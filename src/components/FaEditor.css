@@ -1,0 +1,24 @@
+.editor-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.main-container {
+    background: #f3f2f2;
+}
+
+.main {
+    margin: 0 auto;
+    width: 75%;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.main-header {
+    background: white;
+    height: 226px;
+
+}
+
+.main-frame-container {
+
+}

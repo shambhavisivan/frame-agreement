@@ -1,0 +1,68 @@
+#rcmEditor {
+    margin: 20px 12px;
+}
+
+div.ed-group:not(:last-child) {
+    border-bottom: 1px solid white;
+}
+
+.ed-group-header {
+    color: white;
+    background-color: #0070d2;
+    padding: 4px 8px;
+    font-size: 14px;
+}
+.ed-group-header.invalid {
+    background-color: #d81c2a;
+}
+
+div.ed-group:first-child .ed-group-header{
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+
+.ed-group-header > h3 {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.ed-group-header:hover {
+    cursor: pointer;
+}
+
+.ed-group-header .collapse-chevron {
+    border-color: white;
+    right: 0;
+}
+
+.ed-group-info {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.ed-group-info_min {
+    border-bottom: 1px solid black;
+}
+
+.ed-group-info_max {
+    border-top: 1px solid black;
+}
+
+.ed-group>h3 {
+    display: inline-block;
+    padding: 5px;
+}
+
+tr.ed-group-rc:not(.disabled) {
+    cursor: pointer;
+}
+.q-restriction {
+    margin-left: 10px;
+    color: yellow;
+}
+.red {
+    color: #d81c2a;
+}
+

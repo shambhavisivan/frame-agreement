@@ -1,0 +1,45 @@
+{
+  "name": "frame-agreement-management",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^16.6.3",
+    "react-collapse": "^4.0.3",
+    "react-datepicker": "^2.0.0",
+    "react-dom": "^16.6.3",
+    "react-motion": "^0.5.2",
+    "react-redux": "^5.1.1",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
+    "uuid": "^3.3.2"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
+    "build": "webpack --mode development",
+    "deploy": "webpack --mode development && gulp"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.4",
+    "css-loader": "^1.0.1",
+    "file-loader": "^3.0.1",
+    "gulp": "3.9.1",
+    "gulp-cli": "^2.0.1",
+    "gulp-jsforce-deploy": "^1.1.2",
+    "gulp-rename": "^1.4.0",
+    "gulp-zip": "^4.2.0",
+    "react-hot-loader": "^4.3.12",
+    "redux": "^4.0.1",
+    "run-sequence": "^2.2.1",
+    "style-loader": "^0.23.1",
+    "svg-sprite-loader": "^4.1.3",
+    "webpack": "^4.26.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  }
+}

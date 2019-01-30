@@ -1,10 +1,9 @@
-"use strict";
+'use strict';
 
 let SF = {};
 
-
 let sharedService = {
-    SF: SF
+  SF: SF
 };
 
 export default sharedService;

@@ -4,6 +4,20 @@ const rename = require('gulp-rename');
 const runSequence = require('run-sequence');
 const forceDeploy = require('gulp-jsforce-deploy');
 const credentials = require('./credentials.js');
+const prettier = require('gulp-prettier');
+const sassbeautify = require('gulp-sassbeautify');
+ 
+gulp.task('prettier', () => {
+  return gulp.src('src/**/*.js')
+    .pipe(prettier({ singleQuote: true }))
+    .pipe(gulp.dest('src'));
+});
+
+gulp.task('beautify-scss', () => {
+  return gulp.src('src/**/*.scss')
+    .pipe(sassbeautify())
+    .pipe(gulp.dest('src'))
+})
 
 gulp.task('convert', function () {
   return gulp.src(['dist/bundle.js'])
@@ -27,6 +41,7 @@ gulp.task('deploy', function (callback) {
 });
 
 gulp.task('default', ['deploy']);
+gulp.task('pretty', ['prettier', 'beautify-scss']);
 
 // credentials.js:
 // ---------------

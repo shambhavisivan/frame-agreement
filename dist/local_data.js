@@ -13,6 +13,11 @@
             // status: "Active"
         };
 
+        const FACSettings = {
+            Price_Item_Fields: "cspmb__Contract_Term__c, cspmb__Recurring_Cost__c",
+            Truncate_CP_Fields: true
+        }
+
         const JSONData = [
             {
                 "field": "csconta__Agreement_Name__c",
@@ -97,11 +102,11 @@
                         return createPromise(data);
 
                     case 'getCommercialProducts':
-                        data = [{ "Id": "a1F1t0000001JBoEAM", "Name": "Mobile L_7", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JBZEA2", "Name": "Mobile L_4", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JBUEA2", "Name": "Mobile L_3", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JBjEAM", "Name": "Mobile L_6", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JCDEA2", "Name": "Mobile L_12", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JByEAM", "Name": "Mobile L_9", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JC8EAM", "Name": "Mobile L_11", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JBPEA2", "Name": "Mobile L_2", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JBeEAM", "Name": "Mobile L_5", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JBtEAM", "Name": "Mobile L_8", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t0000001JC3EAM", "Name": "Mobile L_10", "cspmb__Effective_Start_Date__c": 1545264000000 }, { "Id": "a1F1t00000017Y0EAI", "Name": "Mobile L", "cspmb__Effective_Start_Date__c": 1545264000000 }];
+                        data = [{"Id":"a1F1t00000017Y0EAI","Name":"Mobile L","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JBUEA2","Name":"Mobile L_3","cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JBeEAM","Name":"Mobile L_5","cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JBjEAM","Name":"Mobile L_6","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JBoEAM","Name":"Mobile L_7","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JBtEAM","Name":"Mobile L_8","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JByEAM","Name":"Mobile L_9","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JC3EAM","Name":"Mobile L_10","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JC8EAM","Name":"Mobile L_11","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69},{"Id":"a1F1t0000001JCDEA2","Name":"Mobile L_12","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69}];
                         return createPromise(data);
 
                     case 'getAppSettings':
-                        data = { "commercialProductCount": 10, "frameAgreementsCount": 1, "itemsPerPage": 20, "JSONData": JSONData };
+                        data = { "commercialProductCount": 10, "frameAgreementsCount": 1, "itemsPerPage": 20, "JSONData": JSONData, "FACSettings": FACSettings };
                         return createPromise(data);
 
                     case 'upsertFrameAgreements':;

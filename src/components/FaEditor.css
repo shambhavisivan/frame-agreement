@@ -42,6 +42,17 @@
     border-bottom: 1px solid #dddddd;
 }
 
+.main-footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    padding: 17px;
+    box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
+    background: white;
+}
+
 .main-header-row {
     width: 100%;
     margin-bottom: 12px;

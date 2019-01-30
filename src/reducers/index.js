@@ -26,6 +26,10 @@ function validateJSONData(data) {
     return data;
 }
 
+function validateCSV(str) {
+        return /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(str.replace(/ /g,''));
+}
+
 const rootReducer = (state = initialState, action) => {
     switch (action.type) {
 
@@ -36,6 +40,13 @@ const rootReducer = (state = initialState, action) => {
             let fa = state.activeFa;
             fa[action.payload.field] = action.payload.value;
             return { ...state, ...{activeFa: fa} };
+
+        case "SET_ADDED_PRODUCTS":
+            let activeProducts = state.commercialProducts.filter(cp => {
+                return action.payload.includes(cp.Id);
+            });
+            console.log("SET_ADDED_PRODUCTS");
+            return { ...state, ...{activeFa: {...state.activeFa, ...{_ui: {...state.activeFa._ui, ...{commercialProducts: activeProducts}}}}}};
 
         // **********************************************
         // ASYNC REQUEST
@@ -55,12 +66,20 @@ const rootReducer = (state = initialState, action) => {
         case "RECIEVE_FRAME_AGREEMENTS":
             let frameAgreementMap = {};
             action.payload.forEach(fa => {
+                fa._ui = {
+                    commercialProducts: []
+                };
                 frameAgreementMap[fa.Id] = fa;
             });
             return { ...state, ...{frameAgreements: frameAgreementMap}, ...{initialised: {...state.initialised, ...{fa_loaded: true}}}};
 
         case "RECIEVE_COMMERCIAL_PRODUCTS":
             let commercialProducts = action.payload;
+            // commercialProducts.forEach( cp => {
+            //     cp._ui = {
+            //         selected: false
+            //     }
+            // });
             return { ...state, ...{commercialProducts: commercialProducts}, ...{initialised: {...state.initialised, ...{cp_loaded: true}}} };
 
         case "RECIEVE_UPSERT_FRAME_AGREEMENTS":
@@ -69,6 +88,14 @@ const rootReducer = (state = initialState, action) => {
 
         case "RECIEVE_SETTINGS":
             action.payload.JSONData = validateJSONData(action.payload.JSONData);
+
+            if (validateCSV(action.payload.FACSettings.Price_Item_Fields)) {
+                action.payload.FACSettings.Price_Item_Fields = action.payload.FACSettings.Price_Item_Fields.replace(/ /g,'').split(',');
+            } else {
+                console.warn("Price item fields is not valid CSV!");
+                action.payload.FACSettings.Price_Item_Fields = [];
+            }
+
             return { ...state, ...{settings: action.payload}, ...{initialised: {...state.initialised, ...{settings_loaded: true}}} };
         // **********************************************
 

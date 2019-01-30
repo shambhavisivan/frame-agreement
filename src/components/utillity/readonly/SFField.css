@@ -1,6 +1,8 @@
 .sf-field {
-  display: inline-block;
-  float: left;
+    display: inline-block;
+    float: left;
+    padding: 5px 5px;
+    box-sizing: border-box;
 }
 
 .sf-field.editable .sf-label:hover {

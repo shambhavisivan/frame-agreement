@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+// var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
@@ -12,6 +13,20 @@ module.exports = {
                 test: /\.css$/,
                 loader: "style-loader!css-loader"
             },
+            {
+                    test: /\.scss$/,
+                    use: [
+                      {
+                        loader: "style-loader" // creates style nodes from JS strings
+                      },
+                      {
+                        loader: "css-loader" // translates CSS into CommonJS
+                      },
+                      {
+                        loader: "sass-loader" // compiles Sass to CSS
+                      }
+                    ]
+                  },
             {
                 test: /\.svg$/,
                 loader: 'svg-sprite-loader',
@@ -37,6 +52,7 @@ module.exports = {
         filename: 'bundle.js'
     },
     plugins: [
+        // new ExtractTextPlugin('style.css'),
         new webpack.HotModuleReplacementPlugin()
     ],
     devServer: {

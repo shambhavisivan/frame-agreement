@@ -53,3 +53,7 @@
 .modal-footer, .modal-header  {
     width: 100%;
 }
+.modal-footer  {
+    padding: 16px;
+    text-align: right;
+}

@@ -6,7 +6,7 @@ import { getFrameAgreements, getCommercialProducts, getAppSettings } from './act
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
 import FaEditor from './components/FaEditor';
-import "./App.css";
+import "./App.scss";
 
 import { withRouter } from 'react-router-dom';
 
@@ -14,9 +14,11 @@ class App extends Component {
     constructor(props) {
         super(props);
 
-        this.props.getFrameAgreements();
-        this.props.getCommercialProducts();
-        this.props.getAppSettings();
+        this.props.getAppSettings()
+        .then(response => {        
+            this.props.getFrameAgreements();
+            this.props.getCommercialProducts();
+        });
     }
 
     // <img className="icon-settings" src="http://www.vicksdesign.com/products/settings-machine-cog-gear-22-B1.png" />

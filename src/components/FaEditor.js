@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import { withRouter } from 'react-router-dom';
-import { setActiveFa, updateActiveFa, upsertFrameAgreements } from '../actions';
+import { setActiveFa, updateActiveFa, upsertFrameAgreements, setAddedProducts } from '../actions';
 import "./FaEditor.css";
+
+import CommercialProduct from './CommercialProduct';
 
 import Header from './utillity/Header';
 import Icon from './utillity/Icon';
@@ -33,6 +35,7 @@ class FaEditor extends Component {
     this.upsertFrameAgreements = this.upsertFrameAgreements.bind(this);
     this.onOpenModal = this.onOpenModal.bind(this);
     this.onCloseModal = this.onCloseModal.bind(this);
+    this.onAddProducts = this.onAddProducts.bind(this);
 
     this.urlId = this.props.match.params.id || null;
 
@@ -53,11 +56,22 @@ class FaEditor extends Component {
  
   onCloseModal() {
     this.setState({ productModal: false });
+  }; 
+
+  onAddProducts(productIds) {
+    console.log("Added products:", productIds);
+    this.props.setAddedProducts(productIds);
+    setTimeout(()=>{
+      this.setState({
+        activeFa: this.props.activeFa
+      }, () => {
+        this.onCloseModal();
+      });
+    });
   };
 
   componentWillMount() {
     this.editable = this.state.activeFa.csconta__Status__c === 'Draft' || !this.state.activeFa.Id;
-
     // **************************************
     // Organize the header grid
       var field_rows = [];
@@ -136,7 +150,8 @@ class FaEditor extends Component {
                 <span>Product Negotiation</span>
               </div>
 
-              <div className="add-product-box">
+
+              {!this.state.activeFa._ui.commercialProducts.length ? <div className="add-product-box">
                   <span className="box-header-1">There are no Products in here</span>
                   {(() => {
                      if (!this.state.activeFa.Id) {
@@ -148,13 +163,22 @@ class FaEditor extends Component {
                   <div className="box-button-container">
                     <button className="slds-button slds-button--brand" onClick={this.onOpenModal} disabled={!this.state.activeFa.Id}>Add Product</button>
                   </div>
-              </div>
+              </div> : ''}
 
+                  {this.state.activeFa._ui.commercialProducts.map(cp => {
+                     return (
+                        <CommercialProduct key={"cp-" + cp.Id} product={cp} fields={this.props.settings.FACSettings.Price_Item_Fields}/>
+                      );
+                    })}
 
-            <ProductModal open={this.state.productModal} onCloseModal={this.onCloseModal}/>
-
+            <ProductModal open={this.state.productModal} onAddProducts={this.onAddProducts} onCloseModal={this.onCloseModal}/>
 
             </div>
+
+            {this.state.activeFa._ui.commercialProducts.length ? <div className="main-footer"><button className="slds-button slds-button--brand" onClick={this.onOpenModal}>Add Product</button></div> : ''}
+
+
+
           </div>
 
             <div className="sidebar">
@@ -204,6 +228,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
     setActiveFa,
     upsertFrameAgreements,
+    setAddedProducts,
     updateActiveFa
 };
 

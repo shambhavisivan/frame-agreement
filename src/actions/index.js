@@ -16,6 +16,11 @@ export const updateActiveFa = (field, value) => ({
     payload: {field, value}
 });
 
+export const setAddedProducts = productIds => ({
+    type: "SET_ADDED_PRODUCTS",
+    payload: productIds
+});
+
 
 // ***********************************************************************
 

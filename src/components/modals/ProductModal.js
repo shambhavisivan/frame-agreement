@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
 
 import Modal from 'react-responsive-modal';
-import { getFrameAgreements } from '../../actions';
+// import { getFrameAgreements } from '../../actions';
 import Icon from '../utillity/Icon';
 import InputSearch from '../utillity/inputs/InputSearch';
 
@@ -16,11 +16,28 @@ class ProductModal extends Component {
         super(props);
         this.onSearchChange = this.onSearchChange.bind(this);
         this.togglePanel = this.togglePanel.bind(this);
+        this.truncateCPField = this.truncateCPField.bind(this);
+        this.onCloseModal = this.onCloseModal.bind(this);
+        this.addProducts = this.addProducts.bind(this);
 
         this.state = {
             searchValue: '',
-            panel: false
+            panel: false,
+            selectionEmpty: true,
+            selected: {}
         }
+
+        this.priceItemFields = [...this.props.settings.FACSettings.Price_Item_Fields];
+        this.priceItemFields.unshift('Name');
+        console.warn(this.priceItemFields);
+    }
+
+    onCloseModal() {
+      this.setState({
+          selectionEmpty: true,
+          selected: {}
+      });
+      this.props.onCloseModal();
     }
 
     onSearchChange(value) {
@@ -33,9 +50,43 @@ class ProductModal extends Component {
         });
     }
 
+
+    selectProduct(product) {
+        let currentState = !!this.state.selected[product.Id];
+        let newState = {...this.state.selected};
+        if (currentState) {
+          delete newState[product.Id];
+        } else {
+          newState[product.Id] = true;
+        }
+
+        this.setState({
+          selected: {...newState}
+        }, () => {
+          this.setState({
+            selectionEmpty: !Object.keys(newState).length
+          });
+          console.log(this.state.selected);
+        });
+    }
+
+    addProducts() {
+        this.props.onAddProducts(Object.keys(this.state.selected));
+    }
+
+    truncateCPField(field) {
+        var returnString = field;
+        try {
+            returnString = field.split('__')[1].replace(/_/g, ' ');
+        } catch(err) {
+
+        }
+        return returnString;
+    }
+
     render() {
         return (
-            <Modal classNames={{overlay: "overlay", modal: "sf-modal"}} open={this.props.open} onClose={this.props.onCloseModal} center>
+            <Modal classNames={{overlay: "overlay", modal: "sf-modal"}} open={this.props.open} onClose={this.onCloseModal} center>
 
             <div className="modal-header">
                <h2>Add Product to Frame Agreement</h2>
@@ -58,7 +109,7 @@ class ProductModal extends Component {
                         </div>
                     </div>
                     <div className="panel-filter-container">
-                        b
+                        TBA Filtering
                     </div>
                 </div>
 
@@ -79,39 +130,28 @@ class ProductModal extends Component {
 
                <div className="modal-product-list">
                     <div className="product-list-header">
-                        <div className="header-th">
-                            <span>Product Name</span>
+
+                    {this.priceItemFields.map( pif => {
+                       return (
+                        <div key={pif} className="header-th">
+                            <span>{this.props.settings.FACSettings.Truncate_CP_Fields ? this.truncateCPField(pif) : pif}</span>
                         </div>
-                        <div className="header-th">
-                            <span>SKU Code</span>
-                        </div>
-                        <div className="header-th">
-                            <span>Category</span>
-                        </div>
-                        <div className="header-th">
-                            <span>Status</span>
-                        </div>
-                        
+                        );
+                      })}
                     </div>
                     <div className="product-list">
-                        <div className="product-row">
-                            <span>Product 1</span>
-                            <span>11345</span>
-                            <span>Apple</span>
-                            <span>Published</span>
+
+                    {this.props.commercialProducts.map( cp => {
+                       return (
+                        <div key={cp.Id} className={"product-row" + (this.state.selected[cp.Id] ? ' selected' : '')} onClick={() => this.selectProduct(cp)}>
+                            {this.priceItemFields.map( pif => {
+                               return (
+                                <span key={cp.Id + '-' + pif}>{cp[pif] || '-'}</span>
+                                );
+                              })}
                         </div>
-                        <div className="product-row">
-                            <span>Product 2</span>
-                            <span>11345</span>
-                            <span>Apple</span>
-                            <span>Published</span>
-                        </div>
-                        <div className="product-row">
-                            <span>Product 3</span>
-                            <span>11345</span>
-                            <span>Apple</span>
-                            <span>Published</span>
-                        </div>
+                        );
+                      })}
                     </div>
                </div>
 
@@ -125,6 +165,7 @@ class ProductModal extends Component {
 
 
             <div className="modal-footer">
+              <button onClick={this.addProducts} className="slds-button slds-button--brand" disabled={this.state.selectionEmpty}>Add to Frame Agreement</button>
             </div>
 
             </Modal>
@@ -133,11 +174,11 @@ class ProductModal extends Component {
 }
 
 const mapStateToProps = state => {
-    return { frameAgreements: state.frameAgreements};
+    return { commercialProducts: state.commercialProducts, settings: state.settings};
 };
 
 const mapDispatchToProps = {
-    getFrameAgreements
+    // getFrameAgreements
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProductModal))

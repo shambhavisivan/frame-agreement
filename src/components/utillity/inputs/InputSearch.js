@@ -1,0 +1,44 @@
+import React, { Component } from "react";
+import {DebounceInput} from 'react-debounce-input';
+
+import Icon from '../Icon';
+
+import "./InputSearch.css";
+
+
+class InputSearch extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.onTextChange = this.onTextChange.bind(this);
+
+        this.state = {
+            value: this.props.value
+        };
+    }
+
+    onTextChange(e) {
+            this.setState({
+                value: e.target.value
+            });
+            this.props.onChange(e.target.value);
+    }
+
+    // onTextChange(event) {
+    //     this.setState({
+    //         value: event.target.value
+    //     });
+    // }
+
+    render() {
+        return (
+            <div className="search-wrapper">
+              <Icon name="search" width="16" height="16" color="#cccccc"/>
+              <DebounceInput minLength={2} placeholder={this.props.placeholder || "Quick search"} debounceTimeout={300} spellCheck="false" className="search-input" type="text" onChange={this.onTextChange} value={this.state.value} />
+          </div>
+        )
+    }
+}
+
+export default InputSearch;

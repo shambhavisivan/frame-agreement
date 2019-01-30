@@ -1,38 +1,21 @@
 import sharedService from "../utils/shared-service";
 
-const REQUEST_FRAME_AGREEMENTS = "REQUEST_FRAME_AGREEMENTS";
-const RECIEVE_FRAME_AGREEMENTS = "RECIEVE_FRAME_AGREEMENTS";
-
-const REQUEST_COMMERCIAL_PRODUCTS = "REQUEST_COMMERCIAL_PRODUCTS";
-const RECIEVE_COMMERCIAL_PRODUCTS = "RECIEVE_COMMERCIAL_PRODUCTS";
-
-const UPDATE_RCM_DATA = "UPDATE_RCM_DATA";
-const UPDATE_GROUP_DATA = "UPDATE_GROUP_DATA";
-
-const ADD_RCL = "ADD_RCL";
-const REMOVE_RCL = "REMOVE_RCL";
-const EDIT_RCL = "EDIT_RCL";
-
-const TOGGLE_RATE_CARD = "TOGGLE_RATE_CARD";
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
 
-export const updateRcmData = data => ({ type: UPDATE_RCM_DATA, payload: data });
-export const addCustomRcl = (rcId, newRcl) => ({
-    type: ADD_RCL,
-    payload: { rcId, newRcl }
-});
-export const removeCustomRcl = (rcId, crclId) => ({
-    type: REMOVE_RCL,
-    payload: { rcId, crclId }
-});
-export const editCustomRcl = rcl => ({ type: EDIT_RCL, payload: rcl });
-export const updateGroupData = data => ({
-    type: UPDATE_GROUP_DATA,
-    payload: data
-});
 
 // ***********************************************************************
+
+export const setActiveFa = result => ({
+    type: "SET_ACTIVE_FA",
+    payload: result
+});
+
+export const updateActiveFa = (field, value) => ({
+    type: "UPDATE_ACTIVE_FA",
+    payload: {field, value}
+});
+
 
 // ***********************************************************************
 
@@ -92,11 +75,11 @@ export function getAppSettings() {
 // ***********************************************************************
 
 export const requestGetFrameAgreements = () => ({
-    type: REQUEST_FRAME_AGREEMENTS
+    type: "REQUEST_FRAME_AGREEMENTS"
 });
 
 export const recieveGetFrameAgreements = result => ({
-    type: RECIEVE_FRAME_AGREEMENTS,
+    type: "RECIEVE_FRAME_AGREEMENTS",
     payload: result
 });
 
@@ -119,12 +102,40 @@ export function getFrameAgreements() {
 
 // ***********************************************************************
 
+export const requestUpsertFrameAgreements = () => ({
+    type: "REQUEST_UPSERT_FRAME_AGREEMENTS"
+});
+
+export const recieveUpsertFrameAgreements = result => ({
+    type: "RECIEVE_UPSERT_FRAME_AGREEMENTS",
+    payload: result
+});
+
+export function upsertFrameAgreements(fieldData, faId = null) {
+    return function(dispatch) {
+
+        dispatch(requestUpsertFrameAgreements());
+
+        return new Promise((resolve, reject) => {
+            window.SF.invokeAction('upsertFrameAgreements', [faId, JSON.stringify(fieldData)])
+            .then(response => {
+                    dispatch(recieveUpsertFrameAgreements(response));
+                    resolve(response);
+                    return response;
+            });
+
+        });
+    };
+}
+
+// ***********************************************************************
+
 export const requestCommercialProducts = () => ({
-    type: REQUEST_COMMERCIAL_PRODUCTS
+    type: "REQUEST_COMMERCIAL_PRODUCTS"
 });
 
 export const recieveCommercialProducts = result => ({
-    type: RECIEVE_COMMERCIAL_PRODUCTS,
+    type: "RECIEVE_COMMERCIAL_PRODUCTS",
     payload: result
 });
 

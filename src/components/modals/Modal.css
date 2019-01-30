@@ -1,0 +1,55 @@
+/*OVERLAY*/
+.overlay {
+    background: rgba(176, 171, 171, 0.8);
+}
+
+.sf-modal {
+    min-width: 980px;
+
+    background-color: #fafaf9;
+    padding: 0;
+}
+.sf-modal > div:not(div.modal-body) {
+    display: inline-block;
+}
+
+.modal-header, .modal-footer {
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.modal-body {
+
+}
+
+.modal-navigation {
+    margin-bottom: 8px;
+    height: 36px;
+    width: 100%;
+    display: inline-block;
+    padding: 8px 24px 0px 24px;
+    box-sizing: border-box;
+}
+
+.sf-modal .modal-header {
+    border-radius: 4px;
+    box-shadow: 0 2px 0 0 #f0f2f7;
+    background: white;
+    margin-bottom: 1px;
+    text-align: center;
+}
+
+.sf-modal .modal-header h2 {
+    font-size: 20px;
+    color: #222222;
+    margin: 0;
+}
+
+
+.modal-body, .modal-footer {
+    background-color: #fafaf9;
+}
+
+.modal-footer, .modal-header  {
+    width: 100%;
+}

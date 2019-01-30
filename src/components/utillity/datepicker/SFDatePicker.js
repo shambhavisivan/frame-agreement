@@ -2,18 +2,20 @@ import React, { Component } from "react";
 
 import Icon from '../Icon';
 
-import DatePicker from "../../../utils/react-datepicker";
-import "../../../utils/react-datepicker.css";
+import DatePicker from "./react-datepicker";
+import "./react-datepicker.css";
 
 import "./SFDatePicker.css";
 
 class DatePickerInput extends React.Component {
-
+    constructor(props) {
+        super(props)
+    }
     render() {
         return (
-	       <div className="datepicker-input" onClick={this.props.onClick}>
-		        <input className="slds-input" type="text" onChange={this.props.onChange} placeholder={this.props.placeholderText} value={this.props.value} />
-		        <Icon name="event" width="16" heigth="16"/>
+	      <div className={"datepicker-input-container " + (this.props.disabled ? 'disabled' : '')} onClick={this.props.onClick}>
+		        <input className="slds-input" type="text" disabled={this.props.disabled} onChange={this.props.onChange} placeholder={this.props.placeholderText} value={this.props.value} />
+		        <Icon name="event" width="16" height="16"/>
 	      </div>
         )
     }
@@ -23,26 +25,30 @@ class SFDatePicker extends Component {
 
     constructor(props) {
         super(props)
-
+        console.log("DATEPICKER:", props);
+        let initialDate = props.initialDate ? new Date(props.initialDate) : null;
         this.state = {
-            dateValue: undefined
+            dateValue: initialDate
         };
         this.handleDataChange = this.handleDataChange.bind(this);
     }
-    handleDataChange(date) {
-        this.setState({
-            dateValue: date
-        });
 
-        this.props.onDateChange(date);
+    handleDataChange(date) {
+        if (!this.props.disabled) {
+            this.setState({
+                dateValue: new Date(date)
+            });
+            this.props.onDateChange(new Date(date).getTime());
+        }
     }
 
     render() {
         return (
             <DatePicker
-                customInput={<DatePickerInput placeholderText={this.props.placeholderText}/>}
+                customInput={<DatePickerInput labelText={this.props.labelText} placeholderText={this.props.placeholderText}/>}
                 dateFormat="dd.MM.yyyy"
                 weekStartsOn={1}
+                disabled={this.props.disabled}
                 yearDropdownItemNumber={3}
                 dateFormatCalendar="MMMM"
                 showYearDropdown

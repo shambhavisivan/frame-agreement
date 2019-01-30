@@ -4,7 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 
 import { getFrameAgreements, getCommercialProducts, getAppSettings } from './actions';
 // import { editModalWidth } from "./actions";
-import FaPicker from './components/FaPicker';
+import FaList from './components/FaList';
 import FaEditor from './components/FaEditor';
 import "./App.css";
 
@@ -22,13 +22,11 @@ class App extends Component {
     // <img className="icon-settings" src="http://www.vicksdesign.com/products/settings-machine-cog-gear-22-B1.png" />
     render() {
         return this.props.initialised.fa_loaded && this.props.initialised.cp_loaded && this.props.initialised.settings_loaded && (
-            <div>
                 <Switch>
-                  <Route exact path='/' component={FaPicker}/>
+                  <Route exact path='/' component={FaList}/>
                   <Route exact path='/agreement' component={FaEditor}/>
                   <Route exact path='/agreement/:id' component={FaEditor}/>
                 </Switch>
-              </div>
         );
     }
 }

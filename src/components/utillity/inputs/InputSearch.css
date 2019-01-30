@@ -1,0 +1,26 @@
+.search-wrapper {
+	position: relative;
+	width: 100%;
+}
+
+.search-wrapper > svg{
+	position: absolute;
+	top: 8px;
+	left: 13px;
+	z-index: 2;
+}
+
+.search-input {
+    color: #747474;
+    height: 28px;
+    width: 100%;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid #dddddd;
+    padding-left: 37px;
+    box-sizing: border-box;
+}
+
+.search-input::placeholder {
+    /*color: #747474;*/
+}

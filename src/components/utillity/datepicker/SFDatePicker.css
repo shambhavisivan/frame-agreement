@@ -1,19 +1,33 @@
-.datepicker-input {
+.datepicker-input-container {
     border: none;
-    padding: 8px 4px 2px 4px;
     background: white;
     border-bottom: 1px solid #dddbda;
+    position: relative;
+}
+.datepicker-input-container svg{
+    position: absolute;
+    right: 7px;
 }
 
-.datepicker-input input{
+.datepicker-input-container.disabled {
+    border-bottom: 1px solid transparent;
+}
+
+.datepicker-input-container input {
     border: none;
     /* margin-bottom: 20px; */
+    font-family:Salesforce Sans,Arial,sans-serif;
     height: 18px;
     font-size: 14px;
     color: #747474;
-    padding: 0;
+    /*padding: 0;*/
+    background: white;
 }
 
-.datepicker-input input:focus{
+.datepicker-input-container input:focus {
     outline: none;
+}
+
+.datepicker-readonly {
+    padding: 0px 4px;
 }

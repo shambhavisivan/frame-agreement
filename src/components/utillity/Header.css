@@ -45,4 +45,5 @@
 
 .react-header-child-container {
 	flex: 1;
+	position: relative;
 }

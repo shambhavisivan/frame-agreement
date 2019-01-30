@@ -1,0 +1,68 @@
+.sf-field {
+  display: inline-block;
+  float: left;
+}
+
+.sf-field.editable .sf-label:hover {
+  cursor: pointer;
+}
+
+.sf-field .sf-label {
+    text-transform: uppercase;
+    height: 14px;
+    font-size: 11px;
+    padding: 0px 4px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    letter-spacing: normal;
+    color: #5e5d60;
+    margin-bottom: 7px;
+    display: inline-block;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: white;
+}
+
+.sf-field .sf-label.edit {
+    color: #4bca81;
+}
+
+.sf-field-value {
+	padding: 0px 4px;
+}
+.sf-field-value p {
+  font-size: 14px;
+  margin: 0;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 22px;
+  letter-spacing: normal;
+  color: #080707;
+}
+
+.sf-field.editable:hover .form-edit-icon {
+  display: inline-block;
+}
+
+.sf-field .sf-label.edit > .form-edit-icon {
+	display: inline-block;
+}
+
+.form-edit-icon {
+	display: none;
+	float: left;
+  background: white;
+	margin-left: -16px;
+}
+
+.value-holder {
+  border-bottom: 1px solid transparent;
+  padding-bottom: 4px;
+}
+.value-holder.textarea {
+  line-height: normal;
+}

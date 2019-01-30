@@ -8,15 +8,41 @@ const initialState = {
     },
     settings: {},
     frameAgreements: {},
-    commercialProducts: null
+    commercialProducts: null,
+    activeFa: null
+    // activeId: null
 };
+
+function validateJSONData(data) {
+    if (!data) {
+        return [];
+    }
+
+    data.forEach(obj => {
+        obj.type = obj.type || 'text';
+        obj.grid = obj.grid || 3;
+        obj.readOnly = obj.readOnly || false;
+    });
+    return data;
+}
 
 const rootReducer = (state = initialState, action) => {
     switch (action.type) {
 
+        case "SET_ACTIVE_FA":
+            return { ...state, ...{activeFa: action.payload} };
+
+        case "UPDATE_ACTIVE_FA":
+            let fa = state.activeFa;
+            fa[action.payload.field] = action.payload.value;
+            return { ...state, ...{activeFa: fa} };
+
         // **********************************************
         // ASYNC REQUEST
         case "REQUEST_FRAME_AGREEMENTS":
+            return { ...state };
+
+        case "REQUEST_UPSERT_FRAME_AGREEMENTS":
             return { ...state };
 
         case "REQUEST_COMMERCIAL_PRODUCTS":
@@ -31,16 +57,18 @@ const rootReducer = (state = initialState, action) => {
             action.payload.forEach(fa => {
                 frameAgreementMap[fa.Id] = fa;
             });
-            console.warn("*From reducer* Frame Agreements:", frameAgreementMap);
             return { ...state, ...{frameAgreements: frameAgreementMap}, ...{initialised: {...state.initialised, ...{fa_loaded: true}}}};
 
         case "RECIEVE_COMMERCIAL_PRODUCTS":
             let commercialProducts = action.payload;
-            console.warn("*From reducer* Commercial Products:", commercialProducts);
             return { ...state, ...{commercialProducts: commercialProducts}, ...{initialised: {...state.initialised, ...{cp_loaded: true}}} };
 
+        case "RECIEVE_UPSERT_FRAME_AGREEMENTS":
+            let upsertedFa = action.payload;
+            return { ...state, ...{activeFa: upsertedFa},...{frameAgreements: {...state.frameAgreements, ...{[upsertedFa.Id]: upsertedFa}}}};
+
         case "RECIEVE_SETTINGS":
-            console.warn("*From reducer* Settings:", action.payload);
+            action.payload.JSONData = validateJSONData(action.payload.JSONData);
             return { ...state, ...{settings: action.payload}, ...{initialised: {...state.initialised, ...{settings_loaded: true}}} };
         // **********************************************
 

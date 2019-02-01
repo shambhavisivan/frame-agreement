@@ -5,7 +5,7 @@ import Icon from '../Icon';
 import SFDatePicker from '../datepicker/SFDatePicker';
 import InputText from '../inputs/InputText';
 import InputTextArea from '../inputs/InputTextArea';
-import Checkbox from '../inputs/Checkbox';
+import Checkbox from '../inputs/Toggle';
 
 import './SFField.css';
 
@@ -42,10 +42,7 @@ class SFField extends Component {
           placeholderText="Enter date from"
         />
       );
-    } else if (
-      this.props.field.type === 'text' ||
-      this.props.field.type === 'number'
-    ) {
+    } else if (this.props.field.type === 'text' || this.props.field.type === 'number') {
       field = (
         <InputText
           disabled={!this.props.editable}

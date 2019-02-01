@@ -1,56 +1,35 @@
 import React, { Component } from 'react';
-import './Checkbox.css';
+import './Toggle.css';
 
 import Icon from '../Icon';
+import './Checkbox.scss';
 
 class Checkbox extends React.Component {
   constructor(props) {
     super(props);
+
+    this.onChange = this.onChange.bind(this);
+
     this.state = {
-      value: this.props.value
+      value: false
     };
   }
 
   onChange(val) {
     this.setState({
-      value: val || false
+      value: !this.state.value
+    }, () => {
+      this.props.onChange(this.state.value);
     });
-    console.log(this.state.value);
-    this.props.onChange(val);
   }
 
+
   render() {
-    let field;
-    if (this.props.disabled) {
-      field = (
-        <label
-          className={'switch disabled ' + (this.state.value ? 'checked' : '')}
-        >
-          <input type="checkbox" value={this.state.value} />
-          <span className="slider round">
-            {this.state.value && (
-              <Icon name="check" width="14" height="14" color="white" />
-            )}
-          </span>
-        </label>
-      );
-    } else {
-      field = (
-        <label className={'switch ' + (this.state.value ? 'checked' : '')}>
-          <input
-            type="checkbox"
-            onClick={() => this.onChange(!this.state.value)}
-            value={this.state.value}
-          />
-          <span className="slider round">
-            {this.state.value && (
-              <Icon name="check" width="14" height="14" color="white" />
-            )}
-          </span>
-        </label>
-      );
-    }
-    return <div>{field}</div>;
+    return (
+      <div className={"checkbox" + (this.state.value ? ' checked' : '')} onClick={this.onChange}>
+        {this.state.value && <Icon svg-class="checkbox-icon" name="check" width="12" height="12" color="white"></Icon>}
+      </div>
+    );
   }
 }
 

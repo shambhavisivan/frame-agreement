@@ -9,6 +9,7 @@ import store from './store';
 import sharedService from './utils/shared-service';
 
 import './index.scss';
+import './_temp.scss';
 
 function _initialiseFAM() {
   window.redux_store = store;

@@ -1,0 +1,17 @@
+div.info-row{
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+}
+div.info-row > *{
+    flex: 1;
+}
+
+.addons-table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.addons-table thead th {
+	text-align: left;
+}

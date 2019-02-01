@@ -11,7 +11,7 @@ import {
 import "./FaEditor.css";
 
 import FaSidebar from "./FaSidebar";
-import CommercialProduct from "./CommercialProduct";
+import CommercialProduct from "./negotiation/CommercialProduct";
 
 import Header from "./utillity/Header";
 import Icon from "./utillity/Icon";
@@ -19,6 +19,7 @@ import PropTypes from "prop-types";
 
 import SFDatePicker from "./utillity/datepicker/SFDatePicker";
 import SFField from "./utillity/readonly/SFField";
+import InputSearch from "./utillity/inputs/InputSearch";
 
 import ProductModal from "./modals/ProductModal";
 
@@ -30,6 +31,9 @@ class FrameAgreement {
     this.csconta__Status__c = "Draft";
     this.csconta__Valid_From__c = null;
     this.csconta__Valid_To__c = null;
+    this._ui = {
+      commercialProducts: []
+    };
   }
 }
 
@@ -113,9 +117,10 @@ class FaEditor extends Component {
     delete data.csconta__Account__c;
     delete data.csconta__Account__r;
     delete data.Name;
-
-    this.props
-      .upsertFrameAgreements(data, this.props.activeFa.Id)
+    delete data._ui;
+    console.log("***********************************************");
+    console.log(data);
+    this.props.upsertFrameAgreements(data, this.props.activeFa.Id)
       .then(response => {
         this.setState({
           activeFa: response
@@ -130,8 +135,86 @@ class FaEditor extends Component {
   // <SFDatePicker editable={this.editable} initialDate={true} onDateChange={this.onDateChange} labelText="Effective date from" placeholderText="Enter date from"/>
 
   render() {
+// *******************************************************
+// Add product call to action
+let addProductCTA = '';
+if (!this.state.activeFa._ui.commercialProducts.length) {
+    addProductCTA = (<div className="add-product-box">
+        <span className="box-header-1">
+              There are no Products in here
+        </span>
+        {(() => {
+          if (!this.state.activeFa.Id) {
+            return (
+              <span className="box-header-2">
+                Save frame agreement before adding products!
+              </span>
+            );
+          } else {
+            return (
+              <span className="box-header-2">
+                They will be visible as soon as you create them.
+              </span>
+            );
+          }
+        })()}
+        <div className="box-button-container">
+          <button
+            className="slds-button slds-button--brand"
+            onClick={this.onOpenModal}
+            disabled={!this.state.activeFa.Id}>
+            Add Products
+          </button>
+        </div>
+      </div>)
+}
+// *******************************************************
+let footer = "";
+if (this.state.activeFa._ui.commercialProducts.length) {
+    footer = (
+        <div className="main-footer">
+                    <button
+                      className="slds-button slds-button--brand"
+                      onClick={this.onOpenModal}>
+                      Toggle Products
+                    </button>
+                  </div>
+    )
+}
+// *******************************************************
+// Modal needs to be conditionally rendered to activate its lifecycle
+let productModal = '';
+if (this.state.productModal) {
+    productModal = (<ProductModal
+                      open={this.state.productModal}
+                      addedProducts={this.state.activeFa._ui.commercialProducts}
+                      onAddProducts={this.onAddProducts}
+                      onCloseModal={this.onCloseModal}
+                    />)
+}
+// *******************************************************
+// Negotiation header with and without commercial products
+let negotiationHeader;
+if (this.state.activeFa._ui.commercialProducts.length) {
+    negotiationHeader = (
+        <div className="info-row">
+          <span>Products ({this.state.activeFa._ui.commercialProducts.length})</span>
+          <InputSearch placeholder="Quick search"/>
+          <a href="#">expand all</a>
+      </div>
+    );
+} else {
+    negotiationHeader = (<div className="info-row"><span>Product Negotiation</span></div>);
+}
+
+// *******************************************************
+
+
+
     return (
       <div className="editor-container">
+
+
         <Header
           onBackClick={this.onBackClick}
           disabled={!this.editable}
@@ -148,6 +231,7 @@ class FaEditor extends Component {
 
         <div className="main-container">
           <div className="main">
+
             <div className="main-header">
               {this.header_rows.map((row, i) => {
                 return (
@@ -171,42 +255,9 @@ class FaEditor extends Component {
 
             <div className="main-frame-container">
 
-              <div className="info-row">
-                <span>Product Negotiation</span>
-              </div>
+              {negotiationHeader}
 
-              {!this.state.activeFa._ui.commercialProducts.length ? (
-                <div className="add-product-box">
-                  <span className="box-header-1">
-                    There are no Products in here
-                  </span>
-                  {(() => {
-                    if (!this.state.activeFa.Id) {
-                      return (
-                        <span className="box-header-2">
-                          Save frame agreement before adding products!
-                        </span>
-                      );
-                    } else {
-                      return (
-                        <span className="box-header-2">
-                          They will be visible as soon as you create them.
-                        </span>
-                      );
-                    }
-                  })()}
-                  <div className="box-button-container">
-                    <button
-                      className="slds-button slds-button--brand"
-                      onClick={this.onOpenModal}
-                      disabled={!this.state.activeFa.Id}>
-                      Add Products
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
+              {addProductCTA}
 
               {this.state.activeFa._ui.commercialProducts.map(cp => {
                 return (
@@ -218,49 +269,21 @@ class FaEditor extends Component {
                 );
               })}
 
-              {this.state.productModal ? <ProductModal
-                open={this.state.productModal}
-                addedProducts={this.state.activeFa._ui.commercialProducts}
-                onAddProducts={this.onAddProducts}
-                onCloseModal={this.onCloseModal}
-              /> : ''}
+            {productModal}
+
             </div>
 
-            {this.state.activeFa._ui.commercialProducts.length ? (
-              <div className="main-footer">
-                <button
-                  className="slds-button slds-button--brand"
-                  onClick={this.onOpenModal}>
-                  Toggle Products
-                </button>
-              </div>
-            ) : (
-              ""
-            )}
+            {footer}
           </div>
 
           <FaSidebar />
+
         </div>
       </div>
     );
   }
 }
 
-/*
-              <Icon name="success" width="16" height="16" color="#4bca81" />
-http://jsfiddle.net/theoperatore/erLbLf2q/
-
-
-                <ul>
-                  {this.props.commercialProducts && this.props.commercialProducts.map(cp => {
-                     return (
-                        <li key={cp.Id}>
-                            {cp.Name}
-                        </li>
-                      );
-                    })}
-                </ul>
-*/
 
 const mapStateToProps = state => {
   return {

@@ -1,0 +1,20 @@
+.checkbox {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    border: 1px solid #dddbda;
+    position: relative;
+}
+
+.checkbox.checked {
+    background: #0070d2;
+}
+
+.checkbox-icon {
+	margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}

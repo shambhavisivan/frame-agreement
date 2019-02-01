@@ -73,6 +73,31 @@ export function getAppSettings() {
 
 // ***********************************************************************
 
+export const RequestGetAddons = () => ({
+  type: 'REQUEST_GET_ADDONS'
+});
+
+export const RecieveGetAddons = result => ({
+  type: 'RECIEVE_GET_ADDONS',
+  payload: result
+});
+
+export function getAddons(priceItemId) {
+  return function(dispatch) {
+    dispatch(RequestGetAddons());
+
+    return new Promise((resolve, reject) => {
+      window.SF.invokeAction('getAddons', [priceItemId]).then(response => {
+        dispatch(RecieveGetAddons({response, priceItemId}));
+        resolve(response);
+        return response;
+      });
+    });
+  };
+}
+
+// ***********************************************************************
+
 export const requestGetFrameAgreements = () => ({
   type: 'REQUEST_FRAME_AGREEMENTS'
 });
@@ -112,10 +137,8 @@ export function upsertFrameAgreements(fieldData, faId = null) {
     dispatch(requestUpsertFrameAgreements());
 
     return new Promise((resolve, reject) => {
-      window.SF.invokeAction('upsertFrameAgreements', [
-        faId,
-        JSON.stringify(fieldData)
-      ]).then(response => {
+      window.SF.invokeAction('upsertFrameAgreements', [faId, JSON.stringify(fieldData)])
+      .then(response => {
         dispatch(recieveUpsertFrameAgreements(response));
         resolve(response);
         return response;

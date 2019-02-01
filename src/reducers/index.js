@@ -73,6 +73,9 @@ const rootReducer = (state = initialState, action) => {
 
     case 'REQUEST_SETTINGS':
       return { ...state };
+
+    case 'REQUEST_GET_ADDONS':
+      return { ...state };
     // **********************************************
     // ASYNC RECIEVE
     case 'RECIEVE_FRAME_AGREEMENTS':
@@ -104,6 +107,14 @@ const rootReducer = (state = initialState, action) => {
 
     case 'RECIEVE_UPSERT_FRAME_AGREEMENTS':
       let upsertedFa = action.payload;
+      // On error
+      if (!upsertedFa) {
+        return { ...state };
+      }
+      // GET THIS FROM ATTACHMENT
+      upsertedFa._ui = {
+        commercialProducts: []
+      };
       return {
         ...state,
         ...{ activeFa: upsertedFa },
@@ -135,6 +146,20 @@ const rootReducer = (state = initialState, action) => {
           initialised: { ...state.initialised, ...{ settings_loaded: true } }
         }
       };
+
+    case 'RECIEVE_GET_ADDONS':
+      let addons = action.payload.response;
+      let priceItemId = action.payload.priceItemId;
+      let addon_commercialProducts = state.commercialProducts;
+
+      let priceItemIndex = state.commercialProducts.findIndex(pi => {
+        return pi.Id === priceItemId;
+      });
+
+      addon_commercialProducts[priceItemIndex]._addons = addons;
+
+      return {...state, ...{addon_commercialProducts}}
+
     // **********************************************
 
     default:

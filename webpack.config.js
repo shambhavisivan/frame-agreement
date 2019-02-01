@@ -3,6 +3,7 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: './src/index.js',
+    // devtool: 'eval-source-map',
     module: {
         rules: [{
                 test: /\.(js|jsx)$/,
@@ -52,7 +53,9 @@ module.exports = {
         filename: 'bundle.js'
     },
     plugins: [
-        // new ExtractTextPlugin('style.css'),
+        // new webpack.DefinePlugin({
+        //          'process.env.NODE_ENV': '"production"'
+        // }),
         new webpack.HotModuleReplacementPlugin()
     ],
     devServer: {

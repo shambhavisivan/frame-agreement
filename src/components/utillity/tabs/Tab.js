@@ -16,9 +16,8 @@ class Tab extends React.Component {
 
   render() {
     return (
-      <li className={`tab ${this.props.isActive ? 'active' : ''}`}>
-        <a className="tab-link"
-           onClick={this.handleTabClick}>{this.props.label}
+      <li className={`tab ${this.props.isActive ? 'active' : ''}`} onClick={this.handleTabClick}>
+        <a className="tab-link">{this.props.label}
         </a>
       </li>
     );

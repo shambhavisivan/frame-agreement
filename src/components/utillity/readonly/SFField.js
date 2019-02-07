@@ -5,7 +5,7 @@ import Icon from '../Icon';
 import SFDatePicker from '../datepicker/SFDatePicker';
 import InputText from '../inputs/InputText';
 import InputTextArea from '../inputs/InputTextArea';
-import Checkbox from '../inputs/Toggle';
+import Toggle from '../inputs/Toggle';
 
 import './SFField.css';
 
@@ -56,7 +56,7 @@ class SFField extends Component {
       );
     } else if (this.props.field.type === 'boolean') {
       field = (
-        <Checkbox
+        <Toggle
           onChange={this.onChange}
           disabled={!this.props.editable}
           value={this.state.value}

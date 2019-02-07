@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+
 
 import Modal from 'react-responsive-modal';
 // import { getFrameAgreements } from '../../actions';
@@ -226,9 +226,7 @@ const mapDispatchToProps = {
   // getFrameAgreements
 };
 
-export default withRouter(
-  connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(ProductModal)
-);
+  )(ProductModal);

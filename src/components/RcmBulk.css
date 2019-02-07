@@ -1,0 +1,53 @@
+.bulk-filter-container {
+    padding: 16px;
+    background: #f2f3f3;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.bulk-discount-container {
+    background: white;
+    float: left;
+    border-bottom: 1px solid #f2f3f3;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+}
+
+.bulk-filter-container > h4 {
+    width: 100%;
+    color: #514f4d;
+    font-size: 14px;
+    padding-bottom: 13px;
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+.bulk-filter-container > h4 span {
+    color: #0070d2;
+    margin-left: 2px;
+    font-weight: bold;
+}
+
+.bulk-discount-section {
+    width: 30%;
+    margin-right: 15px;
+    display: inline-block;
+    float: left;
+}
+
+.bulk-filter-section {
+    width: 30%;
+    margin-right: 15px;
+    display: inline-block;
+}
+
+.bulk-filter-section select[disabled] {
+    background: #e0e5ee;
+}
+
+.bulk-button-container {
+    width: 30%;
+    display: inline-block;
+}
+

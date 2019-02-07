@@ -45,6 +45,30 @@ export function getAppSettings() {
 }
 // ***********************************************************************
 
+// export const requestRateCards = () => ({
+//   type: 'REQUEST_RATE_CARDS'
+// });
+
+// export const recieveRateCards = result => ({
+//   type: 'RECIEVE_RATE_CARDS',
+//   payload: result
+// });
+
+// export function getRateCards(priceItemId) {
+//   return function(dispatch) {
+//     dispatch(requestRateCards());
+
+//     return new Promise((resolve, reject) => {
+//       window.SF.invokeAction('getRateCards', [priceItemId]).then(response => {
+//         dispatch(recieveRateCards({response, priceItemId}));
+//         resolve(response);
+//         return response;
+//       });
+//     });
+//   };
+// }
+// ***********************************************************************
+
 // export const request = () => ({
 //     type: REQUEST_FRAME_AGREEMENTS
 // });
@@ -73,22 +97,47 @@ export function getAppSettings() {
 
 // ***********************************************************************
 
-export const RequestGetAddons = () => ({
-  type: 'REQUEST_GET_ADDONS'
+// export const requestGetAddons = () => ({
+//   type: 'REQUEST_GET_ADDONS'
+// });
+
+// export const recieveGetAddons = result => ({
+//   type: 'RECIEVE_GET_ADDONS',
+//   payload: result
+// });
+
+// export function getAddons(priceItemId) {
+//   return function(dispatch) {
+//     dispatch(requestGetAddons());
+
+//     return new Promise((resolve, reject) => {
+//       window.SF.invokeAction('getAddons', [priceItemId]).then(response => {
+//         dispatch(recieveGetAddons({response, priceItemId}));
+//         resolve(response);
+//         return response;
+//       });
+//     });
+//   };
+// }
+
+// ***********************************************************************
+
+export const requestPriceItemData = () => ({
+  type: 'REQUEST_PRICE_ITEM_DATA'
 });
 
-export const RecieveGetAddons = result => ({
-  type: 'RECIEVE_GET_ADDONS',
+export const recievePriceItemData = result => ({
+  type: 'RECIEVE_PRICE_ITEM_DATA',
   payload: result
 });
 
-export function getAddons(priceItemId) {
+export function getCommercialProductData(priceItemIdList) {
   return function(dispatch) {
-    dispatch(RequestGetAddons());
+    dispatch(requestPriceItemData());
 
     return new Promise((resolve, reject) => {
-      window.SF.invokeAction('getAddons', [priceItemId]).then(response => {
-        dispatch(RecieveGetAddons({response, priceItemId}));
+      window.SF.invokeAction('getCommercialProductData', [priceItemIdList]).then(response => {
+        dispatch(recievePriceItemData(response));
         resolve(response);
         return response;
       });

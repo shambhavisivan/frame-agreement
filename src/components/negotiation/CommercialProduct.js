@@ -1,26 +1,27 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { connect } from "react-redux";
 
-import Icon from '../utillity/Icon';
+import Icon from "../utillity/Icon";
 
-import Tabs from '../utillity/tabs/Tabs';
-import Tab from '../utillity/tabs/Tab';
+import Tabs from "../utillity/tabs/Tabs";
+import Tab from "../utillity/tabs/Tab";
 
-import Addons from './Addons';
-import Charges from './Charges';
-import Rates from './Rates';
+import Checkbox from "../utillity/inputs/Checkbox";
 
-import { withRouter } from 'react-router-dom';
-import { getAddons } from '../../actions';
+import Addons from "./Addons";
+import Charges from "./Charges";
+import Rates from "./Rates";
 
-import './CommercialProduct.scss';
+
+// import { getAddons, getRateCards } from "../../actions";
+
+import "./CommercialProduct.scss";
 
 class CommercialProduct extends React.Component {
-
   constructor(props) {
     super(props);
     this.fields = [...this.props.fields];
-    this.fields.unshift('Name');
+    this.fields.unshift("Name");
 
     this.onExpandProduct = this.onExpandProduct.bind(this);
 
@@ -29,61 +30,70 @@ class CommercialProduct extends React.Component {
     this.state = {
       loading: false,
       open: false
-    }
+    };
   }
 
   onExpandProduct() {
-
-      if (this.props.product._addons) {
-          this.setState({
-              open: !this.state.open
-          });
-      } else {
-          this.setState({
-              loading: true
-          }, () => {
-              this.props.getAddons(this.props.product.Id)
-                  .then(response => {
-                      this.setState({
-                          open: !this.state.open,
-                          loading: false
-                      });
-                  });
-          });
-      }
+      this.setState({
+        open: !this.state.open
+      });
   }
 
   render() {
     return (
-      <div className={"commercial-product-container" + (this.state.open ? ' product-open' : '')}>
-          
-          <div className="commercial-product-info">
-            <div className="commercial-product-fields" onClick={this.onExpandProduct}>
-              {this.fields.map(pif => {
-                return (
-                  <span key={'facp-' + this.props.product.Id + '-' + pif}>
-                    {this.props.product[pif] || '-'}
-                  </span>
-                );
-              })}
-            </div>
-              {this.state.open && (<div className="commercial-product-description">
-                <span>1600 AVAILABLE  |  £39  |  Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget</span>
-              </div>)}
+      <div
+        className={
+          "commercial-product-container" +
+          (this.state.open ? " product-open" : "")
+        }
+      >
+        <div className="commercial-product-header">
+        
+          <div className="commercial-product-checkbox-container">
+            <Checkbox onChange={() => {this.props.onSelect(this.props.product)}}/>
+          </div>   
+               
+          <div className="commercial-product-fields-container">
+              <div
+                className="commercial-product-fields"
+                onClick={this.onExpandProduct}
+              >
+                {this.fields.map(pif => {
+                  return (
+                    <span key={"facp-" + this.props.product.Id + "-" + pif}>
+                      {this.props.product[pif] || "-"}
+                    </span>
+                  );
+                })}
+              </div>
           </div>
+        </div>
 
-          {this.state.open && (<Tabs>
+        {this.state.open && (
+          <div>
+            <div className="commercial-product-description">
+              <span>
+                1600 AVAILABLE | £39 | Metus in vestibulum faucibus erat tortor
+                et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit,
+                cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum
+                est, vel erat in venenatis vestibulum, sed nostra dui nonummy
+                etiam eros, eget
+              </span>
+            </div>
+
+            <Tabs>
               <Tab label="Add-Ons">
-                <Addons addons={this.props.product._addons}/>
+                <Addons addons={this.props.product._addons} />
               </Tab>
               <Tab label="Charges">
                 <Charges />
               </Tab>
               <Tab label="Rates">
-                <Rates />
+                <Rates rateCards={this.props.product._rateCards} />
               </Tab>
-          </Tabs>)}
-
+            </Tabs>
+          </div>
+        )}
       </div>
     );
   }
@@ -94,13 +104,10 @@ class CommercialProduct extends React.Component {
 // };
 
 const mapDispatchToProps = {
-  getAddons
+
 };
 
-export default withRouter(
-  connect(
+export default connect(
     null,
     mapDispatchToProps
-  )(CommercialProduct)
-);
-
+  )(CommercialProduct);

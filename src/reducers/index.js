@@ -24,10 +24,17 @@ function validateJSONData(data) {
     obj.readOnly = obj.readOnly || false;
   });
   return data;
+
 }
 
 function validateCSV(str) {
-  return /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(str.replace(/ /g, ''));
+  let returnStr = str;
+  try { 
+  returnStr = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(str.replace(/ /g, ''));
+  } catch(e) {
+    console.warn(e);
+  }
+  return returnStr;
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -74,7 +81,13 @@ const rootReducer = (state = initialState, action) => {
     case 'REQUEST_SETTINGS':
       return { ...state };
 
-    case 'REQUEST_GET_ADDONS':
+    // case 'REQUEST_RATE_CARDS':
+    //   return { ...state };
+
+    // case 'REQUEST_GET_ADDONS':
+    //   return { ...state };
+
+    case 'REQUEST_PRICE_ITEM_DATA':
       return { ...state };
     // **********************************************
     // ASYNC RECIEVE
@@ -93,7 +106,7 @@ const rootReducer = (state = initialState, action) => {
       };
 
     case 'RECIEVE_COMMERCIAL_PRODUCTS':
-      let commercialProducts = action.payload;
+      var commercialProducts = action.payload;
       // commercialProducts.forEach( cp => {
       //     cp._ui = {
       //         selected: false
@@ -147,18 +160,52 @@ const rootReducer = (state = initialState, action) => {
         }
       };
 
-    case 'RECIEVE_GET_ADDONS':
-      let addons = action.payload.response;
-      let priceItemId = action.payload.priceItemId;
-      let addon_commercialProducts = state.commercialProducts;
+    // case 'RECIEVE_GET_ADDONS':
+    //   var addons = action.payload.response;
+    //   var priceItemId = action.payload.priceItemId;
+    //   var commercialProducts = state.commercialProducts;
 
-      let priceItemIndex = state.commercialProducts.findIndex(pi => {
-        return pi.Id === priceItemId;
-      });
+    //   var priceItemIndex = state.commercialProducts.findIndex(pi => {
+    //     return pi.Id === priceItemId;
+    //   });
 
-      addon_commercialProducts[priceItemIndex]._addons = addons;
+    //   commercialProducts[priceItemIndex]._addons = addons;
 
-      return {...state, ...{addon_commercialProducts}}
+    //   return {...state, ...{commercialProducts}}
+
+    // case 'RECIEVE_RATE_CARDS':
+    //   var rateCards = action.payload.response;
+    //   var priceItemId = action.payload.priceItemId;
+    //   var commercialProducts = state.commercialProducts;
+
+    //   var priceItemIndex = state.commercialProducts.findIndex(pi => {
+    //     return pi.Id === priceItemId;
+    //   });
+
+    //   commercialProducts[priceItemIndex]._rateCards = rateCards;
+
+    //   return {...state, ...{commercialProducts}}
+
+    case 'RECIEVE_PRICE_ITEM_DATA':
+      var priceItemData = action.payload;
+      // var commercialProducts = [...state.commercialProducts];
+      console.warn(priceItemData);
+      for (var key in priceItemData) {
+
+            var priceItemIndex = state.commercialProducts.findIndex(pi => {
+              return pi.Id === key;
+            });
+
+            if (priceItemIndex === -1) {
+              console.error("Cannot find price item " + key + " in:" + state.commercialProducts.map(cp => cp.Id));
+              return { ...state };
+            }
+            state.commercialProducts[priceItemIndex]._addons = priceItemData[key].addons;
+            // state.commercialProducts[priceItemIndex]._charges = priceItemData[key].charges;
+            state.commercialProducts[priceItemIndex]._rateCards = priceItemData[key].rateCards;
+      }
+
+      return {...state, ...{commercialProducts: state.commercialProducts}}
 
     // **********************************************
 

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-
-import { withRouter } from 'react-router-dom';
 import { getFrameAgreements } from '../actions';
 
 
@@ -44,9 +42,7 @@ const mapDispatchToProps = {
   getFrameAgreements
 };
 
-export default withRouter(
-  connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(FaSidebar)
-);
+  )(FaSidebar);

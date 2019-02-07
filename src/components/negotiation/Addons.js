@@ -46,16 +46,14 @@ class Addons extends React.Component {
   render() {
     return (
       <div className="table-container">
-        <table className="addons-table">
-           <thead>
-              <tr>
-                 <th>Name</th>
-                 <th>Billing Frequency</th>
-                 <th>Authorization Level</th>
-                 <th>Reccuring Charge</th>
-              </tr>
-           </thead>
-           <tbody>
+          <div className="table-list-header">
+            <div className="list-cell">Name</div>
+            <div className="list-cell">Billing Frequency</div>
+            <div className="list-cell">Authorization Level</div>
+            <div className="list-cell">Reccuring Charge</div>
+          </div>
+
+          <ul className="table-list">
                   {this.props.addons.map((add, i) => {
 
                     let icon = {};
@@ -69,19 +67,19 @@ class Addons extends React.Component {
                     }
 
                     return (
-                      <tr key={add.Id} className={'addon-row' + (this.state.selected[add.Id] ? ' selected-addon' : '')}>
-                        <td onClick={() => {this.onCheck(add.Id)}}><Icon name={icon.name} width="14" color={icon.color}/> {add.Name}</td>
-                        <td>{add.cspmb__Billing_Frequency__c}</td>
-                        <td>{add.cspmb__Authorization_Level__c}</td>
-                        <td>{add.cspmb__Recurring_Charge__c}</td>
-                      </tr>
+                      <li key={add.Id} className={'list-row' + (this.state.selected[add.Id] ? ' selected-row' : '')}>
+                        <div className="list-cell" onClick={() => {this.onCheck(add.Id)}}>
+                          <Icon name={icon.name} width="14" color={icon.color}/> {add.Name}
+                        </div>
+                        <div className="list-cell"> {add.cspmb__Billing_Frequency__c}</div>
+                        <div className="list-cell"> {add.cspmb__Authorization_Level__c}</div>
+                        <div className="list-cell"> {add.cspmb__Recurring_Charge__c}</div>
+                      </li>
                       );
                   })}
-           </tbody>
-           <tfoot>
+          </ul>
 
-           </tfoot>
-        </table>
+
         <div className="table-footer">
               <button className="slds-button slds-button--neutral" onClick={this.negotiateSelected}>
                  {Object.keys(this.state.selected).length ? 'Negotiate Selected' : 'Negotiate All'}

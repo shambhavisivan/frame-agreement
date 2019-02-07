@@ -1,0 +1,68 @@
+.negotiation-modal .modal-body {
+    flex-direction: column;
+}
+
+.modal-panel {
+    border-right: 1px solid rgba(153, 153, 153, 0.5);
+    background: #fdfdfd;
+}
+
+
+
+.modal-body.panel-closed .modal-panel {
+    display: none;
+}
+
+
+.modal-body.panel-closed .modal-table-container {
+    flex: 1;
+    box-sizing: border-box;
+}
+
+/**********************************************/
+.products-container {
+    padding: 10px 20px;
+}
+
+.filter-container {
+    padding: 10px 20px;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.filter-container > div{
+    margin-right: 55px;
+}
+
+.products-container .label-text{
+    padding: 7px 0px;
+}
+
+.horizontal-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.horizontal-list>li {
+    flex: 2;
+    padding: 9px 12px;
+    background: #0070d2;
+    color: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin-left: 15px;
+}
+
+.label-text {
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #5e5d60;
+}
+
+.horizontal-list>li:first-child {
+    margin-left: 0px;
+}

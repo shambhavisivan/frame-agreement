@@ -3,7 +3,7 @@ import './Toggle.css';
 
 import Icon from '../Icon';
 
-class Checkbox extends React.Component {
+class Toggle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -54,4 +54,4 @@ class Checkbox extends React.Component {
   }
 }
 
-export default Checkbox;
+export default Toggle;

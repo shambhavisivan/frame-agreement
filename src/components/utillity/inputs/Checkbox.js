@@ -19,7 +19,7 @@ class Checkbox extends React.Component {
     this.setState({
       value: !this.state.value
     }, () => {
-      this.props.onChange(this.state.value);
+      this.props.onChange && this.props.onChange(this.state.value);
     });
   }
 

@@ -7,6 +7,7 @@ import Modal from 'react-responsive-modal';
 // import { getFrameAgreements } from '../../actions';
 import Icon from '../utillity/Icon';
 import InputSearch from '../utillity/inputs/InputSearch';
+import { truncateCPField } from '../../utils/shared-service';
 
 import './Modal.css';
 import './ProductModal.css';
@@ -16,7 +17,6 @@ class ProductModal extends Component {
     super(props);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.togglePanel = this.togglePanel.bind(this);
-    this.truncateCPField = this.truncateCPField.bind(this);
     this.onCloseModal = this.onCloseModal.bind(this);
     this.addProducts = this.addProducts.bind(this);
 
@@ -89,18 +89,10 @@ class ProductModal extends Component {
     });
   }
 
-  truncateCPField(field) {
-    var returnString = field;
-    try {
-      returnString = field.split('__')[1].replace(/_/g, ' ');
-    } catch (err) {}
-    return returnString;
-  }
-
   render() {
     return (
       <Modal
-        classNames={{ overlay: 'overlay', modal: 'sf-modal' }}
+        classNames={{ overlay: 'overlay', modal: 'sf-modal', closeButton: 'close-button' }}
         open={this.props.open}
         onClose={this.onCloseModal}
         center
@@ -168,7 +160,7 @@ class ProductModal extends Component {
                     <div key={pif} className="header-th">
                       <span>
                         {this.props.settings.FACSettings.Truncate_CP_Fields
-                          ? this.truncateCPField(pif)
+                          ? truncateCPField(pif)
                           : pif}
                       </span>
                     </div>

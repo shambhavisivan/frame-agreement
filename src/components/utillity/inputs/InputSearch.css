@@ -1,6 +1,11 @@
 .search-wrapper {
-	position: relative;
-	width: 100%;
+    position: relative;
+    width: 100%;
+}
+.transparent .search-wrapper .search-input{
+    border: none;
+    background: transparent;
+    border-bottom: 1px solid #ddd;
 }
 
 .search-wrapper > svg{

@@ -37,8 +37,9 @@ ol li {
 }
 .slds-button:disabled, .slds-button:disabled:hover {
     cursor: auto;
-    background-color: #dddddd;
+    color: #dddddd;
     border-color: #dddddd;
+    background: white;
 }
 
 .slds-button.link-button {

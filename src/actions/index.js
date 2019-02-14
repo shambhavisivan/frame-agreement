@@ -19,6 +19,11 @@ export const setAddedProducts = productIds => ({
   payload: productIds
 });
 
+export const applyDiscountToFrameAgreement = (priceItemId, charge, data) => ({
+  type: 'APPLY_DISCOUNT',
+  payload: {priceItemId, charge, data}
+});
+
 // ***********************************************************************
 
 export const requestAppSettings = () => ({

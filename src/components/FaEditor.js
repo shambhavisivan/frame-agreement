@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import { withRouter } from "react-router-dom";
 import { setActiveFa, updateActiveFa, upsertFrameAgreements, setAddedProducts, getCommercialProductData } from "../actions";
+import { truncateCPField } from '../utils/shared-service';
 import "./FaEditor.css";
 
 import FaSidebar from "./FaSidebar";
@@ -15,12 +16,14 @@ import PropTypes from "prop-types";
 import SFDatePicker from "./utillity/datepicker/SFDatePicker";
 import SFField from "./utillity/readonly/SFField";
 import InputSearch from "./utillity/inputs/InputSearch";
+import Checkbox from "./utillity/inputs/Checkbox";
 
 import ProductModal from "./modals/ProductModal";
 import NegotiationModal from "./modals/NegotiationModal";
 
 class FrameAgreement {
     constructor() {
+
         this.Id = null;
         this.Name = "";
         this.csconta__Agreement_Name__c = "";
@@ -30,6 +33,7 @@ class FrameAgreement {
         this._ui = {
             commercialProducts: []
         };
+        
     }
 }
 
@@ -52,14 +56,15 @@ class FaEditor extends Component {
             activeFa: this.props.frameAgreements[this.urlId] || new FrameAgreement(),
             productModal: false,
             negotiateModal: false,
-            selectedProducts: {}
+            selectedProducts: {},
+            loadingProducts: []
         };
         // Set active Id in store
         this.props.setActiveFa(this.state.activeFa);
     }
 
     componentWillMount() {
-        this.editable = this.state.activeFa.csconta__Status__c === "Draft" || !this.state.activeFa.Id;
+        this.editable = this.props.settings.FACSettings.FA_Editable_Statuses.includes(this.state.activeFa.csconta__Status__c) || !this.state.activeFa.Id;
         // **************************************
         // Organize the header grid
         var field_rows = [];
@@ -118,15 +123,20 @@ class FaEditor extends Component {
         });
 
         if (IdsToLoad.length) {
-            this.props.getCommercialProductData(productIds)
-                .then(r => {
-                    this.props.setAddedProducts(productIds);
-                    setTimeout(() => {
-                        this.setState({ activeFa: this.props.activeFa }, () => {
+            // this.setState({loadingProducts: [...IdsToLoad]}, () => {
+                // this.onCloseModal();
+                this.props.getCommercialProductData(productIds)
+                    .then(r => {
+
+                        this.setState({loadingProducts: []});
+
+                        this.props.setAddedProducts(productIds);
+                        setTimeout(() => {
+                            this.setState({ activeFa: this.props.activeFa });
                             this.onCloseModal();
                         });
-                    });
-                })
+                    })
+
         } else {
             this.props.setAddedProducts(productIds);
             setTimeout(() => {
@@ -149,6 +159,22 @@ class FaEditor extends Component {
         });
     }
 
+    onSelectAllProducts() {
+        console.log("CHECK ALL");
+        let selectedProducts = this.state.selectedProducts;
+
+        if (this.state.activeFa._ui.commercialProducts.length === Object.keys(this.state.selectedProducts).length) {
+            selectedProducts = {};
+        } else {
+            this.state.activeFa._ui.commercialProducts.forEach(cp => {
+                selectedProducts[cp.Id] = cp;
+            });
+        }
+
+        this.setState({
+            selectedProducts
+        });
+    }
     onBackClick() {
         this.props.history.push("/");
     }
@@ -206,7 +232,7 @@ class FaEditor extends Component {
           <button className="slds-button slds-button--brand" onClick={this.onOpenCommercialProductModal}>
             Toggle Products
           </button>
-          <button className="slds-button slds-button--neutral" onClick={this.onOpenNegotiationModal}>
+          <button disabled={!Object.keys(this.state.selectedProducts).length} className="slds-button slds-button--neutral" onClick={this.onOpenNegotiationModal}>
             Negotiate Products
           </button>
         </div>
@@ -239,19 +265,49 @@ class FaEditor extends Component {
         }
         // *******************************************************
         // Negotiation header with and without commercial products
-        let negotiationHeader;
+        let commercialProductListHeader;
         if (this.state.activeFa._ui.commercialProducts.length) {
-            negotiationHeader = (
+            commercialProductListHeader = (
                 <div className="info-row">
-          <span>Products ({this.state.activeFa._ui.commercialProducts.length})</span>
-          <InputSearch placeholder="Quick search" />
-        </div>
+                    <div className="commercial-product-search-container">
+                        <span>Products ({this.state.activeFa._ui.commercialProducts.length})</span>
+                        <div className="commercial-product-search transparent">
+                            <InputSearch placeholder="Quick search" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <div className="commercial-product-list-header">
+
+                            <div className="commercial-product-checkbox-container">
+                                <Checkbox value={this.state.activeFa._ui.commercialProducts.length === Object.keys(this.state.selectedProducts).length} onChange={() => {this.onSelectAllProducts()}}/>
+                            </div>
+
+                            <div className="commercial-product-fields-container">
+                            <div className="commercial-product-fields">
+                            
+                                <span>
+                                  Product name
+                                </span>
+                                {this.props.settings.FACSettings.Price_Item_Fields.map(pif => {
+                                  return (
+                                    <span key={'header-' + pif}>
+                                      {truncateCPField(pif)}
+                                    </span>
+                                  );
+                                })}
+                                </div>
+                                </div>
+
+                        </div>
+                    </div>
+                </div>
             );
         } else {
-            negotiationHeader = (
+            commercialProductListHeader = (
                 <div className="info-row">
-          <span>Product Negotiation</span>
-        </div>
+                  <span>Product Negotiation</span>
+                </div>
             );
         }
 
@@ -296,12 +352,16 @@ class FaEditor extends Component {
             </div>
 
             <div className="main-frame-container">
-              {negotiationHeader}
+              {commercialProductListHeader}
 
               {addProductCTA}
 
               {this.state.activeFa._ui.commercialProducts.map(cp => {
-                return <CommercialProduct key={"cp-" + cp.Id} product={cp} onSelect={this.onSelectProduct} fields={this.props.settings.FACSettings.Price_Item_Fields} />;
+                return <CommercialProduct key={"cp-" + cp.Id} product={cp} onSelect={this.onSelectProduct} selected={!!this.state.selectedProducts[cp.Id]} fields={this.props.settings.FACSettings.Price_Item_Fields} />;
+              })}
+
+              {this.state.loadingProducts.map((cpId, i) => {
+                return <div className="commercial-product-skeleton" key={cpId + '-' + i}></div>;
               })}
 
               {productModal}

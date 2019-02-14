@@ -5,9 +5,12 @@
 
 .sf-modal {
     min-width: 980px;
-
     background-color: #fafaf9;
     padding: 0;
+    top: 5%;
+    margin: auto;
+    right: 25%;
+    position: absolute;
 }
 .sf-modal > div:not(div.modal-body) {
     display: inline-block;
@@ -20,6 +23,13 @@
 
 .modal-body {
 
+}
+
+.close-button {
+    cursor: pointer;
+}
+.close-button:focus {
+    outline: none;
 }
 
 .modal-navigation {

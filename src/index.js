@@ -12,7 +12,7 @@ import './index.scss';
 import './_temp.scss';
 
 function _initialiseFAM() {
-  window.redux_store = store;
+  window.redux_store = store.getState;
   ReactDOM.render(
     <Provider store={store}>
       <HashRouter>

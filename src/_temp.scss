@@ -1,23 +1,29 @@
-div.info-row{
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
-}
-div.info-row > *{
-    flex: 1;
+input:focus, input:active {
+    outline: none!important;
 }
 
+
+
 .addons-table {
-	table-layout: fixed;
-	width: 100%;
+    table-layout: fixed;
+    width: 100%;
 }
 
 .addons-table thead th {
-	text-align: left;
+    text-align: left;
 }
 
 
-ul, ol, li {
-    list-style: none!important;
+ul,
+ol,
+li {
+    list-style: none !important;
     padding: 0;
+}
+
+.box {
+    padding: 25px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }

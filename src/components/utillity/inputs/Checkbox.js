@@ -10,26 +10,33 @@ class Checkbox extends React.Component {
 
     this.onChange = this.onChange.bind(this);
 
-    this.state = {
-      value: false
-    };
+    let initialState = false;
+
+    if (this.props.hasOwnProperty("value")) {
+      initialState = this.props.value;
+    }
   }
 
   onChange(val) {
-    this.setState({
-      value: !this.state.value
-    }, () => {
-      this.props.onChange && this.props.onChange(this.state.value);
-    });
+        this.props.onChange && this.props.onChange();
   }
 
-
   render() {
-    return (
-      <div className={"checkbox" + (this.state.value ? ' checked' : '')} onClick={this.onChange}>
-        {this.state.value && <Icon svg-class="checkbox-icon" name="check" width="12" height="12" color="white"></Icon>}
-      </div>
-    );
+    if (this.props.hasOwnProperty("readOnly")) {
+        return (
+          <div className={"checkbox" + (this.props.readOnly ? ' checked' : '')}>
+          {this.props.readOnly && <Icon svg-class="checkbox-icon" name="check" width="12" height="12" color="white"></Icon>}
+        </div>
+        )
+    } else {
+      return (
+        <div className={"checkbox" + (this.props.value ? ' checked' : '')} onClick={this.onChange}>
+          {this.props.value && <Icon svg-class="checkbox-icon" name="check" width="12" height="12" color="white"></Icon>}
+        </div>
+      );
+    }
+
+
   }
 }
 

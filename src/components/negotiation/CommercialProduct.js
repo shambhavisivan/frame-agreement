@@ -8,9 +8,12 @@ import Tab from "../utillity/tabs/Tab";
 
 import Checkbox from "../utillity/inputs/Checkbox";
 
+import ProductCharges from "./ProductCharges";
 import Addons from "./Addons";
 import Charges from "./Charges";
 import Rates from "./Rates";
+
+import { applyDiscountToFrameAgreement } from "../../actions";
 
 
 // import { getAddons, getRateCards } from "../../actions";
@@ -39,25 +42,40 @@ class CommercialProduct extends React.Component {
       });
   }
 
+  negotiateAddon(data) {
+    console.log("On product:", this.productId);
+    console.log("Update addons:", Object.keys(data));
+    console.log("To:", Object.values(data));
+
+    this.props.applyDiscountToFrameAgreement(this.productId, '_addons', data);
+  }
+
+  negotiateCharge(data) {
+    console.log("On product:", this.productId);
+    console.log("Update charge:", Object.keys(data));
+    console.log("To:", Object.values(data));
+
+    this.props.applyDiscountToFrameAgreement(this.productId, '_charges', data);
+  }
+
+  negotiateRates(data) {
+    console.log("On product:", this.productId);
+    console.log("Update charge:", data);
+
+    this.props.applyDiscountToFrameAgreement(this.productId, '_rateCards', data);
+  }
+
   render() {
     return (
-      <div
-        className={
-          "commercial-product-container" +
-          (this.state.open ? " product-open" : "")
-        }
-      >
+      <div className={"commercial-product-container" + (this.state.open ? " product-open" : "")}>
         <div className="commercial-product-header">
         
           <div className="commercial-product-checkbox-container">
-            <Checkbox onChange={() => {this.props.onSelect(this.props.product)}}/>
+            <Checkbox value={this.props.selected} onChange={() => {this.props.onSelect(this.props.product)}}/>
           </div>   
                
           <div className="commercial-product-fields-container">
-              <div
-                className="commercial-product-fields"
-                onClick={this.onExpandProduct}
-              >
+              <div className="commercial-product-fields" onClick={this.onExpandProduct}>
                 {this.fields.map(pif => {
                   return (
                     <span key={"facp-" + this.props.product.Id + "-" + pif}>
@@ -67,6 +85,7 @@ class CommercialProduct extends React.Component {
                 })}
               </div>
           </div>
+
         </div>
 
         {this.state.open && (
@@ -83,13 +102,13 @@ class CommercialProduct extends React.Component {
 
             <Tabs>
               <Tab label="Add-Ons">
-                <Addons addons={this.props.product._addons} />
+                <Addons addons={this.props.product._addons} onNegotiate={(data) => {this.negotiateAddon(data)}}/>
               </Tab>
-              <Tab label="Charges">
-                <Charges />
+              <Tab label={"Charges" + (this.props.product._charges.length ? '' : ' (product)')}>
+                {this.props.product._charges.length ? (<Charges onNegotiate={(data) => {this.negotiateCharge(data)}} charges={this.props.product._charges}/>) : (<ProductCharges product={this.props.product}/>)}
               </Tab>
               <Tab label="Rates">
-                <Rates rateCards={this.props.product._rateCards} />
+                <Rates rateCards={this.props.product._rateCards} onNegotiate={(data) => {this.negotiateRates(data)}}/>
               </Tab>
             </Tabs>
           </div>
@@ -104,7 +123,7 @@ class CommercialProduct extends React.Component {
 // };
 
 const mapDispatchToProps = {
-
+    applyDiscountToFrameAgreement
 };
 
 export default connect(

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-
 import Modal from 'react-responsive-modal';
 // import { getFrameAgreements } from '../../actions';
 import Icon from '../utillity/Icon';
@@ -21,11 +20,13 @@ class ProductModal extends Component {
     this.addProducts = this.addProducts.bind(this);
 
     let addedIds = {};
-    this.props.addedProducts.map( p => p.Id).forEach( id => {
-      addedIds[id] = true;
-    });
+    this.props.addedProducts
+      .map(p => p.Id)
+      .forEach(id => {
+        addedIds[id] = true;
+      });
 
-    console.log("ADDED:", addedIds);
+    console.log('ADDED:', addedIds);
 
     this.state = {
       searchValue: '',
@@ -92,7 +93,11 @@ class ProductModal extends Component {
   render() {
     return (
       <Modal
-        classNames={{ overlay: 'overlay', modal: 'sf-modal', closeButton: 'close-button' }}
+        classNames={{
+          overlay: 'overlay',
+          modal: 'sf-modal',
+          closeButton: 'close-button'
+        }}
         open={this.props.open}
         onClose={this.onCloseModal}
         center
@@ -219,6 +224,6 @@ const mapDispatchToProps = {
 };
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ProductModal);
+  mapStateToProps,
+  mapDispatchToProps
+)(ProductModal);

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 class RclInput extends Component {
   constructor(props) {
@@ -6,21 +6,28 @@ class RclInput extends Component {
     this.inputRef = React.createRef();
 
     this.onValueChange = this.onValueChange.bind(this);
-
   }
 
   componentDidMount() {
     this.inputRef.current.value = this.props.value;
   }
 
-
   onValueChange() {
-    this.props.onChange(+this.inputRef.current.value, this.props.rcid, this.props.rclid);
+    this.props.onChange(
+      +this.inputRef.current.value,
+      this.props.rcid,
+      this.props.rclid
+    );
   }
 
   render() {
     return (
-      <input className="rcm-input_sm" ref={this.inputRef} type="number" onChange={this.onValueChange}></input>
+      <input
+        className="rcm-input_sm"
+        ref={this.inputRef}
+        type="number"
+        onChange={this.onValueChange}
+      />
     );
   }
 }

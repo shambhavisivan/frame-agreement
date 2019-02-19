@@ -12,7 +12,7 @@ class InputText extends React.Component {
 
   onTextChange(event) {
     let value = event.target.value;
-    if (event.target.type === "number") {
+    if (event.target.type === 'number') {
       value = +value;
     }
     this.setState({

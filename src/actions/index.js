@@ -21,14 +21,14 @@ export const setAddedProducts = productIds => ({
 
 export const applyDiscountToFrameAgreement = (priceItemId, charge, data) => ({
   type: 'APPLY_DISCOUNT',
-  payload: {priceItemId, charge, data}
+  payload: { priceItemId, charge, data }
 });
 
 // ***********************************************************************
 
-export const requestAppSettings = () => ({
-  type: 'REQUEST_SETTINGS'
-});
+// export const requestAppSettings = () => ({
+//   type: 'REQUEST_SETTINGS'
+// });
 
 export const recieveAppSettings = result => ({
   type: 'RECIEVE_SETTINGS',
@@ -37,7 +37,7 @@ export const recieveAppSettings = result => ({
 
 export function getAppSettings() {
   return function(dispatch) {
-    dispatch(requestAppSettings());
+    // dispatch(requestAppSettings());
 
     return new Promise((resolve, reject) => {
       window.SF.invokeAction('getAppSettings').then(response => {
@@ -45,6 +45,30 @@ export function getAppSettings() {
         resolve(response);
         return response;
       });
+    });
+  };
+}
+
+// ***********************************************************************
+export const recieveSaveAttachment = (parentId, data) => ({
+  type: 'SAVE_ATTACHMENT',
+  payload: { parentId, data }
+});
+
+export function saveAttachment(parentId, data) {
+  return function(dispatch) {
+    return new Promise((resolve, reject) => {
+      if (typeof data !== 'string') {
+        data = JSON.stringify(data);
+      }
+
+      window.SF.invokeAction('saveAttachment', [parentId, data]).then(
+        response => {
+          dispatch(recieveSaveAttachment(response));
+          resolve(response);
+          return response;
+        }
+      );
     });
   };
 }
@@ -127,9 +151,9 @@ export function getAppSettings() {
 
 // ***********************************************************************
 
-export const requestPriceItemData = () => ({
-  type: 'REQUEST_PRICE_ITEM_DATA'
-});
+// export const requestPriceItemData = () => ({
+//   type: 'REQUEST_PRICE_ITEM_DATA'
+// });
 
 export const recievePriceItemData = result => ({
   type: 'RECIEVE_PRICE_ITEM_DATA',
@@ -138,10 +162,12 @@ export const recievePriceItemData = result => ({
 
 export function getCommercialProductData(priceItemIdList) {
   return function(dispatch) {
-    dispatch(requestPriceItemData());
+    // dispatch(requestPriceItemData());
 
     return new Promise((resolve, reject) => {
-      window.SF.invokeAction('getCommercialProductData', [priceItemIdList]).then(response => {
+      window.SF.invokeAction('getCommercialProductData', [
+        priceItemIdList
+      ]).then(response => {
         dispatch(recievePriceItemData(response));
         resolve(response);
         return response;
@@ -152,9 +178,9 @@ export function getCommercialProductData(priceItemIdList) {
 
 // ***********************************************************************
 
-export const requestGetFrameAgreements = () => ({
-  type: 'REQUEST_FRAME_AGREEMENTS'
-});
+// export const requestGetFrameAgreements = () => ({
+//   type: 'REQUEST_FRAME_AGREEMENTS'
+// });
 
 export const recieveGetFrameAgreements = result => ({
   type: 'RECIEVE_FRAME_AGREEMENTS',
@@ -163,7 +189,7 @@ export const recieveGetFrameAgreements = result => ({
 
 export function getFrameAgreements() {
   return function(dispatch) {
-    dispatch(requestGetFrameAgreements());
+    // dispatch(requestGetFrameAgreements());
 
     return new Promise((resolve, reject) => {
       window.SF.invokeAction('getFrameAgreements').then(response => {
@@ -177,23 +203,22 @@ export function getFrameAgreements() {
 
 // ***********************************************************************
 
-export const requestUpsertFrameAgreements = () => ({
-  type: 'REQUEST_UPSERT_FRAME_AGREEMENTS'
-});
+// export const requestGetAttachment = () => ({
+//   type: 'REQUEST_GET_ATTACHMENT'
+// });
 
-export const recieveUpsertFrameAgreements = result => ({
-  type: 'RECIEVE_UPSERT_FRAME_AGREEMENTS',
+export const recieveGetAttachment = result => ({
+  type: 'RECIEVE_GET_ATTACHMENT',
   payload: result
 });
 
-export function upsertFrameAgreements(fieldData, faId = null) {
+export function getAttachment(priceItemId) {
   return function(dispatch) {
-    dispatch(requestUpsertFrameAgreements());
+    // dispatch(requestGetAttachment());
 
     return new Promise((resolve, reject) => {
-      window.SF.invokeAction('upsertFrameAgreements', [faId, JSON.stringify(fieldData)])
-      .then(response => {
-        dispatch(recieveUpsertFrameAgreements(response));
+      window.SF.invokeAction('getAttachment', [priceItemId]).then(response => {
+        dispatch(recieveGetAttachment(response));
         resolve(response);
         return response;
       });
@@ -203,9 +228,72 @@ export function upsertFrameAgreements(fieldData, faId = null) {
 
 // ***********************************************************************
 
-export const requestCommercialProducts = () => ({
-  type: 'REQUEST_COMMERCIAL_PRODUCTS'
+// export const requestUpsertFrameAgreements = () => ({
+//   type: 'REQUEST_UPSERT_FRAME_AGREEMENTS'
+// });
+
+export const _saveFrameAgreement = result => ({
+  type: 'SAVE_FA',
+  payload: result
 });
+
+export function saveFrameAgreement(data, faId) {
+  return function(dispatch) {
+    // dispatch(requestUpsertFrameAgreements());
+
+    if (faId === undefined) {
+      console.error('No Frame agreement Id');
+    }
+
+    var ommited = ['csconta__Account__c', 'csconta__Account__r', 'Name', '_ui'];
+    var SF_data = {};
+
+    for (var key in data) {
+      if (!ommited.includes(key)) {
+        SF_data[key] = JSON.parse(JSON.stringify(data[key]));
+      }
+    }
+
+    return new Promise(resolve => {
+      window.SF.invokeAction('upsertFrameAgreements', [
+        faId,
+        JSON.stringify(SF_data)
+      ]).then(response => {
+        dispatch(_saveFrameAgreement({ ...data, ...response }));
+        resolve(response);
+        return response;
+      });
+    });
+  };
+}
+// ***********************************************************************
+export const _createFrameAgreement = result => ({
+  type: 'CREATE_FA',
+  payload: result
+});
+
+export function createFrameAgreement(fieldData) {
+  return function(dispatch) {
+    // dispatch(requestUpsertFrameAgreements());
+
+    return new Promise((resolve, reject) => {
+      window.SF.invokeAction('upsertFrameAgreements', [
+        null,
+        JSON.stringify(fieldData)
+      ]).then(response => {
+        dispatch(_createFrameAgreement(response));
+        resolve(response);
+        return response;
+      });
+    });
+  };
+}
+
+// ***********************************************************************
+
+// export const requestCommercialProducts = () => ({
+//   type: 'REQUEST_COMMERCIAL_PRODUCTS'
+// });
 
 export const recieveCommercialProducts = result => ({
   type: 'RECIEVE_COMMERCIAL_PRODUCTS',
@@ -214,7 +302,7 @@ export const recieveCommercialProducts = result => ({
 
 export function getCommercialProducts(page = 1) {
   return function(dispatch) {
-    dispatch(requestCommercialProducts());
+    // dispatch(requestCommercialProducts());
 
     return new Promise((resolve, reject) => {
       window.SF.invokeAction('getCommercialProducts', [page]).then(response => {

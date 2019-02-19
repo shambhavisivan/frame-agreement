@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import "./menu.css";
+import React, { Component } from 'react';
+import './menu.css';
 
 class Menu extends Component {
   constructor(props) {
@@ -30,7 +30,7 @@ class Menu extends Component {
     event.preventDefault();
 
     this.setState({ showMenu: true }, () => {
-      document.addEventListener("click", this.closeMenu);
+      document.addEventListener('click', this.closeMenu);
     });
   }
 
@@ -42,7 +42,7 @@ class Menu extends Component {
 
     if (!bool && this._isMounted) {
       this.setState({ showMenu: false }, () => {
-        document.removeEventListener("click", this.closeMenu);
+        document.removeEventListener('click', this.closeMenu);
       });
     }
   }
@@ -50,7 +50,7 @@ class Menu extends Component {
   menuEdit(e) {
     if (this._isMounted) {
       this.setState({ showMenu: false }, () => {
-        document.removeEventListener("click", this.closeMenu);
+        document.removeEventListener('click', this.closeMenu);
       });
     }
     this.props.onEdit(e);
@@ -59,7 +59,7 @@ class Menu extends Component {
   menuRemove(e) {
     if (this._isMounted) {
       this.setState({ showMenu: false }, () => {
-        document.removeEventListener("click", this.closeMenu);
+        document.removeEventListener('click', this.closeMenu);
       });
     }
     this.props.onRemove();
@@ -68,12 +68,18 @@ class Menu extends Component {
   render() {
     return (
       <div className="rcm-menu" onClick={this.showMenu}>
-        <span className="rcm-menu-toggle"></span>
-        {this.state.showMenu && <ul className="rcm-menu-list" ref={(element) => {this.dropdownMenu = element}}>
-                <li onClick={this.menuEdit}>Edit</li>
-                <li onClick={this.menuRemove}>Remove</li>
-              </ul>
-            }
+        <span className="rcm-menu-toggle" />
+        {this.state.showMenu && (
+          <ul
+            className="rcm-menu-list"
+            ref={element => {
+              this.dropdownMenu = element;
+            }}
+          >
+            <li onClick={this.menuEdit}>Edit</li>
+            <li onClick={this.menuRemove}>Remove</li>
+          </ul>
+        )}
       </div>
     );
   }

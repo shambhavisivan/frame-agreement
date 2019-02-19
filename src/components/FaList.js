@@ -47,7 +47,10 @@ class FaList extends Component {
                 <InputSearch onChange={this.onSearchChange} />
               </div>
             </div>
-            <div className="header-row" style={{ justifyContent: 'flex-start' }}>
+            <div
+              className="header-row"
+              style={{ justifyContent: 'flex-start' }}
+            >
               <div className="label-text">Agreement list</div>
             </div>
           </div>

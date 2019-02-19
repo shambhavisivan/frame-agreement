@@ -20,8 +20,6 @@ class SFField extends Component {
     this.state = {
       value: this.props.value
     };
-
-    console.warn('Edit:', this.props.editable);
   }
 
   onChange(value) {
@@ -42,7 +40,10 @@ class SFField extends Component {
           placeholderText="Enter date from"
         />
       );
-    } else if (this.props.field.type === 'text' || this.props.field.type === 'number') {
+    } else if (
+      this.props.field.type === 'text' ||
+      this.props.field.type === 'number'
+    ) {
       field = (
         <InputText
           disabled={!this.props.editable}

@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import './Tab.scss';
 
 class Tab extends React.Component {
-
   constructor(props, context) {
     super(props, context);
     this.handleTabClick = this.handleTabClick.bind(this);
@@ -16,13 +15,14 @@ class Tab extends React.Component {
 
   render() {
     return (
-      <li className={`tab ${this.props.isActive ? 'active' : ''}`} onClick={this.handleTabClick}>
-        <a className="tab-link">{this.props.label}
-        </a>
+      <li
+        className={`tab ${this.props.isActive ? 'active' : ''}`}
+        onClick={this.handleTabClick}
+      >
+        <a className="tab-link">{this.props.label}</a>
       </li>
     );
   }
 }
-
 
 export default Tab;

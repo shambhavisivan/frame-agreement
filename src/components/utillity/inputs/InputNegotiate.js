@@ -26,11 +26,11 @@ class InputNegotiate extends React.Component {
   }
 
   onFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   }
 
   onBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   }
 
   // onTextChange(event) {
@@ -41,29 +41,50 @@ class InputNegotiate extends React.Component {
 
   // onBlur={() => {this.setState({readOnly: true})}}
 
-  // 
+  //
 
   render() {
     return (
       <div className="negotiate-container">
-        <div className={"negotiate-input-wrapper" + (this.state.focus ? ' focused' : '') + (this.state.negotiatedValue !== this.props.originalValue ? ' negotiated' : '')}>
-                <Icon svg-class="negotiate-icon" name="edit" width="14" height="14" color={this.state.focus ? "#0070d2" : "#747474"} />
-                <DebounceInput
-                    debounceTimeout={100}
-                    placeholder="0"
-                    spellCheck="false"
-                    className="negotiate-input"
-                    type="number"
-                    onChange={this.onNegotiate}
-                    onBlur={this.onBlur}
-                    onFocus={this.onFocus}
-                    value={this.state.negotiatedValue}
-                />
-          </div>
-          {this.state.negotiatedValue !== this.props.originalValue && this.props.originalValue ? (<span className="discount"><span>negotiated disc. </span>{(this.props.originalValue - this.state.negotiatedValue).toFixed(2)}</span>) : ''}
+        <div
+          className={
+            'negotiate-input-wrapper' +
+            (this.state.focus ? ' focused' : '') +
+            (this.state.negotiatedValue !== this.props.originalValue
+              ? ' negotiated'
+              : '')
+          }
+        >
+          <Icon
+            svg-class="negotiate-icon"
+            name="edit"
+            width="14"
+            height="14"
+            color={this.state.focus ? '#0070d2' : '#747474'}
+          />
+          <DebounceInput
+            debounceTimeout={100}
+            placeholder="0"
+            spellCheck="false"
+            className="negotiate-input"
+            type="number"
+            onChange={this.onNegotiate}
+            onBlur={this.onBlur}
+            onFocus={this.onFocus}
+            value={this.state.negotiatedValue}
+          />
+        </div>
+        {this.state.negotiatedValue !== this.props.originalValue &&
+        this.props.originalValue ? (
+          <span className="discount">
+            <span>negotiated disc. </span>
+            {(this.props.originalValue - this.state.negotiatedValue).toFixed(2)}
+          </span>
+        ) : (
+          ''
+        )}
       </div>
     );
-
   }
 }
 

@@ -1,0 +1,25 @@
+.temp-info {
+    text-align: left;
+    list-style: none;
+    font-size: 12px;
+    padding: 15px;
+}
+.delimiter {
+	width: 100%;
+	border-bottom: 1px solid #dddddd;
+	padding-top: 5px;
+	margin-bottom: 5px;
+}
+
+
+.log .sf-label{
+    text-transform: uppercase;
+    height: 14px;
+    font-size: 11px;
+    padding: 4px 0px;
+    color: #5e5d60;
+}
+
+.log .log-action{
+	color: #4bca81;
+}

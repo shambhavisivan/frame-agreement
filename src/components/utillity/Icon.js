@@ -41,7 +41,7 @@ const Icon = props => {
   if (isDefined('height')) {
     style.height = props.height + unit;
   } else {
-    style.height = style.width || (16 + unit);
+    style.height = style.width || 16 + unit;
   }
 
   return (

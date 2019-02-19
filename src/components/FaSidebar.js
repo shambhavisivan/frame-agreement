@@ -3,33 +3,39 @@ import { connect } from 'react-redux';
 
 import { getFrameAgreements } from '../actions';
 
-
 import './FaSidebar.css';
 
 class FaSidebar extends Component {
   constructor(props) {
     super(props);
+    this.logs = window.react_logs;
   }
-
-
 
   render() {
     return (
-          <div className="sidebar">
+      <div className="sidebar">
+        <p>
+          <span>Dev Sidebar</span>
+        </p>
 
-              <p>
-                <span>Dev Sidebar</span>
-              </p>
+        <hr />
 
-            <hr />
+        <ul className="temp-info">
+          <li className="delimiter" />
 
-              <ul className="temp-info">
-                {Object.keys(this.props.activeFa).map(fa => {
-                  return <li key={fa}>{fa + ':' + this.props.activeFa[fa]}</li>;
-                })}
-              </ul>         
-
-          </div>
+          {this.logs &&
+            this.logs
+              .slice(Math.max(this.logs.length - 15, 1))
+              .map((log, i) => {
+                return (
+                  <li className="log" key={log + i}>
+                    <span className="sf-label">Action fired:</span>{' '}
+                    <span className="log-action">{log}</span>
+                  </li>
+                );
+              })}
+        </ul>
+      </div>
     );
   }
 }
@@ -43,6 +49,6 @@ const mapDispatchToProps = {
 };
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(FaSidebar);
+  mapStateToProps,
+  mapDispatchToProps
+)(FaSidebar);

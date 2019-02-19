@@ -1,4 +1,4 @@
-import sharedService from "../utils/shared-service";
+import sharedService from '../utils/shared-service';
 
 const initialState = {
   initialised: {
@@ -19,7 +19,7 @@ function validateJSONData(data) {
   }
 
   data.forEach(obj => {
-    obj.type = obj.type || "text";
+    obj.type = obj.type || 'text';
     obj.grid = obj.grid || 3;
     obj.readOnly = obj.readOnly || false;
   });
@@ -34,7 +34,7 @@ function validateCSV(str) {
   let returnStr = str;
   try {
     returnStr = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(
-      str.replace(/ /g, "")
+      str.replace(/ /g, '')
     );
   } catch (e) {
     console.warn(e);
@@ -44,19 +44,26 @@ function validateCSV(str) {
 
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "SET_ACTIVE_FA":
-      return { ...state, ...{ activeFa: action.payload } };
+    case 'SET_ACTIVE_FA':
+      return { ...state, activeFa: action.payload };
 
-    case "UPDATE_ACTIVE_FA":
+    case 'UPDATE_ACTIVE_FA':
       let fa = state.activeFa;
       fa[action.payload.field] = action.payload.value;
       return { ...state, ...{ activeFa: fa } };
 
-    case "SET_ADDED_PRODUCTS":
-      let activeProducts = state.commercialProducts.filter(cp => {
-        return action.payload.includes(cp.Id);
+    case 'SET_ADDED_PRODUCTS':
+      var activeProductsMap = {};
+      var attachment = { ...state.activeFa._ui.attachment };
+
+      var activeProducts = state.commercialProducts.filter(cp => {
+        if (action.payload.includes(cp.Id)) {
+          activeProductsMap[cp.Id] = attachment[cp.Id] || null;
+          return true;
+        }
+        return false;
       });
-      console.log("SET_ADDED_PRODUCTS");
+
       return {
         ...state,
         ...{
@@ -65,15 +72,18 @@ const rootReducer = (state = initialState, action) => {
             ...{
               _ui: {
                 ...state.activeFa._ui,
-                ...{ commercialProducts: activeProducts }
+                ...{
+                  commercialProducts: activeProducts,
+                  attachment: activeProductsMap
+                }
               }
             }
           }
         }
       };
 
-    case "APPLY_DISCOUNT":
-      console.log("reducer:", action.payload);
+    case 'APPLY_DISCOUNT':
+      console.log('reducer:', action.payload);
 
       var priceItemIndex = state.activeFa._ui.commercialProducts.findIndex(
         cp => {
@@ -82,34 +92,49 @@ const rootReducer = (state = initialState, action) => {
       );
 
       var updatedCharge = [
-        ...state.activeFa._ui.commercialProducts[priceItemIndex][action.payload.charge]
+        ...state.activeFa._ui.commercialProducts[priceItemIndex][
+          action.payload.charge
+        ]
       ];
 
-      updatedCharge.forEach(ch => {
-        if (action.payload.data[ch.Id]) {
+      var updatedAttachment = {
+        ...state.activeFa._ui.attachment[action.payload.priceItemId]
+      };
 
-          if (action.payload.charge === "_addons" || action.payload.charge === "_charges") {
-            if (action.payload.data[ch.Id].hasOwnProperty('oneOff')) {
-              ch._negotiatedOneOff = action.payload.data[ch.Id].oneOff;
-            }
-            if (action.payload.data[ch.Id].hasOwnProperty('reccuring')) {
-              ch._negotiatedRecurring = action.payload.data[ch.Id].reccuring;
-            }
-          }
-          if (action.payload.charge === "_rateCards") {
-            ch.rateCardLines.forEach(rcl => {
-              if (action.payload.data[ch.Id].hasOwnProperty(rcl.Id)) {
-                rcl._negotiated = action.payload.data[ch.Id][rcl.Id];
+      updatedCharge &&
+        updatedCharge.forEach(ch => {
+          if (action.payload.data[ch.Id]) {
+            if (
+              action.payload.charge === '_addons' ||
+              action.payload.charge === '_charges'
+            ) {
+              if (action.payload.data[ch.Id].hasOwnProperty('oneOff')) {
+                ch._negotiatedOneOff = action.payload.data[ch.Id].oneOff;
               }
-            })
-          }
+              if (action.payload.data[ch.Id].hasOwnProperty('reccuring')) {
+                ch._negotiatedRecurring = action.payload.data[ch.Id].reccuring;
+              }
+            }
 
-        }
-      });
+            if (action.payload.charge === '_rateCards') {
+              ch.rateCardLines.forEach(rcl => {
+                if (action.payload.data[ch.Id].hasOwnProperty(rcl.Id)) {
+                  rcl._negotiated = action.payload.data[ch.Id][rcl.Id];
+                }
+              });
+            }
+
+            // Update attachment
+            updatedAttachment[action.payload.charge] = {
+              ...updatedAttachment[action.payload.charge],
+              ...action.payload.data
+            };
+          }
+        });
 
       var updatedCommercialProducts = state.activeFa._ui.commercialProducts.map(
         (cp, i) => {
-          if (i === priceItemIndex) {
+          if (cp.Id === action.payload.priceItemId) {
             cp[action.payload.charge] = updatedCharge;
           }
           return cp;
@@ -122,23 +147,30 @@ const rootReducer = (state = initialState, action) => {
           ...state.activeFa,
           _ui: {
             ...state.activeFa._ui,
-            commercialProducts: updatedCommercialProducts
+            commercialProducts: updatedCommercialProducts,
+            attachment: {
+              ...state.activeFa._ui.attachment,
+              [action.payload.priceItemId]: updatedAttachment
+            }
           }
         }
       };
     // **********************************************
     // ASYNC REQUEST
-    case "REQUEST_FRAME_AGREEMENTS":
-      return { ...state };
+    // case "REQUEST_FRAME_AGREEMENTS":
+    //   return { ...state };
 
-    case "REQUEST_UPSERT_FRAME_AGREEMENTS":
-      return { ...state };
+    // case "REQUEST_GET_ATTACHMENT":
+    //   return { ...state };
 
-    case "REQUEST_COMMERCIAL_PRODUCTS":
-      return { ...state };
+    // case "REQUEST_UPSERT_FRAME_AGREEMENTS":
+    //   return { ...state };
 
-    case "REQUEST_SETTINGS":
-      return { ...state };
+    // case "REQUEST_COMMERCIAL_PRODUCTS":
+    //   return { ...state };
+
+    // case "REQUEST_SETTINGS":
+    //   return { ...state };
 
     // case 'REQUEST_RATE_CARDS':
     //   return { ...state };
@@ -146,15 +178,16 @@ const rootReducer = (state = initialState, action) => {
     // case 'REQUEST_GET_ADDONS':
     //   return { ...state };
 
-    case "REQUEST_PRICE_ITEM_DATA":
-      return { ...state };
+    // case "REQUEST_PRICE_ITEM_DATA":
+    //   return { ...state };
     // **********************************************
     // ASYNC RECIEVE
-    case "RECIEVE_FRAME_AGREEMENTS":
+    case 'RECIEVE_FRAME_AGREEMENTS':
       let frameAgreementMap = {};
       action.payload.forEach(fa => {
         fa._ui = {
-          commercialProducts: []
+          commercialProducts: [],
+          attachment: null
         };
         frameAgreementMap[fa.Id] = fa;
       });
@@ -164,7 +197,7 @@ const rootReducer = (state = initialState, action) => {
         ...{ initialised: { ...state.initialised, ...{ fa_loaded: true } } }
       };
 
-    case "RECIEVE_COMMERCIAL_PRODUCTS":
+    case 'RECIEVE_COMMERCIAL_PRODUCTS':
       var commercialProducts = action.payload;
       // commercialProducts.forEach( cp => {
       //     cp._ui = {
@@ -177,41 +210,60 @@ const rootReducer = (state = initialState, action) => {
         ...{ initialised: { ...state.initialised, ...{ cp_loaded: true } } }
       };
 
-    case "RECIEVE_UPSERT_FRAME_AGREEMENTS":
-      let upsertedFa = action.payload;
+    case 'CREATE_FA':
+      var upsertedFa = action.payload;
       // On error
       if (!upsertedFa) {
         return { ...state };
       }
-      // GET THIS FROM ATTACHMENT
+
       upsertedFa._ui = {
         commercialProducts: []
       };
+
       return {
         ...state,
         ...{ activeFa: upsertedFa },
         ...{
           frameAgreements: {
             ...state.frameAgreements,
-            ...{ [upsertedFa.Id]: upsertedFa }
+            ...{
+              [upsertedFa.Id]: upsertedFa
+            }
           }
         }
       };
 
-    case "RECIEVE_SETTINGS":
+    case 'SAVE_FA':
+      var upsertedFa = action.payload;
+      return {
+        ...state,
+        frameAgreements: {
+          ...state.frameAgreements,
+          [upsertedFa.Id]: upsertedFa
+        }
+      };
+
+    case 'RECIEVE_SETTINGS':
       action.payload.JSONData = validateJSONData(action.payload.JSONData);
 
       if (validateCSV(action.payload.FACSettings.Price_Item_Fields)) {
-        action.payload.FACSettings.Price_Item_Fields = action.payload.FACSettings.Price_Item_Fields.replace(/ /g, "").split(",");
+        action.payload.FACSettings.Price_Item_Fields = action.payload.FACSettings.Price_Item_Fields.replace(
+          / /g,
+          ''
+        ).split(',');
       } else {
-        console.warn("Price item fields is not valid CSV!");
+        console.warn('Price item fields is not valid CSV!');
         action.payload.FACSettings.Price_Item_Fields = [];
       }
-      
+
       if (validateCSV(action.payload.FACSettings.FA_Editable_Statuses)) {
-        action.payload.FACSettings.FA_Editable_Statuses = action.payload.FACSettings.FA_Editable_Statuses.replace(/ /g, "").split(",");
+        action.payload.FACSettings.FA_Editable_Statuses = action.payload.FACSettings.FA_Editable_Statuses.replace(
+          / /g,
+          ''
+        ).split(',');
       } else {
-        console.warn("Price item fields is not valid CSV!");
+        console.warn('Price item fields is not valid CSV!');
         action.payload.FACSettings.FA_Editable_Statuses = [];
       }
 
@@ -249,7 +301,7 @@ const rootReducer = (state = initialState, action) => {
 
     //   return {...state, ...{commercialProducts}}
 
-    case "RECIEVE_PRICE_ITEM_DATA":
+    case 'RECIEVE_PRICE_ITEM_DATA':
       var priceItemData = action.payload;
       // var commercialProducts = [...state.commercialProducts];
       console.warn(priceItemData);
@@ -260,21 +312,30 @@ const rootReducer = (state = initialState, action) => {
 
         if (priceItemIndex === -1) {
           console.error(
-            "Cannot find price item " +
+            'Cannot find price item ' +
               key +
-              " in:" +
+              ' in:' +
               state.commercialProducts.map(cp => cp.Id)
           );
           return { ...state };
         }
         state.commercialProducts[priceItemIndex]._addons =
           priceItemData[key].addons;
-        state.commercialProducts[priceItemIndex]._charges = priceItemData[key].charges.charges;
+        state.commercialProducts[priceItemIndex]._charges =
+          priceItemData[key].charges.charges;
         state.commercialProducts[priceItemIndex]._rateCards =
           priceItemData[key].rateCards;
       }
 
       return { ...state, ...{ commercialProducts: state.commercialProducts } };
+
+    case 'RECIEVE_GET_ATTACHMENT':
+      return { ...state };
+
+    // **********************************************
+
+    case 'SAVE_ATTACHMENT':
+      return { ...state };
 
     // **********************************************
 

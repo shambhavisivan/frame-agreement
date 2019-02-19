@@ -18,6 +18,7 @@ class App extends Component {
     super(props);
 
     this.props.getAppSettings().then(response => {
+      window.SF.AuthLevels = response.AuthLevels;
       this.props.getFrameAgreements();
       this.props.getCommercialProducts();
     });

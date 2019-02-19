@@ -1,20 +1,18 @@
-import React, { Component } from "react";
-import Menu from "./menu";
-import "./customRcl.css";
+import React, { Component } from 'react';
+import Menu from './menu';
+import './customRcl.css';
 
 class CustomRcl extends Component {
-
-
   constructor(props) {
     super(props);
 
     let editing = !!this.props.editing;
     this.state = {
       editing: editing,
-      Name: "",
-      Unit: "",
-      originalValue: "",
-      negotiatedValue: ""
+      Name: '',
+      Unit: '',
+      originalValue: '',
+      negotiatedValue: ''
     };
 
     // this.nameInput = React.createRef();
@@ -30,24 +28,19 @@ class CustomRcl extends Component {
     // this.props.rcl;
     // this.props.onChange;
 
-    this.fields = ["Name", "Unit", "originalValue", "negotiatedValue"];
+    this.fields = ['Name', 'Unit', 'originalValue', 'negotiatedValue'];
   }
 
-
   componentDidMount() {
-
     this.fields.splice(2, 0, ...Object.keys(this.props.customFields));
 
     var _state = {};
-    this.fields.forEach( f => {
-      _state[f] = this.props.rcl[f] || "";
+    this.fields.forEach(f => {
+      _state[f] = this.props.rcl[f] || '';
     });
 
-    this.setState({..._state});
-
+    this.setState({ ..._state });
   }
-
-
 
   toggleEditing(e) {
     e.stopPropagation();
@@ -58,20 +51,19 @@ class CustomRcl extends Component {
       this.props.onChange(data);
     }
 
-      this.setState({
-        editing: !this.state.editing
-      });
-
+    this.setState({
+      editing: !this.state.editing
+    });
   }
 
   changeHandler(value, property) {
     let error = false;
-    if (property === "originalValue" || property === "negotiatedValue") {
+    if (property === 'originalValue' || property === 'negotiatedValue') {
       try {
         value = +value;
       } catch (err) {
         error = true;
-        console.error("Values is not an integer!");
+        console.error('Values is not an integer!');
       }
     }
 
@@ -87,7 +79,6 @@ class CustomRcl extends Component {
   }
 
   handleConfirm() {
-
     let data = { ...this.props.rcl, ...this.state };
     delete data.editing;
     this.props.onChange(data);
@@ -114,18 +105,15 @@ class CustomRcl extends Component {
             );
           } else {
             return (
-              <td className={this.state[field] ? "" : "red"} key={field}>
-                {this.state[field] || ('--' + field)}
+              <td className={this.state[field] ? '' : 'red'} key={field}>
+                {this.state[field] || '--' + field}
               </td>
             );
           }
         })}
         <td className="menu-cell">
           {this.state.editing ? (
-            <span
-              className="checkmark-confirm"
-              onClick={this.handleConfirm}
-            />
+            <span className="checkmark-confirm" onClick={this.handleConfirm} />
           ) : (
             <Menu onEdit={this.toggleEditing} onRemove={this.onRclRemove} />
           )}

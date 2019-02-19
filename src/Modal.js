@@ -11,8 +11,6 @@ import store from "./store";
 
 import { editModalWidth, updateRcmData, updateGroupData, invokeSetPlugin, invokeSetPluginRemote, invokeGetPlugin, invokeGetPluginRemote } from "./actions";
 
-import "./Modal.css";
-
 class Modal extends Component {
     constructor(props) {
         super(props);
@@ -44,7 +42,7 @@ class Modal extends Component {
           console.log('%c Using RemoteActions to invoke plugin! ', 'background: #0070d2; color: white; padding: 2px');
           this.getPluginAction = this.props.invokeGetPluginRemote;
           this.setPluginAction = this.props.invokeSetPluginRemote;
-          
+
           // Open modal
           store.dispatch({ type: "TOGGLE_MODAL", payload: true })
 
@@ -102,7 +100,7 @@ class Modal extends Component {
                 console.log("RULES_FINISHED");
                 var _priceItem = sharedService.getAttributeData();
                     this.priceItem = sharedService.getAttributeData();
-                    if (this.priceItem.priceItemId) { 
+                    if (this.priceItem.priceItemId) {
                       this.getPluginAction(JSON.stringify(this.priceItem))
                     } else {
                       console.warn("Cannot find price item!", this.priceItem);
@@ -145,7 +143,7 @@ class Modal extends Component {
         let attachmentValue = Object.values(_rcm_data).filter(rc => (rc.added || rc.IsDefault));
 
         // Attachment still contains "added" property which is not supported in apex
-        // Attachment is saved as string so it doesn't matter. But, if anyone decides to 
+        // Attachment is saved as string so it doesn't matter. But, if anyone decides to
         // unwrap attachment in apex this will cause an issue
 
         _attachment[this.priceItem.priceItemId] = attachmentValue;
@@ -179,7 +177,7 @@ class Modal extends Component {
                         <div className="rcm-modal_header">
                             <h2 className="slds-text-heading--medium">
                                 <span>Rate Card Manager</span>
-                                
+
                             </h2>
                         </div>
 

@@ -10,7 +10,6 @@ import {
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
 import FaEditor from './components/FaEditor';
-import './App.scss';
 
 import { withRouter } from 'react-router-dom';
 

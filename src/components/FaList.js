@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+  import React, { Component } from 'react';
+  import { Link } from 'react-router-dom';
+  import { connect } from 'react-redux';
 
-import { withRouter } from 'react-router-dom';
-import { getFrameAgreements } from '../actions';
+  import { withRouter } from 'react-router-dom';
+  import { getFrameAgreements } from '../actions';
 
-import FrameAgreementRow from './FrameAgreementRow';
-import InputSearch from './utillity/inputs/InputSearch';
+  import FrameAgreementRow from './FrameAgreementRow';
+  import InputSearch from './utillity/inputs/InputSearch';
 
-import './FaList.css';
+  import './FaList.css';
 
 class FaList extends Component {
 	constructor(props) {
@@ -28,34 +28,27 @@ class FaList extends Component {
 
 	render() {
 		return (
-			<div className="fa-list">
-				<div className="fa-list-header">
-					<div className="fa-list-header-compartment">
-						<div className="header-row">
-							<div className="logo-container">
-								<h1>Frame Agreement Negotiation Console</h1>
+			<div>
+				<div className="header">
+					<div className="container">
+						<div className="grid grid-sm">
+							<div className="grid-item w-6-md">
+								<h5 class="header-col-title">Frame Agreement Negotiation Console</h5>
 								<i className="cloudsense-logo" />
 							</div>
-							<div className="action-container">
-								<button className="slds-button slds-button--brand link-button">
-									<Link to="/agreement">Add new Agreement</Link>
-								</button>
+							<div className="grid-item w-6-md">
+								<div className="header-search">
+									<InputSearch onChange={this.onSearchChange} />
+									<Link className="button margin-left-xsm slds-button slds-button--brand link-button" to="/agreement">Add new Agreement</Link>
+								</div>
 							</div>
-						</div>
-						<div className="header-row" style={{ justifyContent: 'center' }}>
-							<div className="search-container">
-								<InputSearch onChange={this.onSearchChange} />
+							<div className="grid-item w-12">
+								<h5 class="header-col-title">Agreement list</h5>
 							</div>
-						</div>
-						<div
-							className="header-row"
-							style={{ justifyContent: 'flex-start' }}
-						>
-							<div className="label-text">Agreement list</div>
 						</div>
 					</div>
 				</div>
-				<div className="fa-list-body">
+				<div className="container">
 					{Object.values(this.props.frameAgreements)
 						.filter(fa => {
 							if (this.state.searchTerm) {
@@ -87,25 +80,25 @@ const mapDispatchToProps = {
 	getFrameAgreements
 };
 
-// const RcmModal = connect(null, mapDispatchToProps)(ConnectedForm);
+  // const RcmModal = connect(null, mapDispatchToProps)(ConnectedForm);
 
-/*
-                <h4>FA PICKER account - {window.SF.param.account}</h4>
-                <span><Link to='/agreement'>New Agreement</Link></span>
-                    <ul>
-                      {Object.values(this.props.frameAgreements).map(fa => {
-                         return (
-                            <li key={fa.Id}>
-                                <Link to={`/agreement/${fa.Id}`}>{fa.Name}</Link>
-                            </li>
-                          );
-                        })}
-                    </ul>
-*/
+  /*
+                  <h4>FA PICKER account - {window.SF.param.account}</h4>
+                  <span><Link to='/agreement'>New Agreement</Link></span>
+                      <ul>
+                        {Object.values(this.props.frameAgreements).map(fa => {
+                           return (
+                              <li key={fa.Id}>
+                                  <Link to={`/agreement/${fa.Id}`}>{fa.Name}</Link>
+                              </li>
+                            );
+                          })}
+                      </ul>
+  */
 
-export default withRouter(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(FaList)
-);
+  export default withRouter(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(FaList)
+  );

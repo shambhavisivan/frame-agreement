@@ -455,7 +455,7 @@ class FaEditor extends Component {
 					>
 						<div className="header-button-container">
 							<button
-								className="slds-button slds-button--translucent"
+								className="slds-button slds-button--translucent button-transparent button-border-light"
 								onClick={this.upsertFrameAgreements}
 							>
 								Save

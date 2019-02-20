@@ -1,0 +1,31 @@
+// Button
+//
+// Button component.
+
+.button {
+    @include sbg(--main-c);
+    border-radius: $border-radius / 2;
+    color: $white;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    padding: $spacer * 2 $spacer * 4;
+}
+
+// Transparent
+//
+
+.button-transparent {
+    background: transparent;
+}
+
+// Border
+//
+
+.button-border-light {
+    border: 1px solid $white;
+}
+
+.button-border-dark {
+    border: 1px solid $black;
+}

@@ -1,13 +1,13 @@
-/* CSS reset */
+// List-style
+//
+// Reset list styles.
+
 #fam {
-	* {
-		font-family: 'Salesforce Sans';
-		box-sizing: border-box;
-	}
 	ol, ul {
 		list-style: none;
 		margin: 0;
 		padding: 0;
+		
 		li {
 			margin-left: 0;
 		}

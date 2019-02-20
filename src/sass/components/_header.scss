@@ -1,0 +1,31 @@
+// Fa list
+//
+// Fa list component.
+
+.header {
+    background: #fff;
+    border-bottom: 1px solid $gray-light-5;
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+
+// Title
+//
+
+.header-col-title {
+    color: #777;
+}
+
+// Search
+//
+
+.header-search {
+    display: flex;
+
+    svg {
+        bottom: 50%;
+        left: 10px;
+        position: absolute;
+        transform: translateY(50%);
+    }
+}

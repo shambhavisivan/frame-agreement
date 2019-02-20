@@ -1,0 +1,17 @@
+// Media query
+//
+// Mixin for media queries.
+
+@mixin mq($breakpoint-key, $direction: min) {
+    $breakpoint-value: map-get($breakpoints, $breakpoint-key);
+
+    @if $direction == min {
+        @media (min-width: $breakpoint-value) {
+            @content;
+        }
+    } @else if $direction == max {
+        @media (max-width: $breakpoint-value - 1) {
+            @content;
+        }
+    }
+}

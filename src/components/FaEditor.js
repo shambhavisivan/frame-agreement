@@ -392,8 +392,8 @@ class FaEditor extends Component {
 		let commercialProductListHeader;
 		if (this.state.activeFa._ui.commercialProducts.length) {
 			commercialProductListHeader = (
-				<div className="info-row">
-					<div className="commercial-product-search-container">
+				<div>
+					<div>
 						<span>
 							Products ({this.state.activeFa._ui.commercialProducts.length})
 						</span>
@@ -403,7 +403,7 @@ class FaEditor extends Component {
 					</div>
 
 					<div>
-						<div className="commercial-product-list-header">
+						<div>
 							<div className="commercial-product-checkbox-container">
 								<Checkbox
 									value={
@@ -436,7 +436,7 @@ class FaEditor extends Component {
 			);
 		} else {
 			commercialProductListHeader = (
-				<div className="info-row">
+				<div>
 					<span>Product Negotiation</span>
 				</div>
 			);
@@ -453,9 +453,9 @@ class FaEditor extends Component {
 						title="Parturient tortor tortor sed tellus molestie neque lobortis sodales"
 						subtitle="Frame Agreement Details"
 					>
-						<div className="header-button-container">
+						<div>
 							<button
-								className="slds-button slds-button--translucent button-transparent button-border-light"
+								className="slds-button slds-button--translucent button button-lg button-transparent button-border-light"
 								onClick={this.upsertFrameAgreements}
 							>
 								Save
@@ -463,7 +463,7 @@ class FaEditor extends Component {
 						</div>
 					</Header>
 
-					<div className="main-container">
+					<div className="container">
 						<div className="main">
 							<div className="main-header">
 								{this.header_rows.map((row, i) => {
@@ -486,7 +486,7 @@ class FaEditor extends Component {
 								})}
 							</div>
 
-							<div className="main-frame-container">
+							<div>
 								{commercialProductListHeader}
 
 								{addProductCTA}

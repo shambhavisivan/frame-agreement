@@ -8,8 +8,6 @@
   import FrameAgreementRow from './FrameAgreementRow';
   import InputSearch from './utillity/inputs/InputSearch';
 
-  import './FaList.css';
-
 class FaList extends Component {
 	constructor(props) {
 		super(props);
@@ -32,18 +30,18 @@ class FaList extends Component {
 				<div className="header">
 					<div className="container">
 						<div className="grid grid-sm">
-							<div className="grid-item w-6-md">
-								<h5 class="header-col-title">Frame Agreement Negotiation Console</h5>
+							<div className="grid-item w-6-sm">
+								<h5 className="header-col-title">Frame Agreement Negotiation Console</h5>
 								<i className="cloudsense-logo" />
 							</div>
-							<div className="grid-item w-6-md">
+							<div className="grid-item w-6-sm">
 								<div className="header-search">
 									<InputSearch onChange={this.onSearchChange} />
 									<Link className="button margin-left-xsm slds-button slds-button--brand link-button" to="/agreement">Add new Agreement</Link>
 								</div>
 							</div>
 							<div className="grid-item w-12">
-								<h5 class="header-col-title">Agreement list</h5>
+								<h5 className="header-col-title">Agreement list</h5>
 							</div>
 						</div>
 					</div>

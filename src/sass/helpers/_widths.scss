@@ -3,17 +3,17 @@
 // Helper classes for site widths.
 
 @for $i from 1 through 12 {
-    .w-#{$i} {
-        width: percentage($i / 12);
-    }
+	.w-#{$i} {
+		width: percentage($i / 12);
+	}
 }
 
 @each $breakpoint-key, $breakpoint-value in $breakpoints {
-    @include mq($breakpoint-key) {
-        @for $i from 1 through 12 {
-            .w-#{$i}-#{$breakpoint-key} {
-                width: percentage($i / 12);
-            }
-        }
-    }
+	@include mq($breakpoint-key) {
+		@for $i from 1 through 12 {
+			.w-#{$i}-#{$breakpoint-key} {
+				width: percentage($i / 12);
+			}
+		}
+	}
 }

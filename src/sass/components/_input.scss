@@ -3,24 +3,24 @@
 // Input component.
 
 .input {
-    border: 1px solid #d5d5d5;
-    border-radius: 8px;
-    display: inline-block;
-    font-size: 12px;
-    outline: 0;
-    padding: 10px 32px;
-    width: 100%;
+	border: 1px solid #d5d5d5;
+	border-radius: $border-radius / 2;
+	display: inline-block;
+	font-size: 12px;
+	outline: 0;
+	padding: $spacer * 2 $spacer * 8;
+	width: 100%;
 
-    &:active,
-    &:focus {
-        outline: 0;
-    }
+	&:active,
+	&:focus {
+		outline: 0;
+	}
 }
 
 // Search
 //
 
 .input-search {
-    flex: 2;
-    position: relative;
+	flex: 2;
+	position: relative;
 }

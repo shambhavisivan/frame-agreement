@@ -11,19 +11,24 @@ class Header extends Component {
 
 	render() {
 		return (
-			<div className={`react-header ${this.props.disabled ? 'disabled' : ''}`}>
-				<div
-					className="react-header-back-button"
-					onClick={this.props.onBackClick}
-				>
-					<Icon name="back" width="22" height="21" color="#FFFFFF" />
-				</div>
-				<div className="react-header-title-container">
-					<div className="react-header-sub_title">{this.props.subtitle}</div>
-					<div className="react-header-title">{this.props.title}</div>
-				</div>
-				<div className="react-header-child-container">
-					{this.props.children}
+			<div className={`header-secondary ${this.props.disabled ? 'disabled' : ''}`}>
+				<div className="container">
+					<div className="header-secondary-body">
+						<div className="header-secondary-body-col">
+							<div
+								onClick={this.props.onBackClick}
+							>
+								<Icon name="back" width="22" height="21" color="#FFFFFF" />
+							</div>
+							<div className="margin-left-sm margin-right-sm">
+								<small className="fade">{this.props.subtitle}</small>
+								<div>{this.props.title}</div>
+							</div>
+						</div>
+						<div>
+							{this.props.children}
+						</div>
+					</div>
 				</div>
 			</div>
 		);

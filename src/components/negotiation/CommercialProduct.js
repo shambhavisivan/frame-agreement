@@ -47,12 +47,9 @@ class CommercialProduct extends React.Component {
 	render() {
 		return (
 			<div
-				className={
-					'commercial-product-container' +
-					(this.state.open ? ' product-open' : '')
-				}
+				className={this.state.open ? 'product-open' : ''}
 			>
-				<div className="commercial-product-header">
+				<div>
 					<div className="commercial-product-checkbox-container">
 						<Checkbox
 							value={this.props.selected}

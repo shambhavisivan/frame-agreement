@@ -1,0 +1,46 @@
+// Panel
+//
+// Panel component.
+
+.panel {
+	align-items: center;
+	background: $white;
+	border: 1px solid transparent;
+	border-radius: $border-radius / 2;
+	box-shadow: $box-shadow;
+	color: #0070d2;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-bottom: $spacer;
+	padding: $spacer * 3 $spacer * 6 $spacer * 3 $spacer * 3;
+	text-decoration: none;
+	transition: $transition;
+	width: 100%;
+
+	&:hover {
+		border: 1px solid $blue-sf;
+	}
+
+	@include mq(sm, max) {
+		align-items: flex-start;
+		flex-direction: column-reverse;
+	}
+}
+
+// Title
+//
+
+.panel-title {
+	align-items: center;
+	display: flex;
+
+	@include mq(sm, max) {
+		margin-top: $spacer * 4;
+		width: 100%;
+	}
+
+	> .icon {
+		margin-right: $spacer * 4;
+	}
+}

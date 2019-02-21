@@ -3,29 +3,41 @@
 // Fa list component.
 
 .header {
-    background: #fff;
-    border-bottom: 1px solid $gray-light-5;
-    padding: 20px 0;
-    margin-bottom: 20px;
+	background: #fff;
+	border-bottom: 2px solid $gray-light-5;
+	padding: $spacer * 5 0;
+	margin-bottom: 20px;
 }
 
 // Title
 //
 
 .header-col-title {
-    color: #777;
+	color: #777;
 }
 
 // Search
 //
 
 .header-search {
-    display: flex;
+	display: flex;
+}
 
-    svg {
-        bottom: 50%;
-        left: 10px;
-        position: absolute;
-        transform: translateY(50%);
-    }
+// Secondary
+
+.header-secondary {
+	background: $blue-sf;
+	color: $white;
+	padding: $spacer * 4 0;
+}
+
+.header-secondary-body {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+}
+
+.header-secondary-body-col {
+	align-items: center;
+	display: flex;
 }

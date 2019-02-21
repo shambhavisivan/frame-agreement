@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom';
 
 import Icon from './utillity/Icon';
 
-import './FrameAgreementRow.css';
-
 class FrameAgreementRow extends React.Component {
 	constructor(props) {
 		super(props);
 		this.statusClass =
-			'badge ' +
-			(this.props.agreement.csconta__Status__c === 'Draft' ? '' : 'badge-dark');
+			'chip ' +
+			(this.props.agreement.csconta__Status__c === 'Draft' ? '' : 'chip-dark');
 	}
 
 	// onTextChange(event) {
@@ -22,10 +20,10 @@ class FrameAgreementRow extends React.Component {
 	render() {
 		return (
 			<Link
-				className="fa-row-container"
+				className="panel"
 				to={`/agreement/${this.props.agreement.Id}`}
 			>
-				<div className="fa-row-text-container">
+				<div className="panel-title">
 					<Icon
 						name="threedots_vertical"
 						width="16"

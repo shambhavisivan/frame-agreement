@@ -1,0 +1,20 @@
+// Chip
+//
+// Chip component.
+
+.chip {
+	background: $gray-light-5;
+	border-radius: $border-radius * 3;
+	color: $white;
+	font-size: 10px;
+	letter-spacing: 2px;
+	padding: $spacer $spacer * 3;
+	text-transform: uppercase;
+}
+
+// Dark
+//
+
+.chip-dark {
+	background: #777;
+}

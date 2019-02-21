@@ -3,33 +3,33 @@
 // Some helper classes to help with general spacing.
 
 $spacing-sizes: (
-    none: 0,
-    xsm: $spacer * 2,
-    sm: $spacer * 4,
-    md: $spacer * 6,
-    lg: $spacer * 8,
-    xlg: $spacer * 16,
-    xxlg: $spacer * 24
+	none: 0,
+	xsm: $spacer * 2,
+	sm: $spacer * 4,
+	md: $spacer * 6,
+	lg: $spacer * 8,
+	xlg: $spacer * 16,
+	xxlg: $spacer * 24
 );
 
 $spacing-directions: (
-    'top',
-    'right',
-    'bottom',
-    'left'
+	'top',
+	'right',
+	'bottom',
+	'left'
 );
 
 $spacing-properties: (
-    'padding',
-    'margin'
+	'padding',
+	'margin'
 );
 
 @each $property in $spacing-properties {
-    @each $direction in $spacing-directions {
-        @each $size, $value in $spacing-sizes {
-            .#{$property}-#{$direction}-#{$size} {
-                #{$property}-#{$direction}: $value;
-            }
-        }
-    }
+	@each $direction in $spacing-directions {
+		@each $size, $value in $spacing-sizes {
+			.#{$property}-#{$direction}-#{$size} {
+				#{$property}-#{$direction}: $value;
+			}
+		}
+	}
 }

@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 
 import Icon from './utillity/Icon';
 
-import './CommercialProduct.css';
-
 class CommercialProduct extends React.Component {
 	constructor(props) {
 		super(props);

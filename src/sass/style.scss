@@ -1,10 +1,12 @@
 // Import partials
 
 // Settings
+@import "settings/theme";
 @import "settings/border";
 @import "settings/responsive";
+@import "settings/shadow";
 @import "settings/spacer";
-@import "settings/theme";
+@import "settings/transition";
 @import "settings/type";
 
 // Base
@@ -26,9 +28,13 @@
 
 // Components
 @import "components/button";
+@import "components/chip";
 @import "components/header";
+@import "components/icon";
 @import "components/input";
+@import "components/panel";
 
 // Helpers
+@import "helpers/opacity";
 @import "helpers/spacing";
 @import "helpers/widths";

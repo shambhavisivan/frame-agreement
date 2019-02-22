@@ -5,87 +5,102 @@ import Icon from '../Icon';
 import './InputNegotiate.css';
 
 class InputNegotiate extends React.Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
-    this.onNegotiate = this.onNegotiate.bind(this);
-    this.onFocus = this.onFocus.bind(this);
-    this.onBlur = this.onBlur.bind(this);
+		this.onNegotiate = this.onNegotiate.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 
-    this.state = {
-      negotiatedValue: +this.props.negotiatedValue,
-      focus: false
-    };
-  }
+		this.state = {
+			negotiatedValue: +this.props.negotiatedValue,
+			focus: false
+		};
 
-  onNegotiate(e) {
-    this.setState({
-      negotiatedValue: +e.target.value
-    });
-    this.props.onChange(+e.target.value);
-  }
+		console.warn('Invalid?', this.props.invalid);
+	}
 
-  onFocus() {
-    this.setState({ focus: true });
-  }
+	onNegotiate(e) {
+		this.setState({
+			negotiatedValue: +e.target.value
+		});
+		this.props.onChange(+e.target.value);
+	}
 
-  onBlur() {
-    this.setState({ focus: false });
-  }
+	onFocus() {
+		this.setState({ focus: true });
+	}
 
-  // onTextChange(event) {
-  //     this.setState({
-  //         value: event.target.value
-  //     });
-  // }
+	onBlur() {
+		this.setState({ focus: false });
+	}
 
-  // onBlur={() => {this.setState({readOnly: true})}}
+	// onTextChange(event) {
+	//     this.setState({
+	//         value: event.target.value
+	//     });
+	// }
 
-  //
+	// onBlur={() => {this.setState({readOnly: true})}}
 
-  render() {
-    return (
-      <div className="negotiate-container">
-        <div
-          className={
-            'negotiate-input-wrapper' +
-            (this.state.focus ? ' focused' : '') +
-            (this.state.negotiatedValue !== this.props.originalValue
-              ? ' negotiated'
-              : '')
-          }
-        >
-          <Icon
-            svg-class="negotiate-icon"
-            name="edit"
-            width="14"
-            height="14"
-            color={this.state.focus ? '#0070d2' : '#747474'}
-          />
-          <DebounceInput
-            debounceTimeout={100}
-            placeholder="0"
-            spellCheck="false"
-            className="negotiate-input"
-            type="number"
-            onChange={this.onNegotiate}
-            onBlur={this.onBlur}
-            onFocus={this.onFocus}
-            value={this.state.negotiatedValue}
-          />
-        </div>
-        {this.state.negotiatedValue !== this.props.originalValue &&
-        this.props.originalValue ? (
-          <span className="discount">
-            <span>negotiated disc. </span>
-            {(this.props.originalValue - this.state.negotiatedValue).toFixed(2)}
-          </span>
-        ) : (
-          ''
-        )}
-      </div>
-    );
-  }
+	//
+
+	render() {
+		return (
+			<div
+				className={
+					'negotiate-container' + (this.props.invalid ? ' invalid' : '')
+				}
+			>
+				<div
+					className={
+						'negotiate-input-wrapper' +
+						(this.state.focus ? ' focused' : '') +
+						(this.state.negotiatedValue !== this.props.originalValue
+							? ' negotiated'
+							: '')
+					}
+				>
+					<Icon
+						svg-class="negotiate-icon"
+						name="edit"
+						width="14"
+						height="14"
+						color={this.state.focus ? '#0070d2' : '#747474'}
+					/>
+					<DebounceInput
+						debounceTimeout={300}
+						placeholder="0"
+						spellCheck="false"
+						className="negotiate-input"
+						type="number"
+						max={this.props.originalValue}
+						onChange={this.onNegotiate}
+						onBlur={this.onBlur}
+						onFocus={this.onFocus}
+						value={this.state.negotiatedValue}
+					/>
+				</div>
+
+				<div className="discount-info">
+					{this.state.negotiatedValue !== this.props.originalValue &&
+					this.props.originalValue ? (
+						<span className="discount">
+							<div>negotiated </div>
+							<span className="discount-amount">
+								{' '}
+								{(
+									this.props.originalValue - this.state.negotiatedValue
+								).toFixed(2)}
+							</span>
+						</span>
+					) : (
+						''
+					)}
+				</div>
+			</div>
+		);
+	}
 }
 
 export default InputNegotiate;

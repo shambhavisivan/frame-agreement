@@ -11,15 +11,15 @@ import sharedService from './utils/shared-service';
 import './sass/style.scss';
 
 function _initialiseFAM() {
-  window.redux_store = store.getState;
-  ReactDOM.render(
-    <Provider store={store}>
-      <HashRouter>
-        <App />
-      </HashRouter>
-    </Provider>,
-    document.getElementById('fam')
-  );
+	window.redux_store = store.getState;
+	ReactDOM.render(
+		<Provider store={store}>
+			<HashRouter>
+				<App />
+			</HashRouter>
+		</Provider>,
+		document.getElementById('fam')
+	);
 }
 
 window.initialiseFAM = _initialiseFAM.bind(this);

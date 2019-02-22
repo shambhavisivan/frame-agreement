@@ -1,12 +1,16 @@
-.negotiate-container {
-	width: 55%;
-    max-width: 120px;
-	float: right;
+.negotiate-container{
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
 } 
 
 .negotiate-input-wrapper {
     position: relative;
-    width: 100%;
+    min-width: 50px;
+    max-width: 120px;
+    flex-basis: auto;
+    flex-grow: 1;
 }
 
 .negotiate-icon {
@@ -60,12 +64,20 @@ input.negotiate-input::-webkit-outer-spin-button {
   margin: 0; 
 }
 
+.discount-info {
+    width: 100%;
+}
 .discount {
 	color: #4bca81;
 	font-size: 13px;
 }
 
-.discount > span {
+.invalid .discount-amount {
+    color: red;
+}
+
+.discount > div {
+    display: inline-block;
 	color: #747474;
 	font-size: 11px;
 }

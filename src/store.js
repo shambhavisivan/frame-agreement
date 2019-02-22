@@ -3,10 +3,10 @@ import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 
 const logger = store => next => action => {
-  console.log('Action fired:', action);
-  console.log('New state:', store.getState());
-  window.react_logs.push(action.type);
-  return next(action);
+	console.log('Action fired:', action);
+	console.log('New state:', store.getState());
+	window.react_logs.push(action.type);
+	return next(action);
 };
 
 const middleware = applyMiddleware(thunk, logger);

@@ -216,44 +216,7 @@ const rateCards = [{
     }
 ];
 
-const attachment = {
-    "a1F1t00000017Y0EAI": {
-        "_charges": {
-            "a1I1t000001WkzoEAC": {
-                "oneOff": 5.6
-            },
-            "a1I1t000001WkzjEAC": {
-                "recurring": 9
-            }
-        },
-        "_rateCards": {
-            "a1N1t0000001QxrEAE": {
-                "a1M1t000000BFrVEAW": 16.99
-            }
-        },
-        "_addons": {
-            "a1A1t0000002cIMEAY": {
-                "recurring": 6.75,
-                "oneOff": 7.49
-            },
-            "a1A1t0000003ScfEAE": {
-                "recurring": 79.44,
-                "oneOff": 4.49
-            }
-        }
-    },
-    "a1F1t0000001JBUEA2": {
-
-    },
-    "a1F1t0000001JBeEAM": {
-        "_rateCards": {
-            "a1N1t0000001X2dEAE": {
-                "a1M1t000000peXZEAY": 61.43,
-                "a1M1t000000peXeEAI": 8.99
-            }
-        }
-    }
-};
+const attachment = "eyJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6NS42fSwiYTFJMXQwMDAwMDFXa3pqRUFDIjp7InJlY3VycmluZyI6OX19LCJfcmF0ZUNhcmRzIjp7ImExTjF0MDAwMDAwMVF4ckVBRSI6eyJhMU0xdDAwMDAwMEJGclZFQVciOjE2Ljk5fX0sIl9hZGRvbnMiOnsiYTFBMXQwMDAwMDAyY0lNRUFZIjp7InJlY3VycmluZyI6Ni43NSwib25lT2ZmIjo3LjQ5fSwiYTFBMXQwMDAwMDAzU2NmRUFFIjp7InJlY3VycmluZyI6NzkuNDQsIm9uZU9mZiI6NC40OX19fSwiYTFGMXQwMDAwMDAxSkJVRUEyIjp7fSwiYTFGMXQwMDAwMDAxSkJlRUFNIjp7Il9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxWDJkRUFFIjp7ImExTTF0MDAwMDAwcGVYWkVBWSI6NjEuNDMsImExTTF0MDAwMDAwcGVYZUVBSSI6OC45OX19fX0=";
 
 const DiscLevels = [{"discountLevel":{"Id":"a141t00000137a8AAA","Name":"Test","cspmb__Charge_Type__c":"RC","cspmb__Discount_Type__c":"Percentage","cspmb__Discount_Values__c":"10,20,30"},"levelId":"a141t00000137a8AAA","priceItemId":"a1F1t00000017Y0EAI"},{"discountLevel":{"Id":"a141t00000137cWAAQ","Name":"Invalid","cspmb__Charge_Type__c":"RC","cspmb__Discount_Type__c":"Percentage","cspmb__Discount_Values__c":"12, 34, gg"},"levelId":"a141t00000137cWAAQ","priceItemId":"a1F1t0000001JBPEA2"},{"addonId":"a0w1t0000002hSaAAI","discountLevel":{"Id":"a141t00000137e7AAA","Name":"TestAddons","cspmb__Charge_Type__c":"RC","cspmb__Discount_Type__c":"Amount","cspmb__Discount_Values__c":"10,20,30"},"levelId":"a141t00000137e7AAA"},{"discountLevel":{"Id":"a141t00000137cgAAA","Name":"Test2","cspmb__Charge_Type__c":"RC","cspmb__Discount_Increment__c":"1","cspmb__Discount_Type__c":"Amount","cspmb__Maximum_Discount_Value__c":10,"cspmb__Minimum_Discount_Value__c":5},"levelId":"a141t00000137cgAAA","priceItemId":"a1F1t00000017Y0EAI"},{"discountLevel":{"Id":"a141t00000137hrAAA","Name":"Test2_2","cspmb__Charge_Type__c":"RC","cspmb__Discount_Increment__c":"1","cspmb__Discount_Type__c":"Percentage","cspmb__Maximum_Discount_Value__c":10,"cspmb__Minimum_Discount_Value__c":1},"levelId":"a141t00000137hrAAA","priceItemId":"a1F1t00000017Y0EAI"},{"addonId":"a0w1t0000002hSaAAI","discountLevel":{"Id":"a141t00000137hrAAA","Name":"Test2_2","cspmb__Charge_Type__c":"RC","cspmb__Discount_Increment__c":"1","cspmb__Discount_Type__c":"Percentage","cspmb__Maximum_Discount_Value__c":10,"cspmb__Minimum_Discount_Value__c":1},"levelId":"a141t00000137hrAAA"},{"discountLevel":{"Id":"a141t00000137lLAAQ","Name":"One-off charge","cspmb__Charge_Type__c":"NRC","cspmb__Discount_Type__c":"Percentage","cspmb__Discount_Values__c":"10,20,30"},"levelId":"a141t00000137lLAAQ","priceItemId":"a1F1t00000017Y0EAI"},{"discountLevel":{"Id":"a141t00000137ycAAA","Name":"ProductCharge-11","cspmb__Charge_Type__c":"RC","cspmb__Discount_Type__c":"Percentage","cspmb__Discount_Values__c":"10,20,30"},"levelId":"a141t00000137ycAAA","priceItemId":"a1F1t0000001JC8EAM"}];
 
@@ -432,7 +395,7 @@ window.SF = SF = {
                     return createPromise(newFA);
                 }
 
-            case "getAttachment":
+            case "getAttachmentBody":
                 return createPromise(attachment);
 
             case "getApprovalHistory":

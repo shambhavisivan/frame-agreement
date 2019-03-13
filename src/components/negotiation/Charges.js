@@ -4,111 +4,112 @@ import Icon from '../utillity/Icon';
 import './Charges.scss';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 
-import { validateCharges } from './Validation';
+import { validateNegotiation } from './Validation';
 
 class Charges extends React.Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {
-			validation: validateCharges(
-				this.props.charges,
-				this.props.authLevel,
-				this.props.attachment
-			)
-		};
-	}
+    this.saveNegotiation = this.saveNegotiation.bind(this);
 
-	negotiateInline(charge, value) {
-		let negotiation = this.props.attachment;
-		negotiation[charge.Id] = negotiation[charge.Id] || {};
-		negotiation[charge.Id][charge._type] = value;
+    this.state = {
+      open: false,
+      saveDisabled: true,
+      negotiation: {}
+    };
 
-		let negotiationFormat = {
-			charge,
-			negotiatedValue: value
-		};
+    console.log('CHARGES:', props);
+  }
 
-		let _validation = validateCharges(negotiationFormat, this.props.authLevel);
-		this.setState(
-			{ validation: { ...this.state.validation, ..._validation } },
-			() => {
-				console.log('Validation:', this.state.validation);
-			}
-		);
+  saveNegotiation() {
+    if (validateNegotiation(this.state.negotiation)) {
+      this.props.onNegotiate(this.state.negotiation);
+      this.setState({ saveDisabled: true });
+    }
+  }
 
-		this.props.onNegotiate(negotiation);
-	}
+  negotiateInline(chargeId, chargeType, value) {
+    let negotiation = this.state.negotiation[chargeId] || {};
+    negotiation[chargeType] = value;
 
-	render() {
-		return (
-			<div className="table-container">
-				<div className="table-list-header">
-					<div className="list-cell">Charge Name</div>
-					<div className="list-cell">Charge Type</div>
-					<div className="list-cell">One-Off Adjustment</div>
-					<div className="list-cell">Negotiated One Off</div>
-					<div className="list-cell">Recurring Adjustment</div>
-					<div className="list-cell">Negotiated Recurring</div>
-				</div>
+    this.setState(
+      { negotiation: { ...this.state.negotiation, [chargeId]: negotiation } },
+      () => {
+        this.setState({ saveDisabled: false });
+        console.log(this.state.negotiation);
+      }
+    );
+  }
 
-				<ul className="table-list">
-					{this.props.charges.map((charge, i) => {
-						let recurringRow = 'N/A';
-						let oneOffRow = 'N/A';
-						var value;
+  render() {
+    return (
+      <div className="table-container">
+        <div className="table-list-header">
+          <div className="list-cell">Charge Name</div>
+          <div className="list-cell">Charge Type</div>
+          <div className="list-cell">One-Off Adjustment</div>
+          <div className="list-cell">Negotiated One Off</div>
+          <div className="list-cell">Reccuring Adjustment</div>
+          <div className="list-cell">Negotiated Reccuring</div>
+        </div>
 
-						if (charge.oneOff != null) {
-							value =
-								(this.props.attachment[charge.Id] &&
-									this.props.attachment[charge.Id].oneOff) ||
-								charge.oneOff;
-							oneOffRow = (
-								<InputNegotiate
-									invalid={this.state.validation[charge.Id]}
-									onChange={val => {
-										this.negotiateInline(charge, val);
-									}}
-									negotiatedValue={value}
-									originalValue={charge.oneOff}
-								/>
-							);
-						}
+        <ul className="table-list">
+          {this.props.charges.map((charge, i) => {
+            return (
+              <li key={charge.Id} className="list-row">
+                <div className="list-cell">
+                  <Icon name="priority" width="14" color="#4bca81" />{' '}
+                  {charge.typeLabel}
+                </div>
+                <div className="list-cell"> {charge.chargeType}</div>
+                <div className="list-cell"> {charge.oneOff || 'N/A'}</div>
+                <div className="list-cell negotiable">
+                  {charge.oneOff != null ? (
+                    <InputNegotiate
+                      onChange={val => {
+                        this.negotiateInline(charge.Id, 'oneOff', val);
+                      }}
+                      negotiatedValue={
+                        charge._negotiatedOneOff || charge.oneOff
+                      }
+                      originalValue={charge.oneOff}
+                    />
+                  ) : (
+                    'N/A'
+                  )}
+                </div>
+                <div className="list-cell"> {charge.recurring || 'N/A'}</div>
+                <div className="list-cell negotiable">
+                  {charge.recurring != null ? (
+                    <InputNegotiate
+                      onChange={val => {
+                        this.negotiateInline(charge.Id, 'reccuring', val);
+                      }}
+                      negotiatedValue={
+                        charge._negotiatedRecurring || charge.recurring
+                      }
+                      originalValue={charge.recurring}
+                    />
+                  ) : (
+                    'N/A'
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
 
-						if (charge.recurring != null) {
-							value =
-								(this.props.attachment[charge.Id] &&
-									this.props.attachment[charge.Id].recurring) ||
-								charge.recurring;
-							recurringRow = (
-								<InputNegotiate
-									invalid={this.state.validation[charge.Id]}
-									onChange={val => {
-										this.negotiateInline(charge, val);
-									}}
-									negotiatedValue={value}
-									originalValue={charge.recurring}
-								/>
-							);
-						}
-
-						return (
-							<li key={charge.Id} className="list-row">
-								<div className="list-cell">
-									<Icon name="priority" width="14" color="#4bca81" />{' '}
-									{charge.Name}
-								</div>
-								<div className="list-cell"> {charge.chargeType}</div>
-								<div className="list-cell"> {charge.oneOff || 'N/A'}</div>
-								<div className="list-cell negotiable">{oneOffRow}</div>
-								<div className="list-cell"> {charge.recurring || 'N/A'}</div>
-								<div className="list-cell negotiable">{recurringRow}</div>
-							</li>
-						);
-					})}
-				</ul>
-			</div>
-		);
-	}
+        <div className="table-footer">
+          <button
+            className="slds-button slds-button--neutral negotiation-button"
+            disabled={this.state.saveDisabled}
+            onClick={this.saveNegotiation}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    );
+  }
 }
 export default Charges;

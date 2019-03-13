@@ -1,0 +1,80 @@
+.fa-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    background: #fbfbfb;
+}
+
+.fa-list-header {
+    display: inline-block;
+    background: white;
+    width: 100%;
+    padding: 12px 0px;
+    padding-bottom: 10px;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+.fa-list-header h1 {
+    height: 25px;
+    font-size: 20px;
+    margin: 0;
+    font-weight: bold;
+    line-height: 1.25;
+    letter-spacing: normal;
+    color: #3e3e3c;
+}
+
+.header-row {
+    flex: 1;
+    display: flex;
+}
+
+.header-row .action-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.header-row .logo-container {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.search-container {
+    width: 33%;
+    display: inline-block;
+}
+
+.label-text {
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #5e5d60;
+}
+
+
+
+.cloudsense-logo {
+    display: inline-block;
+    width: 120px;
+    height: 14px;
+    background-position: center center;
+    background-size: 120px 14px;
+    background-repeat: no-repeat;
+}
+
+.fa-list-body,
+.fa-list-header-compartment {
+    display: inline-block;
+    width: 70%;
+    margin: 0px 15%;
+}
+
+.fa-list-body {
+	padding: 12px 0px;
+	margin-top: 1px;
+}
+

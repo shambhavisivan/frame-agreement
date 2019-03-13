@@ -1,65 +1,83 @@
+.commercial-product-container {
+    width: 100%;
+    padding: 0px 20px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 8px;
+    background-color: white;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.commercial-product-header {
+    width: 100%;
+    display: inline-block;
+    /* margin: 0px 20px; */
+    padding: 20px 0px 10px 0px;
+    /* flex-direction: column; */
+}
+
 .commercial-product-checkbox-container {
-	display: inline-block;
-	width: 40px;
+    display: inline-block;
+    width: 40px;
 }
 
 .commercial-product-fields-container {
-	display: inline-block;
-	width: calc(100% - 40px);
+    display: inline-block;
+    width: calc(100% - 40px);
 }
 
 .commercial-product-header .commercial-product-fields-container {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .commercial-product-fields {
-	display: flex;
+    display: flex;
 }
 
 .commercial-product-fields>span {
-	flex: 1;
+    flex: 1;
 }
 
 
 .commercial-product-container.product-open .commercial-product-header {
-	border-bottom: 1px solid #999999;
+    border-bottom: 1px solid #999999;
 }
 
 .commercial-product-header .commercial-product-fields span:first-child {
-	color: #0070d2;
-	font-size: 20px;
+    color: #0070d2;
+    font-size: 20px;
 }
 
 .commercial-product-header:hover+div .negotiation-button:not(:disabled) {
-	-webkit-box-shadow: 0px 0px 10px 1px orange;
-	-moz-box-shadow: 0px 0px 10px 1px orange;
-	box-shadow: 0px 0px 10px 1px orange;
-	border-color: orange;
-	color: orange;
-	transition: box-shadow 0.1s;
+    -webkit-box-shadow: 0px 0px 10px 1px orange;
+    -moz-box-shadow: 0px 0px 10px 1px orange;
+    box-shadow: 0px 0px 10px 1px orange;
+    border-color: orange;
+    color: orange;
+    transition: box-shadow 0.1s;
 }
 
 .commercial-product-description {
-	width: 30%;
-	font-size: 11px;
-	color: #5e5d60;
-	/*overflow: hidden;*/
-	padding: 14px 20px;
+    width: 30%;
+    font-size: 11px;
+    color: #5e5d60;
+    /*overflow: hidden;*/
+    padding: 14px 20px;
 }
 
 .commercial-product-description span {
-	/*white-space: nowrap;*/
-	overflow: hidden;
-	text-overflow: ellipsis;
+    /*white-space: nowrap;*/
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .commercial-product-skeleton {
-	width: 100%;
-	/* padding: 20px; */
-	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-	margin-bottom: 8px;
-	background-color: white;
-	border-radius: 4px;
-	box-sizing: border-box;
-	height: 56px;
+    width: 100%;
+    /* padding: 20px; */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 8px;
+    background-color: white;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 56px;
 }

@@ -15,43 +15,43 @@ import React from 'react';
 import '../../icons.svg';
 
 const Icon = props => {
-	function isDefined(prop) {
-		return typeof props[prop] !== 'undefined';
-	}
+  function isDefined(prop) {
+    return typeof props[prop] !== 'undefined';
+  }
 
-	let style = {};
-	let unit = 'px';
+  let style = {};
+  let unit = 'px';
 
-	if (isDefined('unit')) {
-		unit = props.unit;
-	}
+  if (isDefined('unit')) {
+    unit = props.unit;
+  }
 
-	if (isDefined('color')) {
-		style.fill = props.color;
-	} else {
-		style.fill = '#706e6b';
-	}
+  if (isDefined('color')) {
+    style.fill = props.color;
+  } else {
+    style.fill = '#706e6b';
+  }
 
-	if (isDefined('width')) {
-		style.width = props.width + unit;
-	} else {
-		style.width = 16 + unit;
-	}
+  if (isDefined('width')) {
+    style.width = props.width + unit;
+  } else {
+    style.width = 16 + unit;
+  }
 
-	if (isDefined('height')) {
-		style.height = props.height + unit;
-	} else {
-		style.height = style.width || 16 + unit;
-	}
+  if (isDefined('height')) {
+    style.height = props.height + unit;
+  } else {
+    style.height = style.width || 16 + unit;
+  }
 
-	return (
-		<svg
-			style={style}
-			className={`icon icon-${props.name} ${props['svg-class'] || ''}`}
-		>
-			<use xlinkHref={`#icons_${props.name}`} />
-		</svg>
-	);
+  return (
+    <svg
+      style={style}
+      className={`icon icon-${props.name} ${props['svg-class'] || ''}`}
+    >
+      <use xlinkHref={`#icons_${props.name}`} />
+    </svg>
+  );
 };
 
 export default Icon;

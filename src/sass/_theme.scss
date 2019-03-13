@@ -1,0 +1,242 @@
+/* COLORS */
+$black: #000;
+$blue-sf: #0070d2;
+$gray-light-5: #dddbda;
+$white: #fff;
+
+$css4: true;
+
+// It is nessesary to define the variables in sass map instead of :root, for compatibility reasons.
+$variables: (
+	--main-c: $blue-sf,
+	--main-bg: $white,
+	--main-br: $gray-light-5,
+
+	--button-c: $blue-sf,
+	--button-bg: $white,
+	--button-br: $gray-light-5,
+);
+
+// This will be used later for dark theme support
+// $darkVariables: (
+// 	--main-c: #ff0000,
+// 	--main-bg: darkblue,
+// 	--main-br: $white,
+
+// 	--button-c: $blue-sf,
+// 	--button-bg: $white,
+// 	--button-br: $gray-light-6
+// );
+
+// To use main theme color, every variable that uses main color needs to be set in .app-wrapper as well
+// .app-wrapper {
+//	--button-c: #{var(--main-c)};
+//}
+
+// Here we transfer the variables from the map to the :root element
+@if($css4) {
+	:root {
+		@each $variable, $value in $variables {
+			#{$variable}: $value;
+		}
+	}
+
+	// This will be used later for dark theme support
+	// .dark {
+	// 	@each $variable, $value in $darkVariables {
+	// 		#{$variable}: $value;
+	// 	}
+	// }
+}
+
+/*** HELPER FUNCTIONS ***/
+
+// change value type to string
+@function to-string($value) {
+	@return inspect($value);
+}
+// MIX WITH BLACK ~ helper function for darken mixins
+@function mixb($variable, $opacity) {
+	@return unquote('linear-gradient(to top,rgba(0, 0, 0,'+ $opacity +'),rgba(0, 0, 0,' + $opacity + '))' + $variable);
+}
+// MIX WITH WHITE ~ helper function for lighten mixins
+@function mixw($variable, $opacity) {
+	@return unquote('linear-gradient(to top,rgba(255, 255, 255,'+ $opacity +'),rgba(255, 255, 255,' + $opacity + ')) ' + $variable);
+}
+
+/*** BACKGROUND COLOR MIXINS ***/
+
+/* SET BACKGROUND COLOR */
+// $variable: only CSS variable format - if $color isn't set, it will take default color from variables map
+// $color [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to change already set background to different color
+// ex. @include sbg(--button-bg);
+// ex. @include sbg(--button-bg, var(--main-c));
+@mixin sbg($variable, $color: $variable) {
+	@if($color == $variable) {
+		background: map-get($variables, $variable);
+	} @else if (str-slice(to-string($color), 1, 4) == 'var(') {
+		#{$variable}: #{$color};
+		$length: str-length($color) - 1;
+		$helper: str-slice($color, 5, $length);
+		background: map-get($variables, $helper);
+	} @else {
+		#{$variable}: #{$color};
+		background: $color;
+	}
+
+	@supports(--css: variables) {
+		background: unquote('var(' + $variable + ')');
+	}
+}
+
+/* BACKGROUND DARKEN */
+// $variable: CSS variable or SCSS variable [ex. var(--color), $blue-sf] - background color to be darkened
+// $opacity: opacity percantange of black background [value should be between 0 and 1; higher number means darker background]
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - background color to be darkened
+// ex. @include bgd(var(--button-bg), 0.4);
+// ex. @include bgd(var(--button-bg), 0.4, var(--main-c));
+@mixin bgd($variable, $opacity, $ie: $variable) {
+	@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+		$length: str-length($ie) - 1;
+		$helper: str-slice($ie, 5, $length);
+		background: mixb(map-get($variables, $helper), $opacity);
+	} @else {
+		background: mixb($ie, $opacity);
+	}
+
+	@supports(--css: variables) {
+		background: mixb($variable, $opacity);
+	}
+}
+
+/* BACKGROUND LIGHTEN */
+// $variable: CSS variable or SCSS variable [ex. var(--color), $blue-sf] - background color to be lightened
+// $opacity: opacity percantange of white background [value should be between 0 and 1; higher number means lighter background]
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - background color to be lightened
+// ex. @include bgl(var(--button-bg), 0.4);
+// ex. @include bgl(var(--button-bg), 0.4, $blue-sf);
+@mixin bgl($variable, $opacity, $ie: $variable) {
+	@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+		$length: str-length($ie) - 1;
+		$helper: str-slice($ie, 5, $length);
+		background: mixw(map-get($variables, $helper), $opacity);
+	} @else {
+		background: mixw($ie, $opacity);
+	}
+
+	@supports(--css: variables) {
+		background: mixw($variable, $opacity);
+	}
+}
+
+/*** TEXT COLOR MIXINS ***/
+
+/* SET TEXT COLOR */
+// $variable: only CSS variable format - if $color isn't set, it will take default color from variables map
+// $color [optional]: any color format (ex. var(--color), $blue-sf, #000, black) - used to change already set text color to different color
+// ex. @include sc(--button-c);
+// ex. @include sc(--button-c, var(--main-c));
+@mixin sc($variable, $color: $variable) {
+	@if($color == $variable) {
+		color: map-get($variables, $variable);
+	} @else if (str-slice(to-string($color), 1, 4) == 'var(') {
+		#{$variable}: #{$color};
+		$length: str-length($color) - 1;
+		$helper: str-slice($color, 5, $length);
+		color: map-get($variables, $helper);
+	} @else {
+		#{$variable}: #{$color};
+		color: $color;
+	}
+
+	@supports(--css: variables) {
+		color: unquote('var(' + $variable + ')');
+	}
+}
+
+/* COLOR DARKEN */
+// $variable: CSS variable or SCSS variable [ex. var(--color), $blue-sf] - color to be darkened
+// $opacity: opacity percantange of black background [value should be between 0 and 1; higher number means darker background]
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - color to be darkened
+// ex. @include cd(var(--button-bg), 0.4);
+// ex. @include cd(var(--button-bg), 0.4, $blue-sf);
+@mixin cd($variable, $opacity, $ie: $variable) {
+	@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+		$length: str-length($ie) - 1;
+		$helper: str-slice($ie, 5, $length);
+		color: mix(black, map-get($variables, $helper), $opacity * 100);
+	} @else {
+		color: mix(black, $ie, $opacity * 100);
+	}
+
+	@supports(--css: variables) {
+		background: mixb($variable, $opacity);
+		color: transparent;
+		background-clip: text;
+		-webkit-background-clip: text;
+		-moz-background-clip: text;
+	}
+}
+
+/* COLOR LIGHTEN */
+// $variable: CSS variable or SCSS variable [ex. var(--color), $blue-sf] - color to be lightened
+// $opacity: opacity percantange of white background [value should be between 0 and 1; higher number means lighter background]
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - color to be lightened
+// ex. @include cl(var(--button-bg), 0.4);
+// ex. @include cl(var(--button-bg), 0.4, $blue-sf);
+@mixin cl($variable, $opacity, $ie: $variable) {
+	@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+		$length: str-length($ie) - 1;
+		$helper: str-slice($ie, 5, $length);
+		color: mix(white, map-get($variables, $helper), $opacity * 100);
+	} @else {
+		color: mix(white, $ie, $opacity * 100);
+	}
+
+	@supports(--css: variables) {
+		background: mixw($variable, $opacity);
+		color: transparent;
+		background-clip: text;
+		-webkit-background-clip: text;
+		-moz-background-clip: text;
+	}
+}
+
+/*** OTHER ***/
+
+/* HELPER MIXIN FOR IE FALLBACK */
+// Mixin temporally sets the $css4 variable to false, compiles the IE fallback, then makes the variable true again and compiles the css4 code
+// It should contain properties that use css4 variables (other than background and text color), otherwise there will be unnessesary duplication of properties.
+@mixin css4 {
+	$css4: false !global;
+	@content;
+	$css4: true !global;
+	@supports(--css: variables) {
+		@content;
+	}
+}
+
+/* CUSTOM VAR FUNCTION - borders, box-shadow, gradients... */
+// $variable: only CSS variable format - this color will be returned from function
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - color to be returned from function for IE only
+// to change border variable to new color it is necessary to define it within @css4 mixin [see example]
+// ex.
+// @include css4 {
+//	--border-c: #{var(--main-c)};
+//	border: 1px solid cvar(--border-c, var(--main-c));
+// }
+@function cvar($variable, $ie: $variable) {
+	@if($css4==false) {
+		@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+			$length: str-length($ie) - 1;
+			$helper: str-slice($ie, 5, $length);
+			@return map-get($variables, $helper);
+		} @else if (str-slice(to-string($ie), 1, 2) == '--')  {
+			@return map-get($variables, $ie);
+		} @else {
+			@return $ie;
+		}
+	} @else {
+		@return unquote('var(' + $variable + ')');
+	}
+}

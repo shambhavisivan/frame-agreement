@@ -211,7 +211,3 @@ li.list-row:first-child {
     border-top: 1px solid #dddbda;
     display: flex;
 }
-/*************************************************/
-.charge-negotiated {
-    color: #4bca81;
-}

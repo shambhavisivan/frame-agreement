@@ -12,8 +12,6 @@
 /.pnp
 .pnp.js
 
-credentials.js
-
 # testing
 /coverage
 

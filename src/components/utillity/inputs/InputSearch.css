@@ -5,7 +5,7 @@
 .transparent .search-wrapper .search-input{
     border: none;
     background: transparent;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #CCCCCC;
 }
 
 .search-wrapper > svg{
@@ -18,11 +18,11 @@
 .search-input {
     color: #747474;
     height: 28px;
-    width: 100%;
-    border-radius: 4px;
+    width: calc(100% - 37px);
+    /*border-radius: 4px;*/
     background-color: white;
     border: 1px solid #dddddd;
-    padding-left: 37px;
+    margin-left: 37px;
     box-sizing: border-box;
 }
 

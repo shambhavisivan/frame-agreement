@@ -54,6 +54,16 @@ ol li {
     padding: 6px 10px;
 }
 
+.link {
+  font-size: 13px;
+  color: #006ccc;
+}
+
+.link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .slds-button>a {
     text-decoration: none;
     color: inherit;
@@ -77,6 +87,16 @@ ol li {
     text-align: center;
     background-color: transparent;
     border: 1px solid white;
+}
+
+.slds-button--translucent:disabled {
+    color: white;
+    background-color: #dddddd;
+}
+
+.slds-button--translucent:disabled:hover {
+    color: white;
+    background-color: #dddddd;
 }
 
 .slds-button--translucent:hover,
@@ -103,6 +123,24 @@ ol li {
 
 .slds-button--neutral:active {
     background-color: #eef1f6;
+}
+
+.slds-button--danger {
+    color: white;
+    text-align: center;
+    background-color: #d81c2a;
+    border: 1px solid #b4141e;
+}
+
+.slds-button--danger:focus,
+.slds-button--danger:hover {
+    background-color: #b4141e;
+    border: 1px solid #b4141e;
+}
+
+.slds-button--danger:active {
+    background-color: #b4141e;
+    border: 1px solid #b4141e;
 }
 
 

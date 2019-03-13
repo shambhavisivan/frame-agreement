@@ -23,3 +23,7 @@
 .log .log-action{
 	color: #4bca81;
 }
+
+.sidebar-button-container button {
+    margin-right: 10px;
+}

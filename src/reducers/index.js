@@ -1,347 +1,496 @@
 import sharedService from '../utils/shared-service';
 
 const initialState = {
-  initialised: {
-    fa_loaded: false,
-    cp_loaded: false,
-    settings_loaded: false
-  },
-  settings: {},
-  frameAgreements: {},
-  commercialProducts: null,
-  activeFa: null
-  // activeId: null
+	initialised: {
+		fa_loaded: false,
+		cp_loaded: false,
+		settings_loaded: false
+	},
+	settings: {},
+	frameAgreements: {},
+	commercialProducts: null,
+	activeFa: null,
+	validation: {},
+	approvalFlag: false, // true -> needs validation
+	handlers: {},
+	toasts: []
+	// activeId: null
 };
 
 function validateJSONData(data) {
-  if (!data) {
-    return [];
-  }
+	if (!data) {
+		return [];
+	}
 
-  data.forEach(obj => {
-    obj.type = obj.type || 'text';
-    obj.grid = obj.grid || 3;
-    obj.readOnly = obj.readOnly || false;
-  });
-  return data;
+	data.forEach(obj => {
+		obj.type = obj.type || 'text';
+		obj.grid = obj.grid || 3;
+		obj.readOnly = obj.readOnly || false;
+	});
+	return data;
 }
 
 function validateCSV(str) {
-  if (typeof str !== 'string') {
-    return false;
-  }
+	if (typeof str !== 'string') {
+		return false;
+	}
 
-  let returnStr = str;
-  try {
-    returnStr = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(
-      str.replace(/ /g, '')
-    );
-  } catch (e) {
-    console.warn(e);
-  }
-  return returnStr;
+	let returnStr = str;
+	try {
+		returnStr = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(
+			str.replace(/ /g, '')
+		);
+	} catch (e) {
+		console.warn(e);
+	}
+	return returnStr;
 }
 
 const rootReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'SET_ACTIVE_FA':
-      return { ...state, activeFa: action.payload };
+	switch (action.type) {
+		case 'REGISTER_METHOD':
+			/*
+            window.FAC.registerMethod("ActionFunction", () => {
+                 return new Promise(resolve => {
+                     setTimeout(() => {resolve("ActionFunction result")}, 2000);
+                 });
+            })
+            */
+			return {
+				...state,
+				handlers: {
+					...state.handlers,
+					[action.payload.name]: action.payload.method
+				}
+			};
 
-    case 'UPDATE_ACTIVE_FA':
-      let fa = state.activeFa;
-      fa[action.payload.field] = action.payload.value;
-      return { ...state, ...{ activeFa: fa } };
+		case 'SET_VALIDATION':
+			function getApprovalFlag(validation) {
+				return Object.keys(validation)
+					.reduce((acc, key) => {
+						let collection = [];
+						if (validation[key].addons) {
+							Object.values(validation[key].addons).forEach(item => {
+								item.hasOwnProperty('oneOff') && collection.push(item.oneOff);
+								item.hasOwnProperty('recurring') &&
+									collection.push(item.recurring);
+							});
+						}
+						if (validation[key].charges) {
+							collection = [
+								...collection,
+								...Object.values(validation[key].charges)
+							];
+						}
+						if (validation[key].rated) {
+							collection = [
+								...collection,
+								...Object.values(validation[key].rated)
+							];
+						}
+						return [...acc, ...collection];
+					}, [])
+					.some(r => r === true);
+			}
 
-    case 'SET_ADDED_PRODUCTS':
-      var activeProductsMap = {};
-      var attachment = { ...state.activeFa._ui.attachment };
+			if (action.payload.priceItemId === null) {
+				return { ...state, validation: {}, approvalFlag: false };
+			} else if (action.payload.type === null) {
+				var validation = { ...state.validation, ...action.payload.priceItemId };
+				var approvalFlag = getApprovalFlag(validation);
 
-      var activeProducts = state.commercialProducts.filter(cp => {
-        if (action.payload.includes(cp.Id)) {
-          activeProductsMap[cp.Id] = attachment[cp.Id] || null;
-          return true;
-        }
-        return false;
-      });
+				return { ...state, validation, approvalFlag };
+			} else {
+				var validation = {
+					...state.validation,
+					[action.payload.priceItemId]: {
+						...state.validation[action.payload.priceItemId],
+						[action.payload.type]: {
+							...state.validation[action.payload.priceItemId][
+								action.payload.type
+							],
+							...action.payload.data
+						}
+					}
+				};
+				var approvalFlag = getApprovalFlag(validation);
+				return { ...state, validation, approvalFlag };
+			}
 
-      return {
-        ...state,
-        ...{
-          activeFa: {
-            ...state.activeFa,
-            ...{
-              _ui: {
-                ...state.activeFa._ui,
-                ...{
-                  commercialProducts: activeProducts,
-                  attachment: activeProductsMap
-                }
-              }
-            }
-          }
-        }
-      };
+		// ASYNC RECIEVE
+		case 'RECIEVE_FRAME_AGREEMENTS':
+			let frameAgreementMap = {};
+			action.payload.forEach(fa => {
+				fa._ui = {
+					commercialProducts: [],
+					attachment: null
+				};
+				frameAgreementMap[fa.Id] = fa;
+			});
+			return {
+				...state,
+				...{ frameAgreements: frameAgreementMap },
+				...{ initialised: { ...state.initialised, ...{ fa_loaded: true } } }
+			};
 
-    case 'APPLY_DISCOUNT':
-      console.log('reducer:', action.payload);
+		case 'ADD_TOAST':
+			// action.payload.type;
+			// action.payload.title;
+			// action.payload.message;
 
-      var priceItemIndex = state.activeFa._ui.commercialProducts.findIndex(
-        cp => {
-          return cp.Id === action.payload.priceItemId;
-        }
-      );
+			return {
+				...state,
+				toasts: [...state.toasts, ...[{ ...action.payload }]]
+			};
 
-      var updatedCharge = [
-        ...state.activeFa._ui.commercialProducts[priceItemIndex][
-          action.payload.charge
-        ]
-      ];
+		case 'RECIEVE_CLONE_FA':
+			// action.payload;
+			let clonedFa = action.payload;
+			clonedFa._ui = {
+				commercialProducts: [],
+				attachment: null
+			};
 
-      var updatedAttachment = {
-        ...state.activeFa._ui.attachment[action.payload.priceItemId]
-      };
+			return {
+				...state,
+				frameAgreements: { ...state.frameAgreements, [clonedFa.Id]: clonedFa }
+			};
 
-      updatedCharge &&
-        updatedCharge.forEach(ch => {
-          if (action.payload.data[ch.Id]) {
-            if (
-              action.payload.charge === '_addons' ||
-              action.payload.charge === '_charges'
-            ) {
-              if (action.payload.data[ch.Id].hasOwnProperty('oneOff')) {
-                ch._negotiatedOneOff = action.payload.data[ch.Id].oneOff;
-              }
-              if (action.payload.data[ch.Id].hasOwnProperty('reccuring')) {
-                ch._negotiatedRecurring = action.payload.data[ch.Id].reccuring;
-              }
-            }
+		case 'SHIFT_TOAST':
+			var newToastQueue = [...state.toasts];
+			newToastQueue.shift();
+			return { ...state, toasts: [...newToastQueue] };
 
-            if (action.payload.charge === '_rateCards') {
-              ch.rateCardLines.forEach(rcl => {
-                if (action.payload.data[ch.Id].hasOwnProperty(rcl.Id)) {
-                  rcl._negotiated = action.payload.data[ch.Id][rcl.Id];
-                }
-              });
-            }
+		case 'RECIEVE_COMMERCIAL_PRODUCTS':
+			var commercialProducts = action.payload;
 
-            // Update attachment
-            updatedAttachment[action.payload.charge] = {
-              ...updatedAttachment[action.payload.charge],
-              ...action.payload.data
-            };
-          }
-        });
+			return {
+				...state,
+				...{ commercialProducts: commercialProducts },
+				...{ initialised: { ...state.initialised, ...{ cp_loaded: true } } }
+			};
 
-      var updatedCommercialProducts = state.activeFa._ui.commercialProducts.map(
-        (cp, i) => {
-          if (cp.Id === action.payload.priceItemId) {
-            cp[action.payload.charge] = updatedCharge;
-          }
-          return cp;
-        }
-      );
+		case 'CREATE_FA':
+			var upsertedFa = action.payload;
+			// On error
+			if (!upsertedFa) {
+				return { ...state };
+			}
 
-      return {
-        ...state,
-        activeFa: {
-          ...state.activeFa,
-          _ui: {
-            ...state.activeFa._ui,
-            commercialProducts: updatedCommercialProducts,
-            attachment: {
-              ...state.activeFa._ui.attachment,
-              [action.payload.priceItemId]: updatedAttachment
-            }
-          }
-        }
-      };
-    // **********************************************
-    // ASYNC REQUEST
-    // case "REQUEST_FRAME_AGREEMENTS":
-    //   return { ...state };
+			upsertedFa._ui = {
+				commercialProducts: [],
+				attachment: null
+			};
 
-    // case "REQUEST_GET_ATTACHMENT":
-    //   return { ...state };
+			return {
+				...state,
+				...{ activeFa: upsertedFa },
+				...{
+					frameAgreements: {
+						...state.frameAgreements,
+						...{
+							[upsertedFa.Id]: upsertedFa
+						}
+					}
+				}
+			};
 
-    // case "REQUEST_UPSERT_FRAME_AGREEMENTS":
-    //   return { ...state };
+		case 'DELETE_FA':
+			var {
+				[action.payload]: value,
+				...withoutRemoved
+			} = state.frameAgreements;
+			return { ...state, frameAgreements: withoutRemoved };
 
-    // case "REQUEST_COMMERCIAL_PRODUCTS":
-    //   return { ...state };
+		case 'SAVE_FA':
+			var upsertedFa = action.payload;
+			upsertedFa._ui = {
+				commercialProducts: [],
+				attachment: null
+			};
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[upsertedFa.Id]: {
+						...upsertedFa,
+						_ui: state.frameAgreements[upsertedFa.Id]._ui
+					}
+				}
+			};
 
-    // case "REQUEST_SETTINGS":
-    //   return { ...state };
+		case 'RECIEVE_SETTINGS':
+			action.payload.HeaderData = validateJSONData(action.payload.HeaderData);
 
-    // case 'REQUEST_RATE_CARDS':
-    //   return { ...state };
+			if (validateCSV(action.payload.FACSettings.Price_Item_Fields)) {
+				action.payload.FACSettings.Price_Item_Fields = action.payload.FACSettings.Price_Item_Fields.replace(
+					/ /g,
+					''
+				).split(',');
+			} else {
+				console.warn('Price item fields is not valid CSV!');
+				action.payload.FACSettings.Price_Item_Fields = [];
+			}
 
-    // case 'REQUEST_GET_ADDONS':
-    //   return { ...state };
+			if (validateCSV(action.payload.FACSettings.FA_Editable_Statuses)) {
+				action.payload.FACSettings.FA_Editable_Statuses = action.payload.FACSettings.FA_Editable_Statuses.replace(
+					/ /g,
+					''
+				).split(',');
+			} else {
+				console.warn('Price item fields is not valid CSV!');
+				action.payload.FACSettings.FA_Editable_Statuses = [];
+			}
 
-    // case "REQUEST_PRICE_ITEM_DATA":
-    //   return { ...state };
-    // **********************************************
-    // ASYNC RECIEVE
-    case 'RECIEVE_FRAME_AGREEMENTS':
-      let frameAgreementMap = {};
-      action.payload.forEach(fa => {
-        fa._ui = {
-          commercialProducts: [],
-          attachment: null
-        };
-        frameAgreementMap[fa.Id] = fa;
-      });
-      return {
-        ...state,
-        ...{ frameAgreements: frameAgreementMap },
-        ...{ initialised: { ...state.initialised, ...{ fa_loaded: true } } }
-      };
+			// ***************************************************************************************************************
+			action.payload.AuthLevels = action.payload.AuthLevels.reduce(function(
+				acc,
+				level
+			) {
+				(acc[level['cspmb__Authorization_Level__c']] =
+					acc[level['cspmb__Authorization_Level__c']] || []).push(level);
+				return acc;
+			},
+			{});
 
-    case 'RECIEVE_COMMERCIAL_PRODUCTS':
-      var commercialProducts = action.payload;
-      // commercialProducts.forEach( cp => {
-      //     cp._ui = {
-      //         selected: false
-      //     }
-      // });
-      return {
-        ...state,
-        ...{ commercialProducts: commercialProducts },
-        ...{ initialised: { ...state.initialised, ...{ cp_loaded: true } } }
-      };
+			// ***************************************************************************************************************
+			let DiscLevels = {};
 
-    case 'CREATE_FA':
-      var upsertedFa = action.payload;
-      // On error
-      if (!upsertedFa) {
-        return { ...state };
-      }
+			let error = {
+				message: '',
+				targets: []
+			};
 
-      upsertedFa._ui = {
-        commercialProducts: []
-      };
+			(() => {
+				action.payload.DiscLevels.forEach(dl => {
+					let discount = JSON.parse(JSON.stringify(dl));
+					discount.discountLevel = {
+						Id: dl.discountLevel.Id,
+						Name: dl.discountLevel.Name,
+						cspmb__Charge_Type__c: dl.discountLevel.cspmb__Charge_Type__c,
+						cspmb__Discount_Type__c: dl.discountLevel.cspmb__Discount_Type__c
+					};
 
-      return {
-        ...state,
-        ...{ activeFa: upsertedFa },
-        ...{
-          frameAgreements: {
-            ...state.frameAgreements,
-            ...{
-              [upsertedFa.Id]: upsertedFa
-            }
-          }
-        }
-      };
+					let failure = false;
 
-    case 'SAVE_FA':
-      var upsertedFa = action.payload;
-      return {
-        ...state,
-        frameAgreements: {
-          ...state.frameAgreements,
-          [upsertedFa.Id]: upsertedFa
-        }
-      };
+					function discountValid(values) {
+						let returnValues;
+						try {
+							returnValues = values
+								.replace(/ /g, '')
+								.split(',')
+								.map(num => {
+									let ret = +num;
+									if (!isNaN(ret)) {
+										return ret;
+									} else {
+										throw new Error();
+									}
+								});
+						} catch (err) {
+							error.message = 'Invalid discount values on ';
+							error.targets.push(dl.levelId);
+							returnValues = false;
+						}
+						return returnValues;
+					}
 
-    case 'RECIEVE_SETTINGS':
-      action.payload.JSONData = validateJSONData(action.payload.JSONData);
+					if (
+						dl.discountLevel.cspmb__Discount_Values__c &&
+						discountValid(dl.discountLevel.cspmb__Discount_Values__c)
+					) {
+						discount.discountLevel.cspmb__Discount_Values__c = discountValid(
+							dl.discountLevel.cspmb__Discount_Values__c
+						);
+					} else if (
+						dl.discountLevel.cspmb__Discount_Increment__c &&
+						dl.discountLevel.cspmb__Maximum_Discount_Value__c &&
+						dl.discountLevel.cspmb__Minimum_Discount_Value__c
+					) {
+						// validate increment
+						if (
+							!isNaN(+dl.discountLevel.cspmb__Discount_Increment__c) &&
+							!isNaN(+dl.discountLevel.cspmb__Maximum_Discount_Value__c) &&
+							!isNaN(+dl.discountLevel.cspmb__Minimum_Discount_Value__c)
+						) {
+							discount.discountLevel.cspmb__Discount_Values__c = [];
 
-      if (validateCSV(action.payload.FACSettings.Price_Item_Fields)) {
-        action.payload.FACSettings.Price_Item_Fields = action.payload.FACSettings.Price_Item_Fields.replace(
-          / /g,
-          ''
-        ).split(',');
-      } else {
-        console.warn('Price item fields is not valid CSV!');
-        action.payload.FACSettings.Price_Item_Fields = [];
-      }
+							for (
+								let i = dl.discountLevel.cspmb__Minimum_Discount_Value__c;
+								i <= dl.discountLevel.cspmb__Maximum_Discount_Value__c;
+								i += +dl.discountLevel.cspmb__Discount_Increment__c
+							) {
+								discount.discountLevel.cspmb__Discount_Values__c.push(i);
+							}
+						} else {
+							error.message =
+								error.message || 'Invalid max/min/increment data on ';
+							failure = true;
+							error.targets.push(dl.levelId);
+						}
+					} else {
+						failure = true;
+					}
 
-      if (validateCSV(action.payload.FACSettings.FA_Editable_Statuses)) {
-        action.payload.FACSettings.FA_Editable_Statuses = action.payload.FACSettings.FA_Editable_Statuses.replace(
-          / /g,
-          ''
-        ).split(',');
-      } else {
-        console.warn('Price item fields is not valid CSV!');
-        action.payload.FACSettings.FA_Editable_Statuses = [];
-      }
+					if (!failure) {
+						DiscLevels[discount.levelId] = discount;
+					} else {
+						console.error(error.message, error.targets);
+					}
+				});
+			})();
 
-      return {
-        ...state,
-        ...{ settings: action.payload },
-        ...{
-          initialised: { ...state.initialised, ...{ settings_loaded: true } }
-        }
-      };
+			action.payload.DiscLevels = DiscLevels;
 
-    // case 'RECIEVE_GET_ADDONS':
-    //   var addons = action.payload.response;
-    //   var priceItemId = action.payload.priceItemId;
-    //   var commercialProducts = state.commercialProducts;
+			// ***************************************************************************************************************
 
-    //   var priceItemIndex = state.commercialProducts.findIndex(pi => {
-    //     return pi.Id === priceItemId;
-    //   });
+			return {
+				...state,
+				...{ settings: action.payload },
+				...{
+					initialised: { ...state.initialised, ...{ settings_loaded: true } }
+				}
+			};
 
-    //   commercialProducts[priceItemIndex]._addons = addons;
+		case 'RECIEVE_PRICE_ITEM_DATA':
+			const productVsDiscount = {};
 
-    //   return {...state, ...{commercialProducts}}
+			for (let lv in state.settings.DiscLevels) {
+				if (state.settings.DiscLevels[lv].priceItemId) {
+					productVsDiscount[state.settings.DiscLevels[lv].priceItemId] =
+						productVsDiscount[state.settings.DiscLevels[lv].priceItemId] || [];
+					productVsDiscount[state.settings.DiscLevels[lv].priceItemId].push(lv);
+				}
+			}
 
-    // case 'RECIEVE_RATE_CARDS':
-    //   var rateCards = action.payload.response;
-    //   var priceItemId = action.payload.priceItemId;
-    //   var commercialProducts = state.commercialProducts;
+			var priceItemData = action.payload;
+			// *********************************************************
+			for (var key in priceItemData) {
+				// *********************************************************
+				var priceItemIndex = state.commercialProducts.findIndex(pi => {
+					return pi.Id === key;
+				});
 
-    //   var priceItemIndex = state.commercialProducts.findIndex(pi => {
-    //     return pi.Id === priceItemId;
-    //   });
+				if (priceItemIndex === -1) {
+					console.error(
+						'Cannot find price item ' +
+							key +
+							' in:' +
+							state.commercialProducts.map(cp => cp.Id)
+					);
+					return { ...state };
+				}
 
-    //   commercialProducts[priceItemIndex]._rateCards = rateCards;
+				// **********************************************
+				if (productVsDiscount[key]) {
+					state.commercialProducts[priceItemIndex]._levelId =
+						productVsDiscount[key];
+				}
+				// **********************************************
+				const addonVsDiscount = {};
+				for (let lv in state.settings.DiscLevels) {
+					if (state.settings.DiscLevels[lv].addonId) {
+						addonVsDiscount[state.settings.DiscLevels[lv].addonId] =
+							addonVsDiscount[state.settings.DiscLevels[lv].addonId] || [];
+						addonVsDiscount[state.settings.DiscLevels[lv].addonId].push(lv);
+					}
+				}
 
-    //   return {...state, ...{commercialProducts}}
+				function formatAddons(addon) {
+					let _addon = { ...addon };
+					_addon.cspmb__One_Off_Charge__c =
+						_addon.cspmb__One_Off_Charge__c ||
+						_addon.cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c;
+					_addon.cspmb__Recurring_Charge__c =
+						_addon.cspmb__Recurring_Charge__c ||
+						_addon.cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c;
+					_addon.cspmb__Authorization_Level__c =
+						_addon.cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c;
+					_addon.Name = _addon.cspmb__Add_On_Price_Item__r.Name;
 
-    case 'RECIEVE_PRICE_ITEM_DATA':
-      var priceItemData = action.payload;
-      // var commercialProducts = [...state.commercialProducts];
-      console.warn(priceItemData);
-      for (var key in priceItemData) {
-        var priceItemIndex = state.commercialProducts.findIndex(pi => {
-          return pi.Id === key;
-        });
+					if (addonVsDiscount[addon.cspmb__Add_On_Price_Item__c]) {
+						_addon.levelId = addonVsDiscount[addon.cspmb__Add_On_Price_Item__c];
+					}
 
-        if (priceItemIndex === -1) {
-          console.error(
-            'Cannot find price item ' +
-              key +
-              ' in:' +
-              state.commercialProducts.map(cp => cp.Id)
-          );
-          return { ...state };
-        }
-        state.commercialProducts[priceItemIndex]._addons =
-          priceItemData[key].addons;
-        state.commercialProducts[priceItemIndex]._charges =
-          priceItemData[key].charges.charges;
-        state.commercialProducts[priceItemIndex]._rateCards =
-          priceItemData[key].rateCards;
-      }
+					delete _addon.cspmb__Add_On_Price_Item__r;
+					delete _addon.cspmb__Price_Item__r;
 
-      return { ...state, ...{ commercialProducts: state.commercialProducts } };
+					return _addon;
+				}
 
-    case 'RECIEVE_GET_ATTACHMENT':
-      return { ...state };
+				// **********************************************
 
-    // **********************************************
+				state.commercialProducts[priceItemIndex]._addons = priceItemData[
+					key
+				].addons.map(addon => formatAddons(addon));
 
-    case 'SAVE_ATTACHMENT':
-      return { ...state };
+				// **********************************************
+				state.commercialProducts[priceItemIndex]._charges = priceItemData[
+					key
+				].charges.charges.map(charge => {
+					let retCharge = { ...charge };
+					if (
+						charge.chargeType
+							.toLowerCase()
+							.replace(/ /g, '')
+							.replace(/\W/g, '') === 'oneoffcharge'
+					) {
+						delete retCharge.recurring;
+						retCharge._type = 'oneOff';
+					} else if (
+						charge.chargeType
+							.toLowerCase()
+							.replace(/ /g, '')
+							.replace(/\W/g, '') === 'recurringcharge'
+					) {
+						delete retCharge.oneOff;
+						retCharge._type = 'recurring';
+					} else {
+						retCharge = null;
+					}
+					return retCharge;
+				});
 
-    // **********************************************
+				state.commercialProducts[
+					priceItemIndex
+				]._charges = state.commercialProducts[priceItemIndex]._charges.filter(
+					charge => {
+						return charge != null;
+					}
+				);
 
-    default:
-      return state;
-  }
+				// **********************************************
+				state.commercialProducts[priceItemIndex]._rateCards =
+					priceItemData[key].rateCards;
+
+				// **********************************************
+				state.commercialProducts[priceItemIndex].dataLoaded = true;
+			}
+			// **********************************************
+
+			return { ...state, ...{ commercialProducts: state.commercialProducts } };
+
+		// **********************************************
+
+		case 'RECIEVE_GET_ATTACHMENT':
+			var priceItemId = action.payload.priceItemId;
+			var attachment = action.payload.data;
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[priceItemId]: {
+						...state.frameAgreements[priceItemId],
+						_ui: { ...state.frameAgreements[priceItemId]._ui, attachment }
+					}
+				}
+			};
+
+		default:
+			// SAVE_ATTACHMENT, RECIEVE_GET_ATTACHMENT, FILTER_COMMERCIAL_PRODUCTS, GET_APPROVAL_HISTORY
+			return { ...state };
+	}
 };
 
 export default rootReducer;

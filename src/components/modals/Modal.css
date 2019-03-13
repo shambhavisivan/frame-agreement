@@ -12,6 +12,14 @@
     right: 25%;
     position: absolute;
 }
+
+.sf-modal.confirmation {
+    min-width: 580px;
+    right: calc( 50% - 290px );
+border-radius: 4px;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+}
+
 .sf-modal > div:not(div.modal-body) {
     display: inline-block;
 }
@@ -21,8 +29,21 @@
     box-sizing: border-box;
 }
 
-.modal-body {
+.confirmation .modal-footer {
+    text-align: center;
+}
 
+.confirmation .modal-footer >  button{
+    margin-right: 12px;
+}
+
+/*.confirmation .modal-header {
+    font-size: 20px;
+}*/
+
+.confirmation .modal-body {
+    justify-content: center;
+    font-size: 13px;
 }
 
 .close-button {

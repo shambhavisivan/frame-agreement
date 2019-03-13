@@ -218,3 +218,43 @@ table th {
     padding: 0.5rem 0.375rem;
     text-transform: uppercase;
 }*/
+
+
+/*CATEGORIZATION*/
+.category-title {
+    width: 100%;
+    font-size: 13px;
+    color: #222222;
+    cursor: pointer;
+display: flex;
+    align-items: center;
+}
+
+.category-title > span{
+    margin-left: 5px;
+}
+
+.filter-category {
+    margin-bottom: 10px;
+}
+
+.category-values-list {
+    padding-left: 15px;
+    padding-top: 5px;
+}
+
+.category-values-list > li {
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    padding-bottom: 5px;
+}
+
+.category-values-list > li span {
+    margin-left: 5px;
+}
+
+.category-values-list > li .checkbox {
+    display: inline-block;
+}

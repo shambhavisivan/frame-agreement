@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "moment": "^2.24.0",
     "react": "^16.7.0",
     "react-collapse": "^4.0.3",
+    "react-confirm-alert": "^2.2.0",
     "react-datepicker": "^2.0.0",
     "react-debounce-input": "^3.2.0",
     "react-dom": "^16.6.3",
@@ -20,8 +22,8 @@
   },
   "scripts": {
     "start": "webpack-dev-server --config ./webpack.config.js --mode development",
-    "build": "webpack --mode development",
-    "deploy": "webpack --mode development && gulp"
+    "build": "webpack --config ./webpack.config.prod.js --mode development",
+    "deploy": "webpack --config ./webpack.config.prod.js --mode production && gulp"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",
@@ -29,6 +31,7 @@
     "@babel/preset-env": "^7.1.6",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "css-loader": "^1.0.1",
     "gulp": "3.9.1",
     "gulp-cli": "^2.0.1",

@@ -1,3 +1,7 @@
+.fa-row-menu-container {
+    cursor: pointer;
+}
+
 .fa-row-container {
     width: 100%;
     display: flex;
@@ -10,8 +14,46 @@
     color: #0070d2;
     margin-bottom: 4px;
     text-decoration: none;
+    position: relative;
 }
 
+.fa-row-container .menu {
+    background: white;
+    border-radius: 4px;
+    position: absolute;
+    top: 40px;
+    z-index: 1;
+    left: 12px;
+    padding: 5px 15px 5px 5px;
+  min-width: 146px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.fa-row-container .menu > li{
+    margin: 0;
+    font-size: 12px;
+    width: 100%;
+    padding: 7px 0px 10px 14px;
+    color: #2b2826;
+    /*padding: 5px 0px;*/
+    display: flex;
+    align-items: center;
+
+}
+
+.fa-row-container .menu svg{
+    margin-right: 10px;
+}
+
+.fa-row-container .menu > li:hover{
+    cursor: pointer;
+    /*text-decoration: underline; */
+    background: rgba(119, 127, 139, 0.15);
+}
+
+.fa-row-container .menu:focus {
+    outline: none;
+}
 
 .fa-row-text {
     line-height: 1.875rem;
@@ -20,9 +62,22 @@
 }
 
 .fa-row-text-container {
+    width: calc(100% - 16px);
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    text-decoration: none;
+    color: #0070d2;
 }
+
+.fa-row-text-container:focus {
+    outline: none;
+}
+
+.fa-row-text-container:active {
+    color: #0070d2;
+}
+
 
 .badge {
     background-color: rgba(119, 127, 139, 0.15);

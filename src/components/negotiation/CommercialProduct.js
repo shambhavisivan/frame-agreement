@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import Icon from '../utillity/Icon';
+import ExpandableArticle from '../utillity/ExpandableArticle';
 
 import Tabs from '../utillity/tabs/Tabs';
 import Tab from '../utillity/tabs/Tab';
@@ -13,172 +14,235 @@ import Addons from './Addons';
 import Charges from './Charges';
 import Rates from './Rates';
 
-import { applyDiscountToFrameAgreement } from '../../actions';
-
-// import { getAddons, getRateCards } from "../../actions";
+import {
+	validateAddons,
+	validateProduct,
+	validateCharges,
+	validateRateCardLines
+} from './Validation';
+import { setValidation } from '../../actions';
 
 import './CommercialProduct.scss';
 
 class CommercialProduct extends React.Component {
-  constructor(props) {
-    super(props);
-    this.fields = [...this.props.fields];
-    this.fields.unshift('Name');
+	constructor(props) {
+		super(props);
+		this.fields = [...this.props.fields];
+		this.fields.unshift('Name');
 
-    this.onExpandProduct = this.onExpandProduct.bind(this);
+		this.onExpandProduct = this.onExpandProduct.bind(this);
 
-    this.productId = this.props.product.Id;
+		this.productId = this.props.product.Id;
+		this.validation = this.props.validation || {};
 
-    this.state = {
-      loading: false,
-      open: false
-    };
-  }
+		this.state = {
+			loading: false
+		};
 
-  onExpandProduct() {
-    this.setState({
-      open: !this.state.open
-    });
-  }
+		let bulkValidation = {};
+		bulkValidation[this.productId] = {
+			addons: validateAddons(
+				this.props.product._addons,
+				this.props.attachment._addons || {}
+			),
+			rated: validateRateCardLines(
+				this.props._rateCards,
+				this.props.attachment._rateCards || {}
+			)
+		};
 
-  negotiateAddon(data) {
-    console.log('On product:', this.productId);
-    console.log('Update addons:', Object.keys(data));
-    console.log('To:', Object.values(data));
+		if (this.props.product._charges.length) {
+			bulkValidation[this.productId].charges = validateCharges(
+				this.props.product._charges,
+				this.props.product.cspmb__Authorization_Level__c,
+				this.props.attachment._charges || {}
+			);
+		} else {
+			bulkValidation[this.productId].product = validateProduct({
+				oneOff: this.props.product.cspmb__One_Off_Cost__c,
+				negotiatedOneOff: this.props.attachment._product
+					? this.props.attachment._product.oneOff
+					: null,
+				recurring: this.props.product.cspmb__Recurring_Cost__c,
+				negotiatedRecurring: this.props.attachment._product
+					? this.props.attachment._product.recurring
+					: null,
+				authLevel: this.props.product.cspmb__Authorization_Level__c || null,
+				Name: this.props.product.Name
+			});
+		}
 
-    // this.props.applyDiscountToFrameAgreement(this.productId, '_addons', data);
-    this.props.onNegotiate('_addons', data);
-  }
+		this.props.setValidation(bulkValidation);
+	}
 
-  negotiateCharge(data) {
-    console.log('On product:', this.productId);
-    console.log('Update charge:', Object.keys(data));
-    console.log('To:', Object.values(data));
+	onExpandProduct() {
+		this.props.onOpen(!this.props.open);
+	}
 
-    this.props.applyDiscountToFrameAgreement(this.productId, '_charges', data);
-  }
+	onNegotiate(type, data) {
+		if (type === '_addons') {
+			this.props.setValidation(
+				this.productId,
+				'addons',
+				validateAddons(this.props.product._addons, data)
+			);
+		}
 
-  negotiateProduct(data) {
-    console.log('On product:', this.productId);
-    this.props.applyDiscountToFrameAgreement(this.productId, '_product', data);
-  }
+		if (type === '_charges') {
+			this.props.setValidation(
+				this.productId,
+				'charges',
+				validateCharges(
+					this.props.product._charges,
+					this.props.product.cspmb__Authorization_Level__c,
+					data
+				)
+			);
+		}
 
-  negotiateRates(data) {
-    console.log('On product:', this.productId);
-    console.log('Update charge:', data);
+		if (type === '_rateCards') {
+			this.props.setValidation(
+				this.productId,
+				'rated',
+				validateRateCardLines(this.props.product._rateCards, data)
+			);
+		}
 
-    this.props.applyDiscountToFrameAgreement(
-      this.productId,
-      '_rateCards',
-      data
-    );
-  }
+		if (type === '_product') {
+			this.props.setValidation(
+				this.productId,
+				'product',
+				validateProduct({
+					oneOff: this.props.product.cspmb__One_Off_Cost__c,
+					negotiatedOneOff: data.oneOff,
+					recurring: this.props.product.cspmb__Recurring_Cost__c,
+					negotiatedRecurring: data.recurring,
+					authLevel: this.props.product.cspmb__Authorization_Level__c || null,
+					Name: this.props.product.Name
+				})
+			);
+		}
 
-  render() {
-    return (
-      <div
-        className={
-          'commercial-product-container' +
-          (this.state.open ? ' product-open' : '')
-        }
-      >
-        <div className="commercial-product-header">
-          <div className="commercial-product-checkbox-container">
-            <Checkbox
-              value={this.props.selected}
-              onChange={() => {
-                this.props.onSelect(this.props.product);
-              }}
-            />
-          </div>
+		this.props.onNegotiate(type, data);
+	}
 
-          <div className="commercial-product-fields-container">
-            <div
-              className="commercial-product-fields"
-              onClick={this.onExpandProduct}
-            >
-              {this.fields.map(pif => {
-                return (
-                  <span key={'facp-' + this.props.product.Id + '-' + pif}>
-                    {this.props.product[pif] || '-'}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+	render() {
+		return (
+			<div
+				className={
+					'commercial-product-container' +
+					(this.props.open ? ' product-open' : '')
+				}
+			>
+				<div className="commercial-product-header">
+					<div className="commercial-product-checkbox-container">
+						<Checkbox
+							disabled={!this.props.editable}
+							value={this.props.selected}
+							onChange={() => {
+								this.props.onSelect(this.props.product);
+							}}
+						/>
+					</div>
 
-        {this.state.open && (
-          <div>
-            <div className="commercial-product-description">
-              <span>
-                1600 AVAILABLE | £39 | Metus in vestibulum faucibus erat tortor
-                et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit,
-                cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum
-                est, vel erat in venenatis vestibulum, sed nostra dui nonummy
-                etiam eros, eget
-              </span>
-            </div>
+					<div className="commercial-product-fields-container">
+						<div
+							className="commercial-product-fields"
+							onClick={this.onExpandProduct}
+						>
+							{this.fields.map(pif => {
+								return (
+									<span key={'facp-' + this.props.product.Id + '-' + pif}>
+										{this.props.product[pif] || '-'}
+									</span>
+								);
+							})}
+						</div>
+					</div>
+				</div>
+				{this.props.open && (
+					<div>
+						{this.props.product.cspmb__Price_Item_Description__c && (
+							<div className="commercial-product-description">
+								<ExpandableArticle>
+									{this.props.product.cspmb__Price_Item_Description__c}
+								</ExpandableArticle>
+							</div>
+						)}
 
-            <Tabs>
-              <Tab label="Add-Ons">
-                <Addons
-                  attachment={this.props.attachment._addons || {}}
-                  addons={this.props.product._addons}
-                  onNegotiate={data => {
-                    this.negotiateAddon(data);
-                  }}
-                />
-              </Tab>
-              <Tab
-                label={
-                  'Charges' +
-                  (this.props.product._charges.length ? '' : ' (product)')
-                }
-              >
-                {this.props.product._charges.length ? (
-                  <Charges
-                    attachment={this.props.attachment._charges || {}}
-                    onNegotiate={data => {
-                      this.negotiateCharge(data);
-                    }}
-                    charges={this.props.product._charges}
-                  />
-                ) : (
-                  <ProductCharges
-                    product={this.props.product}
-                    onNegotiate={data => {
-                      this.negotiateProduct(data);
-                    }}
-                  />
-                )}
-              </Tab>
-              <Tab label="Rates">
-                <Rates
-                  attachment={this.props.attachment._rateCards || {}}
-                  rateCards={this.props.product._rateCards}
-                  onNegotiate={data => {
-                    this.negotiateRates(data);
-                  }}
-                />
-              </Tab>
-            </Tabs>
-          </div>
-        )}
-      </div>
-    );
-  }
+						<Tabs>
+							<Tab label="Add-Ons">
+								<Addons
+									readOnly={this.props.readOnly}
+									validation={this.props.validation[this.productId].addons}
+									attachment={this.props.attachment._addons || {}}
+									addons={this.props.product._addons}
+									onNegotiate={data => {
+										this.onNegotiate('_addons', data);
+									}}
+								/>
+							</Tab>
+							<Tab
+								label={
+									'Charges' +
+									(this.props.product._charges.length ? '' : ' (product)')
+								}
+							>
+								{this.props.product._charges.length ? (
+									<Charges
+										readOnly={this.props.readOnly}
+										level={this.props.product._levelId}
+										validation={this.props.validation[this.productId].charges}
+										attachment={this.props.attachment._charges || {}}
+										onNegotiate={data => {
+											this.onNegotiate('_charges', data);
+										}}
+										authLevel={this.props.product.cspmb__Authorization_Level__c}
+										charges={this.props.product._charges}
+									/>
+								) : (
+									<ProductCharges
+										product={this.props.product}
+										level={this.props.product._levelId}
+										readOnly={this.props.readOnly}
+										validation={this.props.validation[this.productId].product}
+										attachment={this.props.attachment._product || {}}
+										onNegotiate={data => {
+											this.onNegotiate('_product', data);
+										}}
+									/>
+								)}
+							</Tab>
+							<Tab label="Rates">
+								<Rates
+									readOnly={this.props.readOnly}
+									validation={this.props.validation[this.productId].rated}
+									attachment={this.props.attachment._rateCards || {}}
+									rateCards={this.props.product._rateCards}
+									onNegotiate={data => {
+										this.onNegotiate('_rateCards', data);
+									}}
+								/>
+							</Tab>
+						</Tabs>
+					</div>
+				)}
+			</div>
+		);
+	}
 }
 
-// const mapStateToProps = state => {
-//   return {};
-// };
+const mapStateToProps = state => {
+	return {
+		validation: state.validation
+	};
+};
 
 const mapDispatchToProps = {
-  applyDiscountToFrameAgreement
+	setValidation
 };
 
 export default connect(
-  null,
-  mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(CommercialProduct);

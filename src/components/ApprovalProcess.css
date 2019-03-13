@@ -1,0 +1,77 @@
+.table-container.this.props.approval.listProcess .table-list-header{
+	font-size: 10px;
+}
+.table-container.this.props.approval.listProcess .list-row{
+	font-size: 10px;
+}
+
+
+
+
+.approval-table-list {
+	border-radius: 4px;
+	background: #f3f2f2;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+.approval-table-list .table-list-header>.list-cell {
+	text-align: left;
+}
+
+.approval-table-list .list-row>.list-cell {
+	text-align: left;
+}
+
+.approval-table-list-header {
+	background: white;
+	display: flex;
+	padding: 12px 20px;
+	    border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.approval-table-list-header .table-title {
+  font-size: 18px;
+  color: #080707;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.approval-table-list-header .table-title > svg{
+  margin-right: 10px;
+}
+
+.approval-table-list-header .table-actions {
+  flex: 3;
+  text-align: right;
+}
+
+.approval-table-list-header .table-actions .link{
+  margin-left: 30px;
+}
+
+.approval-table-list-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.approval-table-list-container > ul.table-list {
+	margin-top: 5px;
+	background: white;
+}
+
+.approval-history .list-row>.list-cell {
+	padding: 8px 10px; 
+}
+
+.status.Pending {
+	color: #ffa429;
+}
+.status.Approved {
+	color: #4bca81;
+}
+.status.Rejected {
+	color: #d81c2a;
+}

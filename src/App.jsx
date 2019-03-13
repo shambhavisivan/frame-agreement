@@ -13,14 +13,19 @@ import FaEditor from './components/FaEditor';
 
 import { withRouter } from 'react-router-dom';
 
+import { publish } from './api';
+
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.props.getAppSettings().then(response => {
       window.SF.AuthLevels = response.AuthLevels;
-      this.props.getFrameAgreements();
-      this.props.getCommercialProducts();
+       Promise.all([this.props.getFrameAgreements(), this.props.getCommercialProducts()])
+       .then(responseArr => {
+          publish("onLoad", [responseArr]);
+          // window.FAC.toaster = ToastsStore;
+       });
     });
   }
 
@@ -30,11 +35,13 @@ class App extends Component {
       this.props.initialised.fa_loaded &&
       this.props.initialised.cp_loaded &&
       this.props.initialised.settings_loaded && (
-        <Switch>
-          <Route exact path="/" component={FaList} />
-          <Route exact path="/agreement" component={FaEditor} />
-          <Route exact path="/agreement/:id" component={FaEditor} />
-        </Switch>
+        <div>
+          <Switch>
+            <Route exact path="/" component={FaList} />
+            <Route exact path="/agreement" component={FaEditor} />
+            <Route exact path="/agreement/:id" component={FaEditor} />
+          </Switch>
+        </div>
       )
     );
   }

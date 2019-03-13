@@ -178,8 +178,8 @@ li.list-row:first-child {
 }
 
 .list-row div.list-cell:first-child {
-    display: flex;
-    align-items: center;
+    /*display: flex;*/
+    /*align-items: center;*/
     text-align: left;
 }
 
@@ -200,6 +200,13 @@ li.list-row:first-child {
     /*cursor: pointer;*/
 }
 
+.list-cell.valid {
+   color: #4bca81;
+}
+.list-cell.invalid {
+   color: #d81c2a;
+}
+
 .list-cell .checkbox {
     display: inline-block;
     float: left;
@@ -211,3 +218,4 @@ li.list-row:first-child {
     border-top: 1px solid #dddbda;
     display: flex;
 }
+/*************************************************/

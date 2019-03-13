@@ -4,113 +4,173 @@ import './ProductCharges.scss';
 // import Checkbox from '../utillity/inputs/Checkbox';
 import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
+import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
+
+import { validateProduct } from './Validation';
+
+import { setValidation } from '../../actions';
+import { connect } from 'react-redux';
 
 class ProductCharges extends React.Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
-    // this.onSelect = this.onSelect.bind(this);
-    this.saveNegotiation = this.saveNegotiation.bind(this);
-    // this.negotiateInline = this.negotiateInline.bind(this);
+		this.discounts = [];
 
-    // this.props.product
-    console.log(this.props.product);
+		if (this.props.level) {
+			this.props.level.forEach(lv => {
+				this.discounts.push(this.props.settings.DiscLevels[lv].discountLevel);
+			});
+		}
+	}
 
-    this.state = {
-      open: false,
-      saveDisabled: true,
-      negotiation: {}
-    };
-  }
+	negotiateInline(chargeType, value) {
+		let negotiation = this.props.attachment;
+		negotiation[chargeType] = value;
 
-  saveNegotiation() {
-    // if (validateNegotiation(this.state.negotiation)) {
-    this.props.onNegotiate(this.state.negotiation);
-    this.setState({ saveDisabled: true });
-    // }
-  }
+		this.props.onNegotiate(negotiation);
+	}
 
-  negotiateInline(chargeType, value) {
-    this.setState(
-      { negotiation: { ...this.state.negotiation, [chargeType]: value } },
-      () => {
-        this.setState({ saveDisabled: false });
-        console.log(this.state.negotiation);
-      }
-    );
-  }
+	render() {
+		let flagColor = this.props.readOnly ? '#ccc' : '#4bca81';
 
-  render() {
-    return (
-      <div className="table-container">
-        <div className="table-list-header">
-          <div className="list-cell">Charge Name</div>
-          <div className="list-cell">One-Off Adjustment</div>
-          <div className="list-cell">Negotiated One Off</div>
-          <div className="list-cell">Reccuring Adjustment</div>
-          <div className="list-cell">Negotiated Reccuring</div>
-        </div>
+		return (
+			<div className="table-container">
+				<div className="table-list-header">
+					<div className="list-cell">Charge Name</div>
+					<div className="list-cell">One-Off Adjustment</div>
+					<div className="list-cell">Negotiated One Off</div>
+					<div className="list-cell">Recurring Adjustment</div>
+					<div className="list-cell">Negotiated Recurring</div>
+				</div>
 
-        <ul className="table-list">
-          <li className="list-row">
-            <div className="list-cell">
-              <Icon name="priority" width="14" color="#4bca81" /> On product
-            </div>
-            <div className="list-cell">
-              {' '}
-              {this.props.product.cspmb__One_Off_Cost__c || 'N/A'}
-            </div>
-            <div className="list-cell negotiable">
-              {this.props.product.cspmb__One_Off_Cost__c != null ? (
-                <InputNegotiate
-                  onChange={val => {
-                    this.negotiateInline('oneOff', val);
-                  }}
-                  negotiatedValue={
-                    this.props.product._negotiatedOneOff ||
-                    this.props.product.cspmb__One_Off_Cost__c
-                  }
-                  originalValue={this.props.product.cspmb__One_Off_Cost__c}
-                />
-              ) : (
-                'N/A'
-              )}
-            </div>
-            <div className="list-cell">
-              {' '}
-              {this.props.product.cspmb__Recurring_Cost__c || 'N/A'}
-            </div>
-            <div className="list-cell negotiable">
-              {this.props.product.cspmb__Recurring_Cost__c != null ? (
-                <InputNegotiate
-                  onChange={val => {
-                    this.negotiateInline('reccuring', val);
-                  }}
-                  negotiatedValue={
-                    this.props.product._negotiatedRecurring ||
-                    this.props.product.cspmb__Recurring_Cost__c
-                  }
-                  originalValue={this.props.product.cspmb__Recurring_Cost__c}
-                />
-              ) : (
-                'N/A'
-              )}
-            </div>
-          </li>
-        </ul>
+				<ul className="table-list">
+					<li className="list-row">
+						<div className="list-cell">
+							<Icon name="priority" width="14" color={flagColor} /> On product
+						</div>
+						<div className="list-cell">
+							{' '}
+							{this.props.product.cspmb__One_Off_Cost__c || 'N/A'}
+						</div>
+						<div className="list-cell negotiable">
+							{(() => {
+								// This info applies for both types of charges
+								let oneOffRow = 'N/A';
+								let negValue = this.props.attachment.hasOwnProperty('oneOff')
+									? this.props.attachment.oneOff
+									: this.props.product.cspmb__One_Off_Cost__c;
 
-        <div className="table-footer">
-          <button
-            className="slds-button slds-button--neutral negotiation-button"
-            disabled={this.state.saveDisabled}
-            onClick={this.saveNegotiation}
-          >
-            Save
-          </button>
-        </div>
-      </div>
-    );
-  }
+								// If there are any discounts and there one off is defined
+								if (
+									this.discounts.length &&
+									this.props.product.cspmb__One_Off_Cost__c != null
+								) {
+									// Filter only ones that have adequate type
+									let oneOffDiscount = this.discounts.filter(
+										dc => dc.cspmb__Charge_Type__c === 'NRC'
+									);
+									oneOffRow = (
+										<DropdownNegotiate
+											readOnly={this.props.readOnly}
+											invalid={this.props.validation.oneOff}
+											discounts={oneOffDiscount}
+											onChange={val => {
+												this.negotiateInline('oneOff', val);
+											}}
+											negotiatedValue={negValue}
+											originalValue={this.props.product.cspmb__One_Off_Cost__c}
+										/>
+									);
+								} else if (this.props.product.cspmb__One_Off_Cost__c != null) {
+									// No discounts? Put negotiated value input
+									oneOffRow = (
+										<InputNegotiate
+											readOnly={this.props.readOnly}
+											invalid={this.props.validation.oneOff}
+											onChange={val => {
+												this.negotiateInline('oneOff', val);
+											}}
+											negotiatedValue={negValue}
+											originalValue={this.props.product.cspmb__One_Off_Cost__c}
+										/>
+									);
+								}
+								return oneOffRow;
+							})()}
+						</div>
+						<div className="list-cell">
+							{' '}
+							{this.props.product.cspmb__Recurring_Cost__c || 'N/A'}
+						</div>
+						<div className="list-cell negotiable">
+							{(() => {
+								let recurringRow = 'N/A';
+								let negValue = this.props.attachment.hasOwnProperty('recurring')
+									? this.props.attachment.recurring
+									: this.props.product.cspmb__Recurring_Cost__c;
+
+								if (
+									this.discounts.length &&
+									this.props.product.cspmb__Recurring_Cost__c != null
+								) {
+									let recurringDiscount = this.discounts.filter(
+										dc => dc.cspmb__Charge_Type__c === 'RC'
+									);
+									recurringRow = (
+										<DropdownNegotiate
+											readOnly={this.props.readOnly}
+											invalid={this.props.validation.recurring}
+											discounts={recurringDiscount}
+											onChange={val => {
+												this.negotiateInline('recurring', val);
+											}}
+											negotiatedValue={negValue}
+											originalValue={
+												this.props.product.cspmb__Recurring_Cost__c
+											}
+										/>
+									);
+								} else if (
+									this.props.product.cspmb__Recurring_Cost__c != null
+								) {
+									recurringRow = (
+										<InputNegotiate
+											readOnly={this.props.readOnly}
+											invalid={this.props.validation.recurring}
+											onChange={val => {
+												this.negotiateInline('recurring', val);
+											}}
+											negotiatedValue={negValue}
+											originalValue={
+												this.props.product.cspmb__Recurring_Cost__c
+											}
+										/>
+									);
+								}
+								return recurringRow;
+							})()}
+						</div>
+					</li>
+				</ul>
+			</div>
+		);
+	}
 }
 
-export default ProductCharges;
+// export default ProductCharges
+
+const mapStateToProps = state => {
+	return {
+		settings: state.settings
+	};
+};
+
+// const mapDispatchToProps = {
+//     setValidation
+// };
+
+export default connect(
+	mapStateToProps,
+	null
+)(ProductCharges);

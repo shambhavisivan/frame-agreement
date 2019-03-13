@@ -1,10 +1,10 @@
 .commercial-product-container {
+		font-size: 0.9rem;
     width: 100%;
     padding: 0px 20px;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
     margin-bottom: 1px;
     background-color: white;
-    border-radius: 4px;
     box-sizing: border-box;
 }
 
@@ -38,16 +38,9 @@
     flex: 1;
 }
 
-
 .commercial-product-fields > span.volume-fields {
     cursor: text;
 }
-
-.commercial-product-fields > span.volume-fields .negotiate-input-wrapper{
-    /*max-width: unset;*/
-        float: right;
-}
-
 
 .commercial-product-container.product-open {
     margin: 15px 0px;
@@ -59,7 +52,6 @@
 
 .commercial-product-header .commercial-product-fields > span:first-child {
     color: #0070d2;
-    font-size: 20px;
 }
 
 .commercial-product-header:hover+div .negotiation-button:not(:disabled) {

@@ -1,84 +1,75 @@
-// Grid
-//
-// Grid object.
+/* FA Flex */
+// Flex object.
 
-.grid {
+/* Widths */
+$flex-widths: (
+	fa-flex-1: 1,
+	fa-flex-2: 2,
+	fa-flex-3: 3,
+	fa-flex-4: 4,
+	fa-flex-5: 5,
+	fa-flex-6: 6,
+	fa-flex-7: 7,
+	fa-flex-8: 8,
+	fa-flex-9: 9,
+	fa-flex-10: 10,
+	fa-flex-11: 11,
+	fa-flex-12: 12
+);
+
+@each $width, $value in $flex-widths {
+	.#{$width} {
+		flex: $value;
+	}
+}
+
+/* Flex */
+.fa-flex {
 	display: flex;
 	flex-wrap: wrap;
-	margin-left: -$spacer * 6;
-	margin-top: -$spacer * 6;
 }
 
-.grid-flush {
-	margin-left: 0;
-	margin-top: 0;
-
-	.grid-item {
-		padding-left: 0;
-		padding-top: 0;
-	}
-}
-
-// Sizes
-//
-
-.grid-sm {
-	margin-left: -$spacer * 3;
-	margin-top: -$spacer * 3;
-
-	> .grid-item {
-		padding-left: $spacer * 3;
-		padding-top: $spacer * 3;
-	}
-}
-
-// Item
-//
-
-.grid-item {
-	padding-left: $spacer * 6;
-	padding-top: $spacer * 6;
+/* Item */
+.fa-flex-item {
+	margin-left: 1.5rem;
+	margin-right: 1.5rem;
 	width: 100%;
 }
 
-// Horizontal
-//
-
-.grid-start {
+/* Horizontal */
+.fa-flex-start {
 	justify-content: flex-start;
 }
 
-.grid-center {
+.fa-flex-center {
 	justify-content: center;
 }
 
-.grid-end {
+.fa-flex-end {
 	justify-content: flex-end;
 }
 
-.grid-between {
+.fa-flex-between {
 	justify-content: space-between;
 }
 
-.grid-around {
+.fa-flex-around {
 	justify-content: space-around;
 }
 
-// Vertical
-//
-
-.grid-top {
+/* Vertical */
+.fa-flex-top {
 	align-items: flex-start;
 }
 
-.grid-middle {
+.fa-flex-middle {
 	align-items: center;
 }
 
-.grid-bottom {
+.fa-flex-bottom {
 	align-items: flex-end;
 }
 
-.grid-stretch {
+.fa-flex-stretch {
 	align-items: stretch;
 }

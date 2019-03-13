@@ -46,7 +46,7 @@ class CustomButtonDropdown extends React.Component {
 
 	render() {
 		return (
-			<div className="dropdown-button-container">
+			<div className="fa-margin-right-sm">
 				{this.state.menu && (
 					<ul
 						ref={this.menu}
@@ -71,10 +71,10 @@ class CustomButtonDropdown extends React.Component {
 				)}
 
 				<button
-					className="slds-button slds-button-icon slds-button--translucent"
+					className="fa-button fa-button-border-light fa-button-transparent"
 					onClick={this.showMenu}
 				>
-					Custom{' '}
+					<span className="fa-margin-right-xsm">Custom{' '}</span>
 					<Icon
 						name={this.state.menu ? 'up' : 'down'}
 						height="14"

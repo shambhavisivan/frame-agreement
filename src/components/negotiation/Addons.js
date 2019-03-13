@@ -26,13 +26,13 @@ class Addons extends React.Component {
 
 	render() {
 		return (
-			<div className="table-container">
-				<div className="table-list-header">
-					<div className="list-cell">Name</div>
-					<div className="list-cell">One Off Charge</div>
-					<div className="list-cell">Negotiated One Off</div>
-					<div className="list-cell">Recurring Charge</div>
-					<div className="list-cell">Negotiated Recurring</div>
+			<div>
+				<div>
+					<div className="fa-title fa-padding-right-sm">Name</div>
+					<div className="fa-title fa-padding-right-sm">One Off Charge</div>
+					<div className="fa-title fa-padding-right-sm">Negotiated One Off</div>
+					<div className="fa-title fa-padding-right-sm">Recurring Charge</div>
+					<div className="fa-title fa-padding-right-sm">Negotiated Recurring</div>
 				</div>
 
 				<ul className="table-list">

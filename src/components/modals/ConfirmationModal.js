@@ -12,22 +12,22 @@ class ConfirmationModal extends Component {
 
 	render() {
 		return (
-			<div className="sf-modal confirmation">
+			<div className="modal fa-modal">
 				<div className="modal-header">
 					<h2>{this.props.title}</h2>
 				</div>
-				<div className="modal-body">
-					<p>{this.props.message}</p>
+				<div className="modal fa-modal-body">
+					<p className="fa-text-center">{this.props.message}</p>
 				</div>
 				<div className="modal-footer">
 					<button
-						className="slds-button slds-button--neutral"
+						className="fa-button button--neutral fa-margin-right-xsm"
 						onClick={this.props.onCancel}
 					>
 						Cancel
 					</button>
 					<button
-						className="slds-button slds-button--brand"
+						className="fa-button button--brand"
 						onClick={() => {
 							this.props.onConfirm();
 							this.props.onCancel();

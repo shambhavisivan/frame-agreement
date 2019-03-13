@@ -34,9 +34,7 @@
 }
 
 .dropdown-placeholder {
-    color: #0070d2;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
     cursor: pointer;
 }

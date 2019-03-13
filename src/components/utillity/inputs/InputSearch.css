@@ -2,30 +2,16 @@
     position: relative;
     width: 100%;
 }
-.transparent .search-wrapper .search-input{
+
+.transparent .search-wrapper .search-input {
     border: none;
     background: transparent;
     border-bottom: 1px solid #CCCCCC;
 }
 
-.search-wrapper > svg{
+.search-wrapper > svg {
 	position: absolute;
 	top: 8px;
 	left: 13px;
 	z-index: 2;
-}
-
-.search-input {
-    color: #747474;
-    height: 28px;
-    width: calc(100% - 37px);
-    /*border-radius: 4px;*/
-    background-color: white;
-    border: 1px solid #dddddd;
-    margin-left: 37px;
-    box-sizing: border-box;
-}
-
-.search-input::placeholder {
-    /*color: #747474;*/
 }

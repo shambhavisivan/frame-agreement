@@ -1,43 +1,95 @@
-// Fa list
-//
-// Fa list component.
+/* Fa Header */
+// Header component.
 
-.header {
+.fa-main-header {
 	background: #fff;
 	border-bottom: 2px solid $gray-light-5;
-	padding: $spacer * 5 0;
-	margin-bottom: 20px;
+	padding: 1.25rem 0;
+	margin-bottom: 1.25rem;
 }
 
-// Title
-//
-
-.header-col-title {
-	color: #777;
-}
-
-// Search
-//
-
-.header-search {
+/* Container */
+.fa-main-header-container {
 	display: flex;
+	flex-wrap: wrap;
 }
 
-// Secondary
+/* Item */
 
-.header-secondary {
+.fa-main-header-item {
+	flex: 1;
+	padding-left: 1.5rem;
+
+	&:first-child,
+	&:last-child {
+		padding: 0;
+	}
+
+	&:last-child {
+		flex: auto;
+		width: 100%;
+	}
+}
+
+/* Group */
+.fa-main-header-group {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+
+	.cloudsense-logo {
+		margin-bottom: .5rem;
+		margin-right: 1rem;
+	}
+}
+
+/* Title */
+.fa-main-header .fa-main-header-title {
+	color: #777;
+	margin-bottom: .5rem;
+}
+
+/* Search */
+.fa-main-header-search {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+/* Secondary */
+.fa-header-secondary {
 	background: $blue-sf;
 	color: $white;
-	padding: $spacer * 4 0;
+	padding: 1rem 0;
 }
 
-.header-secondary-body {
+.fa-header-secondary-body {
 	align-items: center;
 	display: flex;
 	justify-content: space-between;
+	position: relative;
 }
 
-.header-secondary-body-col {
+.fa-header-secondary-body-sub {
+	font-size: 0.8rem;
+	opacity: 0.5;
+}
+
+.fa-header-secondary-body-title {
+	font-size: 1.2rem;
+}
+
+.fa-header-secondary-body-col {
 	align-items: center;
 	display: flex;
+
+	&-left {
+		padding-left: 1.5rem;
+	}
+}
+
+.fa-header-secondary-prev {
+	bottom: 50%;
+	position: absolute;
+	left: -1.5rem;
+	transform: translateY(50%);
 }

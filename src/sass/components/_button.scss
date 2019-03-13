@@ -1,37 +1,41 @@
-// Button
-//
+/* FA Button */
 // Button component.
 
-.button {
+.fa-button {
 	align-items: center;
-	border-radius: $border-radius / 2;
+	border: 0;
+	border-radius: 0.25rem;
 	color: $white;
 	cursor: pointer;
-	display: flex;
-	font-size: 12px;
+	display: inline-flex;
+	font-size: 0.75rem;
+	height: 2rem;
 	justify-content: center;
-	padding: $spacer $spacer * 5;
+	padding: 0.25rem 0.25rem * 5;
+	text-decoration: none;
 	@include sbg(--main-c);
 }
 
-.button-lg {
-	padding: $spacer * 2 $spacer * 5;
+.fa-button-lg {
+	padding: 0.25rem * 2 0.25rem * 5;
 }
 
-// Transparent
-//
+/* Colours */
+.fa-button-light {
+	background: $white;
+	color: $blue-sf;
+}
 
-.button-transparent {
+/* Transparent */
+.fa-button-transparent {
 	background: transparent;
 }
 
-// Border
-//
-
-.button-border-light {
+/* Border */
+.fa-button-border-light {
 	border: 1px solid $white;
 }
 
-.button-border-dark {
+.fa-button-border-dark {
 	border: 1px solid $black;
 }

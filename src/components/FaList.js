@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { confirmAlert } from 'react-confirm-alert';
+import CloudSenseLogo from '../../dist/cloudsense.png';
 
 import { withRouter } from 'react-router-dom';
 import {
@@ -82,34 +83,29 @@ class FaList extends Component {
 
 	render() {
 		return (
-			<div className="fa-list">
-				<div className="fa-list-header">
-					<div className="fa-list-header-compartment">
-						<div className="header-row">
-							<div className="logo-container">
-								<h1>Frame Agreement Negotiation Console</h1>
-								<i className="cloudsense-logo" />
-							</div>
-							<div className="action-container">
-								<button className="slds-button slds-button--brand link-button">
-									<Link to="/agreement">Add new Agreement</Link>
-								</button>
-							</div>
-						</div>
-						<div className="header-row" style={{ justifyContent: 'center' }}>
-							<div className="search-container">
-								<InputSearch onChange={this.onSearchChange} />
-							</div>
-						</div>
-						<div
-							className="header-row"
-							style={{ justifyContent: 'flex-start' }}
-						>
-							<div className="label-text">Agreement list</div>
+			<div>
+				<div className="fa-main-header">
+					<div className="fa-container">
+						<div className="fa-main-header-container">
+								<div className="fa-main-header-item">
+									<div className="fa-main-header-group">
+										<img className="cloudsense-logo" src={CloudSenseLogo} alt="CloudSense Logo" />
+										<h5 className="fa-main-header-title">Frame Agreement Negotiation Console</h5>
+									</div>
+								</div>
+								<div className="fa-main-header-item">
+									<div className="fa-main-header-search">
+										<InputSearch onChange={this.onSearchChange} />
+										<Link className="fa-button" to="/agreement">Add new Agreement</Link>
+									</div>
+								</div>
+								<div className="fa-main-header-item">
+									<h5 className="fa-main-header-title">Agreement list</h5>
+								</div>
 						</div>
 					</div>
 				</div>
-				<div className="fa-list-body">
+				<div className="fa-container">
 					{Object.values(this.props.frameAgreements)
 						.filter(fa => {
 							if (this.state.searchTerm) {

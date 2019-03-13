@@ -1,0 +1,34 @@
+/* FA Section */
+// Section component.
+
+.fa-section {
+	background: $white;
+	padding: 0.25rem * 4;
+}
+
+.fa-section-vertical {
+		padding: 0.25rem * 4 0;
+}
+
+.fa-section-bare {
+	padding: 0;
+}
+
+/* Sizes */
+$section-sizes: (
+	sm: 0.25rem * 2,
+	md: 0.25rem * 4,
+	lg: 0.25rem * 8,
+	xlg: 0.25rem * 12
+);
+
+@each $label, $size in $section-sizes {
+	.fa-section-#{$label} {
+		padding: $size;
+	}
+}
+
+/* Border */
+.fa-section-border {
+	border: 1px solid $gray-light-5;
+}

@@ -1,15 +1,14 @@
-// Spacing
-//
+/* FA Spacing */
 // Some helper classes to help with general spacing.
 
 $spacing-sizes: (
 	none: 0,
-	xsm: $spacer * 2,
-	sm: $spacer * 4,
-	md: $spacer * 6,
-	lg: $spacer * 8,
-	xlg: $spacer * 16,
-	xxlg: $spacer * 24
+	xsm: 0.25rem * 2,
+	sm: 0.25rem * 4,
+	md: 0.25rem * 6,
+	lg: 0.25rem * 8,
+	xlg: 0.25rem * 16,
+	xxlg: 0.25rem * 24
 );
 
 $spacing-directions: (
@@ -27,7 +26,7 @@ $spacing-properties: (
 @each $property in $spacing-properties {
 	@each $direction in $spacing-directions {
 		@each $size, $value in $spacing-sizes {
-			.#{$property}-#{$direction}-#{$size} {
+			.fa-#{$property}-#{$direction}-#{$size} {
 				#{$property}-#{$direction}: $value;
 			}
 		}

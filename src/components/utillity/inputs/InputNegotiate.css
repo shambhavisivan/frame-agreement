@@ -1,48 +1,45 @@
 .negotiate-container{
-    width: 100%;
-    display: flex;
-    align-items: flex-end;
-    flex-direction: column;
-} 
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+}
 .negotiate-container{
-    cursor: default;
-} 
+  cursor: default;
+}
 
 .negotiate-input-wrapper {
-    position: relative;
-    min-width: 50px;
-    max-width: 120px;
-    flex-basis: auto;
-    flex-grow: 1;
-    text-align: right;
+  position: relative;
+  min-width: 50px;
+  max-width: 120px;
+  flex-basis: auto;
+  flex-grow: 1;
 }
 
 .negotiate-icon {
 	visibility: hidden;
-    position: absolute;
-    top: 1px;
-    left: 4px;
-    z-index: 2;
-} 
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  z-index: 2;
+}
 
 .negotiate-input {
 	border: none;
-	text-align: right;
-    height: 20px;
-    width: 100%;
-    border-bottom: 1px solid transparent;
-    background-color: white;
-    padding-left: 37px;
-    box-sizing: border-box;
+  height: 20px;
+  width: 100%;
+  border-bottom: 1px solid transparent;
+  background-color: white;
+  box-sizing: border-box;
 }
 
 .negotiate-input-wrapper.negotiated > .negotiate-input{
-    color: #080707;
+  color: #080707;
 }
 
 .negotiate-input-wrapper.readOnly {
-    cursor: default;
-    font-size: 13px;
+  cursor: default;
+  font-size: 13px;
 }
 
 /***********************************************************************/
@@ -67,10 +64,10 @@
 }
 
 
-input.negotiate-input::-webkit-inner-spin-button, 
-input.negotiate-input::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input.negotiate-input::-webkit-inner-spin-button,
+input.negotiate-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .discount-info {

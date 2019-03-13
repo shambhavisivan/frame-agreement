@@ -805,12 +805,12 @@ class FaEditor extends Component {
 		let footer = '';
 		if (this.state.activeFa._ui.commercialProducts.length) {
 			footer = (
-				<div className="main-footer">
+				<div className="fa-footer">
 					{this.props.settings.ButtonStandardData.AddProducts.has(
 						this.state.activeFa.csconta__Status__c
 					) && (
 						<button
-							className="slds-button slds-button--brand"
+							className="fa-button fa-margin-right-sm"
 							onClick={this.onOpenCommercialProductModal}
 						>
 							Add Products
@@ -822,7 +822,7 @@ class FaEditor extends Component {
 					) && (
 						<button
 							disabled={!Object.keys(this.state.selectedProducts).length}
-							className="slds-button slds-button--neutral"
+							className="fa-button fa-margin-right-sm"
 							onClick={this.onOpenNegotiationModal}
 						>
 							Negotiate Products
@@ -834,7 +834,7 @@ class FaEditor extends Component {
 					) && (
 						<button
 							disabled={!Object.keys(this.state.selectedProducts).length}
-							className="slds-button slds-button--danger"
+							className="fa-button"
 							onClick={this.onRemoveProducts}
 						>
 							Delete Products
@@ -925,61 +925,72 @@ class FaEditor extends Component {
 
 		if (this.state.activeFa._ui.commercialProducts.length) {
 			commercialProducts = (
-				<div className="commercial-products">
-					<div className="info-row">
-						<div className="commercial-product-search-container">
-							<span>
-								Products ({this.state.activeFa._ui.commercialProducts.length})
-							</span>
-							<div className="commercial-product-search transparent">
-								<InputSearch
-									value={this.state.productFilter}
-									onChange={val => {
-										this.setState({ productFilter: val });
-									}}
-									placeholder="Quick search"
-								/>
-							</div>
-							<div className="commercial-product-column-visibillity">
-								<DropdownCheckbox
-									options={this.props.productFields}
-									onChange={this.toggleVisibility}
-								/>
-							</div>
-						</div>
-
-						<div className="commercial-product-list-header">
-							<div className="commercial-product-checkbox-container">
-								<Checkbox
-									value={
-										this.state.activeFa._ui.commercialProducts.length ===
-										Object.keys(this.state.selectedProducts).length
-									}
-									onChange={() => {
-										this.onSelectAllProducts();
-									}}
-								/>
-							</div>
-
-							<div className="commercial-product-fields-container">
-								<div className="commercial-product-fields">
-									<span>Product name</span>
-									{this.props.productFields
-										.filter(f => f.visible)
-										.map(f => {
-											return (
-												<span
-													key={'header-' + f.name}
-													className={
-														'product-header' + (f.volume ? ' volume' : '')
-													}
-												>
-													{truncateCPField(f.name)}
-												</span>
-											);
-										})}
+				<div>
+					<div>
+						<div className="fa-section fa-section-vertical fa-section-border">
+							<div className="fa-flex fa-flex-middle">
+								<div className="fa-flex-item fa-flex-1">
+									<span>
+										Products ({this.state.activeFa._ui.commercialProducts.length})
+									</span>
+								</div>
+								<div className="fa-flex-item fa-flex-1">
+									<div className="fa-flex fa-flex-middle">
+										<div className="fa-flex-1">
+											<div className="fa-flex fa-flex-middle fa-flex-end">
+												<InputSearch
+													value={this.state.productFilter}
+													onChange={val => {
+														this.setState({ productFilter: val });
+													}}
+													placeholder="Quick search"
+												/>
+												<DropdownCheckbox
+													options={this.props.productFields}
+													onChange={this.toggleVisibility}
+												/>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
+						</div>
+						<div className="commercial-product-container">
+							<div className="commercial-product-header">
+								<div className="commercial-product-checkbox-container">
+									<Checkbox
+										className="fa-margin-right-sm"
+										value={
+											this.state.activeFa._ui.commercialProducts.length ===
+											Object.keys(this.state.selectedProducts).length
+										}
+										onChange={() => {
+											this.onSelectAllProducts();
+										}}
+									/>
+								</div>
+
+								<div className="commercial-product-fields-container">
+									<div className="commercial-product-fields">
+										<span>Product name</span>
+										{this.props.productFields
+											.filter(f => f.visible)
+											.map(f => {
+												return (
+													<span
+														key={'header-' + f.name}
+														className={
+															'list-cell' + (f.volume ? ' volume' : '')
+														}
+													>
+														{truncateCPField(f.name)}
+													</span>
+												);
+											})}
+									</div>
+								</div>
+							</div>
+
 						</div>
 					</div>
 					{this.state.activeFa._ui.commercialProducts
@@ -1019,8 +1030,8 @@ class FaEditor extends Component {
 			);
 		} else {
 			commercialProducts = (
-				<div className="commercial-products">
-					<div className="info-row">
+				<div>
+					<div>
 						<span>Product Negotiation</span>
 					</div>
 					{addProductCTA}
@@ -1040,14 +1051,14 @@ class FaEditor extends Component {
 						status={this.state.activeFa.csconta__Status__c}
 						subtitle="Frame Agreement Details"
 					>
-						<div className="header-button-container">
+						<div className="fa-flex fa-flex-flush">
 							{customButtonsComponent}
 
 							{this.props.settings.ButtonStandardData.Save.has(
 								this.state.activeFa.csconta__Status__c
 							) && (
 								<button
-									className="slds-button slds-button--translucent"
+									className="fa-button fa-button-border-light fa-button-transparent"
 									onClick={this.upsertFrameAgreements}
 								>
 									Save
@@ -1058,7 +1069,7 @@ class FaEditor extends Component {
 								this.state.activeFa.csconta__Status__c
 							) && (
 								<button
-									className="slds-button slds-button--translucent"
+									className="fa-button fa-button-border-light fa-button-transparent"
 									disabled={
 										!this.props.approvalFlag ||
 										!this.state.activeFa._ui.commercialProducts.length
@@ -1072,50 +1083,52 @@ class FaEditor extends Component {
 							{this.props.settings.ButtonStandardData.Submit.has(
 								this.state.activeFa.csconta__Status__c
 							) && (
-								<button className="slds-button slds-button--translucent">
+								<button className="fa-button fa-button-border-light fa-button-transparent">
 									Decompose
 								</button>
 							)}
 
 							{this.state.activeFa.csconta__Status__c ===
 								this.props.settings.FACSettings.statuses.active_status && (
-								<button className="slds-button slds-button--translucent">
+								<button className="fa-button fa-button-border-light fa-button-transparent">
 									Create New Version
 								</button>
 							)}
 						</div>
 					</Header>
 
-					<div className="main-container">
-						<div className="main">
-							<div className="main-header">
+					<div className="fa-container">
+						<div>
+							<section className="fa-section fa-section-vertical fa-section-border fa-section-light">
 								{this.header_rows.map((row, i) => {
 									return (
-										<div className="main-header-row" key={'header-row-' + i}>
-											{row.map(f => {
-												var editable = !f.readOnly && this.editable;
-												return (
-													<SFField
-														editable={editable}
-														onChange={this.onFieldChange}
-														key={f.field}
-														field={f}
-														value={this.state.activeFa[f.field] || ''}
-													/>
-												);
-											})}
+										<div className="fa-margin-bottom-md" key={'header-row-' + i}>
+											<div className="fa-flex">
+												{row.map(f => {
+													var editable = !f.readOnly && this.editable;
+													return (
+														<SFField
+															editable={editable}
+															onChange={this.onFieldChange}
+															key={f.field}
+															field={f}
+															value={this.state.activeFa[f.field] || ''}
+														/>
+													);
+												})}
+											</div>
 										</div>
 									);
 								})}
-							</div>
+							</section>
 
-							<div className="main-frame-container">
+							<section className="fa-section fa-section-border">
 								{approvalHistory}
 								{commercialProducts}
 
 								{productModal}
 								{negotiateModal}
-							</div>
+							</section>
 
 							{this.editable && footer}
 						</div>

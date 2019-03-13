@@ -1,17 +1,23 @@
-// Icon
-//
+/* FA Icon */
 // Icon component.
 
-.icon {
+.fa-icon {
 	cursor: pointer;
 }
 
-// Search
-//
+/* Group */
+.fa-icon-group {
+	align-items: center;
+	display: inline-flex;
+	margin-right: 0.5rem;
+}
 
-.icon-search {
-	bottom: 50%;
-	left: 10px;
-	position: absolute;
-	transform: translateY(50%);
+/* Search */
+.fa-input-search {
+	> .icon-search {
+		bottom: 50%;
+		left: 10px;
+		position: absolute;
+		transform: translateY(50%);
+	}
 }

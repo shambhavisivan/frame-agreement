@@ -229,20 +229,20 @@ class ProductModal extends Component {
 			<Modal
 				classNames={{
 					overlay: 'overlay',
-					modal: 'sf-modal',
+					modal: 'modal fa-modal',
 					closeButton: 'close-button'
 				}}
 				open={this.props.open}
 				onClose={this.onCloseModal}
 				center
 			>
-				<div className="modal-header">
+				<div>
 					<h2>Add Product to Frame Agreement</h2>
 				</div>
 
 				<div
 					className={
-						'modal-body ' + (this.state.panel ? 'panel-open' : 'panel-closed')
+						'modal-body fa-modal-body ' + (this.state.panel ? 'panel-open' : 'panel-closed')
 					}
 				>
 					<div className="modal-panel">
@@ -312,14 +312,14 @@ class ProductModal extends Component {
 						<div className="panel-filter-buttons">
 							<button
 								onClick={this.resetFilter}
-								className="slds-button slds-button--neutral"
+								className="fa-button fa-margin-right-xsm"
 								disabled={false}
 							>
 								Clear Filter
 							</button>
 							<button
 								onClick={this.applyFilter}
-								className="slds-button slds-button--brand"
+								className="fa-button"
 								disabled={false}
 							>
 								Apply Filter

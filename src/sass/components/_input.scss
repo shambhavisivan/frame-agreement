@@ -1,14 +1,15 @@
-// Input
-//
+/* FA Input */
 // Input component.
 
-.input {
+.fa-input {
 	border: 1px solid #d5d5d5;
-	border-radius: $border-radius / 2;
+	border-radius: 0.25rem;
+	box-sizing: border-box;
 	display: inline-block;
-	font-size: 12px;
+	font-size: 0.75rem;
+	height: 2rem;
 	outline: 0;
-	padding: $spacer * 2 $spacer * 8;
+	padding: 0.5rem 2rem;
 	width: 100%;
 
 	&:active,
@@ -17,10 +18,31 @@
 	}
 }
 
-// Search
-//
-
-.input-search {
+/* Search */
+.fa-input-search {
 	flex: 2;
 	position: relative;
+	margin-right: 1rem;
+}
+
+/* Checkbox */
+.fa-checkbox {
+	border-radius: 0.125rem;
+	border: 1px solid #dddbda;
+	cursor: pointer;
+	display: inline-flex;
+  height: 1rem;
+  position: relative;
+	width: 1rem;
+}
+
+.fa-checkbox.checked {
+  background: #0070d2;
+}
+
+.fa-checkbox-icon {
+	bottom: 50%;
+	position: absolute;
+	right: 50%;
+	transform: translate(50%, 50%);
 }

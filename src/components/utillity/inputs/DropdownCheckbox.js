@@ -70,7 +70,7 @@ class DropdownCheckbox extends React.Component {
 				)}
 
 				<div className="dropdown-placeholder" onClick={this.showMenu}>
-					Display columns{' '}
+					<span className="fa-margin-right-xsm">Display columns{' '}</span>
 					<Icon
 						name={this.state.menu ? 'chevronup' : 'chevrondown'}
 						height="14"

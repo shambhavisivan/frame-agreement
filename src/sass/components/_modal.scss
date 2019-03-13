@@ -1,0 +1,17 @@
+/* FA Modal */
+// Modal component.
+
+.fa-modal {
+	background: $white;
+	bottom: 50%;
+	max-width: 800px;
+	position: fixed;
+	right: 50%;
+	transform: translate(50%, 50%);
+	width: 80%;
+}
+
+/* Body */
+.fa-modal-body {
+	padding-bottom: 1.5rem;
+}

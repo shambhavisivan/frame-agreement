@@ -456,7 +456,7 @@ class NegotiationModal extends Component {
 					<div className="list-cell">Original Recurring</div>
 				</div>
 
-				<ul className="table-list">
+				<ul>
 					{Object.keys(this.grouped_addons).map(add => {
 						let addons_name = this.grouped_addons[add][0].Name;
 						let addons_size = this.grouped_addons[add].length;
@@ -673,7 +673,7 @@ class NegotiationModal extends Component {
 		filterContainer = (
 			<div className="filter-container">
 				<div>
-					<div className="label-text">Intersection Rows</div>
+					<div className="fa-padding-bottom-xsm">Intersection Rows</div>
 					<Toggle
 						onChange={val => {
 							this.setState({
@@ -746,7 +746,7 @@ class NegotiationModal extends Component {
 			<Modal
 				classNames={{
 					overlay: 'overlay',
-					modal: 'sf-modal negotiation-modal',
+					modal: 'modal fa-modal',
 					closeButton: 'close-button'
 				}}
 				open={this.props.open}
@@ -755,10 +755,10 @@ class NegotiationModal extends Component {
 				<div className="modal-header">
 					<h2>Bulk Negotiation</h2>
 				</div>
-				<div className="modal-body">
+				<div className="modal-body fa-modal-body">
 					<div className="products-container">
 						<div className="label-text">Selected products</div>
-						<ul className="horizontal-list">
+						<ul>
 							{this.commercialProducts.map(product => {
 								return <li key={product.Id}>{product.Name}</li>;
 							})}
@@ -769,12 +769,12 @@ class NegotiationModal extends Component {
 					<div className="tab-content-container">{tab[this.state.tab]}</div>
 
 					<div className="action-container">
-						<div className="label-text">Charges options</div>
+						<div className="fa-padding-bottom-xsm">Charges options</div>
 						<div className="box">
 							<div className="button-group toggle-buttons">
 								<button
 									className={
-										'slds-button slds-button--' +
+										'fa-margin-right-sm fa-button button--' +
 										(this.state.tab === 'addons' ? 'brand' : 'neutral')
 									}
 									onClick={() => {
@@ -790,7 +790,7 @@ class NegotiationModal extends Component {
 								</button>
 								<button
 									className={
-										'slds-button slds-button--' +
+										'fa-margin-right-sm fa-button button--' +
 										(this.state.tab === 'charges' ? 'brand' : 'neutral')
 									}
 									onClick={() => {
@@ -806,7 +806,7 @@ class NegotiationModal extends Component {
 								</button>
 								<button
 									className={
-										'slds-button slds-button--' +
+										'fa-button button--' +
 										(this.state.tab === 'rated' ? 'brand' : 'neutral')
 									}
 									onClick={() => {
@@ -822,13 +822,13 @@ class NegotiationModal extends Component {
 								</button>
 							</div>
 						</div>
-						<div className="box filter-container">
-							<div>
+						<div className="fa-margin-top-sm">
+							<div className="fa-margin-bottom-sm">
 								<span>Discount options</span>
 								<div className="button-group toggle-buttons">
 									<button
 										className={
-											'slds-button slds-button--' +
+											'fa-margin-right-sm fa-button button--' +
 											(this.state.discountMode === 'percentage'
 												? 'brand'
 												: 'neutral')
@@ -841,7 +841,7 @@ class NegotiationModal extends Component {
 									</button>
 									<button
 										className={
-											'slds-button slds-button--' +
+											'fa-button button--' +
 											(this.state.discountMode === 'fixed'
 												? 'brand'
 												: 'neutral')
@@ -860,13 +860,13 @@ class NegotiationModal extends Component {
 									type="number"
 									min={0}
 									name=""
-									className="search-input"
+									className="fa-input fa-margin-bottom-xsm"
 									ref={this.discount}
 									placeholder="Enter discount percentage"
 								/>
 								<button
 									disabled={!this.state.countTotal}
-									className="slds-button slds-button--neutral"
+									className="fa-button button--neutral"
 									onClick={this.applyDiscount}
 								>
 									Apply discount
@@ -877,7 +877,7 @@ class NegotiationModal extends Component {
 				</div>
 				<div className="modal-footer">
 					<button
-						className="slds-button slds-button--neutral"
+						className="fa-button button--neutral"
 						onClick={() => {
 							this.props.onNegotiate(this.state.attachment);
 						}}

@@ -1,0 +1,56 @@
+/* Reset */
+// Reset default styles.
+
+.fam, .fa-modal {
+	/* Generic */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	blockquote,
+	p,
+	pre,
+	dl,
+	dd,
+	figure,
+	hr,
+	fieldset,
+	legend {
+		margin: 0;
+		padding: 0;
+	}
+
+	/* Placeholder */
+	::placeholder {
+		color: #747474;
+		opacity: 1;
+	}
+
+	:-ms-input-placeholder {
+		color: #747474;
+	}
+
+	::-ms-input-placeholder {
+		color: #747474;
+	}
+
+	/* List */
+	ol, ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			margin-left: 0;
+		}
+	}
+
+	/* Box-sizing */
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+}

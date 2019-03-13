@@ -218,11 +218,7 @@
     font-size: 13px;
 }
 
-li.list-row:first-child {
-    border-top: 1px solid #dddbda;
-}
-
-.list-row>.list-cell {
+.list-row > .list-cell {
     padding: 16px;
     flex: 1;
     text-align: right;
@@ -236,10 +232,6 @@ li.list-row:first-child {
     /*display: flex;*/
     /*align-items: center;*/
     text-align: left;
-}
-
-.list-row div.list-cell:first-child svg{
-    margin-right: 8px;
 }
 
 .list-row.selected-row div.list-cell:first-child {

@@ -31,14 +31,14 @@ class InputSearch extends React.Component {
 
 	render() {
 		return (
-			<div className="search-wrapper">
+			<div className="fa-input-search">
 				<Icon name="search" width="16" height="16" color="#cccccc" />
 				<DebounceInput
 					minLength={2}
 					placeholder={this.props.placeholder || 'Quick search'}
 					debounceTimeout={300}
 					spellCheck="false"
-					className="search-input"
+					className="fa-input"
 					type="text"
 					onChange={this.onTextChange}
 					value={this.state.value}

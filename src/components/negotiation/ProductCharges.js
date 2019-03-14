@@ -51,7 +51,7 @@ class ProductCharges extends React.Component {
 						</div>
 						<div className="list-cell">
 							{' '}
-							{this.props.product.cspmb__One_Off_Cost__c || 'N/A'}
+							{this.props.product.cspmb__One_Off_Charge__c || 'N/A'}
 						</div>
 						<div className="list-cell negotiable">
 							{(() => {
@@ -59,12 +59,12 @@ class ProductCharges extends React.Component {
 								let oneOffRow = 'N/A';
 								let negValue = this.props.attachment.hasOwnProperty('oneOff')
 									? this.props.attachment.oneOff
-									: this.props.product.cspmb__One_Off_Cost__c;
+									: this.props.product.cspmb__One_Off_Charge__c;
 
 								// If there are any discounts and there one off is defined
 								if (
 									this.discounts.length &&
-									this.props.product.cspmb__One_Off_Cost__c != null
+									this.props.product.cspmb__One_Off_Charge__c != null
 								) {
 									// Filter only ones that have adequate type
 									let oneOffDiscount = this.discounts.filter(
@@ -79,10 +79,14 @@ class ProductCharges extends React.Component {
 												this.negotiateInline('oneOff', val);
 											}}
 											negotiatedValue={negValue}
-											originalValue={this.props.product.cspmb__One_Off_Cost__c}
+											originalValue={
+												this.props.product.cspmb__One_Off_Charge__c
+											}
 										/>
 									);
-								} else if (this.props.product.cspmb__One_Off_Cost__c != null) {
+								} else if (
+									this.props.product.cspmb__One_Off_Charge__c != null
+								) {
 									// No discounts? Put negotiated value input
 									oneOffRow = (
 										<InputNegotiate
@@ -92,7 +96,9 @@ class ProductCharges extends React.Component {
 												this.negotiateInline('oneOff', val);
 											}}
 											negotiatedValue={negValue}
-											originalValue={this.props.product.cspmb__One_Off_Cost__c}
+											originalValue={
+												this.props.product.cspmb__One_Off_Charge__c
+											}
 										/>
 									);
 								}
@@ -101,18 +107,18 @@ class ProductCharges extends React.Component {
 						</div>
 						<div className="list-cell">
 							{' '}
-							{this.props.product.cspmb__Recurring_Cost__c || 'N/A'}
+							{this.props.product.cspmb__Recurring_Charge__c || 'N/A'}
 						</div>
 						<div className="list-cell negotiable">
 							{(() => {
 								let recurringRow = 'N/A';
 								let negValue = this.props.attachment.hasOwnProperty('recurring')
 									? this.props.attachment.recurring
-									: this.props.product.cspmb__Recurring_Cost__c;
+									: this.props.product.cspmb__Recurring_Charge__c;
 
 								if (
 									this.discounts.length &&
-									this.props.product.cspmb__Recurring_Cost__c != null
+									this.props.product.cspmb__Recurring_Charge__c != null
 								) {
 									let recurringDiscount = this.discounts.filter(
 										dc => dc.cspmb__Charge_Type__c === 'RC'
@@ -127,12 +133,12 @@ class ProductCharges extends React.Component {
 											}}
 											negotiatedValue={negValue}
 											originalValue={
-												this.props.product.cspmb__Recurring_Cost__c
+												this.props.product.cspmb__Recurring_Charge__c
 											}
 										/>
 									);
 								} else if (
-									this.props.product.cspmb__Recurring_Cost__c != null
+									this.props.product.cspmb__Recurring_Charge__c != null
 								) {
 									recurringRow = (
 										<InputNegotiate
@@ -143,7 +149,7 @@ class ProductCharges extends React.Component {
 											}}
 											negotiatedValue={negValue}
 											originalValue={
-												this.props.product.cspmb__Recurring_Cost__c
+												this.props.product.cspmb__Recurring_Charge__c
 											}
 										/>
 									);

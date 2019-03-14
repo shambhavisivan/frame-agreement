@@ -330,8 +330,62 @@ class FaEditor extends Component {
 			}
 		}, []);
 
+		function enrichAttachment(cp) {
+			let _att = {};
+			// ****************************************
+			if (cp._addons.length) {
+				_att._addons = {};
+			}
+			cp._addons.forEach(addon => {
+				_att._addons[addon.Id] = {
+					oneOff: addon.cspmb__One_Off_Charge__c,
+					recurring: addon.cspmb__Recurring_Charge__c
+				};
+			});
+			// ****************************************
+			if (cp._charges.length) {
+				_att._charges = {};
+			} else {
+				_att._product = {};
+				if (cp.cspmb__One_Off_Charge__c) {
+					_att._product.oneOff = cp.cspmb__One_Off_Charge__c;
+				}
+				if (cp.cspmb__Recurring_Charge__c) {
+					_att._product.recurring = cp.cspmb__Recurring_Charge__c;
+				}
+			}
+
+			cp._charges.forEach(charge => {
+				_att._charges[charge.Id] = {};
+				if (charge.chargeType === 'One-off Charge') {
+					_att._charges[charge.Id].oneOff = charge.oneOff;
+				}
+				if (charge.chargeType === 'Recurring Charge') {
+					_att._charges[charge.Id].recurring = charge.recurring;
+				}
+			});
+			// ****************************************
+			if (cp._rateCards.length) {
+				_att._rateCards = {};
+			}
+			cp._rateCards.forEach(rc => {
+				if (rc.rateCardLines.length) {
+					_att._rateCards[rc.Id] = {};
+					rc.rateCardLines.forEach(rcl => {
+						_att._rateCards[rc.Id][rcl.Id] = rcl.cspmb__rate_value__c;
+					});
+				}
+			});
+			console.log(_att);
+			return _att;
+		}
+
 		async function applyChanges() {
 			let _commercialProducts = this.props.commercialProducts.filter(cp => {
+				if (productsMap[cp.Id]) {
+					_attachment[cp.Id] = enrichAttachment(cp);
+				}
+
 				return productsMap[cp.Id];
 			});
 

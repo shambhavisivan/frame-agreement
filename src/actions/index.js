@@ -155,13 +155,17 @@ export const recieveSaveAttachment = (parentId, data) => ({
 	payload: { parentId, data }
 });
 
+const enrichAttachment = (cp, data) => {};
+
 export function saveAttachment(parentId, data) {
+	console.log(parentId);
+	console.log(data);
+
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
 			if (typeof data !== 'string') {
 				data = JSON.stringify(data);
 			}
-
 			window.SF.invokeAction('saveAttachment', [parentId, data]).then(
 				response => {
 					dispatch(recieveSaveAttachment(response));

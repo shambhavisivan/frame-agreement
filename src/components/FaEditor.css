@@ -75,7 +75,7 @@
     box-sizing: border-box;
     font-size: 13px;
     color: #080707;
-    background: white;
+    /*background: white;*/
     flex-direction: column;
 }
 

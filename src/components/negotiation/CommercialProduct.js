@@ -59,11 +59,11 @@ class CommercialProduct extends React.Component {
 			);
 		} else {
 			bulkValidation[this.productId].product = validateProduct({
-				oneOff: this.props.product.cspmb__One_Off_Cost__c,
+				oneOff: this.props.product.cspmb__One_Off_Charge__c,
 				negotiatedOneOff: this.props.attachment._product
 					? this.props.attachment._product.oneOff
 					: null,
-				recurring: this.props.product.cspmb__Recurring_Cost__c,
+				recurring: this.props.product.cspmb__Recurring_Charge__c,
 				negotiatedRecurring: this.props.attachment._product
 					? this.props.attachment._product.recurring
 					: null,
@@ -113,9 +113,9 @@ class CommercialProduct extends React.Component {
 				this.productId,
 				'product',
 				validateProduct({
-					oneOff: this.props.product.cspmb__One_Off_Cost__c,
+					oneOff: this.props.product.cspmb__One_Off_Charge__c,
 					negotiatedOneOff: data.oneOff,
-					recurring: this.props.product.cspmb__Recurring_Cost__c,
+					recurring: this.props.product.cspmb__Recurring_Charge__c,
 					negotiatedRecurring: data.recurring,
 					authLevel: this.props.product.cspmb__Authorization_Level__c || null,
 					Name: this.props.product.Name

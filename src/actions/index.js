@@ -81,6 +81,12 @@ export function submitForApproval(faId) {
 	};
 }
 // ***********************************************************************
+export const toggleFieldVisibility = index => ({
+	type: 'TOGGLE_FIELD_VISIBILITY',
+	payload: index
+});
+
+// ***********************************************************************
 export const setValidation = (
 	priceItemId = null,
 	type = null,
@@ -154,8 +160,6 @@ export const recieveSaveAttachment = (parentId, data) => ({
 	type: 'SAVE_ATTACHMENT',
 	payload: { parentId, data }
 });
-
-const enrichAttachment = (cp, data) => {};
 
 export function saveAttachment(parentId, data) {
 	console.log(parentId);

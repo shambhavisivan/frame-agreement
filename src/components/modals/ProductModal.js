@@ -16,7 +16,6 @@ import './ProductModal.css';
 class ProductModal extends Component {
 	constructor(props) {
 		super(props);
-		this.onSearchChange = this.onSearchChange.bind(this);
 		this.togglePanel = this.togglePanel.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.addProducts = this.addProducts.bind(this);
@@ -81,14 +80,12 @@ class ProductModal extends Component {
 			panel: false,
 			actionTaken: false,
 			filter: this.initFilterData(),
+			productFilter: '',
 			commercialProducts: this.notAddedCommercialProducts,
 			selected: {}
 		};
 
-		this.priceItemFields = [
-			...this.props.settings.FACSettings.Price_Item_Fields
-		];
-		this.priceItemFields.unshift('Name');
+		this.priceItemFields = this.props.productFields.filter(f => !f.volume);
 		console.warn(this.priceItemFields);
 	}
 
@@ -115,10 +112,6 @@ class ProductModal extends Component {
 			selected: {}
 		});
 		this.props.onCloseModal();
-	}
-
-	onSearchChange(value) {
-		console.log(value);
 	}
 
 	togglePanel(value) {
@@ -336,63 +329,84 @@ class ProductModal extends Component {
 
 					<div className="modal-table-container">
 						<div className="modal-navigation">
-							<div
-								className="categorisation-container"
-								onClick={this.togglePanel}
-							>
-								<Icon
-									name="color_swatch"
-									width="14"
-									height="14"
-									color="#0070d2"
-								/>
-								<div className="categorisation-switch">
-									Product categorisation panel
+							{this.props.settings.CategorizationData.length && (
+								<div
+									className="categorisation-container"
+									onClick={this.togglePanel}
+								>
+									<Icon
+										name="color_swatch"
+										width="14"
+										height="14"
+										color="#0070d2"
+									/>
+									<div className="categorisation-switch">
+										Product categorisation panel
+									</div>
 								</div>
-							</div>
+							)}
 
 							<div className="search-container">
 								<InputSearch
 									placeholder="Filter products"
 									value={this.state.searchValue}
-									onChange={this.onSearchChange}
+									onChange={val => {
+										this.setState({ productFilter: val });
+									}}
 								/>
 							</div>
 						</div>
 
 						<div className="modal-product-list">
 							<div className="product-list-header">
-								{this.priceItemFields.map(pif => {
+								<div className="header-th">Product Name</div>
+								{this.priceItemFields.map(f => {
 									return (
-										<div key={pif} className="header-th">
+										<div key={f.name} className="header-th">
 											<span>
-												{this.props.settings.FACSettings.Truncate_CP_Fields
-													? truncateCPField(pif)
-													: pif}
+												{this.props.settings.FACSettings.truncate_product_fields
+													? truncateCPField(f.name)
+													: f.name}
 											</span>
 										</div>
 									);
 								})}
 							</div>
 							<div className="product-list">
-								{this.state.commercialProducts.map(cp => {
-									return (
-										<div
-											key={cp.Id}
-											className={
-												'product-row' +
-												(this.state.selected[cp.Id] ? ' selected' : '')
-											}
-											onClick={() => this.selectProduct(cp)}
-										>
-											{this.priceItemFields.map(pif => {
-												return (
-													<span key={cp.Id + '-' + pif}>{cp[pif] || '-'}</span>
-												);
-											})}
-										</div>
-									);
-								})}
+								{this.state.commercialProducts
+									.filter(cp => {
+										if (
+											this.state.productFilter &&
+											this.state.productFilter.length >= 2
+										) {
+											return cp.Name.toLowerCase().includes(
+												this.state.productFilter.toLowerCase()
+											);
+										} else {
+											return true;
+										}
+									})
+									.map(cp => {
+										return (
+											<div
+												key={cp.Id}
+												className={
+													'product-row' +
+													(this.state.selected[cp.Id] ? ' selected' : '')
+												}
+												onClick={() => this.selectProduct(cp)}
+											>
+												<span>{cp.Name}</span>
+												{this.priceItemFields.map(f => {
+													return (
+														<span key={cp.Id + '-' + f.name}>
+															{cp[f.name] || '-'}
+														</span>
+													);
+												})}
+											</div>
+										);
+									})}
 							</div>
 						</div>
 
@@ -417,6 +431,7 @@ class ProductModal extends Component {
 const mapStateToProps = state => {
 	return {
 		commercialProducts: state.commercialProducts,
+		productFields: state.productFields,
 		settings: state.settings
 	};
 };

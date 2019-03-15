@@ -42,6 +42,7 @@
 
 .negotiate-input-wrapper.readOnly {
     cursor: default;
+    font-size: 13px;
 }
 
 /***********************************************************************/
@@ -51,7 +52,7 @@
 	visibility: visible;
 }
 
-.negotiate-input:hover {
+.negotiate-input-wrapper:hover .negotiate-input {
 	border-color: #747474;
 }
 

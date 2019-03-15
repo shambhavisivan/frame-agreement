@@ -9,13 +9,22 @@ const initialState = {
 	settings: {},
 	frameAgreements: {},
 	commercialProducts: null,
+	productFields: [],
 	activeFa: null,
 	validation: {},
+	validationProduct: {},
 	approvalFlag: false, // true -> needs validation
 	handlers: {},
 	toasts: []
 	// activeId: null
 };
+
+const VOLUME_FIELDS = [
+	{ label: 'Minimum vol', name: 'mv' },
+	{ label: 'Minimum vol. period', name: 'mvp' },
+	{ label: 'Min. usage commitment', name: 'muc' },
+	{ label: 'Min. usage commitment period', name: 'mucp' }
+];
 
 function validateJSONData(data) {
 	if (!data) {
@@ -93,13 +102,22 @@ const rootReducer = (state = initialState, action) => {
 					.some(r => r === true);
 			}
 
+			function getProductValidation(validation) {
+				let _productValidation = {};
+				for (var key in validation) {
+					_productValidation[key] = getApprovalFlag({ [key]: validation[key] });
+				}
+				return _productValidation;
+			}
+
 			if (action.payload.priceItemId === null) {
 				return { ...state, validation: {}, approvalFlag: false };
 			} else if (action.payload.type === null) {
 				var validation = { ...state.validation, ...action.payload.priceItemId };
 				var approvalFlag = getApprovalFlag(validation);
+				var validationProduct = getProductValidation(validation);
 
-				return { ...state, validation, approvalFlag };
+				return { ...state, validation, approvalFlag, validationProduct };
 			} else {
 				var validation = {
 					...state.validation,
@@ -114,7 +132,8 @@ const rootReducer = (state = initialState, action) => {
 					}
 				};
 				var approvalFlag = getApprovalFlag(validation);
-				return { ...state, validation, approvalFlag };
+				var validationProduct = getProductValidation(validation);
+				return { ...state, validation, approvalFlag, validationProduct };
 			}
 
 		// ASYNC RECIEVE
@@ -154,6 +173,15 @@ const rootReducer = (state = initialState, action) => {
 			return {
 				...state,
 				frameAgreements: { ...state.frameAgreements, [clonedFa.Id]: clonedFa }
+			};
+
+		case 'TOGGLE_FIELD_VISIBILITY':
+			var index = action.payload;
+			return {
+				...state,
+				productFields: state.productFields.map((f, i) =>
+					i === index ? { ...f, visible: !f.visible } : f
+				)
 			};
 
 		case 'SHIFT_TOAST':
@@ -222,24 +250,39 @@ const rootReducer = (state = initialState, action) => {
 		case 'RECIEVE_SETTINGS':
 			action.payload.HeaderData = validateJSONData(action.payload.HeaderData);
 
-			if (validateCSV(action.payload.FACSettings.Price_Item_Fields)) {
-				action.payload.FACSettings.Price_Item_Fields = action.payload.FACSettings.Price_Item_Fields.replace(
-					/ /g,
-					''
-				).split(',');
+			let _productFields = [];
+			// _productFields.push({name:"Name", visible: true})
+
+			if (validateCSV(action.payload.FACSettings.price_item_fields)) {
+				action.payload.FACSettings.price_item_fields = action.payload.FACSettings.price_item_fields
+					.replace(/ /g, '')
+					.split(',');
+
+				action.payload.FACSettings.price_item_fields.forEach(f => {
+					_productFields.push({ name: f, visible: true });
+				});
+
+				if (action.payload.FACSettings.show_volume_fields) {
+					VOLUME_FIELDS.forEach(f => {
+						_productFields.push({
+							name: f.label,
+							visible: true,
+							volume: f.name
+						});
+					});
+				}
 			} else {
 				console.warn('Price item fields is not valid CSV!');
-				action.payload.FACSettings.Price_Item_Fields = [];
+				action.payload.FACSettings.price_item_fields = [];
 			}
 
-			if (validateCSV(action.payload.FACSettings.FA_Editable_Statuses)) {
-				action.payload.FACSettings.FA_Editable_Statuses = action.payload.FACSettings.FA_Editable_Statuses.replace(
-					/ /g,
-					''
-				).split(',');
+			if (validateCSV(action.payload.FACSettings.fa_editable_statuses)) {
+				action.payload.FACSettings.fa_editable_statuses = action.payload.FACSettings.fa_editable_statuses
+					.replace(/ /g, '')
+					.split(',');
 			} else {
 				console.warn('Price item fields is not valid CSV!');
-				action.payload.FACSettings.FA_Editable_Statuses = [];
+				action.payload.FACSettings.fa_editable_statuses = [];
 			}
 
 			// ***************************************************************************************************************
@@ -346,10 +389,9 @@ const rootReducer = (state = initialState, action) => {
 
 			return {
 				...state,
-				...{ settings: action.payload },
-				...{
-					initialised: { ...state.initialised, ...{ settings_loaded: true } }
-				}
+				settings: action.payload,
+				productFields: _productFields,
+				initialised: { ...state.initialised, ...{ settings_loaded: true } }
 			};
 
 		case 'RECIEVE_PRICE_ITEM_DATA':

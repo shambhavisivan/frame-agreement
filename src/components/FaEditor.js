@@ -8,6 +8,7 @@ import {
 	getCommercialProductData,
 	getAttachment,
 	saveAttachment,
+	toggleFieldVisibility,
 	setValidation,
 	getApprovalHistory,
 	createToast,
@@ -30,6 +31,7 @@ import SFDatePicker from './utillity/datepicker/SFDatePicker';
 import SFField from './utillity/readonly/SFField';
 import InputSearch from './utillity/inputs/InputSearch';
 import Checkbox from './utillity/inputs/Checkbox';
+import DropdownCheckbox from './utillity/inputs/DropdownCheckbox';
 
 import ProductModal from './modals/ProductModal';
 import ActionIframe from './modals/ActionIframe';
@@ -58,7 +60,9 @@ class FrameAgreement {
 		this.csconta__Valid_From__c = null;
 		this.csconta__Valid_To__c = null;
 		this._ui = {
-			approval: {},
+			approval: {
+				listProcess: []
+			},
 			commercialProducts: [],
 			attachment: {}
 		};
@@ -81,6 +85,7 @@ class FaEditor extends Component {
 		this._removeProducts = this._removeProducts.bind(this);
 		this.onSubmitForApproval = this.onSubmitForApproval.bind(this);
 		this.onApprovalChange = this.onApprovalChange.bind(this);
+		this.toggleVisibility = this.toggleVisibility.bind(this);
 		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(
 			this
 		);
@@ -207,18 +212,20 @@ class FaEditor extends Component {
 			);
 		}
 
-		this.props.getApprovalHistory(this.faId).then(response => {
-			this.setState({
-				activeFa: {
-					...this.state.activeFa,
-					_ui: { ...this.state.activeFa._ui, approval: response }
-				}
+		if (this.faId) {
+			this.props.getApprovalHistory(this.faId).then(response => {
+				this.setState({
+					activeFa: {
+						...this.state.activeFa,
+						_ui: { ...this.state.activeFa._ui, approval: response }
+					}
+				});
 			});
-		});
+		}
 
 		// **************************************
 		this.editable =
-			this.props.settings.FACSettings.FA_Editable_Statuses.includes(
+			this.props.settings.FACSettings.fa_editable_statuses.includes(
 				this.state.activeFa.csconta__Status__c
 			) || !this.state.activeFa.Id;
 		// **************************************
@@ -257,6 +264,7 @@ class FaEditor extends Component {
 	}
 	/**************************************************/
 	async onSubmitForApproval() {
+		await this.upsertFrameAgreements();
 		await publish('onBeforeSubmit');
 
 		this.props
@@ -332,6 +340,13 @@ class FaEditor extends Component {
 
 		function enrichAttachment(cp) {
 			let _att = {};
+			// ****************************************
+			_att._volume = {
+				mv: null,
+				mvp: null,
+				muc: null,
+				mucp: null
+			};
 			// ****************************************
 			if (cp._addons.length) {
 				_att._addons = {};
@@ -525,6 +540,10 @@ class FaEditor extends Component {
 		this.props.history.push('/');
 	}
 
+	toggleVisibility(index) {
+		this.props.toggleFieldVisibility(index);
+	}
+
 	onFieldChange(field, value) {
 		this.setState({
 			activeFa: { ...this.state.activeFa, [field]: value }
@@ -655,7 +674,7 @@ class FaEditor extends Component {
 		data = await publish('onBeforeSaveFrameAgreement', data);
 
 		if (data.Id) {
-			Promise.all([
+			return Promise.all([
 				this.props.saveFrameAgreement(data, this.state.activeFa.Id),
 				this.props.saveAttachment(
 					this.state.activeFa.Id,
@@ -670,7 +689,7 @@ class FaEditor extends Component {
 				);
 			});
 		} else {
-			this.props.createFrameAgreement(data).then(upsertedFa => {
+			return this.props.createFrameAgreement(data).then(upsertedFa => {
 				this.setState(
 					{
 						activeFa: upsertedFa
@@ -820,6 +839,12 @@ class FaEditor extends Component {
 									placeholder="Quick search"
 								/>
 							</div>
+							<div className="commercial-product-column-visibillity">
+								<DropdownCheckbox
+									options={this.props.productFields}
+									onChange={this.toggleVisibility}
+								/>
+							</div>
 						</div>
 
 						<div className="commercial-product-list-header">
@@ -838,15 +863,20 @@ class FaEditor extends Component {
 							<div className="commercial-product-fields-container">
 								<div className="commercial-product-fields">
 									<span>Product name</span>
-									{this.props.settings.FACSettings.Price_Item_Fields.map(
-										pif => {
+									{this.props.productFields
+										.filter(f => f.visible)
+										.map(f => {
 											return (
-												<span key={'header-' + pif}>
-													{truncateCPField(pif)}
+												<span
+													key={'header-' + f.name}
+													className={
+														'product-header' + (f.volume ? ' volume' : '')
+													}
+												>
+													{truncateCPField(f.name)}
 												</span>
 											);
-										}
-									)}
+										})}
 								</div>
 							</div>
 						</div>
@@ -854,8 +884,8 @@ class FaEditor extends Component {
 					{this.state.activeFa._ui.commercialProducts
 						.filter(cp => {
 							if (
-								this.state.productFilter.length >= 2 &&
-								this.state.productFilter
+								this.state.productFilter &&
+								this.state.productFilter.length >= 2
 							) {
 								return cp.Name.toLowerCase().includes(
 									this.state.productFilter.toLowerCase()
@@ -879,8 +909,8 @@ class FaEditor extends Component {
 									open={this.state.openCommercialProduct === cp.Id}
 									readOnly={!this.editable}
 									onSelect={this.onSelectProduct}
+									invalid={this.props.validationProduct[cp.Id]}
 									selected={!!this.state.selectedProducts[cp.Id]}
-									fields={this.props.settings.FACSettings.Price_Item_Fields}
 								/>
 							);
 						})}
@@ -938,7 +968,10 @@ class FaEditor extends Component {
 
 							<button
 								className="slds-button slds-button--translucent"
-								disabled={!this.props.approvalFlag}
+								disabled={
+									!this.props.approvalFlag ||
+									!this.state.activeFa._ui.commercialProducts.length
+								}
 								onClick={this.onSubmitForApproval}
 							>
 								Submit For Approval
@@ -1001,6 +1034,8 @@ const mapStateToProps = state => {
 		frameAgreements: state.frameAgreements,
 		approvalFlag: state.approvalFlag,
 		validation: state.validation,
+		validationProduct: state.validationProduct,
+		productFields: state.productFields,
 		settings: state.settings,
 		handlers: state.handlers
 	};
@@ -1010,7 +1045,7 @@ const mapDispatchToProps = {
 	// setActiveFa,
 	saveFrameAgreement,
 	createFrameAgreement,
-	// setAddedProducts,
+	toggleFieldVisibility,
 	getCommercialProductData,
 	getAttachment,
 	setValidation,

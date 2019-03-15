@@ -34,8 +34,18 @@
     display: flex;
 }
 
-.commercial-product-fields>span {
+.commercial-product-fields > span {
     flex: 1;
+}
+
+
+.commercial-product-fields > span.volume-fields {
+    cursor: text;
+}
+
+.commercial-product-fields > span.volume-fields .negotiate-input-wrapper{
+    /*max-width: unset;*/
+        float: right;
 }
 
 
@@ -47,7 +57,7 @@
     border-bottom: 1px solid #dddbda;
 }
 
-.commercial-product-header .commercial-product-fields span:first-child {
+.commercial-product-header .commercial-product-fields > span:first-child {
     color: #0070d2;
     font-size: 20px;
 }

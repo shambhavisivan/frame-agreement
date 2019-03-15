@@ -146,7 +146,7 @@ class NegotiationModal extends Component {
 			}
 		};
 		// this.priceItemFields = [
-		//   ...this.props.settings.FACSettings.Price_Item_Fields
+		//   ...this.props.settings.FACSettings.price_item_fields
 		// ];
 		// this.priceItemFields.unshift('Name');
 		// console.warn(this.priceItemFields);

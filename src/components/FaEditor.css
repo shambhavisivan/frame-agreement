@@ -124,7 +124,7 @@
     padding: 9px 20px;
 }
 
-.commercial-product-list-header .commercial-product-fields > span {
+.product-header {
     text-transform: uppercase;
     height: 14px;
     font-size: 11px;
@@ -134,7 +134,11 @@
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    /*background: white;*/
+    text-align: left;
+}
+
+.volume.product-header {
+    text-align: right;
 }
 
 .commercial-product-list-header .commercial-product-search {
@@ -146,6 +150,7 @@
     border-bottom: none;
     padding: 15px;
     display: flex;
+    background: white;
 }
 
 .commercial-product-search-container > span{
@@ -160,6 +165,12 @@
 
 .commercial-product-search-container > .commercial-product-search{
     flex: 1;
+}
+
+.commercial-product-column-visibillity {
+    flex-shrink: 0;
+    width: 150px;
+    text-align: center;
 }
 
 .approval-history {

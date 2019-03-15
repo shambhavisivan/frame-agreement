@@ -8,8 +8,10 @@ import Tabs from '../utillity/tabs/Tabs';
 import Tab from '../utillity/tabs/Tab';
 
 import Checkbox from '../utillity/inputs/Checkbox';
+import InputVolume from '../utillity/inputs/InputVolume';
 
 import ProductCharges from './ProductCharges';
+
 import Addons from './Addons';
 import Charges from './Charges';
 import Rates from './Rates';
@@ -27,8 +29,13 @@ import './CommercialProduct.scss';
 class CommercialProduct extends React.Component {
 	constructor(props) {
 		super(props);
-		this.fields = [...this.props.fields];
-		this.fields.unshift('Name');
+
+		// if (this.props.settings.FACSettings.show_volume_fields) {
+		//   this.fields.push("Minimum vol.");
+		//   this.fields.push("Minimum vol. period");
+		//   this.fields.push("Minimum usage commitment");
+		//   this.fields.push("Minimum usage commitment period");
+		// }
 
 		this.onExpandProduct = this.onExpandProduct.bind(this);
 
@@ -75,8 +82,15 @@ class CommercialProduct extends React.Component {
 		this.props.setValidation(bulkValidation);
 	}
 
-	onExpandProduct() {
+	onExpandProduct(e) {
 		this.props.onOpen(!this.props.open);
+		e.stopPropagation();
+	}
+
+	updateVolume(volume, value) {
+		let _volume = this.props.attachment._volume;
+		_volume[volume] = value;
+		this.props.onNegotiate('_volume', _volume);
 	}
 
 	onNegotiate(type, data) {
@@ -131,7 +145,8 @@ class CommercialProduct extends React.Component {
 			<div
 				className={
 					'commercial-product-container' +
-					(this.props.open ? ' product-open' : '')
+					(this.props.open ? ' product-open' : '') +
+					(this.props.invalid ? ' invalid-product' : '')
 				}
 			>
 				<div className="commercial-product-header">
@@ -146,17 +161,42 @@ class CommercialProduct extends React.Component {
 					</div>
 
 					<div className="commercial-product-fields-container">
-						<div
-							className="commercial-product-fields"
-							onClick={this.onExpandProduct}
-						>
-							{this.fields.map(pif => {
-								return (
-									<span key={'facp-' + this.props.product.Id + '-' + pif}>
-										{this.props.product[pif] || '-'}
-									</span>
-								);
-							})}
+						<div className="commercial-product-fields">
+							<span onClick={this.onExpandProduct}>
+								{this.props.product.Name}
+							</span>
+							{this.props.productFields
+								.filter(f => f.visible)
+								.map((f, i) => {
+									let _field;
+									if (f.volume) {
+										_field = (
+											<span
+												className="volume-fields"
+												key={'facp-' + this.props.product.Id + '-' + f + i}
+											>
+												<InputVolume
+													readOnly={this.props.readOnly}
+													value={this.props.attachment._volume[f.volume]}
+													onChange={val => {
+														this.updateVolume(f.volume, val);
+													}}
+												/>
+											</span>
+										);
+									} else {
+										_field = (
+											<span
+												onClick={this.onExpandProduct}
+												key={'facp-' + this.props.product.Id + '-' + f + i}
+											>
+												{this.props.product[f.name] || '-'}
+											</span>
+										);
+									}
+
+									return _field;
+								})}
 						</div>
 					</div>
 				</div>
@@ -234,7 +274,9 @@ class CommercialProduct extends React.Component {
 
 const mapStateToProps = state => {
 	return {
-		validation: state.validation
+		validation: state.validation,
+		productFields: state.productFields,
+		settings: state.settings
 	};
 };
 

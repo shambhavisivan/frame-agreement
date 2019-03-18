@@ -56,9 +56,11 @@ const approval = {"isApprover":true,"isAdmin":true,"currentUser":"0051t0000025wM
 const approval2 = { "isApprover": false,"isAdmin":false,"currentUser":"0051t0000025wM9AAI","listProcess": []};
 
 const FACSettings = {
-    Price_Item_Fields: "cspmb__Contract_Term__c, cspmb__Recurring_Cost__c",
-    FA_Editable_Statuses: "Draft",
-    Truncate_CP_Fields: true
+    fa_editable_statuses: "Draft",
+    price_item_fields: "cspmb__Contract_Term__c",
+    show_volume_fields: true,
+    rcl_fields: "cspmb__Currency_Code__c, Category__c",
+    truncate_product_fields: true,
 };
 
 const frameAgreements = [{
@@ -182,6 +184,8 @@ const rateCards = [{
                 Id: "a1M1t000000BFrVEAW",
                 Name: "RCL1.1",
                 cspmb__Cap_Unit__c: "Sample Cap Unit",
+                cspmb__Currency_Code__c: "Euro",
+                Category__c: "Cat_A",
                 cspmb__rate_value__c: nullValues ? null : 18.29,
                 cspmb__Rate_Card__c: "a1N1t0000001QxrEAE"
             },
@@ -189,6 +193,8 @@ const rateCards = [{
                 Id: "a1M1t000000BFrVEAA",
                 Name: "RCL1.2",
                 cspmb__Cap_Unit__c: "Sample Cap Unit",
+                cspmb__Currency_Code__c: "Dollar",
+                Category__c: "Cat_B",
                 cspmb__rate_value__c: nullValues ? null : 7.10,
                 cspmb__Rate_Card__c: "a1N1t0000001QxrEAE"
             }
@@ -202,6 +208,8 @@ const rateCards = [{
                 Id: "a1M1t000000BFrVEAR",
                 Name: "RCL2.1",
                 cspmb__Cap_Unit__c: "Sample Cap Unit",
+                cspmb__Currency_Code__c: "Dollar",
+                Category__c: "Cat_A",
                 cspmb__rate_value__c: nullValues ? null : 4.99,
                 cspmb__Rate_Card__c: "a1N1t0000001QxrEAF"
             },
@@ -209,6 +217,8 @@ const rateCards = [{
                 Id: "a1M1t000000BFrVEAU",
                 Name: "RCL2.2",
                 cspmb__Cap_Unit__c: "Sample Cap Unit",
+                cspmb__Currency_Code__c: "Euro",
+                Category__c: "Cat_C",
                 cspmb__rate_value__c: nullValues ? null : 15.59,
                 cspmb__Rate_Card__c: "a1N1t0000001QxrEAF"
             }
@@ -216,7 +226,7 @@ const rateCards = [{
     }
 ];
 
-const attachment = "eyJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6NS42fSwiYTFJMXQwMDAwMDFXa3pqRUFDIjp7InJlY3VycmluZyI6OX19LCJfcmF0ZUNhcmRzIjp7ImExTjF0MDAwMDAwMVF4ckVBRSI6eyJhMU0xdDAwMDAwMEJGclZFQVciOjE2Ljk5fX0sIl9hZGRvbnMiOnsiYTFBMXQwMDAwMDAyY0lNRUFZIjp7InJlY3VycmluZyI6Ni43NSwib25lT2ZmIjo3LjQ5fSwiYTFBMXQwMDAwMDAzU2NmRUFFIjp7InJlY3VycmluZyI6NzkuNDQsIm9uZU9mZiI6NC40OX19fSwiYTFGMXQwMDAwMDAxSkJVRUEyIjp7fSwiYTFGMXQwMDAwMDAxSkJlRUFNIjp7Il9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxWDJkRUFFIjp7ImExTTF0MDAwMDAwcGVYWkVBWSI6NjEuNDMsImExTTF0MDAwMDAwcGVYZUVBSSI6OC45OX19fX0=";
+const attachment = "eyJhMUYxdDAwMDAwMDFKQmpFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwM1NibkVBRSI6e319LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2Nn19LCJhMUYxdDAwMDAwMDFKQ0RFQTIiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2M319LCJhMUYxdDAwMDAwMDFKQzhFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjIzOS40MX19LCJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwMmNJTUVBWSI6eyJvbmVPZmYiOjcuNjQsInJlY3VycmluZyI6Ny43NX0sImExQTF0MDAwMDAwM1NjZkVBRSI6eyJvbmVPZmYiOjcuNDksInJlY3VycmluZyI6NzkuNDR9fSwiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6N30sImExSTF0MDAwMDAxV2t6akVBQyI6eyJyZWN1cnJpbmciOjEyfX0sIl9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxUXhyRUFFIjp7ImExTTF0MDAwMDAwQkZyVkVBVyI6MTI0Ljk5fX19fQ";
 
 const DiscLevels = [{"discountLevel":{"Id":"a141t00000137a8AAA","Name":"Test","cspmb__Charge_Type__c":"RC","cspmb__Discount_Type__c":"Percentage","cspmb__Discount_Values__c":"10,20,30"},"levelId":"a141t00000137a8AAA","priceItemId":"a1F1t00000017Y0EAI"},{"discountLevel":{"Id":"a141t00000137cWAAQ","Name":"Invalid","cspmb__Charge_Type__c":"RC","cspmb__Discount_Type__c":"Percentage","cspmb__Discount_Values__c":"12, 34, gg"},"levelId":"a141t00000137cWAAQ","priceItemId":"a1F1t0000001JBPEA2"},{"addonId":"a0w1t0000002hSaAAI","discountLevel":{"Id":"a141t00000137e7AAA","Name":"TestAddons","cspmb__Charge_Type__c":"RC","cspmb__Discount_Type__c":"Amount","cspmb__Discount_Values__c":"10,20,30"},"levelId":"a141t00000137e7AAA"},{"discountLevel":{"Id":"a141t00000137cgAAA","Name":"Test2","cspmb__Charge_Type__c":"RC","cspmb__Discount_Increment__c":"1","cspmb__Discount_Type__c":"Amount","cspmb__Maximum_Discount_Value__c":10,"cspmb__Minimum_Discount_Value__c":5},"levelId":"a141t00000137cgAAA","priceItemId":"a1F1t00000017Y0EAI"},{"discountLevel":{"Id":"a141t00000137hrAAA","Name":"Test2_2","cspmb__Charge_Type__c":"RC","cspmb__Discount_Increment__c":"1","cspmb__Discount_Type__c":"Percentage","cspmb__Maximum_Discount_Value__c":10,"cspmb__Minimum_Discount_Value__c":1},"levelId":"a141t00000137hrAAA","priceItemId":"a1F1t00000017Y0EAI"},{"addonId":"a0w1t0000002hSaAAI","discountLevel":{"Id":"a141t00000137hrAAA","Name":"Test2_2","cspmb__Charge_Type__c":"RC","cspmb__Discount_Increment__c":"1","cspmb__Discount_Type__c":"Percentage","cspmb__Maximum_Discount_Value__c":10,"cspmb__Minimum_Discount_Value__c":1},"levelId":"a141t00000137hrAAA"},{"discountLevel":{"Id":"a141t00000137lLAAQ","Name":"One-off charge","cspmb__Charge_Type__c":"NRC","cspmb__Discount_Type__c":"Percentage","cspmb__Discount_Values__c":"10,20,30"},"levelId":"a141t00000137lLAAQ","priceItemId":"a1F1t00000017Y0EAI"},{"discountLevel":{"Id":"a141t00000137ycAAA","Name":"ProductCharge-11","cspmb__Charge_Type__c":"RC","cspmb__Discount_Type__c":"Percentage","cspmb__Discount_Values__c":"10,20,30"},"levelId":"a141t00000137ycAAA","priceItemId":"a1F1t0000001JC8EAM"}];
 
@@ -323,7 +333,7 @@ const ButtonData = [
     })
 */
 
-const commercialProducts = [{"Id":"a1F1t0000001JBoEAM","Name":"Mobile L_7","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Mobile","Categorization_Beta__c":"100GB"},{"Id":"a1F1t0000001JBUEA2","Name":"Mobile L_3","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Fixed","Categorization_Beta__c":"100GB","attachmentLoaded":true},{"Id":"a1F1t0000001JBjEAM","Name":"Mobile L_6","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Static","Categorization_Beta__c":"50GB"},{"Id":"a1F1t0000001JCDEA2","Name":"Mobile L_12","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Fixed","Categorization_Beta__c":"50GB"},{"Id":"a1F1t0000001JByEAM","Name":"Mobile L_9","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Mobile","Categorization_Beta__c":"50GB"},{"Id":"a1F1t0000001JC8EAM","Name":"Mobile L_11","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Authorization_Level__c":"a0x1t000001RjC4AAK","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Static","Categorization_Beta__c":"20GB"},{"Id":"a1F1t0000001JBeEAM","Name":"Mobile L_5","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Fixed","Categorization_Beta__c":"10GB","attachmentLoaded":true},{"Id":"a1F1t0000001JBtEAM","Name":"Mobile L_8","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Mobile","Categorization_Beta__c":"20GB"},{"Id":"a1F1t0000001JC3EAM","Name":"Mobile L_10","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"Categorization_Alpha__c":"Static","Categorization_Beta__c":"10GB"},{"Id":"a1F1t00000017Y0EAI","Name":"Mobile L","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Authorization_Level__c":"a0x1t000001RjBzAAK","cspmb__Is_Authorization_Required__c":false,"cspmb__Contract_Term__c":"24 Months","cspmb__Recurring_Cost__c":69,"attachmentLoaded":true}];
+const commercialProducts = [{"Id":"a1F1t0000001JBoEAM","Name":"Mobile L_7","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Mobile","Categorization_Beta__c":"100GB"},{"Id":"a1F1t0000001JBZEA2","Name":"Mobile L_4","cspmb__Effective_Start_Date__c":1547337600000,"cspmb__Effective_End_Date__c":1583625600000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Static","Categorization_Beta__c":"100GB"},{"Id":"a1F1t0000001JBUEA2","Name":"Mobile L_3","cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Fixed","Categorization_Beta__c":"100GB"},{"Id":"a1F1t0000001JBjEAM","Name":"Mobile L_6","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Static","Categorization_Beta__c":"50GB"},{"Id":"a1F1t0000001JCDEA2","Name":"Mobile L_12","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Fixed","Categorization_Beta__c":"50GB"},{"Id":"a1F1t0000001JByEAM","Name":"Mobile L_9","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Mobile","Categorization_Beta__c":"50GB"},{"Id":"a1F1t0000001JC8EAM","Name":"Mobile L_11","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000001RjC4AAK","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Static","Categorization_Beta__c":"20GB"},{"Id":"a1F1t0000001JBeEAM","Name":"Mobile L_5","cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Fixed","Categorization_Beta__c":"10GB"},{"Id":"a1F1t0000001JBtEAM","Name":"Mobile L_8","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Mobile","Categorization_Beta__c":"20GB"},{"Id":"a1F1t0000001JC3EAM","Name":"Mobile L_10","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months","Categorization_Alpha__c":"Static","Categorization_Beta__c":"10GB"},{"Id":"a1F1t00000017Y0EAI","Name":"Mobile L","cspmb__Effective_Start_Date__c":1545264000000,"cspmb__Recurring_Charge__c":269,"cspmb__Authorization_Level__c":"a0x1t000001RjBzAAK","cspmb__Is_Authorization_Required__c":false,"cspmb__Price_Item_Description__c":"30 Gb Internet + 5000 minutes/SMS","cspmb__Contract_Term__c":"24 Months"}];
 
 const newFA = {
     Id: "newFaId",
@@ -399,7 +409,7 @@ window.SF = SF = {
                 return createPromise(attachment);
 
             case "getApprovalHistory":
-                return createPromise(getRandomFromArr([approval, approval2]));
+                return createPromise(getRandomFromArr([approval2, approval2]));
 
             case "getRateCards": // Obsolete
                 return createPromise(rateCards);

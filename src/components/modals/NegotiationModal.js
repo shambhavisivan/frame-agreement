@@ -31,6 +31,8 @@ class NegotiationModal extends Component {
 
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.applyDiscount = this.applyDiscount.bind(this);
+		this.onPropertyChange = this.onPropertyChange.bind(this);
+		this.onPropertyValueChange = this.onPropertyValueChange.bind(this);
 
 		this.commercialProductsMap = {};
 
@@ -112,6 +114,32 @@ class NegotiationModal extends Component {
 			});
 		})();
 		/*********************************************************************************************************************************************************/
+		// RCL categorization
+		var propertyData = {};
+		if (this.props.settings.FACSettings.rcl_fields.length) {
+			let rateCardLines = Object.values(this._rateCards).reduce((acc, cur) => {
+				var crcl = cur.customRateCardLines || [];
+				acc = [...acc, ...cur.rateCardLines, ...crcl];
+				return acc;
+			}, []);
+
+			this.props.settings.FACSettings.rcl_fields.forEach(cf => {
+				propertyData[cf] = {};
+			});
+
+			rateCardLines.forEach(rcl => {
+				this.props.settings.FACSettings.rcl_fields.forEach(cf => {
+					if (rcl[cf]) {
+						propertyData[cf][rcl[cf]] = true;
+					}
+				});
+			});
+
+			for (var key in propertyData) {
+				propertyData[key] = Object.keys(propertyData[key]);
+			}
+		}
+		/*********************************************************************************************************************************************************/
 
 		var attachment = {};
 		try {
@@ -139,6 +167,9 @@ class NegotiationModal extends Component {
 				charges: 0,
 				rated: 0
 			},
+			propertyData,
+			selectedProperty: '',
+			selectedPropertyValue: '',
 			countTotal: 0,
 			filter: {
 				unique: false,
@@ -200,6 +231,20 @@ class NegotiationModal extends Component {
 
 	selectAll(type) {
 		console.log('ALL');
+	}
+
+	onPropertyChange(e) {
+		var defaultProperty = this.state.propertyData[e.target.value]
+			? this.state.propertyData[e.target.value][0]
+			: '';
+		this.setState({
+			selectedProperty: e.target.value || null,
+			selectedPropertyValue: defaultProperty
+		});
+	}
+
+	onPropertyValueChange(e) {
+		this.setState({ selectedPropertyValue: e.target.value || null });
 	}
 
 	onSelectRow(row, type) {
@@ -558,48 +603,64 @@ class NegotiationModal extends Component {
 									</div>
 
 									<ul className="table-list">
-										{rc.rateCardLines.map((rcl, i) => {
-											return (
-												<li
-													onClick={() => {
-														this.onSelectRow(rcl, 'rated');
-													}}
-													key={rcl.Id}
-													className={
-														'list-row' +
-														(this.state.selected.rated[rcl.Id]
-															? ' selected-row'
-															: '')
+										{rc.rateCardLines
+											.filter(rcl => {
+												let retBool = true;
+												if (
+													this.state.selectedProperty &&
+													this.state.selectedPropertyValue
+												) {
+													if (
+														rcl[this.state.selectedProperty] !==
+														this.state.selectedPropertyValue
+													) {
+														retBool = false;
 													}
-												>
-													<div className="list-cell">
-														<Checkbox
-															readOnly={this.state.selected.rated[rcl.Id]}
-														/>{' '}
-														{rcl.Name}
-													</div>
-													<div className="list-cell">
-														{rcl.cspmb__Cap_Unit__c}
-													</div>
-													<div className="list-cell">
-														{rcl.cspmb__rate_value__c}
-														{this.state.selected.rated[rcl.Id] &&
-														this.state.selected.rated[rcl.Id]
-															.negotiatedValue ? (
-															<span>
-																/
-																{
-																	this.state.selected.rated[rcl.Id]
-																		.negotiatedValue
-																}
-															</span>
-														) : (
-															''
-														)}
-													</div>
-												</li>
-											);
-										})}
+												}
+												return retBool;
+											})
+											.map((rcl, i) => {
+												return (
+													<li
+														onClick={() => {
+															this.onSelectRow(rcl, 'rated');
+														}}
+														key={rcl.Id}
+														className={
+															'list-row' +
+															(this.state.selected.rated[rcl.Id]
+																? ' selected-row'
+																: '')
+														}
+													>
+														<div className="list-cell">
+															<Checkbox
+																readOnly={this.state.selected.rated[rcl.Id]}
+															/>{' '}
+															{rcl.Name}
+														</div>
+														<div className="list-cell">
+															{rcl.cspmb__Cap_Unit__c}
+														</div>
+														<div className="list-cell">
+															{rcl.cspmb__rate_value__c}
+															{this.state.selected.rated[rcl.Id] &&
+															this.state.selected.rated[rcl.Id]
+																.negotiatedValue ? (
+																<span>
+																	/
+																	{
+																		this.state.selected.rated[rcl.Id]
+																			.negotiatedValue
+																	}
+																</span>
+															) : (
+																''
+															)}
+														</div>
+													</li>
+												);
+											})}
 									</ul>
 								</li>
 							);
@@ -607,6 +668,79 @@ class NegotiationModal extends Component {
 				</ul>
 			</div>
 		);
+
+		let filterContainer;
+		filterContainer = (
+			<div className="filter-container">
+				<div>
+					<div className="label-text">Intersection Rows</div>
+					<Toggle
+						onChange={val => {
+							this.setState({
+								filter: { ...this.state.filter, intersection: val }
+							});
+						}}
+						value={this.state.filter.intersection}
+					/>
+				</div>
+			</div>
+		);
+		if (
+			this.state.tab === 'rated' &&
+			this.props.settings.FACSettings.rcl_fields.length
+		) {
+			filterContainer = (
+				<div className="bulk-filter-container">
+					<h4>Filter rate card lines</h4>
+
+					<div className="bulk-filter-section">
+						<label>Select rate card line property:</label>
+
+						<select
+							className="rcm-input_sm"
+							value={this.state.selectedProperty || ''}
+							onChange={this.onPropertyChange}
+						>
+							<option value="">-- select an property --</option>
+							{Object.keys(this.state.propertyData).map(key => {
+								return (
+									<option key={key} value={key}>
+										{' '}
+										{key}{' '}
+									</option>
+								);
+							})}
+						</select>
+					</div>
+
+					<div className="bulk-filter-section">
+						<label>Select value:</label>
+
+						<select
+							className="rcm-input_sm"
+							value={this.state.selectedPropertyValue || ''}
+							disabled={
+								this.state.propertyData[this.state.selectedProperty]
+									? false
+									: true
+							}
+							onChange={this.onPropertyValueChange}
+						>
+							{this.state.propertyData[this.state.selectedProperty] &&
+								this.state.propertyData[this.state.selectedProperty].map(
+									val => {
+										return (
+											<option key={val} value={val}>
+												{val}
+											</option>
+										);
+									}
+								)}
+						</select>
+					</div>
+				</div>
+			);
+		}
 
 		return (
 			<Modal
@@ -630,19 +764,7 @@ class NegotiationModal extends Component {
 							})}
 						</ul>
 					</div>
-					<div className="filter-container">
-						<div>
-							<div className="label-text">Intersection Rows</div>
-							<Toggle
-								onChange={val => {
-									this.setState({
-										filter: { ...this.state.filter, intersection: val }
-									});
-								}}
-								value={this.state.filter.intersection}
-							/>
-						</div>
-					</div>
+					{filterContainer}
 
 					<div className="tab-content-container">{tab[this.state.tab]}</div>
 

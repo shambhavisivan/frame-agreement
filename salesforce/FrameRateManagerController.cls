@@ -30,7 +30,7 @@ global with sharing class FrameRateManagerController {
 		return json_data;
 	}
 
-	private static csutil__JSON_Data__c getButtonData() {
+	private static csutil__JSON_Data__c getCustomButtonData() {
 		csutil__JSON_Data__c json_data;
 
 		try {
@@ -38,6 +38,23 @@ global with sharing class FrameRateManagerController {
 				select csutil__value__c
 				from csutil__JSON_Data__c
 				where Name = 'FA-Custom-Buttons'
+				limit 1
+			];
+		} catch (QueryException e) {
+
+		}
+
+		return json_data;
+	}
+
+	private static csutil__JSON_Data__c getStandardButtonData() {
+		csutil__JSON_Data__c json_data;
+
+		try {
+			json_data = [
+				select csutil__value__c
+				from csutil__JSON_Data__c
+				where Name = 'FA-Standard-Buttons'
 				limit 1
 			];
 		} catch (QueryException e) {
@@ -126,6 +143,7 @@ global with sharing class FrameRateManagerController {
 		statuses.put('active_status', FACSettings.get('active_status__c'));
 		statuses.put('approved_status', FACSettings.get('approved_status__c'));
 		statuses.put('draft_status', FACSettings.get('draft_status__c'));
+		statuses.put('closed_status', FACSettings.get('closed_status__c'));
 		statuses.put('requires_approval_status', FACSettings.get('requires_approval_status__c'));
 
 		settingMap.put('statuses', statuses);
@@ -365,20 +383,26 @@ global with sharing class FrameRateManagerController {
 		Integer cp_count = database.countQuery(cp_query);
 		Integer fa_count = database.countQuery('select count() from csconta__Frame_Agreement__c');
 
-		List < Object > headerData;
-		List < Object > buttonData;
-		List < Object > categorizationData;
+		List < Object > headerData = new List < Object >();
+		List < Object > buttonCustom = new List < Object >();
+		Map < String, Object > buttonStandard = new Map < String, Object >();
+		List < Object > categorizationData = new List < Object >();
 
 		csutil__JSON_Data__c header_data = getHeaderData();
-		csutil__JSON_Data__c button_data = getButtonData();
+		csutil__JSON_Data__c button_custom = getCustomButtonData();
+		csutil__JSON_Data__c button_standard = getStandardButtonData();
 		csutil__JSON_Data__c categorization_data = getCategorizationData();
 
 		if (header_data != null) {
 			headerData = (List < Object >) JSON.deserializeUntyped(header_data.csutil__value__c);
 		}
 
-		if (button_data != null) {
-			buttonData = (List < Object >) JSON.deserializeUntyped(button_data.csutil__value__c);
+		if (button_custom != null) {
+			buttonCustom = (List < Object >) JSON.deserializeUntyped(button_custom.csutil__value__c);
+		}
+
+		if (button_standard != null) {
+			buttonStandard = (Map<String, Object>)JSON.deserializeUntyped(button_standard.csutil__value__c);
 		}
 
 		if (categorization_data != null) {
@@ -389,7 +413,8 @@ global with sharing class FrameRateManagerController {
 		count.put('frameAgreementsCount', fa_count);
 		count.put('itemsPerPage', ITEMS_PER_PAGE);
 		count.put('HeaderData', headerData);
-		count.put('ButtonData', buttonData);
+		count.put('ButtonCustomData', buttonCustom);
+		count.put('ButtonStandardData', buttonStandard);
 		count.put('CategorizationData', categorizationData);
 		count.put('FACSettings', getCustomSettings());
 		count.put('AuthLevels', getAuthorizationLevels());
@@ -637,13 +662,47 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@remoteaction
+	public static csconta__Frame_Agreement__c getFrameAgreement(Id faId) {
+		List < csconta__Frame_Agreement__c > faList = new List < csconta__Frame_Agreement__c > ();
+
+		List < String > conjoined_fields = new List < String > ();
+		conjoined_fields.addAll(FA_FIELDS);
+		conjoined_fields.addAll(getFieldsFromJSONData());
+
+		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c where Id = :faId limit 1';
+
+		return database.query(query);
+	}
+
+	@remoteaction
+	public static String setFrameAgreementState(Id faId, String status) {
+		String retString = 'Success';
+		csconta__Frame_Agreement__c fa = [select Id from csconta__Frame_Agreement__c where Id = :faId limit 1];
+		try {
+			fa.csconta__Status__c = status;
+			update fa;
+		} catch(DmlException e) {
+			retString = e.getMessage();  
+		} catch(SObjectException e) {
+			retString = e.getMessage();  
+		} catch(Exception e) {
+			retString = e.getMessage();   
+		}
+		return retString;
+	}
+
+	@remoteaction
 	public static String deleteFrameAgreement(Id faId) {
 		String retString = 'Success';
 		csconta__Frame_Agreement__c fa = [select Id from csconta__Frame_Agreement__c where Id = :faId limit 1];
 		try {
 			delete fa;
-		} catch (DmlException e) {
-			retString = e.getMessage();
+		} catch(DmlException e) {
+			retString = e.getMessage();  
+		} catch(SObjectException e) {
+			retString = e.getMessage();  
+		} catch(Exception e) {
+			retString = e.getMessage();   
 		}
 		return retString;
 	}

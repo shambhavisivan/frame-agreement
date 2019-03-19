@@ -1,100 +1,102 @@
 <apex:page controller="FrameRateManagerController" showHeader="true" showChat="false" showQuickActionVfHeader="false" sidebar="false" standardStylesheets="false">
 
-    <div id="fam"></div>
-    
-    <script type='text/javascript'>
-        Visualforce.remoting.timeout = 120000;
-        var SF;
-        window.react_logs = [];
-        window.SF = SF = {
-            VfManager: Visualforce.remoting.Manager,
-            invokeAction: function (remoteActionName, parametersArr = []) {
-                let invokeActionArgs = [];
+	<div id="fam"></div>
+	
+	<script type='text/javascript'>
+		Visualforce.remoting.timeout = 120000;
+		var SF;
+		window.react_logs = [];
+		window.SF = SF = {
+			VfManager: Visualforce.remoting.Manager,
+			invokeAction: function (remoteActionName, parametersArr = []) {
+				let invokeActionArgs = [];
 
-                invokeActionArgs.push(this.actions[remoteActionName]);
+				invokeActionArgs.push(this.actions[remoteActionName]);
 
-                invokeActionArgs = invokeActionArgs.concat(parametersArr);
+				invokeActionArgs = invokeActionArgs.concat(parametersArr);
 
-                console.log('Invoking action:%c ' + remoteActionName + '%c with params: [' + parametersArr.join(' ,') + ']', 'color: #ffa429', 'color:initial');
+				console.log('Invoking action:%c ' + remoteActionName + '%c with params: [' + parametersArr.join(' ,') + ']', 'color: #ffa429', 'color:initial');
 
-                return new Promise(function (resolve, reject) {
-                        Visualforce.remoting.Manager.invokeAction(...invokeActionArgs, (result, event) => {
-                            resolve(result);
-                            return result;
-                        }), { escape: true, buffer: false }
-                    })
-            },
-            param: {
-                account: '{!$CurrentPage.parameters.account}'
-            },
-            apiSession: "{!$Api.Session_ID}",
-            actions: {
-                getAppSettings: "{!$RemoteAction.FrameRateManagerController.getAppSettings}",
-                getFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getFrameAgreements}",
-                deleteFrameAgreement: "{!$RemoteAction.FrameRateManagerController.deleteFrameAgreement}",
-                upsertFrameAgreements: "{!$RemoteAction.FrameRateManagerController.upsertFrameAgreements}",
-                cloneFrameAgreement: "{!$RemoteAction.FrameRateManagerController.cloneFrameAgreement}",
-                getCommercialProducts: "{!$RemoteAction.FrameRateManagerController.getCommercialProducts}",
-                filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
-                getAuthorizationLevels: "{!$RemoteAction.FrameRateManagerController.getAuthorizationLevels}",
-                getPricingElements: "{!$RemoteAction.FrameRateManagerController.getPricingElements}",
-                getCommercialProductData: "{!$RemoteAction.FrameRateManagerController.getCommercialProductData}",
-                saveAttachment: "{!$RemoteAction.FrameRateManagerController.saveAttachment}",
-                getAttachmentBody: "{!$RemoteAction.FrameRateManagerController.getAttachmentBody}",
-                getApprovalHistory: "{!$RemoteAction.FrameRateManagerController.getApprovalHistory}",
-                approveRejectRecallRecord: "{!$RemoteAction.FrameRateManagerController.approveRejectRecallRecord}",
-                reassignApproval: "{!$RemoteAction.FrameRateManagerController.reassignApproval}",
-                submitForApproval: "{!$RemoteAction.FrameRateManagerController.submitForApproval}",
-                getPriceItemCharges: "{!$RemoteAction.FrameRateManagerController.getPriceItemCharges}"
-            }
-        };
-        
-    </script>
+				return new Promise(function (resolve, reject) {
+						Visualforce.remoting.Manager.invokeAction(...invokeActionArgs, (result, event) => {
+							resolve(result);
+							return result;
+						}), { escape: true, buffer: false }
+					})
+			},
+			param: {
+				account: '{!$CurrentPage.parameters.account}'
+			},
+			apiSession: "{!$Api.Session_ID}",
+			actions: {
+				getAppSettings: "{!$RemoteAction.FrameRateManagerController.getAppSettings}",
+				getFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getFrameAgreements}",
+				getFrameAgreement: "{!$RemoteAction.FrameRateManagerController.getFrameAgreement}",
+				setFrameAgreementState: "{!$RemoteAction.FrameRateManagerController.setFrameAgreementState}",
+				deleteFrameAgreement: "{!$RemoteAction.FrameRateManagerController.deleteFrameAgreement}",
+				upsertFrameAgreements: "{!$RemoteAction.FrameRateManagerController.upsertFrameAgreements}",
+				cloneFrameAgreement: "{!$RemoteAction.FrameRateManagerController.cloneFrameAgreement}",
+				getCommercialProducts: "{!$RemoteAction.FrameRateManagerController.getCommercialProducts}",
+				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
+				getAuthorizationLevels: "{!$RemoteAction.FrameRateManagerController.getAuthorizationLevels}",
+				getPricingElements: "{!$RemoteAction.FrameRateManagerController.getPricingElements}",
+				getCommercialProductData: "{!$RemoteAction.FrameRateManagerController.getCommercialProductData}",
+				saveAttachment: "{!$RemoteAction.FrameRateManagerController.saveAttachment}",
+				getAttachmentBody: "{!$RemoteAction.FrameRateManagerController.getAttachmentBody}",
+				getApprovalHistory: "{!$RemoteAction.FrameRateManagerController.getApprovalHistory}",
+				approveRejectRecallRecord: "{!$RemoteAction.FrameRateManagerController.approveRejectRecallRecord}",
+				reassignApproval: "{!$RemoteAction.FrameRateManagerController.reassignApproval}",
+				submitForApproval: "{!$RemoteAction.FrameRateManagerController.submitForApproval}",
+				getPriceItemCharges: "{!$RemoteAction.FrameRateManagerController.getPriceItemCharges}"
+			}
+		};
+		
+	</script>
 
-    <style type="text/css">
-        @font-face {
-            font-family: 'Salesforce Sans';
-            src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Light.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Light.woff')}') format("woff");
-            font-weight: 300
-        }
+	<style type="text/css">
+		@font-face {
+			font-family: 'Salesforce Sans';
+			src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Light.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Light.woff')}') format("woff");
+			font-weight: 300
+		}
 
-        @font-face {
-            font-family: 'Salesforce Sans';
-            src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-LightItalic.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-LightItalic.woff')}') format("woff");
-            font-style: italic;
-            font-weight: 300
-        }
+		@font-face {
+			font-family: 'Salesforce Sans';
+			src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-LightItalic.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-LightItalic.woff')}') format("woff");
+			font-style: italic;
+			font-weight: 300
+		}
 
-        @font-face {
-            font-family: 'Salesforce Sans';
-            src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Regular.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Regular.woff')}') format("woff");
-            font-weight: 400
-        }
+		@font-face {
+			font-family: 'Salesforce Sans';
+			src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Regular.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Regular.woff')}') format("woff");
+			font-weight: 400
+		}
 
-        @font-face {
-            font-family: 'Salesforce Sans';
-            src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Italic.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Italic.woff')}') format("woff");
-            font-style: italic;
-            font-weight: 400
-        }
+		@font-face {
+			font-family: 'Salesforce Sans';
+			src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Italic.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Italic.woff')}') format("woff");
+			font-style: italic;
+			font-weight: 400
+		}
 
-        @font-face {
-            font-family: 'Salesforce Sans';
-            src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Bold.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Bold.woff')}') format("woff");
-            font-weight: 700
-        }
+		@font-face {
+			font-family: 'Salesforce Sans';
+			src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Bold.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Bold.woff')}') format("woff");
+			font-weight: 700
+		}
 
-        @font-face {
-            font-family: 'Salesforce Sans';
-            src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-BoldItalic.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-BoldItalic.woff')}') format("woff");
-            font-style: italic;
-            font-weight: 700
-        }
-        .cloudsense-logo {
-            background-image: url('{!URLFOR($Resource.fonts, 'img/cloudsense.png')}');
-        }
-    </style>
+		@font-face {
+			font-family: 'Salesforce Sans';
+			src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-BoldItalic.woff2')}') format("woff2"), url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-BoldItalic.woff')}') format("woff");
+			font-style: italic;
+			font-weight: 700
+		}
+		.cloudsense-logo {
+			background-image: url('{!URLFOR($Resource.fonts, 'img/cloudsense.png')}');
+		}
+	</style>
 
-    <script src ="{!$Resource.FrameAgreementResource}" type="text/javascript" />
-    <csutil:CustomResources resources="{!commonContainerPageResources }"/>
+	<script src ="{!$Resource.FrameAgreementResource}" type="text/javascript" />
+	<csutil:CustomResources resources="{!commonContainerPageResources }"/>
 </apex:page>

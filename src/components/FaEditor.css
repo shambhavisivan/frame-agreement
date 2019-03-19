@@ -17,6 +17,10 @@
     justify-content: flex-end;
 }
 
+.header-button-container > .dropdown-button-container, .header-button-container > button, .header-button-container > .custom-button-container > button{
+    margin-right: 10px;
+}
+
 .main-container {
     /*background-color: #fbfbfb;*/
     padding: 0px 17px;

@@ -54,6 +54,39 @@ export function approveRejectRecallRecord(recordId, comments, action) {
 	};
 }
 
+export const _getFrameAgreement = result => ({
+	type: 'GET_FA',
+	payload: result
+});
+
+export function getFrameAgreement(faId) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('getFrameAgreement', [faId]).then(response => {
+				dispatch(_getFrameAgreement(response));
+				resolve(response);
+				return response;
+			});
+		});
+	};
+}
+
+export function setFrameAgreementState(faId, newStatus) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('setFrameAgreementState', [faId, newStatus]).then(
+				response => {
+					dispatch(
+						_getFrameAgreement({ Id: faId, csconta__Status__c: newStatus })
+					);
+					resolve(response);
+					return response;
+				}
+			);
+		});
+	};
+}
+
 export function reassignApproval(recordId, newActorId) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {

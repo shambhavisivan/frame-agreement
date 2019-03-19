@@ -42,7 +42,8 @@ class ApprovalProcess extends React.Component {
 		} catch (err) {}
 
 		this.state = {
-			open: true
+			open: true,
+			loading: false
 		};
 	}
 
@@ -79,6 +80,16 @@ class ApprovalProcess extends React.Component {
 			console.warn('newIsInitiator changed to:', newIsInitiator);
 			this.isInitiator = newIsInitiator;
 		}
+	}
+
+	refreshApprovalHistory() {
+		this.setState({ loading: true }, () => {
+			this.props.onChange().finally(r => {
+				setTimeout(() => {
+					this.setState({ loading: false });
+				}, 500);
+			});
+		});
 	}
 
 	approvalAction(actionType, reassignTo = null) {
@@ -166,6 +177,22 @@ class ApprovalProcess extends React.Component {
 							)}
 						</div>
 					)}
+
+					<div
+						onClick={() => {
+							this.refreshApprovalHistory();
+						}}
+					>
+						<Icon
+							svg-class={
+								'approval-refresh' + (this.state.loading ? ' rotating' : '')
+							}
+							name="refresh"
+							width="14"
+							height="14"
+							color="#747474"
+						/>
+					</div>
 				</div>
 
 				{this.state.open && (

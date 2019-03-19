@@ -25,10 +25,6 @@ class FaList extends Component {
 		this.onSearchChange = this.onSearchChange.bind(this);
 	}
 
-	componentDidUpdate(props) {
-		console.log(props);
-	}
-
 	onSearchChange(value) {
 		console.log(value);
 		this.setState({

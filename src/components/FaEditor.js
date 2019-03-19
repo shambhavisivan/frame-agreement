@@ -12,6 +12,8 @@ import {
 	setValidation,
 	getApprovalHistory,
 	createToast,
+	getFrameAgreement,
+	setFrameAgreementState,
 	submitForApproval,
 	registerMethod
 } from '../actions';
@@ -25,7 +27,7 @@ import ApprovalProcess from './ApprovalProcess';
 import Toaster from './utillity/Toaster';
 import Header from './utillity/Header';
 import Icon from './utillity/Icon';
-import PropTypes from 'prop-types';
+import CustomButtonDropdown from './utillity/CustomButtonDropdown';
 
 import SFDatePicker from './utillity/datepicker/SFDatePicker';
 import SFField from './utillity/readonly/SFField';
@@ -56,7 +58,7 @@ class FrameAgreement {
 	constructor() {
 		this.Id = null;
 		this.csconta__Agreement_Name__c = '';
-		this.csconta__Status__c = 'Draft';
+		this.csconta__Status__c = this.props.settings.FACSettings.statuses.draft_status;
 		this.csconta__Valid_From__c = null;
 		this.csconta__Valid_To__c = null;
 		this._ui = {
@@ -86,16 +88,23 @@ class FaEditor extends Component {
 		this.onSubmitForApproval = this.onSubmitForApproval.bind(this);
 		this.onApprovalChange = this.onApprovalChange.bind(this);
 		this.toggleVisibility = this.toggleVisibility.bind(this);
+		this.refreshFa = this.refreshFa.bind(this);
+		this.setStateOFFa = this.setStateOFFa.bind(this);
+		this.callHandler = this.callHandler.bind(this);
 		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(
 			this
 		);
 
 		// API
-		window.FAC.addProducts = this.onAddProducts.bind(this);
-		window.FAC.negotiate = this.onNegotiate.bind(this);
-		window.FAC.toast = this.props.createToast;
 		window.FAC.registerMethod = this.props.registerMethod;
-		window.FAC.getActiveFrameAgreement = () => this.state.activeFa;
+
+		window.FAC.api.addProducts = this.onAddProducts;
+		window.FAC.api.negotiate = this.onNegotiate.bind(this);
+		window.FAC.api.toast = this.props.createToast;
+		window.FAC.api.refreshFa = this.refreshFa;
+		window.FAC.api.setStatusOfFrameAgreement = this.setStateOFFa;
+		window.FAC.api.getActiveFrameAgreement = () => this.state.activeFa;
+		window.FAC.api.submitForApproval = () => this.onSubmitForApproval;
 
 		this.faId = this.props.match.params.id || null;
 		let _frameAgreement;
@@ -131,10 +140,16 @@ class FaEditor extends Component {
 	}
 
 	componentWillUnmount() {
-		delete window.FAC.addProducts;
-		delete window.FAC.negotiate;
-		delete window.FAC.getActiveFrameAgreement;
-		delete window.FAC.toast;
+		delete window.FAC.registerMethod;
+
+		delete window.FAC.api.addProducts;
+		delete window.FAC.api.negotiate;
+		delete window.FAC.api.toast;
+		delete window.FAC.api.refreshFa;
+		delete window.FAC.api.setStatusOfFrameAgreement;
+		delete window.FAC.api.getActiveFrameAgreement;
+		delete window.FAC.api.submitForApprovaldelete;
+
 		this.props.setValidation();
 	}
 
@@ -225,10 +240,11 @@ class FaEditor extends Component {
 
 		// **************************************
 		this.editable =
-			this.props.settings.FACSettings.fa_editable_statuses.includes(
+			this.props.settings.FACSettings.fa_editable_statuses.has(
 				this.state.activeFa.csconta__Status__c
 			) || !this.state.activeFa.Id;
 		// **************************************
+
 		// Organize the header grid
 		var field_rows = [];
 		var row = [];
@@ -253,7 +269,7 @@ class FaEditor extends Component {
 	/**************************************************/
 	onApprovalChange() {
 		// Refresh approval
-		this.props.getApprovalHistory(this.faId).then(response => {
+		return this.props.getApprovalHistory(this.faId).then(response => {
 			this.setState({
 				activeFa: {
 					...this.state.activeFa,
@@ -262,6 +278,7 @@ class FaEditor extends Component {
 			});
 		});
 	}
+
 	/**************************************************/
 	async onSubmitForApproval() {
 		await this.upsertFrameAgreements();
@@ -323,6 +340,7 @@ class FaEditor extends Component {
 	/**************************************************/
 	async onAddProducts(productsMap) {
 		productsMap = await publish('onBeforeAddProducts', productsMap);
+
 		let _attachment = {};
 		// Sort out products data
 		let IdsToLoad = this.props.commercialProducts.reduce((acc, cp) => {
@@ -551,6 +569,32 @@ class FaEditor extends Component {
 	}
 
 	/**************************************************/
+	async refreshFa(faId = this.faId) {
+		return new Promise(async resolve => {
+			let newFa = await this.props.getFrameAgreement(faId);
+			if (newFa) {
+				this.setState(
+					{ activeFa: { ...this.state.activeFa, ...newFa } },
+					() => {
+						resolve(newFa);
+					}
+				);
+			}
+		});
+	}
+
+	async setStateOFFa(state, faId = this.faId) {
+		let result = await this.props.setFrameAgreementState(faId, state);
+		if (result === 'Success') {
+			this.setState(
+				{ activeFa: { ...this.state.activeFa, csconta__Status__c: state } },
+				() => {
+					console.log(this.state.activeFa);
+				}
+			);
+		}
+	}
+
 	async onNegotiate(priceItemId, type, data) {
 		console.log(data);
 		let attachment = this.state.activeFa._ui.attachment;
@@ -674,20 +718,29 @@ class FaEditor extends Component {
 		data = await publish('onBeforeSaveFrameAgreement', data);
 
 		if (data.Id) {
+			if (this.props.approvalFlag && this.editable) {
+				data.csconta__Status__c = this.props.settings.FACSettings.statuses.requires_approval_status;
+			}
+
 			return Promise.all([
 				this.props.saveFrameAgreement(data, this.state.activeFa.Id),
 				this.props.saveAttachment(
 					this.state.activeFa.Id,
 					this.state.activeFa._ui.attachment
 				)
-			]).then(async responseArr => {
-				await publish('onAfterSaveFrameAgreement', responseArr);
-				this.props.createToast(
-					'success',
-					'Saved!',
-					'Successfuly saved frame agreement.'
-				);
-			});
+			])
+				.then(async responseArr => {
+					await this.refreshFa();
+					return responseArr;
+				})
+				.then(async responseArr => {
+					await publish('onAfterSaveFrameAgreement', responseArr);
+					this.props.createToast(
+						'success',
+						'Saved!',
+						'Successfuly saved frame agreement.'
+					);
+				});
 		} else {
 			return this.props.createFrameAgreement(data).then(upsertedFa => {
 				this.setState(
@@ -753,26 +806,40 @@ class FaEditor extends Component {
 		if (this.state.activeFa._ui.commercialProducts.length) {
 			footer = (
 				<div className="main-footer">
-					<button
-						className="slds-button slds-button--brand"
-						onClick={this.onOpenCommercialProductModal}
-					>
-						Add Products
-					</button>
-					<button
-						disabled={!Object.keys(this.state.selectedProducts).length}
-						className="slds-button slds-button--neutral"
-						onClick={this.onOpenNegotiationModal}
-					>
-						Negotiate Products
-					</button>
-					<button
-						disabled={!Object.keys(this.state.selectedProducts).length}
-						className="slds-button slds-button--danger"
-						onClick={this.onRemoveProducts}
-					>
-						Delete Products
-					</button>
+					{this.props.settings.ButtonStandardData.AddProducts.has(
+						this.state.activeFa.csconta__Status__c
+					) && (
+						<button
+							className="slds-button slds-button--brand"
+							onClick={this.onOpenCommercialProductModal}
+						>
+							Add Products
+						</button>
+					)}
+
+					{this.props.settings.ButtonStandardData.BulkNegotiate.has(
+						this.state.activeFa.csconta__Status__c
+					) && (
+						<button
+							disabled={!Object.keys(this.state.selectedProducts).length}
+							className="slds-button slds-button--neutral"
+							onClick={this.onOpenNegotiationModal}
+						>
+							Negotiate Products
+						</button>
+					)}
+
+					{this.props.settings.ButtonStandardData.DeleteProducts.has(
+						this.state.activeFa.csconta__Status__c
+					) && (
+						<button
+							disabled={!Object.keys(this.state.selectedProducts).length}
+							className="slds-button slds-button--danger"
+							onClick={this.onRemoveProducts}
+						>
+							Delete Products
+						</button>
+					)}
 				</div>
 			);
 		}
@@ -801,6 +868,40 @@ class FaEditor extends Component {
 					onNegotiate={this.onBulkNegotiate}
 					onCloseModal={this.onCloseModal}
 				/>
+			);
+		}
+		// *******************************************************
+		// Custom buttons component
+		let customButtonsComponent = '';
+		let customButtons = this.props.settings.ButtonCustomData.filter(
+			btnObj => !btnObj.hidden.has(this.state.activeFa.csconta__Status__c)
+		);
+
+		if (customButtons.length >= 3) {
+			customButtonsComponent = (
+				<CustomButtonDropdown
+					buttons={customButtons}
+					onAction={this.callHandler}
+				/>
+			);
+		} else {
+			customButtonsComponent = (
+				<div className="custom-button-container">
+					{customButtons.map((btnObj, i) => {
+						return (
+							<button
+								key={btnObj.id + i}
+								id={btnObj.id}
+								onClick={() => {
+									this.callHandler(btnObj.method, btnObj.type);
+								}}
+								className="slds-button slds-button--translucent"
+							>
+								{btnObj.label}
+							</button>
+						);
+					})}
+				</div>
 			);
 		}
 		// *******************************************************
@@ -935,47 +1036,53 @@ class FaEditor extends Component {
 					<Header
 						onBackClick={this.onBackClick}
 						disabled={!this.editable}
-						title="Parturient tortor tortor sed tellus molestie neque lobortis sodales"
+						title={this.state.activeFa.csconta__Agreement_Name__c}
+						status={this.state.activeFa.csconta__Status__c}
 						subtitle="Frame Agreement Details"
 					>
 						<div className="header-button-container">
-							{this.props.settings.ButtonData.filter(
-								btnObj =>
-									!btnObj.hidden.includes(
-										this.state.activeFa.csconta__Status__c
-									)
-							).map((btnObj, i) => {
-								return (
-									<button
-										key={btnObj.id + i}
-										id={btnObj.id}
-										onClick={() => {
-											this.callHandler(btnObj.method, btnObj.type);
-										}}
-										className="slds-button slds-button--translucent"
-									>
-										{btnObj.label}
-									</button>
-								);
-							})}
+							{customButtonsComponent}
 
-							<button
-								className="slds-button slds-button--translucent"
-								onClick={this.upsertFrameAgreements}
-							>
-								Save
-							</button>
+							{this.props.settings.ButtonStandardData.Save.has(
+								this.state.activeFa.csconta__Status__c
+							) && (
+								<button
+									className="slds-button slds-button--translucent"
+									onClick={this.upsertFrameAgreements}
+								>
+									Save
+								</button>
+							)}
 
-							<button
-								className="slds-button slds-button--translucent"
-								disabled={
-									!this.props.approvalFlag ||
-									!this.state.activeFa._ui.commercialProducts.length
-								}
-								onClick={this.onSubmitForApproval}
-							>
-								Submit For Approval
-							</button>
+							{this.props.settings.ButtonStandardData.SubmitForApproval.has(
+								this.state.activeFa.csconta__Status__c
+							) && (
+								<button
+									className="slds-button slds-button--translucent"
+									disabled={
+										!this.props.approvalFlag ||
+										!this.state.activeFa._ui.commercialProducts.length
+									}
+									onClick={this.onSubmitForApproval}
+								>
+									Submit For Approval
+								</button>
+							)}
+
+							{this.props.settings.ButtonStandardData.Submit.has(
+								this.state.activeFa.csconta__Status__c
+							) && (
+								<button className="slds-button slds-button--translucent">
+									Decompose
+								</button>
+							)}
+
+							{this.state.activeFa.csconta__Status__c ===
+								this.props.settings.FACSettings.statuses.active_status && (
+								<button className="slds-button slds-button--translucent">
+									Create New Version
+								</button>
+							)}
 						</div>
 					</Header>
 
@@ -1051,6 +1158,8 @@ const mapDispatchToProps = {
 	setValidation,
 	saveAttachment,
 	createToast,
+	getFrameAgreement,
+	setFrameAgreementState,
 	getApprovalHistory,
 	registerMethod,
 	submitForApproval

@@ -223,6 +223,18 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
+		case 'GET_FA':
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[action.payload.Id]: {
+						...state.frameAgreements[action.payload.Id],
+						csconta__Status__c: action.payload.csconta__Status__c
+					}
+				}
+			};
+
 		case 'DELETE_FA':
 			var {
 				[action.payload]: value,
@@ -289,23 +301,80 @@ const rootReducer = (state = initialState, action) => {
 
 			if (validateCSV(action.payload.FACSettings.fa_editable_statuses)) {
 				action.payload.FACSettings.fa_editable_statuses = action.payload.FACSettings.fa_editable_statuses
-					.replace(/ /g, '')
+					.replace(/ ,/g, ',')
+					.replace(/, /g, ',')
 					.split(',');
+				action.payload.FACSettings.fa_editable_statuses = new Set(
+					action.payload.FACSettings.fa_editable_statuses
+				);
+				if (
+					action.payload.FACSettings.fa_editable_statuses.delete(
+						action.payload.FACSettings.statuses.active_status
+					)
+				) {
+					console.warn(
+						'Active status excluded from list of editable statuses!'
+					);
+				}
+				if (
+					action.payload.FACSettings.fa_editable_statuses.delete(
+						action.payload.FACSettings.statuses.closed_status
+					)
+				) {
+					console.warn(
+						'Closed status excluded from list of editable statuses!'
+					);
+				}
 			} else {
-				console.warn('Price item fields is not valid CSV!');
-				action.payload.FACSettings.fa_editable_statuses = [];
+				console.warn(
+					'FA editable statuses setting is not valid CSV! Defaulting to Draft and Requires Approval.'
+				);
+				action.payload.FACSettings.fa_editable_statuses = [
+					action.payload.FACSettings.statuses.draft_status,
+					action.payload.FACSettings.statuses.requires_approval_status
+				];
 			}
 
 			// ***************************************************************************************************************
-			action.payload.AuthLevels = action.payload.AuthLevels.reduce(function(
-				acc,
-				level
-			) {
-				(acc[level['cspmb__Authorization_Level__c']] =
-					acc[level['cspmb__Authorization_Level__c']] || []).push(level);
-				return acc;
-			},
-			{});
+			action.payload.AuthLevels = action.payload.AuthLevels
+				? action.payload.AuthLevels.reduce(function(acc, level) {
+						(acc[level['cspmb__Authorization_Level__c']] =
+							acc[level['cspmb__Authorization_Level__c']] || []).push(level);
+						return acc;
+				  }, {})
+				: {};
+
+			// ***************************************************************************************************************
+			// Validate standard buttons
+			const standardButtonsDefault = [
+				'Save',
+				'SubmitForApproval',
+				'Submit',
+				'DeleteProducts',
+				'BulkNegotiate',
+				'AddProducts'
+			];
+			var _standardButtons = {};
+			standardButtonsDefault.forEach(sb => {
+				if (!action.payload.ButtonStandardData.hasOwnProperty(sb)) {
+					console.warn(sb + ' not defined in "FA-Standard-Buttons"!');
+				} else {
+					if (!action.payload.ButtonStandardData[sb].length) {
+						console.warn('No visible status for ' + sb + ' button.');
+					}
+
+					_standardButtons[sb] = new Set(
+						action.payload.ButtonStandardData[sb] || []
+					);
+				}
+			});
+
+			action.payload.ButtonStandardData = _standardButtons;
+			// ***************************************************************************************************************
+			// Validate custom buttons
+			action.payload.ButtonCustomData.forEach(cb => {
+				cb.hidden = new Set(cb.hidden || []);
+			});
 
 			// ***************************************************************************************************************
 			let DiscLevels = {};

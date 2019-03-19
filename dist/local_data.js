@@ -60,6 +60,7 @@ const FACSettings = {
     price_item_fields: "cspmb__Contract_Term__c",
     show_volume_fields: true,
     rcl_fields: "cspmb__Currency_Code__c, Category__c",
+    statuses: { "active_status": "Active", "approved_status": "Approved", "closed_status": "Closed", "draft_status": "Draft", "requires_approval_status": "Requires Approval" },
     truncate_product_fields: true,
 };
 
@@ -283,7 +284,7 @@ const HeaderData = [{
 
 const CategorizationData = [{"name":"Alpha","field":"Categorization_Alpha__c","values":["Fixed","Mobile","Static"]},{"name":"Beta","field":"Categorization_Beta__c","values":["10GB","20GB","50GB","100GB"]}];
 
-const ButtonData = [
+const ButtonCustomData = [
   {
     "type": "action",
     "label": "Action button",
@@ -312,6 +313,8 @@ const ButtonData = [
     ]
   }
 ];
+
+const ButtonStandardData = {"Save":["Draft","Requires Approval"],"SubmitForApproval":["Requires Approval"],"Submit":["Approved"],"DeleteProducts":["Draft","Requires Approval"],"BulkNegotiate":["Draft","Requires Approval"],"AddProducts":["Draft","Requires Approval"]};
 
 /*
     window.FAC.registerMethod("RedirectFunction", () => {
@@ -386,7 +389,8 @@ window.SF = SF = {
                     commercialProductCount: 10,
                     frameAgreementsCount: 1,
                     itemsPerPage: 20,
-                    ButtonData: ButtonData,
+                    ButtonCustomData: ButtonCustomData,
+                    ButtonStandardData: ButtonStandardData,
                     CategorizationData: CategorizationData,
                     HeaderData: HeaderData,
                     DiscLevels: DiscLevels,
@@ -409,7 +413,7 @@ window.SF = SF = {
                 return createPromise(attachment);
 
             case "getApprovalHistory":
-                return createPromise(getRandomFromArr([approval2, approval2]));
+                return createPromise(getRandomFromArr([approval, approval]));
 
             case "getRateCards": // Obsolete
                 return createPromise(rateCards);
@@ -428,6 +432,15 @@ window.SF = SF = {
 
             case "filterCommercialProducts":
                 return createPromise(filterProducts(parametersArr[0]));            
+
+            case "setFrameAgreementState":
+                return createPromise("Success");
+
+            case "getFrameAgreement":
+                var fa = frameAgreements.filter(fa => fa.Id === parametersArr[0])[0];
+                fa = JSON.parse(JSON.stringify(fa));
+                delete fa._ui;
+                return createPromise(fa);
 
             case "deleteFrameAgreement":
                 return createPromise("Success");

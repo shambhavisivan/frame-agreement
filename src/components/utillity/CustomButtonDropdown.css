@@ -1,0 +1,46 @@
+.slds-button-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.slds-button-icon svg {
+    margin-left: 10px;
+}
+
+.dropdown-button-container {
+     position: relative;
+}
+
+.dropdown-button-container > ul {
+    z-index: 1;
+    /*padding: 10px;*/
+    position: absolute;
+    list-style: none;
+    min-width: 100px;
+    background: white;
+    text-align: left;
+    top: 33px;
+    right: 0;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 -1px 1px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.dropdown-button-container > ul:focus {
+    outline: none;
+}
+
+.dropdown-button-container > ul > li  {
+    display: flex;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.dropdown-button-container > ul > li:hover  {
+    background: #f3f2f2;
+}
+
+.dropdown-button-container > ul > li:not(:last-child)  {
+    margin-bottom: 5px;
+}

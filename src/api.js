@@ -46,9 +46,10 @@ export const publish = async (eventType, arg = null) => {
 
 export const initialiseApi = () => {
 	window.FAC = {};
+	window.FAC.api = {};
 	window.FAC.eventList = eventList;
 	window.FAC.subscribe = subscribe;
-	window.FAC.invokeAction = window.SF.invokeAction.bind(window.SF);
+	window.FAC.api.invokeAction = window.SF.invokeAction.bind(window.SF);
 
 	// FROM OTHER COMPONENTS
 	// window.FAC.toaster = ToastsStore;

@@ -452,8 +452,8 @@ class NegotiationModal extends Component {
 						Name
 					</div>
 					<div className="list-cell">Present In</div>
-					<div className="list-cell">Original One-Off</div>
-					<div className="list-cell">Original Recurring</div>
+					<div className="list-cell">One-Off</div>
+					<div className="list-cell">Recurring</div>
 				</div>
 
 				<ul>
@@ -510,7 +510,7 @@ class NegotiationModal extends Component {
 					</div>
 					<div className="list-cell">Present In</div>
 					<div className="list-cell">Charge Type</div>
-					<div className="list-cell">Original Value</div>
+					<div className="list-cell">Value</div>
 				</div>
 
 				<ul className="table-list">

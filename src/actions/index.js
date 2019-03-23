@@ -15,6 +15,58 @@ export function registerMethod(name, method) {
 	};
 }
 // ***********************************************************************
+createPricingRuleGroup;
+decomposeAttachment;
+
+export const _createPricingRuleGroup = () => ({
+	type: 'CREATEA_PRG',
+	payload: {}
+});
+
+export const _decomposeAttachment = (data, prId) => ({
+	type: 'DECOMPOSE_ATTACHMENT',
+	payload: { data, prId }
+});
+
+export function createPricingRuleGroup() {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('createPricingRuleGroup').then(prId => {
+				resolve(prId);
+				return prId;
+			});
+		});
+	};
+}
+
+export function decomposeAttachment(data, prId) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('decomposeAttachment', [
+				JSON.stringify(data),
+				prId
+			]).then(message => {
+				// dispatch(_decomposeAttachment(data, prId));
+				resolve(message);
+				return message;
+			});
+		});
+	};
+}
+
+export function undoDecomposition(prId) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('undoDecomposition', [prId]).then(message => {
+				// dispatch(_decomposeAttachment(data, prId));
+				resolve(message);
+				return message;
+			});
+		});
+	};
+}
+
+// ***********************************************************************
 export const recieveApprovalHistory = (faId, data) => ({
 	type: 'GET_APPROVAL_HISTORY',
 	payload: { faId, data }
@@ -79,6 +131,25 @@ export function setFrameAgreementState(faId, newStatus) {
 					dispatch(
 						_getFrameAgreement({ Id: faId, csconta__Status__c: newStatus })
 					);
+					resolve(response);
+					return response;
+				}
+			);
+		});
+	};
+}
+
+export const _createNewVersionOfFrameAgrement = newFa => ({
+	type: 'NEW_VERSION',
+	payload: newFa
+});
+
+export function createNewVersionOfFrameAgrement(faId) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('createNewVersionOfFrameAgrement', [faId]).then(
+				response => {
+					dispatch(_createNewVersionOfFrameAgrement(response));
 					resolve(response);
 					return response;
 				}

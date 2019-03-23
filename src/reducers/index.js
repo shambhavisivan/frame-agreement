@@ -151,7 +151,6 @@ const rootReducer = (state = initialState, action) => {
 				...{ frameAgreements: frameAgreementMap },
 				...{ initialised: { ...state.initialised, ...{ fa_loaded: true } } }
 			};
-
 		case 'ADD_TOAST':
 			// action.payload.type;
 			// action.payload.title;
@@ -241,6 +240,15 @@ const rootReducer = (state = initialState, action) => {
 				...withoutRemoved
 			} = state.frameAgreements;
 			return { ...state, frameAgreements: withoutRemoved };
+
+		case 'NEW_VERSION':
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[action.payload.Id]: action.payload
+				}
+			};
 
 		case 'SAVE_FA':
 			var upsertedFa = action.payload;

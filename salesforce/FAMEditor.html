@@ -15,6 +15,13 @@
 
 				invokeActionArgs = invokeActionArgs.concat(parametersArr);
 
+				parametersArr = parametersArr.map(param => {
+					if (typeof param === 'string' && param.length > 100) {
+						param = param.substring(0,97) + "...";
+					}
+					return param;
+				});
+
 				console.log('Invoking action:%c ' + remoteActionName + '%c with params: [' + parametersArr.join(' ,') + ']', 'color: #ffa429', 'color:initial');
 
 				return new Promise(function (resolve, reject) {
@@ -47,6 +54,9 @@
 				approveRejectRecallRecord: "{!$RemoteAction.FrameRateManagerController.approveRejectRecallRecord}",
 				reassignApproval: "{!$RemoteAction.FrameRateManagerController.reassignApproval}",
 				submitForApproval: "{!$RemoteAction.FrameRateManagerController.submitForApproval}",
+				createPricingRuleGroup: "{!$RemoteAction.FrameRateManagerController.createPricingRuleGroup}",
+				decomposeAttachment: "{!$RemoteAction.FrameRateManagerController.decomposeAttachment}",
+				undoDecomposition: "{!$RemoteAction.FrameRateManagerController.undoDecomposition}",
 				getPriceItemCharges: "{!$RemoteAction.FrameRateManagerController.getPriceItemCharges}"
 			}
 		};
@@ -93,7 +103,7 @@
 			font-weight: 700
 		}
 		.cloudsense-logo {
-			background-image: url('{!URLFOR($Resource.fonts, 'img/cloudsense.png')}');
+			background-image: url('{!URLFOR($Resource.fonts, 'img/cloudsense.png')}')!important;
 		}
 	</style>
 

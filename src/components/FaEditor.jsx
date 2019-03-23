@@ -11,9 +11,13 @@ import {
 	toggleFieldVisibility,
 	setValidation,
 	getApprovalHistory,
+	createPricingRuleGroup,
+	decomposeAttachment,
+	undoDecomposition,
 	createToast,
 	getFrameAgreement,
 	setFrameAgreementState,
+	createNewVersionOfFrameAgrement,
 	submitForApproval,
 	registerMethod
 } from '../actions';
@@ -55,10 +59,10 @@ window.activeFa = {};
 window.editor = {};
 
 class FrameAgreement {
-	constructor() {
+	constructor(props) {
 		this.Id = null;
 		this.csconta__Agreement_Name__c = '';
-		this.csconta__Status__c = this.props.settings.FACSettings.statuses.draft_status;
+		this.csconta__Status__c = props.settings.FACSettings.statuses.draft_status;
 		this.csconta__Valid_From__c = null;
 		this.csconta__Valid_To__c = null;
 		this._ui = {
@@ -91,6 +95,8 @@ class FaEditor extends Component {
 		this.refreshFa = this.refreshFa.bind(this);
 		this.setStateOFFa = this.setStateOFFa.bind(this);
 		this.callHandler = this.callHandler.bind(this);
+		this.onDecompose = this.onDecompose.bind(this);
+		this.createNewVersion = this.createNewVersion.bind(this);
 		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(
 			this
 		);
@@ -121,7 +127,7 @@ class FaEditor extends Component {
 				_frameAgreement = { ...this.props.frameAgreements[this.faId] };
 			}
 		} else {
-			_frameAgreement = new FrameAgreement();
+			_frameAgreement = new FrameAgreement(this.props);
 		}
 
 		// Ref active FA from store
@@ -304,6 +310,137 @@ class FaEditor extends Component {
 				await publish('onAfterSubmit');
 			})
 			.then(this.onApprovalChange);
+	}
+	/**************************************************/
+	async onDecompose() {
+		// 1) Create a structure that is matching one element -> one pipra
+	    let _attachment = this.state.activeFa._ui.attachment;
+	    console.log(_attachment);
+
+	    let structure = [];
+	    for (var cpId in _attachment) {
+	        if (_attachment[cpId].hasOwnProperty('_addons')) {
+	            let addons = _attachment[cpId]._addons;
+	            for (var cpaoa in addons) {
+	                structure.push({
+	                    cpaoaId: cpaoa,
+	                    recurring: addons[cpaoa].recurring || null,
+	                    oneOff: addons[cpaoa].oneOff || null
+	                });
+	            }
+	        }
+
+	        if (_attachment[cpId].hasOwnProperty('_charges')) {
+	            let charges = _attachment[cpId]._charges;
+	            for (var chId in charges) {
+	                structure.push({
+	                    peId: chId,
+	                    recurring: charges[chId].recurring || null,
+	                    oneOff: charges[chId].oneOff || null
+	                });
+	            }
+	        }
+
+	        if (_attachment[cpId].hasOwnProperty('_product')) {
+	            structure.push({
+	                cpId: cpId,
+	                recurring: _attachment[cpId]._product.recurring || null,
+	                oneOff: _attachment[cpId]._product.oneOff || null
+	            });
+	        }
+	    }
+	    // 2) Remove items that have no charge value
+	    structure = structure.filter(
+	        item => item.recurring !== null || item.oneOff !== null
+	    );
+
+	    console.log(structure);
+
+	    // Create pricing rule group, pricing rule and association between them. Return pricing rule id to be used in next stage
+	    const PR_ID = await this.props.createPricingRuleGroup();
+
+	    console.log(PR_ID);
+
+	    if (typeof PR_ID !== 'string') {
+	        console.error('Decompose failed, invalid pricing rule Id!');
+	        return false;
+	    }
+
+	    // This will hold the structure in chunks on n
+	    let decompositionDataChunked = [];
+	    // This will be filled with promises
+	    let decompositionPromiseArray = [];
+
+	    // CHUNK THE STRUCTURE
+	    for (let i = 0; i < structure.length; i += this.props.settings.FACSettings.decomposition_chunk_size) {
+	        decompositionDataChunked.push(structure.slice(i, i + this.props.settings.FACSettings.decomposition_chunk_size));
+	    }
+
+	    console.log(decompositionDataChunked);
+
+	    // Fill the promise array
+	    decompositionDataChunked.forEach(chunk => {
+	        decompositionPromiseArray.push(
+	            this.props.decomposeAttachment(chunk, PR_ID, this.state.activeFa.Id)
+	        );
+	    });
+
+	    //********************************************
+	    // Wait for all to resolve
+	    let result = await Promise.all(decompositionPromiseArray);
+	    result = new Set(result);
+	    //********************************************
+
+	    console.log("Merged results:", result);
+
+	    // If the decomposition was successful
+	    if (!result.has("Success") || result.size > 1) {
+
+
+	        console.error("Decomposition failed, undoing...!");
+	        this.props.createToast(
+	            'error',
+	            'Decomposition failed!',
+	            'Deleting associations made from this attempt.'
+	        );
+
+
+	        let undoArray = [];
+	        let undoPromiseArray = [];
+	        // CHUNK THE STRUCTURE
+	        for (let i = 0; i < structure.length; i += 10000) {
+	            undoArray.push(structure.slice(i, i + 10000));
+	        }
+
+	        undoArray.forEach(chunk => {
+	            undoPromiseArray.push(
+	                this.props.undoDecomposition(PR_ID)
+	            );
+	        });
+
+	        let undo_result = await Promise.all(undoPromiseArray);
+	        this.props.createToast(
+	            'warning',
+	            'Decomposition reverted!',
+	            'Deleted all created associations.'
+	        );
+	    } else {
+
+			await this.setStateOFFa(this.props.settings.FACSettings.statuses.active_status);	    	
+			await this.refreshFa();
+
+	        this.props.createToast(
+	            'success',
+	            'Decomposition succeded!',
+	            'Created ' + structure.length + " associations."
+	        );
+	    }
+	}
+	/**************************************************/
+	async createNewVersion() {
+		let newFa = await this.props.createNewVersionOfFrameAgrement(this.state.activeFa.Id);
+		this.props.history.push('/agreement/' + newFa.Id);
+		// window.location.reload();
 	}
 	/**************************************************/
 	applyAttachment(fa, attachment) {}
@@ -584,6 +721,7 @@ class FaEditor extends Component {
 	}
 
 	async setStateOFFa(state, faId = this.faId) {
+
 		let result = await this.props.setFrameAgreementState(faId, state);
 		if (result === 'Success') {
 			this.setState(
@@ -1083,14 +1221,14 @@ class FaEditor extends Component {
 							{this.props.settings.ButtonStandardData.Submit.has(
 								this.state.activeFa.csconta__Status__c
 							) && (
-								<button className="fa-button fa-button-border-light fa-button-transparent">
+								<button className="fa-button fa-button-border-light fa-button-transparent" onClick={this.onDecompose}>
 									Decompose
 								</button>
 							)}
 
 							{this.state.activeFa.csconta__Status__c ===
 								this.props.settings.FACSettings.statuses.active_status && (
-								<button className="fa-button fa-button-border-light fa-button-transparent">
+								<button className="fa-button fa-button-border-light fa-button-transparent" onClick={this.createNewVersion}>
 									Create New Version
 								</button>
 							)}
@@ -1174,6 +1312,10 @@ const mapDispatchToProps = {
 	getFrameAgreement,
 	setFrameAgreementState,
 	getApprovalHistory,
+	createPricingRuleGroup,
+	createNewVersionOfFrameAgrement,
+	decomposeAttachment,
+	undoDecomposition,
 	registerMethod,
 	submitForApproval
 	// updateActiveFa

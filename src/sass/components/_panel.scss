@@ -8,9 +8,9 @@
 	border-radius: 0.25rem;
 	box-shadow: 0 0 4px transparentize($black, 0.8);
 	color: #0070d2;
+	cursor: pointer;
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: space-between;
 	margin-bottom: 0.25rem;
 	padding: 0.75rem 1.5rem 0.75rem 0.75rem;
 	text-decoration: none;
@@ -32,10 +32,12 @@
 	}
 }
 
-/* Title */
-.fa-panel-title {
+/* Body */
+.fa-panel-body {
 	align-items: center;
 	display: flex;
+	flex: 1;
+	justify-content: space-between;
 
 	@include mq(sm, max) {
 		margin-top: 1rem;

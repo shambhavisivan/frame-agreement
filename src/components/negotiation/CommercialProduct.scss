@@ -9,11 +9,10 @@
 }
 
 .commercial-product-header {
+		align-items: center;
     width: 100%;
-    display: inline-block;
-    /* margin: 0px 20px; */
-    padding: 20px 0px 10px 0px;
-    /* flex-direction: column; */
+    display: flex;
+    padding: 10px 0px;
 }
 
 .commercial-product-checkbox-container {
@@ -31,6 +30,7 @@
 }
 
 .commercial-product-fields {
+		align-items: center;
     display: flex;
 }
 

@@ -38,7 +38,7 @@ class InputSearch extends React.Component {
 					placeholder={this.props.placeholder || 'Quick search'}
 					debounceTimeout={300}
 					spellCheck="false"
-					className="fa-input"
+					className="fa-input fa-input-lg"
 					type="text"
 					onChange={this.onTextChange}
 					value={this.state.value}

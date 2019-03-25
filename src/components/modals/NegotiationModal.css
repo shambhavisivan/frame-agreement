@@ -5,6 +5,7 @@
 .modal-panel {
     border-right: 1px solid rgba(153, 153, 153, 0.5);
     background: #fdfdfd;
+		padding-bottom: 0.25rem;
 }
 
 

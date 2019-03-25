@@ -11,13 +11,19 @@
 	font-size: 0.75rem;
 	height: 2rem;
 	justify-content: center;
-	padding: 0.25rem 0.25rem * 5;
+	padding: 0.25rem 1.25rem;
+	position: relative;
 	text-decoration: none;
 	@include sbg(--main-c);
 }
 
 .fa-button-lg {
-	padding: 0.25rem * 2 0.25rem * 5;
+	padding: 0.5rem 1.25rem;
+}
+
+/* Group */
+.button-group {
+	position: relative;
 }
 
 /* Colours */

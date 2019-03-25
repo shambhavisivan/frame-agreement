@@ -34,7 +34,7 @@ class Checkbox extends React.Component {
 				>
 					{this.props.readOnly && (
 						<Icon
-							svg-class="checkbox-icon"
+							svg-class="fa-checkbox-icon"
 							name="check"
 							width={this.props.small ? 8 : 12}
 							height={this.props.small ? 8 : 12}
@@ -51,7 +51,7 @@ class Checkbox extends React.Component {
 				>
 					{this.props.value && (
 						<Icon
-							svg-class="checkbox-icon"
+							svg-class="fa-checkbox-icon"
 							name="check"
 							width={this.props.small ? 8 : 12}
 							height={this.props.small ? 8 : 12}

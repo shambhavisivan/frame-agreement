@@ -426,7 +426,7 @@ class FaEditor extends Component {
 	        );
 	    } else {
 
-			await this.setStateOFFa(this.props.settings.FACSettings.statuses.active_status);	    	
+			await this.setStateOFFa(this.props.settings.FACSettings.statuses.active_status);
 			await this.refreshFa();
 
 	        this.props.createToast(
@@ -1028,12 +1028,12 @@ class FaEditor extends Component {
 					{customButtons.map((btnObj, i) => {
 						return (
 							<button
+								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
 								key={btnObj.id + i}
 								id={btnObj.id}
 								onClick={() => {
 									this.callHandler(btnObj.method, btnObj.type);
 								}}
-								className="slds-button slds-button--translucent"
 							>
 								{btnObj.label}
 							</button>
@@ -1065,7 +1065,7 @@ class FaEditor extends Component {
 			commercialProducts = (
 				<div>
 					<div>
-						<div className="fa-section fa-section-vertical fa-section-border">
+						<div className="fa-section fa-section-vertical fa-section-shadow">
 							<div className="fa-flex fa-flex-middle">
 								<div className="fa-flex-item fa-flex-1">
 									<span>
@@ -1196,7 +1196,7 @@ class FaEditor extends Component {
 								this.state.activeFa.csconta__Status__c
 							) && (
 								<button
-									className="fa-button fa-button-border-light fa-button-transparent"
+									className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
 									onClick={this.upsertFrameAgreements}
 								>
 									Save
@@ -1260,13 +1260,18 @@ class FaEditor extends Component {
 								})}
 							</section>
 
-							<section className="fa-section fa-section-border">
+							<div className="fa-padding-top-sm">
 								{approvalHistory}
-								{commercialProducts}
+							</div>
 
+							<div className="fa-padding-top-sm">
+								{commercialProducts}
+							</div>
+
+							<div>
 								{productModal}
 								{negotiateModal}
-							</section>
+							</div>
 
 							{this.editable && footer}
 						</div>

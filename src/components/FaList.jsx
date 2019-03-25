@@ -90,7 +90,7 @@ class FaList extends Component {
 								<div className="fa-main-header-item">
 									<div className="fa-main-header-group">
 										<img className="cloudsense-logo" src={CloudSenseLogo} alt="CloudSense Logo" />
-										<h5 className="fa-main-header-title">Frame Agreement Negotiation Console</h5>
+										<h1 className="fa-main-header-title">Frame Agreement Negotiation Console</h1>
 									</div>
 								</div>
 								<div className="fa-main-header-item">

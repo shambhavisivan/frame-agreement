@@ -10,6 +10,7 @@
 	align-items: center;
 	display: inline-flex;
 	margin-right: 0.5rem;
+	position: relative;
 }
 
 /* Search */
@@ -17,7 +18,16 @@
 	> .icon-search {
 		bottom: 50%;
 		left: 10px;
+		pointer-events: none;
 		position: absolute;
 		transform: translateY(50%);
 	}
+}
+
+/* Checkbox */
+.fa-checkbox-icon {
+	bottom: 50%;
+	position: absolute;
+	right: 50%;
+	transform: translate(50%, 50%);
 }

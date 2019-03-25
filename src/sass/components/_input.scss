@@ -6,16 +6,21 @@
 	border-radius: 0.25rem;
 	box-sizing: border-box;
 	display: inline-block;
+	font-family: $font-primary;
 	font-size: 0.75rem;
 	height: 2rem;
 	outline: 0;
-	padding: 0.5rem 2rem;
+	padding: 0.5rem 1rem;
 	width: 100%;
 
 	&:active,
 	&:focus {
-		outline: 0;
+		outline: 1px solid $blue-sf;
 	}
+}
+
+.fa-input-lg {
+	padding: 0.5rem 2rem;
 }
 
 /* Search */
@@ -38,11 +43,4 @@
 
 .fa-checkbox.checked {
   background: #0070d2;
-}
-
-.fa-checkbox-icon {
-	bottom: 50%;
-	position: absolute;
-	right: 50%;
-	transform: translate(50%, 50%);
 }

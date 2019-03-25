@@ -752,7 +752,7 @@ class NegotiationModal extends Component {
 				open={this.props.open}
 				onClose={this.onCloseModal}
 			>
-				<div className="modal-header">
+				<div className="fa-modal-header modal-header">
 					<h2>Bulk Negotiation</h2>
 				</div>
 				<div className="modal-body fa-modal-body">
@@ -860,7 +860,7 @@ class NegotiationModal extends Component {
 									type="number"
 									min={0}
 									name=""
-									className="fa-input fa-margin-bottom-xsm"
+									className="fa-input fa-margin-bottom-sm"
 									ref={this.discount}
 									placeholder="Enter discount percentage"
 								/>

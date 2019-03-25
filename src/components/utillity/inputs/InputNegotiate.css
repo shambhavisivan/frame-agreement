@@ -17,11 +17,12 @@
 }
 
 .negotiate-icon {
+	bottom: 50%;
 	visibility: hidden;
   position: absolute;
-  top: 1px;
-  left: 4px;
   z-index: 2;
+	right: 5px;
+	transform: translateY(50%);
 }
 
 .negotiate-input {

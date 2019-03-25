@@ -309,7 +309,7 @@ class ProductModal extends Component {
 								);
 							})}
 						</div>
-						<div className="panel-filter-buttons">
+						<div className="panel-filter-buttons fa-margin-bottom-sm">
 							<button
 								onClick={this.resetFilter}
 								className="fa-button fa-margin-right-xsm"

@@ -1,0 +1,26 @@
+/* Dropdown */
+// Dropdown component.
+
+.fa-dropdown {
+	background: $white;
+	box-shadow: 0 0 4px transparentize($black, 0.8);
+	color: $black;
+	left: 0;
+	outline: 0;
+	min-width: 8rem;
+	position: absolute;
+	top: calc(100% + 0.5rem);
+	z-index: $z-index-dropdown;
+}
+
+/* Item */
+.fa-dropdown-item {
+	align-items: center;
+	display: flex;
+	font-size: 0.9rem;
+	padding: 0.5rem;
+
+	svg {
+		margin-right: 0.5rem;
+	}
+}

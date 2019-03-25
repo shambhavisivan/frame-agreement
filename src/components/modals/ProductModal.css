@@ -7,8 +7,7 @@
 }
 
 .modal-body.panel-open .categorisation-container {
-    /*display: none;*/
-    visibility: hidden;
+  display: none;
 }
 
 .categorisation-container svg {
@@ -38,6 +37,7 @@
 
 .modal-table-container {
     /*padding: 15px;*/
+		margin-top: 1rem;
 }
 
 .modal-body.panel-open .modal-table-container {
@@ -82,10 +82,10 @@
 
 /**********************************************/
 
-/*.modal-body.panel-open .modal-product-list {
-    padding-right: 12px;
+.modal-product-list {
+  padding-top: 1rem;
 }
-*/
+
 .product-list-header {
     font-size: 12px;
     text-transform: uppercase;

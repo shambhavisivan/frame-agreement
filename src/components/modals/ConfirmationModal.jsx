@@ -13,7 +13,7 @@ class ConfirmationModal extends Component {
 	render() {
 		return (
 			<div className="modal fa-modal">
-				<div className="fa-modal-header modal-header">
+				<div className="modal-header">
 					<h2>{this.props.title}</h2>
 				</div>
 				<div className="modal fa-modal-body">
@@ -24,7 +24,7 @@ class ConfirmationModal extends Component {
 						className="fa-button button--neutral fa-margin-right-xsm"
 						onClick={this.props.onCancel}
 					>
-						Cancel
+						{window.SF.labels.alert_btn_cancel}
 					</button>
 					<button
 						className="fa-button button--brand"

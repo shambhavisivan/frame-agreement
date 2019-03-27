@@ -35,10 +35,10 @@ class InputSearch extends React.Component {
 				<Icon name="search" width="16" height="16" color="#cccccc" />
 				<DebounceInput
 					minLength={2}
-					placeholder={this.props.placeholder || 'Quick search'}
+					placeholder={this.props.placeholder || window.SF.labels.input_quickSearchPlaceholder}
 					debounceTimeout={300}
 					spellCheck="false"
-					className="fa-input fa-input-lg"
+					className="fa-input"
 					type="text"
 					onChange={this.onTextChange}
 					value={this.state.value}

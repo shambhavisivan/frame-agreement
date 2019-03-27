@@ -24,9 +24,9 @@ class Rates extends React.Component {
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell">Name</div>
-					<div className="list-cell">Rate Value</div>
-					<div className="list-cell">Negotiated Value</div>
+					<div className="list-cell">{window.SF.labels.rate_cards_header_name}</div>
+					<div className="list-cell">{window.SF.labels.rate_cards_header_value}</div>
+					<div className="list-cell">{window.SF.labels.rate_cards_header_value_neg}</div>
 				</div>
 				<ul className="rc-list">
 					{this.props.rateCards.map((rc, i) => {

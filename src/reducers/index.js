@@ -20,10 +20,10 @@ const initialState = {
 };
 
 const VOLUME_FIELDS = [
-	{ label: 'Minimum vol', name: 'mv' },
-	{ label: 'Minimum vol. period', name: 'mvp' },
-	{ label: 'Min. usage commitment', name: 'muc' },
-	{ label: 'Min. usage commitment period', name: 'mucp' }
+	{ label: window.SF.labels.products_volume_minVol, name: 'mv' },
+	{ label: window.SF.labels.products_volume_minVolPeriod, name: 'mvp' },
+	{ label: window.SF.labels.products_volume_minUsageComm, name: 'muc' },
+	{ label: window.SF.labels.products_volume_minUsageCommPeriod, name: 'mucp' }
 ];
 
 function validateJSONData(data) {
@@ -242,11 +242,16 @@ const rootReducer = (state = initialState, action) => {
 			return { ...state, frameAgreements: withoutRemoved };
 
 		case 'NEW_VERSION':
+			let newVersion = action.payload;
+			newVersion._ui = {
+				commercialProducts: [],
+				attachment: null
+			};
 			return {
 				...state,
 				frameAgreements: {
 					...state.frameAgreements,
-					[action.payload.Id]: action.payload
+					[action.payload.Id]: newVersion
 				}
 			};
 

@@ -62,13 +62,13 @@ class FaList extends Component {
 					customUI: ({ onClose }) => {
 						return (
 							<ConfirmationModal
-								title="Delete Frame Agreement"
-								message="Are you sure you want to delete this frame agreement?"
+								title={window.SF.labels.alert_cloneFa_title}
+								message={window.SF.labels.alert_cloneFa_message}
 								onCancel={onClose}
 								onConfirm={() => {
 									this.props.deleteFrameAgreement(faId);
 								}}
-								confirmText="Delete"
+								confirmText={window.SF.labels.alert_cloneFa_btn_action}
 							/>
 						);
 					}
@@ -90,17 +90,17 @@ class FaList extends Component {
 								<div className="fa-main-header-item">
 									<div className="fa-main-header-group">
 										<img className="cloudsense-logo" src={CloudSenseLogo} alt="CloudSense Logo" />
-										<h1 className="fa-main-header-title">Frame Agreement Negotiation Console</h1>
+										<h5 className="fa-main-header-title">{window.SF.labels.frameAgreementTitle}</h5>
 									</div>
 								</div>
 								<div className="fa-main-header-item">
 									<div className="fa-main-header-search">
 										<InputSearch onChange={this.onSearchChange} />
-										<Link className="fa-button" to="/agreement">Add new Agreement</Link>
+										<Link className="fa-button" to="/agreement">{window.SF.labels.btn_AddNewAgreement}</Link>
 									</div>
 								</div>
 								<div className="fa-main-header-item">
-									<h5 className="fa-main-header-title">Agreement list</h5>
+									<h5 className="fa-main-header-title">{window.SF.labels.frameAgreementListTitle}</h5>
 								</div>
 						</div>
 					</div>
@@ -135,10 +135,10 @@ class FaList extends Component {
 					{!Object.keys(this.props.frameAgreements).length && (
 						<div className="add-product-box" style={{ border: 'none' }}>
 							<span className="box-header-1">
-								There are no Frame Agreements in here
+								{window.SF.labels.no_fa_message}
 							</span>
 							<span className="box-header-2">
-								Create at least one frame agreements
+								{window.SF.labels.no_fa_message_2}
 							</span>
 							<div className="box-button-container" />
 						</div>

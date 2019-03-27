@@ -100,7 +100,7 @@ class InputNegotiate extends React.Component {
 					{this.props.negotiatedValue !== this.props.originalValue &&
 					this.props.originalValue ? (
 						<span className="discount">
-							<div>negotiated </div>
+							<div>{window.SF.labels.util_negotiation_input_diff_label} </div>
 							<span className="discount-amount">
 								{' '}
 								-

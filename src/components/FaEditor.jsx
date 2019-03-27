@@ -275,11 +275,11 @@ class FaEditor extends Component {
 	/**************************************************/
 	onApprovalChange() {
 		// Refresh approval
-		return this.props.getApprovalHistory(this.faId).then(response => {
+		return Promise.all([this.props.getApprovalHistory(this.faId), this.refreshFa()]).then(response => {
 			this.setState({
 				activeFa: {
 					...this.state.activeFa,
-					_ui: { ...this.state.activeFa._ui, approval: response }
+					_ui: { ...this.state.activeFa._ui, approval: response[0] }
 				}
 			});
 		});
@@ -297,14 +297,14 @@ class FaEditor extends Component {
 				if (response) {
 					this.props.createToast(
 						'success',
-						'Submitted!',
-						'Successfuly submitted for approval.'
+						window.SF.labels.toast_success_title,
+						window.SF.labels.toast_submitForApproval
 					);
 				} else {
 					this.props.createToast(
 						'error',
-						'Failed!',
-						'Unable to start approval process.'
+						window.SF.labels.toast_success_title,
+						window.SF.labels.toast_submitForApproval_failed
 					);
 				}
 				await publish('onAfterSubmit');
@@ -398,10 +398,11 @@ class FaEditor extends Component {
 
 
 	        console.error("Decomposition failed, undoing...!");
+
 	        this.props.createToast(
 	            'error',
-	            'Decomposition failed!',
-	            'Deleting associations made from this attempt.'
+	            window.SF.labels.toast_decomposition_title_failed,
+	            window.SF.labels.toast_decomposition_failed
 	        );
 
 
@@ -421,8 +422,8 @@ class FaEditor extends Component {
 	        let undo_result = await Promise.all(undoPromiseArray);
 	        this.props.createToast(
 	            'warning',
-	            'Decomposition reverted!',
-	            'Deleted all created associations.'
+	            window.SF.labels.toast_decomposition_title_revered,
+	            window.SF.labels.toast_decomposition_revered
 	        );
 	    } else {
 
@@ -431,14 +432,15 @@ class FaEditor extends Component {
 
 	        this.props.createToast(
 	            'success',
-	            'Decomposition succeded!',
-	            'Created ' + structure.length + " associations."
+	            window.SF.labels.toast_decomposition_title_success,
+	            window.SF.labels.toast_decomposition_success + ' (' +  structure.length + ')',
 	        );
 	    }
 	}
 	/**************************************************/
 	async createNewVersion() {
 		let newFa = await this.props.createNewVersionOfFrameAgrement(this.state.activeFa.Id);
+		this.props.history.push('/');
 		this.props.history.push('/agreement/' + newFa.Id);
 		// window.location.reload();
 	}
@@ -599,13 +601,13 @@ class FaEditor extends Component {
 			customUI: ({ onClose }) => {
 				return (
 					<ConfirmationModal
-						title="Delete products"
-						message="Are you sure you want to delete selected products?"
+						title={window.SF.labels.alert_deleteProducts_title}
+						message={window.SF.labels.alert_deleteProducts_message}
 						onCancel={onClose}
 						onConfirm={() => {
 							this._removeProducts();
 						}}
-						confirmText="Delete"
+						confirmText={window.SF.labels.alert_deleteProducts_title}
 					/>
 				);
 			}
@@ -826,8 +828,8 @@ class FaEditor extends Component {
 		if (!this.props.handlers.hasOwnProperty(name)) {
 			this.props.createToast(
 				'error',
-				'Invalid handler!',
-				'Handler with method name "' + name + '" is not defined.'
+				window.SF.labels.toast_invalid_handler_title,
+				window.SF.labels.toast_invalid_handler + ' (' + name + ')'
 			);
 			return;
 		}
@@ -875,8 +877,8 @@ class FaEditor extends Component {
 					await publish('onAfterSaveFrameAgreement', responseArr);
 					this.props.createToast(
 						'success',
-						'Saved!',
-						'Successfuly saved frame agreement.'
+						window.SF.labels.toast_success_title,
+						window.SF.labels.toast_saved_fa
 					);
 				});
 		} else {
@@ -889,10 +891,11 @@ class FaEditor extends Component {
 						await publish('onAfterSaveFrameAgreement', upsertedFa);
 						this.props.createToast(
 							'success',
-							'Created!',
-							'Successfuly created new frame agreement.'
+							window.SF.labels.toast_success_title,
+							window.SF.labels.toast_created_fa
 						);
 
+						this.props.history.push('/');
 						this.props.history.push('/agreement/' + upsertedFa.Id);
 						this.faId = upsertedFa.Id;
 						// window.location.reload();
@@ -916,13 +919,13 @@ class FaEditor extends Component {
 						if (!this.state.activeFa.Id) {
 							return (
 								<span className="box-header-2">
-									Save frame agreement before adding products!
+									{window.SF.labels.save_fa_message}
 								</span>
 							);
 						} else {
 							return (
 								<span className="box-header-2">
-									They will be visible as soon as you create them.
+									{window.SF.labels.save_fa_products_message}
 								</span>
 							);
 						}
@@ -933,7 +936,7 @@ class FaEditor extends Component {
 							onClick={this.onOpenCommercialProductModal}
 							disabled={!this.state.activeFa.Id}
 						>
-							Add Products
+							{window.SF.labels.btn_AddProducts}
 						</button>
 					</div>
 				</div>
@@ -951,7 +954,7 @@ class FaEditor extends Component {
 							className="fa-button fa-margin-right-sm"
 							onClick={this.onOpenCommercialProductModal}
 						>
-							Add Products
+							{window.SF.labels.btn_AddProducts}
 						</button>
 					)}
 
@@ -963,7 +966,7 @@ class FaEditor extends Component {
 							className="fa-button fa-margin-right-sm"
 							onClick={this.onOpenNegotiationModal}
 						>
-							Negotiate Products
+							{window.SF.labels.btn_BulkNegotiate}
 						</button>
 					)}
 
@@ -975,7 +978,7 @@ class FaEditor extends Component {
 							className="fa-button"
 							onClick={this.onRemoveProducts}
 						>
-							Delete Products
+							{window.SF.labels.btn_DeleteProducts}
 						</button>
 					)}
 				</div>
@@ -1028,12 +1031,12 @@ class FaEditor extends Component {
 					{customButtons.map((btnObj, i) => {
 						return (
 							<button
-								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
 								key={btnObj.id + i}
 								id={btnObj.id}
 								onClick={() => {
 									this.callHandler(btnObj.method, btnObj.type);
 								}}
+								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
 							>
 								{btnObj.label}
 							</button>
@@ -1069,7 +1072,7 @@ class FaEditor extends Component {
 							<div className="fa-flex fa-flex-middle">
 								<div className="fa-flex-item fa-flex-1">
 									<span>
-										Products ({this.state.activeFa._ui.commercialProducts.length})
+										{window.SF.labels.products_title} ({this.state.activeFa._ui.commercialProducts.length})
 									</span>
 								</div>
 								<div className="fa-flex-item fa-flex-1">
@@ -1081,7 +1084,7 @@ class FaEditor extends Component {
 													onChange={val => {
 														this.setState({ productFilter: val });
 													}}
-													placeholder="Quick search"
+													placeholder={window.SF.labels.input_quickSearchPlaceholder}
 												/>
 												<DropdownCheckbox
 													options={this.props.productFields}
@@ -1110,7 +1113,7 @@ class FaEditor extends Component {
 
 								<div className="commercial-product-fields-container">
 									<div className="commercial-product-fields">
-										<span>Product name</span>
+										<span>{window.SF.labels.products_productNameHeaderCell}</span>
 										{this.props.productFields
 											.filter(f => f.visible)
 											.map(f => {
@@ -1170,7 +1173,7 @@ class FaEditor extends Component {
 			commercialProducts = (
 				<div>
 					<div>
-						<span>Product Negotiation</span>
+						<span>{window.SF.labels.products_title_empty} </span>
 					</div>
 					{addProductCTA}
 				</div>
@@ -1187,7 +1190,7 @@ class FaEditor extends Component {
 						disabled={!this.editable}
 						title={this.state.activeFa.csconta__Agreement_Name__c}
 						status={this.state.activeFa.csconta__Status__c}
-						subtitle="Frame Agreement Details"
+						subtitle={window.SF.labels.header_frameAgreementEditorTitle}
 					>
 						<div className="fa-flex fa-flex-flush">
 							{customButtonsComponent}
@@ -1199,7 +1202,7 @@ class FaEditor extends Component {
 									className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
 									onClick={this.upsertFrameAgreements}
 								>
-									Save
+									{window.SF.labels.btn_Save}
 								</button>
 							)}
 
@@ -1214,7 +1217,7 @@ class FaEditor extends Component {
 									}
 									onClick={this.onSubmitForApproval}
 								>
-									Submit For Approval
+									{window.SF.labels.btn_SubmitForApproval}
 								</button>
 							)}
 
@@ -1222,14 +1225,14 @@ class FaEditor extends Component {
 								this.state.activeFa.csconta__Status__c
 							) && (
 								<button className="fa-button fa-button-border-light fa-button-transparent" onClick={this.onDecompose}>
-									Decompose
+									{window.SF.labels.btn_Submit}
 								</button>
 							)}
 
 							{this.state.activeFa.csconta__Status__c ===
 								this.props.settings.FACSettings.statuses.active_status && (
 								<button className="fa-button fa-button-border-light fa-button-transparent" onClick={this.createNewVersion}>
-									Create New Version
+									{window.SF.labels.btn_NewVersion}
 								</button>
 							)}
 						</div>
@@ -1273,7 +1276,6 @@ class FaEditor extends Component {
 								{negotiateModal}
 							</div>
 
-							{this.editable && footer}
 						</div>
 
 						<Toaster />
@@ -1285,6 +1287,9 @@ class FaEditor extends Component {
 							/>
 						)}
 					</div>
+
+					{this.editable && footer}
+
 				</div>
 			)
 		);

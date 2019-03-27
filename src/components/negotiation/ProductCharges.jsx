@@ -37,11 +37,11 @@ class ProductCharges extends React.Component {
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell">Charge Name</div>
-					<div className="list-cell">One-Off Adjustment</div>
-					<div className="list-cell">Negotiated One Off</div>
-					<div className="list-cell">Recurring Adjustment</div>
-					<div className="list-cell">Negotiated Recurring</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_name}</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_oneOff}</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_oneOff_neg}</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_recc}</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_recc_neg}</div>
 				</div>
 
 				<ul className="table-list">

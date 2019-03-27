@@ -15,8 +15,6 @@ export function registerMethod(name, method) {
 	};
 }
 // ***********************************************************************
-createPricingRuleGroup;
-decomposeAttachment;
 
 export const _createPricingRuleGroup = () => ({
 	type: 'CREATEA_PRG',
@@ -39,12 +37,13 @@ export function createPricingRuleGroup() {
 	};
 }
 
-export function decomposeAttachment(data, prId) {
+export function decomposeAttachment(data, prId, faId) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
 			window.SF.invokeAction('decomposeAttachment', [
 				JSON.stringify(data),
-				prId
+				prId,
+				faId
 			]).then(message => {
 				// dispatch(_decomposeAttachment(data, prId));
 				resolve(message);
@@ -150,6 +149,10 @@ export function createNewVersionOfFrameAgrement(faId) {
 			window.SF.invokeAction('createNewVersionOfFrameAgrement', [faId]).then(
 				response => {
 					dispatch(_createNewVersionOfFrameAgrement(response));
+					response._ui = {
+						commercialProducts: [],
+						attachment: null
+					};
 					resolve(response);
 					return response;
 				}
@@ -301,7 +304,7 @@ export function deleteFrameAgreement(priceItemId) {
 					if (response === 'Success') {
 						dispatch(_deleteFrameAgreement(priceItemId));
 					} else {
-						createToast('error', 'Could not delete Frame Agreement', response);
+						console.error('Could not delete Frame Agreement', response);
 					}
 					resolve(response);
 					return response;

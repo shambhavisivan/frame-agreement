@@ -44,6 +44,28 @@ class FrameAgreementRow extends React.Component {
 	render() {
 		return (
 			<div className="fa-panel">
+				<div className="fa-panel-title">
+					{this.state.menu && (
+						<ul
+							ref={this.menu}
+							tabIndex="0"
+							onBlur={this.onBlur}
+						>
+							<li onClick={() => this.menuAction('edit')}>
+								<Icon name="edit" height="14" width="14" color="#0070d2" />
+								{window.SF.labels.faMenuActionEdit}
+							</li>
+							<li onClick={() => this.menuAction('clone')}>
+								<Icon name="copy" height="14" width="14" color="#0070d2" />
+								{window.SF.labels.faMenuActionClone}
+							</li>
+							<li onClick={() => this.menuAction('delete')}>
+								<Icon name="delete" height="14" width="14" color="#0070d2" />
+								{window.SF.labels.faMenuActionDelete}
+							</li>
+						</ul>
+					)}
+
 					<div className="fa-icon fa-icon-group" onClick={this.showMenu}>
 						<Icon
 							name="threedots_vertical"
@@ -51,41 +73,24 @@ class FrameAgreementRow extends React.Component {
 							height="16"
 							color="#0070d2"
 						/>
-						{this.state.menu && (
-							<ul
-								className="fa-dropdown"
-								ref={this.menu}
-								tabIndex="0"
-								onBlur={this.onBlur}
-							>
-								<li className="fa-dropdown-item" onClick={() => this.menuAction('edit')}>
-									<Icon name="edit" height="14" width="14" color="#0070d2" />
-									Edit
-								</li>
-								<li className="fa-dropdown-item" onClick={() => this.menuAction('clone')}>
-									<Icon name="copy" height="14" width="14" color="#0070d2" />
-									Clone
-								</li>
-								<li className="fa-dropdown-item" onClick={() => this.menuAction('delete')}>
-									<Icon name="delete" height="14" width="14" color="#0070d2" />
-									Delete
-								</li>
-							</ul>
-						)}
 					</div>
+
 					<Link
-						className="fa-panel-body"
 						to={`/agreement/${this.props.agreement.Id}`}
 					>
-						<div className="fa-panel-body-col">
+						<span>
 							{this.props.agreement.csconta__Agreement_Name__c}
-						</div>
-						<div className="fa-panel-body-col">
-							<span className={this.statusClass}>
-								{this.props.agreement.csconta__Status__c}
-							</span>
-						</div>
+						</span>
+
 					</Link>
+				</div>
+
+				<div>
+					<span className={this.statusClass}>
+						{this.props.agreement.csconta__Status__c}
+					</span>
+				</div>
+
 			</div>
 		);
 	}

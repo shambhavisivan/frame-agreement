@@ -46,30 +46,17 @@ class CustomButtonDropdown extends React.Component {
 
 	render() {
 		return (
-			<div className="button-group fa-margin-right-sm">
-				<button
-					className="fa-button fa-button-border-light fa-button-transparent"
-					onClick={this.showMenu}
-				>
-					<span className="fa-margin-right-xsm">Custom{' '}</span>
-					<Icon
-						name={this.state.menu ? 'up' : 'down'}
-						height="14"
-						width="14"
-						color="white"
-					/>
-				</button>
+			<div className="fa-margin-right-sm">
 				{this.state.menu && (
 					<ul
 						ref={this.menu}
 						tabIndex="0"
-						className="fa-dropdown"
+						className="menu"
 						onBlur={this.onBlur}
 					>
 						{this.props.buttons.map((btnObj, i) => {
 							return (
 								<li
-									className="fa-dropdown-item"
 									key={btnObj.id + i}
 									id={btnObj.id}
 									onClick={() => {
@@ -82,6 +69,19 @@ class CustomButtonDropdown extends React.Component {
 						})}
 					</ul>
 				)}
+
+				<button
+					className="fa-button fa-button-border-light fa-button-transparent"
+					onClick={this.showMenu}
+				>
+					<span className="fa-margin-right-xsm">{window.SF.labels.header_customDropdownPlaceholder}{' '}</span>
+					<Icon
+						name={this.state.menu ? 'up' : 'down'}
+						height="14"
+						width="14"
+						color="white"
+					/>
+				</button>
 			</div>
 		);
 	}

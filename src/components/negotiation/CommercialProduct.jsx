@@ -211,7 +211,7 @@ class CommercialProduct extends React.Component {
 						)}
 
 						<Tabs>
-							<Tab label="Add-Ons">
+							<Tab label={window.SF.labels.products_addons}>
 								<Addons
 									readOnly={this.props.readOnly}
 									validation={this.props.validation[this.productId].addons}
@@ -223,10 +223,7 @@ class CommercialProduct extends React.Component {
 								/>
 							</Tab>
 							<Tab
-								label={
-									'Charges' +
-									(this.props.product._charges.length ? '' : ' (product)')
-								}
+								label={(this.props.product._charges.length ? window.SF.labels.products_charges : window.SF.labels.products_product_charges)}
 							>
 								{this.props.product._charges.length ? (
 									<Charges
@@ -253,7 +250,7 @@ class CommercialProduct extends React.Component {
 									/>
 								)}
 							</Tab>
-							<Tab label="Rates">
+							<Tab label={window.SF.labels.products_rates}>
 								<Rates
 									readOnly={this.props.readOnly}
 									validation={this.props.validation[this.productId].rated}

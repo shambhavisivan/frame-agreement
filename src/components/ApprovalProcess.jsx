@@ -90,9 +90,9 @@ class ApprovalProcess extends React.Component {
 			this.props.approveRejectRecallRecord(this.props.faId, null, actionType)
 			.then(response => {
 				if (response) {
-					this.props.createToast("success", actionType, actionType + " action successful!");
+					this.props.createToast("success", actionType, actionType + " " + window.SF.labels.toast_approvalAction_success);
 				} else {
-					this.props.createToast("error", actionType, actionType + " action failed!");
+					this.props.createToast("error", actionType, actionType + " " + window.SF.labels.toast_approvalAction_failed);
 				}
 			})
 			.then(response => {
@@ -111,15 +111,15 @@ class ApprovalProcess extends React.Component {
 
 					<div className="table-title" onClick={() => {this.setState({open: !this.state.open})}}>
 						<Icon name={this.state.open ? 'chevrondown' : 'chevronright'} width="16" height="16" color="#747474" />
-						Approval history
+						{window.SF.labels.approval_title}
 					</div>
 
 
 					{this.actionRequired && (<div className="table-actions">
-					{this.props.approval.isApprover && (<span className="link" onClick={() => this.approvalAction("Approve")}>Approve</span>)}
-					{this.props.approval.isApprover && (<span className="link" onClick={() => this.approvalAction("Reject")}>Reject</span>)}
-					{this.props.approval.isApprover && (<span className="link" onClick={() => this.approvalAction("Reassign")}>Reassign</span>)}
-					{this.isInitiator && (<span className="link" onClick={() => this.approvalAction("Removed")}>Recall</span>)}
+					{this.props.approval.isApprover && (<span className="link" onClick={() => this.approvalAction("Approve")}>{window.SF.labels.approval_action_approve}</span>)}
+					{this.props.approval.isApprover && (<span className="link" onClick={() => this.approvalAction("Reject")}>{window.SF.labels.approval_action_reject}</span>)}
+					{this.props.approval.isApprover && false && (<span className="link" onClick={() => this.approvalAction("Reassign")}>{window.SF.labels.approval_action_reassign}</span>)}
+					{this.isInitiator && (<span className="link" onClick={() => this.approvalAction("Removed")}>{window.SF.labels.approval_action_recall}</span>)}
 					</div>)}
 
 					<div className="fa-flex fa-flex-middle" onClick={() => {this.refreshApprovalHistory()}}>
@@ -131,12 +131,12 @@ class ApprovalProcess extends React.Component {
 				{this.state.open && (<div className="approval-table-list-container">
 
 					<div className="table-list-header">
-						<div className="list-cell">Action</div>
-						<div className="list-cell">Date</div>
-						<div className="list-cell">Status</div>
-						<div className="list-cell">Assigned to</div>
-						<div className="list-cell">Actual Approver</div>
-						<div className="list-cell">Comments</div>
+						<div className="list-cell">{window.SF.labels.approval_table_header_action}</div>
+						<div className="list-cell">{window.SF.labels.approval_table_header_date}</div>
+						<div className="list-cell">{window.SF.labels.approval_table_header_status}</div>
+						<div className="list-cell">{window.SF.labels.approval_table_header_assignedTo}</div>
+						<div className="list-cell">{window.SF.labels.approval_table_header_actualApprover}</div>
+						<div className="list-cell">{window.SF.labels.approval_table_header_comments}</div>
 					</div>
 
 					{this.props.approval.listProcess.map((process, i) => {

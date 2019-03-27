@@ -28,11 +28,11 @@ class Addons extends React.Component {
 		return (
 			<div>
 				<div>
-					<div className="fa-title fa-padding-right-sm">Name</div>
-					<div className="fa-title fa-padding-right-sm">One Off Charge</div>
-					<div className="fa-title fa-padding-right-sm">Negotiated One Off</div>
-					<div className="fa-title fa-padding-right-sm">Recurring Charge</div>
-					<div className="fa-title fa-padding-right-sm">Negotiated Recurring</div>
+					<div className="fa-title fa-padding-right-sm">{window.SF.labels.addons_header_name}</div>
+					<div className="fa-title fa-padding-right-sm">{window.SF.labels.addons_header_oneOff}</div>
+					<div className="fa-title fa-padding-right-sm">{window.SF.labels.addons_header_oneOff_neg}</div>
+					<div className="fa-title fa-padding-right-sm">{window.SF.labels.addons_header_recc}</div>
+					<div className="fa-title fa-padding-right-sm">{window.SF.labels.addons_header_recc_neg}</div>
 				</div>
 
 				<ul className="table-list">

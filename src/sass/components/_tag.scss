@@ -1,0 +1,22 @@
+/* FA Tag */
+// Tag component.
+
+.fa-tag {
+	background: $blue-sf;
+	border-radius: 0.25rem;
+	color: $white;
+	display: inline-block;
+	flex: 0 1 200px;
+	padding: 0.5rem 0.75rem;
+	margin-bottom: 1rem;
+
+	&:not(:last-child) {
+		margin-right: 1rem;
+	}
+}
+
+/* Group */
+.fa-tag-group {
+	display: flex;
+	flex-wrap: wrap;
+}

@@ -1,0 +1,40 @@
+/* FA Tab */
+// Tab component.
+
+.fa-tab {
+	border: 1px solid $gray-light-5;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 0.8rem;
+	padding: 0.5rem 0.75rem;
+	transition: 0.25s;
+
+	&:first-child {
+		border-top-left-radius: 0.25rem;
+		border-bottom-left-radius: 0.25rem;
+		border-right: 0;
+	}
+
+	&:last-child {
+		border-top-right-radius: 0.25rem;
+		border-bottom-right-radius: 0.25rem;
+		border-left: 0;
+	}
+}
+
+/* Group */
+.fa-tab-group {
+	margin-bottom: 1rem;
+}
+
+/* Active */
+.fa-tab.active {
+	background: $blue-sf;
+	color: $white;
+}
+
+/* Disabled */
+.fa-tab.disabled {
+	cursor: auto;
+	opacity: .5;
+}

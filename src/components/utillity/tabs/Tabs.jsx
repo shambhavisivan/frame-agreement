@@ -39,11 +39,13 @@ class Tabs extends React.Component {
 
 	render() {
 		return (
-			<div className="react-tabs">
-				<ul className="tabs-nav nav navbar-nav navbar-left">
-					{this.renderChildrenWithTabsApiAsProps()}
-				</ul>
-				<div className="tabs-active-content">
+			<div>
+				<div className="fa-tab-group">
+					<ul>
+						{this.renderChildrenWithTabsApiAsProps()}
+					</ul>
+				</div>
+				<div>
 					{this.renderActiveTabContent()}
 				</div>
 			</div>

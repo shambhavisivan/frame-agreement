@@ -850,11 +850,11 @@ class NegotiationModal extends Component {
 						<div className="label-text">
 							{window.SF.labels.modal_bulk_selected_title}
 						</div>
-						<ul>
+						<ul className="fa-tag-group">
 							{this.commercialProducts
 								.slice(0, this.productEllipsis)
 								.map(product => {
-									return <li key={product.Id}>{product.Name}</li>;
+									return <li className="fa-tag" key={product.Id}>{product.Name}</li>;
 								})}
 							{this.commercialProducts.length > this.productEllipsis ? (
 								<li className="product-ellipsis">

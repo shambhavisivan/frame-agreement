@@ -18,14 +18,14 @@ class Tab extends React.Component {
 		let tab = '';
 
 		if (this.props.disabled) {
-			tab = <li className="tab disabled">{this.props.label}</li>;
+			tab = <li className="fa-tab disabled">{this.props.label}</li>;
 		} else {
 			tab = (
 				<li
-					className={`tab ${this.props.isActive ? 'active' : ''}`}
+					className={`fa-tab ${this.props.isActive ? 'active' : ''}`}
 					onClick={this.handleTabClick}
 				>
-					<a className="tab-link">{this.props.label}</a>
+					<a>{this.props.label}</a>
 				</li>
 			);
 		}

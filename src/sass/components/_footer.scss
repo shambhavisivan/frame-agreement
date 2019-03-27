@@ -4,10 +4,10 @@
 .fa-footer {
 	background: $white;
 	bottom: 0;
+	box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
 	color: white;
 	left: 0;
-  position: sticky;
-  padding: 1rem;
-  box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
+	padding: 1rem;
+	position: sticky;
 	width: 100%;
 }

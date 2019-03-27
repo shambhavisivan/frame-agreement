@@ -1073,6 +1073,7 @@ class FaEditor extends Component {
 		if (customButtons.length >= 3) {
 			customButtonsComponent = (
 				<CustomButtonDropdown
+					className="fa-dropdown"
 					buttons={customButtons}
 					onAction={this.callHandler}
 				/>
@@ -1151,7 +1152,7 @@ class FaEditor extends Component {
 								</div>
 							</div>
 						</div>
-						<div className="commercial-product-container">
+						<div className="commercial-product-container commercial-product-container-bare commercial-product-container-default">
 							<div className="commercial-product-header">
 								<div className="commercial-product-checkbox-container">
 									<Checkbox
@@ -1168,9 +1169,7 @@ class FaEditor extends Component {
 
 								<div className="commercial-product-fields-container">
 									<div className="commercial-product-fields">
-										<span>
-											{window.SF.labels.products_productNameHeaderCell}
-										</span>
+										<span className="list-cell">{window.SF.labels.products_productNameHeaderCell}</span>
 										{this.props.productFields
 											.filter(f => f.visible)
 											.map(f => {
@@ -1306,7 +1305,7 @@ class FaEditor extends Component {
 					</Header>
 
 					<div className="fa-container">
-						<div>
+						<div className="fa-container-inner">
 							<section className="fa-section fa-section-vertical fa-section-border fa-section-light">
 								{this.header_rows.map((row, i) => {
 									return (

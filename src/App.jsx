@@ -37,7 +37,7 @@ class App extends Component {
 			this.props.initialised.fa_loaded &&
 			this.props.initialised.cp_loaded &&
 			this.props.initialised.settings_loaded && (
-				<div>
+				<div className="app-wrapper">
 					<Switch>
 						<Route exact path="/" component={FaList} />
 						<Route exact path="/agreement" component={FaEditor} />

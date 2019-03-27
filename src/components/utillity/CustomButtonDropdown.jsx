@@ -47,29 +47,6 @@ class CustomButtonDropdown extends React.Component {
 	render() {
 		return (
 			<div className="fa-margin-right-sm">
-				{this.state.menu && (
-					<ul
-						ref={this.menu}
-						tabIndex="0"
-						className="menu"
-						onBlur={this.onBlur}
-					>
-						{this.props.buttons.map((btnObj, i) => {
-							return (
-								<li
-									key={btnObj.id + i}
-									id={btnObj.id}
-									onClick={() => {
-										this.props.onAction(btnObj.method, btnObj.type);
-									}}
-								>
-									{btnObj.label}
-								</li>
-							);
-						})}
-					</ul>
-				)}
-
 				<button
 					className="fa-button fa-button-border-light fa-button-transparent"
 					onClick={this.showMenu}
@@ -83,6 +60,29 @@ class CustomButtonDropdown extends React.Component {
 						width="14"
 						color="white"
 					/>
+					{this.state.menu && (
+						<ul
+							ref={this.menu}
+							tabIndex="0"
+							className="fa-dropdown"
+							onBlur={this.onBlur}
+						>
+							{this.props.buttons.map((btnObj, i) => {
+								return (
+									<li
+										className="fa-dropdown-item"
+										key={btnObj.id + i}
+										id={btnObj.id}
+										onClick={() => {
+											this.props.onAction(btnObj.method, btnObj.type);
+										}}
+									>
+										{btnObj.label}
+									</li>
+								);
+							})}
+						</ul>
+					)}
 				</button>
 			</div>
 		);

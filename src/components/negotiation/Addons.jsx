@@ -34,20 +34,20 @@ class Addons extends React.Component {
 	render() {
 		return (
 			<div>
-				<div>
-					<div className="fa-title fa-padding-right-sm">
+				<div className="commercial-product-container commercial-product-container-default fa-padding-top-xsm">
+					<div className="fa-title fa-padding-right-sm text-left">
 						{window.SF.labels.addons_header_name}
 					</div>
-					<div className="fa-title fa-padding-right-sm">
+					<div className="fa-title fa-padding-right-sm text-right">
 						{window.SF.labels.addons_header_oneOff}
 					</div>
-					<div className="fa-title fa-padding-right-sm">
+					<div className="fa-title fa-padding-right-sm text-right">
 						{window.SF.labels.addons_header_oneOff_neg}
 					</div>
-					<div className="fa-title fa-padding-right-sm">
+					<div className="fa-title fa-padding-right-sm text-right">
 						{window.SF.labels.addons_header_recc}
 					</div>
-					<div className="fa-title fa-padding-right-sm">
+					<div className="fa-title fa-padding-right-sm text-right">
 						{window.SF.labels.addons_header_recc_neg}
 					</div>
 				</div>

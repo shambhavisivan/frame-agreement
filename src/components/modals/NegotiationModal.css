@@ -22,11 +22,7 @@
 
 /**********************************************/
 .products-container {
-    padding: 10px 20px;
-}
-
-.filter-container {
-    padding: 10px 20px;
+    padding: 20px;
 }
 
 .action-container {
@@ -94,9 +90,8 @@
     justify-content: space-between;
     background: #fafaf9;
     border-bottom: 1px solid #dddbda;
-    font-size: 11px;
+    font-size: 0.8rem;
     color: #5e5d60;
-    text-transform: uppercase;
     user-select: none;
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -106,7 +101,7 @@
 }
 
 .table-list-header>.list-cell {
-    padding: 9px 16px;
+    padding: 0.5rem 1rem;
     flex: 1;
     text-align: right;
 }
@@ -220,7 +215,7 @@
 }
 
 .list-row > .list-cell {
-    padding: 16px;
+    padding: 1rem 1.25rem;
     flex: 1;
     text-align: right;
 }

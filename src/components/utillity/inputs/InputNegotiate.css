@@ -21,7 +21,7 @@
 	visibility: hidden;
   position: absolute;
   z-index: 2;
-	right: 5px;
+	left: 5px;
 	transform: translateY(50%);
 }
 
@@ -32,10 +32,12 @@
   border-bottom: 1px solid transparent;
   background-color: white;
   box-sizing: border-box;
+	text-align: right;
 }
 
 .negotiate-input-wrapper.negotiated > .negotiate-input{
   color: #080707;
+	text-align: right;
 }
 
 .negotiate-input-wrapper.readOnly {

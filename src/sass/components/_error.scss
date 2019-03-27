@@ -1,0 +1,14 @@
+/* Error */
+// Error component.
+
+.error {
+	/* Invalid */
+	&.fa-invalid {
+		background: #d9665d;
+	}
+
+	/* Disabled */
+	&.fa-disabled {
+		background: #ccc;
+	}
+}

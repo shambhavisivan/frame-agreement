@@ -124,7 +124,7 @@ class DropdownNegotiate extends React.Component {
 				}
 			>
 				<div className="negotiate-input-wrapper">
-					<span>{this.props.negotiatedValue} </span>
+					<span className="fa-margin-right-xsm">{this.props.negotiatedValue} </span>
 					<select
 						disabled={this.props.readOnly}
 						value={this.state.selected}

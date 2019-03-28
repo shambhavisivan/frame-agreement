@@ -223,7 +223,11 @@ class CommercialProduct extends React.Component {
 								/>
 							</Tab>
 							<Tab
-								label={(this.props.product._charges.length ? window.SF.labels.products_charges : window.SF.labels.products_product_charges)}
+								label={
+									this.props.product._charges.length
+										? window.SF.labels.products_charges
+										: window.SF.labels.products_product_charges
+								}
 							>
 								{this.props.product._charges.length ? (
 									<Charges

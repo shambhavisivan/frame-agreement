@@ -74,7 +74,9 @@ class CustomButtonDropdown extends React.Component {
 					className="fa-button fa-button-border-light fa-button-transparent"
 					onClick={this.showMenu}
 				>
-					<span className="fa-margin-right-xsm">{window.SF.labels.header_customDropdownPlaceholder}{' '}</span>
+					<span className="fa-margin-right-xsm">
+						{window.SF.labels.header_customDropdownPlaceholder}{' '}
+					</span>
 					<Icon
 						name={this.state.menu ? 'up' : 'down'}
 						height="14"

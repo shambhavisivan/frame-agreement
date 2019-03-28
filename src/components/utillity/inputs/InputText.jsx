@@ -27,7 +27,9 @@ class InputText extends React.Component {
 				<input
 					disabled={this.props.disabled}
 					spellCheck="false"
-					placeholder={window.SF.labels.util_input_text_enter + ' ' + this.props.type}
+					placeholder={
+						window.SF.labels.util_input_text_enter + ' ' + this.props.type
+					}
 					className="slds-input"
 					type={this.props.type}
 					onChange={this.onTextChange}

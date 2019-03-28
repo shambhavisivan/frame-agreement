@@ -83,3 +83,23 @@ export const initialiseApi = () => {
 // console.log(a)
 
 /*********************************************************/
+
+Object.defineProperty(Array.prototype, 'paginate', {
+	value: function(page, pageSize) {
+		if (!Array.isArray(this)) {
+			return this;
+		}
+		page = page - 1 || 0;
+		return this.slice(page * pageSize, page * pageSize + pageSize);
+	}
+});
+
+// Object.defineProperty(Array.prototype, 'intercept', {
+//     value: function(callback) {
+//         if (!Array.isArray(this)) {
+//         	return this;
+//         }
+//         callback(this.length);
+//         return this;
+//     }
+// });

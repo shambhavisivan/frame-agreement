@@ -10,7 +10,11 @@ class Header extends Component {
 
 	render() {
 		return (
-			<div className={`fa-header-secondary ${this.props.disabled ? 'disabled' : ''}`}>
+			<div
+				className={`fa-header-secondary ${
+					this.props.disabled ? 'fa-disabled' : ''
+				} ${this.props.invalid ? 'fa-invalid' : ''}`}
+			>
 				<div className="fa-container">
 					<div className="fa-header-secondary-body">
 						<div
@@ -21,7 +25,9 @@ class Header extends Component {
 						</div>
 						<div className="fa-header-secondary-body-col fa-header-secondary-body-col-left">
 							<div>
-								<div className="fa-header-secondary-body-sub">{this.props.subtitle}</div>
+								<div className="fa-header-secondary-body-sub">
+									{this.props.subtitle}
+								</div>
 								<div className="fa-header-secondary-body-title">
 									{this.props.title}{' '}
 									{this.props.status ? (

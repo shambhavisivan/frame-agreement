@@ -32,16 +32,32 @@ class ProductCharges extends React.Component {
 	}
 
 	render() {
-		let flagColor = this.props.readOnly ? '#ccc' : '#4bca81';
+		let flagColor = '#4bca81';
+		if (this.props.readOnly) {
+			flagColor = '#ccc';
+		}
+		if (this.props.validation.oneOff) {
+			flagColor = '#D9675D';
+		}
 
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell">{window.SF.labels.product_charge_header_name}</div>
-					<div className="list-cell">{window.SF.labels.product_charge_header_oneOff}</div>
-					<div className="list-cell">{window.SF.labels.product_charge_header_oneOff_neg}</div>
-					<div className="list-cell">{window.SF.labels.product_charge_header_recc}</div>
-					<div className="list-cell">{window.SF.labels.product_charge_header_recc_neg}</div>
+					<div className="list-cell">
+						{window.SF.labels.product_charge_header_name}
+					</div>
+					<div className="list-cell">
+						{window.SF.labels.product_charge_header_oneOff}
+					</div>
+					<div className="list-cell">
+						{window.SF.labels.product_charge_header_oneOff_neg}
+					</div>
+					<div className="list-cell">
+						{window.SF.labels.product_charge_header_recc}
+					</div>
+					<div className="list-cell">
+						{window.SF.labels.product_charge_header_recc_neg}
+					</div>
 				</div>
 
 				<ul className="table-list">

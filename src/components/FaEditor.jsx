@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { withRouter } from 'react-router-dom';
+
 import {
 	saveFrameAgreement,
 	createFrameAgreement,
@@ -30,6 +31,7 @@ import ApprovalProcess from './ApprovalProcess';
 
 import Toaster from './utillity/Toaster';
 import Header from './utillity/Header';
+import Pagination from './utillity/Pagination';
 import Icon from './utillity/Icon';
 import CustomButtonDropdown from './utillity/CustomButtonDropdown';
 
@@ -80,6 +82,9 @@ class FaEditor extends Component {
 		super(props);
 
 		this.onBackClick = this.onBackClick.bind(this);
+		this.getCommercialProductsCount = this.getCommercialProductsCount.bind(
+			this
+		);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.onFieldChange = this.onFieldChange.bind(this);
 		this.onAddProducts = this.onAddProducts.bind(this);
@@ -141,7 +146,11 @@ class FaEditor extends Component {
 			selectedProducts: {},
 			loadingProducts: [],
 			openCommercialProduct: '',
-			attachmentLoaded: false
+			attachmentLoaded: false,
+			pagination: {
+				page: 1,
+				pageSize: 10
+			}
 		};
 	}
 
@@ -275,7 +284,10 @@ class FaEditor extends Component {
 	/**************************************************/
 	onApprovalChange() {
 		// Refresh approval
-		return Promise.all([this.props.getApprovalHistory(this.faId), this.refreshFa()]).then(response => {
+		return Promise.all([
+			this.props.getApprovalHistory(this.faId),
+			this.refreshFa()
+		]).then(response => {
 			this.setState({
 				activeFa: {
 					...this.state.activeFa,
@@ -314,138 +326,162 @@ class FaEditor extends Component {
 	/**************************************************/
 	async onDecompose() {
 		// 1) Create a structure that is matching one element -> one pipra
-	    let _attachment = this.state.activeFa._ui.attachment;
-	    console.log(_attachment);
+		let _attachment = this.state.activeFa._ui.attachment;
+		console.log(_attachment);
 
-	    let structure = [];
-	    for (var cpId in _attachment) {
-	        if (_attachment[cpId].hasOwnProperty('_addons')) {
-	            let addons = _attachment[cpId]._addons;
-	            for (var cpaoa in addons) {
-	                structure.push({
-	                    cpaoaId: cpaoa,
-	                    recurring: addons[cpaoa].recurring || null,
-	                    oneOff: addons[cpaoa].oneOff || null
-	                });
-	            }
-	        }
+		let structure = [];
+		for (var cpId in _attachment) {
+			if (_attachment[cpId].hasOwnProperty('_addons')) {
+				let addons = _attachment[cpId]._addons;
+				for (var cpaoa in addons) {
+					structure.push({
+						cpaoaId: cpaoa,
+						recurring: addons[cpaoa].recurring || null,
+						oneOff: addons[cpaoa].oneOff || null
+					});
+				}
+			}
 
-	        if (_attachment[cpId].hasOwnProperty('_charges')) {
-	            let charges = _attachment[cpId]._charges;
-	            for (var chId in charges) {
-	                structure.push({
-	                    peId: chId,
-	                    recurring: charges[chId].recurring || null,
-	                    oneOff: charges[chId].oneOff || null
-	                });
-	            }
-	        }
+			if (_attachment[cpId].hasOwnProperty('_charges')) {
+				let charges = _attachment[cpId]._charges;
+				for (var chId in charges) {
+					structure.push({
+						peId: chId,
+						recurring: charges[chId].recurring || null,
+						oneOff: charges[chId].oneOff || null
+					});
+				}
+			}
 
-	        if (_attachment[cpId].hasOwnProperty('_product')) {
-	            structure.push({
-	                cpId: cpId,
-	                recurring: _attachment[cpId]._product.recurring || null,
-	                oneOff: _attachment[cpId]._product.oneOff || null
-	            });
-	        }
-	    }
-	    // 2) Remove items that have no charge value
-	    structure = structure.filter(
-	        item => item.recurring !== null || item.oneOff !== null
-	    );
+			if (_attachment[cpId].hasOwnProperty('_product')) {
+				structure.push({
+					cpId: cpId,
+					recurring: _attachment[cpId]._product.recurring || null,
+					oneOff: _attachment[cpId]._product.oneOff || null
+				});
+			}
+		}
+		// 2) Remove items that have no charge value
+		structure = structure.filter(
+			item => item.recurring !== null || item.oneOff !== null
+		);
 
-	    console.log(structure);
+		console.log(structure);
 
-	    // Create pricing rule group, pricing rule and association between them. Return pricing rule id to be used in next stage
-	    const PR_ID = await this.props.createPricingRuleGroup();
+		// Create pricing rule group, pricing rule and association between them. Return pricing rule id to be used in next stage
+		const PR_ID = await this.props.createPricingRuleGroup();
 
-	    console.log(PR_ID);
+		console.log(PR_ID);
 
-	    if (typeof PR_ID !== 'string') {
-	        console.error('Decompose failed, invalid pricing rule Id!');
-	        return false;
-	    }
+		if (typeof PR_ID !== 'string') {
+			console.error('Decompose failed, invalid pricing rule Id!');
+			return false;
+		}
 
-	    // This will hold the structure in chunks on n
-	    let decompositionDataChunked = [];
-	    // This will be filled with promises
-	    let decompositionPromiseArray = [];
+		// This will hold the structure in chunks on n
+		let decompositionDataChunked = [];
+		// This will be filled with promises
+		let decompositionPromiseArray = [];
 
-	    // CHUNK THE STRUCTURE
-	    for (let i = 0; i < structure.length; i += this.props.settings.FACSettings.decomposition_chunk_size) {
-	        decompositionDataChunked.push(structure.slice(i, i + this.props.settings.FACSettings.decomposition_chunk_size));
-	    }
+		// CHUNK THE STRUCTURE
+		for (
+			let i = 0;
+			i < structure.length;
+			i += this.props.settings.FACSettings.decomposition_chunk_size
+		) {
+			decompositionDataChunked.push(
+				structure.slice(
+					i,
+					i + this.props.settings.FACSettings.decomposition_chunk_size
+				)
+			);
+		}
 
-	    console.log(decompositionDataChunked);
+		console.log(decompositionDataChunked);
 
-	    // Fill the promise array
-	    decompositionDataChunked.forEach(chunk => {
-	        decompositionPromiseArray.push(
-	            this.props.decomposeAttachment(chunk, PR_ID, this.state.activeFa.Id)
-	        );
-	    });
+		// Fill the promise array
+		decompositionDataChunked.forEach(chunk => {
+			decompositionPromiseArray.push(
+				this.props.decomposeAttachment(chunk, PR_ID, this.state.activeFa.Id)
+			);
+		});
 
-	    //********************************************
-	    // Wait for all to resolve
-	    let result = await Promise.all(decompositionPromiseArray);
-	    result = new Set(result);
-	    //********************************************
+		//********************************************
+		// Wait for all to resolve
+		let result = await Promise.all(decompositionPromiseArray);
+		result = new Set(result);
+		//********************************************
 
-	    console.log("Merged results:", result);
+		console.log('Merged results:', result);
 
-	    // If the decomposition was successful
-	    if (!result.has("Success") || result.size > 1) {
+		// If the decomposition was successful
+		if (!result.has('Success') || result.size > 1) {
+			console.error('Decomposition failed, undoing...!');
 
+			this.props.createToast(
+				'error',
+				window.SF.labels.toast_decomposition_title_failed,
+				window.SF.labels.toast_decomposition_failed
+			);
 
-	        console.error("Decomposition failed, undoing...!");
+			let undoArray = [];
+			let undoPromiseArray = [];
+			// CHUNK THE STRUCTURE
+			for (let i = 0; i < structure.length; i += 10000) {
+				undoArray.push(structure.slice(i, i + 10000));
+			}
 
-	        this.props.createToast(
-	            'error',
-	            window.SF.labels.toast_decomposition_title_failed,
-	            window.SF.labels.toast_decomposition_failed
-	        );
+			undoArray.forEach(chunk => {
+				undoPromiseArray.push(this.props.undoDecomposition(PR_ID));
+			});
 
-
-	        let undoArray = [];
-	        let undoPromiseArray = [];
-	        // CHUNK THE STRUCTURE
-	        for (let i = 0; i < structure.length; i += 10000) {
-	            undoArray.push(structure.slice(i, i + 10000));
-	        }
-
-	        undoArray.forEach(chunk => {
-	            undoPromiseArray.push(
-	                this.props.undoDecomposition(PR_ID)
-	            );
-	        });
-
-	        let undo_result = await Promise.all(undoPromiseArray);
-	        this.props.createToast(
-	            'warning',
-	            window.SF.labels.toast_decomposition_title_revered,
-	            window.SF.labels.toast_decomposition_revered
-	        );
-	    } else {
-
-			await this.setStateOFFa(this.props.settings.FACSettings.statuses.active_status);
+			let undo_result = await Promise.all(undoPromiseArray);
+			this.props.createToast(
+				'warning',
+				window.SF.labels.toast_decomposition_title_revered,
+				window.SF.labels.toast_decomposition_revered
+			);
+		} else {
+			await this.setStateOFFa(
+				this.props.settings.FACSettings.statuses.active_status
+			);
 			await this.refreshFa();
 
-	        this.props.createToast(
-	            'success',
-	            window.SF.labels.toast_decomposition_title_success,
-	            window.SF.labels.toast_decomposition_success + ' (' +  structure.length + ')',
-	        );
-	    }
+			this.props.createToast(
+				'success',
+				window.SF.labels.toast_decomposition_title_success,
+				window.SF.labels.toast_decomposition_success +
+					' (' +
+					structure.length +
+					')'
+			);
+		}
 	}
 	/**************************************************/
 	async createNewVersion() {
-		let newFa = await this.props.createNewVersionOfFrameAgrement(this.state.activeFa.Id);
+		let newFa = await this.props.createNewVersionOfFrameAgrement(
+			this.state.activeFa.Id
+		);
 		this.props.history.push('/');
 		this.props.history.push('/agreement/' + newFa.Id);
 		// window.location.reload();
 	}
 	/**************************************************/
-	applyAttachment(fa, attachment) {}
+	getCommercialProductsCount() {
+		let cpSize = this.state.activeFa._ui.commercialProducts.length;
+		if (this.state.productFilter) {
+			cpSize = this.state.activeFa._ui.commercialProducts.filter(cp => {
+				if (this.state.productFilter && this.state.productFilter.length >= 2) {
+					return cp.Name.toLowerCase().includes(
+						this.state.productFilter.toLowerCase()
+					);
+				} else {
+					return true;
+				}
+			}).length;
+		}
+		return cpSize;
+	}
 	/**************************************************/
 	onOpenNegotiationModal() {
 		console.log(this.state.selectedProducts);
@@ -661,7 +697,6 @@ class FaEditor extends Component {
 	}
 
 	onSelectAllProducts() {
-		console.log('CHECK ALL');
 		let selectedProducts = this.state.selectedProducts;
 
 		if (
@@ -723,7 +758,6 @@ class FaEditor extends Component {
 	}
 
 	async setStateOFFa(state, faId = this.faId) {
-
 		let result = await this.props.setFrameAgreementState(faId, state);
 		if (result === 'Success') {
 			this.setState(
@@ -1072,7 +1106,8 @@ class FaEditor extends Component {
 							<div className="fa-flex fa-flex-middle">
 								<div className="fa-flex-item fa-flex-1">
 									<span>
-										{window.SF.labels.products_title} ({this.state.activeFa._ui.commercialProducts.length})
+										{window.SF.labels.products_title} (
+										{this.state.activeFa._ui.commercialProducts.length})
 									</span>
 								</div>
 								<div className="fa-flex-item fa-flex-1">
@@ -1084,7 +1119,9 @@ class FaEditor extends Component {
 													onChange={val => {
 														this.setState({ productFilter: val });
 													}}
-													placeholder={window.SF.labels.input_quickSearchPlaceholder}
+													placeholder={
+														window.SF.labels.input_quickSearchPlaceholder
+													}
 												/>
 												<DropdownCheckbox
 													options={this.props.productFields}
@@ -1113,7 +1150,9 @@ class FaEditor extends Component {
 
 								<div className="commercial-product-fields-container">
 									<div className="commercial-product-fields">
-										<span>{window.SF.labels.products_productNameHeaderCell}</span>
+										<span>
+											{window.SF.labels.products_productNameHeaderCell}
+										</span>
 										{this.props.productFields
 											.filter(f => f.visible)
 											.map(f => {
@@ -1131,7 +1170,6 @@ class FaEditor extends Component {
 									</div>
 								</div>
 							</div>
-
 						</div>
 					</div>
 					{this.state.activeFa._ui.commercialProducts
@@ -1147,6 +1185,10 @@ class FaEditor extends Component {
 								return true;
 							}
 						})
+						.paginate(
+							this.state.pagination.page,
+							this.state.pagination.pageSize
+						)
 						.map(cp => {
 							return (
 								<CommercialProduct
@@ -1190,6 +1232,7 @@ class FaEditor extends Component {
 						disabled={!this.editable}
 						title={this.state.activeFa.csconta__Agreement_Name__c}
 						status={this.state.activeFa.csconta__Status__c}
+						invalid={this.props.approvalFlag}
 						subtitle={window.SF.labels.header_frameAgreementEditorTitle}
 					>
 						<div className="fa-flex fa-flex-flush">
@@ -1224,14 +1267,20 @@ class FaEditor extends Component {
 							{this.props.settings.ButtonStandardData.Submit.has(
 								this.state.activeFa.csconta__Status__c
 							) && (
-								<button className="fa-button fa-button-border-light fa-button-transparent" onClick={this.onDecompose}>
+								<button
+									className="fa-button fa-button-border-light fa-button-transparent"
+									onClick={this.onDecompose}
+								>
 									{window.SF.labels.btn_Submit}
 								</button>
 							)}
 
 							{this.state.activeFa.csconta__Status__c ===
 								this.props.settings.FACSettings.statuses.active_status && (
-								<button className="fa-button fa-button-border-light fa-button-transparent" onClick={this.createNewVersion}>
+								<button
+									className="fa-button fa-button-border-light fa-button-transparent"
+									onClick={this.createNewVersion}
+								>
 									{window.SF.labels.btn_NewVersion}
 								</button>
 							)}
@@ -1243,7 +1292,10 @@ class FaEditor extends Component {
 							<section className="fa-section fa-section-vertical fa-section-border fa-section-light">
 								{this.header_rows.map((row, i) => {
 									return (
-										<div className="fa-margin-bottom-md" key={'header-row-' + i}>
+										<div
+											className="fa-margin-bottom-md"
+											key={'header-row-' + i}
+										>
 											<div className="fa-flex">
 												{row.map(f => {
 													var editable = !f.readOnly && this.editable;
@@ -1263,19 +1315,34 @@ class FaEditor extends Component {
 								})}
 							</section>
 
-							<div className="fa-padding-top-sm">
-								{approvalHistory}
-							</div>
+							<div className="fa-padding-top-sm">{approvalHistory}</div>
 
 							<div className="fa-padding-top-sm">
 								{commercialProducts}
+								<Pagination
+									totalSize={this.getCommercialProductsCount()}
+									pageSize={this.state.pagination.pageSize}
+									page={this.state.pagination.page}
+									onPageSizeChange={newPageSize => {
+										this.setState({
+											pagination: {
+												...this.state.pagination,
+												pageSize: newPageSize
+											}
+										});
+									}}
+									onPageChange={newPage => {
+										this.setState({
+											pagination: { ...this.state.pagination, page: newPage }
+										});
+									}}
+								/>
 							</div>
 
 							<div>
 								{productModal}
 								{negotiateModal}
 							</div>
-
 						</div>
 
 						<Toaster />
@@ -1289,7 +1356,6 @@ class FaEditor extends Component {
 					</div>
 
 					{this.editable && footer}
-
 				</div>
 			)
 		);

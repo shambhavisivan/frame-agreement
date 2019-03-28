@@ -41,6 +41,10 @@ module.exports = {
                         outputPath: 'fonts/'
                     }
                 }]
+            },
+            {
+                test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf)(\?[a-z0-9=.]+)?$/,
+                loader: 'url-loader?limit=100000'
             }
         ]
     },

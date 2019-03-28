@@ -8,7 +8,9 @@ class FrameAgreementRow extends React.Component {
 		super(props);
 		this.statusClass =
 			'fa-chip ' +
-			(this.props.agreement.csconta__Status__c === 'Draft' ? '' : 'fa-chip-dark');
+			(this.props.agreement.csconta__Status__c === 'Draft'
+				? ''
+				: 'fa-chip-dark');
 		this.showMenu = this.showMenu.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 
@@ -46,11 +48,7 @@ class FrameAgreementRow extends React.Component {
 			<div className="fa-panel">
 				<div className="fa-panel-title">
 					{this.state.menu && (
-						<ul
-							ref={this.menu}
-							tabIndex="0"
-							onBlur={this.onBlur}
-						>
+						<ul ref={this.menu} tabIndex="0" onBlur={this.onBlur}>
 							<li onClick={() => this.menuAction('edit')}>
 								<Icon name="edit" height="14" width="14" color="#0070d2" />
 								{window.SF.labels.faMenuActionEdit}
@@ -75,13 +73,8 @@ class FrameAgreementRow extends React.Component {
 						/>
 					</div>
 
-					<Link
-						to={`/agreement/${this.props.agreement.Id}`}
-					>
-						<span>
-							{this.props.agreement.csconta__Agreement_Name__c}
-						</span>
-
+					<Link to={`/agreement/${this.props.agreement.Id}`}>
+						<span>{this.props.agreement.csconta__Agreement_Name__c}</span>
 					</Link>
 				</div>
 
@@ -90,7 +83,6 @@ class FrameAgreementRow extends React.Component {
 						{this.props.agreement.csconta__Status__c}
 					</span>
 				</div>
-
 			</div>
 		);
 	}

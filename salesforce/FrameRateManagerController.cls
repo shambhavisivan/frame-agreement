@@ -71,6 +71,21 @@ global with sharing class FrameRateManagerController {
 		return json_data;
 	}
 
+	@TestVisible public static String getStandardPricebook() {
+		csutil__JSON_Data__c json_data = [
+											select csutil__value__c
+											from csutil__JSON_Data__c
+											where Name = 'FA-StandardPricebook'
+											limit 1
+										];
+		if (json_data != null) {
+			return (String) json_data.csutil__value__c;
+		} else {
+			return null;
+		}
+	}
+
+
 	@TestVisible private static List < String > getCategorizationDataFields() {
 		List < String > returnData = new List < String > ();
 		csutil__JSON_Data__c json_data = getCategorizationData();
@@ -147,8 +162,11 @@ global with sharing class FrameRateManagerController {
 		// Get all pricing element coorelated to this price item id along with the name of their pricing element type.
 		// These are the charges defined for this price item.
 		List < cspmb__Pricing_Element__c > priceElements = [select id, cspmb__pricing_element_type__r.Name, cspmb__pricing_element_type__r.cspmb__label__c, cspmb__pricing_element_type__r.cspmb__type__c from cspmb__Pricing_Element__c where cspmb__commercial_product__c =: priceItemId];
-		// Create a map for getting the price element type label from price element id
+		// Get Pricing Rule Group - Rule Association marked as standard pricebook
+		String standardPricebook = getStandardPricebook();
+		system.debug('***************standardPricebook' + standardPricebook);
 
+		// Create a map for getting the price element type label from price element id
 		Map < Id, String > pricingElementLabels = new Map < Id, String > ();
 		Map < Id, String > pricingElementTypes = new Map < Id, String > ();
 
@@ -166,8 +184,9 @@ global with sharing class FrameRateManagerController {
 		List < cspmb__Pricing_Rule_Group_Rule_Association__c > priceBookAssociations = [
 			select id, cspmb__pricing_rule__c
 			from cspmb__Pricing_Rule_Group_Rule_Association__c
-			where cspmb__Pricing_Rule_Group__r.csfam__standard_price_book__c = true // REMOVE -> csfam__standard_price_book__c
+			where Id = :standardPricebook
 		];
+		// where cspmb__Pricing_Rule_Group__r.csfam__standard_price_book__c = true // REMOVE -> csfam__standard_price_book__c
 
 		// Save id's of the pricing rules associated with this price book into the list
 		List < Id > pricingRuleList = new List < Id > ();
@@ -487,7 +506,6 @@ global with sharing class FrameRateManagerController {
 
 		List < Object > categorizationData;
 		categorizationData = (List < Object > ) JSON.deserializeUntyped(filterData);
-		system.debug(categorizationData);
 
 		//*******************************************************************
 		// Create list to hold fields: [values]
@@ -526,14 +544,10 @@ global with sharing class FrameRateManagerController {
 			}
 		}
 
-		system.debug(selectClause);
-		system.debug(whereClause);
-
 		String query = 'select ' + selectClause + ' from cspmb__Price_Item__c ' + whereClause + ' limit 50000';
 
 		List < SObject > results = Database.query(query);
 		Set < Id > resultIds = (new Map < Id, SObject > (results)).keySet();
-		system.debug(new List < Id > (resultIds));
 
 		return getCommercialProducts_p(new List < Id > (resultIds));
 	}
@@ -776,9 +790,6 @@ global with sharing class FrameRateManagerController {
 			);
 		}
 
-		system.debug('fieldMap:' + fieldMap);
-		system.debug('dataMap:' + dataMap);
-
 		for (String key: dataMap.keySet()) {
 
 			if (fieldMap.get(key) == null) {
@@ -837,9 +848,6 @@ global with sharing class FrameRateManagerController {
 			pricingElementObj.put(pipra.cspmb__pricing_element__c, pipra);
 		}
 
-		system.debug('priceElementIdList://:' + priceElementIdList);
-		system.debug('pricingElementObj://:' + pricingElementObj);
-
 		List < cspmb__Pricing_Element__c > pricingElList = new List < cspmb__Pricing_Element__c > ();
 
 		pricingElList = [
@@ -849,8 +857,6 @@ global with sharing class FrameRateManagerController {
 			where Id
 			IN: priceElementIdList
 		];
-
-		system.debug('pricingElList://:' + pricingElList);
 
 		List < cspmb__Pricing_Element__c > filteredPricingElements = new List < cspmb__Pricing_Element__c > ();
 
@@ -1083,7 +1089,6 @@ global with sharing class FrameRateManagerController {
 				fa.csconta__Status__c = (String) FACSettings.get('csfam__active_status__c');
 				update fa;
 
-				system.debug(fa);
 				// If this was a version of another fa we need to set the original to replaced/closed
 				if (fa.csconta__replaced_frame_agreement__c != null) {
 				 fa.csconta__effective_start_date__c = datetime.now();

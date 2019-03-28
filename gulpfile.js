@@ -6,9 +6,9 @@ const forceDeploy = require('gulp-jsforce-deploy');
 const credentials = require('./credentials.js');
 const prettier = require('gulp-prettier');
 const sassbeautify = require('gulp-sassbeautify');
- 
+
 gulp.task('prettier', () => {
-  return gulp.src('src/**/*.js')
+  return gulp.src(['src/**/*.jsx', 'src/**/*.js'])
     .pipe(prettier({ singleQuote: true , useTabs: true}))
     .pipe(gulp.dest('src'));
 });

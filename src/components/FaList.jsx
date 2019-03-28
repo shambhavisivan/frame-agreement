@@ -87,21 +87,31 @@ class FaList extends Component {
 				<div className="fa-main-header">
 					<div className="fa-container">
 						<div className="fa-main-header-container">
-								<div className="fa-main-header-item">
-									<div className="fa-main-header-group">
-										<img className="cloudsense-logo" src={CloudSenseLogo} alt="CloudSense Logo" />
-										<h5 className="fa-main-header-title">{window.SF.labels.frameAgreementTitle}</h5>
-									</div>
+							<div className="fa-main-header-item">
+								<div className="fa-main-header-group">
+									<img
+										className="cloudsense-logo"
+										src={CloudSenseLogo}
+										alt="CloudSense Logo"
+									/>
+									<h5 className="fa-main-header-title">
+										{window.SF.labels.frameAgreementTitle}
+									</h5>
 								</div>
-								<div className="fa-main-header-item">
-									<div className="fa-main-header-search">
-										<InputSearch onChange={this.onSearchChange} />
-										<Link className="fa-button" to="/agreement">{window.SF.labels.btn_AddNewAgreement}</Link>
-									</div>
+							</div>
+							<div className="fa-main-header-item">
+								<div className="fa-main-header-search">
+									<InputSearch onChange={this.onSearchChange} />
+									<Link className="fa-button" to="/agreement">
+										{window.SF.labels.btn_AddNewAgreement}
+									</Link>
 								</div>
-								<div className="fa-main-header-item">
-									<h5 className="fa-main-header-title">{window.SF.labels.frameAgreementListTitle}</h5>
-								</div>
+							</div>
+							<div className="fa-main-header-item">
+								<h5 className="fa-main-header-title">
+									{window.SF.labels.frameAgreementListTitle}
+								</h5>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -1,3 +1,3 @@
 global interface RemoteActionDataProvider {
-	Object getData(String params);
+	Object performAction(String params);
 }

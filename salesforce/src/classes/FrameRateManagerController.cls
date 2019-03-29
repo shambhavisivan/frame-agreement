@@ -169,7 +169,7 @@ global with sharing class FrameRateManagerController {
 
 			Type classType = Type.forName(className);
 			RemoteActionDataProvider dataProvider = (RemoteActionDataProvider) classType.newInstance();
-			Object data = dataProvider.getData(params);
+			Object data = dataProvider.performAction(params);
 			return JSON.serialize(data);
 		} catch (Exception e) {
 			return 'Error: ' + e.getMessage();

@@ -27,7 +27,7 @@ class Rates extends React.Component {
 	}
 
 	render() {
-		let flagColor = this.props.readOnly ? '#ccc' : '#4bca81';
+		let flagColor = '#4bca81';
 
 		return (
 			<div className="table-container">
@@ -64,6 +64,10 @@ class Rates extends React.Component {
 										{rc.rateCardLines.map((rcl, i) => {
 											if (this.props.validation[rcl.Id]) {
 												flagColor = '#D9675D';
+											}
+
+											if (this.props.readOnly) {
+												flagColor = '#ccc';
 											}
 
 											return (

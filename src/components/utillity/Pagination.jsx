@@ -11,11 +11,6 @@ class Pagination extends Component {
 		this.onPageSizeChange = this.onPageSizeChange.bind(this);
 
 		this.pageSizes = [10, 20, 50, 100];
-		console.log(props);
-	}
-
-	componentWillUpdate(props) {
-		console.log(props);
 	}
 
 	onPageSizeChange(event) {

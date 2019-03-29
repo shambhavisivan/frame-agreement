@@ -33,11 +33,11 @@ class ProductCharges extends React.Component {
 
 	render() {
 		let flagColor = '#4bca81';
-		if (this.props.readOnly) {
-			flagColor = '#ccc';
-		}
 		if (this.props.validation.oneOff) {
 			flagColor = '#D9675D';
+		}
+		if (this.props.readOnly) {
+			flagColor = '#ccc';
 		}
 
 		return (

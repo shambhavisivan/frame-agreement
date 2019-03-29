@@ -210,8 +210,11 @@ class CommercialProduct extends React.Component {
 							</div>
 						)}
 
-						<Tabs>
-							<Tab label={window.SF.labels.products_addons}>
+						<Tabs initial={this.props.product._addons.length ? 0 : 1}>
+							<Tab
+								label={window.SF.labels.products_addons}
+								disabled={!this.props.product._addons.length}
+							>
 								<Addons
 									readOnly={this.props.readOnly}
 									validation={this.props.validation[this.productId].addons}
@@ -222,6 +225,7 @@ class CommercialProduct extends React.Component {
 									}}
 								/>
 							</Tab>
+
 							<Tab
 								label={
 									this.props.product._charges.length
@@ -254,7 +258,11 @@ class CommercialProduct extends React.Component {
 									/>
 								)}
 							</Tab>
-							<Tab label={window.SF.labels.products_rates}>
+
+							<Tab
+								label={window.SF.labels.products_rates}
+								disabled={!this.props.product._rateCards.length}
+							>
 								<Rates
 									readOnly={this.props.readOnly}
 									validation={this.props.validation[this.productId].rated}

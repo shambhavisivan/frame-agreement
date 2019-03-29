@@ -10,6 +10,7 @@ global with sharing class FrameRateManagerController {
 	public static final List < String > FA_FIELDS = new List < String > {
 		'Id',
 		'Name',
+		'LastModifiedDate',
 		'csconta__Account__r.Name',
 		'csconta__Agreement_Name__c',
 		'csconta__Pricing_Rule_Group__c',
@@ -664,7 +665,7 @@ global with sharing class FrameRateManagerController {
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
 
-		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c';
+		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c order by LastModifiedDate DESC';
 
 		return database.query(query);
 	}

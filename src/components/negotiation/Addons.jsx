@@ -75,11 +75,11 @@ class Addons extends React.Component {
 							} catch (err) {}
 
 							let flagColor = '#4bca81';
-							if (this.props.readOnly) {
-								flagColor = '#ccc';
-							}
 							if (val_oneOff || val_recurring) {
 								flagColor = '#D9675D';
+							}
+							if (this.props.readOnly) {
+								flagColor = '#ccc';
 							}
 
 							let oneOffDiscounts;

@@ -281,6 +281,24 @@ class FaEditor extends Component {
 		window.editor = this;
 	}
 
+	componentWillUpdate() {
+		try {
+			// Mostly for local
+			if (
+				this.editable !==
+					this.props.settings.FACSettings.fa_editable_statuses.has(
+						this.state.activeFa.csconta__Status__c
+					) ||
+				!this.state.activeFa.Id
+			) {
+				this.editable =
+					this.props.settings.FACSettings.fa_editable_statuses.has(
+						this.state.activeFa.csconta__Status__c
+					) || !this.state.activeFa.Id;
+			}
+		} catch (e) {}
+	}
+
 	/**************************************************/
 	onApprovalChange() {
 		// Refresh approval
@@ -374,7 +392,7 @@ class FaEditor extends Component {
 		console.log(PR_ID);
 
 		if (typeof PR_ID !== 'string') {
-			console.error('Decompose failed, invalid pricing rule Id!');
+			console.error('Activation failed, invalid pricing rule Id!');
 			return false;
 		}
 
@@ -966,7 +984,7 @@ class FaEditor extends Component {
 					})()}
 					<div className="box-button-container">
 						<button
-							className="slds-button slds-button--brand"
+							className="fa-button"
 							onClick={this.onOpenCommercialProductModal}
 							disabled={!this.state.activeFa.Id}
 						>

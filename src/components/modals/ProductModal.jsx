@@ -464,7 +464,7 @@ class ProductModal extends Component {
 
 					<button
 						onClick={this.addProducts}
-						className="slds-button slds-button--brand"
+						className="fa-button"
 						disabled={!this.state.actionTaken}
 					>
 						{window.SF.labels.modal_categorization_btn_add}

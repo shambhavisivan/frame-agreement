@@ -394,7 +394,12 @@ export function getAttachment(priceItemId) {
 		return new Promise((resolve, reject) => {
 			window.SF.invokeAction('getAttachmentBody', [priceItemId]).then(
 				response => {
-					response = JSON.parse(atob(response));
+					try {
+						response = JSON.parse(atob(response));
+					} catch (e) {
+						// No attachment
+						response = {};
+					}
 					dispatch(recieveGetAttachment(priceItemId, response));
 					resolve(response);
 					return response;

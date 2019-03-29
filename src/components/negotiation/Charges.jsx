@@ -39,7 +39,7 @@ class Charges extends React.Component {
 	}
 
 	render() {
-		let flagColor = this.props.readOnly ? '#ccc' : '#4bca81';
+		let flagColor = '#4bca81';
 
 		return (
 			<div className="table-container">
@@ -145,6 +145,10 @@ class Charges extends React.Component {
 
 							if (this.props.validation[charge.Id]) {
 								flagColor = '#D9675D';
+							}
+
+							if (this.props.readOnly) {
+								flagColor = '#ccc';
 							}
 
 							return (

@@ -773,7 +773,10 @@ global with sharing class FrameRateManagerController {
 			where name = 'FA-Clone-Observer'
 		];
 		if (!jsonData.isEmpty()) {
-			String result = performAction(jsonData[0].csutil__value__c, faId);
+			Map<String, String> cloneObserverPayload = new Map<String, String>();
+			cloneObserverPayload.put('sourceId', faId);
+			cloneObserverPayload.put('targetId', cloned.id);
+			String result = performAction(jsonData[0].csutil__value__c, JSON.serialize(cloneObserverPayload));
 			if (result.contains('Error')) {
 				return null;
 			}

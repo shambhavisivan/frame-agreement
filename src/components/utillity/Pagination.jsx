@@ -29,8 +29,8 @@ class Pagination extends Component {
 			pagination = (
 				<div className="fa-pagination-container">
 					<ReactPaginate
-						previousLabel={<Icon name="left" width="14" color="#B0ADAB" />}
-						nextLabel={<Icon name="right" width="14" color="#B0ADAB" />}
+						previousLabel={<Icon name="left" width="14" color="#0070d2" />}
+						nextLabel={<Icon name="right" width="14" color="#0070d2" />}
 						breakLabel={'...'}
 						breakClassName={'fa-pagination-ellipsis'}
 						pageCount={pageCount}

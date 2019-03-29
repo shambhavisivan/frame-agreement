@@ -13,6 +13,10 @@ const eventList = [
 	'onAfterDeleteProducts',
 	'onBeforeSaveFrameAgreement',
 	'onAfterSaveFrameAgreement',
+	'onBeforeNegotiate',
+	'onAfterNegotiate',
+	'onBeforeBulkNegotiation',
+	'onAfterBulkNegotiation',
 	'onBeforeSubmit',
 	'onAfterSubmit'
 ];
@@ -30,7 +34,6 @@ const subscribe = (eventType, callback) => {
 		}
 	};
 };
-window.subscribe = subscribe;
 
 export const publish = async (eventType, arg = null) => {
 	log.green('Event triggered: ' + eventType);
@@ -45,22 +48,22 @@ export const publish = async (eventType, arg = null) => {
 };
 
 export const initialiseApi = () => {
-	window.FAC = {};
-	window.FAC.api = {};
-	window.FAC.eventList = eventList;
-	window.FAC.subscribe = subscribe;
-	window.FAC.api.invokeAction = window.SF.invokeAction.bind(window.SF);
+	window.FAM = {};
+	window.FAM.api = {};
+	window.FAM.eventList = eventList;
+	window.FAM.subscribe = subscribe;
+	window.FAM.api.invokeAction = window.SF.invokeAction.bind(window.SF);
 
 	// FROM OTHER COMPONENTS
-	// window.FAC.toaster = ToastsStore;
-	// window.FAC.addProducts = this.onAddProducts.bind(this);
-	// window.FAC.negotiate = this.onNegotiate.bind(this);
-	// window.FAC.toast = this.props.createToast;
-	// window.FAC.registerMethod = this.props.registerMethod;
-	// window.FAC.getActiveFrameAgreement = () => this.state.activeFa;
+	// window.FAM.toaster = ToastsStore;
+	// window.FAM.addProducts = this.onAddProducts.bind(this);
+	// window.FAM.negotiate = this.onNegotiate.bind(this);
+	// window.FAM.toast = this.props.createToast;
+	// window.FAM.registerMethod = this.props.registerMethod;
+	// window.FAM.getActiveFrameAgreement = () => this.state.activeFa;
 
 	/*
-        window.FAC.registerMethod("ActionFunction", () => {
+        window.FAM.registerMethod("ActionFunction", () => {
              return new Promise(resolve => {
                  setTimeout(() => {resolve("ActionFunction result")}, 2000);
              });

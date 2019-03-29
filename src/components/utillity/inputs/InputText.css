@@ -5,9 +5,9 @@
 	background: white;
 	font-family:Salesforce Sans,Arial,sans-serif;
 	border: none;
+	border-bottom: 1px solid #dddbda;
 	padding-bottom: 4px;
 }
-
 .slds-input:focus, .slds-input:active {
 	border-bottom: 1px solid #4bca81;
 	outline: none;

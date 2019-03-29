@@ -854,7 +854,11 @@ class NegotiationModal extends Component {
 							{this.commercialProducts
 								.slice(0, this.productEllipsis)
 								.map(product => {
-									return <li className="fa-tag" key={product.Id}>{product.Name}</li>;
+									return (
+										<li className="fa-tag" key={product.Id}>
+											{product.Name}
+										</li>
+									);
 								})}
 							{this.commercialProducts.length > this.productEllipsis ? (
 								<li className="product-ellipsis">

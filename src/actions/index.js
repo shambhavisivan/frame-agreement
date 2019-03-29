@@ -14,6 +14,19 @@ export function registerMethod(name, method) {
 		dispatch(_registerMethod(name, method));
 	};
 }
+
+export function performAction(className, params) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('performAction', [className, params]).then(
+				response => {
+					resolve(response);
+					return response;
+				}
+			);
+		});
+	};
+}
 // ***********************************************************************
 
 export const _createPricingRuleGroup = () => ({
@@ -424,7 +437,7 @@ export function saveFrameAgreement(data, faId) {
 			console.error('No Frame agreement Id');
 		}
 
-		var ommited = ['csconta__Account__c', 'csconta__Account__r', 'Name', '_ui'];
+		var ommited = ['csconta__Account__c', 'csconta__Account__r', 'Name', '_ui', 'LastModifiedDate'];
 		var SF_data = {};
 
 		for (var key in data) {

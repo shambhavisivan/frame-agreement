@@ -16,28 +16,35 @@
   flex-grow: 1;
 }
 
+.negotiate-input-wrapper select {
+    border-radius: 4px;
+    border: solid 1px #dddbda;
+    background-color: white;
+    padding: 2px 2px;
+}
+
 .negotiate-icon {
-	bottom: 50%;
-	visibility: hidden;
+  bottom: 50%;
+  visibility: hidden;
   position: absolute;
   z-index: 2;
-	left: 5px;
-	transform: translateY(50%);
+  left: 5px;
+  transform: translateY(50%);
 }
 
 .negotiate-input {
-	border: none;
+  border: none;
   height: 20px;
   width: 100%;
   border-bottom: 1px solid transparent;
   background-color: white;
   box-sizing: border-box;
-	text-align: right;
+  text-align: right;
 }
 
 .negotiate-input-wrapper.negotiated > .negotiate-input{
   color: #080707;
-	text-align: right;
+  text-align: right;
 }
 
 .negotiate-input-wrapper.readOnly {
@@ -49,11 +56,11 @@
 
 /*HOVER*/
 .negotiate-input-wrapper:hover .negotiate-icon {
-	visibility: visible;
+  visibility: visible;
 }
 
 .negotiate-input-wrapper:hover .negotiate-input {
-	border-color: #747474;
+  border-color: #747474;
 }
 
 /*FOCUS*/
@@ -63,7 +70,7 @@
 }
 
 .negotiate-input:focus {
-	border-color: #0070d2;
+  border-color: #0070d2;
 }
 
 
@@ -77,8 +84,8 @@ input.negotiate-input::-webkit-outer-spin-button {
     width: 100%;
 }
 .discount {
-	color: #4bca81;
-	font-size: 13px;
+  color: #4bca81;
+  font-size: 13px;
 }
 
 .invalid .discount-amount {
@@ -87,6 +94,6 @@ input.negotiate-input::-webkit-outer-spin-button {
 
 .discount > div {
     display: inline-block;
-	color: #747474;
-	font-size: 11px;
+  color: #747474;
+  font-size: 11px;
 }

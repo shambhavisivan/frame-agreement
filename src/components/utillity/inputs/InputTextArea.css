@@ -1,6 +1,6 @@
 textarea {
 	width: 100%;
-	min-height: 70px;
+	min-height: 90px;
 }
 textarea:disabled {
 	resize: none;

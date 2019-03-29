@@ -16,6 +16,12 @@
 		.list-cell {
 			font-size: 0.8rem;
 		}
+
+        &.invalid-product {
+            &:hover {
+                border: 1px solid #d9665d;
+            }
+        }
 }
 
 .commercial-product-container-default {
@@ -70,6 +76,7 @@
 
 .commercial-product-fields > span {
 	flex: 1;
+	cursor: pointer;
 }
 
 .commercial-product-fields > span.volume-fields {
@@ -97,6 +104,10 @@
 .commercial-product-header .commercial-product-fields > span:first-child:not(.list-cell) {
 	color: #0070d2;
 	font-size: 1.2rem;
+}
+
+.invalid-product .commercial-product-header .commercial-product-fields > span:first-child:not(.list-cell) {
+	color: #d9665d;
 }
 
 .commercial-product-header:hover + div .negotiation-button:not(:disabled) {

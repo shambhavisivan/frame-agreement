@@ -4,24 +4,26 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import {
-	saveFrameAgreement,
-	createFrameAgreement,
-	getCommercialProductData,
-	getAttachment,
-	saveAttachment,
-	toggleFieldVisibility,
-	setValidation,
-	getApprovalHistory,
-	createPricingRuleGroup,
-	decomposeAttachment,
-	undoDecomposition,
 	createToast,
-	getFrameAgreement,
-	setFrameAgreementState,
-	createNewVersionOfFrameAgrement,
+	setValidation,
+	getAttachment,
+	performAction,
+	registerMethod,
+	saveAttachment,
 	submitForApproval,
-	registerMethod
+	getFrameAgreement,
+	undoDecomposition,
+	getApprovalHistory,
+	saveFrameAgreement,
+	decomposeAttachment,
+	createFrameAgreement,
+	toggleFieldVisibility,
+	setFrameAgreementState,
+	createPricingRuleGroup,
+	getCommercialProductData,
+	createNewVersionOfFrameAgrement
 } from '../actions';
+
 import { truncateCPField } from '../utils/shared-service';
 import './FaEditor.css';
 
@@ -107,15 +109,16 @@ class FaEditor extends Component {
 		);
 
 		// API
-		window.FAC.registerMethod = this.props.registerMethod;
+		window.FAM.registerMethod = this.props.registerMethod;
+		window.FAM.api.performAction = this.props.performAction;
 
-		window.FAC.api.addProducts = this.onAddProducts;
-		window.FAC.api.negotiate = this.onNegotiate.bind(this);
-		window.FAC.api.toast = this.props.createToast;
-		window.FAC.api.refreshFa = this.refreshFa;
-		window.FAC.api.setStatusOfFrameAgreement = this.setStateOFFa;
-		window.FAC.api.getActiveFrameAgreement = () => this.state.activeFa;
-		window.FAC.api.submitForApproval = () => this.onSubmitForApproval;
+		window.FAM.api.addProducts = this.onAddProducts;
+		window.FAM.api.negotiate = this.onNegotiate.bind(this);
+		window.FAM.api.toast = this.props.createToast;
+		window.FAM.api.refreshFa = this.refreshFa;
+		window.FAM.api.setStatusOfFrameAgreement = this.setStateOFFa;
+		window.FAM.api.getActiveFrameAgreement = () => this.state.activeFa;
+		window.FAM.api.submitForApproval = () => this.onSubmitForApproval;
 
 		this.faId = this.props.match.params.id || null;
 		let _frameAgreement;
@@ -155,15 +158,15 @@ class FaEditor extends Component {
 	}
 
 	componentWillUnmount() {
-		delete window.FAC.registerMethod;
+		delete window.FAM.registerMethod;
 
-		delete window.FAC.api.addProducts;
-		delete window.FAC.api.negotiate;
-		delete window.FAC.api.toast;
-		delete window.FAC.api.refreshFa;
-		delete window.FAC.api.setStatusOfFrameAgreement;
-		delete window.FAC.api.getActiveFrameAgreement;
-		delete window.FAC.api.submitForApprovaldelete;
+		delete window.FAM.api.addProducts;
+		delete window.FAM.api.negotiate;
+		delete window.FAM.api.toast;
+		delete window.FAM.api.refreshFa;
+		delete window.FAM.api.setStatusOfFrameAgreement;
+		delete window.FAM.api.getActiveFrameAgreement;
+		delete window.FAM.api.submitForApprovaldelete;
 
 		this.props.setValidation();
 	}
@@ -531,7 +534,7 @@ class FaEditor extends Component {
 	}
 
 	/**************************************************/
-	async onAddProducts(productsMap) {
+	async onAddProducts(productsMap = {}) {
 		productsMap = await publish('onBeforeAddProducts', productsMap);
 
 		let _attachment = {};
@@ -668,13 +671,22 @@ class FaEditor extends Component {
 		});
 	}
 
-	async _removeProducts() {
-		let productsToDelete = await publish(
-			'onBeforeDeleteProducts',
-			this.state.selectedProducts
-		);
+	async _removeProducts(optionalIdArray) {
+		let products = this.state.selectedProducts;
+
+		if (typeof optionalIdArray !== 'undefined') {
+			products = {};
+			this.state.activeFa._ui.commercialProducts.forEach(cp => {
+				if (optionalIdArray.includes(cp.Id)) {
+					products[cp.Id] = cp;
+				}
+			});
+		}
+
+		let productsToDelete = await publish('onBeforeDeleteProducts', products);
 
 		let _attachment = this.state.activeFa._ui.attachment;
+
 		for (var key in productsToDelete) {
 			delete _attachment[key];
 		}
@@ -1169,7 +1181,9 @@ class FaEditor extends Component {
 
 								<div className="commercial-product-fields-container">
 									<div className="commercial-product-fields">
-										<span className="list-cell">{window.SF.labels.products_productNameHeaderCell}</span>
+										<span className="list-cell">
+											{window.SF.labels.products_productNameHeaderCell}
+										</span>
 										{this.props.productFields
 											.filter(f => f.visible)
 											.map(f => {
@@ -1393,25 +1407,24 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	// setActiveFa,
+	createToast,
+	setValidation,
+	getAttachment,
+	performAction,
+	registerMethod,
+	saveAttachment,
+	submitForApproval,
+	getFrameAgreement,
+	undoDecomposition,
+	getApprovalHistory,
 	saveFrameAgreement,
+	decomposeAttachment,
 	createFrameAgreement,
 	toggleFieldVisibility,
-	getCommercialProductData,
-	getAttachment,
-	setValidation,
-	saveAttachment,
-	createToast,
-	getFrameAgreement,
 	setFrameAgreementState,
-	getApprovalHistory,
 	createPricingRuleGroup,
-	createNewVersionOfFrameAgrement,
-	decomposeAttachment,
-	undoDecomposition,
-	registerMethod,
-	submitForApproval
-	// updateActiveFa
+	getCommercialProductData,
+	createNewVersionOfFrameAgrement
 };
 
 export default withRouter(

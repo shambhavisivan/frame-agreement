@@ -34,22 +34,19 @@ class FaList extends Component {
 	}
 
 	faMenuAction(action, faId) {
-		console.log(action);
-		console.log(faId);
-
 		switch (action) {
 			case 'clone':
 				confirmAlert({
 					customUI: ({ onClose }) => {
 						return (
 							<ConfirmationModal
-								title="Clone Frame Agreement"
-								message="Are you sure you want to clone this frame agreement?"
+								title={window.SF.labels.alert_cloneFa_title}
+								message={window.SF.labels.alert_cloneFa_message}
 								onCancel={onClose}
 								onConfirm={() => {
 									this.props.cloneFrameAgreement(faId);
 								}}
-								confirmText="Clone"
+								confirmText={window.SF.labels.alert_cloneFa_btn_action}
 							/>
 						);
 					}
@@ -62,20 +59,20 @@ class FaList extends Component {
 					customUI: ({ onClose }) => {
 						return (
 							<ConfirmationModal
-								title={window.SF.labels.alert_cloneFa_title}
-								message={window.SF.labels.alert_cloneFa_message}
+								title={window.SF.labels.alert_deleteProducts_title}
+								message={window.SF.labels.alert_deleteProducts_message}
 								onCancel={onClose}
 								onConfirm={() => {
 									this.props.deleteFrameAgreement(faId);
 								}}
-								confirmText={window.SF.labels.alert_cloneFa_btn_action}
+								confirmText={window.SF.labels.alert_deleteProducts_btn_action}
 							/>
 						);
 					}
 				});
 				break;
 			case 'edit':
-				console.log('EDIT');
+				this.props.history.push('/agreement/' + faId);
 				break;
 			default:
 		}

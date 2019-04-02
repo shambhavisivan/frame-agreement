@@ -437,7 +437,13 @@ export function saveFrameAgreement(data, faId) {
 			console.error('No Frame agreement Id');
 		}
 
-		var ommited = ['csconta__Account__c', 'csconta__Account__r', 'Name', '_ui', 'LastModifiedDate'];
+		var ommited = [
+			'csconta__Account__c',
+			'csconta__Account__r',
+			'Name',
+			'_ui',
+			'LastModifiedDate'
+		];
 		var SF_data = {};
 
 		for (var key in data) {

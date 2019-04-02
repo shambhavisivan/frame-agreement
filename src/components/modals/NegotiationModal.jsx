@@ -179,10 +179,10 @@ class NegotiationModal extends Component {
 				intersection: false
 			},
 			pagination: {
-				page_addons: 10,
-				page_charges: 10,
-				page_rated: 10,
-				pageSize: 1
+				page_addons: 1,
+				page_charges: 1,
+				page_rated: 1,
+				pageSize: 10
 			}
 		};
 		// this.priceItemFields = [

@@ -50,6 +50,9 @@ import NegotiationModal from './modals/NegotiationModal';
 import { confirmAlert } from 'react-confirm-alert';
 import ConfirmationModal from './modals/ConfirmationModal';
 
+// Skeletons
+import CommercialProductSkeleton from './skeletons/CommercialProductSkeleton';
+
 import {
 	validateAddons,
 	validateProduct,
@@ -113,7 +116,7 @@ class FaEditor extends Component {
 		window.FAM.api.performAction = this.props.performAction;
 
 		window.FAM.api.addProducts = this.onAddProducts;
-		window.FAM.api.negotiate = this.onNegotiate.bind(this);
+		window.FAM.api.negotiate = this._apiNegotiate.bind(this);
 		window.FAM.api.toast = this.props.createToast;
 		window.FAM.api.refreshFa = this.refreshFa;
 		window.FAM.api.setStatusOfFrameAgreement = this.setStateOFFa;
@@ -149,12 +152,22 @@ class FaEditor extends Component {
 			selectedProducts: {},
 			loadingProducts: [],
 			openCommercialProduct: '',
-			attachmentLoaded: false,
+			loading: {
+				attachment: false
+			},
 			pagination: {
 				page: 1,
 				pageSize: 10
 			}
 		};
+
+		this._chargeTypes = [
+			'_addons',
+			'_charges',
+			'_rateCards',
+			'_product',
+			'_volume'
+		];
 	}
 
 	componentWillUnmount() {
@@ -198,7 +211,10 @@ class FaEditor extends Component {
 						// Update active FA with data
 						setTimeout(() => {
 							this.setState({
-								attachmentLoaded: true,
+								loading: {
+									...this.state.loading,
+									attachment: true
+								},
 								activeFa: {
 									...this.state.activeFa,
 									_ui: {
@@ -213,7 +229,10 @@ class FaEditor extends Component {
 				} else {
 					// No attachment
 					this.setState({
-						attachmentLoaded: true,
+						loading: {
+							...this.state.loading,
+							attachment: true
+						},
 						activeFa: {
 							...this.state.activeFa,
 							_ui: { ...this.state.activeFa._ui, attachment: {} }
@@ -230,7 +249,10 @@ class FaEditor extends Component {
 
 			this.setState(
 				{
-					attachmentLoaded: true,
+					loading: {
+						...this.state.loading,
+						attachment: true
+					},
 					activeFa: {
 						...this.state.activeFa,
 						_ui: {
@@ -799,6 +821,7 @@ class FaEditor extends Component {
 		}
 	}
 
+	/**************************************************/
 	async onNegotiate(priceItemId, type, data) {
 		console.log(data);
 		let attachment = this.state.activeFa._ui.attachment;
@@ -813,10 +836,72 @@ class FaEditor extends Component {
 				}
 			},
 			async () => {
-				publish('onAfterNegotiate');
+				publish('onAfterNegotiate', this.state.activeFa._ui.attachment);
 			}
 		);
 	}
+
+	async _apiNegotiate(priceItemId, type, data) {
+		let cp = this.state.activeFa._ui.commercialProducts.find(
+			_cp => _cp.Id === priceItemId
+		);
+		if (!cp) {
+			throw new Error(
+				'Cannot find commercial product with Id ' +
+					priceItemId +
+					' in active Frame Agreement!'
+			);
+			return;
+		}
+
+		if (!this._chargeTypes.includes(type)) {
+			console.warn('Make sure charge is one of types:', this._chargeTypes);
+			throw new Error('Negotiation type ' + type + ' not recognized!');
+		}
+
+		// Validate that charge types are not breached
+		if (type === '_charges') {
+			for (var key in data) {
+				var charge = cp._charges.find(_ch => _ch.Id === key);
+				if (
+					charge.chargeType === 'One-off Charge' &&
+					data[key].hasOwnProperty('recurring')
+				) {
+					// not permitted
+					console.error(
+						'Negotiating ' +
+							'%c"Recurring Charge"' +
+							'%c not permitted on charge with type ' +
+							'%c"One-off Charge"',
+						'font-style: italic',
+						'font-style: inherit',
+						'font-style: italic'
+					);
+					return;
+				}
+				if (
+					charge.chargeType === 'Recurring Charge' &&
+					data[key].hasOwnProperty('oneOff')
+				) {
+					// not permitted
+					console.error(
+						'Negotiating ' +
+							'%c"One-off Charge"' +
+							'%c not permitted on charge with type ' +
+							'%c"Recurring Charge"',
+						'font-style: italic',
+						'font-style: inherit',
+						'font-style: italic'
+					);
+					return;
+				}
+			}
+		}
+
+		return this.onNegotiate(priceItemId, type, data);
+	}
+
+	/**************************************************/
 
 	async onBulkNegotiate(data) {
 		console.log(data);
@@ -1127,9 +1212,12 @@ class FaEditor extends Component {
 		}
 		// *******************************************************
 		// Negotiation header with and without commercial products
-		let commercialProducts;
+		let commercialProducts = <CommercialProductSkeleton count={3} />;
 
-		if (this.state.activeFa._ui.commercialProducts.length) {
+		if (
+			this.state.loading.attachment &&
+			this.state.activeFa._ui.commercialProducts.length
+		) {
 			commercialProducts = (
 				<div>
 					<div>
@@ -1242,7 +1330,7 @@ class FaEditor extends Component {
 						})}
 				</div>
 			);
-		} else {
+		} else if (this.state.loading.attachment) {
 			commercialProducts = (
 				<div>
 					<div>
@@ -1256,139 +1344,134 @@ class FaEditor extends Component {
 		// *******************************************************
 
 		return (
-			this.state.attachmentLoaded && (
-				<div className="editor-container">
-					<Header
-						onBackClick={this.onBackClick}
-						disabled={!this.editable}
-						title={this.state.activeFa.csconta__Agreement_Name__c}
-						status={this.state.activeFa.csconta__Status__c}
-						invalid={this.props.approvalFlag}
-						subtitle={window.SF.labels.header_frameAgreementEditorTitle}
-					>
-						<div className="fa-flex fa-flex-flush">
-							{customButtonsComponent}
+			<div className="editor-container">
+				<Header
+					onBackClick={this.onBackClick}
+					disabled={!this.editable}
+					title={this.state.activeFa.csconta__Agreement_Name__c}
+					status={this.state.activeFa.csconta__Status__c}
+					invalid={this.props.approvalFlag}
+					subtitle={window.SF.labels.header_frameAgreementEditorTitle}
+				>
+					<div className="fa-flex fa-flex-flush">
+						{customButtonsComponent}
 
-							{this.props.settings.ButtonStandardData.Save.has(
-								this.state.activeFa.csconta__Status__c
-							) && (
-								<button
-									className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
-									onClick={this.upsertFrameAgreements}
-								>
-									{window.SF.labels.btn_Save}
-								</button>
-							)}
+						{this.props.settings.ButtonStandardData.Save.has(
+							this.state.activeFa.csconta__Status__c
+						) && (
+							<button
+								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
+								onClick={this.upsertFrameAgreements}
+							>
+								{window.SF.labels.btn_Save}
+							</button>
+						)}
 
-							{this.props.settings.ButtonStandardData.SubmitForApproval.has(
-								this.state.activeFa.csconta__Status__c
-							) && (
-								<button
-									className="fa-button fa-button-border-light fa-button-transparent"
-									disabled={
-										!this.props.approvalFlag ||
-										!this.state.activeFa._ui.commercialProducts.length
-									}
-									onClick={this.onSubmitForApproval}
-								>
-									{window.SF.labels.btn_SubmitForApproval}
-								</button>
-							)}
+						{this.props.settings.ButtonStandardData.SubmitForApproval.has(
+							this.state.activeFa.csconta__Status__c
+						) && (
+							<button
+								className="fa-button fa-button-border-light fa-button-transparent"
+								disabled={
+									!this.props.approvalFlag ||
+									!this.state.activeFa._ui.commercialProducts.length
+								}
+								onClick={this.onSubmitForApproval}
+							>
+								{window.SF.labels.btn_SubmitForApproval}
+							</button>
+						)}
 
-							{this.props.settings.ButtonStandardData.Submit.has(
-								this.state.activeFa.csconta__Status__c
-							) && (
-								<button
-									className="fa-button fa-button-border-light fa-button-transparent"
-									onClick={this.onDecompose}
-								>
-									{window.SF.labels.btn_Submit}
-								</button>
-							)}
+						{this.props.settings.ButtonStandardData.Submit.has(
+							this.state.activeFa.csconta__Status__c
+						) && (
+							<button
+								className="fa-button fa-button-border-light fa-button-transparent"
+								onClick={this.onDecompose}
+							>
+								{window.SF.labels.btn_Submit}
+							</button>
+						)}
 
-							{this.state.activeFa.csconta__Status__c ===
-								this.props.settings.FACSettings.statuses.active_status && (
-								<button
-									className="fa-button fa-button-border-light fa-button-transparent"
-									onClick={this.createNewVersion}
-								>
-									{window.SF.labels.btn_NewVersion}
-								</button>
-							)}
-						</div>
-					</Header>
-
-					<div className="fa-container">
-						<div className="fa-container-inner">
-							<section className="fa-section fa-section-vertical fa-section-border fa-section-light">
-								{this.header_rows.map((row, i) => {
-									return (
-										<div
-											className="fa-margin-bottom-md"
-											key={'header-row-' + i}
-										>
-											<div className="fa-flex">
-												{row.map(f => {
-													var editable = !f.readOnly && this.editable;
-													return (
-														<SFField
-															editable={editable}
-															onChange={this.onFieldChange}
-															key={f.field}
-															field={f}
-															value={this.state.activeFa[f.field] || ''}
-														/>
-													);
-												})}
-											</div>
-										</div>
-									);
-								})}
-							</section>
-
-							<div className="fa-padding-top-sm">{approvalHistory}</div>
-
-							<div className="fa-padding-top-sm">
-								{commercialProducts}
-								<Pagination
-									totalSize={this.getCommercialProductsCount()}
-									pageSize={this.state.pagination.pageSize}
-									page={this.state.pagination.page}
-									onPageSizeChange={newPageSize => {
-										this.setState({
-											pagination: {
-												...this.state.pagination,
-												pageSize: newPageSize
-											}
-										});
-									}}
-									onPageChange={newPage => {
-										this.setState({
-											pagination: { ...this.state.pagination, page: newPage }
-										});
-									}}
-								/>
-							</div>
-
-							<div>
-								{productModal}
-								{negotiateModal}
-							</div>
-						</div>
-
-						<Toaster />
-						{this.state.actionIframe && this.state.actionIframeUrl && (
-							<ActionIframe
-								onCloseModal={this.onCloseModal}
-								open={this.state.actionIframe}
-								url={this.state.actionIframeUrl}
-							/>
+						{this.state.activeFa.csconta__Status__c ===
+							this.props.settings.FACSettings.statuses.active_status && (
+							<button
+								className="fa-button fa-button-border-light fa-button-transparent"
+								onClick={this.createNewVersion}
+							>
+								{window.SF.labels.btn_NewVersion}
+							</button>
 						)}
 					</div>
+				</Header>
 
-					{this.editable && footer}
+				<div className="fa-container">
+					<div className="fa-container-inner">
+						<section className="fa-section fa-section-vertical fa-section-border fa-section-light">
+							{this.header_rows.map((row, i) => {
+								return (
+									<div className="fa-margin-bottom-md" key={'header-row-' + i}>
+										<div className="fa-flex">
+											{row.map(f => {
+												var editable = !f.readOnly && this.editable;
+												return (
+													<SFField
+														editable={editable}
+														onChange={this.onFieldChange}
+														key={f.field}
+														field={f}
+														value={this.state.activeFa[f.field] || ''}
+													/>
+												);
+											})}
+										</div>
+									</div>
+								);
+							})}
+						</section>
+
+						<div className="fa-padding-top-sm">{approvalHistory}</div>
+
+						<div className="fa-padding-top-sm">
+							{commercialProducts}
+							<Pagination
+								totalSize={this.getCommercialProductsCount()}
+								pageSize={this.state.pagination.pageSize}
+								page={this.state.pagination.page}
+								onPageSizeChange={newPageSize => {
+									this.setState({
+										pagination: {
+											...this.state.pagination,
+											pageSize: newPageSize
+										}
+									});
+								}}
+								onPageChange={newPage => {
+									this.setState({
+										pagination: { ...this.state.pagination, page: newPage }
+									});
+								}}
+							/>
+						</div>
+
+						<div>
+							{productModal}
+							{negotiateModal}
+						</div>
+					</div>
+
+					<Toaster />
+					{this.state.actionIframe && this.state.actionIframeUrl && (
+						<ActionIframe
+							onCloseModal={this.onCloseModal}
+							open={this.state.actionIframe}
+							url={this.state.actionIframeUrl}
+						/>
+					)}
 				</div>
-			)
+
+				{this.editable && footer}
+			</div>
 		);
 	}
 }

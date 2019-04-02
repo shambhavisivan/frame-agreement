@@ -2,7 +2,7 @@ var SF;
 
 window.localMode = true;
 
-function createPromise(result, timeout = 100) {
+function createPromise(result, timeout = 500) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(result);
@@ -1017,7 +1017,7 @@ window.SF = SF = {
                 }
 
             case "getAttachmentBody":
-                return createPromise(attachment);
+                return createPromise(attachment, 5000);
 
             case "getApprovalHistory":
                 return createPromise(getRandomFromArr([approval, approval2]));

@@ -29,17 +29,12 @@ global with sharing class FrameRateManagerController {
 
 	@TestVisible private static csutil__JSON_Data__c getHeaderData() {
 		csutil__JSON_Data__c json_data;
-		try {
 			json_data = [
 				select csutil__value__c
 				from csutil__JSON_Data__c
 				where Name = 'FA-Header'
 				limit 1
 			];
-		}
-		catch (System.QueryException e) {
-
-		}
 		return json_data;
 	}
 
@@ -92,8 +87,15 @@ global with sharing class FrameRateManagerController {
 		List < String > returnData = new List < String > ();
 		csutil__JSON_Data__c json_data = getCategorizationData();
 
-		List < Object > categorizationData;
-		categorizationData = (List < Object >) JSON.deserializeUntyped(json_data.csutil__value__c);
+		List < Object > categorizationData = new List < Object >();
+
+		if (json_data != null) {
+			try {
+				categorizationData = (List < Object >) JSON.deserializeUntyped(json_data.csutil__value__c);
+			} catch (Exception e) {
+
+			}
+		}
 
 		for (Object category : categorizationData) {
 			Map < String, Object > categoryMap = (Map < String, Object >) category;
@@ -206,7 +208,10 @@ global with sharing class FrameRateManagerController {
 			from cspmb__Pricing_Rule_Group_Rule_Association__c
 			where Id = :standardPricebook
 		];
-		// where cspmb__Pricing_Rule_Group__r.csfam__standard_price_book__c = true // REMOVE -> csfam__standard_price_book__c
+
+		if (priceBookAssociations == null) {
+			return null;
+		}
 
 		// Save id's of the pricing rules associated with this price book into the list
 		List < Id > pricingRuleList = new List < Id > ();

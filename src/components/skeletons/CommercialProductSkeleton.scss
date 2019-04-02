@@ -1,0 +1,24 @@
+.skeleton-cp-container {
+	background-color: #fafaf9;
+	width: 100%;
+	height: 32px;
+	border-bottom: 1px solid #f3f2f2;
+}
+
+.skeleton-cp-container > div {
+	background-color: #fafaf9;
+	border-bottom: 1px solid #f3f2f2;
+	width: 100%;
+}
+
+.skeleton-cp-header {
+	height: 32px;
+}
+.skeleton-cp-table-header {
+	height: 39px;
+	margin-bottom: 5px;
+}
+.skeleton-cp-table-item {
+	height: 50px;
+	/* animation: animation 1s infinite;*/
+}

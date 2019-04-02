@@ -11,9 +11,12 @@ class InputSearch extends React.Component {
 
 		this.onTextChange = this.onTextChange.bind(this);
 
+
 		this.state = {
 			value: this.props.value
 		};
+
+		this.bordered = this.props.bordered || false;
 	}
 
 	onTextChange(e) {
@@ -31,7 +34,7 @@ class InputSearch extends React.Component {
 
 	render() {
 		return (
-			<div className="fa-input-search">
+		<div className={"fa-input-search" + (this.bordered ? ' fa-input-search-border-bottom' : '')}>
 				<Icon name="search" width="16" height="16" color="#cccccc" />
 				<DebounceInput
 					minLength={2}

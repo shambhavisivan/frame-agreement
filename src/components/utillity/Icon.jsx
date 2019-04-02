@@ -48,6 +48,7 @@ const Icon = props => {
 		<svg
 			style={style}
 			className={`icon icon-${props.name} ${props['svg-class'] || ''}`}
+			aria-hidden="true"
 		>
 			<use xlinkHref={`#icons_${props.name}`} />
 		</svg>

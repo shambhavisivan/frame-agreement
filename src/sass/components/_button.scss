@@ -8,8 +8,9 @@
 	color: $white;
 	cursor: pointer;
 	display: inline-flex;
+	font-family: $font-primary;
 	font-size: 0.75rem;
-	height: 2rem;
+	min-height: 2rem;
 	justify-content: center;
 	padding: 0.25rem 1.25rem;
 	position: relative;
@@ -44,4 +45,14 @@
 
 .fa-button-border-dark {
 	border: 1px solid $black;
+}
+
+/* Bare */
+.fa-button-bare {
+	align-items: center;
+	background: none;
+	border: 0;
+	cursor: pointer;
+	display: flex;
+	padding: 0;
 }

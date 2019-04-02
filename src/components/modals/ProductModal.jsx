@@ -258,7 +258,7 @@ class ProductModal extends Component {
 				onClose={this.onCloseModal}
 				center
 			>
-				<div>
+				<div className="fa-modal-header">
 					<h2>{window.SF.labels.modal_addProduct_title}</h2>
 				</div>
 
@@ -332,7 +332,7 @@ class ProductModal extends Component {
 								);
 							})}
 						</div>
-						<div className="panel-filter-buttons fa-margin-bottom-sm">
+						<div className="fa-padding-left-sm fa-margin-bottom-sm">
 							<button
 								onClick={this.resetFilter}
 								className="fa-button fa-margin-right-xsm"
@@ -354,7 +354,7 @@ class ProductModal extends Component {
 						<div className="modal-navigation">
 							{this.props.settings.CategorizationData.length && (
 								<div
-									className="categorization-container"
+									className="fa-padding-bottom-xsm"
 									onClick={this.togglePanel}
 								>
 									<Icon

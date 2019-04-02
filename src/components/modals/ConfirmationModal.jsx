@@ -13,7 +13,7 @@ class ConfirmationModal extends Component {
 	render() {
 		return (
 			<div className="modal fa-modal">
-				<div className="modal-header">
+				<div className="modal-header fa-modal-header">
 					<h2>{this.props.title}</h2>
 				</div>
 				<div className="modal fa-modal-body">

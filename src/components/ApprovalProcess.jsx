@@ -8,8 +8,6 @@ import {
 	createToast
 } from '../actions';
 
-import './ApprovalProcess.css';
-
 class ApprovalProcess extends React.Component {
 	constructor(props) {
 		super(props);

@@ -30,7 +30,7 @@ class InputText extends React.Component {
 					placeholder={
 						window.SF.labels.util_input_text_enter + ' ' + this.props.type
 					}
-					className="slds-input"
+					className="fa-input-border"
 					type={this.props.type}
 					onChange={this.onTextChange}
 					value={this.state.value}

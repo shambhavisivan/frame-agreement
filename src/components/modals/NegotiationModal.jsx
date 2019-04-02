@@ -928,7 +928,7 @@ class NegotiationModal extends Component {
 						</div>
 						<div className="fa-margin-top-sm">
 							<div className="fa-margin-bottom-sm">
-								<span>{window.SF.labels.modal_bulk_discount_title}</span>
+								<div className="fa-padding-bottom-xsm">{window.SF.labels.modal_bulk_discount_title}</div>
 								<div className="button-group toggle-buttons">
 									<button
 										className={
@@ -959,7 +959,7 @@ class NegotiationModal extends Component {
 								</div>
 							</div>
 							<div>
-								<span>{window.SF.labels.modal_bulk_discount_input_title}</span>
+								<div className="fa-padding-bottom-xsm">{window.SF.labels.modal_bulk_discount_input_title}</div>
 								<input
 									type="number"
 									min={0}

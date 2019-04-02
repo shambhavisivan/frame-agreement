@@ -26,7 +26,7 @@
 }
 
 .action-container {
-    padding: 10px 20px;
+  padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
 .filter-container {
@@ -100,10 +100,11 @@
 
 }
 
-.table-list-header>.list-cell {
-    padding: 0.5rem 1rem;
-    flex: 1;
-    text-align: right;
+.table-list-header > .list-cell {
+	color: #777;
+	padding: 0.5rem 1.25rem;
+	flex: 1;
+	text-align: right;
 }
 
 .table-list-header> div.list-cell:first-child {

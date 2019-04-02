@@ -1,12 +1,13 @@
+/* FA Approval Process */
+// CSS Approval process
+
 .table-container.this.props.approval.listProcess .table-list-header{
 	font-size: 10px;
 }
-.table-container.this.props.approval.listProcess .list-row{
+
+.table-container.this.props.approval.listProcess .list-row {
 	font-size: 10px;
 }
-
-
-
 
 .approval-table-list {
 	border-radius: 4px;
@@ -14,12 +15,11 @@
 	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
-
-.approval-table-list .table-list-header>.list-cell {
+.approval-table-list .table-list-header > .list-cell {
 	text-align: left;
 }
 
-.approval-table-list .list-row>.list-cell {
+.approval-table-list .list-row > .list-cell {
 	text-align: left;
 }
 
@@ -31,7 +31,7 @@
 	border-bottom: 1px solid rgba(0,0,0,0.2);
 }
 
-.approval-table-list-header .approval-refresh{
+.approval-table-list-header .approval-refresh {
 	margin-left: 30px;
 }
 
@@ -44,7 +44,7 @@
   cursor: pointer;
 }
 
-.approval-table-list-header .table-title > svg{
+.approval-table-list-header .table-title > svg {
   margin-right: 10px;
 }
 
@@ -53,7 +53,7 @@
   text-align: right;
 }
 
-.approval-table-list-header .table-actions .link{
+.approval-table-list-header .table-actions .link {
   margin-left: 30px;
 }
 
@@ -67,60 +67,55 @@
 }
 
 .approval-history .list-row > .list-cell {
-	padding: 9px 16px;
+	padding: 0.4rem 1.25rem;
 }
 
 .status.Pending {
 	color: #ffa429;
 }
+
 .status.Approved {
 	color: #4bca81;
 }
+
 .status.Rejected {
 	color: #d81c2a;
 }
 
-
-.approval-refresh {
-
-}
-
-
-
 @-webkit-keyframes rotating /* Safari and Chrome */ {
   from {
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
+	  -webkit-transform: rotate(0deg);
+	  -o-transform: rotate(0deg);
+	  transform: rotate(0deg);
   }
   to {
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
+	  -webkit-transform: rotate(360deg);
+	  -o-transform: rotate(360deg);
+	  transform: rotate(360deg);
   }
 }
 
 @keyframes rotating {
   from {
-    -ms-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
+	  -ms-transform: rotate(0deg);
+	  -moz-transform: rotate(0deg);
+	  -webkit-transform: rotate(0deg);
+	  -o-transform: rotate(0deg);
+	  transform: rotate(0deg);
   }
   to {
-    -ms-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
+	  -ms-transform: rotate(360deg);
+	  -moz-transform: rotate(360deg);
+	  -webkit-transform: rotate(360deg);
+	  -o-transform: rotate(360deg);
+	  transform: rotate(360deg);
   }
 }
 
 .rotating {
-  -webkit-animation: rotating 1s linear infinite;
-  -moz-animation: rotating 1s linear infinite;
-  -ms-animation: rotating 1s linear infinite;
-  -o-animation: rotating 1s linear infinite;
-  animation: rotating 1s linear infinite;
+	-webkit-animation: rotating 1s linear infinite;
+	-moz-animation: rotating 1s linear infinite;
+	-ms-animation: rotating 1s linear infinite;
+	-o-animation: rotating 1s linear infinite;
+	animation: rotating 1s linear infinite;
 }

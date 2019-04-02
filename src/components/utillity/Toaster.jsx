@@ -24,7 +24,7 @@ class Toast extends Component {
 				{this.props.title && (
 					<span className="toast-title">{this.props.title}</span>
 				)}
-				<span className="sf-label">{this.props.message}</span>
+				<span>{this.props.message}</span>
 			</div>
 		);
 	}

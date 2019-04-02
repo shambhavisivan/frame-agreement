@@ -21,7 +21,7 @@ class DatePickerInput extends React.Component {
 				onClick={this.props.onClick}
 			>
 				<input
-					className="slds-input"
+					className="fa-input-border"
 					type="text"
 					disabled={this.props.disabled}
 					onChange={this.props.onChange}

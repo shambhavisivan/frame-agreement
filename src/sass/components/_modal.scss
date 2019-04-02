@@ -5,6 +5,7 @@
 	background: $white;
 	bottom: 50%;
 	max-width: 800px;
+	padding: 0;
 	position: fixed;
 	right: 50%;
 	transform: translate(50%, 50%);
@@ -13,6 +14,7 @@
 
 /* Header */
 .fa-modal-header {
+	padding: 1.5rem 0;
 	text-align: center;
 }
 

@@ -15,8 +15,6 @@ import FrameAgreementRow from './FrameAgreementRow';
 import InputSearch from './utillity/inputs/InputSearch';
 import ConfirmationModal from './modals/ConfirmationModal';
 
-import './FaList.css';
-
 class FaList extends Component {
 	constructor(props) {
 		super(props);

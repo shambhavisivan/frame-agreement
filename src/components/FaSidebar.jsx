@@ -7,8 +7,6 @@ import { getFrameAgreements, createToast } from '../actions';
 import ApprovalProcess from './ApprovalProcess';
 import { publish } from '../api';
 
-import './FaSidebar.css';
-
 class FaSidebar extends Component {
 	constructor(props) {
 		super(props);

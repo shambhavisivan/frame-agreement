@@ -25,7 +25,6 @@ import {
 } from '../actions';
 
 import { truncateCPField } from '../utils/shared-service';
-import './FaEditor.css';
 
 import FaSidebar from './FaSidebar';
 import CommercialProduct from './negotiation/CommercialProduct';
@@ -1224,7 +1223,7 @@ class FaEditor extends Component {
 						<div className="fa-section fa-section-vertical fa-section-shadow">
 							<div className="fa-flex fa-flex-middle">
 								<div className="fa-flex-item fa-flex-1">
-									<span>
+									<span className="fa-title-lg">
 										{window.SF.labels.products_title} (
 										{this.state.activeFa._ui.commercialProducts.length})
 									</span>
@@ -1234,6 +1233,7 @@ class FaEditor extends Component {
 										<div className="fa-flex-1">
 											<div className="fa-flex fa-flex-middle fa-flex-end">
 												<InputSearch
+													bordered={true}
 													value={this.state.productFilter}
 													onChange={val => {
 														this.setState({ productFilter: val });

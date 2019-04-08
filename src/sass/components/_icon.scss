@@ -8,9 +8,12 @@
 /* Group */
 .fa-icon-group {
 	align-items: center;
+	bottom: 50%;
 	display: inline-flex;
+	left: 10px;
 	margin-right: 0.5rem;
-	position: relative;
+	position: absolute;
+	transform: translateY(50%);
 }
 
 /* Search */

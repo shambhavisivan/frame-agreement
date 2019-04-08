@@ -14,7 +14,10 @@
 
 	&:active,
 	&:focus {
-		outline: 1px solid $blue-sf;
+		background-color: $white;
+		border-color: $blue-sf;
+		box-shadow: 0 0 3px $blue-sf;
+		outline: 0;
 	}
 }
 
@@ -32,7 +35,7 @@
 }
 
 .fa-input-lg {
-	padding: 0.5rem 2rem;
+	padding: 0.5rem 0.5rem 0.5rem 2rem;
 }
 
 /* Search */
@@ -46,6 +49,9 @@
 	border: 0;
 	border-radius: 0;
 	border-bottom: 1px solid #d5d5d5;
+	&:focus {
+		border-radius: 0.25rem;
+	}
 }
 
 /* Checkbox */
@@ -54,8 +60,8 @@
 	border: 1px solid #dddbda;
 	cursor: pointer;
 	display: inline-flex;
-  height: 1rem;
-  position: relative;
+	height: 1rem;
+	position: relative;
 	width: 1rem;
 }
 

@@ -5,7 +5,6 @@
 	background: #fff;
 	border-bottom: 2px solid $gray-light-5;
 	padding: 1.25rem 0;
-	margin-bottom: 1.25rem;
 }
 
 /* Container */
@@ -15,39 +14,27 @@
 }
 
 /* Item */
-
 .fa-main-header-item {
 	flex: 1;
 	padding-left: 1.5rem;
+	align-self: center;
 
 	&:first-child,
 	&:last-child {
 		padding: 0;
 	}
-
-	&:last-child {
-		flex: auto;
-		width: 100%;
-	}
-}
-
-/* Group */
-.fa-main-header-group {
-	align-items: center;
-	display: flex;
-	flex-wrap: wrap;
-
-	.cloudsense-logo {
-		margin-bottom: .5rem;
-		margin-right: 1rem;
-	}
 }
 
 /* Title */
 .fa-main-header .fa-main-header-title {
+	color: $black;
+	font-size: 1rem;
+}
+
+.fa-main-header .fa-main-header-sub-title {
 	color: #777;
 	font-size: 0.8rem;
-	margin-bottom: .5rem;
+	font-weight: $font-weight-normal
 }
 
 /* Search */

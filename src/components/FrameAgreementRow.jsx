@@ -59,6 +59,14 @@ class FrameAgreementRow extends React.Component {
 	render() {
 		return (
 			<div className="fa-panel">
+				<Link className="fa-panel-item" to={`/agreement/${this.props.agreement.Id}`}>
+					<div className="fa-panel-body">
+						<div className="fa-panel-body-col">{this.props.agreement.csconta__Agreement_Name__c}</div>
+						<div className="fa-panel-body-col">
+							<span className={this.statusClass}>{this.props.agreement.csconta__Status__c}</span>
+						</div>
+					</div>
+				</Link>
 				<div className="fa-icon fa-icon-group" onClick={this.showMenu}>
 					<button
 						className="fa-button-bare"
@@ -72,49 +80,36 @@ class FrameAgreementRow extends React.Component {
 							color="#0070d2"
 						/>
 					</button>
-					{this.state.menu && (
-						<div
-							className="fa-dropdown"
-							aria-hidden={!this.state.menu}
-							ref={this.setWrapperRef}
-						>
-							<button
-								className="fa-dropdown-button"
-								onClick={() => this.menuAction('edit')}
-							>
-								<Icon name="edit" height="14" width="14" color="#0070d2" />
-								{window.SF.labels.faMenuActionEdit}
-							</button>
-							<button
-								className="fa-dropdown-button"
-								onClick={() => this.menuAction('clone')}
-							>
-								<Icon name="copy" height="14" width="14" color="#0070d2" />
-								{window.SF.labels.faMenuActionClone}
-							</button>
-							<button
-								className="fa-dropdown-button"
-								onClick={() => this.menuAction('delete')}
-							>
-								<Icon name="delete" height="14" width="14" color="#0070d2" />
-								{window.SF.labels.faMenuActionDelete}
-							</button>
-						</div>
-					)}
 				</div>
-				<Link
-					className="fa-panel-body"
-					to={`/agreement/${this.props.agreement.Id}`}
-				>
-					<div className="fa-panel-body-col">
-						{this.props.agreement.csconta__Agreement_Name__c}
+				{this.state.menu && (
+					<div
+						className="fa-dropdown fa-dropdown-secondary"
+						aria-hidden={!this.state.menu}
+						ref={this.setWrapperRef}
+					>
+						<button
+							className="fa-dropdown-button"
+							onClick={() => this.menuAction('edit')}
+						>
+							<Icon name="edit" height="14" width="14" color="#0070d2" />
+							{window.SF.labels.faMenuActionEdit}
+						</button>
+						<button
+							className="fa-dropdown-button"
+							onClick={() => this.menuAction('clone')}
+						>
+							<Icon name="copy" height="14" width="14" color="#0070d2" />
+							{window.SF.labels.faMenuActionClone}
+						</button>
+						<button
+							className="fa-dropdown-button"
+							onClick={() => this.menuAction('delete')}
+						>
+							<Icon name="delete" height="14" width="14" color="#0070d2" />
+							{window.SF.labels.faMenuActionDelete}
+						</button>
 					</div>
-					<div className="fa-panel-body-col">
-						<span className={this.statusClass}>
-							{this.props.agreement.csconta__Status__c}
-						</span>
-					</div>
-				</Link>
+				)}
 			</div>
 		);
 	}

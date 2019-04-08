@@ -78,20 +78,16 @@ class FaList extends Component {
 
 	render() {
 		return (
-			<div>
+			<div className="editor-container">
 				<div className="fa-main-header">
 					<div className="fa-container">
 						<div className="fa-main-header-container">
 							<div className="fa-main-header-item">
-								<div className="fa-main-header-group">
-									<img
-										className="cloudsense-logo"
-										src={CloudSenseLogo}
-										alt="CloudSense Logo"
-									/>
-									<h5 className="fa-main-header-title">
+								<div>
+									<h5 className="fa-main-header-sub-title">
 										{window.SF.labels.frameAgreementTitle}
 									</h5>
+									<h1 className="fa-main-header-title">Account Name</h1>
 								</div>
 							</div>
 							<div className="fa-main-header-item">
@@ -102,52 +98,51 @@ class FaList extends Component {
 									</Link>
 								</div>
 							</div>
-							<div className="fa-main-header-item">
-								<h5 className="fa-main-header-title">
-									{window.SF.labels.frameAgreementListTitle}
-								</h5>
-							</div>
 						</div>
 					</div>
 				</div>
 				<div className="fa-container">
-					{Object.values(this.props.frameAgreements)
-						.filter(fa => {
-							if (this.state.searchTerm) {
-								if (
-									fa.csconta__Agreement_Name__c
-										.toLowerCase()
-										.includes(this.state.searchTerm.toLowerCase())
-								) {
-									return true;
-								} else {
-									return false;
-								}
-							} else return true;
-						})
-						.map(fa => {
-							return (
-								<FrameAgreementRow
-									menuAction={(action, data) => {
-										this.faMenuAction(action, fa.Id);
-									}}
-									key={fa.Id}
-									agreement={fa}
-								/>
-							);
-						})}
+					<div className="fa-margin-top-sm">
+						<div className="fa-container-inner">
+							{Object.values(this.props.frameAgreements)
+								.filter(fa => {
+									if (this.state.searchTerm) {
+										if (
+											fa.csconta__Agreement_Name__c
+												.toLowerCase()
+												.includes(this.state.searchTerm.toLowerCase())
+										) {
+											return true;
+										} else {
+											return false;
+										}
+									} else return true;
+								})
+								.map(fa => {
+									return (
+										<FrameAgreementRow
+											menuAction={(action, data) => {
+												this.faMenuAction(action, fa.Id);
+											}}
+											key={fa.Id}
+											agreement={fa}
+										/>
+									);
+								})}
 
-					{!Object.keys(this.props.frameAgreements).length && (
-						<div className="add-product-box" style={{ border: 'none' }}>
-							<span className="box-header-1">
-								{window.SF.labels.no_fa_message}
-							</span>
-							<span className="box-header-2">
-								{window.SF.labels.no_fa_message_2}
-							</span>
-							<div className="box-button-container" />
+							{!Object.keys(this.props.frameAgreements).length && (
+								<div className="add-product-box" style={{ border: 'none' }}>
+									<span className="box-header-1">
+										{window.SF.labels.no_fa_message}
+									</span>
+									<span className="box-header-2">
+										{window.SF.labels.no_fa_message_2}
+									</span>
+									<div className="box-button-container" />
+								</div>
+							)}
 						</div>
-					)}
+					</div>
 				</div>
 			</div>
 		);

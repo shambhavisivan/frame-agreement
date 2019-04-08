@@ -349,6 +349,7 @@ const rootReducer = (state = initialState, action) => {
 			}
 
 			// ***************************************************************************************************************
+			// ***************************************************************************************************************
 			action.payload.AuthLevels = action.payload.AuthLevels
 				? action.payload.AuthLevels.reduce(function(acc, level) {
 						(acc[level['cspmb__Authorization_Level__c']] =
@@ -365,12 +366,15 @@ const rootReducer = (state = initialState, action) => {
 				'Submit',
 				'DeleteProducts',
 				'BulkNegotiate',
-				'AddProducts'
+				'AddProducts',
+				'NewVersion'
 			];
+
 			var _standardButtons = {};
 			standardButtonsDefault.forEach(sb => {
 				if (!action.payload.ButtonStandardData.hasOwnProperty(sb)) {
 					console.warn(sb + ' not defined in "FA-Standard-Buttons"!');
+					_standardButtons[sb] = new Set([]);
 				} else {
 					if (!action.payload.ButtonStandardData[sb].length) {
 						console.warn('No visible status for ' + sb + ' button.');
@@ -385,8 +389,19 @@ const rootReducer = (state = initialState, action) => {
 			action.payload.ButtonStandardData = _standardButtons;
 			// ***************************************************************************************************************
 			// Validate custom buttons
+			action.payload.ButtonCustomData = action.payload.ButtonCustomData.filter(
+				btn => {
+					if (!btn.hasOwnProperty('type') || !btn.hasOwnProperty('label')) {
+						console.warn('Invalid button configuration:', btn);
+						return false;
+					}
+					return true;
+				}
+			);
+
 			action.payload.ButtonCustomData.forEach(cb => {
 				cb.hidden = new Set(cb.hidden || []);
+				cb.id = cb.id || cb.label.replace(/ /g, '').toLowerCase();
 			});
 
 			// ***************************************************************************************************************

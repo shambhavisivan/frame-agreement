@@ -115,12 +115,16 @@ class FaEditor extends Component {
 		window.FAM.api.performAction = this.props.performAction;
 
 		window.FAM.api.addProducts = this.onAddProducts;
+		window.FAM.api.removeProducts = this._removeProducts;
 		window.FAM.api.negotiate = this._apiNegotiate.bind(this);
 		window.FAM.api.toast = this.props.createToast;
 		window.FAM.api.refreshFa = this.refreshFa;
 		window.FAM.api.setStatusOfFrameAgreement = this.setStateOFFa;
-		window.FAM.api.getActiveFrameAgreement = () => this.state.activeFa;
-		window.FAM.api.submitForApproval = () => this.onSubmitForApproval;
+		window.FAM.api.getActiveFrameAgreement = () =>
+			new Promise(resolve => {
+				resolve(this.state.activeFa);
+			});
+		window.FAM.api.submitForApproval = this.onSubmitForApproval;
 
 		this.faId = this.props.match.params.id || null;
 		let _frameAgreement;
@@ -289,7 +293,7 @@ class FaEditor extends Component {
 		var row = [];
 		var row_grid_count = 0;
 
-		this.props.settings.HeaderData.map(f => {
+		this.props.settings.HeaderData.forEach(f => {
 			if (row_grid_count + f.grid > 12) {
 				field_rows.push([...row]);
 				row = [];
@@ -298,7 +302,10 @@ class FaEditor extends Component {
 			row_grid_count += f.grid;
 			row.push(f);
 		});
-		field_rows.push(row);
+
+		if (row.length) {
+			field_rows.push(row);
+		}
 		this.header_rows = field_rows;
 		// **************************************
 		window.activeFa = this.state.activeFa;
@@ -344,26 +351,33 @@ class FaEditor extends Component {
 		await this.upsertFrameAgreements();
 		await publish('onBeforeSubmit');
 
-		this.props
-			.submitForApproval(this.faId)
-			.then(async response => {
-				console.log(response);
-				if (response) {
-					this.props.createToast(
-						'success',
-						window.SF.labels.toast_success_title,
-						window.SF.labels.toast_submitForApproval
-					);
-				} else {
-					this.props.createToast(
-						'error',
-						window.SF.labels.toast_success_title,
-						window.SF.labels.toast_submitForApproval_failed
-					);
-				}
-				await publish('onAfterSubmit');
-			})
-			.then(this.onApprovalChange);
+		let _result;
+
+		return new Promise((resolve, reject) => {
+			this.props
+				.submitForApproval(this.faId)
+				.then(async response => {
+					_result = response;
+					if (response) {
+						this.props.createToast(
+							'success',
+							window.SF.labels.toast_success_title,
+							window.SF.labels.toast_submitForApproval
+						);
+					} else {
+						this.props.createToast(
+							'error',
+							window.SF.labels.toast_success_title,
+							window.SF.labels.toast_submitForApproval_failed
+						);
+					}
+					await publish('onAfterSubmit');
+				})
+				.then(this.onApprovalChange)
+				.then(() => {
+					_result ? resolve(_result) : reject(_result);
+				});
+		});
 	}
 	/**************************************************/
 	async onDecompose() {
@@ -555,13 +569,14 @@ class FaEditor extends Component {
 	}
 
 	/**************************************************/
-	async onAddProducts(productsMap = {}) {
-		productsMap = await publish('onBeforeAddProducts', productsMap);
+	async onAddProducts(products = []) {
+		products = await publish('onBeforeAddProducts', products);
+		let _productsSet = new Set(products);
 
 		let _attachment = {};
 		// Sort out products data
 		let IdsToLoad = this.props.commercialProducts.reduce((acc, cp) => {
-			if (productsMap[cp.Id]) {
+			if (_productsSet.has(cp.Id)) {
 				_attachment[cp.Id] = {};
 				if (!cp.dataLoaded) {
 					return acc.concat([cp.Id]);
@@ -632,44 +647,50 @@ class FaEditor extends Component {
 
 		async function applyChanges() {
 			let _commercialProducts = this.props.commercialProducts.filter(cp => {
-				if (productsMap[cp.Id]) {
+				if (_productsSet.has(cp.Id)) {
 					_attachment[cp.Id] = enrichAttachment(cp);
+					return true;
 				}
-
-				return productsMap[cp.Id];
+				return false;
 			});
 
-			this.setState(
-				{
-					activeFa: {
-						...this.state.activeFa,
-						_ui: {
-							...this.state.activeFa._ui,
-							commercialProducts: [
-								...this.state.activeFa._ui.commercialProducts,
-								..._commercialProducts
-							],
-							attachment: {
-								...this.state.activeFa._ui.attachment,
-								..._attachment
+			return new Promise(resolve => {
+				this.setState(
+					{
+						activeFa: {
+							...this.state.activeFa,
+							_ui: {
+								...this.state.activeFa._ui,
+								commercialProducts: [
+									...this.state.activeFa._ui.commercialProducts,
+									..._commercialProducts
+								],
+								attachment: {
+									...this.state.activeFa._ui.attachment,
+									..._attachment
+								}
 							}
 						}
+					},
+					async () => {
+						await publish(
+							'onAfterAddProducts',
+							this.state.activeFa._ui.commercialProducts.map(cp => cp.Id)
+						);
+						this.onCloseModal();
+						resolve(this.state.activeFa);
 					}
-				},
-				async () => {
-					await publish('onAfterAddProducts');
-					this.onCloseModal();
-				}
-			);
+				);
+			});
 		}
 
 		applyChanges = applyChanges.bind(this);
 
 		// Load products that need loading, this will update their state and we will take them from updated state, not directly from response
 		if (IdsToLoad.length) {
-			this.props.getCommercialProductData(IdsToLoad).then(applyChanges);
+			return this.props.getCommercialProductData(IdsToLoad).then(applyChanges);
 		} else {
-			applyChanges();
+			return applyChanges();
 		}
 	}
 
@@ -693,45 +714,51 @@ class FaEditor extends Component {
 	}
 
 	async _removeProducts(optionalIdArray) {
-		let products = this.state.selectedProducts;
+		return new Promise(async resolve => {
+			let products = this.state.selectedProducts;
 
-		if (typeof optionalIdArray !== 'undefined') {
-			products = {};
-			this.state.activeFa._ui.commercialProducts.forEach(cp => {
-				if (optionalIdArray.includes(cp.Id)) {
-					products[cp.Id] = cp;
-				}
-			});
-		}
-
-		let productsToDelete = await publish('onBeforeDeleteProducts', products);
-
-		let _attachment = this.state.activeFa._ui.attachment;
-
-		for (var key in productsToDelete) {
-			delete _attachment[key];
-		}
-
-		this.setState(
-			{
-				selectedProducts: {},
-				activeFa: {
-					...this.state.activeFa,
-					_ui: {
-						...this.state.activeFa._ui,
-						commercialProducts: [
-							...this.state.activeFa._ui.commercialProducts.filter(
-								cp => !productsToDelete[cp.Id]
-							)
-						],
-						attachment: _attachment
+			if (typeof optionalIdArray !== 'undefined') {
+				products = {};
+				this.state.activeFa._ui.commercialProducts.forEach(cp => {
+					if (optionalIdArray.includes(cp.Id)) {
+						products[cp.Id] = cp;
 					}
-				}
-			},
-			async () => {
-				await publish('onAfterDeleteProducts');
+				});
 			}
-		);
+
+			let productsToDelete = await publish('onBeforeDeleteProducts', products);
+
+			let _attachment = this.state.activeFa._ui.attachment;
+
+			for (var key in productsToDelete) {
+				delete _attachment[key];
+			}
+
+			this.setState(
+				{
+					selectedProducts: {},
+					activeFa: {
+						...this.state.activeFa,
+						_ui: {
+							...this.state.activeFa._ui,
+							commercialProducts: [
+								...this.state.activeFa._ui.commercialProducts.filter(
+									cp => !productsToDelete[cp.Id]
+								)
+							],
+							attachment: _attachment
+						}
+					}
+				},
+				async () => {
+					await publish(
+						'onAfterDeleteProducts',
+						this.state.activeFa._ui.commercialProducts.map(cp => cp.Id)
+					);
+					resolve(this.state.activeFa._ui.attachment);
+				}
+			);
+		});
 	}
 
 	onSelectProduct(product) {
@@ -809,15 +836,19 @@ class FaEditor extends Component {
 	}
 
 	async setStateOFFa(state, faId = this.faId) {
-		let result = await this.props.setFrameAgreementState(faId, state);
-		if (result === 'Success') {
-			this.setState(
-				{ activeFa: { ...this.state.activeFa, csconta__Status__c: state } },
-				() => {
-					console.log(this.state.activeFa);
-				}
-			);
-		}
+		return new Promise(async (resolve, reject) => {
+			let result = await this.props.setFrameAgreementState(faId, state);
+			if (result === 'Success') {
+				this.setState(
+					{ activeFa: { ...this.state.activeFa, csconta__Status__c: state } },
+					() => {
+						resolve(result);
+					}
+				);
+			} else {
+				reject(result);
+			}
+		});
 	}
 
 	/**************************************************/
@@ -840,64 +871,123 @@ class FaEditor extends Component {
 		);
 	}
 
-	async _apiNegotiate(priceItemId, type, data) {
-		let cp = this.state.activeFa._ui.commercialProducts.find(
-			_cp => _cp.Id === priceItemId
-		);
-		if (!cp) {
-			throw new Error(
-				'Cannot find commercial product with Id ' +
-					priceItemId +
-					' in active Frame Agreement!'
+	async _apiNegotiate(data = window.mandatory('negotiate()')) {
+		// {
+		// 	priceItemId: _______, (1)
+		// 	cpAddon: ___________, (2)
+		// 	addon: _____________, (3) X
+		// 	charge: ____________, (4)
+		// 	rateCard: __________, (5)
+		// 	rateCardLine: ______, (6)
+		// 	value: {              (7)
+		// 		recurring: _____,
+		// 		oneOff: ________
+		// 	},
+		// 	value: _____________  (8)
+		// }
+		// **************************
+		// Product (1,7)
+		// Addons (1,2,7) || (1,3,7)
+		// Charges (1,4,7)
+		// RateCard (1,5,6,8)
+		return new Promise(async (resolve, reject) => {
+			// ********************************** BASIC VALIDATION
+			let _attachment = this.state.activeFa._ui.attachment;
+			let cp = this.state.activeFa._ui.commercialProducts.find(
+				_cp => _cp.Id === data.priceItemId
 			);
-			return;
-		}
 
-		if (!this._chargeTypes.includes(type)) {
-			console.warn('Make sure charge is one of types:', this._chargeTypes);
-			throw new Error('Negotiation type ' + type + ' not recognized!');
-		}
-
-		// Validate that charge types are not breached
-		if (type === '_charges') {
-			for (var key in data) {
-				var charge = cp._charges.find(_ch => _ch.Id === key);
-				if (
-					charge.chargeType === 'One-off Charge' &&
-					data[key].hasOwnProperty('recurring')
-				) {
-					// not permitted
-					console.error(
-						'Negotiating ' +
-							'%c"Recurring Charge"' +
-							'%c not permitted on charge with type ' +
-							'%c"One-off Charge"',
-						'font-style: italic',
-						'font-style: inherit',
-						'font-style: italic'
-					);
-					return;
+			if (!cp) {
+				console.error(
+					'Cannot find commercial product with Id ' +
+						data.priceItemId +
+						' in active Frame Agreement!'
+				);
+				reject();
+				return;
+			}
+			if (!data.hasOwnProperty('value')) {
+				console.error('No value provided for negotiation!');
+				reject();
+				return;
+			}
+			// ********************************** Addons
+			if (data.hasOwnProperty('cpAddon')) {
+				if (data.value.hasOwnProperty('oneOff')) {
+					_attachment[data.priceItemId]._addons[data.cpAddon].oneOff =
+						data.value.oneOff;
 				}
-				if (
-					charge.chargeType === 'Recurring Charge' &&
-					data[key].hasOwnProperty('oneOff')
-				) {
-					// not permitted
-					console.error(
-						'Negotiating ' +
-							'%c"One-off Charge"' +
-							'%c not permitted on charge with type ' +
-							'%c"Recurring Charge"',
-						'font-style: italic',
-						'font-style: inherit',
-						'font-style: italic'
-					);
-					return;
+				if (data.value.hasOwnProperty('recurring')) {
+					_attachment[data.priceItemId]._addons[data.cpAddon].recurring =
+						data.value.recurring;
 				}
 			}
-		}
+			// ********************************* Charge
+			else if (data.hasOwnProperty('charge')) {
+				// Charge validation
+				let charge = cp._charges.find(_ch => _ch.Id === data.charge);
+				let type;
+				if (charge.chargeType === 'One-off Charge') {
+					type = 'oneOff';
+				}
+				if (charge.chargeType === 'Recurring Charge') {
+					type = 'recurring';
+				}
+				if (!data.value.hasOwnProperty(type)) {
+					console.error(
+						'Pricing element ' + charge.Id + ' has invalid charge type!'
+					);
+					reject();
+					return;
+				}
 
-		return this.onNegotiate(priceItemId, type, data);
+				_attachment[data.priceItemId]._charges[data.charge][type] =
+					data.value[type];
+			}
+			// *********************************
+			else if (data.hasOwnProperty('rateCard')) {
+				// RCL
+				if (!data.hasOwnProperty('rateCardLine')) {
+					console.error('No rate card line Id provided!');
+					reject();
+					return;
+				}
+
+				if (typeof data.value !== 'number') {
+					console.error('Value for RCL not integer!');
+					reject();
+					return;
+				}
+
+				_attachment[data.priceItemId]._rateCards[data.rateCard][
+					data.rateCardLine
+				] = data.value;
+			}
+			// *********************************
+			else {
+				// Product negotiation
+				_attachment[data.priceItemId]._product = {
+					..._attachment[data.priceItemId]._product,
+					...data.value
+				};
+			}
+			// *********************************
+
+			_attachment = await publish('onBeforeNegotiate', _attachment);
+
+			this.setState(
+				{
+					activeFa: {
+						...this.state.activeFa,
+						_ui: { ...this.state.activeFa._ui, _attachment }
+					}
+				},
+				async () => {
+					publish('onAfterNegotiate', this.state.activeFa._ui.attachment);
+					resolve(_attachment);
+				}
+			);
+		});
 	}
 
 	/**************************************************/
@@ -965,7 +1055,7 @@ class FaEditor extends Component {
 				// this.onCloseModal();
 
 				setTimeout(async () => {
-					await publish('onAfterBulkNegotiation');
+					await publish('onAfterBulkNegotiation', attachment);
 					this.onCloseModal();
 				});
 			}
@@ -1233,8 +1323,8 @@ class FaEditor extends Component {
 										<div className="fa-flex-1">
 											<div className="fa-flex fa-flex-middle fa-flex-end">
 												<InputSearch
-													bordered={true}
 													value={this.state.productFilter}
+													bordered={true}
 													onChange={val => {
 														this.setState({ productFilter: val });
 													}}
@@ -1393,8 +1483,9 @@ class FaEditor extends Component {
 							</button>
 						)}
 
-						{this.state.activeFa.csconta__Status__c ===
-							this.props.settings.FACSettings.statuses.active_status && (
+						{this.props.settings.ButtonStandardData.NewVersion.has(
+							this.state.activeFa.csconta__Status__c
+						) && (
 							<button
 								className="fa-button fa-button-border-light fa-button-transparent"
 								onClick={this.createNewVersion}
@@ -1407,28 +1498,35 @@ class FaEditor extends Component {
 
 				<div className="fa-container">
 					<div className="fa-container-inner">
-						<section className="fa-section fa-section-vertical fa-section-border fa-section-light">
-							{this.header_rows.map((row, i) => {
-								return (
-									<div className="fa-margin-bottom-md" key={'header-row-' + i}>
-										<div className="fa-flex">
-											{row.map(f => {
-												var editable = !f.readOnly && this.editable;
-												return (
-													<SFField
-														editable={editable}
-														onChange={this.onFieldChange}
-														key={f.field}
-														field={f}
-														value={this.state.activeFa[f.field] || ''}
-													/>
-												);
-											})}
+						{this.header_rows.length ? (
+							<section className="fa-section fa-section-vertical fa-section-border fa-section-light">
+								{this.header_rows.map((row, i) => {
+									return (
+										<div
+											className="fa-margin-bottom-md"
+											key={'header-row-' + i}
+										>
+											<div className="fa-flex">
+												{row.map(f => {
+													var editable = !f.readOnly && this.editable;
+													return (
+														<SFField
+															editable={editable}
+															onChange={this.onFieldChange}
+															key={f.field}
+															field={f}
+															value={this.state.activeFa[f.field] || ''}
+														/>
+													);
+												})}
+											</div>
 										</div>
-									</div>
-								);
-							})}
-						</section>
+									);
+								})}
+							</section>
+						) : (
+							''
+						)}
 
 						<div className="fa-padding-top-sm">{approvalHistory}</div>
 

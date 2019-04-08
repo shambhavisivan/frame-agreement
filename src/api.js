@@ -97,6 +97,14 @@ Object.defineProperty(Array.prototype, 'paginate', {
 	}
 });
 
+window.mandatory = function mandatory(funName) {
+	throw new Error(
+		funName
+			? 'Missing parameter in function ' + funName + '!'
+			: 'Missing parameter!'
+	);
+};
+
 // Object.defineProperty(Array.prototype, 'intercept', {
 //     value: function(callback) {
 //         if (!Array.isArray(this)) {

@@ -96,7 +96,7 @@ class FaList extends Component {
 							</div>
 							<div className="fa-main-header-item">
 								<div className="fa-main-header-search">
-									<InputSearch onChange={this.onSearchChange} />
+									<InputSearch onChange={this.onSearchChange} bordered={true} />
 									<Link className="fa-button" to="/agreement">
 										{window.SF.labels.btn_AddNewAgreement}
 									</Link>

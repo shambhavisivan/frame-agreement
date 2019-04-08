@@ -384,7 +384,9 @@ export function getFrameAgreements() {
 		// dispatch(requestGetFrameAgreements());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getFrameAgreements').then(response => {
+			window.SF.invokeAction('getFrameAgreements', [
+				window.SF.param.account
+			]).then(response => {
 				dispatch(recieveGetFrameAgreements(response));
 				resolve(response);
 				return response;
@@ -474,8 +476,10 @@ export function createFrameAgreement(fieldData) {
 	return function(dispatch) {
 		// dispatch(requestUpsertFrameAgreements());
 
-		var ommited = ['csconta__Account__c', 'csconta__Account__r', 'Name', '_ui'];
+		var ommited = ['csconta__Account__r', 'Name', '_ui'];
 		var SF_data = {};
+
+		fieldData.csconta__Account__c = window.SF.param.account;
 
 		for (var key in fieldData) {
 			if (!ommited.includes(key)) {

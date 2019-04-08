@@ -20,6 +20,11 @@ private class FrameRateManagerControllerTest {
 	}
 
 	static String setupPricingModel() {
+		Account test_account = new Account(Name='TestAcc');
+		insert test_account;
+
+		Test.setCurrentPageReference(new PageReference('Page.FAMEditor'));
+		System.currentPageReference().getParameters().put('account', test_account.Id);
 		// commercial products
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(Name = 'cp_1', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
 		cspmb__Price_Item__c cp_2 = new cspmb__Price_Item__c(Name = 'cp_2', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
@@ -98,7 +103,7 @@ private class FrameRateManagerControllerTest {
 		insert add2assoc;
 
 		// FRAME AGREEMENTS
-		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1');
+		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1', csconta__Account__c = test_account.Id);
 		csconta__Frame_Agreement__c fa_2 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA2');
 		csconta__Frame_Agreement__c fa_3 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA3');
 
@@ -135,6 +140,28 @@ private class FrameRateManagerControllerTest {
 		return FACSettings;
 
 	}
+
+	public static testMethod void testConstructor() {
+		setupPricingModel();
+		setupSettings();
+
+		Test.startTest();
+		FrameRateManagerController controller = new FrameRateManagerController();
+		Test.stopTest();
+	}
+
+	public static testMethod void testConstructorInvalid() {
+		Test.startTest();
+		Boolean exceptionOccured = false;
+		try {
+			FrameRateManagerController controller = new FrameRateManagerController();
+		} catch (Exception e) {
+			exceptionOccured = true;
+		}
+		Test.stopTest();
+		system.assertEquals(true, exceptionOccured);
+	}
+
 
 	public static testMethod void testGetCustomSettings() {
 		setupPricingModel();
@@ -214,9 +241,13 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
 		csconta__Frame_Agreement__c fa_2 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA2' limit 1];
 
+		Account acc = [select Id from Account where Name = 'TestAcc' limit 1];
+
 		Test.startTest();
 
-		List < csconta__Frame_Agreement__c > faList = FrameRateManagerController.getFrameAgreements();
+		List < csconta__Frame_Agreement__c > faList = FrameRateManagerController.getFrameAgreements(acc.Id);
+		List < csconta__Frame_Agreement__c > faListInvalid = FrameRateManagerController.getFrameAgreements('invalid');
+
 		csconta__Frame_Agreement__c fa = FrameRateManagerController.getFrameAgreement(fa_1.Id);
 		FrameRateManagerController.setFrameAgreementState(fa_1.Id, 'Active');
 		String invalidString_1 = FrameRateManagerController.setFrameAgreementState('a0x1t000000yZF3', 'Active'); // Invalid
@@ -231,15 +262,19 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c cloned_invalid = FrameRateManagerController.cloneFrameAgreement('a0x1t000000yZF3'); // Invalid
 
 		csconta__Frame_Agreement__c new_version_fa_1 = FrameRateManagerController.createNewVersionOfFrameAgrement(fa_1.Id);
-		try {
-			csconta__Frame_Agreement__c new_version_fa_2 = FrameRateManagerController.createNewVersionOfFrameAgrement('a0x1t000000yZF3'); // Invalid
-		}
-		catch (NullPointerException e) {
-		}
+
+		// Invalids
+		Boolean expectedExceptionThrown = false;
+		 try {
+			FrameRateManagerController.getFrameAgreement('a0x1t000000yZF3');
+			csconta__Frame_Agreement__c new_version_fa_2 = FrameRateManagerController.createNewVersionOfFrameAgrement('a0x1t000000yZF3');
+		 } catch (Exception e) {
+			expectedExceptionThrown = true;
+		 }
 
 		Test.stopTest(); /**********/
 
-		system.assertEquals(3, faList.size());
+		system.assertEquals(1, faList.size());
 		system.assertEquals(fa_1.Id, fa.Id);
 
 		fa_1 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
@@ -250,7 +285,9 @@ private class FrameRateManagerControllerTest {
 		List <csconta__Frame_Agreement__c> emptyList = new List <csconta__Frame_Agreement__c>([select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA2']);
 		system.assertEquals(0, emptyList.size());
 		system.assertEquals('FA1', cloned_1_fa_1.csconta__Agreement_Name__c);
+		system.assertEquals(expectedExceptionThrown, true);
 	}
+
 
 	public static testMethod void testUpsertFrameAgreement() {
 		setupPricingModel();
@@ -481,6 +518,34 @@ private class FrameRateManagerControllerTest {
 		system.assertEquals('VGVzdEJvZHlfNA==', attachmentBodies[4]);
 		system.assertEquals(null, attachmentBodies[5]);
 
+	}
+
+	public static testMethod void temporary() {
+
+		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c();
+		insert cp_1;
+
+		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c();
+		insert fa_1;
+
+		Test.startTest();
+		FrameRateManagerController.getCustomSettings();
+		FrameRateManagerController.getPriceItemCharges(cp_1.Id);
+
+		FrameRateManagerController.getAddons('01p1t00000M4Gqp');
+		FrameRateManagerController.getPriceItemCharges('01p1t00000M4Gqp');
+		FrameRateManagerController.getRateCards('01p1t00000M4Gqp');
+
+
+		FrameRateManagerController.getFrameAgreement(fa_1.Id);
+		FrameRateManagerController.setFrameAgreementState(fa_1.Id, 'Active');
+		FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
+		FrameRateManagerController.deleteFrameAgreement(fa_1.Id);
+
+		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData(new List<Id>{'01p1t00000M4Gqp'});
+
+
+		Test.stopTest();
 	}
 
 }

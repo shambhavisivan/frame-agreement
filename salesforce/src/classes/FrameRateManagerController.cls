@@ -7,6 +7,7 @@ global with sharing class FrameRateManagerController {
 	public static final String FAC_ATTACHMENT_NAME = 'FrameAgreementAttachment';
 	public static final String FAC_ATTACHMENT_DESC = 'Added products and negotiated data against Frame Agreement';
 	public static final Integer ITEMS_PER_PAGE = 20;
+	public String accountId;
 	public static final List < String > FA_FIELDS = new List < String >{
 		'Id',
 		'Name',
@@ -19,66 +20,88 @@ global with sharing class FrameRateManagerController {
 		'csconta__Valid_To__c',
 		'csconta__replaced_frame_agreement__c',
 		'csconta__effective_end_date__c',
-		'csconta__effective_start_date__c'
+		'csconta__effective_start_date__c',
+		'csfam__Frame_Agreement_Number__c'
 	};
 
 
 	global FrameRateManagerController() {
+		accountId = ApexPages.currentPage().getParameters().get('account');
+		if (accountId == null) {
+			 throw new InvalidParamException('Account Id not provided in URL.');
+		}
 		this.commonContainerPageResources = csutil.CustomResource.loadCustomResourceDescriptors('FAMeditor');
 	}
 
+	public class InvalidParamException extends Exception {}
+
 	@TestVisible private static csutil__JSON_Data__c getHeaderData() {
-		csutil__JSON_Data__c json_data;
-			json_data = [
-				select csutil__value__c
-				from csutil__JSON_Data__c
-				where Name = 'FA-Header'
-				limit 1
-			];
-		return json_data;
+		List<csutil__JSON_Data__c> json_data = [
+			select csutil__value__c
+			from csutil__JSON_Data__c
+			where Name = 'FA-Header'
+		];
+
+		if(json_data.isEmpty()) {
+			return null;
+		} else {
+			return json_data[0];
+		}
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getCustomButtonData() {
-		csutil__JSON_Data__c json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Custom-Buttons'
-			limit 1
 		];
-		return json_data;
+
+		if(json_data.isEmpty()) {
+			return null;
+		} else {
+			return json_data[0];
+		}
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getStandardButtonData() {
-		csutil__JSON_Data__c json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Standard-Buttons'
-			limit 1
 		];
-		return json_data;
+
+		if(json_data.isEmpty()) {
+			return null;
+		} else {
+			return json_data[0];
+		}
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getCategorizationData() {
-		csutil__JSON_Data__c json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Categorization'
-			limit 1
 		];
-		return json_data;
+
+		if(json_data.isEmpty()) {
+			return null;
+		} else {
+			return json_data[0];
+		}
 	}
 
-	@TestVisible public static String getStandardPricebook() {
-		csutil__JSON_Data__c json_data = [
+	@TestVisible private static csutil__JSON_Data__c getStandardPricebook() {
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-StandardPricebook'
-			limit 1
 		];
-		if (json_data != null) {
-			return (String) json_data.csutil__value__c;
-		} else {
+
+		if(json_data.isEmpty()) {
 			return null;
+		} else {
+			return json_data[0];
 		}
 	}
 
@@ -111,7 +134,7 @@ global with sharing class FrameRateManagerController {
 		csutil__JSON_Data__c json_data = getHeaderData();
 		String data;
 
-		if (json_data == null) {
+		if (json_data == null || json_data.csutil__value__c == null) {
 			return new List < String > ();
 		} else {
 			data = json_data.csutil__value__c;
@@ -154,10 +177,22 @@ global with sharing class FrameRateManagerController {
 		statuses.put('closed_status', FACSettings.get('csfam__closed_status__c'));
 		statuses.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
 		statuses.put('requires_approval_status', FACSettings.get('csfam__requires_approval_status__c'));
+		statuses.put('fa_number_prefix', FACSettings.get('csfam__fa_number_prefix__c'));
 
 		settingMap.put('statuses', statuses);
 
 		return (settingMap);
+	}
+
+	@TestVisible public static String parseNumberFromName(String faName) {
+		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+		String prefix = (String) FACSettings.get('csfam__fa_number_prefix__c');
+
+		if (prefix == null) {
+			prefix = 'FA';
+		}
+
+		return prefix + '-' + faName.split('-')[1];
 	}
 
 	@RemoteAction
@@ -168,7 +203,6 @@ global with sharing class FrameRateManagerController {
 			return '[]';
 		}
 		try {
-
 			Type classType = Type.forName(className);
 			RemoteActionDataProvider dataProvider = (RemoteActionDataProvider) classType.newInstance();
 			Object data = dataProvider.performAction(params);
@@ -185,12 +219,17 @@ global with sharing class FrameRateManagerController {
 		// These are the charges defined for this price item.
 		List < cspmb__Pricing_Element__c > priceElements = [select id, cspmb__pricing_element_type__r.Name, cspmb__pricing_element_type__r.cspmb__label__c, cspmb__pricing_element_type__r.cspmb__type__c from cspmb__Pricing_Element__c where cspmb__commercial_product__c = :priceItemId];
 		// Get Pricing Rule Group - Rule Association marked as standard pricebook
-		String standardPricebook = getStandardPricebook();
-		system.debug('***************standardPricebook' + standardPricebook);
+		csutil__JSON_Data__c standardPricebook = getStandardPricebook();
+
+		if (standardPricebook == null || priceElements.isEmpty()) {
+			return new ProductPricebookCharges(priceItemId);
+		}
 
 		// Create a map for getting the price element type label from price element id
 		Map < Id, String > pricingElementLabels = new Map < Id, String > ();
 		Map < Id, String > pricingElementTypes = new Map < Id, String > ();
+
+		Set <Id> pricingElementIds = (new Map<Id,SObject>(priceElements)).keySet();
 
 		for (cspmb__Pricing_Element__c pricingElement : priceElements) {
 			String label = pricingElement.cspmb__pricing_element_type__r.cspmb__label__c;
@@ -206,7 +245,7 @@ global with sharing class FrameRateManagerController {
 		List < cspmb__Pricing_Rule_Group_Rule_Association__c > priceBookAssociations = [
 			select id, cspmb__pricing_rule__c
 			from cspmb__Pricing_Rule_Group_Rule_Association__c
-			where Id = :standardPricebook
+			where Id = :standardPricebook.csutil__value__c
 		];
 
 		if (priceBookAssociations == null) {
@@ -225,7 +264,7 @@ global with sharing class FrameRateManagerController {
 		List < cspmb__Price_Item_Pricing_Rule_Association__c > pipraList = [
 			select id, cspmb__recurring_adjustment__c, cspmb__one_off_adjustment__c, cspmb__pricing_element__c
 			from cspmb__Price_Item_Pricing_Rule_Association__c
-			where cspmb__price_item__c = :priceItemId and cspmb__pricing_rule__c in:pricingRuleList
+			where cspmb__pricing_element__c in :pricingElementIds and cspmb__pricing_rule__c in:pricingRuleList
 		];
 
 
@@ -430,19 +469,19 @@ global with sharing class FrameRateManagerController {
 		csutil__JSON_Data__c button_standard = getStandardButtonData();
 		csutil__JSON_Data__c categorization_data = getCategorizationData();
 
-		if (header_data != null) {
+		if (header_data != null && header_data.csutil__value__c != null) {
 			headerData = (List < Object >) JSON.deserializeUntyped(header_data.csutil__value__c);
 		}
 
-		if (button_custom != null) {
+		if (button_custom != null && button_custom.csutil__value__c != null) {
 			buttonCustom = (List < Object >) JSON.deserializeUntyped(button_custom.csutil__value__c);
 		}
 
-		if (button_standard != null) {
+		if (button_standard != null && button_standard.csutil__value__c != null) {
 			buttonStandard = (Map < String, Object >) JSON.deserializeUntyped(button_standard.csutil__value__c);
 		}
 
-		if (categorization_data != null) {
+		if (categorization_data != null && categorization_data.csutil__value__c != null) {
 			categorizationData = (List < Object >) JSON.deserializeUntyped(categorization_data.csutil__value__c);
 		}
 
@@ -620,6 +659,11 @@ global with sharing class FrameRateManagerController {
 		Map < Id, cpData > cpDataMap = new Map < Id, cpData > ();
 
 		for (Id priceItemId : priceItemIdList) {
+			system.debug('**********START');
+			system.debug('**********getAddons ' +  getAddons(priceItemId));
+			system.debug('**********getPriceItemCharges ' +  getPriceItemCharges(priceItemId));
+			system.debug('**********getRateCards ' +  getRateCards(priceItemId));
+			system.debug('**********cpData ' +  new cpData(priceItemId, getAddons(priceItemId), getPriceItemCharges(priceItemId), getRateCards(priceItemId)));
 			cpDataMap.put(priceItemId, new cpData(priceItemId, getAddons(priceItemId), getPriceItemCharges(priceItemId), getRateCards(priceItemId)));
 		}
 
@@ -686,29 +730,46 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static List < csconta__Frame_Agreement__c > getFrameAgreements() {
+	public static List < csconta__Frame_Agreement__c > getFrameAgreements(String accountId) {
 		List < csconta__Frame_Agreement__c > faList = new List < csconta__Frame_Agreement__c > ();
+
+		// Test validity of Id
+		Id accId;
+		try {
+			accId = (Id) accountId;
+		} catch (Exception e) {}
+
+		if (accId == null) {
+			return faList;
+		}
 
 		List < String > conjoined_fields = new List < String > ();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
 
-		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c order by LastModifiedDate DESC';
+		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c';
+
+		query = query + ' where csconta__Account__c = :accId';
+		query = query + ' order by LastModifiedDate DESC';
 
 		return database.query(query);
 	}
 
 	@RemoteAction
 	public static csconta__Frame_Agreement__c getFrameAgreement(Id faId) {
-		List < csconta__Frame_Agreement__c > faList = new List < csconta__Frame_Agreement__c > ();
-
 		List < String > conjoined_fields = new List < String > ();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
-
 		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c where Id = :faId limit 1';
 
-		return database.query(query);
+		csconta__Frame_Agreement__c returnFa = null;
+		try {
+			returnFa = database.query(query);
+		} catch (Exception e) {
+
+		}
+
+		return returnFa;
 	}
 
 	@RemoteAction
@@ -743,6 +804,7 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static csconta__Frame_Agreement__c cloneFrameAgreement(Id faId) {
 
+
 		List < String > conjoined_fields = new List < String > ();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
@@ -761,6 +823,9 @@ global with sharing class FrameRateManagerController {
 		cloned.csconta__Status__c = 'Draft';
 		cloned.csconta__replaced_frame_agreement__c = null;
 		insert cloned;
+
+		cloned.csfam__Frame_Agreement_Number__c = parseNumberFromName(original.Name);
+		update cloned;
 
 		Attachment originalAttachment = getAttachment(faId);
 
@@ -797,27 +862,25 @@ global with sharing class FrameRateManagerController {
 	*/
 	@RemoteAction
 	public static csconta__Frame_Agreement__c createNewVersionOfFrameAgrement(Id faId) {
+		system.debug('createNewVersionOfFrameAgrement ' + faId);
+		csconta__Frame_Agreement__c original = getFrameAgreement(faId);
+
+		if (original == null) {
+			throw new InvalidParamException('Cannot find frame agreement with Id:' + faId);
+		}
+
 		csconta__Frame_Agreement__c clonedFa = cloneFrameAgreement(faId);
 
 		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 		clonedFa.csconta__Status__c = (String) FACSettings.get('csfam__draft_status__c');
 		clonedFa.csconta__replaced_frame_agreement__c = faId;
+		original.csconta__effective_end_date__c = datetime.now();
+		clonedFa.csfam__Frame_Agreement_Number__c = parseNumberFromName(original.Name);
+
+		update original;
 		update clonedFa;
 
-		try {
-			csconta__Frame_Agreement__c original = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where Id = :faId limit 1];
-			original.csconta__effective_end_date__c = datetime.now();
-			update original;
-		}
-		catch (QueryException e) {
-
-		}
-		catch (NullPointerException e) {
-
-		}
-
 		return clonedFa;
-
 	}
 
 	@RemoteAction
@@ -879,6 +942,14 @@ global with sharing class FrameRateManagerController {
 		}
 
 		upsert fa;
+
+		if (fa.csconta__replaced_frame_agreement__c == null) {
+
+			fa = getFrameAgreement(fa.Id);
+			fa.csfam__Frame_Agreement_Number__c = parseNumberFromName(fa.Name);
+			update fa;
+		}
+
 		return fa;
 	}
 
@@ -1253,6 +1324,11 @@ global with sharing class FrameRateManagerController {
 		public List < PricingElementWrapper > charges {
 			get;
 			set;
+		}
+
+		public ProductPricebookCharges(Id priceItemId) {
+			this.priceItemId = priceItemId;
+			this.charges = new List<PricingElementWrapper>();
 		}
 
 		public ProductPricebookCharges(Id priceItemId, List < PricingElementWrapper > charges) {

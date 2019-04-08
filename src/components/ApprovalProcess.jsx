@@ -40,8 +40,9 @@ class ApprovalProcess extends React.Component {
 		} catch (err) {}
 
 		this.state = {
-			open: true,
-			loading: false
+			open: false,
+			loading: false,
+			comment: ''
 		};
 	}
 
@@ -98,7 +99,11 @@ class ApprovalProcess extends React.Component {
 			);
 		} else {
 			this.props
-				.approveRejectRecallRecord(this.props.faId, null, actionType)
+				.approveRejectRecallRecord(
+					this.props.faId,
+					this.state.comment || null,
+					actionType
+				)
 				.then(response => {
 					if (response) {
 						this.props.createToast(
@@ -115,6 +120,7 @@ class ApprovalProcess extends React.Component {
 					}
 				})
 				.then(response => {
+					this.setState({ comment: '' });
 					this.props.onChange();
 				});
 		}
@@ -139,43 +145,6 @@ class ApprovalProcess extends React.Component {
 						{window.SF.labels.approval_title}
 					</div>
 
-					{this.actionRequired && (
-						<div className="table-actions">
-							{this.props.approval.isApprover && (
-								<span
-									className="link"
-									onClick={() => this.approvalAction('Approve')}
-								>
-									{window.SF.labels.approval_action_approve}
-								</span>
-							)}
-							{this.props.approval.isApprover && (
-								<span
-									className="link"
-									onClick={() => this.approvalAction('Reject')}
-								>
-									{window.SF.labels.approval_action_reject}
-								</span>
-							)}
-							{this.props.approval.isApprover && false && (
-								<span
-									className="link"
-									onClick={() => this.approvalAction('Reassign')}
-								>
-									{window.SF.labels.approval_action_reassign}
-								</span>
-							)}
-							{this.isInitiator && (
-								<span
-									className="link"
-									onClick={() => this.approvalAction('Removed')}
-								>
-									{window.SF.labels.approval_action_recall}
-								</span>
-							)}
-						</div>
-					)}
-
 					<div
 						className="fa-flex fa-flex-middle"
 						onClick={() => {
@@ -193,6 +162,53 @@ class ApprovalProcess extends React.Component {
 						/>
 					</div>
 				</div>
+
+				{this.actionRequired && this.state.open && (
+					<div className="approval-action-container">
+						<span>{window.SF.labels.approval_message_title}</span>
+						<textarea
+							value={this.state.comment}
+							onChange={e => {
+								this.setState({ comment: e.target.value });
+							}}
+							placeholder={window.SF.labels.approval_message_placeholder}
+						/>
+						<div className="approval-action-button-container">
+							{this.props.approval.isApprover && (
+								<button
+									className="fa-button fa-button-border-light"
+									onClick={() => this.approvalAction('Approve')}
+								>
+									{window.SF.labels.approval_action_approve}
+								</button>
+							)}
+							{this.props.approval.isApprover && (
+								<button
+									className="fa-button fa-button-border-light"
+									onClick={() => this.approvalAction('Reject')}
+								>
+									{window.SF.labels.approval_action_reject}
+								</button>
+							)}
+							{this.props.approval.isApprover && false && (
+								<button
+									className="fa-button fa-button-border-light"
+									onClick={() => this.approvalAction('Reassign')}
+								>
+									{window.SF.labels.approval_action_reassign}
+								</button>
+							)}
+							{this.isInitiator && (
+								<button
+									className="fa-button fa-button-border-light"
+									onClick={() => this.approvalAction('Removed')}
+								>
+									{window.SF.labels.approval_action_recall}
+								</button>
+							)}
+						</div>
+					</div>
+				)}
 
 				{this.state.open && (
 					<div className="approval-table-list-container">

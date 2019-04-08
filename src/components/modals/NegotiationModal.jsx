@@ -151,7 +151,11 @@ class NegotiationModal extends Component {
 		} catch (err) {}
 
 		this.state = {
-			tab: 'addons',
+			tab: Object.keys(this.grouped_addons).length
+				? 'addons'
+				: this._charges.length
+				? 'charges'
+				: 'rated',
 			discountMode: 'percentage', // fixed
 			discount: 0,
 			selected: {
@@ -877,6 +881,7 @@ class NegotiationModal extends Component {
 						<div className="box">
 							<div className="button-group toggle-buttons">
 								<button
+									disabled={!Object.keys(this.grouped_addons).length}
 									className={
 										'fa-margin-right-sm fa-button button--' +
 										(this.state.tab === 'addons' ? 'brand' : 'neutral')
@@ -892,7 +897,9 @@ class NegotiationModal extends Component {
 										''
 									)}
 								</button>
+
 								<button
+									disabled={!this._charges.length}
 									className={
 										'fa-margin-right-sm fa-button button--' +
 										(this.state.tab === 'charges' ? 'brand' : 'neutral')
@@ -908,7 +915,9 @@ class NegotiationModal extends Component {
 										''
 									)}
 								</button>
+
 								<button
+									disabled={!this._rateCards.length}
 									className={
 										'fa-button button--' +
 										(this.state.tab === 'rated' ? 'brand' : 'neutral')
@@ -928,7 +937,9 @@ class NegotiationModal extends Component {
 						</div>
 						<div className="fa-margin-top-sm">
 							<div className="fa-margin-bottom-sm">
-								<div className="fa-padding-bottom-xsm">{window.SF.labels.modal_bulk_discount_title}</div>
+								<div className="fa-padding-bottom-xsm">
+									{window.SF.labels.modal_bulk_discount_title}
+								</div>
 								<div className="button-group toggle-buttons">
 									<button
 										className={
@@ -959,7 +970,9 @@ class NegotiationModal extends Component {
 								</div>
 							</div>
 							<div>
-								<div className="fa-padding-bottom-xsm">{window.SF.labels.modal_bulk_discount_input_title}</div>
+								<div className="fa-padding-bottom-xsm">
+									{window.SF.labels.modal_bulk_discount_input_title}
+								</div>
 								<input
 									type="number"
 									min={0}

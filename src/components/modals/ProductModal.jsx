@@ -239,7 +239,7 @@ class ProductModal extends Component {
 	}
 
 	addProducts() {
-		this.props.onAddProducts(this.state.selected);
+		this.props.onAddProducts(Object.keys(this.state.selected));
 		this.setState({
 			actionTaken: false,
 			selected: {}
@@ -352,7 +352,7 @@ class ProductModal extends Component {
 
 					<div className="modal-table-container">
 						<div className="modal-navigation">
-							{this.props.settings.CategorizationData.length && (
+							{this.props.settings.CategorizationData.length ? (
 								<div
 									className="fa-padding-bottom-xsm"
 									onClick={this.togglePanel}
@@ -367,6 +367,8 @@ class ProductModal extends Component {
 										{window.SF.labels.modal_categorization_switch}
 									</div>
 								</div>
+							) : (
+								''
 							)}
 
 							<div className="search-container">

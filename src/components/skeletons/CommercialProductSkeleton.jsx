@@ -15,7 +15,9 @@ class CommercialProductSkeleton extends Component {
 	render() {
 		return (
 			<div className="skeleton-cp-container">
-				<div className="skeleton-cp-header" />
+				<div className="skeleton-cp-header">
+					<span />
+				</div>
 				<div className="skeleton-cp-table-header" />
 				{this.products.map((cp, i) => {
 					return <div key={i} className="skeleton-cp-table-item" />;

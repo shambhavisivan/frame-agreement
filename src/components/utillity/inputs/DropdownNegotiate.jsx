@@ -117,16 +117,41 @@ class DropdownNegotiate extends React.Component {
 	}
 
 	render() {
+		var dirty = this.props.originalValue !== this.props.negotiatedValue;
+		var negotiateFixed;
+		try {
+			negotiateFixed = this.props.negotiatedValue.toFixed(2);
+		} catch (e) {
+			negotiateFixed = this.props.negotiatedValue;
+		}
+
 		return (
 			<div
 				className={
-					'negotiate-container ' + (this.props.invalid ? 'invalid' : '')
+					'negotiate-container select-negotiate' +
+					(this.props.invalid ? 'invalid' : '')
 				}
 			>
-				<div className="negotiate-input-wrapper">
-					<span className="fa-margin-right-xsm">
-						{this.props.negotiatedValue}{' '}
-					</span>
+				<div className={'negotiate-input-wrapper' + (dirty ? ' dirty' : '')}>
+					<span className="">{negotiateFixed}</span>
+
+					{dirty && (
+						<div className="discount-info">
+							<div className="discount">
+								<div>{window.SF.labels.util_negotiation_input_diff_label} </div>
+								<span className="discount-amount">
+									{' '}
+									-
+									{(
+										this.props.originalValue - this.props.negotiatedValue
+									).toFixed(2)}
+								</span>
+							</div>
+						</div>
+					)}
+				</div>
+
+				<div className="negotiate-select-wrapper">
 					<select
 						disabled={this.props.readOnly}
 						value={this.state.selected}
@@ -142,21 +167,6 @@ class DropdownNegotiate extends React.Component {
 						})}
 					</select>
 				</div>
-
-				{this.props.originalValue !== this.props.negotiatedValue && (
-					<div className="discount-info">
-						<div className="discount">
-							<div>{window.SF.labels.util_negotiation_input_diff_label} </div>
-							<span className="discount-amount">
-								{' '}
-								-
-								{(
-									this.props.originalValue - this.props.negotiatedValue
-								).toFixed(2)}
-							</span>
-						</div>
-					</div>
-				)}
 			</div>
 		);
 	}

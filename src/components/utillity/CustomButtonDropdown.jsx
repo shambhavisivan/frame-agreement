@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import Icon from "./Icon";
+import Icon from './Icon';
 
-import "./CustomButtonDropdown.css";
+import './CustomButtonDropdown.css';
 
 class CustomButtonDropdown extends React.Component {
 	constructor(props) {
@@ -22,11 +22,11 @@ class CustomButtonDropdown extends React.Component {
 	}
 
 	componentDidMount() {
-		document.addEventListener("mousedown", this.handleClickOutside);
+		document.addEventListener('mousedown', this.handleClickOutside);
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener("mousedown", this.handleClickOutside);
+		document.removeEventListener('mousedown', this.handleClickOutside);
 	}
 
 	setWrapperRef(node) {
@@ -52,12 +52,26 @@ class CustomButtonDropdown extends React.Component {
 	render() {
 		return (
 			<div className="fa-dropdown-group fa-margin-right-sm">
-				<button className="fa-button fa-button-border-light fa-button-transparent" onClick={this.showMenu}>
-					<span className="fa-margin-right-xsm">{window.SF.labels.header_customDropdownPlaceholder}</span>
-					<Icon name={this.state.menu ? "up" : "down"} height="14" width="14" color="white" />
-					</button>
-					{this.state.menu && (
-					<div ref={this.setWrapperRef} aria-hidden={!this.state.menu} className="fa-dropdown">
+				<button
+					className="fa-button fa-button-border-light fa-button-transparent"
+					onClick={this.showMenu}
+				>
+					<span className="fa-margin-right-xsm">
+						{window.SF.labels.header_customDropdownPlaceholder}
+					</span>
+					<Icon
+						name={this.state.menu ? 'up' : 'down'}
+						height="14"
+						width="14"
+						color="white"
+					/>
+				</button>
+				{this.state.menu && (
+					<div
+						ref={this.setWrapperRef}
+						aria-hidden={!this.state.menu}
+						className="fa-dropdown"
+					>
 						{this.props.buttons.map((btnObj, i) => {
 							return (
 								<button
@@ -68,9 +82,9 @@ class CustomButtonDropdown extends React.Component {
 									onClick={() => {
 										this.props.onAction(btnObj.method, btnObj.type);
 									}}
-									>
+								>
 									{btnObj.label}
-									</button>
+								</button>
 							);
 						})}
 					</div>

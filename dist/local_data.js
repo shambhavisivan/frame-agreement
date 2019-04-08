@@ -622,13 +622,15 @@ const ButtonCustomData = [{
     }
 ];
 
+
 const ButtonStandardData = {
     "Save": ["Draft", "Requires Approval"],
     "SubmitForApproval": ["Requires Approval"],
     "Submit": ["Draft", "Approved"],
     "DeleteProducts": ["Draft", "Requires Approval"],
     "BulkNegotiate": ["Draft", "Requires Approval"],
-    "AddProducts": ["Draft", "Requires Approval"]
+    "AddProducts": ["Draft", "Requires Approval"],
+    "NewVersion": ["Active"]
 };
 
 /*
@@ -819,6 +821,8 @@ window.SF = SF = {
         approval_action_reject: "Reject",
         approval_action_reassign: "Reassign",
         approval_action_recall: "Recall",
+        approval_message_title: "Comment",
+        approval_message_placeholder: "Enter comment...",
         approval_table_header_action: "Action",
         approval_table_header_date: "Date",
         approval_table_header_status: "Status",
@@ -1017,10 +1021,10 @@ window.SF = SF = {
                 }
 
             case "getAttachmentBody":
-                return createPromise(attachment, 5000);
+                return createPromise(attachment, 2000);
 
             case "getApprovalHistory":
-                return createPromise(getRandomFromArr([approval, approval2]));
+                return createPromise(getRandomFromArr([approval, approval]));
 
             case "getRateCards": // Obsolete
                 return createPromise(rateCards);
@@ -1050,7 +1054,7 @@ window.SF = SF = {
                 return createPromise(filterProducts(parametersArr[0]));
 
             case "setFrameAgreementState":
-                return createPromise("Success");
+                return createPromise(getRandomFromArr(["Success", "Failure"]));
 
             case "createNewVersionOfFrameAgrement":
                 let newFa = JSON.parse(JSON.stringify(frameAgreements.filter(fa => fa.Id === parametersArr[0])[0]));

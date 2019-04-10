@@ -83,6 +83,22 @@
 .fa-button-transparent {
 	background: transparent;
 
+	&.secondary {
+		border: 1px solid $gray;
+		color: $blue-sf;
+		font-size: 0.8125rem;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background: $gray-light;
+		}
+
+		svg {
+			fill: $blue-sf;
+		}
+	}
+
 	svg {
 		fill: $white;
 	}

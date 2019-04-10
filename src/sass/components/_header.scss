@@ -14,30 +14,27 @@
 
 /* Item */
 .fa-main-header-item {
+	align-self: center;
 	display: flex;
 	flex: 1;
 	padding-left: 1.5rem;
-	align-self: center;
 
 	&:first-child,
 	&:last-child {
 		padding: 0;
 	}
+
 	&:last-child {
 		justify-content: flex-end;
 	}
 }
 
-.fa-app-icon {
-    width: 2rem;
-    height: 2rem;
-    background: #00aad3;
-    display: inline-block;
-    border-radius: 4px;
-    margin-right: 16px;
+/* Title */
+.fa-main-header .fa-main-header-title,
+.fa-main-header .fa-main-header-sub-title {
+	display: block;
 }
 
-/* Title */
 .fa-main-header .fa-main-header-title {
 	color: $black;
 	font-size: 1.2rem;
@@ -63,7 +60,7 @@
 	background: $blue-sf;
 	color: $white;
 	padding: 0.75rem 0;
-	z-index: 2;
+	z-index: $z-index-header-secondary;
 }
 
 .fa-header-secondary-body {
@@ -76,7 +73,6 @@
 .fa-header-secondary-body-sub {
 	font-size: 0.8rem;
 	opacity: 0.4;
-	line-height: 1;
 }
 
 .fa-header-secondary-body-title {
@@ -95,8 +91,8 @@
 
 .fa-header-secondary-prev {
 	bottom: 50%;
-	position: absolute;
 	left: -1.5rem;
+	position: absolute;
 	transform: translateY(50%);
 }
 

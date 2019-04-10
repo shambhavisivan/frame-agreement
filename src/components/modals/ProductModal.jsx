@@ -278,7 +278,7 @@ class ProductModal extends Component {
 					>
 						<Icon name="expand_alt" width="24" height="24" color="white" />
 					</span>
-					<h2>{window.SF.labels.modal_addProduct_title}</h2>
+					<h2 className="fa-modal-header-title">{window.SF.labels.modal_addProduct_title}</h2>
 				</div>
 
 				<div
@@ -296,17 +296,16 @@ class ProductModal extends Component {
 								<Icon name="close" width="12" height="12" color="#0070d2" />
 								<span>Close</span>
 							</div>
+						</div>
+
+						<div className="panel-filter-container">
 							<div
 								className="product-list-header"
-								style={{ border: 0, padding: 0 }}
 							>
 								<div className="header-th">
 									<span>{window.SF.labels.modal_categorization_title}</span>
 								</div>
 							</div>
-						</div>
-
-						<div className="panel-filter-container">
 							{Object.keys(this.state.filter).map(key => {
 								let category = this.state.filter[key];
 
@@ -354,14 +353,14 @@ class ProductModal extends Component {
 						<div className="fa-padding-left-sm fa-margin-bottom-sm">
 							<button
 								onClick={this.resetFilter}
-								className="fa-button fa-margin-right-xsm"
+								className="fa-button fa-button-transparent secondary fa-margin-right-xsm"
 								disabled={false}
 							>
 								{window.SF.labels.modal_categorization_btn_clear}
 							</button>
 							<button
 								onClick={this.applyFilter}
-								className="fa-button"
+								className="fa-button fa-button-transparent secondary"
 								disabled={false}
 							>
 								{window.SF.labels.modal_categorization_btn_apply}
@@ -371,19 +370,21 @@ class ProductModal extends Component {
 
 					<div className="modal-table-container">
 						<div className="modal-navigation">
-							{this.props.settings.CategorizationData.length ? (
+							{this.props.settings.CategorizationData.length && !this.state.panel ? (
 								<div
-									className="fa-padding-bottom-xsm"
+									className="fa-flex fa-flex-middle"
 									onClick={this.togglePanel}
 								>
-									<Icon
-										name="color_swatch"
-										width="14"
-										height="14"
-										color="#0070d2"
-									/>
 									<div className="categorization-switch">
-										{window.SF.labels.modal_categorization_switch}
+										<Icon
+											name="color_swatch"
+											width="14"
+											height="14"
+											color="#0070d2"
+										/>
+										<div className="categorization-switch-link">
+											{window.SF.labels.modal_categorization_switch}
+										</div>
 									</div>
 								</div>
 							) : (

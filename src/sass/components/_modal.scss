@@ -3,13 +3,12 @@
 
 .fa-modal {
 	background: $white;
-	/*bottom: 50%;*/
-	top: 50px;
-	max-width: 800px;
+	bottom: 50%;
+	max-width: 850px;
 	padding: 0;
 	position: fixed;
 	right: 50%;
-	transform: translate(50%, 0%);
+	transform: translate(50%, 50%);
 	width: 80%;
 }
 
@@ -19,8 +18,12 @@
 
 /* Header */
 .fa-modal-header {
-	padding: 1.5rem 0;
+	padding: 1rem 0;
 	text-align: center;
+}
+
+.fa-modal-header-title {
+	font-weight: $font-weight-normal;
 }
 
 /* Body */

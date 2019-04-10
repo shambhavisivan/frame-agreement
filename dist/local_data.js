@@ -1029,7 +1029,7 @@ window.SF = SF = {
                 return createPromise(attachment, 1000);
 
             case "getApprovalHistory":
-                return createPromise(getRandomFromArr([approval2, approval2]));
+                return createPromise(getRandomFromArr([approval, approval]));
 
             case "getRateCards": // Obsolete
                 return createPromise(rateCards);

@@ -1,94 +1,106 @@
 /*OVERLAY*/
 .overlay {
-    background: rgba(176, 171, 171, 0.8);
+	background: rgba(176, 171, 171, 0.8);
 }
 
 .sf-modal {
-    min-width: 980px;
-    background-color: #fafaf9;
-    padding: 0;
-    top: 5%;
-    margin: auto;
-    right: 25%;
-    position: absolute;
+	min-width: 980px;
+	background-color: #fafaf9;
+	padding: 0;
+	top: 5%;
+	margin: auto;
+	right: 25%;
+	position: absolute;
 }
 
 .sf-modal.confirmation {
-    min-width: 580px;
-    right: calc(50% - 290px);
-    border-radius: 4px;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+	min-width: 580px;
+	right: calc(50% - 290px);
+	border-radius: 4px;
+	box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
 }
 
 .sf-modal>div:not(div.modal-body) {
-    display: inline-block;
+	display: inline-block;
 }
 
 .modal-header,
 .modal-footer {
-    padding: 15px;
-    box-sizing: border-box;
+	padding: 15px;
+	box-sizing: border-box;
 }
 
 .confirmation .modal-footer {
-    text-align: center;
+	text-align: center;
 }
 
 .confirmation .modal-footer>button {
-    margin-right: 12px;
+	margin-right: 12px;
 }
 
 .close-button {
-    cursor: pointer;
-    top: -40px;
-    right: -20px;
+	background: none;
+	cursor: pointer;
+	top: -40px;
+	right: -20px;
 }
 
 .close-button svg {
-    width: 48px;
-    height: 48px;
-    fill: white;
+	width: 48px;
+	height: 48px;
+	fill: white;
 }
 
 .close-button:focus {
-    outline: none;
+	outline: none;
 }
 
 .modal-navigation {
-    margin-bottom: 8px;
-    height: 36px;
-    width: 100%;
-    display: inline-block;
-    padding: 1rem;
-    box-sizing: border-box;
+	width: 100%;
+	display: flex;
+	padding: 1rem 1rem 0.5rem 1rem;
+	box-sizing: border-box;
+}
+
+.modal-navigation .search-container {
+	width: 400px;
+}
+
+.panel-open .modal-navigation {
+	justify-content: center;
 }
 
 .sf-modal .modal-header {
-    border-radius: 4px;
-    box-shadow: 0 2px 0 0 #f0f2f7;
-    background: white;
-    margin-bottom: 1px;
-    text-align: center;
+	border-radius: 4px;
+	box-shadow: 0 2px 0 0 #f0f2f7;
+	background: white;
+	margin-bottom: 1px;
+	text-align: center;
 }
 
 .sf-modal .modal-header h2 {
-    font-size: 20px;
-    color: #222222;
-    margin: 0;
+	font-size: 20px;
+	color: #222222;
+	margin: 0;
 }
-
 
 .modal-body,
 .modal-footer {
-    background-color: #fafaf9;
+	background-color: #fafaf9;
+}
+
+.modal-body.panel-open {
+	border-bottom: 1px solid #dddbda;
+	border-top: 1px solid #dddbda;
+	padding-bottom: 0;
 }
 
 .modal-footer,
-.modal-header {
-    width: 100%;
+.modal-header  {
+	width: 100%;
 }
 
 .modal-footer {
-    padding: 1.5rem 1.25rem;
-    text-align: right;
+	padding: 1rem 1.25rem;
+	text-align: right;
 }

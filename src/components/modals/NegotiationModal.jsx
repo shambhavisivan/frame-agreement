@@ -851,7 +851,7 @@ class NegotiationModal extends Component {
 				onClose={this.onCloseModal}
 			>
 				<div className="fa-modal-header modal-header">
-					<h2>{window.SF.labels.modal_bulk_title}</h2>
+					<h2 className="fa-modal-header-title">{window.SF.labels.modal_bulk_title}</h2>
 				</div>
 				<div className="modal-body fa-modal-body">
 					<div className="products-container">

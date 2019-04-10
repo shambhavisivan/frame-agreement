@@ -2,8 +2,8 @@
 // Header component.
 
 .fa-main-header {
-	background: #fff;
-	border-bottom: 2px solid $gray-light-5;
+	background: $white;
+	border-bottom: 2px solid $gray;
 	padding: 1.25rem 0;
 }
 
@@ -32,7 +32,7 @@
 }
 
 .fa-main-header .fa-main-header-sub-title {
-	color: #777;
+	color: $gray-dark;
 	font-size: 0.8rem;
 	font-weight: $font-weight-normal
 }

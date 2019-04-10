@@ -3,9 +3,10 @@
 
 .fa-button {
 	align-items: center;
+	background: $blue-sf;
+	color: $white;
 	border: 0;
 	border-radius: 0.25rem;
-	color: $white;
 	cursor: pointer;
 	display: inline-flex;
 	font-family: $font-primary;
@@ -15,7 +16,33 @@
 	padding: 0.25rem 1.25rem;
 	position: relative;
 	text-decoration: none;
-	@include sbg(--main-c);
+
+	&:hover,
+	&:active,
+	&:focus {
+		background: $blue-sf-dark;
+	}
+
+	&:focus {
+		box-shadow: 0 0 3px darken($blue-sf, 5%);
+	}
+
+	&:disabled {
+		background: $gray;
+		pointer-events: none;
+	}
+
+	.fa-invalid &:active,
+	.fa-invalid &:focus,
+	.fa-invalid &:hover {
+		background: $red-dark;
+	}
+
+	.fa-disabled &:active,
+	.fa-disabled &:focus,
+	.fa-disabled &:hover {
+		background: $gray-darker;
+	}
 }
 
 .fa-button-lg {
@@ -36,6 +63,20 @@
 /* Transparent */
 .fa-button-transparent {
 	background: transparent;
+
+	svg {
+		fill: $white;
+	}
+
+	&:disabled {
+		background: transparent;
+		border: 1px solid $gray;
+		color: $gray;
+
+		svg {
+			fill: $gray;
+		}
+	}
 }
 
 /* Border */

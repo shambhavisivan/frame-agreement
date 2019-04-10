@@ -4,11 +4,11 @@
 .error {
 	/* Invalid */
 	&.fa-invalid {
-		background: #d9665d;
+		background: $red;
 	}
 
 	/* Disabled */
 	&.fa-disabled {
-		background: #ccc;
+		background: $gray-dark;
 	}
 }

@@ -28,8 +28,6 @@ const Icon = props => {
 
 	if (isDefined('color')) {
 		style.fill = props.color;
-	} else {
-		style.fill = '#706e6b';
 	}
 
 	if (isDefined('width')) {

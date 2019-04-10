@@ -24,16 +24,16 @@
 
 	/* Placeholder */
 	::placeholder {
-		color: #747474;
+		color: $gray-dark;
 		opacity: 1;
 	}
 
 	:-ms-input-placeholder {
-		color: #747474;
+		color: $gray-dark;
 	}
 
 	::-ms-input-placeholder {
-		color: #747474;
+		color: $gray-dark;
 	}
 
 	/* List */

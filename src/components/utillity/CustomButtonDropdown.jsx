@@ -63,7 +63,6 @@ class CustomButtonDropdown extends React.Component {
 						name={this.state.menu ? 'up' : 'down'}
 						height="14"
 						width="14"
-						color="white"
 					/>
 				</button>
 				{this.state.menu && (

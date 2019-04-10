@@ -2,7 +2,7 @@
 // Input component.
 
 .fa-input {
-	border: 1px solid #d5d5d5;
+	border: 1px solid $gray;
 	border-radius: 0.25rem;
 	box-sizing: border-box;
 	display: inline-block;
@@ -48,7 +48,7 @@
 .fa-input-search-border-bottom .fa-input {
 	border: 0;
 	border-radius: 0;
-	border-bottom: 1px solid #d5d5d5;
+	border-bottom: 1px solid $gray;
 	&:focus {
 		border-radius: 0.25rem;
 	}
@@ -57,7 +57,7 @@
 /* Checkbox */
 .fa-checkbox {
 	border-radius: 0.125rem;
-	border: 1px solid #dddbda;
+	border: 1px solid $gray;
 	cursor: pointer;
 	display: inline-flex;
 	height: 1rem;
@@ -66,5 +66,5 @@
 }
 
 .fa-checkbox.checked {
-	background: #0070d2;
+	background: $gray;
 }

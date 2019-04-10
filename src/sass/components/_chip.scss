@@ -2,7 +2,7 @@
 // Chip component.
 
 .fa-chip {
-	background: $gray-light-5;
+	background: $gray;
 	border-radius: 1.5rem;
 	color: $white;
 	font-size: 0.6rem;
@@ -13,5 +13,5 @@
 
 /* Dark */
 .fa-chip-dark {
-	background: #777;
+	background: $gray-dark;
 }

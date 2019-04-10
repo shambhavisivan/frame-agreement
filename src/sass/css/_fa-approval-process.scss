@@ -28,7 +28,7 @@
 	display: flex;
 	align-items: center;
 	padding: 12px 20px;
-	border-bottom: 1px solid rgba(0,0,0,0.2);
+	border-bottom: 1px solid #dddbda;
 }
 
 .approval-table-list-header .approval-refresh {
@@ -36,7 +36,7 @@
 }
 
 .approval-table-list-header .table-title {
-  font-size: 1rem;
+  font-size: 1.125rem;
   color: #080707;
   flex: 1;
   display: flex;

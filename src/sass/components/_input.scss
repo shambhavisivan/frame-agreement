@@ -68,3 +68,19 @@
 .fa-checkbox.checked {
 	background: $gray;
 }
+
+/* Textarea */
+.fa-textarea {
+	border: 1px solid $gray;
+	border-radius: 0.25rem;
+	font-size: 0.8125rem;
+	padding: 0.5rem 0.75rem;
+
+	&:active,
+	&:focus {
+		outline: 0;
+		border-color: $blue-sf-light;
+		background-color: $white;
+		box-shadow: 0 0 3px $blue-sf;
+	}
+}

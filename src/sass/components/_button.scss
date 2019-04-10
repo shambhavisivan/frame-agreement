@@ -21,6 +21,7 @@
 	&:active,
 	&:focus {
 		background: $blue-sf-dark;
+		outline: none;
 	}
 
 	&:focus {
@@ -52,6 +53,24 @@
 /* Group */
 .button-group {
 	position: relative;
+}
+
+.button-group-secondary {
+
+	.fa-btn {
+		border-radius: 0;
+		margin-right: -1px;
+	}
+
+	.fa-btn:first-child {
+		border-top-left-radius: 0.25rem;
+		border-bottom-left-radius: 0.25rem;
+	}
+
+	.fa-btn:last-child {
+		border-top-right-radius: 0.25rem;
+		border-bottom-right-radius: 0.25rem;
+	}
 }
 
 /* Colours */
@@ -97,3 +116,40 @@
 	display: flex;
 	padding: 0;
 }
+
+/* Neutral */
+.fa-button-neutral {
+	align-items: center;
+	border-radius: 0.25rem;
+	cursor: pointer;
+	display: inline-flex;
+	font-family: $font-primary;
+	font-size: 0.75rem;
+	min-height: 2rem;
+	justify-content: center;
+	padding: 0.25rem 1.25rem;
+	position: relative;
+	text-decoration: none;
+	background: $white;
+	border: 1px solid $gray;
+	color: $blue-sf-light;
+
+	&:hover {
+		background: $gray-blue;
+	}
+
+	&:focus {
+		box-shadow: 0 0 3px $blue-sf;
+		outline: 0;
+		z-index: 1;
+	}
+
+	&:active {
+		border: 1px solid $blue-sf;
+	}
+
+	svg {
+		fill: $blue-sf;
+	}
+}
+

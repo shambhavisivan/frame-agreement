@@ -164,46 +164,51 @@ class ApprovalProcess extends React.Component {
 				</div>
 
 				{this.actionRequired && this.state.open && (
-					<div className="approval-action-container">
-						<span>{window.SF.labels.approval_message_title}</span>
+					<div className="fa-section fa-section-border-bottom">
+						<span className="fa-title">{window.SF.labels.approval_message_title}</span>
 						<textarea
+							className="fa-textarea"
 							value={this.state.comment}
 							onChange={e => {
 								this.setState({ comment: e.target.value });
 							}}
 							placeholder={window.SF.labels.approval_message_placeholder}
 						/>
-						<div className="approval-action-button-container">
+						<div className="button-group-secondary">
 							{this.props.approval.isApprover && (
 								<button
-									className="fa-button fa-button-border-light"
+									className="fa-btn fa-button-neutral"
 									onClick={() => this.approvalAction('Approve')}
 								>
-									{window.SF.labels.approval_action_approve}
-								</button>
-							)}
-							{this.props.approval.isApprover && (
-								<button
-									className="fa-button fa-button-border-light"
-									onClick={() => this.approvalAction('Reject')}
-								>
-									{window.SF.labels.approval_action_reject}
+									<Icon name="approval" height="14" width="14" />
+									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_approve}</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && false && (
 								<button
-									className="fa-button fa-button-border-light"
+									className="fa-btn fa-button-neutral"
 									onClick={() => this.approvalAction('Reassign')}
 								>
-									{window.SF.labels.approval_action_reassign}
+									<Icon name="change_owner" height="14" width="14" />
+									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reassign}</span>
 								</button>
 							)}
 							{this.isInitiator && (
 								<button
-									className="fa-button fa-button-border-light"
+									className="fa-btn fa-button-neutral"
 									onClick={() => this.approvalAction('Removed')}
 								>
-									{window.SF.labels.approval_action_recall}
+										<Icon name="undo" height="14" width="14" />
+										<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_recall}</span>
+								</button>
+							)}
+							{this.props.approval.isApprover && (
+								<button
+									className="fa-btn fa-button-neutral"
+									onClick={() => this.approvalAction('Reject')}
+								>
+									<Icon name="dislike" height="14" width="14" />
+									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reject}</span>
 								</button>
 							)}
 						</div>

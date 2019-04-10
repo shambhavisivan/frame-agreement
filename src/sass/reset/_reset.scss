@@ -2,6 +2,7 @@
 // Reset default styles.
 
 .fam, .fa-modal {
+
 	/* Generic */
 	h1,
 	h2,
@@ -57,5 +58,6 @@
 	*::before,
 	*::after {
 		box-sizing: border-box;
+		font-family: $font-primary;
 	}
 }

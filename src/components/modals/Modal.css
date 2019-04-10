@@ -15,16 +15,17 @@
 
 .sf-modal.confirmation {
     min-width: 580px;
-    right: calc( 50% - 290px );
-border-radius: 4px;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+    right: calc(50% - 290px);
+    border-radius: 4px;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
 }
 
-.sf-modal > div:not(div.modal-body) {
+.sf-modal>div:not(div.modal-body) {
     display: inline-block;
 }
 
-.modal-header, .modal-footer {
+.modal-header,
+.modal-footer {
     padding: 15px;
     box-sizing: border-box;
 }
@@ -33,13 +34,22 @@ border-radius: 4px;
     text-align: center;
 }
 
-.confirmation .modal-footer > button {
+.confirmation .modal-footer>button {
     margin-right: 12px;
 }
 
 .close-button {
     cursor: pointer;
+    top: -40px;
+    right: -20px;
 }
+
+.close-button svg {
+    width: 48px;
+    height: 48px;
+    fill: white;
+}
+
 .close-button:focus {
     outline: none;
 }
@@ -68,14 +78,17 @@ border-radius: 4px;
 }
 
 
-.modal-body, .modal-footer {
+.modal-body,
+.modal-footer {
     background-color: #fafaf9;
 }
 
-.modal-footer, .modal-header  {
+.modal-footer,
+.modal-header {
     width: 100%;
 }
-.modal-footer  {
+
+.modal-footer {
     padding: 1.5rem 1.25rem;
     text-align: right;
 }

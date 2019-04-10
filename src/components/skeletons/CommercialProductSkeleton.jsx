@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
+import './Skeleton.scss';
 
-import './CommercialProductSkeleton.scss';
+import Shape from './Shape';
 
 class CommercialProductSkeleton extends Component {
 	constructor(props) {
 		super(props);
-		// this.props.count
-		this.products = new Array(this.props.count);
+		this.count = this.props.count > 10 ? 10 : this.props.count;
+		this.products = new Array(this.count + 1);
 		for (var i = 0; i < this.products.length; i++) {
 			this.products[i] = i;
 		}
@@ -14,13 +15,24 @@ class CommercialProductSkeleton extends Component {
 
 	render() {
 		return (
-			<div className="skeleton-cp-container">
-				<div className="skeleton-cp-header">
-					<span />
+			<div className="skeleton-container skeleton-cp">
+				<div className="skeleton-header">
+					<Shape width={145} height={28} />
+					<Shape width={515} height={28} />
 				</div>
-				<div className="skeleton-cp-table-header" />
+
 				{this.products.map((cp, i) => {
-					return <div key={i} className="skeleton-cp-table-item" />;
+					return (
+						<div key={i} className="skeleton-table-item">
+							<div className="skeleton-right">
+								<Shape width={28} height={28} />
+								<Shape width={112} height={28} />
+							</div>
+							<Shape width={145} height={28} />
+							<Shape width={145} height={28} />
+							<Shape width={145} height={28} />
+						</div>
+					);
 				})}
 			</div>
 		);

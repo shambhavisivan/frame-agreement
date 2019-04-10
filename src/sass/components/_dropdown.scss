@@ -27,7 +27,7 @@
 	cursor: pointer;
 	display: flex;
 	font-family: $font-primary;
-	font-size: 0.9rem;
+	font-size: 0.875rem;
 	padding: 0.5rem;
 	width: 100%;
 
@@ -40,7 +40,7 @@
 	}
 
 	&:hover {
-		background: $gray-light;
+		background: $gray-light;;
 	}
 
 	svg {

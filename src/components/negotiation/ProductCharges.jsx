@@ -67,7 +67,9 @@ class ProductCharges extends React.Component {
 						</div>
 						<div className="list-cell">
 							{' '}
-							{this.props.product.cspmb__One_Off_Charge__c || 'N/A'}
+							{this.props.product.hasOwnProperty('cspmb__One_Off_Charge__c')
+								? this.props.product.cspmb__One_Off_Charge__c
+								: 'N/A'}
 						</div>
 						<div className="list-cell negotiable">
 							{(() => {
@@ -123,7 +125,9 @@ class ProductCharges extends React.Component {
 						</div>
 						<div className="list-cell">
 							{' '}
-							{this.props.product.cspmb__Recurring_Charge__c || 'N/A'}
+							{this.props.product.hasOwnProperty('cspmb__Recurring_Charge__c')
+								? this.props.product.cspmb__Recurring_Charge__c
+								: 'N/A'}
 						</div>
 						<div className="list-cell negotiable">
 							{(() => {

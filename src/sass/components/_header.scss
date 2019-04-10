@@ -3,8 +3,7 @@
 
 .fa-main-header {
 	background: $white;
-	border-bottom: 2px solid $gray;
-	padding: 1.25rem 0;
+	padding: 1rem 0;
 }
 
 /* Container */
@@ -15,6 +14,7 @@
 
 /* Item */
 .fa-main-header-item {
+	display: flex;
 	flex: 1;
 	padding-left: 1.5rem;
 	align-self: center;
@@ -23,31 +23,47 @@
 	&:last-child {
 		padding: 0;
 	}
+	&:last-child {
+		justify-content: flex-end;
+	}
+}
+
+.fa-app-icon {
+    width: 2rem;
+    height: 2rem;
+    background: #00aad3;
+    display: inline-block;
+    border-radius: 4px;
+    margin-right: 16px;
 }
 
 /* Title */
 .fa-main-header .fa-main-header-title {
 	color: $black;
-	font-size: 1rem;
+	font-size: 1.2rem;
+	line-height: 1.1;
 }
 
 .fa-main-header .fa-main-header-sub-title {
 	color: $gray-dark;
-	font-size: 0.8rem;
-	font-weight: $font-weight-normal
+	font-size: 0.8125rem;
+	font-weight: $font-weight-normal;
+	line-height: 1;
 }
 
 /* Search */
 .fa-main-header-search {
 	display: flex;
 	flex-wrap: wrap;
+	flex: 1;
 }
 
 /* Secondary */
 .fa-header-secondary {
 	background: $blue-sf;
 	color: $white;
-	padding: 1rem 0;
+	padding: 0.75rem 0;
+	z-index: 2;
 }
 
 .fa-header-secondary-body {
@@ -60,10 +76,12 @@
 .fa-header-secondary-body-sub {
 	font-size: 0.8rem;
 	opacity: 0.4;
+	line-height: 1;
 }
 
 .fa-header-secondary-body-title {
 	font-size: 1.2rem;
+	line-height: 1.2;
 }
 
 .fa-header-secondary-body-col {
@@ -80,4 +98,9 @@
 	position: absolute;
 	left: -1.5rem;
 	transform: translateY(50%);
+}
+
+.fa-header-secondary-prev:hover {
+	cursor: pointer;
+	left: -1.55rem;
 }

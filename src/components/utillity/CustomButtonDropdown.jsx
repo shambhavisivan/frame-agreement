@@ -51,7 +51,7 @@ class CustomButtonDropdown extends React.Component {
 
 	render() {
 		return (
-			<div className="fa-dropdown-group fa-margin-right-sm">
+			<div className="fa-dropdown-group fa-margin-right-xsm">
 				<button
 					className="fa-button fa-button-border-light fa-button-transparent"
 					onClick={this.showMenu}

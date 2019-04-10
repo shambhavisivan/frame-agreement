@@ -59,11 +59,19 @@ class FrameAgreementRow extends React.Component {
 	render() {
 		return (
 			<div className="fa-panel">
-				<Link className="fa-panel-item" to={`/agreement/${this.props.agreement.Id}`}>
+				<Link
+					className="fa-panel-item"
+					to={`/agreement/${this.props.agreement.Id}`}
+				>
 					<div className="fa-panel-body">
-						<div className="fa-panel-body-col">{this.props.agreement.csconta__Agreement_Name__c}</div>
 						<div className="fa-panel-body-col">
-							<span className={this.statusClass}>{this.props.agreement.csconta__Status__c}</span>
+							{this.props.agreement.csconta__Agreement_Name__c ||
+								'-- anonymous --'}
+						</div>
+						<div className="fa-panel-body-col">
+							<span className={this.statusClass}>
+								{this.props.agreement.csconta__Status__c}
+							</span>
 						</div>
 					</div>
 				</Link>

@@ -248,9 +248,11 @@ export function getAppSettings() {
 
 		return new Promise((resolve, reject) => {
 			window.SF.invokeAction('getAppSettings').then(response => {
-				dispatch(recieveAppSettings(response));
-				resolve(response);
-				return response;
+				setTimeout(() => {
+					dispatch(recieveAppSettings(response));
+					resolve(response);
+					return response;
+				}, 1000);
 			});
 		});
 	};

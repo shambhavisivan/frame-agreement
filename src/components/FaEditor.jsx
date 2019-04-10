@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import { Prompt } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
 import {
@@ -147,6 +147,7 @@ class FaEditor extends Component {
 		// Ref active FA from store
 		this.state = {
 			activeFa: _frameAgreement,
+			actionTaken: false,
 			productModal: false,
 			productFilter: '',
 			negotiateModal: false,
@@ -657,6 +658,7 @@ class FaEditor extends Component {
 			return new Promise(resolve => {
 				this.setState(
 					{
+						actionTaken: true,
 						activeFa: {
 							...this.state.activeFa,
 							_ui: {
@@ -736,6 +738,7 @@ class FaEditor extends Component {
 
 			this.setState(
 				{
+					actionTaken: true,
 					selectedProducts: {},
 					activeFa: {
 						...this.state.activeFa,
@@ -816,6 +819,7 @@ class FaEditor extends Component {
 
 	onFieldChange(field, value) {
 		this.setState({
+			actionTaken: true,
 			activeFa: { ...this.state.activeFa, [field]: value }
 		});
 	}
@@ -860,6 +864,7 @@ class FaEditor extends Component {
 		attachment = await publish('onBeforeNegotiate', attachment);
 		this.setState(
 			{
+				actionTaken: true,
 				activeFa: {
 					...this.state.activeFa,
 					_ui: { ...this.state.activeFa._ui, attachment }
@@ -977,6 +982,7 @@ class FaEditor extends Component {
 
 			this.setState(
 				{
+					actionTaken: true,
 					activeFa: {
 						...this.state.activeFa,
 						_ui: { ...this.state.activeFa._ui, _attachment }
@@ -1025,6 +1031,7 @@ class FaEditor extends Component {
 
 		this.setState(
 			{
+				actionTaken: true,
 				activeFa: {
 					...this.state.activeFa,
 					_ui: { ...this.state.activeFa._ui, attachment }
@@ -1048,6 +1055,17 @@ class FaEditor extends Component {
 							attachment[cp.Id]._charges || {}
 						)
 					};
+
+					if (attachment[cp.Id].hasOwnProperty('_product')) {
+						bulkValidation[cp.Id].product = validateProduct({
+							oneOff: cp.cspmb__One_Off_Charge__c,
+							negotiatedOneOff: attachment[cp.Id]._product.oneOff,
+							recurring: cp.cspmb__Recurring_Charge__c,
+							negotiatedRecurring: attachment[cp.Id]._product.recurring,
+							authLevel: cp.cspmb__Authorization_Level__c || null,
+							Name: cp.Name
+						});
+					}
 				});
 
 				this.props.setValidation(bulkValidation);
@@ -1189,7 +1207,7 @@ class FaEditor extends Component {
 						this.state.activeFa.csconta__Status__c
 					) && (
 						<button
-							className="fa-button fa-margin-right-sm"
+							className="fa-button fa-margin-right-xsm"
 							onClick={this.onOpenCommercialProductModal}
 						>
 							{window.SF.labels.btn_AddProducts}
@@ -1201,7 +1219,7 @@ class FaEditor extends Component {
 					) && (
 						<button
 							disabled={!Object.keys(this.state.selectedProducts).length}
-							className="fa-button fa-margin-right-sm"
+							className="fa-button fa-margin-right-xsm"
 							onClick={this.onOpenNegotiationModal}
 						>
 							{window.SF.labels.btn_BulkNegotiate}
@@ -1275,7 +1293,7 @@ class FaEditor extends Component {
 								onClick={() => {
 									this.callHandler(btnObj.method, btnObj.type);
 								}}
-								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
+								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-xsm"
 							>
 								{btnObj.label}
 							</button>
@@ -1292,16 +1310,18 @@ class FaEditor extends Component {
 			this.state.activeFa._ui.approval.listProcess.length
 		) {
 			approvalHistory = (
-				<ApprovalProcess
-					onChange={this.onApprovalChange}
-					faId={this.faId}
-					approval={this.state.activeFa._ui.approval}
-				/>
+				<div className="fa-padding-top-sm">
+					<ApprovalProcess
+						onChange={this.onApprovalChange}
+						faId={this.faId}
+						approval={this.state.activeFa._ui.approval}
+					/>
+				</div>
 			);
 		}
 		// *******************************************************
 		// Negotiation header with and without commercial products
-		let commercialProducts = <CommercialProductSkeleton count={3} />;
+		let commercialProducts = <CommercialProductSkeleton count={5} />;
 
 		if (
 			this.state.loading.attachment &&
@@ -1435,10 +1455,17 @@ class FaEditor extends Component {
 
 		return (
 			<div className="editor-container">
+				<Prompt
+					when={this.state.actionTaken}
+					message={window.SF.labels.modal_unsavedChanges_alert}
+				/>
+
 				<Header
 					onBackClick={this.onBackClick}
 					disabled={!this.editable}
-					title={this.state.activeFa.csconta__Agreement_Name__c}
+					title={
+						this.state.activeFa.csconta__Agreement_Name__c || '-- anonymous --'
+					}
 					status={this.state.activeFa.csconta__Status__c}
 					invalid={this.props.approvalFlag}
 					subtitle={window.SF.labels.header_frameAgreementEditorTitle}
@@ -1450,7 +1477,7 @@ class FaEditor extends Component {
 							this.state.activeFa.csconta__Status__c
 						) && (
 							<button
-								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-sm"
+								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-xsm"
 								onClick={this.upsertFrameAgreements}
 							>
 								{window.SF.labels.btn_Save}
@@ -1499,7 +1526,7 @@ class FaEditor extends Component {
 				<div className="fa-container">
 					<div className="fa-container-inner">
 						{this.header_rows.length ? (
-							<section className="fa-section fa-section-vertical fa-section-border fa-section-light">
+							<section className="fa-section fa-section-vertical fa-section-shadow fa-section-light">
 								{this.header_rows.map((row, i) => {
 									return (
 										<div
@@ -1528,7 +1555,7 @@ class FaEditor extends Component {
 							''
 						)}
 
-						<div className="fa-padding-top-sm">{approvalHistory}</div>
+						{approvalHistory}
 
 						<div className="fa-padding-top-sm">
 							{commercialProducts}

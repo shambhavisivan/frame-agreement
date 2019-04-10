@@ -484,8 +484,10 @@ private class FrameRateManagerControllerTest {
 		system.assertEquals('Success', decomposeResult_1);
 
 		List < cspmb__Price_Item_Pricing_Rule_Association__c > pipraList = [select Id from cspmb__Price_Item_Pricing_Rule_Association__c where cspmb__pricing_rule__c = :prId limit 10000];
+		List < cspmb__Price_Item_Pricing_Rule_Association__c > pipraList2 = [select Id from cspmb__Price_Item_Pricing_Rule_Association__c where cspmb__pricing_rule__c = :prId_2 limit 10000];
 
-		system.assertEquals(0, pipraList.size());
+		system.assertEquals(0, pipraList.size()); // Deleted
+		system.assertEquals(6, pipraList2.size());
 		Test.stopTest();
 	}
 

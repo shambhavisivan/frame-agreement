@@ -1,5 +1,6 @@
 <apex:page controller="FrameRateManagerController" showHeader="true" showChat="false" showQuickActionVfHeader="false"
-	sidebar="false" standardStylesheets="false">
+	sidebar="false" standardStylesheets="false" title="Frame Agreement Manager">
+
 	<div id="fam" class="fam"></div>
 	<script type='text/javascript'>
 		Visualforce.remoting.timeout = 120000;
@@ -82,6 +83,8 @@
 				approval_action_reject: '{!$Label.approval_action_reject}',
 				approval_action_reassign: '{!$Label.approval_action_reassign}',
 				approval_action_recall: '{!$Label.approval_action_recall}',
+				approval_message_title: '{!$Label.approval_message_title}',
+				approval_message_placeholder: '{!$Label.approval_message_placeholder}',
 				approval_table_header_action: '{!$Label.approval_table_header_action}',
 				approval_table_header_date: '{!$Label.approval_table_header_date}',
 				approval_table_header_status: '{!$Label.approval_table_header_status}',
@@ -126,6 +129,7 @@
 				modal_bluk_rateFilter_propertyTitle: '{!$Label.modal_bluk_rateFilter_propertyTitle}',
 				modal_bluk_rateFilter_propertyValueTitle: '{!$Label.modal_bluk_rateFilter_propertyValueTitle}',
 				modal_bluk_rateFilter_dropdownPlaceholder: '{!$Label.modal_bluk_rateFilter_dropdownPlaceholder}',
+				modal_unsavedChanges_alert: '{!$Label.modal_unsavedChanges_alert}',
 				alert_deleteProducts_title: '{!$Label.alert_deleteProducts_title}',
 				alert_deleteProducts_message: '{!$Label.alert_deleteProducts_message}',
 				alert_deleteProducts_btn_action: '{!$Label.alert_deleteProducts_btn_action}',

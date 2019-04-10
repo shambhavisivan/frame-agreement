@@ -1,0 +1,29 @@
+@mixin skeletonAnimation {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, transparent 0, rgba(#f3f2f2, 0.6) 30%, rgba(#f3f2f2, 1) 40%, transparent);
+    animation: shimmer 1s infinite;
+    content: '';
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-shape {
+    background-color: #ecebea;
+    position: relative;
+    overflow: hidden;
+
+        &::after {
+            @include skeletonAnimation;
+        }
+}
+
+

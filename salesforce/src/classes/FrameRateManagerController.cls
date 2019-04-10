@@ -167,6 +167,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('truncate_product_fields', FACSettings.get('csfam__truncate_product_fields__c'));
 		settingMap.put('show_volume_fields', FACSettings.get('csfam__show_volume_fields__c'));
 		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
+		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
 
 		settingMap.put('fa_editable_statuses', FACSettings.get('csfam__fa_editable_statuses__c'));
 
@@ -175,7 +176,6 @@ global with sharing class FrameRateManagerController {
 		statuses.put('approved_status', FACSettings.get('csfam__approved_status__c'));
 		statuses.put('draft_status', FACSettings.get('csfam__draft_status__c'));
 		statuses.put('closed_status', FACSettings.get('csfam__closed_status__c'));
-		statuses.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
 		statuses.put('requires_approval_status', FACSettings.get('csfam__requires_approval_status__c'));
 		statuses.put('fa_number_prefix', FACSettings.get('csfam__fa_number_prefix__c'));
 
@@ -343,15 +343,7 @@ global with sharing class FrameRateManagerController {
 				Approval.ProcessWorkitemRequest workItemRequest = new Approval.ProcessWorkitemRequest();
 				workItemRequest.setWorkItemId(pwi[0].Id);
 				workItemRequest.setAction(action);
-				String commentAction = '';
-				if (action == 'Reject') {
-					commentAction = ' Rejected';
-				} else if (action == 'Removed') {
-					commentAction = ' Recalled';
-				} else if (action == 'Approve') {
-					commentAction = ' Approved';
-				}
-				workItemRequest.setComments(comments + commentAction + ' by User: ' + UserInfo.getName());
+				workItemRequest.setComments(comments);
 				Approval.ProcessResult result = Approval.process(workItemRequest);
 				// String observable = action == 'Reject' ? 'AfterReject' : 'AfterApprove';
 				// executeObservers(recordId, action, observable);
@@ -1158,6 +1150,8 @@ global with sharing class FrameRateManagerController {
 		List < cspmb__Price_Item_Pricing_Rule_Association__c > pipraList = new List < cspmb__Price_Item_Pricing_Rule_Association__c >();
 
 		categorizationData = (List < Object >) JSON.deserializeUntyped(data);
+		system.debug('***********data**************');
+		system.debug(categorizationData);
 
 		for (Object item : categorizationData) {
 			try {
@@ -1191,8 +1185,9 @@ global with sharing class FrameRateManagerController {
 				if (oneOff != null) {
 					pipra.cspmb__one_off_adjustment__c = oneOff;
 				}
-
+				system.debug(pipra);
 				pipraList.add(pipra);
+				system.debug('pipraList *** ' + pipraList);
 
 			}
 			catch (Exception e) {
@@ -1202,6 +1197,10 @@ global with sharing class FrameRateManagerController {
 
 		if (retString == 'Success') {
 			try {
+				system.debug('Inserting pipra');
+				system.debug(pipraList);
+				system.debug('pipraList2 *** ' + pipraList);
+
 				insert pipraList;
 				csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 

@@ -158,9 +158,17 @@ class Charges extends React.Component {
 										{charge.Name}
 									</div>
 									<div className="list-cell"> {charge.chargeType}</div>
-									<div className="list-cell"> {charge.oneOff || 'N/A'}</div>
+									<div className="list-cell">
+										{' '}
+										{charge.hasOwnProperty('oneOff') ? charge.oneOff : 'N/A'}
+									</div>
 									<div className="list-cell negotiable">{oneOffRow}</div>
-									<div className="list-cell"> {charge.recurring || 'N/A'}</div>
+									<div className="list-cell">
+										{' '}
+										{charge.hasOwnProperty('recurring')
+											? charge.recurring
+											: 'N/A'}
+									</div>
 									<div className="list-cell negotiable">{recurringRow}</div>
 								</li>
 							);

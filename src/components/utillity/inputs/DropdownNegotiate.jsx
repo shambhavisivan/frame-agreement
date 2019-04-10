@@ -82,7 +82,8 @@ class DropdownNegotiate extends React.Component {
 		console.log(initialDiscount);
 
 		this.state = {
-			selected: initialDiscount
+			selected: initialDiscount,
+			fixed: true
 		};
 	}
 
@@ -125,6 +126,29 @@ class DropdownNegotiate extends React.Component {
 			negotiateFixed = this.props.negotiatedValue;
 		}
 
+		let _discount;
+		if (this.state.fixed) {
+			_discount = (
+				<span className="discount-amount">
+					{' '}
+					-{(this.props.originalValue - this.props.negotiatedValue).toFixed(2)}
+				</span>
+			);
+		} else {
+			_discount = (
+				<span className="discount-amount">
+					{' '}
+					-
+					{(
+						((this.props.originalValue - this.props.negotiatedValue) /
+							this.props.originalValue) *
+						100
+					).toFixed(2)}
+					%
+				</span>
+			);
+		}
+
 		return (
 			<div
 				className={
@@ -137,15 +161,14 @@ class DropdownNegotiate extends React.Component {
 
 					{dirty && (
 						<div className="discount-info">
-							<div className="discount">
+							<div
+								className="discount"
+								onClick={() => {
+									this.setState({ fixed: !this.state.fixed });
+								}}
+							>
 								<div>{window.SF.labels.util_negotiation_input_diff_label} </div>
-								<span className="discount-amount">
-									{' '}
-									-
-									{(
-										this.props.originalValue - this.props.negotiatedValue
-									).toFixed(2)}
-								</span>
+								{_discount}
 							</div>
 						</div>
 					)}

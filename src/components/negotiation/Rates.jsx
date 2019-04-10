@@ -81,7 +81,9 @@ class Rates extends React.Component {
 														{rcl.Name}
 													</div>
 													<div className="list-cell">
-														{rcl.cspmb__rate_value__c || '-/-'}
+														{rcl.hasOwnProperty('rcl.cspmb__rate_value__c')
+															? rcl.rcl.cspmb__rate_value__c
+															: 'N/A'}
 													</div>
 													<div className="list-cell negotiable">
 														<InputNegotiate

@@ -79,6 +79,7 @@ class ProductModal extends Component {
 		this.state = {
 			searchValue: '',
 			panel: false,
+			expanded: false,
 			actionTaken: false,
 			filter: this.initFilterData(),
 			productFilter: '',
@@ -198,6 +199,12 @@ class ProductModal extends Component {
 		return cpSize;
 	}
 
+	toggleExpanded() {
+		this.setState({ expanded: !this.state.expanded }, () => {
+			console.log('Expand:', this.state.expanded);
+		});
+	}
+
 	toggleCategoryCollapse(name) {
 		console.log('Toggling ', name);
 		this.setState(
@@ -251,14 +258,26 @@ class ProductModal extends Component {
 			<Modal
 				classNames={{
 					overlay: 'overlay',
-					modal: 'modal fa-modal',
+					modal: 'modal fa-modal' + (this.state.expanded ? ' expanded' : ''),
 					closeButton: 'close-button'
 				}}
+				closeIconSvgPath={
+					<path d="M14.3 11.7l6-6c.3-.3.3-.7 0-1l-.9-1c-.3-.2-.7-.2-1 0l-6 6.1c-.2.2-.5.2-.7 0l-6-6.1c-.3-.3-.7-.3-1 0l-1 1c-.2.2-.2.7 0 .9l6.1 6.1c.2.2.2.4 0 .6l-6.1 6.1c-.3.3-.3.7 0 1l1 1c.2.2.7.2.9 0l6.1-6.1c.2-.2.4-.2.6 0l6.1 6.1c.2.2.7.2.9 0l1-1c.3-.3.3-.7 0-1l-6-6c-.2-.2-.2-.5 0-.7z" />
+				}
+				closeIconSize={48}
 				open={this.props.open}
 				onClose={this.onCloseModal}
 				center
 			>
 				<div className="fa-modal-header">
+					<span
+						className="modal-expand"
+						onClick={() => {
+							this.toggleExpanded();
+						}}
+					>
+						<Icon name="expand_alt" width="24" height="24" color="white" />
+					</span>
 					<h2>{window.SF.labels.modal_addProduct_title}</h2>
 				</div>
 

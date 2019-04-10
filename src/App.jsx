@@ -10,6 +10,11 @@ import {
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
 import FaEditor from './components/FaEditor';
+import Icon from './components/utillity/Icon';
+
+import LandingSkeleton from './components/skeletons/LandingSkeleton';
+import EditorSkeleton from './components/skeletons/EditorSkeleton';
+import CommercialProductSkeleton from './components/skeletons/CommercialProductSkeleton';
 
 import { withRouter } from 'react-router-dom';
 
@@ -26,25 +31,43 @@ class App extends Component {
 				this.props.getCommercialProducts()
 			]).then(responseArr => {
 				publish('onLoad', [responseArr]);
-				// window.FAC.toaster = ToastsStore;
 			});
 		});
+
+		this.landing = this.props.history.location.pathname === '/';
 	}
 
-	// <img className="icon-settings" src="http://www.vicksdesign.com/products/settings-machine-cog-gear-22-B1.png" />
 	render() {
-		return (
+		let _loadingComponent;
+
+		if (this.landing) {
+			_loadingComponent = <LandingSkeleton count={5} />;
+		} else {
+			_loadingComponent = (
+				<React.Fragment>
+					<EditorSkeleton count={5} />;
+					<div className="skeleton-landing-cp">
+						<CommercialProductSkeleton count={5} />;
+					</div>
+				</React.Fragment>
+			);
+		}
+
+		const loading =
 			this.props.initialised.fa_loaded &&
 			this.props.initialised.cp_loaded &&
-			this.props.initialised.settings_loaded && (
-				<div className="fa-app-wrapper">
-					<Switch>
-						<Route exact path="/" component={FaList} />
-						<Route exact path="/agreement" component={FaEditor} />
-						<Route exact path="/agreement/:id" component={FaEditor} />
-					</Switch>
-				</div>
-			)
+			this.props.initialised.settings_loaded;
+
+		return loading ? (
+			<div className="fa-app-wrapper">
+				<Switch>
+					<Route exact path="/" component={FaList} />
+					<Route exact path="/agreement" component={FaEditor} />
+					<Route exact path="/agreement/:id" component={FaEditor} />
+				</Switch>
+			</div>
+		) : (
+			_loadingComponent
 		);
 	}
 }

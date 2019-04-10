@@ -169,20 +169,22 @@ class Addons extends React.Component {
 							return (
 								<li key={add.Id} className="list-row">
 									<div className="list-cell">
-										<Icon name="priority" width="14" color={flagColor} />{' '}
+										<Icon name="priority" width="14" color={flagColor} />
 										{add.Name}
 									</div>
 
 									<div className="list-cell">
-										{' '}
-										{add.cspmb__One_Off_Charge__c || 'N/A'}
+										{add.hasOwnProperty('cspmb__One_Off_Charge__c')
+											? add.cspmb__One_Off_Charge__c
+											: 'N/A'}
 									</div>
 
 									<div className="list-cell negotiable">{oneOffRow}</div>
 
 									<div className="list-cell">
-										{' '}
-										{add.cspmb__Recurring_Charge__c || 'N/A'}
+										{add.hasOwnProperty('cspmb__Recurring_Charge__c')
+											? add.cspmb__Recurring_Charge__c
+											: 'N/A'}
 									</div>
 
 									<div className="list-cell negotiable">{recurringRow}</div>

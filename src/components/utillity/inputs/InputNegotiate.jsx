@@ -13,7 +13,8 @@ class InputNegotiate extends React.Component {
 		this.onBlur = this.onBlur.bind(this);
 
 		this.state = {
-			focus: false
+			focus: false,
+			fixed: true
 		};
 	}
 
@@ -89,6 +90,29 @@ class InputNegotiate extends React.Component {
 			);
 		}
 
+		let _discount;
+		if (this.state.fixed) {
+			_discount = (
+				<span className="discount-amount">
+					{' '}
+					-{(this.props.originalValue - this.props.negotiatedValue).toFixed(2)}
+				</span>
+			);
+		} else {
+			_discount = (
+				<span className="discount-amount">
+					{' '}
+					-
+					{(
+						((this.props.originalValue - this.props.negotiatedValue) /
+							this.props.originalValue) *
+						100
+					).toFixed(2)}
+					%
+				</span>
+			);
+		}
+
 		return (
 			<div
 				className={
@@ -99,15 +123,14 @@ class InputNegotiate extends React.Component {
 				<div className="discount-info">
 					{this.props.negotiatedValue !== this.props.originalValue &&
 					this.props.originalValue ? (
-						<span className="discount">
+						<span
+							className="discount"
+							onClick={() => {
+								this.setState({ fixed: !this.state.fixed });
+							}}
+						>
 							<div>{window.SF.labels.util_negotiation_input_diff_label} </div>
-							<span className="discount-amount">
-								{' '}
-								-
-								{(
-									this.props.originalValue - this.props.negotiatedValue
-								).toFixed(2)}
-							</span>
+							{_discount}
 						</span>
 					) : (
 						''

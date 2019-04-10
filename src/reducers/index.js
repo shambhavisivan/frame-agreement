@@ -349,6 +349,8 @@ const rootReducer = (state = initialState, action) => {
 			}
 
 			// ***************************************************************************************************************
+			action.payload.FACSettings.decomposition_chunk_size =
+				action.payload.FACSettings.decomposition_chunk_size || 1000;
 			// ***************************************************************************************************************
 			action.payload.AuthLevels = action.payload.AuthLevels
 				? action.payload.AuthLevels.reduce(function(acc, level) {

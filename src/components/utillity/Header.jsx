@@ -11,7 +11,7 @@ class Header extends Component {
 	render() {
 		return (
 			<div
-				className={`fa-header-secondary ${
+				className={`fa-header-secondary fa-section-shadow ${
 					this.props.disabled ? 'error fa-disabled' : ''
 				} ${this.props.invalid ? 'error fa-invalid' : ''}`}
 			>
@@ -21,7 +21,7 @@ class Header extends Component {
 							className="fa-header-secondary-prev"
 							onClick={this.props.onBackClick}
 						>
-							<Icon name="back" width="22" height="21" color="#FFFFFF" />
+							<Icon name="back" width="19" height="18" color="#FFFFFF" />
 						</div>
 						<div className="fa-header-secondary-body-col fa-header-secondary-body-col-left">
 							<div>
@@ -29,7 +29,7 @@ class Header extends Component {
 									{this.props.subtitle}
 								</div>
 								<div className="fa-header-secondary-body-title">
-									{this.props.title}{' '}
+									{this.props.title}
 								</div>
 							</div>
 							<div className="fa-padding-left-sm">

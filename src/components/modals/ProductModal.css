@@ -7,7 +7,7 @@
 }
 
 .modal-body.panel-open .categorisation-container {
-  display: none;
+    display: none;
 }
 
 .categorisation-container svg {
@@ -74,11 +74,29 @@
     padding: 16px;
 }
 
+.modal-expand {
+    cursor: pointer;
+    /* margin-left: 15px; */
+    position: absolute;
+    top: -20px;
+    top: -36px;
+    right: 40px;
+}
+
+/*.modal-expand svg {
+    fill: #706e6b;
+}
+
+.modal-expand:hover svg {
+    fill: #0070d2;
+}*/
 
 /**********************************************/
 
 .modal-product-list {
-  padding-top: 1rem;
+    padding-top: 1rem;
+    max-height: 55vh;
+    overflow-y: auto;
 }
 
 .product-list-header {
@@ -97,13 +115,18 @@
     padding: 8px 0px;
     height: 32px;
     box-sizing: border-box;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 5px;
 }
 
 .product-list {
     padding: 1rem;
 }
 
-.product-list > .product-row {
+.product-list>.product-row {
     height: 28px;
     border-radius: 2px;
     box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.22);
@@ -115,21 +138,27 @@
     color: #080707;
 }
 
-.product-list > .product-row.selected {
+.product-list>.product-row.selected {
     color: white;
     background-color: #0070d2;
 }
 
-.product-list>.product-row > span {
-    font-size: 13px;
+.product-list>.product-row>span {
+    font-size: 12px;
     flex: 1;
-    display: flex;
+    /*display: flex;*/
+    line-height: 28px;
     align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 5px;
 }
 
 .product-list>.product-row>span:first-child {
     color: #0070d2;
 }
+
 .product-list>.product-row.selected>span:first-child {
     color: white;
 }
@@ -204,11 +233,11 @@ table th {
     font-size: 13px;
     color: #222222;
     cursor: pointer;
-display: flex;
+    display: flex;
     align-items: center;
 }
 
-.category-title > span{
+.category-title>span {
     margin-left: 5px;
 }
 
@@ -221,7 +250,7 @@ display: flex;
     padding-top: 5px;
 }
 
-.category-values-list > li {
+.category-values-list>li {
     cursor: pointer;
     font-size: 13px;
     display: flex;
@@ -229,10 +258,10 @@ display: flex;
     padding-bottom: 5px;
 }
 
-.category-values-list > li span {
+.category-values-list>li span {
     margin-left: 5px;
 }
 
-.category-values-list > li .checkbox {
+.category-values-list>li .checkbox {
     display: inline-block;
 }

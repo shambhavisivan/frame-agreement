@@ -1,0 +1,170 @@
+@mixin header {
+    padding: 10px 10px 13px 9px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #fafaf9;
+}
+
+@mixin centered {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+@mixin skeletonAnimation {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, transparent 0, rgba(#f3f2f2, 0.6) 30%, rgba(#f3f2f2, 1) 40%, transparent);
+    animation: shimmer 1.5s infinite;
+    content: '';
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-container {
+    background-color: #f3f2f2;
+    width: 100%;
+    border-bottom: 2px solid #f3f2f2;
+    display: inline-block;
+}
+
+.skeleton-table-item {
+    background-color: #fafaf9;
+    display: flex;
+    flex-direction: row;
+    padding: 12px 10px;
+    margin-bottom: 10px;
+}
+
+.skeleton-shape {
+    margin-right: 5px;
+}
+
+.skeleton-landing-cp {
+    @include centered;
+}
+
+/****************************************/
+
+.skeleton-fa {
+    .skeleton-header {
+        @include header;
+
+        .skeleton-row {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            @include centered;
+        }
+    }
+
+    .skeleton-table {
+        background-color: #f3f2f2;
+        position: relative;
+        overflow: hidden;
+        @include centered;
+
+        .skeleton-left,
+        .skeleton-right {
+            display: flex;
+            flex: 1;
+        }
+
+        .skeleton-right {
+            justify-content: flex-end;
+        }
+    }
+}
+
+.skeleton-ed {
+    .skeleton-header {
+        @include header;
+        background-color: #ecebea;
+        border-bottom: 2px solid #ecebea;
+
+        .skeleton-shape {
+            background-color: #fafaf9;
+        }
+
+        margin-bottom: 0px;
+
+        .skeleton-row {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            @include centered;
+        }
+
+        .skeleton-left,
+        .skeleton-right {
+            display: flex;
+            flex: 1;
+        }
+
+        .skeleton-left {
+            flex-direction: column;
+        }
+
+        .skeleton-right {
+            justify-content: flex-end;
+        }
+    }
+
+    .skeleton-ed-fields {
+        @include centered;
+        background-color: #fafaf9;
+        height: 200px;
+    }
+
+    .skeleton-table-item {
+
+        .skeleton-left,
+        .skeleton-right {
+            display: flex;
+            flex: 1;
+        }
+
+        .skeleton-right {
+            justify-content: flex-end;
+        }
+    }
+
+    .skeleton-table {
+        background-color: #f3f2f2;
+        position: relative;
+        overflow: hidden;
+        @include centered;
+    }
+}
+
+.skeleton-cp {
+    .skeleton-header {
+        padding: 20px 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        background-color: #fafaf9;
+        margin-bottom: 5px;
+    }
+
+    .skeleton-table-item {
+        background-color: #fafaf9;
+        position: relative;
+        overflow: hidden;
+        justify-content: space-between;
+    }
+
+
+    .skeleton-right {
+        display: flex;
+    }
+}

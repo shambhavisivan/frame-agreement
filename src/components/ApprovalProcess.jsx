@@ -40,7 +40,7 @@ class ApprovalProcess extends React.Component {
 		} catch (err) {}
 
 		this.state = {
-			open: false,
+			open: true,
 			loading: false,
 			comment: ''
 		};

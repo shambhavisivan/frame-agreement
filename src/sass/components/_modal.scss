@@ -1,5 +1,6 @@
 /* FA Modal */
 // Modal component.
+
 .fa-modal {
 	position: absolute;
 	max-width: 850px;
@@ -38,10 +39,10 @@
 
 /* Body */
 .fa-modal-body {
-	padding-bottom: 1.5rem;
-	flex: 1;
-	overflow: hidden;
 	display: flex;
+	flex: 1;
+	overflow: auto;
+	padding-bottom: 1.5rem;
 
 	.react-confirm-alert & {
 		padding: 1.5rem;

@@ -2,6 +2,14 @@
 	flex-direction: column;
 }
 
+.negotiation-modal .filter-container {
+	border-top: 0;
+}
+
+.negotiation-modal .list-row > .list-cell {
+	padding: 1rem 1.5rem;
+}
+
 .modal-panel {
 	background: #fdfdfd;
 	padding-bottom: 0.25rem;
@@ -79,10 +87,10 @@
 
 /**********************************************/
 .table-list-header {
+	background: #fafaf9;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	background: #fff;
 	border-bottom: 1px solid #dddbda;
 	font-size: 0.8rem;
 	color: #5e5d60;
@@ -99,6 +107,10 @@
 	padding: 0.25rem 0.75rem;
 	flex: 1;
 	text-align: right;
+}
+
+.filter-container + .tab-content-container .table-list-header > .list-cell {
+	padding: 0.5rem 1.5rem;
 }
 
 .table-list-header > div.list-cell:first-child {
@@ -172,14 +184,14 @@
 	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
-.bulk-filter-container > h4 {
+.fa-modal .bulk-filter-container > h4 {
 	margin: 0;
 	width: 100%;
-	color: #514f4d;
+	color: #000;
 	font-size: 14px;
-	padding-bottom: 13px;
+	font-weight: 700;
+	padding-bottom: 0.25rem;
 	display: inline-block;
-	text-transform: uppercase;
 }
 
 .bulk-filter-container > h4 span {
@@ -194,6 +206,13 @@
 	display: inline-block;
 }
 
+.bulk-filter-section label {
+	color: #000;
+	display: inline-block;
+	font-size: 0.75rem;
+	padding-bottom: 0.5rem;
+}
+
 .bulk-filter-section select {
 	width: 100%;
 	font-size: 13px;
@@ -204,6 +223,13 @@
 	height: 26px;
 	font-size: 12px;
 	padding: 2px 6px;
+}
+
+.bulk-filter-section select:focus {
+	background-color: #fff;
+	border-color: #0070d2;
+	box-shadow: 0 0 3px #0070d2;
+	outline: 0;
 }
 
 .bulk-filter-section select[disabled] {

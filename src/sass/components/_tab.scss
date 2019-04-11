@@ -38,3 +38,32 @@
 	cursor: auto;
 	opacity: .5;
 }
+
+/* Secondary */
+.fa-tabs-secondary {
+	border-bottom: 1px solid $gray;
+	color: $black;
+	display: flex;
+
+	.fa-tabs-secondary-item {
+		align-items: center;
+		border-bottom: 2px solid transparent;
+		cursor: pointer;
+		display: flex;
+		height: 2.5rem;
+		font-size: 0.8125rem;
+		padding: 0 .75rem;
+		transition: 0.25s;
+
+		&:hover {
+			border-bottom: 2px solid $blue-sf;
+		}
+
+		&-addons,
+		&-charges,
+		&-brand,
+		&-nuetral {
+			border-bottom: 2px solid $blue-sf;
+		}
+	}
+}

@@ -100,21 +100,21 @@ class FrameAgreementRow extends React.Component {
 							onClick={() => this.menuAction('edit')}
 						>
 							<Icon name="edit" height="14" width="14" color="#0070d2" />
-							{window.SF.labels.faMenuActionEdit}
+							<span className="fa-margin-left-xsm">{window.SF.labels.faMenuActionEdit}</span>
 						</button>
 						<button
 							className="fa-dropdown-button"
 							onClick={() => this.menuAction('clone')}
 						>
 							<Icon name="copy" height="14" width="14" color="#0070d2" />
-							{window.SF.labels.faMenuActionClone}
+							<span className="fa-margin-left-xsm">{window.SF.labels.faMenuActionClone}</span>
 						</button>
 						<button
 							className="fa-dropdown-button"
 							onClick={() => this.menuAction('delete')}
 						>
 							<Icon name="delete" height="14" width="14" color="#0070d2" />
-							{window.SF.labels.faMenuActionDelete}
+							<span className="fa-margin-left-xsm">{window.SF.labels.faMenuActionDelete}</span>
 						</button>
 					</div>
 				)}

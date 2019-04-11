@@ -11,32 +11,47 @@ class DropdownCheckbox extends React.Component {
 		this.menu = React.createRef();
 
 		this.showMenu = this.showMenu.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.toggleVisibility = this.toggleVisibility.bind(this);
 
 		this.state = {
 			menu: false
 		};
 
-		// this.props.options
+		this.setWrapperRef = this.setWrapperRef.bind(this);
+		this.handleClickOutside = this.handleClickOutside.bind(this);
+	}
+
+	componentDidMount() {
+		document.addEventListener('mousedown', this.handleClickOutside);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('mousedown', this.handleClickOutside);
+	}
+
+	setWrapperRef(node) {
+		this.wrapperRef = node;
+	}
+
+	handleClickOutside(event) {
+		if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+			this.hideMenu();
+		}
 	}
 
 	showMenu() {
 		this.setState(
 			{
 				menu: true
-			},
-			() => {
-				this.menu.current.focus();
-			}
-		);
+			});
 	}
 
-	onBlur() {
+	hideMenu() {
 		this.setState({
 			menu: false
 		});
 	}
+
 	toggleVisibility(index) {
 		this.props.onChange(index);
 	}
@@ -47,26 +62,26 @@ class DropdownCheckbox extends React.Component {
 		return (
 			<div className="dropdown-checkbox-container">
 				{this.state.menu && (
-					<ul
-						ref={this.menu}
-						tabIndex="0"
-						className="menu"
+					<div
+						ref={this.setWrapperRef}
+						className="fa-dropdown fa-dropdown-reverse"
 						onBlur={this.onBlur}
 					>
 						{this.props.options.map((option, i) => {
 							return (
-								<li
+								<button
+									className="fa-dropdown-button"
 									key={option.name}
 									onClick={() => {
 										this.toggleVisibility(i);
 									}}
 								>
 									<Checkbox readOnly={option.visible} />
-									{option.name}
-								</li>
+									<span className="fa-margin-left-xsm">{option.name}</span>
+								</button>
 							);
 						})}
-					</ul>
+					</div>
 				)}
 
 				<div className="dropdown-placeholder" onClick={this.showMenu}>

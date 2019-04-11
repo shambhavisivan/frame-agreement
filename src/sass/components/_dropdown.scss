@@ -10,8 +10,15 @@
 	outline: 0;
 	min-width: 8rem;
 	position: absolute;
+	text-align: left;
 	top: calc(100% + 0.5rem);
 	z-index: $z-index-dropdown;
+}
+
+.fa-dropdown-reverse {
+	left: inherit;
+	min-width: 16rem;
+	right: 0;
 }
 
 .fa-dropdown-secondary {
@@ -41,10 +48,6 @@
 
 	&:hover {
 		background: $gray-light;
-	}
-
-	svg {
-		margin-right: 0.5rem;
 	}
 }
 

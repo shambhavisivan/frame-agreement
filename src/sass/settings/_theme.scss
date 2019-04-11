@@ -7,6 +7,7 @@ $gray: #dddbda;
 $gray-light: #f5f5f5;
 $gray-dark: #777f8b;
 $gray-darker: #6b727d;
+$gray-darkest: #080707;
 $gray-blue: #f4f6f9;
 $white: #fff;
 $red: #d9665d;
@@ -19,6 +20,8 @@ $variables: (
 	--main-c: $blue-sf,
 	--main-bg: $white,
 	--main-br: $gray,
+
+	--font-dark: $gray-darkest,
 
 	--button-c: $blue-sf,
 	--button-bg: $white,

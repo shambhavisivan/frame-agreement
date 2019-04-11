@@ -1,21 +1,55 @@
-/* Page */
-// Base page styles.
-
-html,
-body {
-	background: $gray-light;
-	line-height: 1.5;
-	font-family: $font-primary;
-	font-size: 1rem;
-	font-weight: $font-weight-normal;
+// Base Styles
+html {
 	height: 100%;
-	padding: 0;
-	margin: 0;
-	width: 100%;
+
+	body {
+		height: 100%;
+		padding: 0;
+		margin: 0;
+		background: $gray-light;
+
+		* {
+			-webkit-font-smoothing: antialiased;
+		}
+
+		.fam {
+			line-height: 1.5;
+			font-family: $font-primary;
+			font-size: 1rem;
+			font-weight: $font-weight-normal;
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+
+			.fa-app-wrapper {
+				height: 100%;
+			}
+		}
+	}
 }
 
-/* Fam */
-.fam,
-.fa-app-wrapper {
-	height: 100%;
+// Salesfroce Classic Overrides
+body.hasMotif.sfdcBody {
+    padding: 0 10px;
+    margin: 0;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 100vh;
+
+    .outerNoSidebar {
+        padding: 0;
+
+        .noSidebarCell {
+			padding: 0;
+
+			.fam {
+				background: $gray-light;
+
+				*:hover a {
+					text-decoration: none !important;
+				}
+			}
+		}
+    }
 }

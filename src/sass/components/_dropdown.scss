@@ -13,6 +13,11 @@
 	text-align: left;
 	top: calc(100% + 0.5rem);
 	z-index: $z-index-dropdown;
+    border-radius: 0.25rem;
+	padding: 0.25rem 0;
+	@include css4 {
+		border: 1px solid cvar(--main-br);
+	}
 }
 
 .fa-dropdown-reverse {
@@ -30,12 +35,15 @@
 	align-items: center;
 	background: none;
 	border: 0;
-	color: $black;
+	@include sc(--font-dark);
 	cursor: pointer;
 	display: flex;
 	font-family: $font-primary;
-	font-size: 0.875rem;
-	padding: 0.5rem;
+	font-size: 0.75rem;
+	font-weight: $font-weight-normal;
+	padding: 0.5rem 0.75rem;
+	margin: 0;
+	border-radius: 0;
 	width: 100%;
 
 	&:focus,

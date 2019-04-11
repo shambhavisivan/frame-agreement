@@ -4,6 +4,9 @@
 .fa-main-header {
 	background: $white;
 	padding: 1rem 0;
+	position: sticky;
+	top: 0;
+	z-index: $z-index-main-header;
 }
 
 /* Container */
@@ -35,6 +38,12 @@
 	display: block;
 }
 
+/* Title */
+.fa-main-header .fa-main-header-item:first-of-type > div {
+	display: flex;
+	flex-direction: column;
+}
+
 .fa-main-header .fa-main-header-title {
 	color: $black;
 	font-size: 1.2rem;
@@ -57,6 +66,8 @@
 
 /* Secondary */
 .fa-header-secondary {
+	position: sticky;
+	top: 0;
 	background: $blue-sf;
 	color: $white;
 	padding: 0.75rem 0;

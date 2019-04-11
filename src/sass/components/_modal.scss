@@ -10,6 +10,12 @@
 	right: 50%;
 	transform: translate(50%, 50%);
 	width: 80%;
+
+	.react-confirm-alert & {
+		box-shadow: 0 0 4px transparentize($gray, 0.6);
+		font-size: 0.875rem;
+		max-width: 650px;
+	}
 }
 
 .fa-modal.expanded {
@@ -20,13 +26,22 @@
 .fa-modal-header {
 	padding: 1rem 0;
 	text-align: center;
+
+	.react-confirm-alert & {
+		border-bottom: 2px solid $gray-blue;
+	}
 }
 
 .fa-modal-header-title {
+	font-size: 1.25rem;
 	font-weight: $font-weight-normal;
 }
 
 /* Body */
 .fa-modal-body {
 	padding-bottom: 1.5rem;
+
+	.react-confirm-alert & {
+		padding: 1.5rem 0;
+	}
 }

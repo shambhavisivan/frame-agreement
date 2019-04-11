@@ -21,7 +21,7 @@ class ConfirmationModal extends Component {
 				</div>
 				<div className="modal-footer">
 					<button
-						className="fa-button button--neutral fa-margin-right-xsm"
+						className="fa-button fa-button-neutral fa-margin-right-xsm"
 						onClick={this.props.onCancel}
 					>
 						{window.SF.labels.alert_btn_cancel}

@@ -38,6 +38,11 @@
 	margin-right: 12px;
 }
 
+.react-confirm-alert .modal-footer {
+	background: #f4f6f9;
+	box-shadow: 0 0 4px #dddbda;
+}
+
 .close-button {
 	background: none;
 	cursor: pointer;

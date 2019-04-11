@@ -34,6 +34,7 @@
 
 	&:hover {
 		border: 1px solid $blue-sf;
+		text-decoration: none;
 	}
 
 	@include mq(sm, max) {

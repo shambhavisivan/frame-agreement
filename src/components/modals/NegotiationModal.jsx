@@ -877,13 +877,10 @@ class NegotiationModal extends Component {
 							)}
 						</ul>
 					</div>
-					{filterContainer}
 
-					<div className="tab-content-container">{tab[this.state.tab]}</div>
-
-					<div className="action-container">
-						<div className="box">
-							<div className="button-group toggle-buttons">
+					<section className="fa-section fa-section-transparent">
+						<div className="box fa-padding-left-xxsm">
+							<div className="fa-button-group toggle-buttons">
 								<button
 									disabled={!Object.keys(this.grouped_addons).length}
 									className={
@@ -939,15 +936,22 @@ class NegotiationModal extends Component {
 								</button>
 							</div>
 						</div>
-						<div className="fa-margin-top-sm">
-							<div className="fa-margin-bottom-sm">
-								<div className="fa-padding-bottom-xsm">
+					</section>
+
+					{filterContainer}
+
+					<div className="tab-content-container">{tab[this.state.tab]}</div>
+
+					<div className="action-container">
+						<div className="fa-discount">
+							<div class="fa-discount-item">
+								<div className="fa-title fa-title-dark">
 									{window.SF.labels.modal_bulk_discount_title}
 								</div>
-								<div className="button-group toggle-buttons">
+								<div className="fa-button-group-secondary toggle-buttons">
 									<button
 										className={
-											'fa-margin-right-sm fa-button button--' +
+											'fa-btn fa-margin-right-sm fa-button-' +
 											(this.state.discountMode === 'percentage'
 												? 'brand'
 												: 'neutral')
@@ -960,7 +964,7 @@ class NegotiationModal extends Component {
 									</button>
 									<button
 										className={
-											'fa-button button--' +
+											'fa-btn fa-button-' +
 											(this.state.discountMode === 'fixed'
 												? 'brand'
 												: 'neutral')
@@ -973,21 +977,23 @@ class NegotiationModal extends Component {
 									</button>
 								</div>
 							</div>
-							<div>
-								<div className="fa-padding-bottom-xsm">
+							<div class="fa-discount-item">
+								<div className="fa-title fa-title-dark">
 									{window.SF.labels.modal_bulk_discount_input_title}
 								</div>
 								<input
 									type="number"
 									min={0}
 									name=""
-									className="fa-input fa-margin-bottom-sm"
+									className="fa-input"
 									ref={this.discount}
 									placeholder={window.SF.labels.modal_bulk_input_placeholder}
 								/>
+							</div>
+							<div class="fa-discount-item">
 								<button
 									disabled={!this.state.countTotal}
-									className="fa-button button--neutral"
+									className="fa-discount-item fa-button button--neutral"
 									onClick={this.applyDiscount}
 								>
 									{window.SF.labels.modal_bulk_btn_apply}

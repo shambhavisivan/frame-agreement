@@ -1,0 +1,22 @@
+/* FA Discount */
+// CSS Discount
+
+.fa-discount {
+	align-items: flex-end;
+	display: flex;
+}
+
+/* Item */
+.fa-discount-item {
+	&:not(:last-child) {
+		padding-right: 1rem;
+	}
+
+	&:nth-child(2) {
+		flex: 100px;
+	}
+
+	&:last-child {
+		text-align: right;
+	}
+}

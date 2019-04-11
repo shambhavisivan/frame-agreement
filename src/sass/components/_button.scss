@@ -1,7 +1,8 @@
 /* FA Button */
 // Button component.
 
-.fa-button {
+.fa-button,
+.fa-button-brand {
 	align-items: center;
 	background: $blue-sf;
 	color: $white;
@@ -51,11 +52,11 @@
 }
 
 /* Group */
-.button-group {
+.fa-button-group {
 	position: relative;
 }
 
-.button-group-secondary {
+.fa-button-group-secondary {
 
 	.fa-btn {
 		border-radius: 0;

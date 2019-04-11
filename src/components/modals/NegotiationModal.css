@@ -1,74 +1,69 @@
 .negotiation-modal .modal-body {
-    flex-direction: column;
+	flex-direction: column;
 }
 
 .modal-panel {
-    border-right: 1px solid rgba(153, 153, 153, 0.5);
-    background: #fdfdfd;
-		padding-bottom: 0.25rem;
+	border-right: 1px solid rgba(153, 153, 153, 0.5);
+	background: #fdfdfd;
+	padding-bottom: 0.25rem;
 }
-
-
 
 .modal-body.panel-closed .modal-panel {
-    display: none;
+	display: none;
 }
 
-
 .modal-body.panel-closed .modal-table-container {
-    flex: 1;
-    box-sizing: border-box;
+	flex: 1;
+	box-sizing: border-box;
 }
 
 /**********************************************/
 .products-container {
-    padding: 20px;
+	padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
 .action-container {
-  padding: 1.25rem 1.25rem 0 1.25rem;
+	padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
 .filter-container {
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
-.filter-container>div {
-    margin-right: 55px;
+.filter-container > div {
+	margin-right: 55px;
 }
 
 .products-container .label-text {
-    padding: 7px 0px;
+	padding: 7px 0px;
 }
-
 
 .horizontal-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
-.horizontal-list>li {
-    flex: 2;
-    padding: 9px 12px;
-    background: #0070d2;
-    color: white;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    margin-left: 15px;
+.horizontal-list > li {
+	flex: 2;
+	padding: 9px 12px;
+	background: #0070d2;
+	color: white;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+	border-radius: 4px;
+	margin-left: 15px;
 }
 
 .label-text {
-    text-transform: uppercase;
-    font-size: 11px;
-    color: #5e5d60;
+	text-transform: uppercase;
+	font-size: 11px;
+	color: #5e5d60;
 }
 
-.horizontal-list>li:first-child {
-    margin-left: 0px;
+.horizontal-list > li:first-child {
+	margin-left: 0px;
 }
-
 
 /**********************************************/
 
@@ -113,153 +108,142 @@
 
 /*************************************************/
 .rc-title {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    color: #706e6b;
-    position: relative;
-    padding: 0px 42px;
-    box-sizing: border-box;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	width: 100%;
+	color: #706e6b;
+	position: relative;
+	padding: 0px 42px;
+	box-sizing: border-box;
 }
 
-.rc-title>.title-upper {
-    height: 21px;
-    flex: 1;
-    border-bottom: 1px solid #706e6b;
+.rc-title > .title-upper {
+	height: 21px;
+	flex: 1;
+	border-bottom: 1px solid #706e6b;
 }
 
-.rc-title>.title-lower {
-    height: 21px;
-    flex: 1;
-    /*border-bottom: 1px solid #706e6b;*/
+.rc-title > .title-lower {
+	height: 21px;
+	flex: 1;
 }
 
-.rc-title>.title-content {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    padding: 0px 8px;
-    background: #fafaf9;
-    display: flex;
-    align-items: center;
+.rc-title > .title-content {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	padding: 0px 8px;
+	background: #fafaf9;
+	display: flex;
+	align-items: center;
 }
 
-.rc-title>.title-content svg {
-    margin-right: 5px
+.rc-title > .title-content svg {
+	margin-right: 5px
 }
 
 /*************************************************/
-/*Filtering */
 .bulk-filter-container {
-    padding: 16px;
-    background: #f2f3f3;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+	padding: 16px;
+	background: #f2f3f3;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .bulk-filter-container > h4 {
-    margin: 0;
-    width: 100%;
-    color: #514f4d;
-    font-size: 14px;
-    padding-bottom: 13px;
-    display: inline-block;
-    text-transform: uppercase;
+	margin: 0;
+	width: 100%;
+	color: #514f4d;
+	font-size: 14px;
+	padding-bottom: 13px;
+	display: inline-block;
+	text-transform: uppercase;
 }
 
 .bulk-filter-container > h4 span {
-    color: #0070d2;
-    margin-left: 2px;
-    font-weight: bold;
+	color: #0070d2;
+	margin-left: 2px;
+	font-weight: bold;
 }
 
-
 .bulk-filter-section {
-    width: 30%;
-    margin-right: 15px;
-    display: inline-block;
+	width: 30%;
+	margin-right: 15px;
+	display: inline-block;
 }
 
 .bulk-filter-section select {
-    width: 100%;
-    font-size: 13px;
-    padding: 6px 9px;
-    border-radius: 4px;
-    border: 1px solid #dddbda;
-    position: relative;
-    height: 26px;
-    font-size: 12px;
-    padding: 2px 6px;
-
+	width: 100%;
+	font-size: 13px;
+	padding: 6px 9px;
+	border-radius: 4px;
+	border: 1px solid #dddbda;
+	position: relative;
+	height: 26px;
+	font-size: 12px;
+	padding: 2px 6px;
 }
 
 .bulk-filter-section select[disabled] {
-    background: #e0e5ee;
+	background: #e0e5ee;
 }
 
 .bulk-button-container {
-    width: 30%;
-    display: inline-block;
+	width: 30%;
+	display: inline-block;
 }
-
-
 
 /*************************************************/
 .list-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #dddbda;
-    font-size: 13px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid #dddbda;
+	font-size: 13px;
 }
 
 .list-row > .list-cell {
-    padding: 1rem 1.25rem;
-    flex: 1;
-    text-align: right;
+	padding: 1rem 1.25rem;
+	flex: 1;
+	text-align: right;
 }
 
 .list-row.selected-row {
-    background: #F3F2F2;
+	background: #F3F2F2;
 }
 
 .list-row div.list-cell:first-child {
-    /*display: flex;*/
-    /*align-items: center;*/
     text-align: left;
 }
 
 .list-row.selected-row div.list-cell:first-child {
-    color: #0070D2;
+	color: #0070D2;
 }
 
 /*************************************************/
 .table-footer {
-    padding: 14px 20px;
-}
-
-.list-row {
-    /*cursor: pointer;*/
+	padding: 14px 20px;
 }
 
 .list-cell.valid {
-   color: #4bca81;
+	color: #4bca81;
 }
 .list-cell.invalid {
-   color: #d81c2a;
+	color: #d81c2a;
 }
 
 .list-cell .checkbox {
-    display: inline-block;
-    float: left;
-    margin-right: 15px;
+	display: inline-block;
+	float: left;
+	margin-right: 15px;
 }
-/*************************************************/
 
+/*************************************************/
 .filter-container {
-    border-top: 1px solid #dddbda;
-    display: flex;
+	border-top: 1px solid #dddbda;
+	display: flex;
 }
+
 /*************************************************/

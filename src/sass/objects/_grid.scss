@@ -1,6 +1,20 @@
 /* FA Flex */
 // Flex object.
 
+/* Flex */
+.fa-flex {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+/* Item */
+.fa-flex-item {
+	flex: 1;
+	margin-left: 1.5rem;
+	margin-right: 1.5rem;
+	width: 100%;
+}
+
 /* Widths */
 $flex-widths: (
 	fa-flex-1: 1,
@@ -21,20 +35,6 @@ $flex-widths: (
 	.#{$width} {
 		flex: $value;
 	}
-}
-
-/* Flex */
-.fa-flex {
-	display: flex;
-	flex-wrap: wrap;
-}
-
-/* Item */
-.fa-flex-item {
-	flex: 1;
-	margin-left: 1.5rem;
-	margin-right: 1.5rem;
-	width: 100%;
 }
 
 /* Horizontal */

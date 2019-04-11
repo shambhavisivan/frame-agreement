@@ -174,7 +174,7 @@ class ApprovalProcess extends React.Component {
 							}}
 							placeholder={window.SF.labels.approval_message_placeholder}
 						/>
-						<div className="button-group-secondary">
+						<div className="fa-button-group-secondary">
 							{this.props.approval.isApprover && (
 								<button
 									className="fa-btn fa-button-neutral"

@@ -6,6 +6,8 @@ import CloudSenseLogo from '../../dist/cloudsense.png';
 
 import { withRouter } from 'react-router-dom';
 import {
+	createToast,
+	clearToasts,
 	getFrameAgreements,
 	cloneFrameAgreement,
 	deleteFrameAgreement
@@ -14,6 +16,7 @@ import {
 import FrameAgreementRow from './FrameAgreementRow';
 import InputSearch from './utillity/inputs/InputSearch';
 import ConfirmationModal from './modals/ConfirmationModal';
+import Toaster from './utillity/Toaster';
 
 class FaList extends Component {
 	constructor(props) {
@@ -22,6 +25,14 @@ class FaList extends Component {
 			searchTerm: ''
 		};
 		this.onSearchChange = this.onSearchChange.bind(this);
+
+		window.FAM.api.toast = this.props.createToast;
+		window.FAM.api.clearToasts = this.props.clearToasts;
+	}
+
+	componentWillUnmount() {
+		delete window.FAM.api.toast;
+		delete window.FAM.api.clearToasts;
 	}
 
 	onSearchChange(value) {
@@ -79,6 +90,7 @@ class FaList extends Component {
 	render() {
 		return (
 			<div className="editor-container">
+				<Toaster />
 				<div className="fa-main-header fa-section-shadow">
 					<div className="fa-container">
 						<div className="fa-main-header-container">
@@ -92,7 +104,9 @@ class FaList extends Component {
 									<h5 className="fa-main-header-sub-title">
 										{window.SF.labels.frameAgreementTitle}
 									</h5>
-									<h1 className="fa-main-header-title">Account Name</h1>
+									<h1 className="fa-main-header-title">
+										{this.props.settings.account.Name}
+									</h1>
 								</div>
 							</div>
 							<div className="fa-main-header-item">
@@ -155,30 +169,16 @@ class FaList extends Component {
 }
 
 const mapStateToProps = state => {
-	return { frameAgreements: state.frameAgreements };
+	return { frameAgreements: state.frameAgreements, settings: state.settings };
 };
 
 const mapDispatchToProps = {
+	createToast,
+	clearToasts,
 	getFrameAgreements,
-	deleteFrameAgreement,
-	cloneFrameAgreement
+	cloneFrameAgreement,
+	deleteFrameAgreement
 };
-
-// const RcmModal = connect(null, mapDispatchToProps)(ConnectedForm);
-
-/*
-                <h4>FA PICKER account - {window.SF.param.account}</h4>
-                <span><Link to='/agreement'>New Agreement</Link></span>
-                    <ul>
-                      {Object.values(this.props.frameAgreements).map(fa => {
-                         return (
-                            <li key={fa.Id}>
-                                <Link to={`/agreement/${fa.Id}`}>{fa.Name}</Link>
-                            </li>
-                          );
-                        })}
-                    </ul>
-*/
 
 export default withRouter(
 	connect(

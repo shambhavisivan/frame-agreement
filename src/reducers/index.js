@@ -26,6 +26,17 @@ const VOLUME_FIELDS = [
 	{ label: window.SF.labels.products_volume_minUsageCommPeriod, name: 'mucp' }
 ];
 
+function makeId(n) {
+	var text = '';
+	var possible =
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+	for (var i = 0; i < n; i++)
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+	return text;
+}
+
 function validateJSONData(data) {
 	if (!data) {
 		return [];
@@ -155,11 +166,21 @@ const rootReducer = (state = initialState, action) => {
 			// action.payload.type;
 			// action.payload.title;
 			// action.payload.message;
+			// action.payload.timeout;
 
 			return {
 				...state,
-				toasts: [...state.toasts, ...[{ ...action.payload }]]
+				toasts: [...state.toasts, ...[{ ...action.payload, id: makeId(8) }]]
 			};
+
+		case 'REMOVE_TOAST':
+			return {
+				...state,
+				toasts: [...state.toasts.filter(t => t.id !== action.payload.id)]
+			};
+
+		case 'CLEAR_TOAST_QUEUE':
+			return { ...state, toasts: [] };
 
 		case 'RECIEVE_CLONE_FA':
 			// action.payload;
@@ -182,11 +203,6 @@ const rootReducer = (state = initialState, action) => {
 					i === index ? { ...f, visible: !f.visible } : f
 				)
 			};
-
-		case 'SHIFT_TOAST':
-			var newToastQueue = [...state.toasts];
-			newToastQueue.shift();
-			return { ...state, toasts: [...newToastQueue] };
 
 		case 'RECIEVE_COMMERCIAL_PRODUCTS':
 			var commercialProducts = action.payload;

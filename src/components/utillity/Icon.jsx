@@ -45,6 +45,7 @@ const Icon = props => {
 	return (
 		<svg
 			style={style}
+			onClick={props.onClick ? props.onClick : () => {}}
 			className={`icon icon-${props.name} ${props['svg-class'] || ''}`}
 			aria-hidden="true"
 		>

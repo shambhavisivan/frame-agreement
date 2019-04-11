@@ -311,10 +311,11 @@ private class FrameRateManagerControllerTest {
 		setupPricingModel();
 
 		setupSettings();
+		Account acc = [select Id from Account where Name = 'TestAcc' limit 1];
 
 		Test.startTest();
 
-		Map<String, Object> appSetting = FrameRateManagerController.getAppSettings();
+		Map<String, Object> appSetting = FrameRateManagerController.getAppSettings(acc.Id);
 
 		Test.stopTest();
 

@@ -216,27 +216,42 @@ export const setValidation = (
 	payload: { priceItemId, type, data }
 });
 
-export const shiftToast = () => ({
-	type: 'SHIFT_TOAST',
+export const _removeToast = id => ({
+	type: 'REMOVE_TOAST',
+	payload: { id }
+});
+
+export const _clearToasts = () => ({
+	type: 'CLEAR_TOAST_QUEUE',
 	payload: {}
 });
 
-export const addToast = (type, title, message) => {
+export const addToast = (type, title, message, timeout) => {
 	return {
 		type: 'ADD_TOAST',
-		payload: { type, title, message }
+		payload: { type, title, message, timeout }
 	};
 };
 
-export function createToast(type, title, message) {
+export function createToast(type, title, message, timeout = 3000) {
 	return function(dispatch) {
-		dispatch(addToast(type, title, message));
-		setTimeout(() => {
-			dispatch(shiftToast());
-		}, 3000);
+		dispatch(addToast(type, title, message, timeout));
 	};
 }
 
+export function removeToast(id) {
+	return function(dispatch) {
+		dispatch(_removeToast(id));
+	};
+}
+
+export function clearToasts(id) {
+	return function(dispatch) {
+		dispatch(_clearToasts());
+	};
+}
+
+// ***********************************************************************
 export const recieveAppSettings = result => ({
 	type: 'RECIEVE_SETTINGS',
 	payload: result
@@ -247,13 +262,15 @@ export function getAppSettings() {
 		// dispatch(requestAppSettings());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getAppSettings').then(response => {
-				setTimeout(() => {
-					dispatch(recieveAppSettings(response));
-					resolve(response);
-					return response;
-				}, 1000);
-			});
+			window.SF.invokeAction('getAppSettings', [window.SF.param.account]).then(
+				response => {
+					setTimeout(() => {
+						dispatch(recieveAppSettings(response));
+						resolve(response);
+						return response;
+					}, 1000);
+				}
+			);
 		});
 	};
 }

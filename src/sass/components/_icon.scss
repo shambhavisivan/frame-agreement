@@ -25,6 +25,15 @@
 		position: absolute;
 		transform: translateY(50%);
 	}
+
+	> .icon-close  {
+		bottom: 50%;
+		right: 10px;
+		/*pointer-events: none;*/
+		position: absolute;
+		transform: translateY(50%);
+		cursor: pointer;
+	}
 }
 
 /* Checkbox */

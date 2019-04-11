@@ -59,11 +59,7 @@ class CustomButtonDropdown extends React.Component {
 					<span className="fa-margin-right-xsm">
 						{window.SF.labels.header_customDropdownPlaceholder}
 					</span>
-					<Icon
-						name={this.state.menu ? 'up' : 'down'}
-						height="14"
-						width="14"
-					/>
+					<Icon name={this.state.menu ? 'up' : 'down'} height="14" width="14" />
 				</button>
 				{this.state.menu && (
 					<div

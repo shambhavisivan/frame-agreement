@@ -40,10 +40,9 @@ class DropdownCheckbox extends React.Component {
 	}
 
 	showMenu() {
-		this.setState(
-			{
-				menu: true
-			});
+		this.setState({
+			menu: true
+		});
 	}
 
 	hideMenu() {

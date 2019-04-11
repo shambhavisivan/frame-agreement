@@ -955,6 +955,7 @@ window.SF = SF = {
                     ButtonStandardData: ButtonStandardData,
                     CategorizationData: CategorizationData,
                     HeaderData: HeaderData,
+                    account: {Id:"aaaa", Name:"aaaa"},
                     DiscLevels: DiscLevels,
                     AuthLevels: [{
                         "Id": "a151t000000rmV7AAI",

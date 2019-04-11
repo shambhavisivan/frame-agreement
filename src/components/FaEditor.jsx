@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 
 import {
 	createToast,
+	clearToasts,
 	setValidation,
 	getAttachment,
 	performAction,
@@ -118,6 +119,7 @@ class FaEditor extends Component {
 		window.FAM.api.removeProducts = this._removeProducts;
 		window.FAM.api.negotiate = this._apiNegotiate.bind(this);
 		window.FAM.api.toast = this.props.createToast;
+		window.FAM.api.clearToasts = this.props.clearToasts;
 		window.FAM.api.refreshFa = this.refreshFa;
 		window.FAM.api.setStatusOfFrameAgreement = this.setStateOFFa;
 		window.FAM.api.getActiveFrameAgreement = () =>
@@ -180,6 +182,7 @@ class FaEditor extends Component {
 		delete window.FAM.api.addProducts;
 		delete window.FAM.api.negotiate;
 		delete window.FAM.api.toast;
+		delete window.FAM.api.clearToasts;
 		delete window.FAM.api.refreshFa;
 		delete window.FAM.api.setStatusOfFrameAgreement;
 		delete window.FAM.api.getActiveFrameAgreement;
@@ -1455,10 +1458,10 @@ class FaEditor extends Component {
 
 		return (
 			<div className="editor-container">
-				<Prompt
-					when={this.state.actionTaken}
-					message={window.SF.labels.modal_unsavedChanges_alert}
-				/>
+                <Prompt
+                    when={this.state.actionTaken && this.faId && this.editable}
+                    message={window.SF.labels.modal_unsavedChanges_alert}
+                />
 
 				<Header
 					onBackClick={this.onBackClick}
@@ -1614,6 +1617,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
 	createToast,
+	clearToasts,
 	setValidation,
 	getAttachment,
 	performAction,

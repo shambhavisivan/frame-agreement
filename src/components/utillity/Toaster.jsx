@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
+import { removeToast } from '../../actions';
+
 import './Toaster.scss';
 
 import Icon from './Icon';
@@ -10,11 +13,23 @@ class Toast extends Component {
 		// this.props.type
 		// this.props.title
 		// this.props.message
+		// this.props.id
+
+		this.id = (' ' + this.props.id).slice(1);
+
+		if (this.props.timeout !== null) {
+			setTimeout(() => {
+				this.props.onRemove(this.id);
+			}, this.props.timeout);
+		}
 	}
 
 	render() {
 		return (
 			<div
+				onClick={() => {
+					this.props.onRemove(this.props.id);
+				}}
 				className={
 					'toast ' +
 					(this.props.type.toLowerCase() || 'info') +
@@ -43,8 +58,13 @@ class Toaster extends Component {
 						<Toast
 							key={'toast-' + i}
 							unload={i === 0}
+							onRemove={id => {
+								this.props.removeToast(id);
+							}}
+							id={toast.id}
 							type={toast.type}
 							title={toast.title}
+							timeout={toast.timeout}
 							message={toast.message}
 						/>
 					);
@@ -58,11 +78,11 @@ const mapStateToProps = state => {
 	return { toasts: state.toasts };
 };
 
-// const mapDispatchToProps = {
-//   createToast
-// };
+const mapDispatchToProps = {
+	removeToast
+};
 
 export default connect(
 	mapStateToProps,
-	null
+	mapDispatchToProps
 )(Toaster);

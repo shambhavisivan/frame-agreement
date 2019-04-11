@@ -18,11 +18,12 @@ class InputSearch extends React.Component {
 		this.bordered = this.props.bordered || false;
 	}
 
-	onTextChange(e) {
+	onTextChange(value = '') {
+		console.log('New value ', value);
 		this.setState({
-			value: e.target.value
+			value: value
 		});
-		this.props.onChange(e.target.value);
+		this.props.onChange(value);
 	}
 
 	// onTextChange(event) {
@@ -50,9 +51,24 @@ class InputSearch extends React.Component {
 					spellCheck="false"
 					className="fa-input fa-input-lg"
 					type="text"
-					onChange={this.onTextChange}
+					onChange={e => {
+						this.onTextChange(e.target.value);
+					}}
 					value={this.state.value}
 				/>
+				{this.state.value ? (
+					<Icon
+						name="close"
+						width="16"
+						height="16"
+						color="#cccccc"
+						onClick={() => {
+							this.onTextChange();
+						}}
+					/>
+				) : (
+					''
+				)}
 			</div>
 		);
 	}

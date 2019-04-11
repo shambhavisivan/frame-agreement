@@ -242,9 +242,76 @@ class NegotiationModal extends Component {
 		this.setState({ tab: newTab });
 	}
 
-	selectAll(type) {
-		console.log('ALL');
-	}
+    selectAll(type) {
+        var newSelected = {};
+
+        switch (type) {
+            case 'addons':
+                var totalCount = Object.keys(this.grouped_addons).length;
+                var selectedCount = Object.keys(this.state.selected.addons).length;
+
+                if (totalCount !== selectedCount) {
+                    Object.keys(this.grouped_addons).forEach(addId => {
+                        newSelected[addId] = true;
+                    });
+                }
+                this.setState({ selected: { ...this.state.selected, addons: newSelected } });
+
+                // code block
+                break;
+            case 'charges':
+                // code block
+                var totalCount = this._charges.length;
+                var selectedCount = Object.keys(this.state.selected.charges).length;
+
+                var newSelected = {};
+                if (totalCount !== selectedCount) {
+                    this._charges.forEach(ch => {
+                        newSelected[ch.Id] = true;
+                    });
+                }
+                this.setState({ selected: { ...this.state.selected, charges: newSelected } });
+                break;
+            case 'rated':
+                var allRcl = this._rateCards.reduce((acc, iterator) => {
+                    let _rcl = iterator.rateCardLines.filter(rcl => {
+                        let retBool = true;
+                        if (this.state.selectedProperty && this.state.selectedPropertyValue) {
+                            if (rcl[this.state.selectedProperty] !== this.state.selectedPropertyValue) {
+                                retBool = false;
+                            }
+                        }
+                        return retBool;
+                    });
+                    return acc.concat([], _rcl);
+                }, []);
+                var selectedCount = Object.keys(this.state.selected.rated).length;
+
+                var newSelected = {};
+                if (allRcl.length !== selectedCount) {
+                    allRcl.forEach(rcl => {
+                        newSelected[rcl.Id] = true;
+                    });
+                }
+                this.setState({ selected: { ...this.state.selected, rated: newSelected } });
+                break;
+        }
+
+
+        this.setState({
+                count: {
+                    ...this.state.count,
+                    [type]: Object.keys(newSelected).length
+                }
+            },
+            () => {
+                this.setState({
+                    countTotal: Object.values(this.state.count).reduce((a, b) => +(a + b), 0)
+                });
+                console.log(this.state.selected);
+            }
+        );
+    }
 
 	onPropertyChange(e) {
 		var defaultProperty = this.state.propertyData[e.target.value]
@@ -543,7 +610,7 @@ class NegotiationModal extends Component {
 					<div className="list-cell">
 						<Checkbox
 							onChange={() => {
-								this.selectAll('addons');
+								this.selectAll('charges');
 							}}
 						/>
 						{window.SF.labels.modal_charge_table_header_name}
@@ -890,9 +957,9 @@ class NegotiationModal extends Component {
 										this.setTab('addons');
 									}}
 								>
-									{window.SF.labels.products_addons}{' '}
+									{window.SF.labels.products_addons}
 									{this.state.count.addons ? (
-										<span>({this.state.count.addons})</span>
+										<span> ({this.state.count.addons})</span>
 									) : (
 										''
 									)}
@@ -908,9 +975,9 @@ class NegotiationModal extends Component {
 										this.setTab('charges');
 									}}
 								>
-									{window.SF.labels.products_charges}{' '}
+									{window.SF.labels.products_charges}
 									{this.state.count.charges ? (
-										<span>({this.state.count.charges})</span>
+										<span> ({this.state.count.charges})</span>
 									) : (
 										''
 									)}
@@ -926,7 +993,7 @@ class NegotiationModal extends Component {
 										this.setTab('rated');
 									}}
 								>
-									{window.SF.labels.products_rates}{' '}
+									{window.SF.labels.products_rates}
 									{this.state.count.rated ? (
 										<span>({this.state.count.rated})</span>
 									) : (

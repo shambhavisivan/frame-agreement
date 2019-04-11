@@ -31,9 +31,9 @@
 }
 
 .skeleton-container {
-    background-color: #f3f2f2;
+    /*background-color: #f3f2f2;*/
     width: 100%;
-    border-bottom: 2px solid #f3f2f2;
+    /*border-bottom: 2px solid #f3f2f2;*/
     display: inline-block;
 }
 
@@ -88,7 +88,8 @@
 .skeleton-ed {
     .skeleton-header {
         @include header;
-        background-color: #ecebea;
+        padding: 9px 10px 8px 10px;
+        background-color: #f3f2f2;
         border-bottom: 2px solid #ecebea;
 
         .skeleton-shape {

@@ -6,7 +6,6 @@ global with sharing class FrameRateManagerController {
 	}
 	public static final String FAC_ATTACHMENT_NAME = 'FrameAgreementAttachment';
 	public static final String FAC_ATTACHMENT_DESC = 'Added products and negotiated data against Frame Agreement';
-	public static final Integer ITEMS_PER_PAGE = 20;
 	public String accountId;
 	public static final List < String > FA_FIELDS = new List < String >{
 		'Id',
@@ -21,7 +20,7 @@ global with sharing class FrameRateManagerController {
 		'csconta__replaced_frame_agreement__c',
 		'csconta__effective_end_date__c',
 		'csconta__effective_start_date__c',
-		'csfam__Frame_Agreement_Number__c'
+		'csconta__frame_agreement_number__c'
 	};
 
 
@@ -435,7 +434,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map < String, Object > getAppSettings() {
+	public static Map < String, Object > getAppSettings(Id accountId) {
 		Map < String, Object > count = new Map < String, Object > ();
 
 		String cp_query = 'select count() from cspmb__Price_Item__c ';
@@ -450,6 +449,8 @@ global with sharing class FrameRateManagerController {
 
 		Integer cp_count = database.countQuery(cp_query);
 		Integer fa_count = database.countQuery('select count() from csconta__Frame_Agreement__c');
+
+		Account acc = [select Id, Name from Account where Id=:accountId];
 
 		List < Object > headerData = new List < Object > ();
 		List < Object > buttonCustom = new List < Object > ();
@@ -479,7 +480,7 @@ global with sharing class FrameRateManagerController {
 
 		count.put('commercialProductCount', cp_count);
 		count.put('frameAgreementsCount', fa_count);
-		count.put('itemsPerPage', ITEMS_PER_PAGE);
+		count.put('account', acc);
 		count.put('HeaderData', headerData);
 		count.put('ButtonCustomData', buttonCustom);
 		count.put('ButtonStandardData', buttonStandard);
@@ -551,8 +552,7 @@ global with sharing class FrameRateManagerController {
 		if (!priceItemIds.isEmpty()) {
 			query += 'and Id in :priceItemIds ';
 		}
-		// ADD limit CLAUSE
-		// query += 'limit ' + ITEMS_PER_PAGE + ' OFFSET ' + ((pageNum - 1) * ITEMS_PER_PAGE);
+
 		query += 'limit 50000';
 
 		List < cspmb__Price_Item__c > cpList = database.query(query);
@@ -698,7 +698,7 @@ global with sharing class FrameRateManagerController {
 	public static List < cspmb__Price_Item_Add_On_Price_Item_Association__c > getAddons(String priceItemId) {
 
 		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > priceItemAddonAssociations = [
-			select Id, cspmb__Price_Item__c, cspmb__Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Price_Item__r.cspmb__Effective_Start_Date__c,
+			select Id, cspmb__Price_Item__c, cspmb__Overrides_Add_On_Charges__c, cspmb__Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Price_Item__r.cspmb__Effective_Start_Date__c,
 				cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c, cspmb__Add_On_Price_Item__c, cspmb__Add_On_Price_Item__r.Name, cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c, cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c,
 				cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c
 			from cspmb__Price_Item_Add_On_Price_Item_Association__c
@@ -712,6 +712,11 @@ global with sharing class FrameRateManagerController {
 
 			Boolean start_invalid = addonAsson.cspmb__Price_Item__r.cspmb__Effective_Start_Date__c != null && date.today() < addonAsson.cspmb__Price_Item__r.cspmb__Effective_Start_Date__c;
 			Boolean end_invalid = addonAsson.cspmb__Price_Item__r.cspmb__Effective_End_Date__c != null && date.today() > addonAsson.cspmb__Price_Item__r.cspmb__Effective_End_Date__c;
+
+			if (addonAsson.cspmb__Overrides_Add_On_Charges__c == false) {
+				addonAsson.cspmb__One_Off_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c;
+				addonAsson.cspmb__Recurring_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c;
+			}
 
 			if (!(start_invalid || end_invalid)) {
 				filteredPriceItemAddonAssociations.add(addonAsson);
@@ -816,7 +821,7 @@ global with sharing class FrameRateManagerController {
 		cloned.csconta__replaced_frame_agreement__c = null;
 		insert cloned;
 
-		cloned.csfam__Frame_Agreement_Number__c = parseNumberFromName(original.Name);
+		cloned.csconta__frame_agreement_number__c = parseNumberFromName(original.Name);
 		update cloned;
 
 		Attachment originalAttachment = getAttachment(faId);
@@ -867,7 +872,7 @@ global with sharing class FrameRateManagerController {
 		clonedFa.csconta__Status__c = (String) FACSettings.get('csfam__draft_status__c');
 		clonedFa.csconta__replaced_frame_agreement__c = faId;
 		original.csconta__effective_end_date__c = datetime.now();
-		clonedFa.csfam__Frame_Agreement_Number__c = parseNumberFromName(original.Name);
+		clonedFa.csconta__frame_agreement_number__c = parseNumberFromName(original.Name);
 
 		update original;
 		update clonedFa;
@@ -938,7 +943,7 @@ global with sharing class FrameRateManagerController {
 		if (fa.csconta__replaced_frame_agreement__c == null) {
 
 			fa = getFrameAgreement(fa.Id);
-			fa.csfam__Frame_Agreement_Number__c = parseNumberFromName(fa.Name);
+			fa.csconta__frame_agreement_number__c = parseNumberFromName(fa.Name);
 			update fa;
 		}
 

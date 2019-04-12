@@ -153,7 +153,7 @@ class DropdownNegotiate extends React.Component {
 			<div
 				className={
 					'negotiate-container select-negotiate' +
-					(this.props.invalid ? 'invalid' : '')
+					(this.props.invalid ? ' invalid' : '')
 				}
 			>
 				<div className={'negotiate-input-wrapper' + (dirty ? ' dirty' : '')}>

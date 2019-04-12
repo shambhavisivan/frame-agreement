@@ -40,7 +40,7 @@ class CustomButtonDropdown extends React.Component {
 	}
 
 	showMenu() {
-		this.setState({ menu: true });
+		this.setState({ menu: !this.state.menu });
 	}
 
 	hideMenu() {
@@ -51,7 +51,7 @@ class CustomButtonDropdown extends React.Component {
 
 	render() {
 		return (
-			<div className="fa-dropdown-group fa-margin-right-xsm">
+			<div className="fa-dropdown-group fa-margin-right-xsm" ref={this.setWrapperRef}>
 				<button
 					className="fa-button fa-button-border-light fa-button-transparent"
 					onClick={this.showMenu}
@@ -63,7 +63,6 @@ class CustomButtonDropdown extends React.Component {
 				</button>
 				{this.state.menu && (
 					<div
-						ref={this.setWrapperRef}
 						aria-hidden={!this.state.menu}
 						className="fa-dropdown"
 					>

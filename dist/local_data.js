@@ -986,7 +986,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "a1M1t000000BFrVEAA",
@@ -995,7 +995,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Dollar",
         "Category__c": "Cat_B",
         "cspmb__rate_value__c": 7.1,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "aEQIJwAz",
@@ -1004,7 +1004,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "aufzFvy3",
@@ -1013,7 +1013,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "lbB2OJ7d",
@@ -1022,7 +1022,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "vYv1wHdA",
@@ -1031,7 +1031,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "ek0ttfF8",
@@ -1040,7 +1040,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "oinEai3W",
@@ -1049,7 +1049,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "ewPcC7Us",
@@ -1058,7 +1058,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "y2xajnCw",
@@ -1067,7 +1067,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "d8XvCi9s",
@@ -1076,7 +1076,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "4rURwnDE",
@@ -1085,7 +1085,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "QISWtJe2",
@@ -1094,7 +1094,7 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       },
       {
         "Id": "XffgQ8pi",
@@ -1103,12 +1103,11 @@ const rateCards = [
         "cspmb__Currency_Code__c": "Euro",
         "Category__c": "Cat_A",
         "cspmb__rate_value__c": 18.29,
-        "cspmb__Rate_Card__c": "LofQovJL"
+        "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE"
       }
     ]
   }
 ];
-
 const attachment = "eyJhMUYxdDAwMDAwMDFKQmpFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwM1NibkVBRSI6e319LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2Nn19LCJhMUYxdDAwMDAwMDFKQ0RFQTIiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2M319LCJhMUYxdDAwMDAwMDFKQzhFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjIzOS40MX19LCJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwMmNJTUVBWSI6eyJvbmVPZmYiOjcuNjQsInJlY3VycmluZyI6Ny43NX0sImExQTF0MDAwMDAwM1NjZkVBRSI6eyJvbmVPZmYiOjcuNDksInJlY3VycmluZyI6NzkuNDR9fSwiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6N30sImExSTF0MDAwMDAxV2t6akVBQyI6eyJyZWN1cnJpbmciOjEyfX0sIl9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxUXhyRUFFIjp7ImExTTF0MDAwMDAwQkZyVkVBVyI6MTI0Ljk5fX19fQ";
 
 const DiscLevels = [{
@@ -1579,11 +1578,11 @@ window.SF = SF = {
         toast_failed_title: "Failed!",
         toast_submitForApproval_success: "Successfuly submitted for approval!",
         toast_submitForApproval_failed: "Unable to start approval process.",
-        toast_decomposition_title_failed: "Decomposition failed!",
+        toast_decomposition_title_failed: "Activation failed!",
         toast_decomposition_failed: "Deleting associations made from this attempt.",
-        toast_decomposition_title_revered: "Decomposition reverted!",
+        toast_decomposition_title_revered: "Activation reverted!",
         toast_decomposition_revered: "Deleted all created associations.",
-        toast_decomposition_title_success: "Decomposition succeded!",
+        toast_decomposition_title_success: "Activation succeded!",
         toast_decomposition_success: "Created associations",
         toast_invalid_handler_title: "Invalid handler!",
         toast_invalid_handler: "Handler not defined",

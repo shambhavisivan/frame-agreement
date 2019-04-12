@@ -1504,14 +1504,15 @@ class FaEditor extends Component {
 
 						{this.props.settings.ButtonStandardData.Submit.has(
 							this.state.activeFa.csconta__Status__c
-						) && (
-							<button
-								className="fa-button fa-button-border-light fa-button-transparent"
-								onClick={this.onDecompose}
-							>
-								{window.SF.labels.btn_Submit}
-							</button>
-						)}
+						) &&
+							this.faId && (
+								<button
+									className="fa-button fa-button-border-light fa-button-transparent"
+									onClick={this.onDecompose}
+								>
+									{window.SF.labels.btn_Submit}
+								</button>
+							)}
 
 						{this.props.settings.ButtonStandardData.NewVersion.has(
 							this.state.activeFa.csconta__Status__c

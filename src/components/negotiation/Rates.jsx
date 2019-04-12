@@ -89,7 +89,7 @@ class Rates extends React.Component {
 					</div>
 				</div>
 				<ul className="rc-list">
-					{this.paginationFormat[this.state.pagination.page - 1].map(
+					{(this.paginationFormat[this.state.pagination.page - 1] || []).map(
 						(rc, i) => {
 							return (
 								<li key={rc.Id} className="list-item">

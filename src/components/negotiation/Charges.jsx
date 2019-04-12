@@ -39,8 +39,6 @@ class Charges extends React.Component {
 	}
 
 	render() {
-		let flagColor = '#4bca81';
-
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
@@ -71,6 +69,7 @@ class Charges extends React.Component {
 						.map((charge, i) => {
 							let recurringRow = 'N/A';
 							let oneOffRow = 'N/A';
+							let flagColor = '#4bca81';
 							var value;
 
 							if (charge.oneOff != null) {

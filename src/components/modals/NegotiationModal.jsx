@@ -115,6 +115,8 @@ class NegotiationModal extends Component {
 				return false;
 			});
 		})();
+
+		// this.rateCardsPaginationFormat = this.paginateRateCards(this._rateCards, 10);
 		/*********************************************************************************************************************************************************/
 		// RCL categorization
 		var propertyData = {};
@@ -187,7 +189,12 @@ class NegotiationModal extends Component {
 				page_charges: 1,
 				page_rated: 1,
 				pageSize: 10
-			}
+			},
+			rateCardsPaginationFormat: this.paginateRateCards(
+				this._rateCards,
+				10,
+				true
+			)
 		};
 		// this.priceItemFields = [
 		//   ...this.props.settings.FACSettings.price_item_fields
@@ -234,12 +241,73 @@ class NegotiationModal extends Component {
 		});
 	}
 
+	componentDidUpdate(nextProps, nextState) {
+		// if (nextState.pagination.pageSize !== this.state.pagination.pageSize) {
+		// 	this.rateCardsPaginationFormat = this.paginateRateCards(this._rateCards, nextState.pagination.pageSize);
+		// }
+	}
+
 	onCloseModal() {
 		this.props.onCloseModal();
 	}
 
 	setTab(newTab) {
 		this.setState({ tab: newTab });
+	}
+
+	paginateRateCards(rcArr, pageSize, overrideState = false) {
+		let _rcMap = {};
+		rcArr.forEach(rc => {
+			_rcMap[rc.Id] = { Id: rc.Id, Name: rc.Name };
+			if (rc.hasOwnProperty('authId')) {
+				_rcMap[rc.Id].authId = rc.authId;
+			}
+		});
+
+		let _mergedRcl = rcArr
+			.reduce((acc, iterator, i) => {
+				return acc.concat([], iterator.rateCardLines);
+			}, [])
+			.filter(rcl => {
+				let retBool = true;
+				try {
+					if (this.state.selectedProperty && this.state.selectedPropertyValue) {
+						if (
+							rcl[this.state.selectedProperty].toString() !==
+							this.state.selectedPropertyValue.toString()
+						) {
+							retBool = false;
+						}
+					}
+				} catch (err) {}
+				return retBool;
+			});
+
+		let _chunked = _mergedRcl.chunk(pageSize);
+
+		let paginated = _chunked.map(_set => {
+			let _rcPageMap = {};
+
+			_set.forEach(rcl => {
+				if (!_rcPageMap.hasOwnProperty(rcl.cspmb__Rate_Card__c)) {
+					_rcPageMap[rcl.cspmb__Rate_Card__c] = {
+						..._rcMap[rcl.cspmb__Rate_Card__c]
+					};
+					_rcPageMap[rcl.cspmb__Rate_Card__c].rateCardLines = [];
+				}
+				_rcPageMap[rcl.cspmb__Rate_Card__c].rateCardLines.push(rcl);
+			});
+
+			return Object.values(_rcPageMap);
+		});
+
+		console.log(paginated);
+
+		if (!overrideState) {
+			this.setState({ rateCardsPaginationFormat: paginated });
+		}
+
+		return paginated;
 	}
 
 	selectAll(type) {
@@ -277,35 +345,33 @@ class NegotiationModal extends Component {
 				});
 				break;
 			case 'rated':
-				var allRcl = this._rateCards.reduce((acc, iterator) => {
-					let _rcl = iterator.rateCardLines.filter(rcl => {
-						let retBool = true;
-						if (
-							this.state.selectedProperty &&
-							this.state.selectedPropertyValue
-						) {
-							if (
-								rcl[this.state.selectedProperty] !==
-								this.state.selectedPropertyValue
-							) {
-								retBool = false;
-							}
-						}
-						return retBool;
-					});
-					return acc.concat([], _rcl);
-				}, []);
+				var allRcl = this.state.rateCardsPaginationFormat.reduce(
+					(acc, iterator) => {
+						return acc.concat(
+							[],
+							iterator.reduce(
+								(acc2, iterator2) => acc2.concat([], iterator2.rateCardLines),
+								[]
+							)
+						);
+					},
+					[]
+				);
+
 				var selectedCount = Object.keys(this.state.selected.rated).length;
 
 				var newSelected = {};
+
 				if (allRcl.length !== selectedCount) {
 					allRcl.forEach(rcl => {
 						newSelected[rcl.Id] = true;
 					});
 				}
+
 				this.setState({
 					selected: { ...this.state.selected, rated: newSelected }
 				});
+
 				break;
 		}
 
@@ -332,14 +398,21 @@ class NegotiationModal extends Component {
 		var defaultProperty = this.state.propertyData[e.target.value]
 			? this.state.propertyData[e.target.value][0]
 			: '';
-		this.setState({
-			selectedProperty: e.target.value || null,
-			selectedPropertyValue: defaultProperty
-		});
+		this.setState(
+			{
+				selectedProperty: e.target.value || null,
+				selectedPropertyValue: defaultProperty
+			},
+			() => {
+				this.paginateRateCards(this._rateCards, this.state.pagination.pageSize);
+			}
+		);
 	}
 
 	onPropertyValueChange(e) {
-		this.setState({ selectedPropertyValue: e.target.value || null });
+		this.setState({ selectedPropertyValue: e.target.value || null }, () => {
+			this.paginateRateCards(this._rateCards, this.state.pagination.pageSize);
+		});
 	}
 
 	onSelectRow(row, type) {
@@ -540,6 +613,10 @@ class NegotiationModal extends Component {
 				<div className="table-list-header">
 					<div className="list-cell">
 						<Checkbox
+							value={
+								Object.keys(this.grouped_addons).length ===
+								Object.keys(this.state.selected.addons).length
+							}
 							onChange={() => {
 								this.selectAll('addons');
 							}}
@@ -628,6 +705,10 @@ class NegotiationModal extends Component {
 				<div className="table-list-header">
 					<div className="list-cell">
 						<Checkbox
+							value={
+								Object.keys(this._charges.length) ===
+								Object.keys(this.state.selected.charges).length
+							}
 							onChange={() => {
 								this.selectAll('charges');
 							}}
@@ -713,11 +794,23 @@ class NegotiationModal extends Component {
 			</div>
 		);
 
+		let selectAllRatedChecked =
+			this.state.rateCardsPaginationFormat.reduce((acc, iterator) => {
+				return acc.concat(
+					[],
+					iterator.reduce(
+						(acc2, iterator2) => acc2.concat([], iterator2.rateCardLines),
+						[]
+					)
+				);
+			}, []).length === Object.keys(this.state.selected.rated).length;
+
 		tab.rated = (
 			<div className="table-container">
 				<div className="table-list-header">
 					<div className="list-cell">
 						<Checkbox
+							value={selectAllRatedChecked}
 							onChange={() => {
 								this.selectAll('rated');
 							}}
@@ -732,112 +825,101 @@ class NegotiationModal extends Component {
 					</div>
 				</div>
 				<ul className="rc-list">
-					{this._rateCards
-						// .filter(rc => {
-						//   if (this.state.filter.intersection) {
-						//     return this._rcCpMap[rc.Id].length === this.commercialProducts.length;
-						//   }
-						//   return true;
-						// })
-						.paginate(
-							this.state.pagination.page_rated,
-							this.state.pagination.pageSize
-						)
-						.map((rc, i) => {
-							return (
-								<li
-									key={rc.product + '-' + rc.Id}
-									className="list-item selectable"
-								>
-									<div className="rc-title">
-										<div className="title-upper" />
-										<div className="title-content">
-											<Icon name="announcement" width="14" color="#706e6b" />
-											{rc.Name}
-											{/* <span className="product-count">
-												{this._rcCpMap[rc.Id].length}
-											</span> */}
-										</div>
-										<div className="title-lower"> </div>
+					{(
+						this.state.rateCardsPaginationFormat[
+							this.state.pagination.page_rated - 1
+						] || []
+					).map((rc, i) => {
+						return (
+							<li
+								key={rc.product + '-' + rc.Id}
+								className="list-item selectable"
+							>
+								<div className="rc-title">
+									<div className="title-upper" />
+									<div className="title-content">
+										<Icon name="announcement" width="14" color="#706e6b" />
+										{rc.Name}
+										<span className="product-count">
+											{this._rcCpMap[rc.Id].length}
+										</span>
 									</div>
+									<div className="title-lower"> </div>
+								</div>
 
-									<ul className="table-list">
-										{rc.rateCardLines
-											.filter(rcl => {
-												let retBool = true;
-												if (
-													this.state.selectedProperty &&
-													this.state.selectedPropertyValue
-												) {
-													if (
-														rcl[this.state.selectedProperty] !==
-														this.state.selectedPropertyValue
-													) {
-														retBool = false;
-													}
+								<ul className="table-list">
+									{rc.rateCardLines.map((rcl, i) => {
+										return (
+											<li
+												onClick={() => {
+													this.onSelectRow(rcl, 'rated');
+												}}
+												key={rcl.Id}
+												className={
+													'list-row' +
+													(this.state.selected.rated[rcl.Id]
+														? ' selected-row'
+														: '')
 												}
-												return retBool;
-											})
-											.map((rcl, i) => {
-												return (
-													<li
-														onClick={() => {
-															this.onSelectRow(rcl, 'rated');
-														}}
-														key={rcl.Id}
-														className={
-															'list-row' +
-															(this.state.selected.rated[rcl.Id]
-																? ' selected-row'
-																: '')
-														}
-													>
-														<div className="list-cell">
-															<Checkbox
-																readOnly={this.state.selected.rated[rcl.Id]}
-															/>{' '}
-															{rcl.Name}
-														</div>
-														<div className="list-cell">
-															{rcl.cspmb__Cap_Unit__c}
-														</div>
-														<div className="list-cell">
-															{rcl.cspmb__rate_value__c}
-															{this.state.selected.rated[rcl.Id] &&
-															this.state.selected.rated[rcl.Id]
-																.negotiatedValue ? (
-																<span>
-																	/
-																	{
-																		this.state.selected.rated[rcl.Id]
-																			.negotiatedValue
-																	}
-																</span>
-															) : (
-																''
-															)}
-														</div>
-													</li>
-												);
-											})}
-									</ul>
-								</li>
-							);
-						})}
+											>
+												<div className="list-cell">
+													<Checkbox
+														readOnly={this.state.selected.rated[rcl.Id]}
+													/>{' '}
+													{rcl.Name}
+												</div>
+												<div className="list-cell">
+													{rcl.cspmb__Cap_Unit__c}
+												</div>
+												<div className="list-cell">
+													{rcl.cspmb__rate_value__c}
+													{this.state.selected.rated[rcl.Id] &&
+													this.state.selected.rated[rcl.Id].negotiatedValue ? (
+														<span>
+															/
+															{
+																this.state.selected.rated[rcl.Id]
+																	.negotiatedValue
+															}
+														</span>
+													) : (
+														''
+													)}
+												</div>
+											</li>
+										);
+									})}
+								</ul>
+							</li>
+						);
+					})}
 				</ul>
 
 				<Pagination
-					totalSize={this._rateCards.length}
+					totalSize={
+						this.state.rateCardsPaginationFormat.length *
+						this.state.pagination.pageSize
+					}
 					pageSize={this.state.pagination.pageSize}
 					page={this.state.pagination.page_rated}
 					onPageSizeChange={newPageSize => {
-						this.setState({
-							pagination: {
-								...this.state.pagination,
-								pageSize: newPageSize,
-								page_rated: 1
+						// this.paginateRateCards(this._rateCards, this.state.pagination.pageSize);
+
+						this.setState(
+							{
+								pagination: {
+									...this.state.pagination,
+									pageSize: newPageSize,
+									page_rated: 1
+								}
+							},
+							() => {
+								this.paginateRateCards(
+									this._rateCards,
+									this.state.pagination.pageSize
+								);
 							}
-						});
+						);
 					}}
 					onPageChange={newPage => {
 						this.setState({
@@ -988,7 +1070,10 @@ class NegotiationModal extends Component {
 								>
 									{window.SF.labels.products_addons}
 									{this.state.count.addons ? (
-										<span className="fa-padding-left-xxsm"> ({this.state.count.addons})</span>
+										<span className="fa-padding-left-xxsm">
+											{' '}
+											({this.state.count.addons})
+										</span>
 									) : (
 										''
 									)}
@@ -1006,7 +1091,10 @@ class NegotiationModal extends Component {
 								>
 									{window.SF.labels.products_charges}
 									{this.state.count.charges ? (
-										<span className="fa-padding-left-xxsm"> ({this.state.count.charges})</span>
+										<span className="fa-padding-left-xxsm">
+											{' '}
+											({this.state.count.charges})
+										</span>
 									) : (
 										''
 									)}
@@ -1024,7 +1112,9 @@ class NegotiationModal extends Component {
 								>
 									{window.SF.labels.products_rates}
 									{this.state.count.rated ? (
-										<span className="fa-padding-left-xxsm">({this.state.count.rated})</span>
+										<span className="fa-padding-left-xxsm">
+											({this.state.count.rated})
+										</span>
 									) : (
 										''
 									)}
@@ -1072,7 +1162,7 @@ class NegotiationModal extends Component {
 									</button>
 								</div>
 							</div>
-							<div class="fa-discount-item">
+							<div className="fa-discount-item">
 								<div className="fa-title fa-title-dark">
 									{window.SF.labels.modal_bulk_discount_input_title}
 								</div>
@@ -1085,7 +1175,7 @@ class NegotiationModal extends Component {
 									placeholder={window.SF.labels.modal_bulk_input_placeholder}
 								/>
 							</div>
-							<div class="fa-discount-item">
+							<div className="fa-discount-item">
 								<button
 									disabled={!this.state.countTotal}
 									className="fa-discount-item fa-button button--neutral"

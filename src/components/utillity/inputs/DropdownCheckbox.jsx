@@ -18,6 +18,7 @@ class DropdownCheckbox extends React.Component {
 		};
 
 		this.setWrapperRef = this.setWrapperRef.bind(this);
+
 		this.handleClickOutside = this.handleClickOutside.bind(this);
 	}
 
@@ -41,7 +42,7 @@ class DropdownCheckbox extends React.Component {
 
 	showMenu() {
 		this.setState({
-			menu: true
+			menu: !this.state.menu
 		});
 	}
 
@@ -59,10 +60,9 @@ class DropdownCheckbox extends React.Component {
 
 	render() {
 		return (
-			<div className="dropdown-checkbox-container">
+			<div className="dropdown-checkbox-container" ref={this.setWrapperRef}>
 				{this.state.menu && (
 					<div
-						ref={this.setWrapperRef}
 						className="fa-dropdown fa-dropdown-reverse"
 						onBlur={this.onBlur}
 					>
@@ -85,7 +85,7 @@ class DropdownCheckbox extends React.Component {
 
 				<div className="dropdown-placeholder" onClick={this.showMenu}>
 					<span className="fa-margin-right-xsm">
-						{window.SF.labels.products_display_columns}{' '}
+						{window.SF.labels.products_display_columns}
 					</span>
 					<Icon
 						name={this.state.menu ? 'chevronup' : 'chevrondown'}

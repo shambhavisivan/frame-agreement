@@ -4,32 +4,105 @@
 .fa-pagination-container {
 	display: flex;
 	justify-content: flex-end;
-	padding-right: 1.5rem;
-	padding-top: 1rem;
+	padding: 1rem 1.25rem;
+
+	.fa-pagination {
+		display: flex;
+		padding-right: 1rem;
+		border-radius: 0.25rem;
+		margin: 0;
+
+		li  {
+
+			&.next.disabled svg,
+			&.previous.disabled svg {
+				fill: #b0adab !important;
+			}
+
+			a {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 0.75rem;
+				height: 2rem;
+				padding: 0;
+				width: 2rem;
+				height: 2rem;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				cursor: pointer;
+				color: #0070d2;
+				text-decoration: none;
+			}
+
+			&:first-child a {
+				border-top-left-radius: 0.25rem;
+				border-bottom-left-radius: 0.25rem;
+			}
+
+			&:last-child a {
+				border-top-right-radius: 0.25rem;
+				border-bottom-right-radius: 0.25rem;
+			}
+
+			&:nth-of-type(n+2) a {
+				border-left: none;
+			}
+
+			&.page.active a {
+				background: $blue-sf;
+				color: white;
+			}
+
+			& a:hover {
+				background: #f4f6f9;
+			}
+
+			& a:focus {
+				outline: none;
+				position: relative;
+				z-index: 1000;
+				box-shadow: 0 0 3px $blue-sf;;
+				border: 1px solid $blue-sf;
+			}
+
+			& a:active {
+				border: 1px solid #ddd;
+			}
+
+			&.disabled a {
+				cursor: default;
+				box-shadow: none;
+				background: $white;
+				border-color: #ddd;
+			}
+
+			&:nth-of-type(n+2).disabled a {
+				border-left: none;
+			}
+		}
+	}
 
 	select {
 		min-width: 5rem;
-	}
-}
-
-.fa-pagination li  {
-	> a {
-		align-items: center;
-		display: flex;
-		font-size: 0.75rem;
 		height: 2rem;
-		justify-content: center;
-		padding: 0;
-		width: 2rem;
-	}
+		border-radius: 0.25rem;
+		border: solid 1px #ddd;
+		background-color: white;
 
-	&:first-child > a {
-		border-top-left-radius: 0.25rem;
-		border-bottom-left-radius: 0.25rem;
-	}
+		&:hover {
+			background: #f4f6f9;
+		}
 
-	&:last-child > a {
-		border-top-right-radius: 0.25rem;
-		border-bottom-right-radius: 0.25rem;
+		&:focus {
+			outline: none;
+			position: relative;
+			z-index: 1000;
+			box-shadow: 0 0 3px $blue-sf;
+			border: 1px solid #ddd;
+		}
 	}
 }
+
+
+

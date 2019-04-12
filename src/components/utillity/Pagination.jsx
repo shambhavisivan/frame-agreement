@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ReactPaginate from 'react-paginate';
-import './Pagination.css';
 
 import Icon from './Icon';
 

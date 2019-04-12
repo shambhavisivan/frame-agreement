@@ -77,7 +77,6 @@
 .fa-header-secondary-body {
 	align-items: center;
 	display: flex;
-	justify-content: space-between;
 	position: relative;
 }
 
@@ -97,17 +96,10 @@
 
 	&-left {
 		padding-left: 1.5rem;
+		margin-right: auto;
 	}
-}
-
-.fa-header-secondary-prev {
-	bottom: 50%;
-	left: -1.5rem;
-	position: absolute;
-	transform: translateY(50%);
 }
 
 .fa-header-secondary-prev:hover {
 	cursor: pointer;
-	/*animate translation left*/
 }

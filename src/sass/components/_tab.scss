@@ -31,12 +31,16 @@
 .fa-tab.active {
 	background: $blue-sf;
 	color: $white;
+
+	a {
+		color: $white;
+	}
 }
 
 /* Disabled */
 .fa-tab.disabled {
 	cursor: auto;
-	opacity: .5;
+	opacity: 0.5;
 }
 
 /* Secondary */

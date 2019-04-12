@@ -23,6 +23,10 @@
 	text-align: left;
 }
 
+.approval-table-list .fa-section .fa-button-group-secondary {
+	margin-top: 0.5rem;
+}
+
 .approval-table-list-header {
 	background: white;
 	display: flex;
@@ -60,6 +64,10 @@
 .approval-table-list-container {
 	display: flex;
 	flex-direction: column;
+}
+
+.approval-table-list-container .table-list-header {
+	@include sbg(--table-header);
 }
 
 .approval-table-list-container > ul.table-list {

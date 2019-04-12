@@ -5,6 +5,7 @@ $blue-sf-dark: #0062b9;
 $blue-sf-light: #2196f3;
 $gray: #dddbda;
 $gray-light: #f5f5f5;
+$gray-light-1: #fafaf9;
 $gray-dark: #777f8b;
 $gray-darker: #6b727d;
 $gray-darkest: #080707;
@@ -22,6 +23,8 @@ $variables: (
 	--main-br: $gray,
 
 	--font-dark: $gray-darkest,
+
+	--table-header: $gray-light-1,
 
 	--button-c: $blue-sf,
 	--button-bg: $white,

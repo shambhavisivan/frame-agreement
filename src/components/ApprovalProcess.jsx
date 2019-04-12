@@ -177,17 +177,6 @@ class ApprovalProcess extends React.Component {
 							placeholder={window.SF.labels.approval_message_placeholder}
 						/>
 						<div className="fa-button-group-secondary">
-							{this.props.approval.isApprover && (
-								<button
-									className="fa-btn fa-button-neutral"
-									onClick={() => this.approvalAction('Approve')}
-								>
-									<Icon name="approval" height="14" width="14" />
-									<span className="fa-padding-left-xsm">
-										{window.SF.labels.approval_action_approve}
-									</span>
-								</button>
-							)}
 							{this.props.approval.isApprover && false && (
 								<button
 									className="fa-btn fa-button-neutral"
@@ -208,6 +197,15 @@ class ApprovalProcess extends React.Component {
 									<span className="fa-padding-left-xsm">
 										{window.SF.labels.approval_action_recall}
 									</span>
+								</button>
+							)}
+							{this.props.approval.isApprover && (
+								<button
+									className="fa-btn fa-button-neutral"
+									onClick={() => this.approvalAction('Approve')}
+								>
+									<Icon name="approval" height="14" width="14" />
+									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_approve}</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && (

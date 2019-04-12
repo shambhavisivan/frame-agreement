@@ -10,6 +10,8 @@ class Rates extends React.Component {
 	constructor(props) {
 		super(props);
 
+		this.paginationFormat = this.paginateRateCards(10);
+
 		this.state = {
 			pagination: {
 				page: 1,
@@ -24,6 +26,50 @@ class Rates extends React.Component {
 		negotiation[rc.Id][rcl.Id] = value;
 
 		this.props.onNegotiate(negotiation);
+	}
+
+	componentWillUpdate(nextProps, nextState) {
+		if (nextState.pagination.pageSize !== this.state.pagination.pageSize) {
+			this.paginationFormat = this.paginateRateCards(
+				nextState.pagination.pageSize
+			);
+		}
+	}
+
+	// Behold
+	paginateRateCards(pageSize) {
+		let _rcMap = {};
+		this.props.rateCards.forEach(rc => {
+			_rcMap[rc.Id] = { Id: rc.Id, Name: rc.Name };
+			if (rc.hasOwnProperty('authId')) {
+				_rcMap[rc.Id].authId = rc.authId;
+			}
+		});
+
+		let _mergedRcl = this.props.rateCards.reduce((acc, iterator, i) => {
+			return acc.concat([], iterator.rateCardLines);
+		}, []);
+
+		let _chunked = _mergedRcl.chunk(pageSize);
+
+		let paginated = _chunked.map(_set => {
+			let _rcPageMap = {};
+
+			_set.forEach(rcl => {
+				if (!_rcPageMap.hasOwnProperty(rcl.cspmb__Rate_Card__c)) {
+					_rcPageMap[rcl.cspmb__Rate_Card__c] = {
+						..._rcMap[rcl.cspmb__Rate_Card__c]
+					};
+					_rcPageMap[rcl.cspmb__Rate_Card__c].rateCardLines = [];
+				}
+				_rcPageMap[rcl.cspmb__Rate_Card__c].rateCardLines.push(rcl);
+			});
+
+			return Object.values(_rcPageMap);
+		});
+
+		console.log(paginated);
+		return paginated;
 	}
 
 	render() {
@@ -43,12 +89,8 @@ class Rates extends React.Component {
 					</div>
 				</div>
 				<ul className="rc-list">
-					{this.props.rateCards
-						.paginate(
-							this.state.pagination.page,
-							this.state.pagination.pageSize
-						)
-						.map((rc, i) => {
+					{this.paginationFormat[this.state.pagination.page - 1].map(
+						(rc, i) => {
 							return (
 								<li key={rc.Id} className="list-item">
 									<div className="rc-title">
@@ -107,16 +149,23 @@ class Rates extends React.Component {
 									</ul>
 								</li>
 							);
-						})}
+						}
+					)}
 				</ul>
 
 				<Pagination
-					totalSize={this.props.rateCards.length}
+					totalSize={
+						this.paginationFormat.length * this.state.pagination.pageSize
+					}
 					pageSize={this.state.pagination.pageSize}
 					page={this.state.pagination.page}
 					onPageSizeChange={newPageSize => {
 						this.setState({
-							pagination: { ...this.state.pagination, pageSize: newPageSize }
+							pagination: {
+								...this.state.pagination,
+								pageSize: newPageSize,
+								page: 1
+							}
 						});
 					}}
 					onPageChange={newPage => {

@@ -242,76 +242,91 @@ class NegotiationModal extends Component {
 		this.setState({ tab: newTab });
 	}
 
-    selectAll(type) {
-        var newSelected = {};
+	selectAll(type) {
+		var newSelected = {};
 
-        switch (type) {
-            case 'addons':
-                var totalCount = Object.keys(this.grouped_addons).length;
-                var selectedCount = Object.keys(this.state.selected.addons).length;
+		switch (type) {
+			case 'addons':
+				var totalCount = Object.keys(this.grouped_addons).length;
+				var selectedCount = Object.keys(this.state.selected.addons).length;
 
-                if (totalCount !== selectedCount) {
-                    Object.keys(this.grouped_addons).forEach(addId => {
-                        newSelected[addId] = true;
-                    });
-                }
-                this.setState({ selected: { ...this.state.selected, addons: newSelected } });
+				if (totalCount !== selectedCount) {
+					Object.keys(this.grouped_addons).forEach(addId => {
+						newSelected[addId] = true;
+					});
+				}
+				this.setState({
+					selected: { ...this.state.selected, addons: newSelected }
+				});
 
-                // code block
-                break;
-            case 'charges':
-                // code block
-                var totalCount = this._charges.length;
-                var selectedCount = Object.keys(this.state.selected.charges).length;
+				// code block
+				break;
+			case 'charges':
+				// code block
+				var totalCount = this._charges.length;
+				var selectedCount = Object.keys(this.state.selected.charges).length;
 
-                var newSelected = {};
-                if (totalCount !== selectedCount) {
-                    this._charges.forEach(ch => {
-                        newSelected[ch.Id] = true;
-                    });
-                }
-                this.setState({ selected: { ...this.state.selected, charges: newSelected } });
-                break;
-            case 'rated':
-                var allRcl = this._rateCards.reduce((acc, iterator) => {
-                    let _rcl = iterator.rateCardLines.filter(rcl => {
-                        let retBool = true;
-                        if (this.state.selectedProperty && this.state.selectedPropertyValue) {
-                            if (rcl[this.state.selectedProperty] !== this.state.selectedPropertyValue) {
-                                retBool = false;
-                            }
-                        }
-                        return retBool;
-                    });
-                    return acc.concat([], _rcl);
-                }, []);
-                var selectedCount = Object.keys(this.state.selected.rated).length;
+				var newSelected = {};
+				if (totalCount !== selectedCount) {
+					this._charges.forEach(ch => {
+						newSelected[ch.Id] = true;
+					});
+				}
+				this.setState({
+					selected: { ...this.state.selected, charges: newSelected }
+				});
+				break;
+			case 'rated':
+				var allRcl = this._rateCards.reduce((acc, iterator) => {
+					let _rcl = iterator.rateCardLines.filter(rcl => {
+						let retBool = true;
+						if (
+							this.state.selectedProperty &&
+							this.state.selectedPropertyValue
+						) {
+							if (
+								rcl[this.state.selectedProperty] !==
+								this.state.selectedPropertyValue
+							) {
+								retBool = false;
+							}
+						}
+						return retBool;
+					});
+					return acc.concat([], _rcl);
+				}, []);
+				var selectedCount = Object.keys(this.state.selected.rated).length;
 
-                var newSelected = {};
-                if (allRcl.length !== selectedCount) {
-                    allRcl.forEach(rcl => {
-                        newSelected[rcl.Id] = true;
-                    });
-                }
-                this.setState({ selected: { ...this.state.selected, rated: newSelected } });
-                break;
-        }
+				var newSelected = {};
+				if (allRcl.length !== selectedCount) {
+					allRcl.forEach(rcl => {
+						newSelected[rcl.Id] = true;
+					});
+				}
+				this.setState({
+					selected: { ...this.state.selected, rated: newSelected }
+				});
+				break;
+		}
 
-
-        this.setState({
-                count: {
-                    ...this.state.count,
-                    [type]: Object.keys(newSelected).length
-                }
-            },
-            () => {
-                this.setState({
-                    countTotal: Object.values(this.state.count).reduce((a, b) => +(a + b), 0)
-                });
-                console.log(this.state.selected);
-            }
-        );
-    }
+		this.setState(
+			{
+				count: {
+					...this.state.count,
+					[type]: Object.keys(newSelected).length
+				}
+			},
+			() => {
+				this.setState({
+					countTotal: Object.values(this.state.count).reduce(
+						(a, b) => +(a + b),
+						0
+					)
+				});
+				console.log(this.state.selected);
+			}
+		);
+	}
 
 	onPropertyChange(e) {
 		var defaultProperty = this.state.propertyData[e.target.value]
@@ -592,7 +607,11 @@ class NegotiationModal extends Component {
 					page={this.state.pagination.page_addons}
 					onPageSizeChange={newPageSize => {
 						this.setState({
-							pagination: { ...this.state.pagination, pageSize: newPageSize }
+							pagination: {
+								...this.state.pagination,
+								pageSize: newPageSize,
+								page_addons: 1
+							}
 						});
 					}}
 					onPageChange={newPage => {
@@ -678,7 +697,11 @@ class NegotiationModal extends Component {
 					page={this.state.pagination.page_charges}
 					onPageSizeChange={newPageSize => {
 						this.setState({
-							pagination: { ...this.state.pagination, pageSize: newPageSize }
+							pagination: {
+								...this.state.pagination,
+								pageSize: newPageSize,
+								page_charges: 1
+							}
 						});
 					}}
 					onPageChange={newPage => {
@@ -809,7 +832,11 @@ class NegotiationModal extends Component {
 					page={this.state.pagination.page_rated}
 					onPageSizeChange={newPageSize => {
 						this.setState({
-							pagination: { ...this.state.pagination, pageSize: newPageSize }
+							pagination: {
+								...this.state.pagination,
+								pageSize: newPageSize,
+								page_rated: 1
+							}
 						});
 					}}
 					onPageChange={newPage => {
@@ -917,7 +944,9 @@ class NegotiationModal extends Component {
 				onClose={this.onCloseModal}
 			>
 				<div className="fa-modal-header">
-					<h2 className="fa-modal-header-title">{window.SF.labels.modal_bulk_title}</h2>
+					<h2 className="fa-modal-header-title">
+						{window.SF.labels.modal_bulk_title}
+					</h2>
 				</div>
 				<div className="negotiation-modal fa-modal-body">
 					<div className="products-container">

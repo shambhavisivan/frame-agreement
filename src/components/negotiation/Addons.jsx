@@ -35,18 +35,14 @@ class Addons extends React.Component {
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell">
-						{window.SF.labels.addons_header_name}
-					</div>
+					<div className="list-cell">{window.SF.labels.addons_header_name}</div>
 					<div className="list-cell">
 						{window.SF.labels.addons_header_oneOff}
 					</div>
 					<div className="list-cell">
 						{window.SF.labels.addons_header_oneOff_neg}
 					</div>
-					<div className="list-cell">
-						{window.SF.labels.addons_header_recc}
-					</div>
+					<div className="list-cell">{window.SF.labels.addons_header_recc}</div>
 					<div className="list-cell">
 						{window.SF.labels.addons_header_recc_neg}
 					</div>
@@ -199,7 +195,11 @@ class Addons extends React.Component {
 					page={this.state.pagination.page}
 					onPageSizeChange={newPageSize => {
 						this.setState({
-							pagination: { ...this.state.pagination, pageSize: newPageSize }
+							pagination: {
+								...this.state.pagination,
+								pageSize: newPageSize,
+								page: 1
+							}
 						});
 					}}
 					onPageChange={newPage => {

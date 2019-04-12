@@ -277,7 +277,9 @@ class ProductModal extends Component {
 					>
 						<Icon name="expand_alt" width="24" height="24" color="white" />
 					</span>
-					<h2 className="fa-modal-header-title">{window.SF.labels.modal_addProduct_title}</h2>
+					<h2 className="fa-modal-header-title">
+						{window.SF.labels.modal_addProduct_title}
+					</h2>
 				</div>
 
 				<div
@@ -369,7 +371,8 @@ class ProductModal extends Component {
 
 					<div className="modal-table-container">
 						<div className="modal-navigation">
-							{this.props.settings.CategorizationData.length && !this.state.panel ? (
+							{this.props.settings.CategorizationData.length &&
+							!this.state.panel ? (
 								<div
 									className="fa-flex fa-flex-middle"
 									onClick={this.togglePanel}
@@ -473,7 +476,11 @@ class ProductModal extends Component {
 						page={this.state.pagination.page}
 						onPageSizeChange={newPageSize => {
 							this.setState({
-								pagination: { ...this.state.pagination, pageSize: newPageSize }
+								pagination: {
+									...this.state.pagination,
+									pageSize: newPageSize,
+									page: 1
+								}
 							});
 						}}
 						onPageChange={newPage => {

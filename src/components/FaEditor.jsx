@@ -1458,10 +1458,10 @@ class FaEditor extends Component {
 
 		return (
 			<div className="editor-container">
-                <Prompt
-                    when={this.state.actionTaken && this.faId && this.editable}
-                    message={window.SF.labels.modal_unsavedChanges_alert}
-                />
+				<Prompt
+					when={this.state.actionTaken && this.faId && this.editable}
+					message={window.SF.labels.modal_unsavedChanges_alert}
+				/>
 
 				<Header
 					onBackClick={this.onBackClick}
@@ -1568,6 +1568,7 @@ class FaEditor extends Component {
 									this.setState({
 										pagination: {
 											...this.state.pagination,
+											page: 1,
 											pageSize: newPageSize
 										}
 									});

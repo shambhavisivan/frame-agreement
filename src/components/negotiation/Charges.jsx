@@ -181,7 +181,11 @@ class Charges extends React.Component {
 					page={this.state.pagination.page}
 					onPageSizeChange={newPageSize => {
 						this.setState({
-							pagination: { ...this.state.pagination, pageSize: newPageSize }
+							pagination: {
+								...this.state.pagination,
+								pageSize: newPageSize,
+								page: 1
+							}
 						});
 					}}
 					onPageChange={newPage => {

@@ -77,7 +77,9 @@ class SFField extends Component {
 
 		return (
 			<div
-				className={'fa-element-wrapper ' + (this.props.editable ? 'editable' : '')}
+				className={
+					'fa-element-wrapper ' + (this.props.editable ? 'editable' : '')
+				}
 				style={{ flex: this.props.field.grid }}
 			>
 				<label className="fa-element-label">
@@ -90,9 +92,7 @@ class SFField extends Component {
 						color="#4bca81"
 					/>
 				</label>
-				<div className="fa-element">
-					{field}
-				</div>
+				<div className="fa-element">{field}</div>
 			</div>
 		);
 	}

@@ -160,7 +160,10 @@ class CommercialProduct extends React.Component {
 
 					<div className="commercial-product-fields-container">
 						<div className="commercial-product-fields">
-							<span className="product-field product-name" onClick={this.onExpandProduct}>
+							<span
+								className="product-field product-name"
+								onClick={this.onExpandProduct}
+							>
 								{this.props.product.Name}
 							</span>
 							{this.props.productFields
@@ -184,7 +187,8 @@ class CommercialProduct extends React.Component {
 										);
 									} else {
 										_field = (
-											<span className="product-field"
+											<span
+												className="product-field"
 												onClick={this.onExpandProduct}
 												key={'facp-' + this.props.product.Id + '-' + f + i}
 											>

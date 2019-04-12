@@ -165,7 +165,9 @@ class ApprovalProcess extends React.Component {
 
 				{this.actionRequired && this.state.open && (
 					<div className="fa-section fa-section-border-bottom">
-						<span className="fa-title">{window.SF.labels.approval_message_title}</span>
+						<span className="fa-title">
+							{window.SF.labels.approval_message_title}
+						</span>
 						<textarea
 							className="fa-textarea"
 							value={this.state.comment}
@@ -181,7 +183,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Approve')}
 								>
 									<Icon name="approval" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_approve}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_approve}
+									</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && false && (
@@ -190,7 +194,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Reassign')}
 								>
 									<Icon name="change_owner" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reassign}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_reassign}
+									</span>
 								</button>
 							)}
 							{this.isInitiator && (
@@ -198,8 +204,10 @@ class ApprovalProcess extends React.Component {
 									className="fa-btn fa-button-neutral"
 									onClick={() => this.approvalAction('Removed')}
 								>
-										<Icon name="undo" height="14" width="14" />
-										<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_recall}</span>
+									<Icon name="undo" height="14" width="14" />
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_recall}
+									</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && (
@@ -208,7 +216,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Reject')}
 								>
 									<Icon name="dislike" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reject}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_reject}
+									</span>
 								</button>
 							)}
 						</div>

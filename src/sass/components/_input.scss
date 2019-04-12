@@ -21,19 +21,6 @@
 	}
 }
 
-.fa-input-border {
-	background: none;
-	border: 0;
-	border-bottom: 1px solid transparent;
-	font-size: 0.875rem;
-	outline: 0;
-	padding-bottom: 0.5rem;
-
-	&:focus {
-		border-bottom: 1px solid $blue-sf;
-	}
-}
-
 .fa-input-lg {
 	padding: 0.5rem 0.5rem 0.5rem 2rem;
 }

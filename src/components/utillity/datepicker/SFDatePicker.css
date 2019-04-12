@@ -2,11 +2,15 @@
 	border: none;
 	background: white;
 	position: relative;
+	display: flex;
+	align-items: center;
 }
 
-.datepicker-input-container svg{
+.datepicker-input-container svg {
 	position: absolute;
 	right: 7px;
+	fill: #b0adab;
+	pointer-events: none;
 }
 
 .datepicker-input-container.disabled {

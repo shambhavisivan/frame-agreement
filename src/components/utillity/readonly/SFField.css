@@ -45,12 +45,12 @@
   letter-spacing: normal;
   color: #080707;
 }
-
+/*
 .sf-field.editable:hover .form-edit-icon {
   display: inline-block;
-}
+}*/
 
-.sf-field .sf-label.edit > .form-edit-icon {
+/*.sf-field .sf-label.edit > .form-edit-icon {
 	display: inline-block;
 }
 
@@ -59,7 +59,7 @@
 	float: left;
   background: white;
 	margin-left: -16px;
-}
+}*/
 
 .value-holder {
   border-bottom: 1px solid transparent;

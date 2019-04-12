@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 import Icon from '../Icon';
 
@@ -22,16 +22,14 @@ class InputTextArea extends React.Component {
 
 	render() {
 		return (
-			<div>
-				<textarea
-					disabled={this.props.disabled}
-					spellCheck="false"
-					onKeyPress={this._handleKeyPress}
-					className="fa-input-border"
-					onChange={this.onTextChange}
-					value={this.state.value}
-				/>
-			</div>
+			<textarea
+				disabled={this.props.disabled}
+				spellCheck="false"
+				onKeyPress={this._handleKeyPress}
+				className="fa-input-border"
+				onChange={this.onTextChange}
+				value={this.state.value}
+			/>
 		);
 	}
 }

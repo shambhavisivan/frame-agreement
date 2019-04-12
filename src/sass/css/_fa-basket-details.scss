@@ -1,0 +1,85 @@
+.basket-details {
+	width: 100%;
+	padding: 1rem;
+
+	.details-row-wrapper {
+		display: flex;
+		width: 100%;
+	}
+
+	.fa-element-wrapper {
+		position: relative;
+		overflow: hidden;
+		margin: 0.5rem 0.6rem;
+
+		.fa-element-label {
+			display: flex;
+			align-items: center;
+
+			.element-title {
+				display: inline-block;
+				margin: 0;
+				color: #777f8b;
+				font-size: 0.75rem;
+				max-width: 100%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+
+		.fa-element {
+			display: flex;
+			min-height: 2rem;
+			width: 100%;
+			overflow: hidden;
+
+			> input {
+				width: 100%;
+			}
+
+			> textarea {
+				min-width: 100%;
+				max-width: 100%;
+			}
+
+			.fa-input-border {
+				background: transparent;
+				border: 0;
+				border-top: 1px solid transparent;
+				border-bottom: 1px solid transparent;
+				font-size: 0.875rem;
+				outline: 0;
+				min-height: 2rem;
+				max-width: 100%;
+				text-overflow: ellipsis;
+				overflow: hidden;
+
+				&:focus {
+					border-bottom: 1px solid #4bca81;
+				}
+			}
+		}
+
+		.form-edit-icon {
+			display: none;
+		}
+
+		&.editable {
+			.fa-input-border {
+				border-bottom: 1px solid #d9d9d9;
+			}
+
+			&:hover, &:focus-within {
+				.form-edit-icon {
+					display: inline-block;
+				}
+
+				.element-title {
+					max-width: calc(100% - 1rem);
+					margin-right: 0.25rem;
+				}
+			}
+		}
+	}
+}

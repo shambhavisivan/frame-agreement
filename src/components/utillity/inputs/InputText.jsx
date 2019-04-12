@@ -23,19 +23,17 @@ class InputText extends React.Component {
 
 	render() {
 		return (
-			<div>
-				<input
-					disabled={this.props.disabled}
-					spellCheck="false"
-					placeholder={
-						window.SF.labels.util_input_text_enter + ' ' + this.props.type
-					}
-					className="fa-input-border"
-					type={this.props.type}
-					onChange={this.onTextChange}
-					value={this.state.value}
-				/>
-			</div>
+			<input
+				disabled={this.props.disabled}
+				spellCheck="false"
+				placeholder={
+					window.SF.labels.util_input_text_enter + ' ' + this.props.type
+				}
+				className="fa-input-border"
+				type={this.props.type}
+				onChange={this.onTextChange}
+				value={this.state.value}
+			/>
 		);
 	}
 }

@@ -1526,27 +1526,25 @@ class FaEditor extends Component {
 				<div className="fa-container">
 					<div className="fa-container-inner">
 						{this.header_rows.length ? (
-							<section className="fa-section fa-section-vertical fa-section-shadow fa-section-light">
+							<section className="basket-details fa-section fa-section-vertical fa-section-shadow fa-section-light">
 								{this.header_rows.map((row, i) => {
 									return (
 										<div
-											className="fa-margin-bottom-md"
+											className="details-row-wrapper"
 											key={'header-row-' + i}
 										>
-											<div className="fa-flex">
-												{row.map(f => {
-													var editable = !f.readOnly && this.editable;
-													return (
-														<SFField
-															editable={editable}
-															onChange={this.onFieldChange}
-															key={f.field}
-															field={f}
-															value={this.state.activeFa[f.field] || ''}
-														/>
-													);
-												})}
-											</div>
+											{row.map(f => {
+												var editable = !f.readOnly && this.editable;
+												return (
+													<SFField
+														editable={editable}
+														onChange={this.onFieldChange}
+														key={f.field}
+														field={f}
+														value={this.state.activeFa[f.field] || ''}
+													/>
+												);
+											})}
 										</div>
 									);
 								})}

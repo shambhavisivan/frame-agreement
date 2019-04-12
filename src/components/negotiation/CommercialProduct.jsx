@@ -24,8 +24,6 @@ import {
 } from './Validation';
 import { setValidation } from '../../actions';
 
-import './CommercialProduct.scss';
-
 class CommercialProduct extends React.Component {
 	constructor(props) {
 		super(props);
@@ -162,7 +160,7 @@ class CommercialProduct extends React.Component {
 
 					<div className="commercial-product-fields-container">
 						<div className="commercial-product-fields">
-							<span onClick={this.onExpandProduct}>
+							<span className="product-field product-name" onClick={this.onExpandProduct}>
 								{this.props.product.Name}
 							</span>
 							{this.props.productFields
@@ -172,7 +170,7 @@ class CommercialProduct extends React.Component {
 									if (f.volume) {
 										_field = (
 											<span
-												className="volume-fields"
+												className="product-field volume-fields"
 												key={'facp-' + this.props.product.Id + '-' + f + i}
 											>
 												<InputVolume
@@ -186,7 +184,7 @@ class CommercialProduct extends React.Component {
 										);
 									} else {
 										_field = (
-											<span
+											<span className="product-field"
 												onClick={this.onExpandProduct}
 												key={'facp-' + this.props.product.Id + '-' + f + i}
 											>
@@ -201,7 +199,7 @@ class CommercialProduct extends React.Component {
 					</div>
 				</div>
 				{this.props.open && (
-					<div>
+					<div className="commercial-product-body">
 						{this.props.product.cspmb__Price_Item_Description__c && (
 							<div className="commercial-product-description">
 								<ExpandableArticle>

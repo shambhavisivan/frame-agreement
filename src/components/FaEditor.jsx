@@ -1328,8 +1328,8 @@ class FaEditor extends Component {
 			this.state.activeFa._ui.commercialProducts.length
 		) {
 			commercialProducts = (
-				<div>
-					<div>
+				<div className="product-table-wrapper">
+					<div className="product-table-header-wrapper">
 						<div className="fa-section fa-section-vertical fa-section-shadow">
 							<div className="fa-flex fa-flex-middle">
 								<div className="fa-flex-item fa-flex-1">
@@ -1363,7 +1363,7 @@ class FaEditor extends Component {
 							</div>
 						</div>
 						<div className="commercial-product-container commercial-product-container-bare commercial-product-container-default">
-							<div className="commercial-product-header">
+							<div className="commercial-table-header">
 								<div className="commercial-product-checkbox-container">
 									<Checkbox
 										className="fa-margin-right-sm"

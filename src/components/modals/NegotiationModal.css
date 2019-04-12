@@ -67,42 +67,47 @@
 /**********************************************/
 
 .product-count {
-    background: #706e6b;
-    color: white;
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    border-radius: 9px;
-    margin-left: 5px;
-    font-size: 12px;
+	background: #706e6b;
+	color: white;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	border-radius: 9px;
+	margin-left: 5px;
+	font-size: 12px;
 }
 
 /**********************************************/
 .table-list-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fff;
-    border-bottom: 1px solid #dddbda;
-    font-size: 0.8rem;
-    color: #5e5d60;
-    user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -o-user-select: none;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	border-bottom: 1px solid #dddbda;
+	font-size: 0.8rem;
+	color: #5e5d60;
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
 
 }
 
 .table-list-header > .list-cell {
 	color: #777;
-	padding: 0.5rem 1.25rem;
+	padding: 0.25rem 0.75rem;
 	flex: 1;
 	text-align: right;
 }
 
-.table-list-header> div.list-cell:first-child {
-    text-align: left;
+.table-list-header > div.list-cell:first-child {
+	text-align: left;
+	padding-left: 1.5rem;
+}
+
+.table-list-header > div.list-cell:last-child {
+	padding-right: 1.5rem;
 }
 
 /*************************************************/
@@ -214,7 +219,7 @@
 }
 
 .list-row div.list-cell:first-child {
-    text-align: left;
+	text-align: left;
 }
 
 .list-row.selected-row div.list-cell:first-child {
@@ -229,6 +234,7 @@
 .list-cell.valid {
 	color: #4bca81;
 }
+
 .list-cell.invalid {
 	color: #d81c2a;
 }

@@ -27,7 +27,7 @@
 	background: white;
 	display: flex;
 	align-items: center;
-	padding: 12px 20px;
+	padding: 0.75rem 1.5rem;
 	border-bottom: 1px solid #dddbda;
 }
 
@@ -67,7 +67,13 @@
 }
 
 .approval-history .list-row > .list-cell {
-	padding: 0.4rem 1.25rem;
+	padding: 0.4rem 0.75rem;
+	&:first-child {
+		padding-left: 1.5rem;
+	}
+	&:last-child {
+		padding-right: 1.5rem;
+	}
 }
 
 .status.Pending {

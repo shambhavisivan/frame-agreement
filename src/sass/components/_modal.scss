@@ -1,15 +1,16 @@
 /* FA Modal */
 // Modal component.
-
 .fa-modal {
-	background: $white;
-	bottom: 50%;
+	position: absolute;
 	max-width: 850px;
-	padding: 0;
-	position: fixed;
-	right: 50%;
-	transform: translate(50%, 50%);
 	width: 80%;
+	background: $white;
+	padding: 0;
+	max-height: 90vh;
+	display: flex;
+	flex-direction: column;
+	border-radius: 0.25rem;
+	box-shadow: 0 0 4px #dddbda;
 
 	.react-confirm-alert & {
 		box-shadow: 0 0 4px transparentize($gray, 0.6);
@@ -26,10 +27,8 @@
 .fa-modal-header {
 	padding: 1rem 0;
 	text-align: center;
-
-	.react-confirm-alert & {
-		border-bottom: 2px solid $gray-blue;
-	}
+	border-radius: 0.25rem 0.25rem 0 0 ;
+	border-bottom: 1px solid #dddbda;
 }
 
 .fa-modal-header-title {
@@ -40,8 +39,119 @@
 /* Body */
 .fa-modal-body {
 	padding-bottom: 1.5rem;
+	flex: 1;
+	overflow: hidden;
+	display: flex;
 
 	.react-confirm-alert & {
-		padding: 1.5rem 0;
+		padding: 1.5rem;
+		justify-content: center;
 	}
+
+	&.product-modal {
+		padding: 0;
+		background: #f8f8f8;
+	}
+
+	&.negotiation-modal {
+		flex-direction: column;
+		background: #f8f8f8;
+	}
+}
+
+.fa-modal-footer {
+	padding: 1rem 1.25rem;
+	text-align: right;
+	border-radius: 0 0 0.25rem 0.25rem;
+	border-top: 1px solid #dddbda;
+	background: #f3f2f2;
+}
+
+
+/*OVERLAY*/
+.overlay {
+	background: rgba(176, 171, 171, 0.8);
+	justify-content: center;
+	align-items: center;
+}
+
+.sf-modal {
+	width: 100%;
+	max-width: 90vw;
+	background-color: transparent;
+	padding: 0;
+	iframe {
+		padding: 0;
+	}
+}
+
+/*.sf-modal.confirmation {
+	min-width: 580px;
+	right: calc(50% - 290px);
+	border-radius: 4px;
+	box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+}*/
+/*
+
+.sf-modal>div:not(div.modal-body) {
+	display: inline-block;
+}
+*/
+
+/*.confirmation .modal-footer {
+	text-align: center;
+}
+
+.confirmation .modal-footer>button {
+	margin-right: 12px;
+}*/
+
+.close-button {
+	background: none;
+	cursor: pointer;
+	top: -40px;
+	right: -20px;
+}
+
+.close-button svg {
+	width: 48px;
+	height: 48px;
+	fill: white;
+}
+
+.close-button:focus {
+	outline: none;
+}
+
+.modal-navigation {
+	width: 100%;
+	display: flex;
+	padding: 1rem 1rem 0.5rem 1rem;
+	height: 57px;
+}
+
+.modal-navigation .search-container {
+	width: 400px;
+}
+
+.panel-open .modal-navigation {
+	justify-content: center;
+}
+
+.sf-modal .modal-header {
+	border-radius: 4px;
+	box-shadow: 0 2px 0 0 #f0f2f7;
+	background: white;
+	margin-bottom: 1px;
+	text-align: center;
+}
+
+.sf-modal .modal-header h2 {
+	font-size: 20px;
+	color: #222222;
+	margin: 0;
+}
+
+.react-confirm-alert-firm-svg {
+	display: none;
 }

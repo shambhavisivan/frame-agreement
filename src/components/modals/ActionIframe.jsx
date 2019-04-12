@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Modal from 'react-responsive-modal';
 
-import './Modal.css';
 import './ActionIframe.css';
 
 class ActionIframe extends Component {

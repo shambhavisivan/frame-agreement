@@ -11,7 +11,6 @@ import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField } from '../../utils/shared-service';
 
-import './Modal.css';
 import './ProductModal.css';
 
 class ProductModal extends Component {
@@ -283,7 +282,7 @@ class ProductModal extends Component {
 
 				<div
 					className={
-						'modal-body fa-modal-body ' +
+						'product-modal fa-modal-body ' +
 						(this.state.panel ? 'panel-open' : 'panel-closed')
 					}
 				>
@@ -299,68 +298,68 @@ class ProductModal extends Component {
 						</div>
 
 						<div className="panel-filter-container">
-							<div
-								className="product-list-header"
-							>
+							<div className="product-list-header">
 								<div className="header-th">
 									<span>{window.SF.labels.modal_categorization_title}</span>
 								</div>
 							</div>
-							{Object.keys(this.state.filter).map(key => {
-								let category = this.state.filter[key];
+							<div className="product-list">
+								{Object.keys(this.state.filter).map(key => {
+									let category = this.state.filter[key];
 
-								return (
-									<div className="filter-category" key={key}>
-										<div
-											className="category-title"
-											onClick={() => {
-												this.toggleCategoryCollapse(key);
-											}}
-										>
-											<Icon
-												name={category.open ? 'chevrondown' : 'chevronright'}
-												width="12"
-												height="12"
-												color="#747474"
-											/>
-											<span>{category.label}</span>
+									return (
+										<div className="filter-category" key={key}>
+											<div
+												className="category-title"
+												onClick={() => {
+													this.toggleCategoryCollapse(key);
+												}}
+											>
+												<Icon
+													name={category.open ? 'chevrondown' : 'chevronright'}
+													width="12"
+													height="12"
+													color="#747474"
+												/>
+												<span>{category.label}</span>
+											</div>
+
+											{category.open && (
+												<ul className="category-values-list">
+													{Object.keys(category.values).map(val => {
+														return (
+															<li
+																key={val}
+																onClick={() => {
+																	this.toggleFilter(key, val);
+																}}
+															>
+																<Checkbox
+																	small={true}
+																	readOnly={category.values[val]}
+																/>
+																<span>{val}</span>
+															</li>
+														);
+													})}
+												</ul>
+											)}
 										</div>
-
-										{category.open && (
-											<ul className="category-values-list">
-												{Object.keys(category.values).map(val => {
-													return (
-														<li
-															key={val}
-															onClick={() => {
-																this.toggleFilter(key, val);
-															}}
-														>
-															<Checkbox
-																small={true}
-																readOnly={category.values[val]}
-															/>
-															<span>{val}</span>
-														</li>
-													);
-												})}
-											</ul>
-										)}
-									</div>
-								);
-							})}
+									);
+								})}
+							</div>
 						</div>
-						<div className="fa-padding-left-sm fa-margin-bottom-sm">
+						<div className="filter-btns-row">
 							<button
 								onClick={this.resetFilter}
-								className="fa-button fa-button-transparent secondary fa-margin-right-xsm"
+								className="fa-button-neutral"
 								disabled={false}
 							>
 								{window.SF.labels.modal_categorization_btn_clear}
 							</button>
 							<button
 								onClick={this.applyFilter}
-								className="fa-button fa-button-transparent secondary"
+								className="fa-button-neutral"
 								disabled={false}
 							>
 								{window.SF.labels.modal_categorization_btn_apply}
@@ -467,7 +466,7 @@ class ProductModal extends Component {
 					</div>
 				</div>
 
-				<div className="modal-footer">
+				<div className="fa-modal-footer">
 					<Pagination
 						totalSize={this.getCommercialProductsCount()}
 						pageSize={this.state.pagination.pageSize}

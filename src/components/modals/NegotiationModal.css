@@ -1,18 +1,17 @@
-.negotiation-modal .modal-body {
+.negotiation-modal .fa-modal-body {
 	flex-direction: column;
 }
 
 .modal-panel {
-	border-right: 1px solid rgba(153, 153, 153, 0.5);
 	background: #fdfdfd;
 	padding-bottom: 0.25rem;
 }
 
-.modal-body.panel-closed .modal-panel {
+.fa-modal-body.panel-closed .modal-panel {
 	display: none;
 }
 
-.modal-body.panel-closed .modal-table-container {
+.fa-modal-body.panel-closed .modal-table-container {
 	flex: 1;
 	box-sizing: border-box;
 }

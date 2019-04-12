@@ -13,15 +13,15 @@ class ConfirmationModal extends Component {
 	render() {
 		return (
 			<div className="modal fa-modal">
-				<div className="modal-header fa-modal-header">
+				<div className="fa-modal-header">
 					<h2 className="fa-modal-header-title">{this.props.title}</h2>
 				</div>
-				<div className="modal fa-modal-body">
-					<p className="fa-text-center">{this.props.message}</p>
+				<div className="confirmation-modal fa-modal-body">
+					<p>{this.props.message}</p>
 				</div>
-				<div className="modal-footer">
+				<div className="fa-modal-footer">
 					<button
-						className="fa-button fa-button-neutral fa-margin-right-xsm"
+						className="fa-button-neutral fa-margin-right-xsm"
 						onClick={this.props.onCancel}
 					>
 						{window.SF.labels.alert_btn_cancel}

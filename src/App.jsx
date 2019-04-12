@@ -47,7 +47,7 @@ class App extends Component {
 				<React.Fragment>
 					<EditorSkeleton count={5} />;
 					<div className="skeleton-landing-cp">
-						<CommercialProductSkeleton count={5} />;
+						<CommercialProductSkeleton count={5} />
 					</div>
 				</React.Fragment>
 			);

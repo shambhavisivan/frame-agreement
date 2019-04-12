@@ -18,7 +18,6 @@ import { setValidation, createToast } from '../../actions';
 
 // import { getFrameAgreements } from '../../actions';
 
-import './Modal.css';
 import './NegotiationModal.css';
 
 const ADDON_VALUE_FIELD = 'cspmb__Recurring_Charge__c';
@@ -850,10 +849,10 @@ class NegotiationModal extends Component {
 				open={this.props.open}
 				onClose={this.onCloseModal}
 			>
-				<div className="fa-modal-header modal-header">
+				<div className="fa-modal-header">
 					<h2 className="fa-modal-header-title">{window.SF.labels.modal_bulk_title}</h2>
 				</div>
-				<div className="modal-body fa-modal-body">
+				<div className="negotiation-modal fa-modal-body">
 					<div className="products-container">
 						<div className="label-text">
 							{window.SF.labels.modal_bulk_selected_title}
@@ -944,7 +943,7 @@ class NegotiationModal extends Component {
 
 					<div className="action-container">
 						<div className="fa-discount">
-							<div class="fa-discount-item">
+							<div className="fa-discount-item">
 								<div className="fa-title fa-title-dark">
 									{window.SF.labels.modal_bulk_discount_title}
 								</div>
@@ -1002,7 +1001,7 @@ class NegotiationModal extends Component {
 						</div>
 					</div>
 				</div>
-				<div className="modal-footer">
+				<div className="fa-modal-footer">
 					<button
 						disabled={!this.state.actionTaken}
 						className="fa-button button--neutral"

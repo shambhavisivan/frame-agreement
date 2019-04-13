@@ -56,7 +56,7 @@
 	flex: 2;
 	padding: 9px 12px;
 	background: #0070d2;
-	color: white;
+	color: #fff;
 	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 	border-radius: 4px;
 	margin-left: 15px;
@@ -76,7 +76,7 @@
 
 .product-count {
 	background: #706e6b;
-	color: white;
+	color: #fff;
 	width: 16px;
 	height: 16px;
 	display: inline-block;
@@ -248,6 +248,14 @@
 	justify-content: space-between;
 	border-bottom: 1px solid #dddbda;
 	font-size: 13px;
+}
+
+.list-row:hover {
+	background: #fafaf9;
+}
+
+.list-row:hover .negotiate-input-wrapper:hover input {
+	background: #fff;
 }
 
 .list-row > .list-cell {

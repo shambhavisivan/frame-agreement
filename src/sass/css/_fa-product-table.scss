@@ -44,6 +44,10 @@
 					font-size: 0.8rem;
 					flex: 1;
 					text-align: left;
+					&.volume {
+						text-align: right;
+						margin-left: 0.75rem;
+					}
 				}
 			}
 		}
@@ -56,7 +60,7 @@
 	width: 100%;
 	border: 1px solid transparent;
 	margin-bottom: 1px;
-	background-color: white;
+	background-color: #fff;
 	box-sizing: border-box;
 	transition: margin 0.25s;
 
@@ -98,12 +102,13 @@
 				flex: 1;
 				cursor: pointer;
 				font-size: 0.85rem;
-				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
 
 				&.volume-fields {
 					cursor: text;
+					margin-left: 0.75rem;
+
 				}
 			}
 		}
@@ -139,6 +144,15 @@
 			}
 			.list-row:last-child {
 				border: 0;
+			}
+		}
+		.table-list .list-row .list-cell {
+			padding: 0.5rem 0.75rem;
+			&:first-child {
+				padding-left: 1.5rem;
+			}
+			&:last-child {
+				padding-right: 1.5rem;
 			}
 		}
 	}
@@ -180,7 +194,7 @@
 	width: 100%;
 	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 	margin-bottom: 8px;
-	background-color: white;
+	background-color: #fff;
 	border-radius: 4px;
 	box-sizing: border-box;
 	height: 56px;

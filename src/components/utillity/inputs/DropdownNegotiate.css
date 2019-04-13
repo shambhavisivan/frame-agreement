@@ -12,6 +12,7 @@
 }
 
 .negotiate-select-wrapper select {
+    height: 2rem;
     border-radius: 4px;
     border-color: #dddbda;
     color: rgba(8, 7, 7, 0.6);
@@ -21,10 +22,21 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    background-color: #fff;
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAAgCAMAAAC4saEMAAAACXBIWXMAAA7zAAAO8wEcU5k6AAAAEXRFWHRUaXRsZQBQREYgQ3JlYXRvckFevCgAAAATdEVYdEF1dGhvcgBQREYgVG9vbHMgQUcbz3cwAAAALXpUWHREZXNjcmlwdGlvbgAACJnLKCkpsNLXLy8v1ytISdMtyc/PKdZLzs8FAG6fCPGXryy4AAABuVBMVEVbW1leX1pfYFtjY2FjY2NjZF9kZGJkZGRlZWNmZmRmZmZnaGNoaGZoaGhoaWRpaWdqamhqampqa2Zra2lrbGdsbGpsbGxsbWhtbWttbW1tbmlubmxubm5ub2pvb21vb29vcGtwcG5wcHBwcWxxcW9xcm1ycnBycnJyc25zc3Fzc3NzdG90dHJ0dHR0dXB1dXN1dXV1dnF2dnR2dnZ2d3J3d3V4eHZ4eXR5enV6enh6enp7e3t8fXh9fnl+fnx/f3+AgH6AgICEhIKHh4WIiIaPj4+Tk5OXmJOenpyhoZ+nqKOoqKivr6+1tbO2trS5ubm7vLfExMTHx8XMzMrMzMzOzs7Pz8/S0tDU1NTV1dPV1dXY2NjZ2dfZ2tXa2trd3dve3tzf393f39/i4uLj4+Pk5OLl5ePm5uTo6Obo6Ojq6urs7Ors7Ozt7e3u7uzu7u7v7+3w8O7w8PDy8vDy8vLz8/Hz8/P09PL09PT19fP19fX29vT29vb39/X39/f4+Pb4+Pj5+ff5+fn5+vX6+vj6+vr7+/n7+/v8/Pr8/Pz8/fj9/fv9/f3+/vz+/v7+//r///v///3///+qX5rlAAAByklEQVQ4y+2SaVsSYRiFaSMTU1wIYQyygsAK0rKizUrb930v2lczLdNEYSBmc+adOOcX96G5WGJSfkD35/s6c868j4et4vlv1sBfNJsGaZGfaDrgIzAHqKS8YNOuz5x8f/fR/ck7WYdb7+49ePM4m50iSdpGzZy6vGVfdGBsc9jBdyg8nOo50Hnjg11SGnu+ODIQGtoY3eGQWrM74evxHX9l0DYMo2HR073RXUPRoEMslug7HDv2pLqiaiolXgu1d4diDp2pDcG+8PWKkf9ukFp9pkJeOrp+fzVzWzAVu/ir8mdQXqv/usb5s9u7tzoEE8Nrzy1Xfi6SsmI3LJqxyJdn2nuT8f5kZFO6Y7BrYg45lz8vkzPkw1P9fkkKjI56R/ynn391faNvtBWStyMHvYNx755AZOQmUEC52bSokAvkVSkpBeKejP+KUDGru2RSo2zRsnFh3c5Ib6btvAq9iFk3s0SlxDzxY7wt7c1MTANl07WnrZHMyyyaX050nUy/xRJyyLn1JOctkosAnkkdr1GACh1L+Pcl60B5+nNhhUuuu3lRLuqtmQCgt2CaJgChrm6apimEEGJ1UwDQdbTYs5a4YqYQAjCbe/4GzqmMCfEIbawAAAAASUVORK5CYII=');
     background-size: 18px 12px;
     background-repeat: no-repeat;
     background-position: 40px center;
+    cursor: pointer;
+}
+
+.negotiate-select-wrapper select:hover {
+    background-color: #fafaf9;
+}
+
+.negotiate-select-wrapper select:focus {
+    box-shadow: 0 0 3px #0070d2;
+	outline: 0;
 }
 
 .negotiate-input-wrapper.dirty>span {

@@ -1033,9 +1033,9 @@ class NegotiationModal extends Component {
 				<div className="negotiation-modal fa-modal-body">
 					<div className="products-container">
 						<div className="label-text">
-							{window.SF.labels.modal_bulk_selected_title}
+							{this.commercialProducts.length} {window.SF.labels.modal_bulk_selected_title}
 						</div>
-						<ul className="fa-tag-group">
+					{/*	<ul className="fa-tag-group">
 							{this.commercialProducts
 								.slice(0, this.productEllipsis)
 								.map(product => {
@@ -1052,7 +1052,7 @@ class NegotiationModal extends Component {
 							) : (
 								''
 							)}
-						</ul>
+						</ul>*/}
 					</div>
 
 					<section className="fa-section fa-section-transparent">

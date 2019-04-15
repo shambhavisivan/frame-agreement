@@ -104,6 +104,9 @@
 				font-size: 0.85rem;
 				text-overflow: ellipsis;
 				white-space: nowrap;
+				max-width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
 
 				&.volume-fields {
 					cursor: text;

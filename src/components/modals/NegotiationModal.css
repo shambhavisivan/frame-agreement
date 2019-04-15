@@ -43,7 +43,7 @@
 }
 
 .products-container .label-text {
-	padding: 7px 0px;
+	padding: 0 0.5rem;
 }
 
 .horizontal-list {
@@ -262,8 +262,17 @@
 	padding: 1rem 1.25rem;
 	flex: 1;
 	text-align: right;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
+.list-row > .list-cell.align-left {
+	text-align: left;
+}
+.table-list-header > .list-cell.align-left {
+	text-align: left;
+}
 .list-row.selected-row {
 	background: #F3F2F2;
 }

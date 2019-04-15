@@ -39,6 +39,7 @@
 	flex: 7;
 	display: flex;
 	flex-direction: column;
+	max-width: 100%;
 }
 
 .panel-navigation {
@@ -84,6 +85,8 @@
 }
 .panel-filter-container .product-list {
 	padding-bottom: 0;
+	overflow: hidden;
+	width: 100%;
 }
 .product-list-header {
 	font-size: 12px;
@@ -150,6 +153,8 @@
 /* CATEGORIZATION */
 .filter-category {
 	margin-bottom: 0.5rem;
+	max-width: 100%;
+	overflow: hidden;
 }
 .category-title {
 	width: 100%;
@@ -163,6 +168,9 @@
 
 .category-title > span {
 	margin-left: 5px;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .category-values-list {
@@ -180,6 +188,9 @@
 
 .category-values-list > li span {
 	margin-left: 10px;
+	max-width: calc(100% - 1.5rem);
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .category-values-list > li .checkbox {

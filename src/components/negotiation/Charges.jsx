@@ -42,10 +42,10 @@ class Charges extends React.Component {
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell">
+					<div className="list-cell align-left">
 						{window.SF.labels.charges_header_name}
 					</div>
-					<div className="list-cell">
+					<div className="list-cell align-left">
 						{window.SF.labels.charges_header_type}
 					</div>
 					<div className="list-cell">
@@ -152,11 +152,11 @@ class Charges extends React.Component {
 
 							return (
 								<li key={charge.Id} className="list-row">
-									<div className="list-cell">
+									<div className="list-cell align-left">
 										<Icon name="priority" width="14" color={flagColor} />{' '}
 										{charge.Name}
 									</div>
-									<div className="list-cell"> {charge.chargeType}</div>
+									<div className="list-cell align-left"> {charge.chargeType}</div>
 									<div className="list-cell">
 										{' '}
 										{charge.hasOwnProperty('oneOff') ? charge.oneOff : 'N/A'}

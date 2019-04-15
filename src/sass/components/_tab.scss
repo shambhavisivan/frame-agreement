@@ -8,12 +8,8 @@
 
 /* Active */
 .fa-tab.active {
-	background: $blue-sf;
-	color: $white;
-
-	a {
-		color: $white;
-	}
+	background: $white;
+	font-weight: bold;
 	border-bottom: 2px solid $blue-sf;
 }
 
@@ -50,5 +46,6 @@
 	&-brand,
 	&-nuetral {
 		border-bottom: 2px solid $blue-sf;
+		font-weight: bold;
 	}
 }

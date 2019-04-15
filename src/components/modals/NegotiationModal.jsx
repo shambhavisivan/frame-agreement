@@ -1056,7 +1056,7 @@ class NegotiationModal extends Component {
 					</div>
 
 					<section className="fa-section fa-section-transparent">
-						<div className="box fa-padding-left-xxsm">
+						<div className="box">
 							<ul className="fa-tabs-secondary toggle-buttons">
 								<li
 									disabled={!Object.keys(this.grouped_addons).length}

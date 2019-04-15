@@ -354,18 +354,19 @@ export const recievePriceItemData = result => ({
 });
 
 export function getCommercialProductData(priceItemIdList) {
-	return function(dispatch) {
+	return async function(dispatch) {
 		// dispatch(requestPriceItemData());
 
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getCommercialProductData', [
-				priceItemIdList
-			]).then(response => {
-				dispatch(recievePriceItemData(response));
-				resolve(response);
-				return response;
-			});
+		let promiseArray = priceItemIdList.map(cpId => {
+			return window.SF.invokeAction('getCommercialProductData', [cpId]);
 		});
+
+		let results = await Promise.all(promiseArray);
+		let merged_result = results.reduce((acc, val) => {return {...acc, ...val}}, {});
+
+		dispatch(recievePriceItemData(merged_result));
+		
+		return merged_result;
 	};
 }
 

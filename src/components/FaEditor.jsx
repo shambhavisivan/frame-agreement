@@ -366,12 +366,12 @@ class FaEditor extends Component {
 						this.props.createToast(
 							'success',
 							window.SF.labels.toast_success_title,
-							window.SF.labels.toast_submitForApproval
+							window.SF.labels.toast_submitForApproval_success
 						);
 					} else {
 						this.props.createToast(
 							'error',
-							window.SF.labels.toast_success_title,
+							window.SF.labels.toast_failed_title,
 							window.SF.labels.toast_submitForApproval_failed
 						);
 					}

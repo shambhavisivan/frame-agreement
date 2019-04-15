@@ -225,7 +225,7 @@ private class FrameRateManagerControllerTest {
 
 		Boolean isUserAdmin = FrameRateManagerController.isUserAdmin();
 		Set < Id > isUserDelegate = FrameRateManagerController.isUserDelegate(userId);
-		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList);
+		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList[0]);
 
 		Test.stopTest();
 
@@ -545,7 +545,7 @@ private class FrameRateManagerControllerTest {
 		FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
 		FrameRateManagerController.deleteFrameAgreement(fa_1.Id);
 
-		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData(new List<Id>{'01p1t00000M4Gqp'});
+		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData('01p1t00000M4Gqp');
 
 
 		Test.stopTest();

@@ -647,17 +647,10 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map < Id, cpData > getCommercialProductData(List < Id > priceItemIdList) {
+	public static Map < Id, cpData > getCommercialProductData(Id priceItemId) {
 		Map < Id, cpData > cpDataMap = new Map < Id, cpData > ();
 
-		for (Id priceItemId : priceItemIdList) {
-			system.debug('**********START');
-			system.debug('**********getAddons ' +  getAddons(priceItemId));
-			system.debug('**********getPriceItemCharges ' +  getPriceItemCharges(priceItemId));
-			system.debug('**********getRateCards ' +  getRateCards(priceItemId));
-			system.debug('**********cpData ' +  new cpData(priceItemId, getAddons(priceItemId), getPriceItemCharges(priceItemId), getRateCards(priceItemId)));
-			cpDataMap.put(priceItemId, new cpData(priceItemId, getAddons(priceItemId), getPriceItemCharges(priceItemId), getRateCards(priceItemId)));
-		}
+		cpDataMap.put(priceItemId, new cpData(priceItemId, getAddons(priceItemId), getPriceItemCharges(priceItemId), getRateCards(priceItemId)));
 
 		return cpDataMap;
 	}
@@ -1202,9 +1195,6 @@ global with sharing class FrameRateManagerController {
 
 		if (retString == 'Success') {
 			try {
-				system.debug('Inserting pipra');
-				system.debug(pipraList);
-				system.debug('pipraList2 *** ' + pipraList);
 
 				insert pipraList;
 				csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());

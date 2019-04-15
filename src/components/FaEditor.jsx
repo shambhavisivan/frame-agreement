@@ -1548,7 +1548,7 @@ class FaEditor extends Component {
 					</div>
 				</Header>
 
-				<div className="fa-container">
+				<div className="fa-main-wrapper">
 					<div className="fa-container-inner">
 						{this.header_rows.length ? (
 							<section className="basket-details fa-section fa-section-vertical fa-section-shadow fa-section-light">

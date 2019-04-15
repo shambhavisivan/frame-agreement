@@ -1,6 +1,9 @@
 /* FA Pagination */
 // Pagination component
 
+.commercial-product-body .fa-pagination-container {
+	border-top: 1px solid #dddbda;
+}
 .fa-pagination-container {
 	display: flex;
 	justify-content: flex-end;

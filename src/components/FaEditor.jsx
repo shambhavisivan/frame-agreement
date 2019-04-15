@@ -1213,7 +1213,13 @@ class FaEditor extends Component {
 							className="fa-button fa-margin-right-xsm"
 							onClick={this.onOpenCommercialProductModal}
 						>
-							{window.SF.labels.btn_AddProducts}
+							<Icon
+								name="add"
+								width="16"
+								height="16"
+								color="#0070d2"
+							/>
+							<span className="fa-padding-left-xsm">{window.SF.labels.btn_AddProducts}</span>
 						</button>
 					)}
 
@@ -1225,7 +1231,13 @@ class FaEditor extends Component {
 							className="fa-button fa-margin-right-xsm"
 							onClick={this.onOpenNegotiationModal}
 						>
-							{window.SF.labels.btn_BulkNegotiate}
+							<Icon
+								name="user"
+								width="16"
+								height="16"
+								color="#0070d2"
+							/>
+							<span className="fa-padding-left-xsm">{window.SF.labels.btn_BulkNegotiate}</span>
 						</button>
 					)}
 
@@ -1237,7 +1249,13 @@ class FaEditor extends Component {
 							className="fa-button"
 							onClick={this.onRemoveProducts}
 						>
-							{window.SF.labels.btn_DeleteProducts}
+							<Icon
+								name="delete"
+								width="16"
+								height="16"
+								color="#0070d2"
+							/>
+							<span className="fa-padding-left-xsm">{window.SF.labels.btn_DeleteProducts}</span>
 						</button>
 					)}
 				</div>
@@ -1331,116 +1349,119 @@ class FaEditor extends Component {
 			this.state.activeFa._ui.commercialProducts.length
 		) {
 			commercialProducts = (
-				<div className="product-table-wrapper">
-					<div className="product-table-header-wrapper">
-						<div className="fa-section fa-section-vertical fa-section-shadow">
-							<div className="fa-flex fa-flex-middle">
-								<div className="fa-flex-item fa-flex-1">
-									<span className="fa-title-lg">
-										{window.SF.labels.products_title} (
-										{this.state.activeFa._ui.commercialProducts.length})
-									</span>
-								</div>
-								<div className="fa-flex-item fa-flex-1">
-									<div className="fa-flex fa-flex-middle">
-										<div className="fa-flex-1">
-											<div className="fa-flex fa-flex-middle fa-flex-end">
-												<InputSearch
-													value={this.state.productFilter}
-													bordered={true}
-													onChange={val => {
-														this.setState({ productFilter: val });
-													}}
-													placeholder={
-														window.SF.labels.input_quickSearchPlaceholder
-													}
-												/>
-												<DropdownCheckbox
-													options={this.props.productFields}
-													onChange={this.toggleVisibility}
-												/>
+				<div>
+					<div className="product-table-wrapper">
+						<div className="product-table-header-wrapper">
+							<div className="fa-section fa-section-vertical">
+								<div className="fa-flex fa-flex-middle">
+									<div className="fa-flex-item fa-flex-1">
+										<span className="fa-title-lg">
+											{window.SF.labels.products_title} (
+											{this.state.activeFa._ui.commercialProducts.length})
+										</span>
+									</div>
+									<div className="fa-flex-item fa-flex-1">
+										<div className="fa-flex fa-flex-middle">
+											<div className="fa-flex-1">
+												<div className="fa-flex fa-flex-middle fa-flex-end">
+													<InputSearch
+														value={this.state.productFilter}
+														bordered={true}
+														onChange={val => {
+															this.setState({ productFilter: val });
+														}}
+														placeholder={
+															window.SF.labels.input_quickSearchPlaceholder
+														}
+													/>
+													<DropdownCheckbox
+														options={this.props.productFields}
+														onChange={this.toggleVisibility}
+													/>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div className="commercial-product-container commercial-product-container-bare commercial-product-container-default">
-							<div className="commercial-table-header">
-								<div className="commercial-product-checkbox-container">
-									<Checkbox
-										className="fa-margin-right-sm"
-										value={
-											this.state.activeFa._ui.commercialProducts.length ===
-											Object.keys(this.state.selectedProducts).length
-										}
-										onChange={() => {
-											this.onSelectAllProducts();
-										}}
-									/>
-								</div>
+							<div className="commercial-product-container commercial-product-container-bare commercial-product-container-default">
+								<div className="commercial-table-header">
+									<div className="commercial-product-checkbox-container">
+										<Checkbox
+											className="fa-margin-right-sm"
+											value={
+												this.state.activeFa._ui.commercialProducts.length ===
+												Object.keys(this.state.selectedProducts).length
+											}
+											onChange={() => {
+												this.onSelectAllProducts();
+											}}
+										/>
+									</div>
 
-								<div className="commercial-product-fields-container">
-									<div className="commercial-product-fields">
-										<span className="list-cell">
-											{window.SF.labels.products_productNameHeaderCell}
-										</span>
-										{this.props.productFields
-											.filter(f => f.visible)
-											.map(f => {
-												return (
-													<span
-														key={'header-' + f.name}
-														className={
-															'list-cell' + (f.volume ? ' volume' : '')
-														}
-													>
-														{truncateCPField(f.name)}
-													</span>
-												);
-											})}
+									<div className="commercial-product-fields-container">
+										<div className="commercial-product-fields">
+											<span className="list-cell">
+												{window.SF.labels.products_productNameHeaderCell}
+											</span>
+											{this.props.productFields
+												.filter(f => f.visible)
+												.map(f => {
+													return (
+														<span
+															key={'header-' + f.name}
+															className={
+																'list-cell' + (f.volume ? ' volume' : '')
+															}
+														>
+															{truncateCPField(f.name)}
+														</span>
+													);
+												})}
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					{this.state.activeFa._ui.commercialProducts
-						.filter(cp => {
-							if (
-								this.state.productFilter &&
-								this.state.productFilter.length >= 2
-							) {
-								return cp.Name.toLowerCase().includes(
-									this.state.productFilter.toLowerCase()
+						{this.state.activeFa._ui.commercialProducts
+							.filter(cp => {
+								if (
+									this.state.productFilter &&
+									this.state.productFilter.length >= 2
+								) {
+									return cp.Name.toLowerCase().includes(
+										this.state.productFilter.toLowerCase()
+									);
+								} else {
+									return true;
+								}
+							})
+							.paginate(
+								this.state.pagination.page,
+								this.state.pagination.pageSize
+							)
+							.map(cp => {
+								return (
+									<CommercialProduct
+										onOpen={bool => {
+											this.setState({ openCommercialProduct: bool ? cp.Id : '' });
+										}}
+										onNegotiate={(type, data) =>
+											this.onNegotiate(cp.Id, type, data)
+										}
+										key={'cp-' + cp.Id}
+										attachment={this.state.activeFa._ui.attachment[cp.Id]}
+										product={cp}
+										open={this.state.openCommercialProduct === cp.Id}
+										readOnly={!this.editable}
+										onSelect={this.onSelectProduct}
+										invalid={this.props.validationProduct[cp.Id]}
+										selected={!!this.state.selectedProducts[cp.Id]}
+									/>
 								);
-							} else {
-								return true;
-							}
-						})
-						.paginate(
-							this.state.pagination.page,
-							this.state.pagination.pageSize
-						)
-						.map(cp => {
-							return (
-								<CommercialProduct
-									onOpen={bool => {
-										this.setState({ openCommercialProduct: bool ? cp.Id : '' });
-									}}
-									onNegotiate={(type, data) =>
-										this.onNegotiate(cp.Id, type, data)
-									}
-									key={'cp-' + cp.Id}
-									attachment={this.state.activeFa._ui.attachment[cp.Id]}
-									product={cp}
-									open={this.state.openCommercialProduct === cp.Id}
-									readOnly={!this.editable}
-									onSelect={this.onSelectProduct}
-									invalid={this.props.validationProduct[cp.Id]}
-									selected={!!this.state.selectedProducts[cp.Id]}
-								/>
-							);
-						})}
+							})}
+							<div className="section-bottom"></div>
+					</div>
 				</div>
 			);
 		} else if (this.state.loading.attachment) {

@@ -6,9 +6,26 @@
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	padding: 1rem;
 	background: $white;
 	box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
 	color: white;
 	z-index: $z-index-fa-footer;
+}
+
+.fa-footer .fa-button {
+	background: $white;
+	border-right: 1px solid $gray;
+	border-radius: 0;
+	color: $blue-sf;
+	font-size: 0.875rem;
+	margin-right: 0;
+	padding: 1.5rem 4rem;
+
+	&:disabled {
+		opacity: .5;
+	}
+
+	&:hover {
+		background: $gray-blue;
+	}
 }

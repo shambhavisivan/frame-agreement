@@ -279,6 +279,7 @@ class ApprovalProcess extends React.Component {
 								</ul>
 							);
 						})}
+						<div className="section-bottom"></div>
 					</div>
 				)}
 			</div>

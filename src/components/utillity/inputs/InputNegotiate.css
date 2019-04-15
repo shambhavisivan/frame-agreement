@@ -50,6 +50,7 @@
 .negotiate-input-wrapper.readOnly {
   cursor: default;
   font-size: 13px;
+	text-align: right;
 }
 
 /***********************************************************************/

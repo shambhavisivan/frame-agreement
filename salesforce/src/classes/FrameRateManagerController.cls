@@ -691,11 +691,11 @@ global with sharing class FrameRateManagerController {
 	public static List < cspmb__Price_Item_Add_On_Price_Item_Association__c > getAddons(String priceItemId) {
 
 		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > priceItemAddonAssociations = [
-			select Id, cspmb__Price_Item__c, cspmb__Overrides_Add_On_Charges__c, cspmb__Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Price_Item__r.cspmb__Effective_Start_Date__c,
+			select Id, cspmb__Price_Item__c, cspmb__Overrides_Add_On_Charges__c, cspmb__effective_end_date__c, cspmb__effective_start_date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c,
 				cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c, cspmb__Add_On_Price_Item__c, cspmb__Add_On_Price_Item__r.Name, cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c, cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c,
 				cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c
 			from cspmb__Price_Item_Add_On_Price_Item_Association__c
-			where cspmb__Price_Item__c = :priceItemId
+			where cspmb__Price_Item__c = :priceItemId and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
 		];
 
 
@@ -703,15 +703,18 @@ global with sharing class FrameRateManagerController {
 
 		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson : priceItemAddonAssociations) {
 
-			Boolean start_invalid = addonAsson.cspmb__Price_Item__r.cspmb__Effective_Start_Date__c != null && date.today() < addonAsson.cspmb__Price_Item__r.cspmb__Effective_Start_Date__c;
-			Boolean end_invalid = addonAsson.cspmb__Price_Item__r.cspmb__Effective_End_Date__c != null && date.today() > addonAsson.cspmb__Price_Item__r.cspmb__Effective_End_Date__c;
+			Boolean start_invalid = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c != null && date.today() < addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c;
+			Boolean end_invalid = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c != null && date.today() > addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c;
+			
+			Boolean start_invalid_assoc = addonAsson.cspmb__effective_start_date__c != null && date.today() < addonAsson.cspmb__effective_start_date__c;
+			Boolean end_invalid_assoc = addonAsson.cspmb__effective_end_date__c != null && date.today() > addonAsson.cspmb__effective_end_date__c;
 
 			if (addonAsson.cspmb__Overrides_Add_On_Charges__c == false) {
 				addonAsson.cspmb__One_Off_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c;
 				addonAsson.cspmb__Recurring_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c;
 			}
 
-			if (!(start_invalid || end_invalid)) {
+			if (!(start_invalid || end_invalid) && !(start_invalid_assoc || end_invalid_assoc)) {
 				filteredPriceItemAddonAssociations.add(addonAsson);
 			}
 		}
@@ -1114,12 +1117,12 @@ global with sharing class FrameRateManagerController {
 	* @return pricing rule Id
 	*/
 	@RemoteAction
-	public static Id createPricingRuleGroup() {
+	public static Id createPricingRuleGroup(Id faId) {
 
 		Integer prg_count = database.countQuery('select count() from cspmb__Pricing_Rule_Group__c');
 		String rgc = 'FAM ' + String.valueOfGmt(datetime.now()) + '___' + prg_count;
 
-		cspmb__Pricing_Rule_Group__c prg = new cspmb__Pricing_Rule_Group__c(cspmb__description__c = 'Auto generated from FA decomposition.', cspmb__pricing_rule_group_code__c = rgc);
+		cspmb__Pricing_Rule_Group__c prg = new cspmb__Pricing_Rule_Group__c(cspmb__description__c = 'Auto generated from FA decomposition.', cspmb__pricing_rule_group_code__c = rgc, csconta__frame_agreement__c = faId);
 		insert prg;
 
 		cspmb__pricing_rule__c pr = new cspmb__pricing_rule__c(cspmb__description__c = 'Auto generated from FA decomposition.');
@@ -1195,7 +1198,6 @@ global with sharing class FrameRateManagerController {
 
 		if (retString == 'Success') {
 			try {
-
 				insert pipraList;
 				csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 

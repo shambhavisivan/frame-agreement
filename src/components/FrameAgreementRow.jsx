@@ -36,7 +36,11 @@ class FrameAgreementRow extends React.Component {
 	}
 
 	handleClickOutside(event) {
-		if (this.wrapperRef && !this.wrapperRef.contains(event.target) && event.target.localName !== 'svg') {
+		if (
+			this.wrapperRef &&
+			!this.wrapperRef.contains(event.target) &&
+			event.target.localName !== 'svg'
+		) {
 			this.hideMenu();
 		}
 	}

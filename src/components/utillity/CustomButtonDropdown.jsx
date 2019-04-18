@@ -51,7 +51,10 @@ class CustomButtonDropdown extends React.Component {
 
 	render() {
 		return (
-			<div className="fa-dropdown-group fa-margin-right-xsm" ref={this.setWrapperRef}>
+			<div
+				className="fa-dropdown-group fa-margin-right-xsm"
+				ref={this.setWrapperRef}
+			>
 				<button
 					className="fa-button fa-button-border-light fa-button-transparent"
 					onClick={this.showMenu}
@@ -62,10 +65,7 @@ class CustomButtonDropdown extends React.Component {
 					<Icon name={this.state.menu ? 'up' : 'down'} height="14" width="14" />
 				</button>
 				{this.state.menu && (
-					<div
-						aria-hidden={!this.state.menu}
-						className="fa-dropdown"
-					>
+					<div aria-hidden={!this.state.menu} className="fa-dropdown">
 						{this.props.buttons.map((btnObj, i) => {
 							return (
 								<button

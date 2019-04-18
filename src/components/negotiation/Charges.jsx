@@ -156,7 +156,10 @@ class Charges extends React.Component {
 										<Icon name="priority" width="14" color={flagColor} />{' '}
 										{charge.Name}
 									</div>
-									<div className="list-cell align-left"> {charge.chargeType}</div>
+									<div className="list-cell align-left">
+										{' '}
+										{charge.chargeType}
+									</div>
 									<div className="list-cell">
 										{' '}
 										{charge.hasOwnProperty('oneOff') ? charge.oneOff : 'N/A'}

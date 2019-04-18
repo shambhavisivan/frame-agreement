@@ -29,12 +29,17 @@ private class FrameRateManagerControllerTest {
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(Name = 'cp_1', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
 		cspmb__Price_Item__c cp_2 = new cspmb__Price_Item__c(Name = 'cp_2', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
 
+		cspmb__Price_Item__c cp_addon_inv = new cspmb__Price_Item__c(Name = 'cp_addon_inv', cspmb__Is_Active__c = true);
+		cspmb__Price_Item__c cp_addon_assoc_inv = new cspmb__Price_Item__c(Name = 'cp_addon_assoc_inv', cspmb__Is_Active__c = true);
+
 		Date invalidEndDate = Date.newInstance(1992, 3, 14);
 		cspmb__Price_Item__c cp_3 = new cspmb__Price_Item__c(Name = 'cp_3', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00, cspmb__Effective_End_Date__c = invalidEndDate);
 
 		insert cp_1;
 		insert cp_2;
 		insert cp_3;
+		insert cp_addon_inv;
+		insert cp_addon_assoc_inv;
 
 		// pricing element and types
 		cspmb__Pricing_Element_Type__c pricingElementType_1 = new cspmb__Pricing_Element_Type__c(cspmb__label__c = 'One-off charge', cspmb__type__c = 'One-off charge');
@@ -90,17 +95,42 @@ private class FrameRateManagerControllerTest {
 		insert pirc;
 
 		// ADDONS
-		cspmb__Add_On_Price_Item__c add_1 = new cspmb__Add_On_Price_Item__c (Name = 'ADD1', cspmb__One_Off_Charge__c = 10.00);
-		cspmb__Add_On_Price_Item__c add_2 = new cspmb__Add_On_Price_Item__c (Name = 'ADD2', cspmb__One_Off_Charge__c = 10.00);
+		cspmb__Add_On_Price_Item__c add_1 = new cspmb__Add_On_Price_Item__c (Name = 'ADD1', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true);
+		cspmb__Add_On_Price_Item__c add_2 = new cspmb__Add_On_Price_Item__c (Name = 'ADD2', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true);
+
+
+		cspmb__Add_On_Price_Item__c add_invalid_start = new cspmb__Add_On_Price_Item__c (Name = 'ADD_INV_START', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Effective_Start_Date__c = Date.today().addDays(1));
+		cspmb__Add_On_Price_Item__c add_invalid_end = new cspmb__Add_On_Price_Item__c (Name = 'ADD_INV_END', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Effective_End_Date__c = Date.today().addDays(-1));
+		cspmb__Add_On_Price_Item__c add_inactive = new cspmb__Add_On_Price_Item__c (Name = 'ADD_INACTIVE', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = false);
 
 		insert add_1;
 		insert add_2;
 
-		cspmb__Price_Item_Add_On_Price_Item_Association__c add1assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_1.Id);
+		insert add_invalid_start;
+		insert add_invalid_end;
+		insert add_inactive;
+
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add1assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_1.Id, cspmb__Overrides_Add_On_Charges__c = false);
 		cspmb__Price_Item_Add_On_Price_Item_Association__c add2assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_2.Id, cspmb__Price_Item__c = cp_3.Id);
+		
+		cspmb__Price_Item_Add_On_Price_Item_Association__c addValassocStart = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c addInvassocStart = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id, cspmb__effective_start_date__c = Date.today().addDays(1));
+		cspmb__Price_Item_Add_On_Price_Item_Association__c addInvassocEnd = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_2.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id, cspmb__effective_end_date__c = Date.today().addDays(-1));
+		
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add3assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_invalid_start.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add4assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_invalid_end.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add5assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_inactive.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
 
 		insert add1assoc;
 		insert add2assoc;
+
+		insert addValassocStart;
+		insert addInvassocStart;
+		insert addInvassocEnd;
+
+		insert add3assoc;
+		insert add4assoc;
+		insert add5assoc;
 
 		// FRAME AGREEMENTS
 		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1', csconta__Account__c = test_account.Id);
@@ -215,6 +245,10 @@ private class FrameRateManagerControllerTest {
 
 
 		List<cspmb__Price_Item__c> cpList = [select Id from cspmb__Price_Item__c];
+		cspmb__Price_Item__c cp_addon_inv = [select Id from cspmb__Price_Item__c where Name = 'cp_addon_inv'];
+		cspmb__Price_Item__c cp_1 = [select Id from cspmb__Price_Item__c where Name = 'cp_1'];
+		cspmb__Price_Item__c cp_addon_assoc_inv = [select Id from cspmb__Price_Item__c where Name = 'cp_addon_assoc_inv'];
+
 		List<Id> cpIdList = new List<Id>();
 
 		for (cspmb__Price_Item__c cp : cpList) {
@@ -226,10 +260,23 @@ private class FrameRateManagerControllerTest {
 		Boolean isUserAdmin = FrameRateManagerController.isUserAdmin();
 		Set < Id > isUserDelegate = FrameRateManagerController.isUserDelegate(userId);
 		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList[0]);
+		
+		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonsInvalid = FrameRateManagerController.getAddons(cp_addon_inv.Id);
+		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonsValid = FrameRateManagerController.getAddons(cp_1.Id);
+		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addons2InvalidAssoc1Valid = FrameRateManagerController.getAddons(cp_addon_assoc_inv.Id);
+
+		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonAssoc_cp_addon_inv = [
+			select Id, cspmb__Price_Item__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c
+			from cspmb__Price_Item_Add_On_Price_Item_Association__c
+			where cspmb__Price_Item__c = :cp_addon_inv.Id and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
+		];
 
 		Test.stopTest();
 
-		//system.assertEquals(true, isUserAdmin);
+		system.assertEquals(addonAssoc_cp_addon_inv.size(), 2);
+		system.assertEquals(addonsInvalid.size(), 0);
+		system.assertEquals(addonsValid.size(), 1);
+		system.assertEquals(addons2InvalidAssoc1Valid.size(), 1);
 		//system.assertEquals(1, isUserDelegate.size());
 		//system.assertEquals(3, commercialProductData.keySet().size());
 
@@ -341,8 +388,8 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(3, cpIdList.size());
-		system.assertEquals(2, getCommercialProducts.size());
+		system.assertEquals(5, cpIdList.size());
+		system.assertEquals(4, getCommercialProducts.size());
 
 	}
 
@@ -357,7 +404,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(2, getCommercialProducts.size());
+		system.assertEquals(4, getCommercialProducts.size());
 
 	}
 
@@ -373,7 +420,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(2, filteredCp.size());
+		system.assertEquals(4, filteredCp.size());
 
 	}
 
@@ -474,8 +521,8 @@ private class FrameRateManagerControllerTest {
 		system.debug('fa_2:' + fa_2);
 		Test.startTest();
 
-		Id prId = FrameRateManagerController.createPricingRuleGroup();
-		Id prId_2 = FrameRateManagerController.createPricingRuleGroup();
+		Id prId = FrameRateManagerController.createPricingRuleGroup(fa_1.Id);
+		Id prId_2 = FrameRateManagerController.createPricingRuleGroup(fa_2.Id);
 
 		String decomposeResult_1 = FrameRateManagerController.decomposeAttachment(decomposeData, prId, fa_1.Id);
 		String decomposeResult_2 = FrameRateManagerController.decomposeAttachment(decomposeData, prId_2, fa_2.Id);

@@ -205,7 +205,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Approve')}
 								>
 									<Icon name="approval" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_approve}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_approve}
+									</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && (
@@ -279,7 +281,7 @@ class ApprovalProcess extends React.Component {
 								</ul>
 							);
 						})}
-						<div className="section-bottom"></div>
+						<div className="section-bottom" />
 					</div>
 				)}
 			</div>

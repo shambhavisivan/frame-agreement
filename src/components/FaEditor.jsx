@@ -429,7 +429,9 @@ class FaEditor extends Component {
 		console.log(structure);
 
 		// Create pricing rule group, pricing rule and association between them. Return pricing rule id to be used in next stage
-		const PR_ID = await this.props.createPricingRuleGroup();
+		const PR_ID = await this.props.createPricingRuleGroup(
+			this.state.activeFa.Id
+		);
 
 		console.log(PR_ID);
 
@@ -1213,13 +1215,10 @@ class FaEditor extends Component {
 							className="fa-button fa-margin-right-xsm"
 							onClick={this.onOpenCommercialProductModal}
 						>
-							<Icon
-								name="add"
-								width="16"
-								height="16"
-								color="#0070d2"
-							/>
-							<span className="fa-padding-left-xsm">{window.SF.labels.btn_AddProducts}</span>
+							<Icon name="add" width="16" height="16" color="#0070d2" />
+							<span className="fa-padding-left-xsm">
+								{window.SF.labels.btn_AddProducts}
+							</span>
 						</button>
 					)}
 
@@ -1231,13 +1230,10 @@ class FaEditor extends Component {
 							className="fa-button fa-margin-right-xsm"
 							onClick={this.onOpenNegotiationModal}
 						>
-							<Icon
-								name="user"
-								width="16"
-								height="16"
-								color="#0070d2"
-							/>
-							<span className="fa-padding-left-xsm">{window.SF.labels.btn_BulkNegotiate}</span>
+							<Icon name="user" width="16" height="16" color="#0070d2" />
+							<span className="fa-padding-left-xsm">
+								{window.SF.labels.btn_BulkNegotiate}
+							</span>
 						</button>
 					)}
 
@@ -1249,13 +1245,10 @@ class FaEditor extends Component {
 							className="fa-button"
 							onClick={this.onRemoveProducts}
 						>
-							<Icon
-								name="delete"
-								width="16"
-								height="16"
-								color="#0070d2"
-							/>
-							<span className="fa-padding-left-xsm">{window.SF.labels.btn_DeleteProducts}</span>
+							<Icon name="delete" width="16" height="16" color="#0070d2" />
+							<span className="fa-padding-left-xsm">
+								{window.SF.labels.btn_DeleteProducts}
+							</span>
 						</button>
 					)}
 				</div>
@@ -1444,7 +1437,9 @@ class FaEditor extends Component {
 								return (
 									<CommercialProduct
 										onOpen={bool => {
-											this.setState({ openCommercialProduct: bool ? cp.Id : '' });
+											this.setState({
+												openCommercialProduct: bool ? cp.Id : ''
+											});
 										}}
 										onNegotiate={(type, data) =>
 											this.onNegotiate(cp.Id, type, data)
@@ -1460,7 +1455,7 @@ class FaEditor extends Component {
 									/>
 								);
 							})}
-							<div className="section-bottom"></div>
+						<div className="section-bottom" />
 					</div>
 				</div>
 			);

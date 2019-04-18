@@ -39,10 +39,10 @@ export const _decomposeAttachment = (data, prId) => ({
 	payload: { data, prId }
 });
 
-export function createPricingRuleGroup() {
+export function createPricingRuleGroup(faId) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('createPricingRuleGroup').then(prId => {
+			window.SF.invokeAction('createPricingRuleGroup', [faId]).then(prId => {
 				resolve(prId);
 				return prId;
 			});
@@ -362,10 +362,12 @@ export function getCommercialProductData(priceItemIdList) {
 		});
 
 		let results = await Promise.all(promiseArray);
-		let merged_result = results.reduce((acc, val) => {return {...acc, ...val}}, {});
+		let merged_result = results.reduce((acc, val) => {
+			return { ...acc, ...val };
+		}, {});
 
 		dispatch(recievePriceItemData(merged_result));
-		
+
 		return merged_result;
 	};
 }

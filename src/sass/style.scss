@@ -1,53 +1,22 @@
-// Import partials
-
 // Settings
-@import "settings/responsive";
 @import "settings/theme";
 @import "settings/type";
 @import "settings/z-index";
-
-// Base
-@import "base/link";
-@import "base/page";
-
-// Mixins
-@import "mixins/media-query";
-
-// Reset
-@import "reset/reset";
-
-// Objects
-@import "objects/container";
-@import "objects/grid";
+@import "settings/reset";
 
 // Components
+@import "components/app";
 @import "components/button";
+@import "components/card";
 @import "components/chip";
+@import "components/data-table";
 @import "components/dropdown";
-@import "components/error";
-@import "components/footer";
-@import "components/header";
-@import "components/icon";
 @import "components/input";
+@import "components/main-body";
+@import "components/main-footer";
+@import "components/main-header";
 @import "components/modal";
 @import "components/pagination";
 @import "components/panel";
-@import "components/section";
+@import "components/skeleton";
 @import "components/tab";
-@import "components/tag";
-
-// CSS
-@import "css/fa-approval-process";
-@import "css/fa-discount";
-@import "css/fa-editor";
-@import "css/fa-icon";
-@import "css/fa-list";
-
-// Helpers
-@import "helpers/spacing";
-@import "helpers/text";
-@import "helpers/title";
-
-
-@import "css/fa-basket-details";
-@import "css/fa-product-table";

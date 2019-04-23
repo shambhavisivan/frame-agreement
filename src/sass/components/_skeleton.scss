@@ -1,0 +1,390 @@
+.skeleton-ed-container {
+    background-color: #f3f2f2;
+    width: 100%;
+    display: inline-block;
+
+    div {
+        background-color: #fafaf9;
+        width: 100%;
+    }
+
+
+        .skeleton-shape {
+            margin-right: 5px;
+        }
+
+    .skeleton-ed-header {
+        /* height: 32px; */
+        padding: 20px 10px;
+        display: flex;
+        /* justify-content: space-between; */
+        /* align-items: center; */
+        flex-direction: row;
+        /* margin: 0 auto; */
+        /* max-width: 1280px; */
+        width: 100%;
+
+        &>.skeleton-row {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            max-width: 1280px;
+            margin: 0 auto;
+            margin-bottom: 5px;
+        }
+
+        &>.skeleton-column {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            max-width: 1280px;
+            margin: 0 auto;
+            margin-bottom: 5px;
+        }
+    }
+
+    .skeleton-ed-fields {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            max-width: 1280px;
+            margin: 0 auto;
+            height: 200px;
+            margin-bottom: 20px;
+
+    }
+
+    .skeleton-ed-table {
+        margin: 0 auto;
+        max-width: 1280px;
+        width: 90%;
+        margin-bottom: 20px;
+    }
+
+    .skeleton-table-item{
+        height: 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        margin-bottom: 5px;
+
+        position: relative;
+        overflow: hidden;
+
+        & > div {
+            margin-right: 10px;
+            &:last-of-type {
+                /*float: left;*/
+            }
+        }
+
+        &::after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(90deg, transparent 0, rgba(#f3f2f2, 0.6) 30%, rgba(#f3f2f2, 1) 40%, transparent);
+            animation: shimmer 1.5s infinite;
+            content: '';
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    }
+}
+
+
+
+.skeleton-fa-container {
+    background-color: #f3f2f2;
+    width: 100%;
+    display: inline-block;
+
+    &>div {
+        background-color: #fafaf9;
+        width: 100%;
+    }
+
+    .skeleton-fa-header {
+        /* height: 32px; */
+        padding: 20px 10px;
+        display: flex;
+        /* justify-content: space-between; */
+        /* align-items: center; */
+        flex-direction: column;
+        /* margin: 0 auto; */
+        /* max-width: 1280px; */
+        width: 100%;
+        margin-bottom: 20px;
+
+        &>.skeleton-row {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            max-width: 1280px;
+            margin: 0 auto;
+            margin-bottom: 5px;
+        }
+
+    }
+
+    .skeleton-fa-table {
+        margin: 0 auto;
+        max-width: 1280px;
+        width: 90%;
+        margin-bottom: 20px;
+    }
+
+    .skeleton-table-item{
+        height: 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        margin-bottom: 5px;
+
+        position: relative;
+        overflow: hidden;
+
+        & > div {
+            margin-right: 10px;
+            &:last-of-type {
+                /*float: left;*/
+            }
+        }
+
+        &::after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(90deg, transparent 0, rgba(#f3f2f2, 0.6) 30%, rgba(#f3f2f2, 1) 40%, transparent);
+            animation: shimmer 1.5s infinite;
+            content: '';
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .skeleton-shape {
+            margin-right: 5px;
+        }
+    }
+}
+
+
+
+@mixin skeletonAnimation {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, transparent 0, rgba(#f3f2f2, 0.6) 30%, rgba(#f3f2f2, 1) 40%, transparent);
+    animation: shimmer 1s infinite;
+    content: '';
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-shape {
+    background-color: #ecebea;
+    position: relative;
+    overflow: hidden;
+
+        &::after {
+            @include skeletonAnimation;
+        }
+}
+
+
+
+
+
+@mixin header {
+    padding: 10px 10px 13px 9px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #fafaf9;
+}
+
+@mixin centered {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+@mixin skeletonAnimation {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, transparent 0, rgba(#f3f2f2, 0.6) 30%, rgba(#f3f2f2, 1) 40%, transparent);
+    animation: shimmer 1.5s infinite;
+    content: '';
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-container {
+    /*background-color: #f3f2f2;*/
+    width: 100%;
+    /*border-bottom: 2px solid #f3f2f2;*/
+    display: inline-block;
+}
+
+.skeleton-table-item {
+    background-color: #fafaf9;
+    display: flex;
+    flex-direction: row;
+    padding: 12px 10px;
+    margin-bottom: 10px;
+}
+
+.skeleton-shape {
+    margin-right: 5px;
+}
+
+.skeleton-landing-cp {
+    @include centered;
+}
+
+/****************************************/
+
+.skeleton-fa {
+    .skeleton-header {
+        @include header;
+
+        .skeleton-row {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            @include centered;
+        }
+    }
+
+    .skeleton-table {
+        background-color: #f3f2f2;
+        position: relative;
+        overflow: hidden;
+        @include centered;
+
+        .skeleton-left,
+        .skeleton-right {
+            display: flex;
+            flex: 1;
+        }
+
+        .skeleton-right {
+            justify-content: flex-end;
+        }
+    }
+}
+
+.skeleton-ed {
+    .skeleton-header {
+        @include header;
+        padding: 9px 10px 8px 10px;
+        background-color: #f3f2f2;
+        border-bottom: 2px solid #ecebea;
+
+        .skeleton-shape {
+            background-color: #fafaf9;
+        }
+
+        margin-bottom: 0px;
+
+        .skeleton-row {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            @include centered;
+        }
+
+        .skeleton-left,
+        .skeleton-right {
+            display: flex;
+            flex: 1;
+        }
+
+        .skeleton-left {
+            flex-direction: column;
+        }
+
+        .skeleton-right {
+            justify-content: flex-end;
+        }
+    }
+
+    .skeleton-ed-fields {
+        @include centered;
+        background-color: #fafaf9;
+        height: 200px;
+    }
+
+    .skeleton-table-item {
+
+        .skeleton-left,
+        .skeleton-right {
+            display: flex;
+            flex: 1;
+        }
+
+        .skeleton-right {
+            justify-content: flex-end;
+        }
+    }
+
+    .skeleton-table {
+        background-color: #f3f2f2;
+        position: relative;
+        overflow: hidden;
+        @include centered;
+    }
+}
+
+.skeleton-cp {
+    .skeleton-header {
+        padding: 20px 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        background-color: #fafaf9;
+        margin-bottom: 5px;
+    }
+
+    .skeleton-table-item {
+        background-color: #fafaf9;
+        position: relative;
+        overflow: hidden;
+        justify-content: space-between;
+    }
+
+
+    .skeleton-right {
+        display: flex;
+    }
+}

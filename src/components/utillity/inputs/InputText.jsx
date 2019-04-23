@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './InputText.css';
 
 class InputText extends React.Component {
 	constructor(props) {

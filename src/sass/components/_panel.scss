@@ -36,11 +36,6 @@
 		border: 1px solid $blue-sf;
 		text-decoration: none;
 	}
-
-	@include mq(sm, max) {
-		align-items: flex-start;
-		flex-direction: column-reverse;
-	}
 }
 
 /* Body */
@@ -49,11 +44,6 @@
 	display: flex;
 	flex: 1;
 	justify-content: space-between;
-
-	@include mq(sm, max) {
-		margin-top: 1rem;
-		width: 100%;
-	}
 
 	> .icon {
 		margin-right: 1rem;

@@ -3,9 +3,6 @@ import React, { Component } from 'react';
 import Icon from '../Icon';
 
 import DatePicker from './react-datepicker';
-import './react-datepicker.css';
-
-import './SFDatePicker.css';
 
 class DatePickerInput extends React.Component {
 	constructor(props) {

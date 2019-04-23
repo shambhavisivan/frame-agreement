@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import './Shape.scss';
-
 const Shape = props => {
 	function isDefined(prop) {
 		return typeof props[prop] !== 'undefined';

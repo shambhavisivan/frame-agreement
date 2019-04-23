@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 
 import { removeToast } from '../../actions';
 
-import './Toaster.scss';
-
 import Icon from './Icon';
 
 class Toast extends Component {

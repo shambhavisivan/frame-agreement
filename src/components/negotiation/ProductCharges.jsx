@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import './ProductCharges.scss';
 // import Checkbox from '../utillity/inputs/Checkbox';
 import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';

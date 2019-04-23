@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import Icon from '../Icon';
 import Checkbox from './Checkbox';
 
-import './DropdownCheckbox.css';
-
 class DropdownCheckbox extends React.Component {
 	constructor(props) {
 		super(props);

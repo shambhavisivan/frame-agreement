@@ -254,3 +254,371 @@ $variables: (
 		@return unquote('var(' + $variable + ')');
 	}
 }
+
+
+
+
+
+
+
+//// NEW THEME THAT NEEDS TO BE MERGED CORRECTLY
+
+
+/* COLORS */
+$black: #000;
+$blue-cs: #00abd3;
+$blue-dark-1: #16325c;
+$blue-dark-2: #30486c;
+$blue-dark-3: #1b3d71;
+$blue-dark-4: #54698d;
+$blue-light-1: #b6dde9;
+$blue-light-2: #c6e1ff;
+$blue-light-4: #e3f3ff;
+$blue-light-5: #f8f8ff;
+$blue-medium-1: #005fb2;
+$blue-medium-2: #0062b8;
+$blue-medium-3: #1589ee;
+$blue-medium-4: #1090ff;
+$blue-medium-5: #5897fb;
+$blue-medium-6: #5eb4ff;
+$blue-sf: #0070d2;
+$gray-dark-1: #080707;
+$gray-dark-2: #444444;
+$gray-dark-3: #4e5c60;
+$gray-dark-4: #5e5d60;
+$gray-dark-5: #6a6a6a;
+$gray-dark-6: #747474;
+$gray-dark-7: #777f8b;
+$gray-dark-8: #3e3e3c;
+$gray-dark-9: #706e6b;
+$gray-light-2: #dddddd;
+$gray-light-4: #d8d8d8;
+$gray-light-5: #dddbda;
+$gray-light-6: #d8dde6;
+$gray-light-7: #ebebeb;
+$gray-light-8: #e0e5ee;
+$gray-light-10: #e4ebf6;
+$gray-light-11: #ecebea;
+$gray-light-12: #eef1f6;
+$gray-light-14: #f2f3f3;
+$gray-light-17: #f8f8f8;
+$gray-light-19: #f4f6f9;
+$gray-light-20: #fdfdfd;
+$gray-light-26: #fafaf9;
+$gray-medium-1: #999999;
+$gray-medium-2: #969492;
+$gray-medium-4: #9a9ea5;
+$gray-medium-6: #aaaaaa;
+$gray-medium-7: #a9a9a9;
+$gray-medium-8: #b0b0b0;
+$gray-medium-11: #c9c7c5;
+$gray-medium-12: #a8b7c7;
+$green-dark-1: #04844b;
+$green-light-3: #4bca81;
+$orange-medium-1: #ffb75d;
+$orange-cs: #ffa429;
+$red-medium-1: #c11a1a;
+$red-medium-2: #c23934;
+$red-medium-3: #d81c2a;
+$red-medium-4: #d9675d;
+$white: #fff;
+
+$css4: true;
+
+// It is nessesary to define the variables in sass map instead of :root, for compatibility reasons.
+$variables: (
+	--main-c: $blue-sf,
+	--main-bg: $gray-light-14,
+	--main-br: $gray-light-5,
+	--main-fg: $white,
+
+	--home-bg: $gray-light-11,
+
+	--button-bg: $white,
+	--button-bg-alt: $blue-sf,
+	--button-br: $gray-light-5,
+	--button-hover: $gray-light-19,
+	--button-hover-alt: $blue-medium-1,
+	--button-active: $gray-light-12,
+	--button-active-br: $blue-sf,
+	--button-c-disabled: $gray-light-5,
+	--button-dd-hover: $gray-light-14,
+	--button-dd-active: $gray-light-11,
+
+	--font-c: $gray-dark-1,
+	--font-c-alt: $gray-medium-1,
+	--font-highlight: $blue-sf,
+	--font-inverse: $white,
+
+	--form-c: $gray-dark-1,
+	--form-placeholder: $gray-dark-6,
+
+	--main-header-bg: $white,
+	--main-header-c: $gray-dark-1,
+	--main-header-icon-bg: $blue-cs,
+
+	--solutions-wrapper-br: $gray-light-5,
+	--solutions-c: $gray-dark-8,
+
+	--breadcrumbs-tab: $gray-light-14,
+	--breadcrumbs-tab-hover: $gray-light-5,
+	--breadcrumbs-tab-c: $gray-dark-8,
+	--breadcrumbs-tab-active: $blue-sf,
+	--breadcrumbs-tab-active-hover: $blue-medium-1,
+	--breadcrumbs-tab-active-c: $white,
+
+	--table-header-bg: $gray-light-26,
+	--table-bg: $white,
+	--table-bg-hover: $gray-light-26,
+	--table-br: $gray-light-5,
+	--table-c: $gray-dark-1,
+
+	--shadow-light: rgba($black, 0.1),
+	--shadow-medium: rgba($black, 0.22),
+	--shadow-dark: rgba($black, 0.5),
+
+	--checkbox-bg: $gray-medium-7,
+	--checkbox-bg-alt: $gray-medium-2,
+	--checkbox-disabled-bg: $gray-medium-1,
+	--checkbox-disabled-circle-bg: $gray-light-5,
+
+	--input-active-br: $blue-medium-3,
+
+	--transparent: rgba($black, 0),
+
+	--schema-bg: $white,
+	--schema-menu-bg: $gray-light-26,
+	--schema-menu-br: $gray-light-5,
+	--schema-result-c: $gray-medium-8,
+	--schema-result-table: $gray-light-26,
+	--schema-modal-bg: rgba($gray-medium-8, 0.8),
+	--schema-modal-fg: $white,
+	--schema-modal-close-br: $gray-light-11,
+	--scheam-modal-close-hover: rgba($white, 0.75),
+
+	--toast-info-bg: $gray-dark-9,
+	--toast-success-bg: $green-dark-1,
+	--toast-warning-bg: $orange-medium-1,
+	--toast-error-bg: $red-medium-2,
+	--toast-c: $white,
+	--toast-warning-c: $gray-dark-8,
+);
+
+// This will be used later for dark theme support
+// $darkVariables: (
+// 	--main-c: #ff0000,
+// 	--main-bg: darkblue,
+// 	--main-br: $white,
+
+// 	--button-c: $blue-sf,
+// 	--button-bg: $white,
+// 	--button-br: $gray-light-6
+// );
+
+// Here we transfer the variables from the map to the :root element
+@if($css4) {
+	:root {
+		@each $variable, $value in $variables {
+			#{$variable}: $value;
+		}
+	}
+
+	// This will be used later for dark theme support
+	// .dark {
+	// 	@each $variable, $value in $darkVariables {
+	// 		#{$variable}: $value;
+	// 	}
+	// }
+}
+
+/*** HELPER FUNCTIONS ***/
+
+// change value type to string
+@function to-string($value) {
+	@return inspect($value);
+}
+// MIX WITH BLACK ~ helper function for darken mixins
+@function mixb($variable, $opacity) {
+	@return unquote('linear-gradient(to top,rgba(0, 0, 0,'+ $opacity +'),rgba(0, 0, 0,' + $opacity + '))' + $variable);
+}
+// MIX WITH WHITE ~ helper function for lighten mixins
+@function mixw($variable, $opacity) {
+	@return unquote('linear-gradient(to top,rgba(255, 255, 255,'+ $opacity +'),rgba(255, 255, 255,' + $opacity + ')) ' + $variable);
+}
+
+/*** BACKGROUND COLOR MIXINS ***/
+
+/* SET BACKGROUND COLOR */
+// $variable: only CSS variable format - if $color isn't set, it will take default color from variables map
+// $color [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to change already set background to different color
+// ex. @include sbg(--button-bg);
+// ex. @include sbg(--button-bg, var(--main-c));
+@mixin sbg($variable, $color: $variable) {
+	@if($color == $variable) {
+		background: map-get($variables, $variable);
+	} @else if (str-slice(to-string($color), 1, 4) == 'var(') {
+		#{$variable}: #{$color};
+		$length: str-length($color) - 1;
+		$helper: str-slice($color, 5, $length);
+		background: map-get($variables, $helper);
+	} @else {
+		#{$variable}: #{$color};
+		background: $color;
+	}
+
+	@supports(--css: variables) {
+		background: unquote('var(' + $variable + ')');
+	}
+}
+
+/* BACKGROUND DARKEN */
+// $variable: CSS variable or SCSS variable [ex. var(--color), $blue-sf] - background color to be darkened
+// $opacity: opacity percantange of black background [value should be between 0 and 1; higher number means darker background]
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - background color to be darkened
+// ex. @include bgd(var(--button-bg), 0.4);
+// ex. @include bgd(var(--button-bg), 0.4, var(--main-c));
+@mixin bgd($variable, $opacity, $ie: $variable) {
+	@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+		$length: str-length($ie) - 1;
+		$helper: str-slice($ie, 5, $length);
+		background: mixb(map-get($variables, $helper), $opacity);
+	} @else {
+		background: mixb($ie, $opacity);
+	}
+
+	@supports(--css: variables) {
+		background: mixb($variable, $opacity);
+	}
+}
+
+/* BACKGROUND LIGHTEN */
+// $variable: CSS variable or SCSS variable [ex. var(--color), $blue-sf] - background color to be lightened
+// $opacity: opacity percantange of white background [value should be between 0 and 1; higher number means lighter background]
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - background color to be lightened
+// ex. @include bgl(var(--button-bg), 0.4);
+// ex. @include bgl(var(--button-bg), 0.4, $blue-sf);
+@mixin bgl($variable, $opacity, $ie: $variable) {
+	@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+		$length: str-length($ie) - 1;
+		$helper: str-slice($ie, 5, $length);
+		background: mixw(map-get($variables, $helper), $opacity);
+	} @else {
+		background: mixw($ie, $opacity);
+	}
+
+	@supports(--css: variables) {
+		background: mixw($variable, $opacity);
+	}
+}
+
+/*** TEXT COLOR MIXINS ***/
+
+/* SET TEXT COLOR */
+// $variable: only CSS variable format - if $color isn't set, it will take default color from variables map
+// $color [optional]: any color format (ex. var(--color), $blue-sf, #000, black) - used to change already set text color to different color
+// ex. @include sc(--button-c);
+// ex. @include sc(--button-c, var(--main-c));
+@mixin sc($variable, $color: $variable) {
+	@if($color == $variable) {
+		color: map-get($variables, $variable);
+	} @else if (str-slice(to-string($color), 1, 4) == 'var(') {
+		#{$variable}: #{$color};
+		$length: str-length($color) - 1;
+		$helper: str-slice($color, 5, $length);
+		color: map-get($variables, $helper);
+	} @else {
+		#{$variable}: #{$color};
+		color: $color;
+	}
+
+	@supports(--css: variables) {
+		color: unquote('var(' + $variable + ')');
+	}
+}
+
+/* COLOR DARKEN */
+// $variable: CSS variable or SCSS variable [ex. var(--color), $blue-sf] - color to be darkened
+// $opacity: opacity percantange of black background [value should be between 0 and 1; higher number means darker background]
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - color to be darkened
+// ex. @include cd(var(--button-bg), 0.4);
+// ex. @include cd(var(--button-bg), 0.4, $blue-sf);
+@mixin cd($variable, $opacity, $ie: $variable) {
+	@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+		$length: str-length($ie) - 1;
+		$helper: str-slice($ie, 5, $length);
+		color: mix(black, map-get($variables, $helper), $opacity * 100);
+	} @else {
+		color: mix(black, $ie, $opacity * 100);
+	}
+
+	@supports(--css: variables) {
+		background: mixb($variable, $opacity);
+		color: transparent;
+		background-clip: text;
+		-webkit-background-clip: text;
+		-moz-background-clip: text;
+	}
+}
+
+/* COLOR LIGHTEN */
+// $variable: CSS variable or SCSS variable [ex. var(--color), $blue-sf] - color to be lightened
+// $opacity: opacity percantange of white background [value should be between 0 and 1; higher number means lighter background]
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - color to be lightened
+// ex. @include cl(var(--button-bg), 0.4);
+// ex. @include cl(var(--button-bg), 0.4, $blue-sf);
+@mixin cl($variable, $opacity, $ie: $variable) {
+	@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+		$length: str-length($ie) - 1;
+		$helper: str-slice($ie, 5, $length);
+		color: mix(white, map-get($variables, $helper), $opacity * 100);
+	} @else {
+		color: mix(white, $ie, $opacity * 100);
+	}
+
+	@supports(--css: variables) {
+		background: mixw($variable, $opacity);
+		color: transparent;
+		background-clip: text;
+		-webkit-background-clip: text;
+		-moz-background-clip: text;
+	}
+}
+
+/*** OTHER ***/
+
+/* HELPER MIXIN FOR IE FALLBACK */
+// Mixin temporally sets the $css4 variable to false, compiles the IE fallback, then makes the variable true again and compiles the css4 code
+// It should contain properties that use css4 variables (other than background and text color), otherwise there will be unnessesary duplication of properties.
+@mixin css4 {
+	$css4: false !global;
+	@content;
+	$css4: true !global;
+	@supports(--css: variables) {
+		@content;
+	}
+}
+
+/* CUSTOM VAR FUNCTION - borders, box-shadow, gradients... */
+// $variable: only CSS variable format - this color will be returned from function
+// $ie [optional]: any color format [ex. var(--color), $blue-sf, #000, black] - used to set fallback for IE11 when needed - color to be returned from function for IE only
+// to change border variable to new color it is necessary to define it within @css4 mixin [see example]
+// ex.
+// @include css4 {
+//	--border-c: #{var(--main-c)};
+//	border: 1px solid cvar(--border-c, var(--main-c));
+// }
+@function cvar($variable, $ie: $variable) {
+	@if($css4==false) {
+		@if (str-slice(to-string($ie), 1, 4) == 'var(') {
+			$length: str-length($ie) - 1;
+			$helper: str-slice($ie, 5, $length);
+			@return map-get($variables, $helper);
+		} @else if (str-slice(to-string($ie), 1, 2) == '--')  {
+			@return map-get($variables, $ie);
+		} @else {
+			@return $ie;
+		}
+	} @else {
+		@return unquote('var(' + $variable + ')');
+	}
+}

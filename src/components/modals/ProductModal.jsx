@@ -11,8 +11,6 @@ import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField } from '../../utils/shared-service';
 
-import './ProductModal.css';
-
 class ProductModal extends Component {
 	constructor(props) {
 		super(props);

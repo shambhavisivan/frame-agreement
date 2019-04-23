@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import CommercialProductSkeleton from './CommercialProductSkeleton';
-import './Skeleton.scss';
 
 import Shape from './Shape';
 

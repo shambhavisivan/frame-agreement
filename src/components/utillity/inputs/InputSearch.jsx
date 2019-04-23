@@ -3,8 +3,6 @@ import { DebounceInput } from 'react-debounce-input';
 
 import Icon from '../Icon';
 
-import './InputSearch.css';
-
 class InputSearch extends React.Component {
 	constructor(props) {
 		super(props);

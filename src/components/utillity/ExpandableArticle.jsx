@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './ExpandableArticle.css';
 
 class ExpandableArticle extends Component {
 	constructor(props) {

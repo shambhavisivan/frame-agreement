@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 
 import Icon from '../Icon';
 
-import './InputTextArea.css';
-
 class InputTextArea extends React.Component {
 	constructor(props) {
 		super(props);

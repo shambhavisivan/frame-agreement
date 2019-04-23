@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Icon from '../Icon';
 
-import './DropdownNegotiate.css';
-
 /*
 
   Id: "a141t00000137a8AAA"

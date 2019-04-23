@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Modal from 'react-responsive-modal';
 
-import './ActionIframe.css';
-
 class ActionIframe extends Component {
 	constructor(props) {
 		super(props);

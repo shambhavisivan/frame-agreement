@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './Toggle.css';
 
 import Icon from '../Icon';
 

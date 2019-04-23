@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import Icon from '../Icon';
 
-import './InputNegotiate.css';
-
 class InputNegotiate extends React.Component {
 	constructor(props) {
 		super(props);

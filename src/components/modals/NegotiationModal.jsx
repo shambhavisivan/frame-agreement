@@ -18,8 +18,6 @@ import { setValidation, createToast } from '../../actions';
 
 // import { getFrameAgreements } from '../../actions';
 
-import './NegotiationModal.css';
-
 const ADDON_VALUE_FIELD = 'cspmb__Recurring_Charge__c';
 const RATE_VALUE_FIELD = 'cspmb__rate_value__c';
 

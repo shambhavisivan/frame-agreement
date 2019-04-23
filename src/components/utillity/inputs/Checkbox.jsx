@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import './Toggle.css';
 
 import Icon from '../Icon';
-import './Checkbox.scss';
 
 class Checkbox extends React.Component {
 	constructor(props) {

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import Icon from '../Icon';
 
-import './InputVolume.css';
-
 class InputVolume extends Component {
 	constructor(props) {
 		super(props);

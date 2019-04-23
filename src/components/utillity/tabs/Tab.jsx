@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import './Tab.scss';
-
 class Tab extends React.Component {
 	constructor(props, context) {
 		super(props, context);

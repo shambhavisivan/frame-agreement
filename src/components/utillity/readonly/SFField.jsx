@@ -6,8 +6,6 @@ import InputText from '../inputs/InputText';
 import InputTextArea from '../inputs/InputTextArea';
 import Toggle from '../inputs/Toggle';
 
-import './SFField.css';
-
 class SFField extends Component {
 	constructor(props) {
 		super(props);

@@ -1,0 +1,401 @@
+/* FA Section */
+// Section component.
+
+.fa-section {
+	background: $white;
+	padding: 1rem 1.5rem;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.fa-section-vertical {
+	padding: 1rem 0;
+}
+
+.fa-section-transparent {
+	background: none;
+}
+
+/* Sizes */
+$section-sizes: (
+	sm: 0.25rem * 2,
+	md: 0.25rem * 4,
+	lg: 0.25rem * 8,
+	xlg: 0.25rem * 12
+);
+
+@each $label, $size in $section-sizes {
+	.fa-section-#{$label} {
+		padding: $size;
+	}
+}
+
+/* Border */
+.fa-section-border {
+	border: 1px solid $gray;
+}
+
+.fa-section-border-bottom {
+	border-bottom: 1px solid $gray;
+}
+
+/* Shadow */
+.fa-section-shadow {
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Bottom */
+.section-bottom {
+	background: $white;
+	border-bottom-left-radius: 0.25rem;
+	border-bottom-right-radius: 0.25rem;
+	height: 1.25rem;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.approval-table-list-container .section-bottom {
+	box-shadow: none;
+}
+.approval-history.approval-table-list > .fa-section.fa-section-border-bottom {
+	box-shadow: none;
+}
+
+
+
+
+
+/* FA Approval Process */
+// CSS Approval process
+
+.table-container.this.props.approval.listProcess .table-list-header{
+	font-size: 10px;
+}
+
+.table-container.this.props.approval.listProcess .list-row {
+	font-size: 10px;
+}
+
+.approval-table-list {
+	border-radius: 4px;
+	background: #f3f2f2;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.approval-table-list .table-list-header > .list-cell {
+	text-align: left;
+}
+
+.approval-table-list .list-row > .list-cell {
+	text-align: left;
+}
+
+.approval-table-list .fa-section .fa-button-group-secondary {
+	margin-top: 0.5rem;
+}
+
+.approval-table-list-header {
+	background: white;
+	border-top-right-radius: 0.25rem;
+	border-top-left-radius: 0.25rem;
+	display: flex;
+	align-items: center;
+	padding: 0.75rem 1.5rem;
+	border-bottom: 1px solid #dddbda;
+}
+
+.approval-table-list-header .approval-refresh {
+	margin-left: 30px;
+}
+
+.approval-table-list-header .table-title {
+  font-size: 1.125rem;
+  color: #080707;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.approval-table-list-header .table-title > svg {
+	margin-right: 10px;
+}
+
+.approval-table-list-header .table-actions {
+	flex: 3;
+	text-align: right;
+}
+
+.approval-table-list-header .table-actions .link {
+	margin-left: 30px;
+}
+
+.approval-table-list-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.approval-table-list-container .table-list-header {
+	@include sbg(--table-header);
+}
+
+.approval-table-list-container > ul.table-list {
+	background: white;
+}
+
+.approval-history .list-row > .list-cell {
+	padding: 0.4rem 0.75rem;
+	&:first-child {
+		padding-left: 1.5rem;
+	}
+	&:last-child {
+		padding-right: 1.5rem;
+	}
+}
+
+.status.Pending {
+	color: #ffa429;
+}
+
+.status.Approved {
+	color: #4bca81;
+}
+
+.status.Rejected {
+	color: #d81c2a;
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+	from {
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	to {
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes rotating {
+	from {
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+  to {
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+  }
+}
+
+.rotating {
+	-webkit-animation: rotating 1s linear infinite;
+	-moz-animation: rotating 1s linear infinite;
+	-ms-animation: rotating 1s linear infinite;
+	-o-animation: rotating 1s linear infinite;
+	animation: rotating 1s linear infinite;
+}
+
+
+
+
+
+.basket-details {
+	border-bottom-left-radius: 0.25rem;
+	border-bottom-right-radius: 0.25rem;
+	width: 100%;
+	padding: 1rem;
+
+	.details-row-wrapper {
+		display: flex;
+		width: 100%;
+	}
+
+	.fa-element-wrapper {
+		position: relative;
+		margin: 0.5rem 0.6rem;
+
+		.fa-element-label {
+			display: flex;
+			align-items: center;
+
+			.element-title {
+				display: inline-block;
+				margin: 0;
+				color: #777f8b;
+				font-size: 0.75rem;
+				max-width: 100%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+
+		.fa-element {
+			display: flex;
+			min-height: 2rem;
+			width: 100%;
+			overflow: hidden;
+
+			> input {
+				width: 100%;
+			}
+
+			> textarea {
+				min-width: 100%;
+				max-width: 100%;
+				overflow: auto;
+			}
+
+			.fa-input-border {
+				background: transparent;
+				border: 0;
+				border-top: 1px solid transparent;
+				border-bottom: 1px solid transparent;
+				font-size: 0.875rem;
+				outline: 0;
+				min-height: 2rem;
+				max-width: 100%;
+				text-overflow: ellipsis;
+				overflow: hidden;
+
+				&:focus {
+					border-bottom: 1px solid #4bca81;
+				}
+			}
+		}
+
+		.form-edit-icon {
+			display: none;
+		}
+
+		&.editable {
+			.fa-input-border {
+				border-bottom: 1px solid #d9d9d9;
+			}
+
+			&:hover, &:focus-within {
+				.form-edit-icon {
+					display: inline-block;
+				}
+
+				.element-title {
+					max-width: calc(100% - 1rem);
+					margin-right: 0.25rem;
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+/* FA Discount */
+// CSS Discount
+
+.fa-discount {
+	align-items: flex-end;
+	display: flex;
+}
+
+/* Item */
+.fa-discount-item {
+	&:not(:last-child) {
+		padding-right: 1rem;
+	}
+
+	&:nth-child(2) {
+		flex: 100px;
+	}
+
+	&:last-child {
+		text-align: right;
+	}
+}
+
+
+
+
+
+/* FA Editor */
+// CSS FA Editor
+
+.editor-container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	background: #ecebea;
+}
+
+.sidebar {
+	flex: 1;
+	text-align: center;
+	padding: 0px 10px;
+}
+
+.add-product-box {
+	padding: 54px 0px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-radius: 4px;
+	border: 1px solid #dddddd;
+}
+
+.box-header-1 {
+	font-size: 20px;
+	color: #5e5d60;
+}
+
+.box-header-2 {
+	font-size: 13px;
+	color: #747474;
+}
+
+.box-button-container {
+	padding: 13px;
+}
+
+
+
+
+
+
+.expandable-article {
+	display: flex;
+	align-items: center;
+}
+
+.expandable-text {
+	white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.expandable-article.expanded {
+	display: block;
+	align-items: unset;
+}
+.expandable-article.expanded .expandable-text{
+	white-space: pre-wrap;
+}
+
+.expandable-more {
+ color: #006ccc;
+}
+
+.expandable-more:hover {
+ text-decoration: underline;
+ cursor: pointer;
+}

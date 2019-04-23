@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 
 import Icon from './Icon';
 
-import './CustomButtonDropdown.css';
-
 class CustomButtonDropdown extends React.Component {
 	constructor(props) {
 		super(props);

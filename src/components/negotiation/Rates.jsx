@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Modal from 'react-responsive-modal';
 
-import './Rates.scss';
 import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import Pagination from '../utillity/Pagination';

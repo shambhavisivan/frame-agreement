@@ -14,7 +14,7 @@
 	box-shadow: 0 0 4px #dddbda;
 
 	.react-confirm-alert & {
-		box-shadow: 0 0 4px transparentize($gray, 0.6);
+		box-shadow: 0 0 4px transparentize($gray-light-5, 0.6);
 		font-size: 0.875rem;
 		max-width: 650px;
 	}

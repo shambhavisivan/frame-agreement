@@ -14,7 +14,7 @@
 
 .fa-footer .fa-button {
 	background: $white;
-	border-right: 1px solid $gray;
+	border-right: 1px solid $gray-light-5;
 	border-radius: 0;
 	color: $blue-sf;
 	font-size: 0.875rem;
@@ -26,6 +26,6 @@
 	}
 
 	&:hover {
-		background: $gray-blue;
+		background: $gray-light-19;
 	}
 }

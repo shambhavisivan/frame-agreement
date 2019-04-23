@@ -22,7 +22,7 @@
 	&:hover,
 	&:active,
 	&:focus {
-		background: $blue-sf-dark;
+		background: $blue-medium-2;
 		outline: none;
 		text-decoration: none;
 		color: $white;
@@ -33,20 +33,20 @@
 	}
 
 	&:disabled {
-		background: $gray;
+		background: $gray-light-5;
 		pointer-events: none;
 	}
 
 	.fa-invalid &:active,
 	.fa-invalid &:focus,
 	.fa-invalid &:hover {
-		background: $red-dark;
+		background: $red-medium-4;
 	}
 
 	.fa-disabled &:active,
 	.fa-disabled &:focus,
 	.fa-disabled &:hover {
-		background: $gray-darker;
+		background: $gray-dark-5;
 	}
 }
 
@@ -88,14 +88,14 @@
 	background: transparent;
 
 	&.secondary {
-		border: 1px solid $gray;
+		border: 1px solid $gray-light-5;
 		color: $blue-sf;
 		font-size: 0.8125rem;
 
 		&:hover,
 		&:active,
 		&:focus {
-			background: $gray-light;
+			background: $gray-light-15;
 		}
 
 		svg {
@@ -109,11 +109,11 @@
 
 	&:disabled {
 		background: transparent;
-		border: 1px solid $gray;
-		color: $gray;
+		border: 1px solid $gray-light-5;
+		color: $gray-light-5;
 
 		svg {
-			fill: $gray;
+			fill: $gray-light-5;
 		}
 	}
 }
@@ -152,15 +152,15 @@
 	position: relative;
 	text-decoration: none;
 	background: $white;
-	border: 1px solid $gray;
-	color: $blue-sf-light;
+	border: 1px solid $gray-light-5;
+	color: $blue-sf;
 
 	&:hover {
-		background: $gray-blue;
+		background: $gray-light-19;
 	}
 
 	&:focus {
-		background: $gray-blue;
+		background: $gray-light-19;
 		box-shadow: 0 0 3px $blue-sf;
 		outline: 0;
 		z-index: 1;

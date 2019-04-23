@@ -51,7 +51,7 @@
 }
 
 .fa-main-header .fa-main-header-sub-title {
-	color: $gray-dark;
+	color: $gray-dark-7;
 	font-size: 0.8125rem;
 	font-weight: $font-weight-normal;
 	line-height: 1;
@@ -110,12 +110,12 @@
 .error {
 	/* Invalid */
 	&.fa-invalid {
-		background: $red;
+		background: $red-medium-4;
 	}
 
 	/* Disabled */
 	&.fa-disabled {
-		background: $gray-dark;
+		background: $gray-dark-7;
 	}
 }
 

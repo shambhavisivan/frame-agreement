@@ -1207,18 +1207,16 @@ class FaEditor extends Component {
 		let footer = '';
 		if (this.state.activeFa._ui.commercialProducts.length) {
 			footer = (
-				<div className="fa-footer">
+				<div className="fa-main-footer">
 					{this.props.settings.ButtonStandardData.AddProducts.has(
 						this.state.activeFa.csconta__Status__c
 					) && (
 						<button
-							className="fa-button fa-margin-right-xsm"
+							className="fa-button"
 							onClick={this.onOpenCommercialProductModal}
 						>
 							<Icon name="add" width="16" height="16" color="#0070d2" />
-							<span className="fa-padding-left-xsm">
-								{window.SF.labels.btn_AddProducts}
-							</span>
+							<span className="fa-button-icon">{window.SF.labels.btn_AddProducts}</span>
 						</button>
 					)}
 
@@ -1227,13 +1225,11 @@ class FaEditor extends Component {
 					) && (
 						<button
 							disabled={!Object.keys(this.state.selectedProducts).length}
-							className="fa-button fa-margin-right-xsm"
+							className="fa-button"
 							onClick={this.onOpenNegotiationModal}
 						>
 							<Icon name="user" width="16" height="16" color="#0070d2" />
-							<span className="fa-padding-left-xsm">
-								{window.SF.labels.btn_BulkNegotiate}
-							</span>
+							<span className="fa-button-icon">{window.SF.labels.btn_BulkNegotiate}</span>
 						</button>
 					)}
 
@@ -1246,9 +1242,7 @@ class FaEditor extends Component {
 							onClick={this.onRemoveProducts}
 						>
 							<Icon name="delete" width="16" height="16" color="#0070d2" />
-							<span className="fa-padding-left-xsm">
-								{window.SF.labels.btn_DeleteProducts}
-							</span>
+							<span className="fa-button-icon">{window.SF.labels.btn_DeleteProducts}</span>
 						</button>
 					)}
 				</div>
@@ -1307,7 +1301,7 @@ class FaEditor extends Component {
 								onClick={() => {
 									this.callHandler(btnObj.method, btnObj.type);
 								}}
-								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-xsm"
+								className="fa-button fa-button-border-light fa-button-transparent"
 							>
 								{btnObj.label}
 							</button>
@@ -1381,7 +1375,6 @@ class FaEditor extends Component {
 								<div className="commercial-table-header">
 									<div className="commercial-product-checkbox-container">
 										<Checkbox
-											className="fa-margin-right-sm"
 											value={
 												this.state.activeFa._ui.commercialProducts.length ===
 												Object.keys(this.state.selectedProducts).length

@@ -1,4 +1,4 @@
-// Base Styles
+/* BASE STYLES */
 html {
 	height: 100%;
 
@@ -6,7 +6,7 @@ html {
 		height: 100%;
 		padding: 0;
 		margin: 0;
-		background: $gray-light-15;
+		@include sbg(--main-bg);
 
 		* {
 			-webkit-font-smoothing: antialiased;
@@ -23,112 +23,105 @@ html {
 			margin: 0;
 
 			.fa-app-wrapper {
+				display: flex;
+				flex-direction: column;
 				height: 100%;
 			}
 		}
 	}
 }
 
-// Salesfroce Classic Overrides
+/* SALESFORCE CLASSIC OVERRIDES */
 body.hasMotif.sfdcBody {
-    padding: 0 10px;
-    margin: 0;
-    box-sizing: border-box;
-    height: auto;
-    min-height: 100vh;
+	padding: 0 10px;
+	margin: 0;
+	box-sizing: border-box;
+	height: auto;
+	min-height: 100vh;
 
-    .outerNoSidebar {
-        padding: 0;
+	.outerNoSidebar {
+		padding: 0;
 
-        .noSidebarCell {
+		.noSidebarCell {
 			padding: 0;
 
 			.fam {
-				background: $gray-light-15;
-
-				*:hover a {
-					text-decoration: none !important;
-				}
+			  @include sbg(--main-bg);
 			}
 		}
-    }
+	}
 }
-
-
-
-
-
 
 //Don't currently know where to put this
 
-.sf-field {
-    display: inline-block;
-    float: left;
-    padding: 5px 5px;
-    box-sizing: border-box;
-}
+// .sf-field {
+//     display: inline-block;
+//     float: left;
+//     padding: 5px 5px;
+//     box-sizing: border-box;
+// }
 
-.sf-field.editable .sf-label:hover {
-  cursor: pointer;
-}
+// .sf-field.editable .sf-label:hover {
+//   cursor: pointer;
+// }
 
-.sf-field .sf-label {
-    text-transform: uppercase;
-    height: 14px;
-    font-size: 11px;
-    padding: 0px 4px;
-    font-weight: normal;
-    font-style: normal;
-    font-stretch: normal;
-    letter-spacing: normal;
-    color: #5e5d60;
-    margin-bottom: 7px;
-    display: inline-block;
-    white-space: nowrap;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    background: white;
-}
+// .sf-field .sf-label {
+//     text-transform: uppercase;
+//     height: 14px;
+//     font-size: 11px;
+//     padding: 0px 4px;
+//     font-weight: normal;
+//     font-style: normal;
+//     font-stretch: normal;
+//     letter-spacing: normal;
+//     color: #5e5d60;
+//     margin-bottom: 7px;
+//     display: inline-block;
+//     white-space: nowrap;
+//     width: 100%;
+//     overflow: hidden;
+//     text-overflow: ellipsis;
+//     background: white;
+// }
 
-.sf-field .sf-label.edit {
-    color: #4bca81;
-}
+// .sf-field .sf-label.edit {
+//     color: #4bca81;
+// }
 
-.sf-field-value {
-	padding: 0px 4px;
-}
-.sf-field-value p {
-  font-size: 14px;
-  margin: 0;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: 22px;
-  letter-spacing: normal;
-  color: #080707;
-}
-/*
-.sf-field.editable:hover .form-edit-icon {
-  display: inline-block;
-}*/
+// .sf-field-value {
+// 	padding: 0px 4px;
+// }
+// .sf-field-value p {
+//   font-size: 14px;
+//   margin: 0;
+//   font-weight: normal;
+//   font-style: normal;
+//   font-stretch: normal;
+//   line-height: 22px;
+//   letter-spacing: normal;
+//   color: #080707;
+// }
+// /*
+// .sf-field.editable:hover .form-edit-icon {
+//   display: inline-block;
+// }*/
 
-/*.sf-field .sf-label.edit > .form-edit-icon {
-	display: inline-block;
-}
+// /*.sf-field .sf-label.edit > .form-edit-icon {
+// 	display: inline-block;
+// }
 
-.form-edit-icon {
-	display: none;
-	float: left;
-  background: white;
-	margin-left: -16px;
-}*/
+// .form-edit-icon {
+// 	display: none;
+// 	float: left;
+//   background: white;
+// 	margin-left: -16px;
+// }*/
 
-.value-holder {
-  border-bottom: 1px solid transparent;
-  padding-bottom: 4px;
-}
-.value-holder.textarea {
-  line-height: normal;
-}
+// .value-holder {
+//   border-bottom: 1px solid transparent;
+//   padding-bottom: 4px;
+// }
+// .value-holder.textarea {
+//   line-height: normal;
+// }
 

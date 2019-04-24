@@ -89,7 +89,7 @@ class FaList extends Component {
 
 	render() {
 		return (
-			<div className="editor-container">
+			<div className="fa-app">
 				<Toaster />
 				<div className="fa-main-header">
 					<div className="fa-main-header__inner">
@@ -114,47 +114,41 @@ class FaList extends Component {
 						</div>
 					</div>
 				</div>
-				<div className="fa-container">
-					<div className="fa-margin-top-sm">
-						<div className="fa-container-inner">
-							{Object.values(this.props.frameAgreements)
-								.filter(fa => {
-									if (this.state.searchTerm) {
-										if (
-											fa.csconta__Agreement_Name__c
-												.toLowerCase()
-												.includes(this.state.searchTerm.toLowerCase())
-										) {
-											return true;
-										} else {
-											return false;
-										}
-									} else return true;
-								})
-								.map(fa => {
-									return (
-										<FrameAgreementRow
-											menuAction={(action, data) => {
-												this.faMenuAction(action, fa.Id);
-											}}
-											key={fa.Id}
-											agreement={fa}
-										/>
-									);
-								})}
+				<div className="fa-main-body">
+					<div className="fa-main-body__inner">
+						{Object.values(this.props.frameAgreements)
+							.filter(fa => {
+								if (this.state.searchTerm) {
+									if (
+										fa.csconta__Agreement_Name__c
+											.toLowerCase()
+											.includes(this.state.searchTerm.toLowerCase())
+									) {
+										return true;
+									} else {
+										return false;
+									}
+								} else return true;
+							})
+							.map(fa => {
+								return (
+									<FrameAgreementRow
+										menuAction={(action, data) => {
+											this.faMenuAction(action, fa.Id);
+										}}
+										key={fa.Id}
+										agreement={fa}
+									/>
+								);
+							})}
 
-							{!Object.keys(this.props.frameAgreements).length && (
-								<div className="add-product-box" style={{ border: 'none' }}>
-									<span className="box-header-1">
-										{window.SF.labels.no_fa_message}
-									</span>
-									<span className="box-header-2">
-										{window.SF.labels.no_fa_message_2}
-									</span>
-									<div className="box-button-container" />
-								</div>
-							)}
-						</div>
+						{!Object.keys(this.props.frameAgreements).length && (
+							<div className="add-product-box">
+								<span className="box-header-1">{window.SF.labels.no_fa_message}</span>
+								<span className="box-header-2">{window.SF.labels.no_fa_message_2}</span>
+								<div className="box-button-container" />
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

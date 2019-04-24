@@ -1,32 +1,25 @@
-/* FA Container */
-// Container object.
-
-.fa-container {
+.fa-app {
+	display: flex;
+	flex-direction: column;
 	flex: 1;
-	margin: 0 auto;
-	max-width: 1280px;
-	width: 90%;
+	overflow: hidden;
 
-	.editor-container > & {
-		flex: 1;
-		height: 100%;
-		margin: 0;
-		max-width: none;
-		overflow-y: auto;
-		width: inherit;
+	.fa-secondary-header + .fa-main-body {
+		padding: 0 1rem 1rem;
 	}
-}
 
-.fa-main-wrapper {
-	background: #ECEBEA;
-	flex: 1;
-}
-/* Inner */
-.fa-container-inner {
-	flex: 1;
-	margin: 0 auto;
-	max-width: 1280px;
-	padding-bottom: 1rem;
-	width: 90%;
-	background: #ECEBEA;
+	.fa-main-body {
+		flex: 1;
+		margin: 0 auto;
+		width: 100%;
+		padding: 1rem;
+		overflow-y: auto;
+
+		.fa-main-body__inner {
+			flex: 1;
+			margin: 0 auto;
+			max-width: 1280px;
+			width: 100%;
+		}
+	}
 }

@@ -1324,7 +1324,7 @@ class FaEditor extends Component {
 			this.state.activeFa._ui.approval.listProcess.length
 		) {
 			approvalHistory = (
-				<div className="fa-padding-top-sm">
+				<div className="card">
 					<ApprovalProcess
 						onChange={this.onApprovalChange}
 						faId={this.faId}
@@ -1473,7 +1473,7 @@ class FaEditor extends Component {
 		// *******************************************************
 
 		return (
-			<div className="editor-container">
+			<div className="fa-app">
 				<Prompt
 					when={this.state.actionTaken && this.faId && this.editable}
 					message={window.SF.labels.modal_unsavedChanges_alert}
@@ -1540,68 +1540,62 @@ class FaEditor extends Component {
 							</button>
 						)}
 				</Header>
-
-				<div className="fa-main-wrapper">
-					<div className="fa-container-inner">
-						{this.header_rows.length ? (
-							<section className="basket-details fa-section fa-section-vertical fa-section-shadow fa-section-light">
-								{this.header_rows.map((row, i) => {
-									return (
-										<div
-											className="details-row-wrapper"
-											key={'header-row-' + i}
-										>
-											{row.map(f => {
-												var editable = !f.readOnly && this.editable;
-												return (
-													<SFField
-														editable={editable}
-														onChange={this.onFieldChange}
-														key={f.field}
-														field={f}
-														value={this.state.activeFa[f.field] || ''}
-													/>
-												);
-											})}
-										</div>
-									);
-								})}
-							</section>
-						) : (
-							''
-						)}
-
-						{approvalHistory}
-
-						<div className="fa-padding-top-sm">
-							{commercialProducts}
-							<Pagination
-								totalSize={this.getCommercialProductsCount()}
-								pageSize={this.state.pagination.pageSize}
-								page={this.state.pagination.page}
-								onPageSizeChange={newPageSize => {
-									this.setState({
-										pagination: {
-											...this.state.pagination,
-											page: 1,
-											pageSize: newPageSize
-										}
-									});
-								}}
-								onPageChange={newPage => {
-									this.setState({
-										pagination: { ...this.state.pagination, page: newPage }
-									});
-								}}
-							/>
-						</div>
-
-						<div>
+					<div className="fa-main-body">
+						<div className="fa-main-body__inner">
+							{this.header_rows.length ? (
+								<section className="basket-details fa-section fa-section-vertical fa-section-shadow fa-section-light">
+									{this.header_rows.map((row, i) => {
+										return (
+											<div
+												className="details-row-wrapper"
+												key={'header-row-' + i}
+											>
+												{row.map(f => {
+													var editable = !f.readOnly && this.editable;
+													return (
+														<SFField
+															editable={editable}
+															onChange={this.onFieldChange}
+															key={f.field}
+															field={f}
+															value={this.state.activeFa[f.field] || ''}
+														/>
+													);
+												})}
+											</div>
+										);
+									})}
+								</section>
+							) : (
+								''
+							)}
+							{approvalHistory}
+							<div className="card">
+								{commercialProducts}
+								<Pagination
+									totalSize={this.getCommercialProductsCount()}
+									pageSize={this.state.pagination.pageSize}
+									page={this.state.pagination.page}
+									onPageSizeChange={newPageSize => {
+										this.setState({
+											pagination: {
+												...this.state.pagination,
+												page: 1,
+												pageSize: newPageSize
+											}
+										});
+									}}
+									onPageChange={newPage => {
+										this.setState({
+											pagination: { ...this.state.pagination, page: newPage }
+										});
+									}}
+								/>
+							</div>
 							{productModal}
 							{negotiateModal}
 						</div>
 					</div>
-
 					<Toaster />
 					{this.state.actionIframe && this.state.actionIframeUrl && (
 						<ActionIframe
@@ -1610,8 +1604,6 @@ class FaEditor extends Component {
 							url={this.state.actionIframeUrl}
 						/>
 					)}
-				</div>
-
 				{this.editable && footer}
 			</div>
 		);

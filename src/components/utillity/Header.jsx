@@ -10,41 +10,37 @@ class Header extends Component {
 	render() {
 		return (
 			<div
-				className={`fa-header-secondary fa-section-shadow ${
+				className={`fa-secondary-header ${
 					this.props.disabled ? 'error fa-disabled' : ''
 				} ${this.props.invalid ? 'error fa-invalid' : ''}`}
 			>
-				<div className="fa-container">
-					<div className="fa-header-secondary-body">
-						<div
-							className="fa-header-secondary-prev"
-							onClick={this.props.onBackClick}
-						>
-							<Icon name="back" width="19" height="18" color="#FFFFFF" />
-						</div>
-						<div className="fa-header-secondary-body-col fa-header-secondary-body-col-left">
-							<div>
-								<div className="fa-header-secondary-body-sub">
-									{this.props.subtitle}
-								</div>
-								<div className="fa-header-secondary-body-title">
-									{this.props.title}
-								</div>
+				<div className="fa-secondary-header__inner">
+					<div
+						className="fa-secondary-header__prev"
+						onClick={this.props.onBackClick}
+					>
+						<Icon name="back" width="19" height="18" color="#FFFFFF" />
+					</div>
+					<div className="fa-secondary-header__item">
+						<div className="fa-secondary-header__title-wrapper">
+							<div className="fa-secondary-header__subtitle">
+								{this.props.subtitle}
 							</div>
-							<div className="fa-padding-left-sm">
-								{this.props.status ? (
-									<span className="fa-chip fa-chip-transparent">
-										{this.props.status}
-									</span>
-								) : (
-									''
-								)}
+							<div className="fa-secondary-header__title">
+								{this.props.title}
 							</div>
 						</div>
+						{this.props.status ? (
+							<span className="fa-chip fa-chip-transparent">
+								{this.props.status}
+							</span>
+						) : (
+							''
+						)}
+					</div>
 
-						<div className="fa-header-secondary-body-col fa-header-secondary-body-col-right">
-							{this.props.children}
-						</div>
+					<div className="fa-secondary-header__item fa-secondary-header__item--right">
+						{this.props.children}
 					</div>
 				</div>
 			</div>

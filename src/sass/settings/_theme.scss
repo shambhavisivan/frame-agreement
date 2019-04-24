@@ -90,12 +90,14 @@ $variables: (
 	--button-br-2: $white,
 
 	--main-header-bg: $white,
-	--main-header-c: $gray-dark-1,
+	--main-header-title-c: $gray-dark-1,
+	--main-header-subtitle-c: $gray-dark-8,
 	--main-header-icon: $blue-cs,
 
 	--secondary-header-bg-draft: $blue-sf,
 	--secondary-header-bg-invalid: $red-medium-4,
 	--secondary-header-bg-disabled: grey,
+	--secondary-header-c: $white,
 
 	--table-header-bg: $gray-light-26,
 	--table-body-bg: $white,
@@ -104,7 +106,7 @@ $variables: (
 	--table-c: $gray-dark-1,
 
 	--shadow-light: rgba($black, 0.1),
-	--shadow-medium: rgba($black, 0.22),
+	--shadow-medium: rgba($black, 0.2),
 	--shadow-dark: rgba($black, 0.5),
 
 	--checkbox-bg: $gray-medium-7,

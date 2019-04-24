@@ -1489,14 +1489,13 @@ class FaEditor extends Component {
 					invalid={this.props.approvalFlag}
 					subtitle={window.SF.labels.header_frameAgreementEditorTitle}
 				>
-					<div className="fa-flex fa-flex-flush">
 						{customButtonsComponent}
 
 						{this.props.settings.ButtonStandardData.Save.has(
 							this.state.activeFa.csconta__Status__c
 						) && (
 							<button
-								className="fa-button fa-button-border-light fa-button-transparent fa-margin-right-xsm"
+								className="fa-button fa-button-border-light fa-button-transparent"
 								onClick={this.upsertFrameAgreements}
 							>
 								{window.SF.labels.btn_Save}
@@ -1540,7 +1539,6 @@ class FaEditor extends Component {
 								{window.SF.labels.btn_NewVersion}
 							</button>
 						)}
-					</div>
 				</Header>
 
 				<div className="fa-main-wrapper">

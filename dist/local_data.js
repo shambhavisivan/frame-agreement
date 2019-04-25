@@ -768,54 +768,54 @@ const DiscLevels = [{
 }];
 
 const HeaderData = [{
-        field: "csconta__Agreement_Name__c",
-        readOnly: false,
-        label: "Agreement Name",
-        type: "text",
-        grid: 2
-    },
-    {
-        field: "Arb_Field_Integer__c",
-        readOnly: false,
-        label: "Arb Field Integer",
-        type: "number",
-        grid: 1
-    },
-    {
-        field: "Arb_Field_Bool__c",
-        readOnly: false,
-        label: "Arb Field Bool",
-        type: "boolean",
-        grid: 2
-    },
-    {
-        field: "Arb_Field_Text__c",
-        readOnly: false,
-        label: "Arb Field Text",
-        type: "text",
-        grid: 2
-    },
-    {
-        field: "Arb_Field_Date__c",
-        readOnly: false,
-        label: "Arb Field Date",
-        type: "date",
-        grid: 2
-    },
-    {
-        field: "Arb_Field_Text_3__c",
-        readOnly: false,
-        label: "Arb Field Text 3",
-        type: "text",
-        grid: 2
-    },
-    {
-        field: "Arb_Field_Textarea__c",
-        readOnly: false,
-        label: "Arb Field Textarea",
-        type: "textarea",
-        grid: 4
-    }
+		field: "csconta__Agreement_Name__c",
+		readOnly: false,
+		label: "Agreement Name",
+		type: "text",
+		grid: 4
+	},
+	{
+		field: "Arb_Field_Integer__c",
+		readOnly: false,
+		label: "Arb Field Integer",
+		type: "number",
+		grid: 1
+	},
+	{
+		field: "Arb_Field_Bool__c",
+		readOnly: false,
+		label: "Arb Field Bool",
+		type: "boolean",
+		grid: 1
+	},
+	{
+		field: "Arb_Field_Text__c",
+		readOnly: false,
+		label: "Arb Field Text",
+		type: "text",
+		grid: 2
+	},
+	{
+		field: "Arb_Field_Date__c",
+		readOnly: false,
+		label: "Arb Field Date",
+		type: "date",
+		grid: 2
+	},
+	{
+		field: "Arb_Field_Text_3__c",
+		readOnly: false,
+		label: "Arb Field Text 3",
+		type: "text",
+		grid: 2
+	},
+	{
+		field: "Arb_Field_Textarea__c",
+		readOnly: false,
+		label: "Arb Field Textarea",
+		type: "textarea",
+		grid: 6
+	}
 ];
 
 const CategorizationData = [{

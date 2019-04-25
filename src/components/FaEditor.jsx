@@ -1318,7 +1318,7 @@ class FaEditor extends Component {
 			this.state.activeFa._ui.approval.listProcess.length
 		) {
 			approvalHistory = (
-				<div className="card">
+				<div className="card approval-card">
 					<ApprovalProcess
 						onChange={this.onApprovalChange}
 						faId={this.faId}
@@ -1336,120 +1336,103 @@ class FaEditor extends Component {
 			this.state.activeFa._ui.commercialProducts.length
 		) {
 			commercialProducts = (
-				<div>
-					<div className="product-table-wrapper">
-						<div className="product-table-header-wrapper">
-							<div className="fa-section fa-section-vertical">
-								<div className="fa-flex fa-flex-middle">
-									<div className="fa-flex-item fa-flex-1">
-										<span className="fa-title-lg">
-											{window.SF.labels.products_title} (
-											{this.state.activeFa._ui.commercialProducts.length})
-										</span>
-									</div>
-									<div className="fa-flex-item fa-flex-1">
-										<div className="fa-flex fa-flex-middle">
-											<div className="fa-flex-1">
-												<div className="fa-flex fa-flex-middle fa-flex-end">
-													<InputSearch
-														value={this.state.productFilter}
-														bordered={true}
-														onChange={val => {
-															this.setState({ productFilter: val });
-														}}
-														placeholder={
-															window.SF.labels.input_quickSearchPlaceholder
-														}
-													/>
-													<DropdownCheckbox
-														options={this.props.productFields}
-														onChange={this.toggleVisibility}
-													/>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
+				<div className="products-card__inner">
+					<div className="products-card__header">
+						<span className="products__title">
+							{window.SF.labels.products_title} (
+							{this.state.activeFa._ui.commercialProducts.length})
+						</span>
+						<div className="header__inputs">
+							<InputSearch
+								value={this.state.productFilter}
+								bordered={true}
+								onChange={val => {
+									this.setState({ productFilter: val });
+								}}
+								placeholder={
+									window.SF.labels.input_quickSearchPlaceholder
+								}
+							/>
+							<DropdownCheckbox
+								options={this.props.productFields}
+								onChange={this.toggleVisibility}
+							/>
+						</div>
+					</div>
+					<div className="product-card__container commercial-product-container-bare product-card__container--header">
+						<div className="container__header">
+							<div className="container__checkbox">
+								<Checkbox
+									className="fa-margin-right-sm"
+									value={
+										this.state.activeFa._ui.commercialProducts.length ===
+										Object.keys(this.state.selectedProducts).length
+									}
+									onChange={() => {
+										this.onSelectAllProducts();
+									}}
+								/>
 							</div>
-							<div className="commercial-product-container commercial-product-container-bare commercial-product-container-default">
-								<div className="commercial-table-header">
-									<div className="commercial-product-checkbox-container">
-										<Checkbox
-											value={
-												this.state.activeFa._ui.commercialProducts.length ===
-												Object.keys(this.state.selectedProducts).length
-											}
-											onChange={() => {
-												this.onSelectAllProducts();
-											}}
-										/>
-									</div>
-
-									<div className="commercial-product-fields-container">
-										<div className="commercial-product-fields">
-											<span className="list-cell">
-												{window.SF.labels.products_productNameHeaderCell}
+							<div className="container__fields">
+								<span className="list-cell">{window.SF.labels.products_productNameHeaderCell}</span>
+								{this.props.productFields
+									.filter(f => f.visible)
+									.map(f => {
+										return (
+											<span
+												key={'header-' + f.name}
+												className={
+													'list-cell' + (f.volume ? ' volume' : '')
+												}
+											>
+												{truncateCPField(f.name)}
 											</span>
-											{this.props.productFields
-												.filter(f => f.visible)
-												.map(f => {
-													return (
-														<span
-															key={'header-' + f.name}
-															className={
-																'list-cell' + (f.volume ? ' volume' : '')
-															}
-														>
-															{truncateCPField(f.name)}
-														</span>
-													);
-												})}
-										</div>
-									</div>
-								</div>
+										);
+									})
+								}
 							</div>
 						</div>
-						{this.state.activeFa._ui.commercialProducts
-							.filter(cp => {
-								if (
-									this.state.productFilter &&
-									this.state.productFilter.length >= 2
-								) {
-									return cp.Name.toLowerCase().includes(
-										this.state.productFilter.toLowerCase()
-									);
-								} else {
-									return true;
-								}
-							})
-							.paginate(
-								this.state.pagination.page,
-								this.state.pagination.pageSize
-							)
-							.map(cp => {
-								return (
-									<CommercialProduct
-										onOpen={bool => {
-											this.setState({
-												openCommercialProduct: bool ? cp.Id : ''
-											});
-										}}
-										onNegotiate={(type, data) =>
-											this.onNegotiate(cp.Id, type, data)
-										}
-										key={'cp-' + cp.Id}
-										attachment={this.state.activeFa._ui.attachment[cp.Id]}
-										product={cp}
-										open={this.state.openCommercialProduct === cp.Id}
-										readOnly={!this.editable}
-										onSelect={this.onSelectProduct}
-										invalid={this.props.validationProduct[cp.Id]}
-										selected={!!this.state.selectedProducts[cp.Id]}
-									/>
-								);
-							})}
-						<div className="section-bottom" />
 					</div>
+					{this.state.activeFa._ui.commercialProducts
+						.filter(cp => {
+							if (
+								this.state.productFilter &&
+								this.state.productFilter.length >= 2
+							) {
+								return cp.Name.toLowerCase().includes(
+									this.state.productFilter.toLowerCase()
+								);
+							} else {
+								return true;
+							}
+						})
+						.paginate(
+							this.state.pagination.page,
+							this.state.pagination.pageSize
+						)
+						.map(cp => {
+							return (
+								<CommercialProduct
+									onOpen={bool => {
+										this.setState({
+											openCommercialProduct: bool ? cp.Id : ''
+										});
+									}}
+									onNegotiate={(type, data) =>
+										this.onNegotiate(cp.Id, type, data)
+									}
+									key={'cp-' + cp.Id}
+									attachment={this.state.activeFa._ui.attachment[cp.Id]}
+									product={cp}
+									open={this.state.openCommercialProduct === cp.Id}
+									readOnly={!this.editable}
+									onSelect={this.onSelectProduct}
+									invalid={this.props.validationProduct[cp.Id]}
+									selected={!!this.state.selectedProducts[cp.Id]}
+								/>
+							);
+						})}
+					<div className="card__bottom" />
 				</div>
 			);
 		} else if (this.state.loading.attachment) {
@@ -1471,7 +1454,6 @@ class FaEditor extends Component {
 					when={this.state.actionTaken && this.faId && this.editable}
 					message={window.SF.labels.modal_unsavedChanges_alert}
 				/>
-
 				<Header
 					onBackClick={this.onBackClick}
 					disabled={!this.editable}
@@ -1482,121 +1464,117 @@ class FaEditor extends Component {
 					invalid={this.props.approvalFlag}
 					subtitle={window.SF.labels.header_frameAgreementEditorTitle}
 				>
-						{customButtonsComponent}
-
-						{this.props.settings.ButtonStandardData.Save.has(
-							this.state.activeFa.csconta__Status__c
-						) && (
-							<button
-								className="fa-button fa-button-border-light fa-button-transparent"
-								onClick={this.upsertFrameAgreements}
-							>
-								{window.SF.labels.btn_Save}
-							</button>
-						)}
-
-						{this.props.settings.ButtonStandardData.SubmitForApproval.has(
-							this.state.activeFa.csconta__Status__c
-						) && (
-							<button
-								className="fa-button fa-button-border-light fa-button-transparent"
-								disabled={
-									!this.props.approvalFlag ||
-									!this.state.activeFa._ui.commercialProducts.length
-								}
-								onClick={this.onSubmitForApproval}
-							>
-								{window.SF.labels.btn_SubmitForApproval}
-							</button>
-						)}
-
-						{this.props.settings.ButtonStandardData.Submit.has(
-							this.state.activeFa.csconta__Status__c
-						) &&
-							this.faId && (
-								<button
-									className="fa-button fa-button-border-light fa-button-transparent"
-									onClick={this.onDecompose}
-								>
-									{window.SF.labels.btn_Submit}
-								</button>
-							)}
-
-						{this.props.settings.ButtonStandardData.NewVersion.has(
-							this.state.activeFa.csconta__Status__c
-						) && (
-							<button
-								className="fa-button fa-button-border-light fa-button-transparent"
-								onClick={this.createNewVersion}
-							>
-								{window.SF.labels.btn_NewVersion}
-							</button>
-						)}
-				</Header>
-					<div className="fa-main-body">
-						<div className="fa-main-body__inner">
-							{this.header_rows.length ? (
-								<section className="basket-details fa-section fa-section-vertical fa-section-shadow fa-section-light">
-									{this.header_rows.map((row, i) => {
-										return (
-											<div
-												className="details-row-wrapper"
-												key={'header-row-' + i}
-											>
-												{row.map(f => {
-													var editable = !f.readOnly && this.editable;
-													return (
-														<SFField
-															editable={editable}
-															onChange={this.onFieldChange}
-															key={f.field}
-															field={f}
-															value={this.state.activeFa[f.field] || ''}
-														/>
-													);
-												})}
-											</div>
-										);
-									})}
-								</section>
-							) : (
-								''
-							)}
-							{approvalHistory}
-							<div className="card">
-								{commercialProducts}
-								<Pagination
-									totalSize={this.getCommercialProductsCount()}
-									pageSize={this.state.pagination.pageSize}
-									page={this.state.pagination.page}
-									onPageSizeChange={newPageSize => {
-										this.setState({
-											pagination: {
-												...this.state.pagination,
-												page: 1,
-												pageSize: newPageSize
-											}
-										});
-									}}
-									onPageChange={newPage => {
-										this.setState({
-											pagination: { ...this.state.pagination, page: newPage }
-										});
-									}}
-								/>
-							</div>
-							{productModal}
-							{negotiateModal}
-						</div>
-					</div>
-					<Toaster />
-					{this.state.actionIframe && this.state.actionIframeUrl && (
-						<ActionIframe
-							onCloseModal={this.onCloseModal}
-							open={this.state.actionIframe}
-							url={this.state.actionIframeUrl}
-						/>
+					{customButtonsComponent}
+					{this.props.settings.ButtonStandardData.Save.has(
+						this.state.activeFa.csconta__Status__c
+					) && (
+						<button
+							className="fa-button fa-button-border-light fa-button-transparent"
+							onClick={this.upsertFrameAgreements}
+						>
+							{window.SF.labels.btn_Save}
+						</button>
 					)}
+					{this.props.settings.ButtonStandardData.SubmitForApproval.has(
+						this.state.activeFa.csconta__Status__c
+					) && (
+						<button
+							className="fa-button fa-button-border-light fa-button-transparent"
+							disabled={
+								!this.props.approvalFlag ||
+								!this.state.activeFa._ui.commercialProducts.length
+							}
+							onClick={this.onSubmitForApproval}
+						>
+							{window.SF.labels.btn_SubmitForApproval}
+						</button>
+					)}
+					{this.props.settings.ButtonStandardData.Submit.has(
+						this.state.activeFa.csconta__Status__c
+					) &&
+						this.faId && (
+						<button
+							className="fa-button fa-button-border-light fa-button-transparent"
+							onClick={this.onDecompose}
+						>
+							{window.SF.labels.btn_Submit}
+						</button>
+					)}
+					{this.props.settings.ButtonStandardData.NewVersion.has(
+						this.state.activeFa.csconta__Status__c
+					) && (
+						<button
+							className="fa-button fa-button-border-light fa-button-transparent"
+							onClick={this.createNewVersion}
+						>
+							{window.SF.labels.btn_NewVersion}
+						</button>
+					)}
+				</Header>
+				<div className="fa-main-body">
+					<div className="fa-main-body__inner">
+						{this.header_rows.length ? (
+							<section className="card basket-details-card">
+								{this.header_rows.map((row, i) => {
+									return (
+										<div
+											className="basket-details-card__row"
+											key={'header-row-' + i}
+										>
+											{row.map(f => {
+												var editable = !f.readOnly && this.editable;
+												return (
+													<SFField
+														editable={editable}
+														onChange={this.onFieldChange}
+														key={f.field}
+														field={f}
+														value={this.state.activeFa[f.field] || ''}
+													/>
+												);
+											})}
+										</div>
+									);
+								})}
+							</section>
+						) : (
+							''
+						)}
+						{approvalHistory}
+						<div className="card products-card">
+							{commercialProducts}
+							<Pagination
+								totalSize={this.getCommercialProductsCount()}
+								pageSize={this.state.pagination.pageSize}
+								page={this.state.pagination.page}
+								onPageSizeChange={newPageSize => {
+									this.setState({
+										pagination: {
+											...this.state.pagination,
+											page: 1,
+											pageSize: newPageSize
+										}
+									});
+								}}
+								onPageChange={newPage => {
+									this.setState({
+										pagination: { ...this.state.pagination, page: newPage }
+									});
+								}}
+							/>
+						</div>
+						{productModal}
+						{negotiateModal}
+					</div>
+				</div>
+				<Toaster />
+				{this.state.actionIframe && this.state.actionIframeUrl && (
+					<ActionIframe
+						onCloseModal={this.onCloseModal}
+						open={this.state.actionIframe}
+						url={this.state.actionIframeUrl}
+					/>
+				)}
 				{this.editable && footer}
 			</div>
 		);

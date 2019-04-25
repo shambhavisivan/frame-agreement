@@ -76,12 +76,12 @@ class SFField extends Component {
 		return (
 			<div
 				className={
-					'fa-element-wrapper ' + (this.props.editable ? 'editable' : '')
+					'row__element ' + (this.props.editable ? 'editable' : '')
 				}
 				style={{ width: (100 / 12) * this.props.field.grid + '%' }}
 			>
-				<label className="fa-element-label">
-					<span className="element-title">{this.props.field.label}</span>
+				<label className="element__label">
+					<span className="label__title">{this.props.field.label}</span>
 					<Icon
 						svg-class="form-edit-icon"
 						name="edit"
@@ -90,7 +90,7 @@ class SFField extends Component {
 						color="#4bca81"
 					/>
 				</label>
-				<div className="fa-element">{field}</div>
+				<div className="element__field">{field}</div>
 			</div>
 		);
 	}

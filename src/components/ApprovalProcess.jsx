@@ -128,10 +128,10 @@ class ApprovalProcess extends React.Component {
 
 	render() {
 		return (
-			<div className="approval-history approval-table-list">
-				<div className="approval-table-list-header">
+			<div className="approval-history approval-card__inner">
+				<div className="approval-card__header">
 					<div
-						className="table-title"
+						className="header__title"
 						onClick={() => {
 							this.setState({ open: !this.state.open });
 						}}
@@ -144,9 +144,7 @@ class ApprovalProcess extends React.Component {
 						/>
 						{window.SF.labels.approval_title}
 					</div>
-
 					<div
-						className="fa-flex fa-flex-middle"
 						onClick={() => {
 							this.refreshApprovalHistory();
 						}}
@@ -162,12 +160,9 @@ class ApprovalProcess extends React.Component {
 						/>
 					</div>
 				</div>
-
 				{this.actionRequired && this.state.open && (
-					<div className="fa-section fa-section-border-bottom">
-						<span className="fa-title">
-							{window.SF.labels.approval_message_title}
-						</span>
+					<div className="approval-card__body">
+						<span className="body__title">{window.SF.labels.approval_message_title}</span>
 						<textarea
 							className="fa-textarea"
 							value={this.state.comment}
@@ -183,9 +178,7 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Reassign')}
 								>
 									<Icon name="change_owner" height="14" width="14" />
-									<span className="fa-padding-left-xsm">
-										{window.SF.labels.approval_action_reassign}
-									</span>
+									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reassign}</span>
 								</button>
 							)}
 							{this.isInitiator && (
@@ -194,9 +187,7 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Removed')}
 								>
 									<Icon name="undo" height="14" width="14" />
-									<span className="fa-padding-left-xsm">
-										{window.SF.labels.approval_action_recall}
-									</span>
+									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_recall}</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && (
@@ -205,9 +196,7 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Approve')}
 								>
 									<Icon name="approval" height="14" width="14" />
-									<span className="fa-padding-left-xsm">
-										{window.SF.labels.approval_action_approve}
-									</span>
+									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_approve}</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && (
@@ -216,15 +205,12 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Reject')}
 								>
 									<Icon name="dislike" height="14" width="14" />
-									<span className="fa-padding-left-xsm">
-										{window.SF.labels.approval_action_reject}
-									</span>
+									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reject}</span>
 								</button>
 							)}
 						</div>
 					</div>
 				)}
-
 				{this.state.open && (
 					<div className="approval-table-list-container">
 						<div className="table-list-header">
@@ -247,7 +233,6 @@ class ApprovalProcess extends React.Component {
 								{window.SF.labels.approval_table_header_comments}
 							</div>
 						</div>
-
 						{this.props.approval.listProcess.map((process, i) => {
 							return (
 								<ul key={process.Id} className="table-list">
@@ -262,9 +247,7 @@ class ApprovalProcess extends React.Component {
 													{moment(step.CreatedDate).format('MM/D/YYYY, HH:mm')}
 												</div>
 												<div className="list-cell">
-													<span className={'status ' + step.StepStatus}>
-														{step.StepStatus}
-													</span>
+													<span className={'status ' + step.StepStatus}>{step.StepStatus}</span>
 												</div>
 												<div className="list-cell">
 													{step.Actor && step.Actor.Name}
@@ -281,19 +264,13 @@ class ApprovalProcess extends React.Component {
 								</ul>
 							);
 						})}
-						<div className="section-bottom" />
+						<div className="card__bottom"></div>
 					</div>
 				)}
 			</div>
 		);
 	}
 }
-
-// const mapStateToProps = state => {
-//     return {
-
-//     };
-// };
 
 const mapDispatchToProps = {
 	approveRejectRecallRecord,

@@ -142,13 +142,13 @@ class CommercialProduct extends React.Component {
 		return (
 			<div
 				className={
-					'commercial-product-container' +
+					'product-card__container' +
 					(this.props.open ? ' product-open' : '') +
 					(this.props.invalid ? ' invalid-product' : '')
 				}
 			>
-				<div className="commercial-product-header">
-					<div className="commercial-product-checkbox-container">
+				<div className="container__header">
+					<div className="container__checkbox">
 						<Checkbox
 							disabled={!this.props.editable}
 							value={this.props.selected}
@@ -157,49 +157,46 @@ class CommercialProduct extends React.Component {
 							}}
 						/>
 					</div>
-
-					<div className="commercial-product-fields-container">
-						<div className="commercial-product-fields">
-							<span
-								className="product-field product-name"
-								onClick={this.onExpandProduct}
-							>
-								{this.props.product.Name}
-							</span>
-							{this.props.productFields
-								.filter(f => f.visible)
-								.map((f, i) => {
-									let _field;
-									if (f.volume) {
-										_field = (
-											<span
-												className="product-field volume-fields"
-												key={'facp-' + this.props.product.Id + '-' + f + i}
-											>
-												<InputVolume
-													readOnly={this.props.readOnly}
-													value={this.props.attachment._volume[f.volume]}
-													onChange={val => {
-														this.updateVolume(f.volume, val);
-													}}
-												/>
-											</span>
-										);
-									} else {
-										_field = (
-											<span
-												className="product-field"
-												onClick={this.onExpandProduct}
-												key={'facp-' + this.props.product.Id + '-' + f + i}
-											>
-												{this.props.product[f.name] || '-'}
-											</span>
-										);
-									}
-
-									return _field;
-								})}
+					<div className="container__fields">
+						<div
+							className="fields__item fields__item--title"
+							onClick={this.onExpandProduct}
+						>
+							{this.props.product.Name}
 						</div>
+						{this.props.productFields
+							.filter(f => f.visible)
+							.map((f, i) => {
+								let _field;
+								if (f.volume) {
+									_field = (
+										<div
+											className="fields__item volume-fields"
+											key={'facp-' + this.props.product.Id + '-' + f + i}
+										>
+											<InputVolume
+												readOnly={this.props.readOnly}
+												value={this.props.attachment._volume[f.volume]}
+												onChange={val => {
+													this.updateVolume(f.volume, val);
+												}}
+											/>
+										</div>
+									);
+								} else {
+									_field = (
+										<div
+											className="fields__item"
+											onClick={this.onExpandProduct}
+											key={'facp-' + this.props.product.Id + '-' + f + i}
+										>
+											{this.props.product[f.name] || '-'}
+										</div>
+									);
+								}
+								return _field;
+							})
+						}
 					</div>
 				</div>
 				{this.props.open && (
@@ -211,7 +208,6 @@ class CommercialProduct extends React.Component {
 								</ExpandableArticle>
 							</div>
 						)}
-
 						<Tabs initial={this.props.product._addons.length ? 0 : 1}>
 							<Tab
 								label={window.SF.labels.products_addons}
@@ -227,7 +223,6 @@ class CommercialProduct extends React.Component {
 									}}
 								/>
 							</Tab>
-
 							<Tab
 								label={
 									this.props.product._charges.length
@@ -260,7 +255,6 @@ class CommercialProduct extends React.Component {
 									/>
 								)}
 							</Tab>
-
 							<Tab
 								label={window.SF.labels.products_rates}
 								disabled={!this.props.product._rateCards.length}

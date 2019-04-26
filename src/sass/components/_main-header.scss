@@ -96,7 +96,7 @@
 			flex: 1;
 
 			.fa-secondary-header__title-wrapper {
-				margin-right: 0.5rem;
+				margin-right: 1rem;
 
 				.fa-secondary-header__subtitle {
 					font-size: 0.8125rem;
@@ -144,6 +144,10 @@
 					@include sc(--button-c-invalid-hover);
 				}
 			}
+
+			.fa-chip {
+				@include sc(--button-bg-invalid);
+			}
 		}
 
 		&.fa-disabled {
@@ -159,6 +163,15 @@
 					@include sbg(--button-bg-inactive-hover);
 				}
 			}
+
+			.fa-chip {
+				@include sc(--button-bg-inactive);
+			}
 		}
+	}
+
+	.fa-chip {
+		@include sbg(--chip-header-bg);
+		@include sc(--main-c);
 	}
 }

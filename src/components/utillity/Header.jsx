@@ -31,7 +31,7 @@ class Header extends Component {
 							</div>
 						</div>
 						{this.props.status ? (
-							<span className="fa-chip fa-chip-transparent">
+							<span className="fa-chip fa-chip--draft">
 								{this.props.status}
 							</span>
 						) : (

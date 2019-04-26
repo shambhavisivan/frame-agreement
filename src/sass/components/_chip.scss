@@ -1,17 +1,18 @@
-/* FA Chip */
-// Chip component.
-
 .fa-chip {
-	background: $gray-light-5;
-	border-radius: 1.5rem;
-	color: $white;
-	font-size: 0.6rem;
-	letter-spacing: 2px;
-	padding: 0.25rem 0.75rem;
+	border-radius: 0.75rem;
+	font-size: 0.6125rem;
+	letter-spacing: 0.125rem;
+	padding: 0.25rem 0.5rem;
+	line-height: 1;
 	text-transform: uppercase;
-}
 
-/* Dark */
-.fa-chip-dark {
-	background: $gray-dark-7;
+	&.fa-chip--draft {
+		@include sbg(--chip-draft-bg);
+		@include sc(--chip-draft-c);
+	}
+
+	&.fa-chip--active {
+		@include sbg(--chip-active-bg);
+		@include sc(--chip-active-c);
+	}
 }

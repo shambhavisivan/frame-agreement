@@ -9,8 +9,8 @@ class FrameAgreementRow extends React.Component {
 		this.statusClass =
 			'fa-chip ' +
 			(this.props.agreement.csconta__Status__c === 'Draft'
-				? ''
-				: 'fa-chip-dark');
+				? 'fa-chip--draft'
+				: 'fa-chip--active');
 
 		this.showMenu = this.showMenu.bind(this);
 		this.hideMenu = this.hideMenu.bind(this);
@@ -69,14 +69,9 @@ class FrameAgreementRow extends React.Component {
 				>
 					<div className="fa-panel-body">
 						<div className="fa-panel-body-col">
-							{this.props.agreement.csconta__Agreement_Name__c ||
-								'-- anonymous --'}
+							<span>{this.props.agreement.csconta__Agreement_Name__c || '-- anonymous --'}</span>
 						</div>
-						<div className="fa-panel-body-col">
-							<span className={this.statusClass}>
-								{this.props.agreement.csconta__Status__c}
-							</span>
-						</div>
+						<span className={this.statusClass}>{this.props.agreement.csconta__Status__c}</span>
 					</div>
 				</Link>
 				<div className="fa-icon fa-icon-group" onClick={this.showMenu}>

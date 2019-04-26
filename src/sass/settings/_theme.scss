@@ -81,11 +81,15 @@ $variables: (
 	--button-bg-invalid: $red-medium-4,
 	--button-c-invalid: $white,
 	--button-bg-invalid-hover: $red-medium-3,
-	--button-c-invalid-hover:test,
-	--button-bg-disabled:test,
+	--button-bg-inactive: $gray-dark-7,
+	--button-c-inactive: $white,
+	--button-bg-inactive-hover: $gray-dark-5,
+	--button-bg-disabled: $gray-light-5,
 	--button-c-disabled: $white,
-	--button-bg-disabled-hover:test,
-	--button-c-disabled-hover:test,
+	--button-focus: $blue-sf,
+	--button-icon: $blue-sf,
+	--button-icon-hover: $blue-medium-1,
+	--button-icon-alt: $white,
 
 	--main-br: $gray-light-5,
 	--secondary-br: $white,
@@ -97,8 +101,10 @@ $variables: (
 
 	--secondary-header-bg-draft: $blue-sf,
 	--secondary-header-bg-invalid: $red-medium-4,
-	--secondary-header-bg-disabled: $gray-dark-7,
+	--secondary-header-bg-inactive: $gray-dark-7,
 	--secondary-header-c: $white,
+
+	--main-footer-bg: $white,
 
 	--card-bg: $white,
 

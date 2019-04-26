@@ -1056,7 +1056,7 @@ class NegotiationModal extends Component {
 
 					<section className="fa-section fa-section-transparent">
 						<div className="box">
-							<ul className="fa-tabs-secondary toggle-buttons">
+							<ul className="fa-tabs-secondary">
 								<li
 									disabled={!Object.keys(this.grouped_addons).length}
 									className={
@@ -1132,13 +1132,13 @@ class NegotiationModal extends Component {
 								<div className="fa-title fa-title-dark">
 									{window.SF.labels.modal_bulk_discount_title}
 								</div>
-								<div className="fa-button-group-secondary toggle-buttons">
+								<div className="fa-button-group">
 									<button
 										className={
-											'fa-btn fa-margin-right-sm fa-button-' +
+											'fa-button fa-button--' +
 											(this.state.discountMode === 'percentage'
 												? 'brand'
-												: 'neutral')
+												: 'default')
 										}
 										onClick={() => {
 											this.setState({ discountMode: 'percentage' });
@@ -1148,10 +1148,10 @@ class NegotiationModal extends Component {
 									</button>
 									<button
 										className={
-											'fa-btn fa-button-' +
+											'fa-button fa-button--' +
 											(this.state.discountMode === 'fixed'
 												? 'brand'
-												: 'neutral')
+												: 'default')
 										}
 										onClick={() => {
 											this.setState({ discountMode: 'fixed' });
@@ -1177,7 +1177,7 @@ class NegotiationModal extends Component {
 							<div className="fa-discount-item">
 								<button
 									disabled={!this.state.countTotal}
-									className="fa-discount-item fa-button button--neutral"
+									className="fa-discount-item fa-button fa-button--default"
 									onClick={this.applyDiscount}
 								>
 									{window.SF.labels.modal_bulk_btn_apply}
@@ -1189,7 +1189,7 @@ class NegotiationModal extends Component {
 				<div className="fa-modal-footer">
 					<button
 						disabled={!this.state.actionTaken}
-						className="fa-button button--neutral"
+						className="fa-button fa-button--default"
 						onClick={() => {
 							this.props.onNegotiate(this.state.attachment);
 						}}

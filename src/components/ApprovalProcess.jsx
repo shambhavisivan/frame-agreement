@@ -171,10 +171,10 @@ class ApprovalProcess extends React.Component {
 							}}
 							placeholder={window.SF.labels.approval_message_placeholder}
 						/>
-						<div className="fa-button-group-secondary">
+						<div className="fa-button-group">
 							{this.props.approval.isApprover && false && (
 								<button
-									className="fa-btn fa-button-neutral"
+									className="fa-button fa-button--default"
 									onClick={() => this.approvalAction('Reassign')}
 								>
 									<Icon name="change_owner" height="14" width="14" />
@@ -183,7 +183,7 @@ class ApprovalProcess extends React.Component {
 							)}
 							{this.isInitiator && (
 								<button
-									className="fa-btn fa-button-neutral"
+									className="fa-button fa-button--default"
 									onClick={() => this.approvalAction('Removed')}
 								>
 									<Icon name="undo" height="14" width="14" />
@@ -192,7 +192,7 @@ class ApprovalProcess extends React.Component {
 							)}
 							{this.props.approval.isApprover && (
 								<button
-									className="fa-btn fa-button-neutral"
+									className="fa-button fa-button--default"
 									onClick={() => this.approvalAction('Approve')}
 								>
 									<Icon name="approval" height="14" width="14" />
@@ -201,7 +201,7 @@ class ApprovalProcess extends React.Component {
 							)}
 							{this.props.approval.isApprover && (
 								<button
-									className="fa-btn fa-button-neutral"
+									className="fa-button fa-button--default"
 									onClick={() => this.approvalAction('Reject')}
 								>
 									<Icon name="dislike" height="14" width="14" />

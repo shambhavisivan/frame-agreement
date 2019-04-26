@@ -81,7 +81,7 @@ class FrameAgreementRow extends React.Component {
 				</Link>
 				<div className="fa-icon fa-icon-group" onClick={this.showMenu}>
 					<button
-						className="fa-button-bare"
+						className="fa-panel__button"
 						aria-label="Dropdown button"
 						aria-expanded={this.state.menu}
 					>

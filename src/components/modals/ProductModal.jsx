@@ -352,14 +352,14 @@ class ProductModal extends Component {
 						<div className="filter-btns-row">
 							<button
 								onClick={this.resetFilter}
-								className="fa-button-neutral"
+								className="fa-button fa-button--default"
 								disabled={false}
 							>
 								{window.SF.labels.modal_categorization_btn_clear}
 							</button>
 							<button
 								onClick={this.applyFilter}
-								className="fa-button-neutral"
+								className="fa-button fa-button--default"
 								disabled={false}
 							>
 								{window.SF.labels.modal_categorization_btn_apply}
@@ -490,7 +490,7 @@ class ProductModal extends Component {
 
 					<button
 						onClick={this.addProducts}
-						className="fa-button"
+						className="fa-button fa-button--brand"
 						disabled={!this.state.actionTaken}
 					>
 						{window.SF.labels.modal_categorization_btn_add}

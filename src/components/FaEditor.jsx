@@ -1193,7 +1193,7 @@ class FaEditor extends Component {
 					})()}
 					<div className="box-button-container">
 						<button
-							className="fa-button"
+							className="fa-button fa-button--brand"
 							onClick={this.onOpenCommercialProductModal}
 							disabled={!this.state.activeFa.Id}
 						>
@@ -1212,7 +1212,7 @@ class FaEditor extends Component {
 						this.state.activeFa.csconta__Status__c
 					) && (
 						<button
-							className="fa-button"
+							className="fa-button fa-button--default"
 							onClick={this.onOpenCommercialProductModal}
 						>
 							<Icon name="add" width="16" height="16" color="#0070d2" />
@@ -1225,7 +1225,7 @@ class FaEditor extends Component {
 					) && (
 						<button
 							disabled={!Object.keys(this.state.selectedProducts).length}
-							className="fa-button"
+							className="fa-button fa-button--default"
 							onClick={this.onOpenNegotiationModal}
 						>
 							<Icon name="user" width="16" height="16" color="#0070d2" />
@@ -1238,7 +1238,7 @@ class FaEditor extends Component {
 					) && (
 						<button
 							disabled={!Object.keys(this.state.selectedProducts).length}
-							className="fa-button"
+							className="fa-button fa-button--default"
 							onClick={this.onRemoveProducts}
 						>
 							<Icon name="delete" width="16" height="16" color="#0070d2" />
@@ -1301,7 +1301,7 @@ class FaEditor extends Component {
 								onClick={() => {
 									this.callHandler(btnObj.method, btnObj.type);
 								}}
-								className="fa-button fa-button-border-light fa-button-transparent"
+								className="fa-button fa-button--transparent"
 							>
 								{btnObj.label}
 							</button>
@@ -1469,7 +1469,7 @@ class FaEditor extends Component {
 						this.state.activeFa.csconta__Status__c
 					) && (
 						<button
-							className="fa-button fa-button-border-light fa-button-transparent"
+							className="fa-button fa-button--transparent"
 							onClick={this.upsertFrameAgreements}
 						>
 							{window.SF.labels.btn_Save}
@@ -1479,7 +1479,7 @@ class FaEditor extends Component {
 						this.state.activeFa.csconta__Status__c
 					) && (
 						<button
-							className="fa-button fa-button-border-light fa-button-transparent"
+							className="fa-button fa-button--transparent"
 							disabled={
 								!this.props.approvalFlag ||
 								!this.state.activeFa._ui.commercialProducts.length
@@ -1494,7 +1494,7 @@ class FaEditor extends Component {
 					) &&
 						this.faId && (
 						<button
-							className="fa-button fa-button-border-light fa-button-transparent"
+							className="fa-button fa-button--transparent"
 							onClick={this.onDecompose}
 						>
 							{window.SF.labels.btn_Submit}
@@ -1504,7 +1504,7 @@ class FaEditor extends Component {
 						this.state.activeFa.csconta__Status__c
 					) && (
 						<button
-							className="fa-button fa-button-border-light fa-button-transparent"
+							className="fa-button fa-button--transparent"
 							onClick={this.createNewVersion}
 						>
 							{window.SF.labels.btn_NewVersion}

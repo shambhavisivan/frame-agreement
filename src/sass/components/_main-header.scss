@@ -132,10 +132,33 @@
 
 		&.fa-invalid {
 			@include sbg(--secondary-header-bg-invalid);
+
+			.fa-button--transparent {
+				@include sbg(--button-bg-invalid);
+				@include sc(--button-c-invalid);
+
+				&:active,
+				&:focus,
+				&:hover {
+					@include sbg(--button-bg-invalid-hover);
+					@include sc(--button-c-invalid-hover);
+				}
+			}
 		}
 
 		&.fa-disabled {
-			@include sbg(--secondary-header-bg-disabled);
+			@include sbg(--secondary-header-bg-inactive);
+
+			.fa-button--transparent {
+				@include sbg(--button-bg-inactive);
+				@include sc(--button-c-inactive);
+
+				&:active,
+				&:focus,
+				&:hover {
+					@include sbg(--button-bg-inactive-hover);
+				}
+			}
 		}
 	}
 }

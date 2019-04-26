@@ -21,13 +21,13 @@ class ConfirmationModal extends Component {
 				</div>
 				<div className="fa-modal-footer">
 					<button
-						className="fa-button-neutral fa-margin-right-xsm"
+						className="fa-button fa-button-default"
 						onClick={this.props.onCancel}
 					>
 						{window.SF.labels.alert_btn_cancel}
 					</button>
 					<button
-						className="fa-button button--brand"
+						className="fa-button fa-button--brand"
 						onClick={() => {
 							this.props.onConfirm();
 							this.props.onCancel();

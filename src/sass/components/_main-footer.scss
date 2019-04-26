@@ -1,31 +1,36 @@
-/* FA Footer */
-// Footer component.
-
 .fa-main-footer {
 	position: sticky;
 	bottom: 0;
 	left: 0;
+	display: flex;
 	width: 100%;
-	background: $white;
-	box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
-	color: white;
 	z-index: $z-index-fa-main-footer;
-}
-
-.fa-main-footer .fa-button {
-	background: $white;
-	border-right: 1px solid $gray-light-5;
-	border-radius: 0;
-	color: $blue-sf;
-	font-size: 0.875rem;
-	margin-right: 0;
-	padding: 1.25rem 4rem;
-
-	&:disabled {
-		opacity: 0.5;
+	@include sbg(--main-footer-bg);
+	@include css4 {
+		box-shadow: 0 -1px 1px cvar(--shadow-medium);
 	}
 
-	&:hover {
-		background: $gray-light-19;
+	.fa-button.fa-button--default {
+		flex: 1;
+		max-width: 256px;
+		border-radius: 0;
+		font-size: 0.875rem;
+		margin-right: 0;
+		padding: 1.25rem;
+		border: none;
+		@include sbg(--button-bg-default);
+		@include sc(--button-c-default);
+		@include css4 {
+			border-right: 1px solid cvar(--main-br);
+		}
+
+		&:disabled {
+			opacity: 0.5;
+		}
+
+		&:hover {
+			@include sbg(--button-bg-default-hover);
+			@include sc(--button-c-default-hover);
+		}
 	}
 }

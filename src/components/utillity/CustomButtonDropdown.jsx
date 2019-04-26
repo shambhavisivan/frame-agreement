@@ -54,7 +54,7 @@ class CustomButtonDropdown extends React.Component {
 				ref={this.setWrapperRef}
 			>
 				<button
-					className="fa-button fa-button-border-light fa-button-transparent"
+					className="fa-button fa-button--transparent"
 					onClick={this.showMenu}
 				>
 					<span className="fa-margin-right-xsm">

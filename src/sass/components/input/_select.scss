@@ -1,0 +1,32 @@
+/* FA SELECT */
+
+.fa-select {
+	border-radius: 0.25rem;
+	height: 2rem;
+	padding-left: 0.5rem;
+	padding-right: 1.5rem;
+	width: 100%;
+	@include sbg(--select-bg);
+	@include css4 {
+		border: 1px solid cvar(--select-br);
+	}
+
+	&:active,
+	&:focus {
+		outline: 0;
+		@include sbg(--select-bg);
+		@include css4 {
+			border-color: cvar(--select-primary-br);
+			box-shadow: 0 0 3px cvar(--select-shadow);
+		}
+	}
+
+	&:disabled {
+		cursor: default;
+		user-select: none;
+		@include sbg(--select-disabled-bg);
+		@include css4 {
+			border-color: cvar(--select-disabled-br);
+		}
+	}
+}

@@ -45,9 +45,6 @@
 	.fa-tabs-secondary {
 		display: flex;
 		padding: 0 0.75rem;
-		@include css4 {
-			border-bottom: 2px solid cvar(--main-br);
-		}
 
 		.fa-tabs-secondary__item {
 			display: flex;
@@ -78,6 +75,13 @@
 				}
 			}
 		}
+	}
+}
+
+.fa-tab-group-secondary {
+	@include sbg(--tab-bg);
+	@include css4 {
+		border-bottom: 2px solid cvar(--main-br);
 	}
 }
 

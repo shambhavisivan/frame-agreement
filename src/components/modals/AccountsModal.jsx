@@ -5,7 +5,6 @@ import { decodeEntities } from '../../utils/shared-service';
 import Pagination from '../utillity/Pagination';
 import Icon from '../utillity/Icon';
 import InputSearch from '../utillity/inputs/InputSearch';
-import './AccountsModal.scss';
 
 const RecordSkeletonRow = () => {
 	let skeletonStyle = {
@@ -451,7 +450,7 @@ class AccountsModal extends Component {
 								value={this.state.main_acc.Name || ''}
 							/>
 							<button
-								className="fa-btn fa-button-brand"
+								className="fa-button fa-button--brand"
 								onClick={() => this.onOpenAccounts('main')}
 							>
 								Choose
@@ -477,7 +476,7 @@ class AccountsModal extends Component {
 						})}
 						<p>
 							<button
-								className="fa-btn fa-button-default"
+								className="fa-button fa-button--default"
 								onClick={() => this.onOpenAccounts('association')}
 							>
 								Add

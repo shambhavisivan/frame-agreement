@@ -822,7 +822,7 @@ class NegotiationModal extends Component {
 						{window.SF.labels.modal_charge_table_header_rateValue}
 					</div>
 				</div>
-				<ul className="rc-list">
+				<ul className="fa-modal-list">
 					{(
 						this.state.rateCardsPaginationFormat[
 							this.state.pagination.page_rated - 1
@@ -833,14 +833,12 @@ class NegotiationModal extends Component {
 								key={rc.product + '-' + rc.Id}
 								className="list-item selectable"
 							>
-								<div className="rc-title">
+								<div className="fa-modal-title">
 									<div className="title-upper" />
 									<div className="title-content">
 										<Icon name="announcement" width="14" color="#706e6b" />
 										{rc.Name}
-										<span className="product-count">
-											{this._rcCpMap[rc.Id].length}
-										</span>
+										<span className="fa-modal-product-count">{this._rcCpMap[rc.Id].length}</span>
 									</div>
 									<div className="title-lower"> </div>
 								</div>
@@ -952,16 +950,16 @@ class NegotiationModal extends Component {
 			this.props.settings.FACSettings.rcl_fields.length
 		) {
 			filterContainer = (
-				<div className="bulk-filter-container">
+				<div className="fa-modal-filter-container">
 					<h4>{window.SF.labels.modal_bluk_rateFilter_title}</h4>
 
-					<div className="bulk-filter-section">
+					<div className="fa-modal-filter-section">
 						<label>
 							{window.SF.labels.modal_bluk_rateFilter_propertyTitle}
 						</label>
 
 						<select
-							className="rcm-input_sm"
+							className="fa-select"
 							value={this.state.selectedProperty || ''}
 							onChange={this.onPropertyChange}
 						>
@@ -979,13 +977,13 @@ class NegotiationModal extends Component {
 						</select>
 					</div>
 
-					<div className="bulk-filter-section">
+					<div className="fa-modal-filter-section">
 						<label>
 							{window.SF.labels.modal_bluk_rateFilter_propertyValueTitle}
 						</label>
 
 						<select
-							className="rcm-input_sm"
+							className="fa-select"
 							value={this.state.selectedPropertyValue || ''}
 							disabled={
 								this.state.propertyData[this.state.selectedProperty]
@@ -1024,13 +1022,29 @@ class NegotiationModal extends Component {
 				onClose={this.onCloseModal}
 			>
 				<div className="fa-modal-header">
+					<button
+						className="close-modal-button"
+						onClick={this.onCloseModal}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 52 52"
+						>
+							<path
+								fill="#fff"
+								d="m31 25.4l13-13.1c0.6-0.6 0.6-1.5 0-2.1l-2-2.1c-0.6-0.6-1.5-0.6-2.1 0l-13.1 13.1c-0.4 0.4-1 0.4-1.4 0l-13.1-13.2c-0.6-0.6-1.5-0.6-2.1 0l-2.1 2.1c-0.6 0.6-0.6 1.5 0 2.1l13.1 13.1c0.4 0.4 0.4 1 0 1.4l-13.2 13.2c-0.6 0.6-0.6 1.5 0 2.1l2.1 2.1c0.6 0.6 1.5 0.6 2.1 0l13.1-13.1c0.4-0.4 1-0.4 1.4 0l13.1 13.1c0.6 0.6 1.5 0.6 2.1 0l2.1-2.1c0.6-0.6 0.6-1.5 0-2.1l-13-13.1c-0.4-0.4-0.4-1 0-1.4z"
+							/>
+						</svg>
+					</button>
 					<h2 className="fa-modal-header-title">
 						{window.SF.labels.modal_bulk_title}
 					</h2>
 				</div>
 				<div className="negotiation-modal fa-modal-body">
-					<div className="products-container">
-						<div className="label-text">
+					<div className="fa-modal-products-container">
+						<div className="fa-modal-product-title">
 							{this.commercialProducts.length}{' '}
 							{window.SF.labels.modal_bulk_selected_title}
 						</div>
@@ -1055,7 +1069,7 @@ class NegotiationModal extends Component {
 					</div>
 
 					<section className="fa-section fa-section-transparent">
-						<div className="fa-tab-group">
+						<div className="fa-tab-group fa-tab-group-secondary">
 							<ul className="fa-tabs-secondary">
 								<li
 									disabled={!Object.keys(this.grouped_addons).length}
@@ -1118,12 +1132,10 @@ class NegotiationModal extends Component {
 
 					<div className="tab-content-container">{tab[this.state.tab]}</div>
 
-					<div className="action-container">
-						<div className="fa-discount">
-							<div className="fa-discount-item">
-								<div className="fa-title fa-title-dark">
-									{window.SF.labels.modal_bulk_discount_title}
-								</div>
+					<div className="fa-modal-action-container">
+						<div className="fa-modal-discount">
+							<div className="fa-modal-discount-item">
+								<h4 className="fa-modal-discount-title">{window.SF.labels.modal_bulk_discount_title}</h4>
 								<div className="fa-button-group">
 									<button
 										className={
@@ -1153,10 +1165,10 @@ class NegotiationModal extends Component {
 									</button>
 								</div>
 							</div>
-							<div className="fa-discount-item">
-								<div className="fa-title fa-title-dark">
+							<div className="fa-modal-discount-item">
+								<h4 className="fa-modal-discount-title">
 									{window.SF.labels.modal_bulk_discount_input_title}
-								</div>
+								</h4>
 								<input
 									type="number"
 									min={0}
@@ -1166,10 +1178,10 @@ class NegotiationModal extends Component {
 									placeholder={window.SF.labels.modal_bulk_input_placeholder}
 								/>
 							</div>
-							<div className="fa-discount-item">
+							<div className="fa-modal-discount-item">
 								<button
 									disabled={!this.state.countTotal}
-									className="fa-discount-item fa-button fa-button--default"
+									className="fa-button fa-button--brand"
 									onClick={this.applyDiscount}
 								>
 									{window.SF.labels.modal_bulk_btn_apply}

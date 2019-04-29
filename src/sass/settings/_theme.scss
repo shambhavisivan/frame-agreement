@@ -129,6 +129,7 @@ $variables: (
 	--card-icon-bg: $gray-light-5,
 
 	--table-header-bg: $gray-light-26,
+	--table-list-header-c: $gray-dark-4,
 	--table-body-bg: $white,
 	--table-row-bg-hover: $gray-light-26,
 	--table-br: $gray-light-5,
@@ -144,7 +145,12 @@ $variables: (
 
 	--select-bg: $white,
 	--select-c: $gray-dark-7,
+	--select-br: $gray-light-5,
+	--select-primary-br: $blue-medium-3,
 	--select-hover-bg: $gray-light-26,
+	--select-shadow: $blue-sf,
+	--select-disabled-bg: $gray-light-11,
+	--select-disabled-br: $gray-medium-11,
 
 	--checkbox-checked-bg: $blue-sf,
 	--checkbox-br: $gray-light-5,
@@ -216,6 +222,14 @@ $variables: (
 
 	--negotiate-icon-c: $gray-light-5,
 	--negotiate-icon-hover-c: $gray-dark-4,
+
+	--list-row-br: $gray-light-5,
+	--list-row-light-bg: $white,
+	--list-row-primary-c: $blue-sf,
+	--list-row-selected-bg: $gray-light-15,
+	--list-row-highlight-bg: $gray-light-20,
+	--list-cell-valid-c: $green-light-3,
+	--list-cell-invalid-c: $red-medium-3
 );
 
 // This will be used later for dark theme support

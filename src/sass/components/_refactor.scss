@@ -23,7 +23,7 @@
 }
 
 .list-row.selected-row {
-	@include sbg(--list-row-selected);
+	@include sbg(--list-row-selected-bg);
 }
 
 .list-row div.list-cell:first-child {
@@ -31,7 +31,7 @@
 }
 
 .list-row.selected-row div.list-cell:first-child {
-	@include sc(--list-row-primary);
+	@include sc(--list-row-primary-c);
 }
 
 .list-row {
@@ -40,21 +40,21 @@
 	justify-content: space-between;
 	font-size: 0.8125rem;
 	@include css4 {
-		border-bottom: 1px solid cvar(--list-row-border);
+		border-bottom: 1px solid cvar(--list-row-br);
 	}
 }
 
 .list-row:hover {
-	@include sbg(--list-row-highlight);
+	@include sbg(--list-row-highlight-bg);
 }
 
 .list-row:hover .negotiate-input-wrapper:hover input {
-	@include sbg(--list-row-light);
+	@include sbg(--list-row-light-bg);
 }
 
 .commercial-product-container .table-container .rc-list .list-item > .table-list .list-row {
 	@include css4 {
-		border-bottom: 1px solid cvar(--list-row-border);
+		border-bottom: 1px solid cvar(--list-row-br);
 	}
 }
 
@@ -72,10 +72,10 @@
 	-khtml-user-select: none;
 	-webkit-user-select: none;
 	-o-user-select: none;
-	@include sc(--table-list-header);
-	@include sbg(--list-row-highlight);
+	@include sc(--table-list-header-c);
+	@include sbg(--list-row-highlight-bg);
 	@include css4 {
-		border-bottom: 1px solid cvar(--list-row-border);
+		border-bottom: 1px solid cvar(--list-row-br);
 	}
 }
 
@@ -83,15 +83,15 @@
 	padding: 0.25rem 0.75rem;
 	flex: 1;
 	text-align: right;
-	@include sc(--table-list-header);
+	@include sc(--table-list-header-c);
 }
 
 .list-cell.valid {
-	@include sc(--list-cell-valid);
+	@include sc(--list-cell-valid-c);
 }
 
 .list-cell.invalid {
-	@include sc(--list-cell-invalid);
+	@include sc(--list-cell-invalid-c);
 }
 
 .list-cell .checkbox {
@@ -109,7 +109,15 @@
 }
 
 .negotiation-modal .list-row > .list-cell {
-	padding: 1rem 1.5rem;
+	padding: 1rem 0.75rem;
+
+	&:first-child {
+		padding-left: 1.5rem;
+	}
+
+	&:last-child {
+		padding-right: 1.5rem;
+	}
 }
 
 .filter-container + .tab-content-container .table-list-header > .list-cell {

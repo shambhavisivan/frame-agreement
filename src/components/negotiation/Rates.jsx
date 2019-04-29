@@ -87,12 +87,12 @@ class Rates extends React.Component {
 						{window.SF.labels.rate_cards_header_value_neg}
 					</div>
 				</div>
-				<ul className="rc-list">
+				<ul className="fa-modal-list">
 					{(this.paginationFormat[this.state.pagination.page - 1] || []).map(
 						(rc, i) => {
 							return (
 								<li key={rc.Id} className="list-item">
-									<div className="rc-title">
+									<div className="fa-modal-title">
 										<div className="title-upper" />
 										<div className="title-content">
 											<Icon name="announcement" width="14" color="#706e6b" />{' '}

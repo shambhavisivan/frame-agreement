@@ -267,8 +267,24 @@ class ProductModal extends Component {
 				center
 			>
 				<div className="fa-modal-header">
+					<button
+						className="close-modal-button"
+						onClick={this.onCloseModal}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 52 52"
+						>
+							<path
+								fill="#fff"
+								d="m31 25.4l13-13.1c0.6-0.6 0.6-1.5 0-2.1l-2-2.1c-0.6-0.6-1.5-0.6-2.1 0l-13.1 13.1c-0.4 0.4-1 0.4-1.4 0l-13.1-13.2c-0.6-0.6-1.5-0.6-2.1 0l-2.1 2.1c-0.6 0.6-0.6 1.5 0 2.1l13.1 13.1c0.4 0.4 0.4 1 0 1.4l-13.2 13.2c-0.6 0.6-0.6 1.5 0 2.1l2.1 2.1c0.6 0.6 1.5 0.6 2.1 0l13.1-13.1c0.4-0.4 1-0.4 1.4 0l13.1 13.1c0.6 0.6 1.5 0.6 2.1 0l2.1-2.1c0.6-0.6 0.6-1.5 0-2.1l-13-13.1c-0.4-0.4-0.4-1 0-1.4z"
+							/>
+						</svg>
+					</button>
 					<span
-						className="modal-expand"
+						className="fa-modal-expand"
 						onClick={() => {
 							this.toggleExpanded();
 						}}
@@ -282,11 +298,11 @@ class ProductModal extends Component {
 
 				<div
 					className={
-						'product-modal fa-modal-body ' +
+						'fa-product-modal fa-modal-body ' +
 						(this.state.panel ? 'panel-open' : 'panel-closed')
 					}
 				>
-					<div className="modal-panel">
+					<div className="fa-modal-panel">
 						<div className="panel-navigation">
 							<div
 								className="panel-navigation--close"
@@ -295,61 +311,59 @@ class ProductModal extends Component {
 								<Icon name="close" width="12" height="12" color="#0070d2" />
 								<span>Close</span>
 							</div>
-						</div>
+							<div>
+								<div className="fa-modal-product-list-header">
+									<div className="header-th">
+										<span>{window.SF.labels.modal_categorization_title}</span>
+									</div>
+								</div>
+								<div className="fa-modal-product-list">
+									{Object.keys(this.state.filter).map(key => {
+										let category = this.state.filter[key];
 
-						<div className="panel-filter-container">
-							<div className="product-list-header">
-								<div className="header-th">
-									<span>{window.SF.labels.modal_categorization_title}</span>
+										return (
+											<div className="fa-modal-product-list-categories" key={key}>
+												<div
+													onClick={() => {
+														this.toggleCategoryCollapse(key);
+													}}
+												>
+													<Icon
+														name={category.open ? 'chevrondown' : 'chevronright'}
+														width="12"
+														height="12"
+														color="#747474"
+													/>
+													<span className="fa-modal-product-list-categories-item">{category.label}</span>
+												</div>
+
+												{category.open && (
+													<ul>
+														{Object.keys(category.values).map(val => {
+															return (
+																<li
+																	key={val}
+																	onClick={() => {
+																		this.toggleFilter(key, val);
+																	}}
+																>
+																	<Checkbox
+																		small={true}
+																		readOnly={category.values[val]}
+																	/>
+																	<span>{val}</span>
+																</li>
+															);
+														})}
+													</ul>
+												)}
+											</div>
+										);
+									})}
 								</div>
 							</div>
-							<div className="product-list">
-								{Object.keys(this.state.filter).map(key => {
-									let category = this.state.filter[key];
-
-									return (
-										<div className="filter-category" key={key}>
-											<div
-												className="category-title"
-												onClick={() => {
-													this.toggleCategoryCollapse(key);
-												}}
-											>
-												<Icon
-													name={category.open ? 'chevrondown' : 'chevronright'}
-													width="12"
-													height="12"
-													color="#747474"
-												/>
-												<span>{category.label}</span>
-											</div>
-
-											{category.open && (
-												<ul className="category-values-list">
-													{Object.keys(category.values).map(val => {
-														return (
-															<li
-																key={val}
-																onClick={() => {
-																	this.toggleFilter(key, val);
-																}}
-															>
-																<Checkbox
-																	small={true}
-																	readOnly={category.values[val]}
-																/>
-																<span>{val}</span>
-															</li>
-														);
-													})}
-												</ul>
-											)}
-										</div>
-									);
-								})}
-							</div>
 						</div>
-						<div className="filter-btns-row">
+						<div className="fa-modal-button-group">
 							<button
 								onClick={this.resetFilter}
 								className="fa-button fa-button--default"
@@ -367,22 +381,22 @@ class ProductModal extends Component {
 						</div>
 					</div>
 
-					<div className="modal-table-container">
-						<div className="modal-navigation">
+					<div className="fa-modal-table-container">
+						<div className="fa-modal-navigation">
 							{this.props.settings.CategorizationData.length &&
 							!this.state.panel ? (
 								<div
 									className="fa-flex fa-flex-middle"
 									onClick={this.togglePanel}
 								>
-									<div className="categorization-switch">
+									<div className="fa-modal-categorization-switch">
 										<Icon
 											name="color_swatch"
 											width="14"
 											height="14"
 											color="#0070d2"
 										/>
-										<div className="categorization-switch-link">
+										<div className="fa-modal-categorization-switch-link">
 											{window.SF.labels.modal_categorization_switch}
 										</div>
 									</div>
@@ -404,8 +418,8 @@ class ProductModal extends Component {
 							</div>
 						</div>
 
-						<div className="modal-product-list">
-							<div className="product-list-header">
+						<div>
+							<div className="fa-modal-product-list-header">
 								<div className="header-th">
 									{window.SF.labels.products_productNameHeaderCell}
 								</div>
@@ -421,7 +435,7 @@ class ProductModal extends Component {
 									);
 								})}
 							</div>
-							<div className="product-list">
+							<div className="fa-modal-product-list">
 								{this.state.commercialProducts
 									.filter(cp => {
 										if (

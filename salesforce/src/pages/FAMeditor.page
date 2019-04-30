@@ -58,7 +58,6 @@
 				createPricingRuleGroup: "{!$RemoteAction.FrameRateManagerController.createPricingRuleGroup}",
 				decomposeAttachment: "{!$RemoteAction.FrameRateManagerController.decomposeAttachment}",
 				undoDecomposition: "{!$RemoteAction.FrameRateManagerController.undoDecomposition}",
-				getPriceItemCharges: "{!$RemoteAction.FrameRateManagerController.getPriceItemCharges}",
 				performAction: "{!$RemoteAction.FrameRateManagerController.performAction}"
 			},
 			labels: {

@@ -355,13 +355,15 @@ export const recievePriceItemData = result => ({
 
 export function getCommercialProductData(priceItemIdList) {
 	return async function(dispatch) {
-		// dispatch(requestPriceItemData());
 
-		let promiseArray = priceItemIdList.map(cpId => {
-			return window.SF.invokeAction('getCommercialProductData', [cpId]);
+		let priceItemChunks = priceItemIdList.chunk(window.SF.product_chunk_size || 100);
+
+		let promiseArray = priceItemChunks.map(cpChunk => {
+			return window.SF.invokeAction('getCommercialProductData', [cpChunk]);
 		});
 
 		let results = await Promise.all(promiseArray);
+
 		let merged_result = results.reduce((acc, val) => {
 			return { ...acc, ...val };
 		}, {});
@@ -373,6 +375,7 @@ export function getCommercialProductData(priceItemIdList) {
 }
 
 // ***********************************************************************
+
 export const _filterCommercialProducts = result => ({
 	type: 'FILTER_COMMERCIAL_PRODUCTS',
 	payload: result

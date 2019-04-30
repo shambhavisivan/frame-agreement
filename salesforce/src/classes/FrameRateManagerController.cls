@@ -165,6 +165,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('price_item_fields', FACSettings.get('csfam__price_item_fields__c'));
 		settingMap.put('truncate_product_fields', FACSettings.get('csfam__truncate_product_fields__c'));
 		settingMap.put('show_volume_fields', FACSettings.get('csfam__show_volume_fields__c'));
+		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
 		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
 		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
 
@@ -211,26 +212,37 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	@RemoteAction
-	@TestVisible public static ProductPricebookCharges getPriceItemCharges(String priceItemId) {
+	@TestVisible public static Map < Id, List < PricingElementWrapper >> getPriceItemCharges(List < Id > priceItemIdList) {
+
+		Map <Id, List <PricingElementWrapper>> cpId_peWrapper = new Map <Id, List <PricingElementWrapper>> ();
 		// Get all pricing elements and their types labels for commercial product
 		// Get all pricing element coorelated to this price item id along with the name of their pricing element type.
 		// These are the charges defined for this price item.
-		List < cspmb__Pricing_Element__c > priceElements = [select id, cspmb__pricing_element_type__r.Name, cspmb__pricing_element_type__r.cspmb__label__c, cspmb__pricing_element_type__r.cspmb__type__c from cspmb__Pricing_Element__c where cspmb__commercial_product__c = :priceItemId];
+		List<cspmb__Pricing_Element__c> priceElements = [
+			select id, cspmb__commercial_product__c, cspmb__pricing_element_type__r.Name,
+				cspmb__pricing_element_type__r.cspmb__label__c,
+				cspmb__pricing_element_type__r.cspmb__type__c
+			from cspmb__Pricing_Element__c
+			where cspmb__commercial_product__c in: priceItemIdList
+		];
 		// Get Pricing Rule Group - Rule Association marked as standard pricebook
 		csutil__JSON_Data__c standardPricebook = getStandardPricebook();
 
 		if (standardPricebook == null || priceElements.isEmpty()) {
-			return new ProductPricebookCharges(priceItemId);
+			// return new ProductPricebookCharges(priceItemId);
+			return cpId_peWrapper;
 		}
+
+
+		Map < Id, Id > peId_cpId = new Map < Id, Id > ();
 
 		// Create a map for getting the price element type label from price element id
 		Map < Id, String > pricingElementLabels = new Map < Id, String > ();
 		Map < Id, String > pricingElementTypes = new Map < Id, String > ();
 
-		Set <Id> pricingElementIds = (new Map<Id,SObject>(priceElements)).keySet();
+		Set < Id > pricingElementIds = (new Map < Id, SObject > (priceElements)).keySet();
 
-		for (cspmb__Pricing_Element__c pricingElement : priceElements) {
+		for (cspmb__Pricing_Element__c pricingElement: priceElements) {
 			String label = pricingElement.cspmb__pricing_element_type__r.cspmb__label__c;
 			String type = pricingElement.cspmb__pricing_element_type__r.cspmb__type__c;
 			if (label == null) {
@@ -238,44 +250,54 @@ global with sharing class FrameRateManagerController {
 			}
 			pricingElementLabels.put(pricingElement.Id, label);
 			pricingElementTypes.put(pricingElement.Id, type);
+			peId_cpId.put(pricingElement.Id, pricingElement.cspmb__commercial_product__c);
 		}
-
+		// ***************************************************
 		// Get all cspmb__Pricing_Rule_Group_Rule_Association__c associated with standard price book
 		List < cspmb__Pricing_Rule_Group_Rule_Association__c > priceBookAssociations = [
 			select id, cspmb__pricing_rule__c
 			from cspmb__Pricing_Rule_Group_Rule_Association__c
-			where Id = :standardPricebook.csutil__value__c
+			where Id =: standardPricebook.csutil__value__c
 		];
 
 		if (priceBookAssociations == null) {
-			return null;
+			return cpId_peWrapper;
 		}
 
 		// Save id's of the pricing rules associated with this price book into the list
 		List < Id > pricingRuleList = new List < Id > ();
-		for (cspmb__Pricing_Rule_Group_Rule_Association__c prgra : priceBookAssociations) {
+		for (cspmb__Pricing_Rule_Group_Rule_Association__c prgra: priceBookAssociations) {
 			pricingRuleList.add(prgra.cspmb__pricing_rule__c);
 		}
-
+		// ***************************************************
 		// Use this list to query price item -> pricing rule
 		// This is not the list of charges for given price item
 		// On these sobjects you can find price rule, price element and price item
 		List < cspmb__Price_Item_Pricing_Rule_Association__c > pipraList = [
 			select id, cspmb__recurring_adjustment__c, cspmb__one_off_adjustment__c, cspmb__pricing_element__c
 			from cspmb__Price_Item_Pricing_Rule_Association__c
-			where cspmb__pricing_element__c in :pricingElementIds and cspmb__pricing_rule__c in:pricingRuleList
+			where cspmb__pricing_element__c in: pricingElementIds and cspmb__pricing_rule__c in: pricingRuleList
 		];
-
 
 		List < PricingElementWrapper > priceItemChargesData = new List < PricingElementWrapper > ();
 		// for each pipra, create charges object
-		for (cspmb__Price_Item_Pricing_Rule_Association__c pipra : pipraList) {
-			priceItemChargesData.add(new PricingElementWrapper(pipra.cspmb__pricing_element__c, pricingElementLabels.get(pipra.cspmb__pricing_element__c), pipra.cspmb__recurring_adjustment__c, pipra.cspmb__one_off_adjustment__c, pricingElementTypes.get(pipra.cspmb__pricing_element__c)));
-		}
-		// create new structure to map price item to charges object
-		ProductPricebookCharges priceItemData = new ProductPricebookCharges(priceItemId, priceItemChargesData);
+		for (cspmb__Price_Item_Pricing_Rule_Association__c pipra: pipraList) {
 
-		return priceItemData;
+			Id priceItemId = peId_cpId.get(pipra.cspmb__pricing_element__c);
+
+			PricingElementWrapper tempPipra = new PricingElementWrapper(pipra.cspmb__pricing_element__c, pricingElementLabels.get(pipra.cspmb__pricing_element__c), pipra.cspmb__recurring_adjustment__c, pipra.cspmb__one_off_adjustment__c, pricingElementTypes.get(pipra.cspmb__pricing_element__c));
+
+			if (cpId_peWrapper.containsKey(priceItemId)) {
+				// get rate card lines for this rate card
+				List < PricingElementWrapper > tempPeList = cpId_peWrapper.get(priceItemId);
+				tempPeList.add(tempPipra);
+				cpId_peWrapper.put(priceItemId, tempPeList);
+			} else {
+				cpId_peWrapper.put(priceItemId, new List < PricingElementWrapper > { tempPipra });
+			}
+
+		}
+		return cpId_peWrapper;
 	}
 
 	@RemoteAction
@@ -647,55 +669,165 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map < Id, cpData > getCommercialProductData(Id priceItemId) {
+	public static Map < Id, cpData > getCommercialProductData(List <String> priceItemIdList) {
 		Map < Id, cpData > cpDataMap = new Map < Id, cpData > ();
 
-		cpDataMap.put(priceItemId, new cpData(priceItemId, getAddons(priceItemId), getPriceItemCharges(priceItemId), getRateCards(priceItemId)));
+		Map < Id, List < cspmb__Price_Item_Add_On_Price_Item_Association__c >> addons = getAddons(priceItemIdList);
+		Map < Id, List < PricingElementWrapper >> charges = getPriceItemCharges(priceItemIdList);
+		Map <Id, List <RateCard>> rateCards = getRateCards(priceItemIdList);
+
+		for (String priceItemId : priceItemIdList) {
+			List < cspmb__Price_Item_Add_On_Price_Item_Association__c > this_addons = addons.get(priceItemId);
+			if (this_addons == null) {
+				this_addons = new List < cspmb__Price_Item_Add_On_Price_Item_Association__c > ();
+			}
+
+			List < PricingElementWrapper > this_charges = charges.get(priceItemId);
+			if (this_charges == null) {
+				this_charges = new List < PricingElementWrapper > ();
+			}
+
+			List <RateCard> this_rateCards = rateCards.get(priceItemId);
+			if (this_rateCards == null) {
+				this_rateCards = new List <RateCard> ();
+			}
+
+			cpDataMap.put(priceItemId, new cpData(this_addons, this_charges, this_rateCards));
+		}
 
 		return cpDataMap;
 	}
 
 
-	public static List < RateCard > getRateCards(String priceItemId) {
+	public static Map <Id, List <RateCard>> getRateCards(List <Id> priceItemIdList) {
+		// contains end result, mapping price item ids to their rate cards
+		Map <Id, List <RateCard>> prId_RateCards = new Map <Id, List <RateCard>> ();
 
-		List < Id > rateCardIdList = new List < Id > ();
-		Map < Id, cspmb__Price_Item_Rate_Card_Association__c > rateCardAssObj = new Map < Id, cspmb__Price_Item_Rate_Card_Association__c > ();
-
-		for (cspmb__Price_Item_Rate_Card_Association__c pirca : [
-			select Id, cspmb__Rate_Card__r.Id
-			from cspmb__Price_Item_Rate_Card_Association__c
-			where cspmb__Price_Item__c = :priceItemId
-		]) {
-			rateCardIdList.add(pirca.cspmb__Rate_Card__r.Id);
-			rateCardAssObj.put(pirca.cspmb__Rate_Card__r.Id, pirca);
+		if (priceItemIdList.isEmpty()) {
+			return prId_RateCards;
 		}
 
+		// contains information about which rate card belongs to which price item (rateCardId: priceItemId)
+		Map < Id,  Id> rateCard_priceItemMap = new Map < Id, Id> ();
+		// contains list of rate card ids to be loaded
+		List < Id > rateCardIdList = new List < Id > ();
+
+		List<cspmb__Price_Item_Rate_Card_Association__c> rateCardAssocList = [select Id, cspmb__Rate_Card__r.Id, cspmb__Price_Item__c
+			from cspmb__Price_Item_Rate_Card_Association__c
+			where cspmb__Price_Item__c in :priceItemIdList];
+
+		for (cspmb__Price_Item_Rate_Card_Association__c pirca : rateCardAssocList) {
+			rateCard_priceItemMap.put(pirca.cspmb__Rate_Card__r.Id, pirca.cspmb__Price_Item__c);
+			rateCardIdList.add(pirca.cspmb__Rate_Card__r.Id);
+		}
+		// ***************************************************
+		// contains information about which rate card has which rate card lines (rateCardId: rateCardLineList)
+		Map < Id, List <cspmb__Rate_Card_Line__c>> rcId_rateCardLineList = new Map < Id, List <cspmb__Rate_Card_Line__c>> ();
+		// list of loaded/relevant rate card lines
+		List < cspmb__Rate_Card_Line__c > rateCardLines = getRateCardLines(rateCardIdList);
+
+		for (cspmb__Rate_Card_Line__c rcl : rateCardLines) {
+
+			// mechanism populating list inside map, handles first occurence
+			if (rcId_rateCardLineList.containsKey(rcl.cspmb__Rate_Card__c)) {
+				// get rate card lines for this rate card
+				List <cspmb__Rate_Card_Line__c> tempRclList = rcId_rateCardLineList.get(rcl.cspmb__Rate_Card__c);
+				tempRclList.add(rcl);
+				rcId_rateCardLineList.put(rcl.cspmb__Rate_Card__c, tempRclList);
+			} else {
+				rcId_rateCardLineList.put(rcl.cspmb__Rate_Card__c, new List <cspmb__Rate_Card_Line__c> {rcl});
+			}
+
+		}
+		// ***************************************************
+		// list of loaded/relevant rate cards
 		List < cspmb__Rate_Card__c > rateCardList = new List < cspmb__Rate_Card__c > ();
 		rateCardList = [select Id, Name, cspmb__Is_Active__c, cspmb__Effective_Start_Date__c, cspmb__Effective_End_Date__c, cspmb__Rate_Card_Code__c, cspmb__Authorization_Level__c, cspmb__Is_Authorization_Required__c from cspmb__Rate_Card__c where cspmb__Is_Active__c = true and Id IN:rateCardIdList];
 
-		List < RateCard > rateCardsList = new List < RateCard > ();
+		// ***************************************************
+		List <RateCard> rateCardModelList = new List <RateCard> ();
+		for (cspmb__Rate_Card__c rc : rateCardList) {
 
-		for (cspmb__Rate_Card__c rcl : rateCardList) {
-
-			Boolean start_invalid = rcl.cspmb__Effective_Start_Date__c != null && date.today() < rcl.cspmb__Effective_Start_Date__c;
-			Boolean end_invalid = rcl.cspmb__Effective_End_Date__c != null && date.today() > rcl.cspmb__Effective_End_Date__c;
+			Boolean start_invalid = rc.cspmb__Effective_Start_Date__c != null && date.today() < rc.cspmb__Effective_Start_Date__c;
+			Boolean end_invalid = rc.cspmb__Effective_End_Date__c != null && date.today() > rc.cspmb__Effective_End_Date__c;
 
 			if (!(start_invalid || end_invalid)) {
-				rateCardsList.add(new RateCard(rcl, getRateCardLines(rcl.Id)));
+				List <cspmb__Rate_Card_Line__c> rclList = new List <cspmb__Rate_Card_Line__c> ();
+
+				if (rcId_rateCardLineList.containsKey(rc.Id)) {
+					// get list of rate card lines for this rate card
+					rclList = rcId_rateCardLineList.get(rc.Id);
+				}
+
+				rateCardModelList.add(new RateCard(rc, rclList));
 			}
 		}
-		return rateCardsList;
+		// ***************************************************
+		// populate 'prId_RateCards' with rate cards against corresponding ids taken from 'rateCard_priceItemMap'
+		for (RateCard rc : rateCardModelList) {
+			Id corespondingPriceItemId = rateCard_priceItemMap.get(rc.Id);
+
+			// List <RateCard> corespondingRateCards = new List <RateCard> ();
+			if (!prId_RateCards.containsKey(corespondingPriceItemId)) {
+				prId_RateCards.put(corespondingPriceItemId, new List <RateCard> ());
+			}
+
+			List <RateCard> tempRcList = prId_RateCards.get(corespondingPriceItemId);
+			tempRcList.add(rc);
+			prId_RateCards.put(corespondingPriceItemId, tempRcList);
+
+		}
+		// ***************************************************
+		return prId_RateCards;
 	}
 
+	public static List < cspmb__Rate_Card_Line__c > getRateCardLines(List <String> rateCardLinesIdList) {
 
-	public static List < cspmb__Price_Item_Add_On_Price_Item_Association__c > getAddons(String priceItemId) {
+		List < String > standardFields = new List < String >{
+			'Id',
+			'Name',
+			'cspmb__Cap_Unit__c',
+			'cspmb__rate_value__c',
+			'cspmb__Rate_Card__c'
+		};
+
+		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+		String csFields = (String) FACSettings.get('csfam__rcl_fields__c');
+		List < String > csFieldsArr = new List < String > ();
+
+		if (!String.isBlank(csFields)) {
+			csFieldsArr = csFields.split(',');
+		}
+
+		List < String > fieldsArr = new List < String > ();
+		fieldsArr.addAll(standardFields);
+		fieldsArr.addAll(csFieldsArr);
+
+		// Remove duplicates
+
+		Set < String > uniqueSet = new Set < String > ();
+		List < String > uniqueList = new List < String > ();
+		uniqueSet.addAll(fieldsArr);
+		uniqueList.addAll(uniqueSet);
+
+
+		String query = 'select ' + String.join(uniqueList, ',') + ' from cspmb__Rate_Card_Line__c where cspmb__Rate_Card__c in :rateCardLinesIdList and cspmb__Is_Active__c = true';
+		List < cspmb__Rate_Card_Line__c > rateCardLines = new List < cspmb__Rate_Card_Line__c > ();
+		rateCardLines = database.query(query);
+
+		return rateCardLines;
+	}
+
+	public static Map < Id, List < cspmb__Price_Item_Add_On_Price_Item_Association__c >> getAddons(List <Id> priceItemIdList) {
+		// contains end result, mapping price item ids to their addons
+		Map < Id, List < cspmb__Price_Item_Add_On_Price_Item_Association__c >> prId_addons = new Map < Id, List < cspmb__Price_Item_Add_On_Price_Item_Association__c >> ();
 
 		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > priceItemAddonAssociations = [
 			select Id, cspmb__Price_Item__c, cspmb__Overrides_Add_On_Charges__c, cspmb__effective_end_date__c, cspmb__effective_start_date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c,
 				cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c, cspmb__Add_On_Price_Item__c, cspmb__Add_On_Price_Item__r.Name, cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c, cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c,
 				cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c
 			from cspmb__Price_Item_Add_On_Price_Item_Association__c
-			where cspmb__Price_Item__c = :priceItemId and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
+			where cspmb__Price_Item__c in :priceItemIdList and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
 		];
 
 
@@ -705,7 +837,7 @@ global with sharing class FrameRateManagerController {
 
 			Boolean start_invalid = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c != null && date.today() < addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c;
 			Boolean end_invalid = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c != null && date.today() > addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c;
-			
+
 			Boolean start_invalid_assoc = addonAsson.cspmb__effective_start_date__c != null && date.today() < addonAsson.cspmb__effective_start_date__c;
 			Boolean end_invalid_assoc = addonAsson.cspmb__effective_end_date__c != null && date.today() > addonAsson.cspmb__effective_end_date__c;
 
@@ -717,9 +849,21 @@ global with sharing class FrameRateManagerController {
 			if (!(start_invalid || end_invalid) && !(start_invalid_assoc || end_invalid_assoc)) {
 				filteredPriceItemAddonAssociations.add(addonAsson);
 			}
+
 		}
 
-		return filteredPriceItemAddonAssociations;
+		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson : filteredPriceItemAddonAssociations) {
+			if (prId_addons.containsKey(addonAsson.cspmb__Price_Item__c)) {
+				// get addons lines for this price item
+				List <cspmb__Price_Item_Add_On_Price_Item_Association__c> tempAddList = prId_addons.get(addonAsson.cspmb__Price_Item__c);
+				tempAddList.add(addonAsson);
+				prId_addons.put(addonAsson.cspmb__Price_Item__c, tempAddList);
+			} else {
+				prId_addons.put(addonAsson.cspmb__Price_Item__c, new List <cspmb__Price_Item_Add_On_Price_Item_Association__c> {addonAsson});
+			}
+		}
+
+		return prId_addons;
 	}
 
 	@RemoteAction
@@ -985,45 +1129,6 @@ global with sharing class FrameRateManagerController {
 		return filteredPricingElements;
 	}
 
-
-	public static List < cspmb__Rate_Card_Line__c > getRateCardLines(String rateCardId) {
-
-
-		List < String > standardFields = new List < String >{
-			'Id',
-			'Name',
-			'cspmb__Cap_Unit__c',
-			'cspmb__rate_value__c',
-			'cspmb__Rate_Card__c'
-		};
-
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		String csFields = (String) FACSettings.get('csfam__rcl_fields__c');
-		List < String > csFieldsArr = new List < String > ();
-
-		if (!String.isBlank(csFields)) {
-			csFieldsArr = csFields.split(',');
-		}
-
-		List < String > fieldsArr = new List < String > ();
-		fieldsArr.addAll(standardFields);
-		fieldsArr.addAll(csFieldsArr);
-
-		// Remove duplicates
-
-		Set < String > uniqueSet = new Set < String > ();
-		List < String > uniqueList = new List < String > ();
-		uniqueSet.addAll(fieldsArr);
-		uniqueList.addAll(uniqueSet);
-
-
-		String query = 'select ' + String.join(uniqueList, ',') + ' from cspmb__Rate_Card_Line__c where cspmb__Rate_Card__c = :rateCardId and cspmb__Is_Active__c = true';
-		List < cspmb__Rate_Card_Line__c > rateCardLines = new List < cspmb__Rate_Card_Line__c > ();
-		rateCardLines = database.query(query);
-
-		return rateCardLines;
-	}
-
 	//******************************************* ATTACHMENT *******************************************
 	@RemoteAction
 	public static String saveAttachment(Id faId, String attachmentBody) {
@@ -1228,6 +1333,11 @@ global with sharing class FrameRateManagerController {
 
 	}
 
+	/**
+	* Delete all pipras created for given pricing rule id
+	* @param prId pricing rule Id for deleting
+	* @return result message
+	*/
 	@RemoteAction
 	public static String undoDecomposition(Id prId) {
 
@@ -1287,15 +1397,11 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public class cpData {
-		public Id Id {
-			get;
-			set;
-		}
 		public List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addons {
 			get;
 			set;
 		}
-		public ProductPricebookCharges charges {
+		public List < PricingElementWrapper > charges {
 			get;
 			set;
 		}
@@ -1304,32 +1410,10 @@ global with sharing class FrameRateManagerController {
 			set;
 		}
 
-		public cpData(Id priceItemId, List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonList, ProductPricebookCharges charges, List < RateCard > rateCardList) {
-			this.Id = priceItemId;
+		public cpData(List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonList, List < PricingElementWrapper > charges, List < RateCard > rateCardList) {
 			this.addons = addonList;
 			this.charges = charges;
 			this.rateCards = rateCardList;
-		}
-	}
-
-	public class ProductPricebookCharges {
-		public Id priceItemId {
-			get;
-			set;
-		}
-		public List < PricingElementWrapper > charges {
-			get;
-			set;
-		}
-
-		public ProductPricebookCharges(Id priceItemId) {
-			this.priceItemId = priceItemId;
-			this.charges = new List<PricingElementWrapper>();
-		}
-
-		public ProductPricebookCharges(Id priceItemId, List < PricingElementWrapper > charges) {
-			this.priceItemId = priceItemId;
-			this.charges = charges;
 		}
 	}
 

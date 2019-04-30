@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import Icon from '../utillity/Icon';
+
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 import Pagination from '../utillity/Pagination';

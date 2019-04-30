@@ -367,6 +367,12 @@ const rootReducer = (state = initialState, action) => {
 			// ***************************************************************************************************************
 			action.payload.FACSettings.decomposition_chunk_size =
 				action.payload.FACSettings.decomposition_chunk_size || 1000;
+
+			action.payload.FACSettings.product_chunk_size =
+				action.payload.FACSettings.product_chunk_size || 100;
+
+			// Temporary until actions get access to store values
+			window.SF.product_chunk_size = action.payload.FACSettings.product_chunk_size;
 			// ***************************************************************************************************************
 			action.payload.AuthLevels = action.payload.AuthLevels
 				? action.payload.AuthLevels.reduce(function(acc, level) {
@@ -595,7 +601,7 @@ const rootReducer = (state = initialState, action) => {
 				// **********************************************
 				state.commercialProducts[priceItemIndex]._charges = priceItemData[
 					key
-				].charges.charges.map(charge => {
+				].charges.map(charge => {
 					let retCharge = { ...charge };
 					if (
 						charge.chargeType

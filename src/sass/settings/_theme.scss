@@ -100,6 +100,12 @@ $variables: (
 	--chip-active-c: $white,
 	--chip-header-bg: $white,
 
+	--dropdown-bg: $white,
+	--dropdown-br: $gray-light-5,
+	--dropdown-c: $gray-dark-1,
+	--dropdown-hover-bg: $gray-light-14,
+	--dropdown-negotiate-bg: $green-light-3,
+
 	--main-header-bg: $white,
 	--main-header-title-c: $gray-dark-1,
 	--main-header-subtitle-c: $gray-dark-8,
@@ -126,6 +132,10 @@ $variables: (
 	--shadow-opaque: $gray-medium-11,
 
 	--input-hover: $green-light-3,
+
+	--select-bg: $white,
+	--select-c: $gray-dark-7,
+	--select-hover-bg: $gray-light-26,
 
 	--checkbox-bg: $gray-medium-7,
 	--checkbox-bg-alt: $gray-medium-2,

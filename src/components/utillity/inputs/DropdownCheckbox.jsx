@@ -60,18 +60,18 @@ class DropdownCheckbox extends React.Component {
 		return (
 			<div className="dropdown-checkbox-container" ref={this.setWrapperRef}>
 				{this.state.menu && (
-					<div className="fa-dropdown fa-dropdown-reverse" onBlur={this.onBlur}>
+					<div className="fa-dropdown fa-dropdown--reverse" onBlur={this.onBlur}>
 						{this.props.options.map((option, i) => {
 							return (
 								<button
-									className="fa-dropdown-button"
+									className="fa-dropdown__button"
 									key={option.name}
 									onClick={() => {
 										this.toggleVisibility(i);
 									}}
 								>
 									<Checkbox readOnly={option.visible} />
-									<span className="fa-margin-left-xsm">{option.name}</span>
+									<span>{option.name}</span>
 								</button>
 							);
 						})}
@@ -79,9 +79,7 @@ class DropdownCheckbox extends React.Component {
 				)}
 
 				<div className="dropdown-placeholder" onClick={this.showMenu}>
-					<span className="fa-margin-right-xsm">
-						{window.SF.labels.products_display_columns}
-					</span>
+					<span>{window.SF.labels.products_display_columns}</span>
 					<Icon
 						name={this.state.menu ? 'chevronup' : 'chevrondown'}
 						height="14"

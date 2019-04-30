@@ -90,26 +90,26 @@ class FrameAgreementRow extends React.Component {
 				</div>
 				{this.state.menu && (
 					<div
-						className="fa-dropdown fa-dropdown-secondary"
+						className="fa-dropdown fa-dropdown--secondary"
 						aria-hidden={!this.state.menu}
 						ref={this.setWrapperRef}
 					>
 						<button
-							className="fa-dropdown-button"
+							className="fa-dropdown__button"
 							onClick={() => this.menuAction('edit')}
 						>
 							<Icon name="edit" height="14" width="14" color="#0070d2" />
 							<span>{window.SF.labels.faMenuActionEdit}</span>
 						</button>
 						<button
-							className="fa-dropdown-button"
+							className="fa-dropdown__button"
 							onClick={() => this.menuAction('clone')}
 						>
 							<Icon name="copy" height="14" width="14" color="#0070d2" />
 							<span>{window.SF.labels.faMenuActionClone}</span>
 						</button>
 						<button
-							className="fa-dropdown-button"
+							className="fa-dropdown__button"
 							onClick={() => this.menuAction('delete')}
 						>
 							<Icon name="delete" height="14" width="14" color="#0070d2" />

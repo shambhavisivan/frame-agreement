@@ -156,6 +156,11 @@ $variables: (
 	--toast-error-bg: $red-medium-2,
 	--toast-warning-bg: $orange-medium-1,
 	--toast-warning-c: $gray-dark-8,
+
+	--skeleton-bg: $gray-light-11,
+	--skeleton-bg-alt: $gray-light-20,
+	--skeleton-gradient-bg: rgba($gray-light-14, 0.6),
+	--skeleton-gradient-dark-bg: $gray-light-14,
 );
 
 // This will be used later for dark theme support

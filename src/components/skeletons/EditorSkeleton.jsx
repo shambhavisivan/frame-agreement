@@ -20,18 +20,19 @@ class EditorSkeleton extends Component {
 				<div className="skeleton-header">
 					<div className="skeleton-row">
 						<div className="skeleton-left">
-							<Shape width={380} height={18} />
-							<Shape width={150} height={22} />
+							<Shape width={360} height={10} />
+							<Shape width={200} height={18} />
 						</div>
 						<div className="skeleton-right">
-							<Shape width={110} height={34} />
-							<Shape width={110} height={34} />
-							<Shape width={110} height={34} />
+							<Shape width={120} height={33} />
+							<Shape width={120} height={33} />
+							<Shape width={120} height={33} />
 						</div>
 					</div>
 				</div>
-
-				<div className="skeleton-ed-fields" />
+				<div className="skeleton-body">
+					<div className="skeleton-ed-fields" />
+				</div>
 			</div>
 		);
 	}

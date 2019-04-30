@@ -45,9 +45,11 @@ class App extends Component {
 		} else {
 			_loadingComponent = (
 				<React.Fragment>
-					<EditorSkeleton count={5} />;
-					<div className="skeleton-landing-cp">
-						<CommercialProductSkeleton count={5} />
+					<EditorSkeleton count={5} />
+					<div className="skeleton-body--alt">
+						<div className="skeleton-landing-cp">
+							<CommercialProductSkeleton count={5} />
+						</div>
 					</div>
 				</React.Fragment>
 			);

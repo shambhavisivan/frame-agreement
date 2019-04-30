@@ -1,52 +1,77 @@
-/* FA Tab */
-// Tab component.
+.fa-tab-group {
+	padding: 0 0.75rem;
 
-/* Group */
-.fa-tab-group > ul {
-	display: flex;
-}
+	.fa-tabs-primary {
+		display: flex;
 
-/* Active */
-.fa-tab.active {
-	background: $white;
-	font-weight: bold;
-	border-bottom: 2px solid $blue-sf;
-}
+		.fa-tab {
+			display: flex;
+			align-items: center;
+			height: 2.5rem;
+			font-size: 0.8125rem;
+			padding: 0 0.75rem;
+			transition: 0.25s;
+			cursor: pointer;
+			@include sbg(--tab-bg);
+			@include sc(--font-c-alt);
+			@include css4 {
+				border-bottom: 2px solid cvar(--transparent);
+			}
 
-/* Disabled */
-.fa-tab.disabled {
-	cursor: auto;
-	opacity: 0.5;
-	display: none;
-}
+			&:hover {
+				@include css4 {
+					border-bottom: 2px solid cvar(--tab-br);
+				}
+			}
 
-/* Secondary */
-.fa-tabs-secondary {
-	border-bottom: 1px solid $gray-light-5;
-	color: $black;
-	display: flex;
-}
+			&.active {
+				@include sc(--font-c);
+				@include css4 {
+					border-bottom: 3px solid cvar(--tab-br);
+				}
+			}
 
-.fa-tabs-secondary-item,
-.fa-tab {
-	align-items: center;
-	border-bottom: 2px solid transparent;
-	cursor: pointer;
-	display: flex;
-	height: 2.5rem;
-	font-size: 0.8125rem;
-	padding: 0 .75rem;
-	transition: 0.25s;
-
-	&:hover {
-		border-bottom: 2px solid $blue-sf;
+			&.disabled {
+				display: none;
+			}
+		}
 	}
 
-	&-addons,
-	&-charges,
-	&-brand,
-	&-nuetral {
-		border-bottom: 2px solid $blue-sf;
-		font-weight: bold;
+	.fa-tabs-secondary {
+		display: flex;
+		padding: 0 0.75rem;
+		@include css4 {
+			border-bottom: 2px solid cvar(--main-br);
+		}
+
+		.fa-tabs-secondary__item {
+			display: flex;
+			align-items: center;
+			height: 2.5rem;
+			font-size: 0.8125rem;
+			padding: 0 0.75rem;
+			transition: 0.25s;
+			cursor: pointer;
+			@include sbg(--tab-bg);
+			@include sc(--font-c-alt);
+			@include css4 {
+				border-bottom: 2px solid cvar(--transparent);
+			}
+
+			&:hover {
+				@include css4 {
+					border-bottom: 2px solid cvar(--tab-br);
+				}
+			}
+
+			&-addons,
+			&-charges,
+			&-brand {
+				@include sc(--font-c);
+				@include css4 {
+					border-bottom: 3px solid cvar(--tab-br);
+				}
+			}
+		}
 	}
 }

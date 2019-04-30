@@ -39,7 +39,7 @@ class Tabs extends React.Component {
 		return (
 			<div>
 				<div className="fa-tab-group">
-					<ul>{this.renderChildrenWithTabsApiAsProps()}</ul>
+					<ul className="fa-tabs-primary">{this.renderChildrenWithTabsApiAsProps()}</ul>
 				</div>
 				<div>{this.renderActiveTabContent()}</div>
 			</div>

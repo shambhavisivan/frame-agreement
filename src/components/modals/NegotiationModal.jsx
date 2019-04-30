@@ -1055,12 +1055,12 @@ class NegotiationModal extends Component {
 					</div>
 
 					<section className="fa-section fa-section-transparent">
-						<div className="box">
+						<div className="fa-tab-group">
 							<ul className="fa-tabs-secondary">
 								<li
 									disabled={!Object.keys(this.grouped_addons).length}
 									className={
-										'fa-tabs-secondary-item fa-tabs-secondary-item-' +
+										'fa-tabs-secondary__item fa-tabs-secondary__item-' +
 										(this.state.tab === 'addons' ? 'brand' : 'neutral')
 									}
 									onClick={() => {
@@ -1069,10 +1069,7 @@ class NegotiationModal extends Component {
 								>
 									{window.SF.labels.products_addons}
 									{this.state.count.addons ? (
-										<span className="fa-padding-left-xxsm">
-											{' '}
-											({this.state.count.addons})
-										</span>
+										<span>({this.state.count.addons})</span>
 									) : (
 										''
 									)}
@@ -1081,7 +1078,7 @@ class NegotiationModal extends Component {
 								<li
 									disabled={!this._charges.length}
 									className={
-										'fa-tabs-secondary-item fa-tabs-secondary-item-' +
+										'fa-tabs-secondary__item fa-tabs-secondary__item-' +
 										(this.state.tab === 'charges' ? 'brand' : 'neutral')
 									}
 									onClick={() => {
@@ -1090,10 +1087,7 @@ class NegotiationModal extends Component {
 								>
 									{window.SF.labels.products_charges}
 									{this.state.count.charges ? (
-										<span className="fa-padding-left-xxsm">
-											{' '}
-											({this.state.count.charges})
-										</span>
+										<span>({this.state.count.charges})</span>
 									) : (
 										''
 									)}
@@ -1102,7 +1096,7 @@ class NegotiationModal extends Component {
 								<li
 									disabled={!this._rateCards.length}
 									className={
-										'fa-tabs-secondary-item fa-tabs-secondary-item-' +
+										'fa-tabs-secondary__item fa-tabs-secondary__item-' +
 										(this.state.tab === 'rated' ? 'brand' : 'neutral')
 									}
 									onClick={() => {
@@ -1111,9 +1105,7 @@ class NegotiationModal extends Component {
 								>
 									{window.SF.labels.products_rates}
 									{this.state.count.rated ? (
-										<span className="fa-padding-left-xxsm">
-											({this.state.count.rated})
-										</span>
+										<span>({this.state.count.rated})</span>
 									) : (
 										''
 									)}

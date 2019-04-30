@@ -1,5 +1,3 @@
-/* FA Pagination */
-// Pagination component
 .fa-pagination-container {
 	display: flex;
 	justify-content: flex-end;
@@ -15,23 +13,24 @@
 
 			&.next.disabled svg,
 			&.previous.disabled svg {
-				fill: #b0adab !important;
+				fill: #b0b0b0 !important;
 			}
 
 			a {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				font-size: 0.75rem;
-				height: 2rem;
-				padding: 0;
 				width: 2rem;
 				height: 2rem;
-				background-color: #fff;
-				border: 1px solid #ddd;
-				cursor: pointer;
-				color: #0070d2;
+				padding: 0;
+				font-size: 0.75rem;
 				text-decoration: none;
+				cursor: pointer;
+				@include sbg(--pagination-bg);
+				@include sc(--pagination-c);
+				@include css4 {
+					border: 1px solid cvar(--main-br);
+				}
 			}
 
 			&:first-child a {
@@ -49,31 +48,37 @@
 			}
 
 			&.page.active a {
-				background: $blue-sf;
-				color: white;
+				@include sbg(--pagination-c);
+				@include sc(--pagination-bg);
 			}
 
 			& a:hover {
-				background: #f4f6f9;
+				@include sbg(--pagination-hover-bg);
 			}
 
 			& a:focus {
 				outline: none;
 				position: relative;
-				z-index: 1000;
-				box-shadow: 0 0 3px $blue-sf;;
-				border: 1px solid $blue-sf;
+				z-index: $z-index-pagination-focus;
+				@include css4 {
+					border: 1px solid cvar(--pagination-c);
+					box-shadow: 0 0 3px cvar(--pagination-c);
+				}
 			}
 
 			& a:active {
-				border: 1px solid #ddd;
+				@include css4 {
+					border: 1px solid cvar(--main-br);
+				}
 			}
 
 			&.disabled a {
 				cursor: default;
 				box-shadow: none;
-				background: $white;
-				border-color: #ddd;
+				@include sbg(--pagination-bg);
+				@include css4 {
+					border: 1px solid cvar(--main-br);
+				}
 			}
 
 			&:nth-of-type(n+2).disabled a {
@@ -86,26 +91,32 @@
 		min-width: 5rem;
 		height: 2rem;
 		border-radius: 0.25rem;
-		border: solid 1px #ddd;
-		background-color: white;
+		@include sbg(--pagination-bg);
+		@include css4 {
+			border: 1px solid cvar(--main-br);
+		}
 
 		&:hover {
-			background: #f4f6f9;
+			@include sbg(--pagination-hover-bg);
 		}
 
 		&:focus {
 			outline: none;
 			position: relative;
-			z-index: 1000;
-			box-shadow: 0 0 3px $blue-sf;
-			border: 1px solid #ddd;
+			z-index: $z-index-pagination-focus;
+			@include css4 {
+				border: 1px solid cvar(--pagination-c);
+				box-shadow: 0 0 3px cvar(--pagination-c);
+			}
 		}
 	}
 }
-.commercial-product-body .fa-pagination-container {
-	border-top: 1px solid #dddbda;
-}
 
-.fa-container-inner > .fa-padding-top-sm > .fa-pagination-container {
-	padding-right: 0;
+.commercial-product-body {
+
+	.fa-pagination-container {
+		@include css4 {
+			border-top: 1px solid cvar(--main-br);
+		}
+	}
 }

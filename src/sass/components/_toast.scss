@@ -1,66 +1,68 @@
 @keyframes slideInFromRight {
-    0% {
-        transform: translateX(100%);
-        opacity: 0;
-    }
+	0% {
+		transform: translateX(100%);
+		opacity: 0;
+	}
 
-    100% {
-        transform: translateX(0%);
-        opacity: 1;
-    }
+	100% {
+		transform: translateX(0%);
+		opacity: 1;
+	}
 }
-
 
 .toaster-container {
-    position: fixed;
-    right: 5px;
-    top: 5px;
-    background: transparent;
-    z-index: 9900;
-    width: 360px;
-}
+	position: fixed;
+	right: 0.3125rem;
+	top: 0.3125rem;
+	z-index: $z-index-toast;
+	width: 360px;
+	@include sbg(--transparent);
 
-.toast {
-    min-height: 50px;
-    width: 100%;
-    /*width: 120px;*/
-    color: white;
-    z-index: 9901;
-    border-radius: 5px;
-    margin-bottom: 5px;
-    padding: 15px;
-    font-size: 13px;
-    animation: 0.3s ease-out 0s 1 slideInFromRight;
-}
+	.toast {
+		min-height: 3rem;
+		width: 100%;
+		z-index: $z-index-toast;
+		border-radius: 0.25rem;
+		margin-bottom: 0.3125rem;
+		padding: 0.9375rem;
+		font-size: 0.8125rem;
+		animation: 0.3s ease-out 0s 1 slideInFromRight;
+		@include sc(--toast-c);
 
-.toast:hover {
-    cursor: pointer;
-    box-shadow: 0 0 6px #000;
-}
+		&:hover {
+			cursor: pointer;
+			@include css4 {
+				box-shadow: 0 0 6px cvar(--shadow-medium);
+			}
+		}
 
+		> span {
+			display: block;
+		}
 
-.toast-title {
-    font-size: 14px;
-    font-weight: bold;
-}
+		.toast__title {
+			font-size: 0.875rem;
+			font-weight: $font-weight-bold;
+		}
 
-.toast>span {
-    display: block;
-}
+		&.success {
+			@include sbg(--toast-success-bg);
+		}
 
-.toast.success {
-    background: #4bca81;
-}
+		&.info {
+			@include sbg(--toast-info-bg);
+			@include css4 {
+				border: 1px solid cvar(--toast-info-br);
+			}
+		}
 
-.toast.info {
-    background: #0070D2;
-    border: 1px solid white;
-}
+		&.warning {
+			@include sbg(--toast-warning-bg);
+			@include sc(--toast-warning-c);
+		}
 
-.toast.warning {
-    background: #ffa429;
-}
-
-.toast.error {
-    background: #d81c2a;
+		&.error {
+			@include sbg(--toast-error-bg);
+		}
+	}
 }

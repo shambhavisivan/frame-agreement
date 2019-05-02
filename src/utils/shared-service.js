@@ -20,6 +20,33 @@ export const truncateCPField = field => {
 	return returnString;
 };
 
+export const decodeEntities = (() => {
+	// this prevents any overhead from creating the object each time
+	var element = document.createElement('div');
+
+	function decodeHTMLEntities(str) {
+		let flagString = true;
+
+		if (typeof str !== 'string') {
+			flagString = false;
+			str = JSON.stringify(str);
+		}
+
+		if (str && typeof str === 'string') {
+			// strip script/html tags
+			str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gim, '');
+			str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gim, '');
+			element.innerHTML = str;
+			str = element.textContent;
+			element.textContent = '';
+		}
+
+		return flagString ? str : JSON.parse(str);
+	}
+
+	return decodeHTMLEntities;
+})();
+
 export const log = {
 	blue: log => {
 		console.log('%c' + log, 'color: #0070d2');

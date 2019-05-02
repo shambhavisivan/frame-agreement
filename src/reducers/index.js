@@ -70,12 +70,12 @@ const rootReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case 'REGISTER_METHOD':
 			/*
-            window.FAM.registerMethod("ActionFunction", () => {
-                 return new Promise(resolve => {
-                     setTimeout(() => {resolve("ActionFunction result")}, 2000);
-                 });
-            })
-            */
+			window.FAM.registerMethod("ActionFunction", () => {
+				 return new Promise(resolve => {
+					 setTimeout(() => {resolve("ActionFunction result")}, 2000);
+				 });
+			})
+			*/
 			return {
 				...state,
 				handlers: {
@@ -372,7 +372,8 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.product_chunk_size || 100;
 
 			// Temporary until actions get access to store values
-			window.SF.product_chunk_size = action.payload.FACSettings.product_chunk_size;
+			window.SF.product_chunk_size =
+				action.payload.FACSettings.product_chunk_size;
 			// ***************************************************************************************************************
 			action.payload.AuthLevels = action.payload.AuthLevels
 				? action.payload.AuthLevels.reduce(function(acc, level) {

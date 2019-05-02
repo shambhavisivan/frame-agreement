@@ -355,8 +355,9 @@ export const recievePriceItemData = result => ({
 
 export function getCommercialProductData(priceItemIdList) {
 	return async function(dispatch) {
-
-		let priceItemChunks = priceItemIdList.chunk(window.SF.product_chunk_size || 100);
+		let priceItemChunks = priceItemIdList.chunk(
+			window.SF.product_chunk_size || 100
+		);
 
 		let promiseArray = priceItemChunks.map(cpChunk => {
 			return window.SF.invokeAction('getCommercialProductData', [cpChunk]);

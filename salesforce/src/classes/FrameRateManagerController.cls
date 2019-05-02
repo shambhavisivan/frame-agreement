@@ -104,6 +104,115 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
+	@RemoteAction
+	@TestVisible public static Map <String, Object> getLookupInformation(String field, List <String> columns, String whereClause, String initValId) {
+		Map <String, Object> returnValues = new Map <String, Object> ();
+		String pointedObject = '';
+
+		//***********************************
+		String [] types = new String[]{'csconta__Frame_Agreement__c'};
+
+		Schema.DescribeSobjectResult[] results = Schema.describeSObjects(types);
+
+		for(Schema.DescribeSobjectResult res : results) {
+			Map<String, Schema.SObjectField> fieldMap = res.fields.getMap();
+
+			pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
+		}
+		//***********************************
+
+
+		String query_count = 'select count() from  ' + pointedObject;
+		if (whereClause != null) {
+			query_count = query_count + ' where ' + whereClause;
+		}
+
+		if (initValId != null && initValId != '') {
+			String query_init = 'select ' + columns[0] + ' from  ' + pointedObject + ' where id=:initValId limit 1';
+			returnValues.put('initialLabel', database.query(query_init)[0].get(columns[0]));
+		}
+
+		system.debug(query_count);
+		returnValues.put('count', database.countQuery(query_count));
+
+
+		return returnValues;
+
+	}
+
+	@RemoteAction
+	@TestVisible public static List <Object> getLookupRecords(String jsonParameters) {
+		Map < String, Object > parameters = (Map < String, Object >) JSON.deserializeUntyped(jsonParameters);
+
+		List <Object> returnValues = new List <Object> ();
+
+		//***********************************
+		String pointedObject = '';
+
+		String [] types = new String[]{'csconta__Frame_Agreement__c'};
+
+		Schema.DescribeSobjectResult[] results = Schema.describeSObjects(types);
+
+		for(Schema.DescribeSobjectResult res : results) {
+			Map<String, Schema.SObjectField> fieldMap = res.fields.getMap();
+
+			String field = (String) parameters.get('field');
+			pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
+		}
+		//***********************************
+		List <String> columnsParsed = new List <String> ();
+
+		for (Object column : (List <Object>) parameters.get('columns')) {
+			system.debug(String.valueOf(column));
+			columnsParsed.add(String.valueOf(column));
+		}
+
+		columnsParsed.add('Id');
+
+		Set < String > uniqueSet = new Set < String > ();
+		List < String > uniqueList = new List < String > ();
+
+		uniqueSet.addAll(columnsParsed);
+		uniqueList.addAll(uniqueSet);
+
+		 //***********************************
+
+		String query = 'select  ' + String.join(uniqueList, ',') + ' from  ' + pointedObject;
+
+		// CONSTRUCT WHERE CLAUSE LIST
+		List <String> whereClauses = new List <String> ();
+
+		if (parameters.containsKey('whereClause') && parameters.get('whereClause') != null) {
+			whereClauses.add((String) parameters.get('whereClause'));
+		}
+
+		if (parameters.containsKey('search') && parameters.get('search') != null) {
+			whereClauses.add((String) parameters.get('search'));
+		}
+
+		if (parameters.containsKey('lastId') && parameters.get('lastId') != null) {
+			String lastId = (String) parameters.get('lastId');
+			whereClauses.add('id > :lastId');
+		}
+
+		String whereClause = '';
+		if (whereClauses.size() > 0) {
+			whereClause = ' where ';
+			whereClause = whereClause + String.join(whereClauses, ' and ');
+		}
+
+		query = query + whereClause;
+		query = query + ' order by id';
+		query = query + ' limit ' + String.valueOf(parameters.get('offset'));
+
+		system.debug(query);
+
+		returnValues = database.query(query);
+
+		return returnValues;
+
+	}
+
 
 	@TestVisible private static List < String > getCategorizationDataFields() {
 		List < String > returnData = new List < String > ();

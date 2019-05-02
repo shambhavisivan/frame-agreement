@@ -58,7 +58,9 @@
 				createPricingRuleGroup: "{!$RemoteAction.FrameRateManagerController.createPricingRuleGroup}",
 				decomposeAttachment: "{!$RemoteAction.FrameRateManagerController.decomposeAttachment}",
 				undoDecomposition: "{!$RemoteAction.FrameRateManagerController.undoDecomposition}",
-				performAction: "{!$RemoteAction.FrameRateManagerController.performAction}"
+				performAction: "{!$RemoteAction.FrameRateManagerController.performAction}",
+				getLookupInformation: "{!$RemoteAction.FrameRateManagerController.getLookupInformation}",
+				getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
 			},
 			labels: {
 				frameAgreementTitle: '{!$Label.frameAgreementTitle}',

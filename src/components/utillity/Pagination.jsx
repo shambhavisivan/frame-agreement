@@ -6,10 +6,20 @@ import Icon from './Icon';
 class Pagination extends Component {
 	constructor(props) {
 		super(props);
+
 		this.onPageChange = this.onPageChange.bind(this);
 		this.onPageSizeChange = this.onPageSizeChange.bind(this);
 
 		this.pageSizes = [10, 20, 50, 100];
+		if (this.props.restricted) {
+			this.margin = 0;
+			this.range = 9;
+		} else {
+			this.margin = 2;
+			this.range = 5;
+		}
+
+		// this.props.class
 	}
 
 	onPageSizeChange(event) {
@@ -27,30 +37,52 @@ class Pagination extends Component {
 		if (this.props.totalSize > this.pageSizes[0]) {
 			pagination = (
 				<div className="fa-pagination-container">
+					{this.props.disabled ? <div className="pagination-overlay" /> : ''}
+
 					<ReactPaginate
-						previousLabel={<Icon name="left" width="14" color="#0070d2" />}
-						nextLabel={<Icon name="right" width="14" color="#0070d2" />}
+						previousLabel={
+							<Icon
+								name="left"
+								width="14"
+								color={this.props.disabled ? '#dddbda' : '#0070d2'}
+							/>
+						}
+						nextLabel={
+							<Icon
+								name="right"
+								width="14"
+								color={this.props.disabled ? '#dddbda' : '#0070d2'}
+							/>
+						}
 						breakLabel={'...'}
+						forcePage={this.props.page - 1}
 						breakClassName={'fa-pagination-ellipsis'}
 						pageCount={pageCount}
-						marginPagesDisplayed={2}
-						pageRangeDisplayed={5}
+						marginPagesDisplayed={this.margin}
+						pageRangeDisplayed={this.range}
 						onPageChange={this.onPageChange}
 						containerClassName={'fa-pagination'}
 						subContainerClassName={'pages pagination'}
-						pageClassName={'page'}
+						pageClassName={'page' + (this.props.disabled ? ' disabled' : '')}
 						activeClassName={'active'}
 					/>
 
-					<select value={this.props.pageSize} onChange={this.onPageSizeChange}>
-						{this.pageSizes.map(val => {
-							return (
-								<option key={val} value={val}>
-									{val}
-								</option>
-							);
-						})}
-					</select>
+					{!this.props.restricted ? (
+						<select
+							value={this.props.pageSize}
+							onChange={this.onPageSizeChange}
+						>
+							{this.pageSizes.map(val => {
+								return (
+									<option key={val} value={val}>
+										{val}
+									</option>
+								);
+							})}
+						</select>
+					) : (
+						''
+					)}
 				</div>
 			);
 		}

@@ -4,6 +4,7 @@ import Icon from '../Icon';
 import SFDatePicker from '../datepicker/SFDatePicker';
 import InputText from '../inputs/InputText';
 import InputTextArea from '../inputs/InputTextArea';
+import Lookup from '../inputs/Lookup';
 import Toggle from '../inputs/Toggle';
 
 class SFField extends Component {
@@ -68,6 +69,28 @@ class SFField extends Component {
 					onBlur={() => {
 						this.setState({ edit: false });
 					}}
+					value={this.state.value}
+				/>
+			);
+		} else if (this.props.field.type === 'lookup') {
+			// "field": "csconta__Account__c",
+			// "readOnly": false,
+			// "label": "Account",
+			// "type": "lookup",
+			// "grid": 4,
+			// "lookupData": {
+			//     "columns": ["Name", "Type"],
+			//     "whereClause": "name != 'invalidTest'"
+			// }
+
+			field = (
+				<Lookup
+					disabled={!this.props.editable}
+					label={this.props.field.label}
+					onChange={this.onChange}
+					field={this.props.field.field}
+					columns={this.props.field.lookupData.columns}
+					filter={this.props.field.lookupData.whereClause}
 					value={this.state.value}
 				/>
 			);

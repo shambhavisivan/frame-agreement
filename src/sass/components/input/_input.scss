@@ -1,0 +1,269 @@
+/* FA INPUT */
+
+.fa-input {
+	border-radius: 0.25rem;
+	box-sizing: border-box;
+	display: inline-block;
+	font-family: $font-primary;
+	font-size: 0.75rem;
+	outline: 0;
+	padding: 0.5rem 1rem;
+	width: 100%;
+	@include css4 {
+		border: 1px solid cvar(--input-br);
+	}
+
+	&:active,
+	&:focus {
+		outline: 0;
+		@include sbg(--input-lightest-bg);
+		@include css4 {
+			border-color: cvar(--input-primary-c);
+			box-shadow: 0 0 3px cvar(--input-primary-c);
+		}
+	}
+}
+
+.fa-input-lg {
+	padding: 0.5rem 0.5rem 0.5rem 2rem;
+}
+
+/* SEARCH */
+.fa-input-search {
+	flex: 2;
+	position: relative;
+	margin-right: 1rem;
+}
+
+.fa-input-search-border-bottom .fa-input {
+	border: 0;
+	border-radius: 0;
+	@include css4 {
+		border-bottom: 1px solid cvar(--input-br);
+	}
+
+	> .icon-search {
+		bottom: 50%;
+		left: 0.5rem;
+		pointer-events: none;
+		position: absolute;
+		transform: translateY(50%);
+	}
+
+	> .icon-close	{
+		bottom: 50%;
+		right: 1rem;
+		position: absolute;
+		transform: translateY(50%);
+		cursor: pointer;
+	}
+
+	&:focus {
+		border-radius: 0.25rem;
+	}
+}
+
+/* CHECKBOX */
+.fa-checkbox {
+	border-radius: 0.125rem;
+	cursor: pointer;
+	display: inline-flex;
+	height: 1rem;
+	position: relative;
+	width: 1rem;
+	@include css4 {
+		border: 1px solid cvar(--input-br);
+	}
+}
+
+.fa-checkbox.checked {
+	@include sbg(--input-primary-bg);
+}
+
+/* TEXTAREA */
+.fa-textarea {
+	border-radius: 0.25rem;
+	font-size: 0.8125rem;
+	padding: 0.5rem 0.75rem;
+	@include css4 {
+		border: 1px solid cvar(--input-br);
+	}
+
+	&:active,
+	&:focus {
+		outline: 0;
+		@include sbg(--input-lightest-bg);
+		@include css4 {
+			border-color: cvar(--input-primary-c);
+			box-shadow: 0 0 3px cvar(--input-primary-c);
+		}
+	}
+}
+
+/* FA ICON */
+.fa-icon {
+	cursor: pointer;
+}
+
+/* FA ICON GROUP */
+.fa-icon-group {
+	align-items: center;
+	bottom: 50%;
+	display: inline-flex;
+	left: 1rem;
+	margin-right: 0.5rem;
+	position: absolute;
+	transform: translateY(50%);
+}
+
+.negotiate-container {
+	width: 100%;
+	display: flex;
+	align-items: flex-end;
+	flex-direction: column;
+}
+
+.negotiate-container {
+	cursor: default;
+}
+
+.negotiate-input-wrapper {
+	position: relative;
+	min-width: 3.125rem;
+	width: 100%;
+	flex: 1;
+}
+
+.negotiate-input-wrapper select {
+	border-radius: 0.25rem;
+	padding: 0.125rem;
+	@include sbg(--input-lightest-bg);
+	@include css4 {
+		border: solid 1px cvar(--checkbox-br);
+	}
+}
+
+.negotiate-icon {
+	bottom: 50%;
+	visibility: hidden;
+	position: absolute;
+	z-index: $z-index-negotiate-icon;
+	right: 0.5rem;
+	transform: translateY(50%);
+}
+
+.negotiate-input {
+	border: none;
+	width: 100%;
+	box-sizing: border-box;
+	text-align: right;
+	padding: 0.5rem 2rem 0.5rem 0;
+	border-radius: 0.25rem;
+	@include sbg(--transparent);
+}
+
+.negotiate-input-wrapper.negotiated > .negotiate-input {
+	text-align: right;
+	@include sc(--input-dark-c);
+}
+
+.negotiate-input-wrapper.readOnly {
+	cursor: default;
+	font-size: 0.8125rem;
+	text-align: right;
+}
+
+.negotiate-icon {
+	visibility: visible;
+	@include css4 {
+		fill: cvar(--negotiate-icon-c);
+	}
+}
+
+.negotiate-input-wrapper:hover .negotiate-icon {
+	@include css4 {
+		fill: cvar(--negotiate-icon-hover-c);
+	}
+}
+
+.negotiate-input-wrapper.focused .negotiate-icon {
+	visibility: visible;
+}
+
+.negotiate-input:focus {
+	outline: 0;
+	@include css4 {
+		box-shadow: inset 0 0 3px cvar(--input-primary-c);
+	}
+}
+
+input.negotiate-input::-webkit-inner-spin-button,
+input.negotiate-input::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.discount-info {
+	width: 100%;
+}
+
+.discount {
+	font-size: 0.8125rem;
+	@include sc(--input-state-c);
+}
+
+.invalid .discount-amount {
+	@include sc(--input-invalid-c);
+}
+
+.discount > div {
+	display: inline-block;
+	font-size: 0.6875rem;
+	@include sc(--input-dark-c);
+}
+
+.search-wrapper {
+	position: relative;
+	width: 100%;
+}
+
+.transparent .search-wrapper .search-input {
+	border: none;
+	@include sbg(--transparent);
+	@include css4 {
+		border-bottom: 1px solid cvar(--input-br);
+	}
+}
+
+.search-wrapper > svg {
+	position: absolute;
+	top: 0.5rem;
+	left: 3px;
+	z-index: $z-index-search-wrapper;
+}
+
+.slds-input {
+	font-size: 0.875rem;
+	width: 100%;
+	font-family: $font-primary;
+	border: none;
+	padding-bottom: 0.25rem;
+	@include sbg(--input-lightest-bg);
+	@include sc(--input-dark-c);
+	@include css4 {
+		border-bottom: 1px solid cvar(--input-br);
+	}
+}
+
+.slds-input:focus, .slds-input:active {
+	outline: none;
+	@include css4 {
+		border-bottom: 1px solid cvar(--input-state-c);
+	}
+}
+
+.slds-input:disabled {
+	@include css4 {
+		border-bottom: 1px solid cvar(--transparent);
+	}
+}

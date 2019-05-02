@@ -1,0 +1,11 @@
+/* FA TEXTAREA */
+
+textarea {
+	font-family: $font-primary;
+	width: 100%;
+	min-height: 5.625rem;
+}
+
+textarea:disabled {
+	resize: none;
+}

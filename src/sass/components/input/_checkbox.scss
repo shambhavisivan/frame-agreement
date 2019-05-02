@@ -1,0 +1,29 @@
+/* FA CHECKBOX */
+
+/* CHECKBOX */
+.fa-checkbox-icon {
+	bottom: 50%;
+	position: absolute;
+	right: 50%;
+	transform: translate(50%, 50%);
+}
+
+.checkbox {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 0.125rem;
+	position: relative;
+	cursor: pointer;
+	@include css4 {
+		border: 1px solid cvar(--checkbox-br);
+	}
+}
+
+.checkbox.small {
+	width: 0.75rem;
+	height: 0.75rem;
+}
+
+.checkbox.checked {
+	@include sbg(--checkbox-checked-bg);
+}

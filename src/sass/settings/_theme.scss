@@ -145,6 +145,8 @@ $variables: (
 	--select-c: $gray-dark-7,
 	--select-hover-bg: $gray-light-26,
 
+	--checkbox-checked-bg: $blue-sf,
+	--checkbox-br: $gray-light-5,
 	--checkbox-bg: $gray-medium-7,
 	--checkbox-bg-alt: $gray-medium-2,
 	--checkbox-disabled-bg: $gray-medium-1,
@@ -169,6 +171,50 @@ $variables: (
 	--status-pending-c: $orange-cs,
 	--status-approved-c: $green-light-3,
 	--status-rejected-c: $red-medium-3,
+
+	--modal-primary-c: $blue-sf,
+	--modal-primary-bg: $blue-sf,
+	--modal-br: $gray-light-5,
+	--modal-title-c: $gray-dark-9,
+	--modal-title-bg: $gray-dark-9,
+	--modal-shadow-c: rgba($gray-dark-9, 0.5),
+	--modal-light-c: $gray-light-14,
+	--modal-light-bg: $gray-light-14,
+	--modal-lighter-bg: $gray-light-20,
+	--modal-lightest-c: $white,
+	--modal-lightest-bg: $white,
+	--modal-dark-c: $black,
+	--modal-close-br: $gray-light-11,
+
+	--overlay: rgba($gray-medium-1, 0.8),
+
+	--input-br: $gray-light-5,
+	--input-dark-c: $gray-dark-1,
+	--input-state-c: $green-light-3,
+	--input-lightest-bg: $white,
+	--input-primary-c: $blue-sf,
+	--input-primary-bg: $blue-sf,
+	--input-invalid-c: $red-medium-3,
+
+	--switch-bg: $gray-light-5,
+	--switch-primary-bg: $blue-sf,
+	--switch-light-c: $white,
+
+	--datepicker-primary-c: $blue-sf,
+	--datepicker-primary-bg: $blue-sf,
+	--datepicker-light-c: $white,
+	--datepicker-light-bg: $white,
+	--datepicker-dark-c: $black,
+	--datepicker-general-c: $gray-light-5,
+	--datepicker-general-bg: $gray-light-5,
+	--datepicker-border-darkest-c: $gray-dark-9,
+	--datepicker-highlight-c: $green-light-3,
+	--datepicker-highlight-bg: $green-light-3,
+	--datepicker-highlight-transparent-bg: rgba($green-light-3, 0.5),
+	--datepicker-alternate-c: $orange-cs,
+
+	--negotiate-icon-c: $gray-light-5,
+	--negotiate-icon-hover-c: $gray-dark-4,
 );
 
 // This will be used later for dark theme support

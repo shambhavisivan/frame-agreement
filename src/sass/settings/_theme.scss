@@ -132,6 +132,7 @@ $variables: (
 	--table-row-bg-hover: $gray-light-26,
 	--table-row-br: $gray-light-5,
 	--table-c: $gray-dark-1,
+	--table-description-c: $gray-dark-5,
 
 	--shadow-light: rgba($black, 0.1),
 	--shadow-medium: rgba($black, 0.2),
@@ -164,6 +165,10 @@ $variables: (
 	--skeleton-bg-alt: $gray-light-20,
 	--skeleton-gradient-bg: rgba($gray-light-14, 0.6),
 	--skeleton-gradient-dark-bg: $gray-light-14,
+
+	--status-pending-c: $orange-cs,
+	--status-approved-c: $green-light-3,
+	--status-rejected-c: $red-medium-3,
 );
 
 // This will be used later for dark theme support

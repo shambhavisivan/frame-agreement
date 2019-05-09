@@ -1,53 +1,145 @@
+.commercial-product-body {
 
-	.commercial-product-body {
-		.commercial-product-description {
-			font-size: 11px;
-			color: #5e5d60;
-			padding: 0 1.5rem 0.75rem 1.5rem;
-		}
-		.fa-tab-group {
-			padding: 0 1.5rem;
-			margin: 0;
-		}
-		.table-container {
-			.table-list-header {
-				background: #FAFAF9;
-				border-top: 1px solid #dddbda;
-				.list-cell {
-					font-size: 0.75rem;
-					color: rgba(0,0,0,0.5);
-				}
+	.commercial-product-description {
+		font-size: 0.6875rem;
+		padding: 0 1.5rem 0.75rem;
+		@include sc(--table-description-c);
+	}
+
+	.fa-tab-group {
+		padding: 0 1.5rem;
+		margin: 0;
+	}
+
+	.table-container {
+
+		.table-list-header {
+			@include sbg(--table-header-bg);
+			@include css4 {
+				border-top: 1px solid cvar(--table-row-br);
 			}
+
 			.list-cell {
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				.icon-priority {
-					margin-right: 0.25rem;
-					vertical-align: middle;
-				}
-			}
-			.list-row:last-child {
-				border: 0;
+				font-size: 0.75rem;
+				@include sc(--table-c);
 			}
 		}
-		.table-list .list-row .list-cell {
-			padding: 0.5rem 0.75rem;
-			&:first-child {
-				padding-left: 1.5rem;
+
+		.list-cell {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			.icon-priority {
+				margin-right: 0.25rem;
+				vertical-align: middle;
 			}
-			&:last-child {
-				padding-right: 1.5rem;
-			}
+		}
+
+		.list-row:last-child {
+			border: none;
 		}
 	}
 
+	.table-list .list-row .list-cell {
+		padding: 0.5rem 0.75rem;
+
+		&:first-child {
+			padding-left: 1.5rem;
+		}
+
+		&:last-child {
+			padding-right: 1.5rem;
+		}
+	}
+}
+
 .commercial-product-skeleton {
 	width: 100%;
-	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-	margin-bottom: 8px;
-	background-color: #fff;
-	border-radius: 4px;
+	margin-bottom: 0.5rem;
+	border-radius: 0.25rem;
 	box-sizing: border-box;
-	height: 56px;
+	height: 3.5rem;
+	@include sbg(--table-body-bg);
+	@include css4 {
+		box-shadow: 0 1px 2px 0 cvar(--shadow-medium);
+	}
+}
+
+.table-container.this.props.approval.listProcess {
+
+	.table-list-header {
+		font-size: 0.625rem;
+
+		> .list-cell {
+			text-align: left;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	.list-row {
+		font-size: 0.625rem;
+
+		> .list-cell {
+			text-align: left;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+}
+
+.approval-card__inner .fa-button-group-secondary {
+	margin-top: 0.5rem;
+}
+
+.approval-table-list-header .table-actions {
+	flex: 3;
+	text-align: right;
+
+	.link {
+		margin-left: 1.875rem;
+	}
+}
+
+.approval-table-list-container {
+	display: flex;
+	flex-direction: column;
+
+	.table-list-header {
+		@include sbg(--table-header);
+	}
+
+	> ul.table-list {
+		@include sbg(--table-body-bg);
+	}
+}
+
+.approval-history .list-row > .list-cell {
+	padding: 0.5rem 0.75rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	&:first-child {
+		padding-left: 1.5rem;
+	}
+
+	&:last-child {
+		padding-right: 1.5rem;
+	}
+}
+
+.status.Pending {
+	@include sc(--status-pending-c);
+}
+
+.status.Approved {
+	@include sc(--status-approved-c);
+}
+
+.status.Rejected {
+	@include sc(--status-rejected-c);
 }

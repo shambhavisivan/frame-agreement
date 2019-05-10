@@ -6,7 +6,7 @@ function createPromise(result, timeout = 500) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(result);
-        }, 10);
+        }, timeout);
     });
 }
 
@@ -269,6 +269,7 @@ const FACSettings = {
     price_item_fields: "cspmb__Contract_Term__c",
     show_volume_fields: true,
     decomposition_chunk_size: 2,
+    new_frame_agreement: true,
     product_chunk_size: 100,
     rcl_fields: "cspmb__Currency_Code__c, Category__c",
     statuses: {
@@ -295,6 +296,7 @@ const frameAgreements = [{
         Arb_Field_Date__c: 1547510400000,
         Arb_Field_Text_2__c: "Arb Text 2 - change 2",
         Arb_Field_Text_3__c: "Arb Text 3 - change 1",
+        csconta__replaced_frame_agreement__c: "a1t1t000000EOuxAAG",
         Arb_Field_Textarea__c: "Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget",
         csconta__Account__r: {
             Name: "Test Account",
@@ -768,54 +770,75 @@ const DiscLevels = [{
 }];
 
 const HeaderData = [{
-		field: "csconta__Agreement_Name__c",
-		readOnly: false,
-		label: "Agreement Name",
-		type: "text",
-		grid: 4
-	},
-	{
-		field: "Arb_Field_Integer__c",
-		readOnly: false,
-		label: "Arb Field Integer",
-		type: "number",
-		grid: 1
-	},
-	{
-		field: "Arb_Field_Bool__c",
-		readOnly: false,
-		label: "Arb Field Bool",
-		type: "boolean",
-		grid: 1
-	},
-	{
-		field: "Arb_Field_Text__c",
-		readOnly: false,
-		label: "Arb Field Text",
-		type: "text",
-		grid: 2
-	},
-	{
-		field: "Arb_Field_Date__c",
-		readOnly: false,
-		label: "Arb Field Date",
-		type: "date",
-		grid: 2
-	},
-	{
-		field: "Arb_Field_Text_3__c",
-		readOnly: false,
-		label: "Arb Field Text 3",
-		type: "text",
-		grid: 2
-	},
-	{
-		field: "Arb_Field_Textarea__c",
-		readOnly: false,
-		label: "Arb Field Textarea",
-		type: "textarea",
-		grid: 6
-	}
+        "field": "csconta__Agreement_Name__c",
+        "readOnly": false,
+        "label": "Agreement Name",
+        "type": "text",
+        "grid": 2
+    },
+    {
+        "field": "csfam__Arb_Field_Integer__c",
+        "readOnly": false,
+        "label": "Arb Field Integer",
+        "type": "number",
+        "grid": 1
+    },
+    {
+        "field": "csfam__Arb_Field_Bool__c",
+        "readOnly": false,
+        "label": "Arb Field Bool",
+        "type": "boolean",
+        "grid": 2
+    },
+    {
+        "field": "csfam__Arb_Field_Text__c",
+        "readOnly": false,
+        "label": "Arb Field Text",
+        "type": "text",
+        "grid": 2
+    },
+    {
+        "field": "csfam__Arb_Field_Date__c",
+        "readOnly": false,
+        "label": "Arb Field Date",
+        "type": "date",
+        "grid": 2
+    },
+    {
+        "field": "csfam__Arb_Field_Text_3__c",
+        "readOnly": false,
+        "label": "Arb Field Text 3",
+        "type": "text",
+        "grid": 2
+    },
+    {
+        "field": "csfam__Arb_Field_Textarea__c",
+        "readOnly": false,
+        "label": "Arb Field Textarea",
+        "type": "textarea",
+        "grid": 4
+    },
+    {
+        "field": "csconta__Account__c",
+        "readOnly": false,
+        "label": "Account",
+        "type": "lookup",
+        "grid": 4,
+        "lookupData": {
+            "columns": ["Name", "Type"],
+            "whereClause": "name != 'invalidTest'"
+        }
+    },
+    {
+        "field": "csconta__replaced_frame_agreement__c",
+        "readOnly": false,
+        "label": "Replaced FA",
+        "type": "lookup",
+        "grid": 4,
+        "lookupData": {
+            "columns": ["csconta__Agreement_Name__c"]
+        }
+    }
 ];
 
 const CategorizationData = [{
@@ -828,33 +851,57 @@ const CategorizationData = [{
     "values": ["10GB", "20GB", "50GB", "100GB"]
 }];
 
-const ButtonCustomData = [{
-        "type": "action",
-        "label": "Action button",
-        "id": "bta1",
-        "method": "ActionFunction",
-        "hidden": [
-            "Active"
-        ]
-    },
-    {
-        "type": "iframe",
-        "label": "iFrame button",
-        "id": "bta2",
-        "method": "iFrameFunction",
-        "hidden": [
-            "Active"
-        ]
-    },
-    {
-        "type": "redirect",
-        "label": "Redirect button",
-        "id": "bta3",
-        "method": "RedirectFunction",
-        "hidden": [
-            "Active"
-        ]
-    }
+const ButtonCustomData = [
+  {
+    "type": "action",
+    "label": "Action button",
+    "id": "bta1",
+    "location": "Editor",
+    "method": "ActionFunction",
+    "hidden": [
+      "Active"
+    ]
+  },
+  {
+    "type": "iframe",
+    "label": "iFrame button",
+    "id": "bta2",
+    "location": "Editor",
+    "method": "iFrameFunction",
+    "hidden": [
+      "Active"
+    ]
+  },
+  {
+    "type": "redirect",
+    "label": "Redirect button",
+    "id": "bta3",
+    "location": "Editor",
+    "method": "RedirectFunction",
+    "hidden": [
+      "Active"
+    ]
+  },
+  {
+    "type": "redirect",
+    "label": "Redirect 2",
+    "id": "bta4",
+    "method": "ActionFunction",
+    "location": "List",
+    "hidden": [
+      "Active"
+    ]
+  },
+  {
+    "type": "redirect",
+    "label": "Action button",
+    "id": "bta5",
+    "location": "Footer",
+    "method": "ActionFunction",
+    "hidden": [
+      "Active"
+    ]
+  }
 ];
 
 
@@ -869,23 +916,23 @@ const ButtonStandardData = {
 };
 
 /*
-	window.FAC.registerMethod("RedirectFunction", () => {
-		 return new Promise(resolve => {
-			 setTimeout(() => {resolve("https://stackoverflow.com/questions/503093/how-do-i-redirect-to-another-webpage")});
-		 });
-	})
+    window.FAC.registerMethod("RedirectFunction", () => {
+         return new Promise(resolve => {
+             setTimeout(() => {resolve("https://stackoverflow.com/questions/503093/how-do-i-redirect-to-another-webpage")});
+         });
+    })
 
-	window.FAC.registerMethod("iFrameFunction", () => {
-		 return new Promise(resolve => {
-			 setTimeout(() => {resolve("http://localhost:8080/#/agreement")});
-		 });
-	})
+    window.FAC.registerMethod("iFrameFunction", () => {
+         return new Promise(resolve => {
+             setTimeout(() => {resolve("http://localhost:8080/#/agreement")});
+         });
+    })
 
-	window.FAC.registerMethod("ActionFunction", () => {
-		 return new Promise(resolve => {
-			 setTimeout(() => {resolve("ActionFunction called")});
-		 });
-	})
+    window.FAC.registerMethod("ActionFunction", () => {
+         return new Promise(resolve => {
+             setTimeout(() => {resolve("ActionFunction called")});
+         });
+    })
 */
 
 const commercialProducts = [{
@@ -895,6 +942,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Mobile",
@@ -907,6 +956,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Static",
@@ -917,6 +968,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Fixed",
@@ -928,6 +981,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Static",
@@ -939,6 +994,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Fixed",
@@ -950,6 +1007,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Mobile",
@@ -961,6 +1020,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000001RjC4AAK",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Static",
@@ -971,6 +1032,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Fixed",
@@ -982,6 +1045,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Mobile",
@@ -993,6 +1058,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000000yZF3AAM",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": true,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months",
     "Categorization_Alpha__c": "Static",
@@ -1004,6 +1071,8 @@ const commercialProducts = [{
     "cspmb__Recurring_Charge__c": 269,
     "cspmb__Authorization_Level__c": "a0x1t000001RjBzAAK",
     "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Is_One_Off_Discount_Allowed__c": true,
+    "cspmb__Is_Recurring_Discount_Allowed__c": false,
     "cspmb__Price_Item_Description__c": "30 Gb Internet + 5000 minutes/SMS",
     "cspmb__Contract_Term__c": "24 Months"
 }];
@@ -1029,6 +1098,12 @@ const newFA = {
     }
 };
 
+const lookupAccountData = [];
+for (var i = 0; i < 2000; i++) {
+    lookupAccountData.push({'Name': getRandomFromArr(["Pyramid Construction #", "Express Logistics #", "University no.", "United Oil &amp; Gas Corp. "]) + i, 'Type': 'Customer-' + getRandomFromArr(["Prospect", "Direct", "Channel", "Consumer", "Random", "Schmustomer"]), 'Id': makeId(15)});
+}
+lookupAccountData.sort((a,b) => (a.Id > b.Id) ? 1 : ((b.Id > a.Id) ? -1 : 0));
+
 // const priceItemData = {"a1F1t00000017Y0EAI":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t00000017Y0EAI","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001QxrEAE","Name":"RC1","rateCardLines":[{"Id":"a1M1t000000BFrVEAW","Name":"RCL1.1","cspmb__Cap_Unit__c":"Sample Cap Unit","cspmb__rate_value__c":124.99,"cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"},{"Id":"a1M1t000000peaJEAQ","Name":"RCL_1_1","cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"}]}]},"a1F1t0000001JBUEA2":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBUEA2","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":12.99,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]},"a1F1t0000001JBeEAM":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnhAAE","Name":"ADD3","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBeEAM","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":12.99,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]}};
 
 window.react_logs = [];
@@ -1044,6 +1119,7 @@ window.SF = SF = {
         faMenuActionDelete: "Delete",
         faMenuActionClone: "Clone",
         faMenuActionEdit: "Edit",
+        faMenuActionAccounts: "Accounts",
         btn_AddNewAgreement: "Add new Agreement",
         header_frameAgreementEditorTitle: "Frame Agreement Details",
         header_customDropdownPlaceholder: "Custom",
@@ -1185,7 +1261,7 @@ window.SF = SF = {
                     commercialProductCount: 10,
                     frameAgreementsCount: 3,
                     itemsPerPage: 20,
-                    ButtonCustomData: getRandomFromArr([ButtonCustomData, ButtonCustomData.slice(0, 2)]),
+                    ButtonCustomData: ButtonCustomData,
                     ButtonStandardData: ButtonStandardData,
                     CategorizationData: CategorizationData,
                     HeaderData: HeaderData,
@@ -1320,10 +1396,47 @@ window.SF = SF = {
                 var priceItemIdList = parametersArr[0];
 
                 priceItemIdList.forEach(priceItemId => {
-                	priceItemData[priceItemId] = productData[priceItemId]
+                    priceItemData[priceItemId] = productData[priceItemId]
                 });
 
                 return createPromise(priceItemData);
+
+            case "getLookupRecords":
+                var getLookupRecordsData;
+                var param = JSON.parse(parametersArr[0]);
+                var lastIndex;
+
+                if (param.field === "csconta__replaced_frame_agreement__c") {
+                    getLookupRecordsData = [{"csconta__Agreement_Name__c":"My Agreement","Id":"a1t1t000000ZRdPAAW"},{"csconta__Agreement_Name__c":"Test A","Id":"a1t1t000000ZRafAAG"},{"csconta__Agreement_Name__c":"Test A","Id":"a1t1t000000ZRaaAAG"},{"csconta__Agreement_Name__c":"Test A","Id":"a1t1t000000ZRaVAAW"},{"csconta__Agreement_Name__c":"IBM Frame Agreement","Id":"a1t1t000000EOtBAAW"},{"Id":"a1t1t000000EPvDAAW"},{"csconta__Agreement_Name__c":"Test #3","Id":"a1t1t000000EP9nAAG"},{"csconta__Agreement_Name__c":"Test #3","Id":"a1t1t000000EOuxAAG"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSNjAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSNyAAO"},{"csconta__Agreement_Name__c":".....","Id":"a1t1t000000ZSMHAA4"},{"csconta__Agreement_Name__c":"dsgsdg","Id":"a1t1t000000ZSOcAAO"},{"Id":"a1t1t000000ZSP6AAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSMgAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSMlAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSMMAA4"},{"csconta__Agreement_Name__c":".....","Id":"a1t1t000000ZSMbAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSNtAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSNoAAO"},{"csconta__Agreement_Name__c":".....","Id":"a1t1t000000ZSO8AAO"},{"Id":"a1t1t000000ZSQEAA4"},{"csconta__Agreement_Name__c":"Test #1","Id":"a1t1t000000ZSQ4AAO"},{"csconta__Agreement_Name__c":"123213","Id":"a1t1t000000ZSR2AAO"},{"csconta__Agreement_Name__c":"FA 1","Id":"a1t1t000000ZSQnAAO"},{"csconta__Agreement_Name__c":"Test 1","Id":"a1t1t000000ZSPkAAO"},{"csconta__Agreement_Name__c":"Frame Agreement #1","Id":"a1t1t000000ZR7LAAW"},{"Id":"a1t1t000000ZSM2AAO"},{"Id":"a1t1t000000ZSPXAA4"},{"csconta__Agreement_Name__c":".....","Id":"a1t1t000000ZSO3AAO"},{"csconta__Agreement_Name__c":"SIMON","Id":"a1t1t000000ZSPuAAO"},{"csconta__Agreement_Name__c":"Test #2","Id":"a1t1t000000ZSUQAA4"},{"csconta__Agreement_Name__c":"Test #1","Id":"a1t1t000000ZSTmAAO"},{"csconta__Agreement_Name__c":"Test #2","Id":"a1t1t000000ZSUaAAO"}];
+                } else if (param.field === "csconta__Account__c" || param.pointedObject === "Account") {
+                    lastIndex = lookupAccountData.findIndex(r => r.Id === param.lastId);
+                    lastIndex = lastIndex === -1 ? 0 : lastIndex;
+                    getLookupRecordsData = lookupAccountData.slice(lastIndex + 1, lastIndex + param.offset + 1);
+                }
+
+                return createPromise(getLookupRecordsData, 1000);
+
+            case "getLookupInformation":
+                var lookupInformation;
+                if (parametersArr[0] === "csconta__replaced_frame_agreement__c") {
+                    lookupInformation = {count: 33};
+                } else if (parametersArr[0] === "csconta__Account__c" || parametersArr[0] === "Account") {
+                    lookupInformation = {initialLabel: "Test Account", count: 2000};
+                }
+
+                return createPromise(lookupInformation);
+
+            case "getAccountsInformation":
+                var accountsInformation = {"main_account":{"Id":"0011t00000DQdZEAA1","Name":"Pyramid Construction Inc."},"associated_accounts":[{"Id":"a1o1t000000jDS5AAM","csconta__Account__c":"0011t00000Pq1WRAAZ","csconta__Account__r":{"Id":"0011t00000Pq1WRAAZ","Name":"Test Account"}}],"count":2014};
+                return createPromise(accountsInformation);
+
+            case "addAccountAssociation":
+                var newAssociation = {"Id":makeId(8),"csconta__Account__c":parametersArr[1],"csconta__Account__r":{"Id":parametersArr[1],"Name":"Universal name"}};
+                return createPromise(newAssociation);
+
+            default:
+                return createPromise("Success");
+
         }
     }
 };

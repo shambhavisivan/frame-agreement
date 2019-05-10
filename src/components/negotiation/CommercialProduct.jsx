@@ -195,8 +195,7 @@ class CommercialProduct extends React.Component {
 									);
 								}
 								return _field;
-							})
-						}
+							})}
 					</div>
 				</div>
 				{this.props.open && (
@@ -233,6 +232,12 @@ class CommercialProduct extends React.Component {
 								{this.props.product._charges.length ? (
 									<Charges
 										readOnly={this.props.readOnly}
+										oneOffAllowed={
+											this.props.product.cspmb__Is_One_Off_Discount_Allowed__c
+										}
+										recurringAllowed={
+											this.props.product.cspmb__Is_Recurring_Discount_Allowed__c
+										}
 										level={this.props.product._levelId}
 										validation={this.props.validation[this.productId].charges}
 										attachment={this.props.attachment._charges || {}}
@@ -245,6 +250,12 @@ class CommercialProduct extends React.Component {
 								) : (
 									<ProductCharges
 										product={this.props.product}
+										oneOffAllowed={
+											this.props.product.cspmb__Is_One_Off_Discount_Allowed__c
+										}
+										recurringAllowed={
+											this.props.product.cspmb__Is_Recurring_Discount_Allowed__c
+										}
 										level={this.props.product._levelId}
 										readOnly={this.props.readOnly}
 										validation={this.props.validation[this.productId].product}

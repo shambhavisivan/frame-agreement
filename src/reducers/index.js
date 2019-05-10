@@ -70,12 +70,12 @@ const rootReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case 'REGISTER_METHOD':
 			/*
-			window.FAM.registerMethod("ActionFunction", () => {
-				 return new Promise(resolve => {
-					 setTimeout(() => {resolve("ActionFunction result")}, 2000);
-				 });
-			})
-			*/
+            window.FAM.registerMethod("ActionFunction", () => {
+            	 return new Promise(resolve => {
+            		 setTimeout(() => {resolve("ActionFunction result")}, 2000);
+            	 });
+            })
+            */
 			return {
 				...state,
 				handlers: {
@@ -116,7 +116,9 @@ const rootReducer = (state = initialState, action) => {
 			function getProductValidation(validation) {
 				let _productValidation = {};
 				for (var key in validation) {
-					_productValidation[key] = getApprovalFlag({ [key]: validation[key] });
+					_productValidation[key] = getApprovalFlag({
+						[key]: validation[key]
+					});
 				}
 				return _productValidation;
 			}
@@ -206,6 +208,17 @@ const rootReducer = (state = initialState, action) => {
 
 		case 'RECIEVE_COMMERCIAL_PRODUCTS':
 			var commercialProducts = action.payload;
+
+			// validate
+			commercialProducts.forEach(cp => {
+				if (!cp.hasOwnProperty('cspmb__Is_One_Off_Discount_Allowed__c')) {
+					cp.cspmb__Is_One_Off_Discount_Allowed__c = true;
+				}
+
+				if (!cp.hasOwnProperty('cspmb__Is_Recurring_Discount_Allowed__c ')) {
+					cp.cspmb__Is_One_Off_Discount_Allowed__c = true;
+				}
+			});
 
 			return {
 				...state,
@@ -424,9 +437,19 @@ const rootReducer = (state = initialState, action) => {
 				}
 			);
 
+			const LOCATIONS = {
+				Editor: true,
+				Footer: true,
+				List: true
+			};
+
 			action.payload.ButtonCustomData.forEach(cb => {
 				cb.hidden = new Set(cb.hidden || []);
 				cb.id = cb.id || cb.label.replace(/ /g, '').toLowerCase();
+
+				if (!cb.location || !LOCATIONS[cb.location]) {
+					cb.location = 'Editor';
+				}
 			});
 
 			// ***************************************************************************************************************

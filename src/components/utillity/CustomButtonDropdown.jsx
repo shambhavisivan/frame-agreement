@@ -49,10 +49,7 @@ class CustomButtonDropdown extends React.Component {
 
 	render() {
 		return (
-			<div
-				className="fa-dropdown-group"
-				ref={this.setWrapperRef}
-			>
+			<div className="fa-dropdown-group" ref={this.setWrapperRef}>
 				<button
 					className="fa-button fa-button--transparent"
 					onClick={this.showMenu}

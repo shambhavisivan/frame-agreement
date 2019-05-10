@@ -69,9 +69,14 @@ class FrameAgreementRow extends React.Component {
 				>
 					<div className="fa-panel-body">
 						<div className="fa-panel-body-col">
-							<span>{this.props.agreement.csconta__Agreement_Name__c || '-- anonymous --'}</span>
+							<span>
+								{this.props.agreement.csconta__Agreement_Name__c ||
+									'-- anonymous --'}
+							</span>
 						</div>
-						<span className={this.statusClass}>{this.props.agreement.csconta__Status__c}</span>
+						<span className={this.statusClass}>
+							{this.props.agreement.csconta__Status__c}
+						</span>
 					</div>
 				</Link>
 				<div className="fa-icon fa-icon-group" onClick={this.showMenu}>
@@ -114,6 +119,13 @@ class FrameAgreementRow extends React.Component {
 						>
 							<Icon name="delete" height="14" width="14" color="#0070d2" />
 							<span>{window.SF.labels.faMenuActionDelete}</span>
+						</button>
+						<button
+							className="fa-dropdown__button"
+							onClick={() => this.menuAction('accounts')}
+						>
+							<Icon name="people" height="14" width="14" color="#0070d2" />
+							<span>{window.SF.labels.faMenuActionAccounts}</span>
 						</button>
 					</div>
 				)}

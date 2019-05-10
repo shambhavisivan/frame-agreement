@@ -1131,6 +1131,7 @@ class FaEditor extends Component {
 				)
 			])
 				.then(async responseArr => {
+					this.setState({ actionTaken: false });
 					await this.refreshFa();
 					return responseArr;
 				})
@@ -1146,6 +1147,7 @@ class FaEditor extends Component {
 			return this.props.createFrameAgreement(data).then(upsertedFa => {
 				this.setState(
 					{
+						actionTaken: false,
 						activeFa: upsertedFa
 					},
 					async () => {
@@ -1204,6 +1206,35 @@ class FaEditor extends Component {
 			);
 		}
 		// *******************************************************
+		let customButtonFooterComponent = '';
+
+		let customButtonsFooter = this.props.settings.ButtonCustomData.filter(
+			btnObj =>
+				!btnObj.hidden.has(this.state.activeFa.csconta__Status__c) &&
+				btnObj.location === 'Footer'
+		);
+
+		customButtonFooterComponent = (
+			<React.Fragment>
+				{customButtonsFooter.map((btnObj, i) => {
+					return (
+						<button
+							key={btnObj.id + i}
+							id={btnObj.id}
+							className="fa-button fa-button--default"
+							onClick={() => {
+								this.callHandler(btnObj.method, btnObj.type);
+							}}
+						>
+							<Icon name="salesforce1" width="16" height="16" color="#0070d2" />
+							<span className="fa-button-icon">{btnObj.label}</span>
+						</button>
+					);
+				})}
+			</React.Fragment>
+		);
+
+		// *******************************************************
 		let footer = '';
 		if (this.state.activeFa._ui.commercialProducts.length) {
 			footer = (
@@ -1216,7 +1247,9 @@ class FaEditor extends Component {
 							onClick={this.onOpenCommercialProductModal}
 						>
 							<Icon name="add" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">{window.SF.labels.btn_AddProducts}</span>
+							<span className="fa-button-icon">
+								{window.SF.labels.btn_AddProducts}
+							</span>
 						</button>
 					)}
 
@@ -1229,7 +1262,9 @@ class FaEditor extends Component {
 							onClick={this.onOpenNegotiationModal}
 						>
 							<Icon name="user" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">{window.SF.labels.btn_BulkNegotiate}</span>
+							<span className="fa-button-icon">
+								{window.SF.labels.btn_BulkNegotiate}
+							</span>
 						</button>
 					)}
 
@@ -1242,9 +1277,13 @@ class FaEditor extends Component {
 							onClick={this.onRemoveProducts}
 						>
 							<Icon name="delete" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">{window.SF.labels.btn_DeleteProducts}</span>
+							<span className="fa-button-icon">
+								{window.SF.labels.btn_DeleteProducts}
+							</span>
 						</button>
 					)}
+
+					{customButtonFooterComponent}
 				</div>
 			);
 		}
@@ -1279,7 +1318,9 @@ class FaEditor extends Component {
 		// Custom buttons component
 		let customButtonsComponent = '';
 		let customButtons = this.props.settings.ButtonCustomData.filter(
-			btnObj => !btnObj.hidden.has(this.state.activeFa.csconta__Status__c)
+			btnObj =>
+				!btnObj.hidden.has(this.state.activeFa.csconta__Status__c) &&
+				btnObj.location === 'Editor'
 		);
 
 		if (customButtons.length >= 3) {
@@ -1349,9 +1390,7 @@ class FaEditor extends Component {
 								onChange={val => {
 									this.setState({ productFilter: val });
 								}}
-								placeholder={
-									window.SF.labels.input_quickSearchPlaceholder
-								}
+								placeholder={window.SF.labels.input_quickSearchPlaceholder}
 							/>
 							<DropdownCheckbox
 								options={this.props.productFields}
@@ -1374,22 +1413,21 @@ class FaEditor extends Component {
 								/>
 							</div>
 							<div className="container__fields">
-								<span className="list-cell">{window.SF.labels.products_productNameHeaderCell}</span>
+								<span className="list-cell">
+									{window.SF.labels.products_productNameHeaderCell}
+								</span>
 								{this.props.productFields
 									.filter(f => f.visible)
 									.map(f => {
 										return (
 											<span
 												key={'header-' + f.name}
-												className={
-													'list-cell' + (f.volume ? ' volume' : '')
-												}
+												className={'list-cell' + (f.volume ? ' volume' : '')}
 											>
 												{truncateCPField(f.name)}
 											</span>
 										);
-									})
-								}
+									})}
 							</div>
 						</div>
 					</div>
@@ -1493,13 +1531,13 @@ class FaEditor extends Component {
 						this.state.activeFa.csconta__Status__c
 					) &&
 						this.faId && (
-						<button
-							className="fa-button fa-button--transparent"
-							onClick={this.onDecompose}
-						>
-							{window.SF.labels.btn_Submit}
-						</button>
-					)}
+							<button
+								className="fa-button fa-button--transparent"
+								onClick={this.onDecompose}
+							>
+								{window.SF.labels.btn_Submit}
+							</button>
+						)}
 					{this.props.settings.ButtonStandardData.NewVersion.has(
 						this.state.activeFa.csconta__Status__c
 					) && (

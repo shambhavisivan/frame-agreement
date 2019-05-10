@@ -23,7 +23,10 @@ class ActionIframe extends Component {
 				onClose={this.props.onCloseModal}
 				center
 			>
-				<iframe src={this.props.url} />
+				<iframe
+					src={this.props.url}
+					sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+				/>
 			</Modal>
 		);
 	}

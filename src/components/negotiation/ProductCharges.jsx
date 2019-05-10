@@ -16,6 +16,9 @@ class ProductCharges extends React.Component {
 
 		this.discounts = [];
 
+		// this.props.oneOffAllowed
+		// this.props.recurringAllowed
+
 		if (this.props.level) {
 			this.props.level.forEach(lv => {
 				this.discounts.push(this.props.settings.DiscLevels[lv].discountLevel);
@@ -28,6 +31,20 @@ class ProductCharges extends React.Component {
 		negotiation[chargeType] = value;
 
 		this.props.onNegotiate(negotiation);
+	}
+
+	isChargeAllowed(chargeType) {
+		if (chargeType === 'One-off Charge') {
+			return this.props.oneOffAllowed;
+		}
+
+		if (chargeType === 'Recurring Charge') {
+			return this.props.recurringAllowed;
+		}
+
+		console.error(
+			chargeType + ' is neither "One-Off Charge" nor "Recurring Charge"'
+		);
 	}
 
 	render() {
@@ -89,7 +106,9 @@ class ProductCharges extends React.Component {
 									);
 									oneOffRow = (
 										<DropdownNegotiate
-											readOnly={this.props.readOnly}
+											readOnly={
+												this.props.readOnly || !this.props.oneOffAllowed
+											}
 											invalid={this.props.validation.oneOff}
 											discounts={oneOffDiscount}
 											onChange={val => {
@@ -107,7 +126,9 @@ class ProductCharges extends React.Component {
 									// No discounts? Put negotiated value input
 									oneOffRow = (
 										<InputNegotiate
-											readOnly={this.props.readOnly}
+											readOnly={
+												this.props.readOnly || !this.props.oneOffAllowed
+											}
 											invalid={this.props.validation.oneOff}
 											onChange={val => {
 												this.negotiateInline('oneOff', val);
@@ -144,7 +165,9 @@ class ProductCharges extends React.Component {
 									);
 									recurringRow = (
 										<DropdownNegotiate
-											readOnly={this.props.readOnly}
+											readOnly={
+												this.props.readOnly || !this.props.recurringAllowed
+											}
 											invalid={this.props.validation.recurring}
 											discounts={recurringDiscount}
 											onChange={val => {
@@ -161,7 +184,9 @@ class ProductCharges extends React.Component {
 								) {
 									recurringRow = (
 										<InputNegotiate
-											readOnly={this.props.readOnly}
+											readOnly={
+												this.props.readOnly || !this.props.recurringAllowed
+											}
 											invalid={this.props.validation.recurring}
 											onChange={val => {
 												this.negotiateInline('recurring', val);

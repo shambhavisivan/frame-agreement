@@ -60,6 +60,9 @@
 				undoDecomposition: "{!$RemoteAction.FrameRateManagerController.undoDecomposition}",
 				performAction: "{!$RemoteAction.FrameRateManagerController.performAction}",
 				getLookupInformation: "{!$RemoteAction.FrameRateManagerController.getLookupInformation}",
+				getAccountsInformation: "{!$RemoteAction.FrameRateManagerController.getAccountsInformation}",
+				deleteAccountAssociation: "{!$RemoteAction.FrameRateManagerController.deleteAccountAssociation}",
+				addAccountAssociation: "{!$RemoteAction.FrameRateManagerController.addAccountAssociation}",
 				getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
 			},
 			labels: {
@@ -69,6 +72,7 @@
 				faMenuActionDelete: '{!$Label.faMenuActionDelete}',
 				faMenuActionClone: '{!$Label.faMenuActionClone}',
 				faMenuActionEdit: '{!$Label.faMenuActionEdit}',
+				faMenuActionAccounts: '{!$Label.faMenuActionAccounts}',
 				btn_AddNewAgreement: '{!$Label.btn_AddNewAgreement}',
 				header_frameAgreementEditorTitle: '{!$Label.header_frameAgreementEditorTitle}',
 				header_customDropdownPlaceholder: '{!$Label.header_customDropdownPlaceholder}',

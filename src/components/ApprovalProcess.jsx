@@ -162,7 +162,9 @@ class ApprovalProcess extends React.Component {
 				</div>
 				{this.actionRequired && this.state.open && (
 					<div className="approval-card__body">
-						<span className="body__title">{window.SF.labels.approval_message_title}</span>
+						<span className="body__title">
+							{window.SF.labels.approval_message_title}
+						</span>
 						<textarea
 							className="fa-textarea"
 							value={this.state.comment}
@@ -178,7 +180,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Reassign')}
 								>
 									<Icon name="change_owner" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reassign}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_reassign}
+									</span>
 								</button>
 							)}
 							{this.isInitiator && (
@@ -187,7 +191,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Removed')}
 								>
 									<Icon name="undo" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_recall}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_recall}
+									</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && (
@@ -196,7 +202,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Approve')}
 								>
 									<Icon name="approval" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_approve}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_approve}
+									</span>
 								</button>
 							)}
 							{this.props.approval.isApprover && (
@@ -205,7 +213,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Reject')}
 								>
 									<Icon name="dislike" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reject}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_reject}
+									</span>
 								</button>
 							)}
 						</div>
@@ -247,7 +257,9 @@ class ApprovalProcess extends React.Component {
 													{moment(step.CreatedDate).format('MM/D/YYYY, HH:mm')}
 												</div>
 												<div className="list-cell">
-													<span className={'status ' + step.StepStatus}>{step.StepStatus}</span>
+													<span className={'status ' + step.StepStatus}>
+														{step.StepStatus}
+													</span>
 												</div>
 												<div className="list-cell">
 													{step.Actor && step.Actor.Name}
@@ -264,7 +276,7 @@ class ApprovalProcess extends React.Component {
 								</ul>
 							);
 						})}
-						<div className="card__bottom"></div>
+						<div className="card__bottom" />
 					</div>
 				)}
 			</div>

@@ -105,11 +105,69 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, Object> getLookupInformation(String field, List <String> columns, String whereClause, String initValId) {
+	@TestVisible public static Map <String, Object> getAccountsInformation(String faId) {
+		// NEED
+		// count
+		// initial labels for associations
+		Map <String, Object> returnValues = new Map <String, Object> ();
+
+		// Get accounts entangled with this fa
+
+		// create property main account (account id, account name)
+		csconta__frame_agreement__c activeFa = [select Id, csconta__Account__c from csconta__frame_agreement__c where Id = :faId limit 1];
+
+		if (activeFa.csconta__Account__c != null) {
+			Account mainAcc = [select Id, Name from Account where Id = :activeFa.csconta__Account__c limit 1];
+			returnValues.put('main_account', mainAcc);
+		}
+		// create property for associations (id, account id, account name)
+		List <csconta__Account_Frame_Agreement_Association__c> associatedAccounts = new List <csconta__Account_Frame_Agreement_Association__c> ();
+		associatedAccounts = [select id, csconta__Account__r.Id, csconta__Account__r.Name from csconta__Account_Frame_Agreement_Association__c where csconta__Frame_Agreement__c = :faId];
+		returnValues.put('associated_accounts', associatedAccounts);
+
+		// Get count for accounts
+		String query_count = 'select count() from  Account';
+		returnValues.put('count', database.countQuery(query_count));
+
+		return returnValues;
+
+	}
+
+	@RemoteAction
+	@TestVisible public static String deleteAccountAssociation(String assocId) {
+		String result = 'Success';
+		csconta__Account_Frame_Agreement_Association__c association = [select Id from csconta__Account_Frame_Agreement_Association__c where Id = :assocId limit 1];
+
+		try {
+		    delete association;
+		} catch (Exception e) {
+		   result = e.getMessage();
+		}
+
+		return result;
+
+	}
+
+	@RemoteAction
+	@TestVisible public static csconta__Account_Frame_Agreement_Association__c addAccountAssociation(String faId, String accountId) {
+		csconta__Account_Frame_Agreement_Association__c  association;
+			try {
+				association = new csconta__Account_Frame_Agreement_Association__c (csconta__Account__c=accountId, csconta__Frame_Agreement__c=faId);
+			    insert association;
+			} catch (Exception e) {
+			   // result = e.getMessage();
+				system.debug(e.getMessage());
+			}
+
+			return [select id, csconta__Account__r.Id, csconta__Account__r.Name from csconta__Account_Frame_Agreement_Association__c where Id = :association.Id];
+	}
+
+	@RemoteAction
+	@TestVisible public static Map <String, Object> getLookupInformation(String field, String column, String whereClause, String initValId) {
 		Map <String, Object> returnValues = new Map <String, Object> ();
 		String pointedObject = '';
 
-		//***********************************
+		//***********************************************************************************
 		String [] types = new String[]{'csconta__Frame_Agreement__c'};
 
 		Schema.DescribeSobjectResult[] results = Schema.describeSObjects(types);
@@ -119,7 +177,7 @@ global with sharing class FrameRateManagerController {
 
 			pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
 		}
-		//***********************************
+		//***********************************************************************************
 
 
 		String query_count = 'select count() from  ' + pointedObject;
@@ -128,8 +186,8 @@ global with sharing class FrameRateManagerController {
 		}
 
 		if (initValId != null && initValId != '') {
-			String query_init = 'select ' + columns[0] + ' from  ' + pointedObject + ' where id=:initValId limit 1';
-			returnValues.put('initialLabel', database.query(query_init)[0].get(columns[0]));
+			String query_init = 'select ' + column + ' from  ' + pointedObject + ' where id=:initValId limit 1';
+			returnValues.put('initialLabel', database.query(query_init)[0].get(column));
 		}
 
 		system.debug(query_count);
@@ -149,15 +207,22 @@ global with sharing class FrameRateManagerController {
 		//***********************************
 		String pointedObject = '';
 
-		String [] types = new String[]{'csconta__Frame_Agreement__c'};
+		if (parameters.containsKey('pointedObject')) {
+			// Supporting getting of records for known pointed object
+			pointedObject = String.valueOf(parameters.get('pointedObject'));
 
-		Schema.DescribeSobjectResult[] results = Schema.describeSObjects(types);
+		} else {
 
-		for(Schema.DescribeSobjectResult res : results) {
-			Map<String, Schema.SObjectField> fieldMap = res.fields.getMap();
+			String [] types = new String[]{'csconta__Frame_Agreement__c'};
 
-			String field = (String) parameters.get('field');
-			pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
+			Schema.DescribeSobjectResult[] results = Schema.describeSObjects(types);
+
+			for(Schema.DescribeSobjectResult res : results) {
+				Map<String, Schema.SObjectField> fieldMap = res.fields.getMap();
+
+				String field = (String) parameters.get('field');
+				pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
+			}
 		}
 		//***********************************
 		List <String> columnsParsed = new List <String> ();
@@ -277,6 +342,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
 		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
 		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
+		settingMap.put('new_frame_agreement', FACSettings.get('csfam__new_frame_agreement__c'));
 
 		settingMap.put('fa_editable_statuses', FACSettings.get('csfam__fa_editable_statuses__c'));
 
@@ -639,6 +705,8 @@ global with sharing class FrameRateManagerController {
 			'Name',
 			'cspmb__Effective_Start_Date__c',
 			'cspmb__Effective_End_Date__c',
+			'cspmb__Is_One_Off_Discount_Allowed__c',
+			'cspmb__Is_Recurring_Discount_Allowed__c',
 			'cspmb__Recurring_Charge__c',
 			'cspmb__One_Off_Charge__c',
 			'cspmb__Authorization_Level__c',
@@ -988,14 +1056,23 @@ global with sharing class FrameRateManagerController {
 		if (accId == null) {
 			return faList;
 		}
+		// ******************************************************
+		// Get association accounts
+		List <AggregateResult> aggFa = [select count(id), csconta__Frame_Agreement__c from csconta__Account_Frame_Agreement_Association__c where csconta__Account__c = :accountId group by csconta__Frame_Agreement__c];
+		List<String> junctionFaIdList = new List<String>();
 
+		for (AggregateResult fa : aggFa) {
+			junctionFaIdList.add((String)fa.get('csconta__Frame_Agreement__c'));
+		}
+
+		// ******************************************************
 		List < String > conjoined_fields = new List < String > ();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
 
 		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c';
 
-		query = query + ' where csconta__Account__c = :accId';
+		query = query + ' where csconta__Account__c = :accId or Id in :junctionFaIdList';
 		query = query + ' order by LastModifiedDate DESC';
 
 		return database.query(query);

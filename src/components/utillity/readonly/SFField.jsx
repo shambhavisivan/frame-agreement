@@ -98,9 +98,7 @@ class SFField extends Component {
 
 		return (
 			<div
-				className={
-					'row__element ' + (this.props.editable ? 'editable' : '')
-				}
+				className={'row__element ' + (this.props.editable ? 'editable' : '')}
 				style={{ width: (100 / 12) * this.props.field.grid + '%' }}
 			>
 				<label className="element__label">

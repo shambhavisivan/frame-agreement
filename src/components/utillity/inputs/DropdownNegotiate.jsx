@@ -30,6 +30,7 @@ class DropdownNegotiate extends React.Component {
 		}
 
 		this.discounts = [];
+
 		this.props.discounts.forEach(discount => {
 			discount.cspmb__Discount_Values__c.forEach((val, index) => {
 				// Bit of a validation
@@ -62,6 +63,12 @@ class DropdownNegotiate extends React.Component {
 				});
 			});
 		});
+
+		// Check if values are 0
+
+		this.discountNulled =
+			this.props.discounts.length === 1 &&
+			!this.props.discounts.reduce((a, b) => a + b, 0);
 
 		this.discounts.forEach((discount, index) => {
 			if (
@@ -174,7 +181,7 @@ class DropdownNegotiate extends React.Component {
 
 				<div className="negotiate-select-wrapper">
 					<select
-						disabled={this.props.readOnly}
+						disabled={this.props.readOnly || this.discountNulled}
 						value={this.state.selected}
 						onChange={e => this.onChange(e)}
 					>

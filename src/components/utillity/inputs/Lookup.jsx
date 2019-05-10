@@ -79,7 +79,7 @@ class Lookup extends React.Component {
 	componentWillMount() {
 		window.SF.invokeAction('getLookupInformation', [
 			this.props.field,
-			this.props.columns,
+			this.props.columns[0],
 			this.filter,
 			this.props.value || null
 		]).then(response => {
@@ -130,7 +130,7 @@ class Lookup extends React.Component {
 				Promise.all([
 					window.SF.invokeAction('getLookupInformation', [
 						params.field,
-						params.columns,
+						params.columns[0],
 						infoMergedWhere,
 						null
 					]),
@@ -301,7 +301,11 @@ class Lookup extends React.Component {
 					placeholder="No record selected"
 					aria-describedby=""
 					readOnly={true}
-					value={this.state.loadedInput ? this.state.recordLabel : '-'}
+					value={
+						this.state.loadedInput
+							? decodeEntities(this.state.recordLabel)
+							: '-'
+					}
 				/>
 				<button
 					className="fa-btn fa-button-brand"

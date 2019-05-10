@@ -1,0 +1,209 @@
+/* Refactor styles */
+
+/*** Move to tables sass file ***/
+/**********************************************/
+.table-list-header > .list-cell.align-left {
+	text-align: left;
+}
+
+.rc-list .list-row > .list-cell {
+	padding: 0.75rem 1.25rem;
+}
+
+.list-row > .list-cell {
+	padding: 1rem 1.25rem;
+	flex: 1;
+	text-align: right;
+	max-width: 100%;
+	@include overflow-ellipsis;
+}
+
+.list-row > .list-cell.align-left {
+	text-align: left;
+}
+
+.list-row.selected-row {
+	@include sbg(--list-row-selected);
+}
+
+.list-row div.list-cell:first-child {
+	text-align: left;
+}
+
+.list-row.selected-row div.list-cell:first-child {
+	@include sc(--list-row-primary);
+}
+
+.list-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.8125rem;
+	@include css4 {
+		border-bottom: 1px solid cvar(--list-row-border);
+	}
+}
+
+.list-row:hover {
+	@include sbg(--list-row-highlight);
+}
+
+.list-row:hover .negotiate-input-wrapper:hover input {
+	@include sbg(--list-row-light);
+}
+
+.commercial-product-container .table-container .rc-list .list-item > .table-list .list-row {
+	@include css4 {
+		border-bottom: 1px solid cvar(--list-row-border);
+	}
+}
+
+.commercial-product-container .table-container .rc-list .list-item:last-child > .table-list .list-row:last-child 	{
+	border-bottom: none;
+}
+
+.table-list-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.8125rem;
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	@include sc(--table-list-header);
+	@include sbg(--list-row-highlight);
+	@include css4 {
+		border-bottom: 1px solid cvar(--list-row-border);
+	}
+}
+
+.table-list-header > .list-cell {
+	padding: 0.25rem 0.75rem;
+	flex: 1;
+	text-align: right;
+	@include sc(--table-list-header);
+}
+
+.list-cell.valid {
+	@include sc(--list-cell-valid);
+}
+
+.list-cell.invalid {
+	@include sc(--list-cell-invalid);
+}
+
+.list-cell .checkbox {
+	display: inline-block;
+	float: left;
+	margin-right: 0.9375rem;
+}
+
+.list-row > .list-cell.negotiable {
+	padding: 0.375rem 1rem;
+}
+
+.list-row > .list-cell.negotiable {
+	padding: 0.375rem 1rem;
+}
+
+.negotiation-modal .list-row > .list-cell {
+	padding: 1rem 1.5rem;
+}
+
+.filter-container + .tab-content-container .table-list-header > .list-cell {
+	padding: 0.5rem 1.5rem;
+}
+
+.table-list-header > div.list-cell:first-child {
+	text-align: left;
+	padding-left: 1.5rem;
+}
+
+.table-list-header > div.list-cell:last-child {
+	padding-right: 1.5rem;
+}
+
+/* Iframe */
+iframe {
+	width: 100%;
+	min-height: 70%;
+	padding: 0;
+	border: none;
+}
+
+/* Close */
+.close-modal-button {
+	width: 2rem;
+	height: 2rem;
+	position: absolute;
+	top: -2.5rem;
+	right: -0.5rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0;
+	border-radius: 0.25rem;
+	text-decoration: none;
+	cursor: pointer;
+	@include sbg(--transparent);
+	@include css4 {
+		border: 1px solid cvar(--transparent);
+	}
+
+	&:hover {
+		svg path {
+			fill: rgba(255,255,255,0.75);
+		}
+	}
+
+	&:focus {
+		outline: 0;
+		@include css4 {
+			border: 1px solid cvar(--modal-close-br);
+			box-shadow: 0 0 3px cvar(--modal-close-br);
+		}
+	}
+}
+
+.styles_closeButton__20ID4 {
+	display: none;
+}
+
+/* Icon */
+.fa-dropdown .icon,
+.fa-footer .icon {
+	margin-right: 0.5rem;
+}
+
+/* Overlay */
+.overlay {
+	justify-content: center;
+	align-items: center;
+	@include sbg(--overlay);
+}
+
+.react-confirm-alert-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: $z-index-overlay;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: react-confirm-alert-fadeIn 0.1s 0.1s forwards;
+	@include sbg(--overlay);
+
+	.react-confirm-alert {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+.react-confirm-alert-firm-svg {
+	display: none;
+}

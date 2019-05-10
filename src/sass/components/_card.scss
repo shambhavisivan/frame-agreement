@@ -28,9 +28,7 @@
 						margin: 0 0.25rem 0 0;
 						font-size: 0.75rem;
 						max-width: 100%;
-						white-space: nowrap;
-						overflow: hidden;
-						text-overflow: ellipsis;
+						@include overflow-ellipsis;
 						@include sc(--font-c-alt);
 					}
 				}
@@ -72,8 +70,7 @@
 						outline: 0;
 						min-height: 2rem;
 						max-width: 100%;
-						text-overflow: ellipsis;
-						overflow: hidden;
+						@include overflow-ellipsis;
 						@include sbg(--transparent);
 						@include css4 {
 							border-top: 1px solid cvar(--transparent);
@@ -230,13 +227,11 @@
 						}
 
 						.list-cell {
-							white-space: nowrap;
-							overflow: hidden;
-							text-overflow: ellipsis;
 							cursor: default;
 							font-size: 0.8125rem;
 							flex: 1;
 							text-align: left;
+							@include overflow-ellipsis;
 							@include sc(--font-c-alt);
 
 							&.volume {
@@ -266,14 +261,12 @@
 							flex: 1;
 							cursor: pointer;
 							font-size: 0.85rem;
-							text-overflow: ellipsis;
-							white-space: nowrap;
 							max-width: 100%;
 							overflow: hidden;
-							text-overflow: ellipsis;
 							display: flex;
 							align-self: center;
 							line-height: 1;
+							@include overflow-ellipsis;
 
 							&.fields__item--title {
 								font-size: 1.125rem;
@@ -457,11 +450,9 @@
 }
 
 .expandable-text {
-	white-space: nowrap;
-	overflow: hidden;
 	display: inline-block;
-	text-overflow: ellipsis;
 	width: 100%;
+	@include overflow-ellipsis;
 }
 
 .expandable-article.expanded {

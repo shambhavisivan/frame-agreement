@@ -184,9 +184,7 @@
 }
 
 .react-datepicker-time__header {
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
+	@include overflow-ellipsis;
 }
 
 .react-datepicker__navigation {

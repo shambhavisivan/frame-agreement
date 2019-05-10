@@ -353,11 +353,11 @@ iframe {
 	 border-bottom: none;
 }
 
-/*************************************************/
-.bulk-filter-container {
-	padding: 16px;
-	background: #f2f3f3;
-	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+.fa-modal-product-list-header .header-th {
+	font-size: 0.75rem;
+	flex: 1;
+	padding: 0.35rem 0.35rem 0.35rem 0;
+	@include overflow-ellipsis;
 }
 
 .fa-modal .bulk-filter-container > h4 {
@@ -437,10 +437,10 @@ iframe {
 .list-row > .list-cell {
 	padding: 1rem 1.25rem;
 	flex: 1;
-	text-align: right;
-	max-width: 100%;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	line-height: 1.75rem;
+	align-items: center;
+	padding-right: 0.25rem;
+	@include overflow-ellipsis;
 }
 
 .list-row > .list-cell.align-left {

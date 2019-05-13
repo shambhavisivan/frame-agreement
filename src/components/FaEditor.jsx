@@ -122,11 +122,44 @@ class FaEditor extends Component {
 		window.FAM.api.clearToasts = this.props.clearToasts;
 		window.FAM.api.refreshFa = this.refreshFa;
 		window.FAM.api.setStatusOfFrameAgreement = this.setStateOFFa;
+		window.FAM.api.saveFrameAgreement = this.upsertFrameAgreements;
+
 		window.FAM.api.getActiveFrameAgreement = () =>
 			new Promise(resolve => {
 				resolve(this.state.activeFa);
 			});
 		window.FAM.api.submitForApproval = this.onSubmitForApproval;
+
+		window.FAM.api.getCustomData = () =>
+			new Promise(resolve => {
+				resolve(this.state.activeFa._ui.attachment.custom);
+			});
+
+		window.FAM.api.setCustomData = newData => {
+			if (typeof newData !== 'string') {
+				newData = JSON.stringify(newData);
+			}
+
+			return new Promise(resolve => {
+				this.setState(
+					{
+						activeFa: {
+							...this.state.activeFa,
+							_ui: {
+								...this.state.activeFa._ui,
+								attachment: {
+									...this.state.activeFa._ui.attachment,
+									custom: newData
+								}
+							}
+						}
+					},
+					() => {
+						resolve(this.state.activeFa._ui.attachment);
+					}
+				);
+			});
+		};
 
 		this.faId = this.props.match.params.id || null;
 		let _frameAgreement;
@@ -187,6 +220,8 @@ class FaEditor extends Component {
 		delete window.FAM.api.setStatusOfFrameAgreement;
 		delete window.FAM.api.getActiveFrameAgreement;
 		delete window.FAM.api.submitForApprovaldelete;
+		delete window.FAM.api.getCustomData;
+		delete window.FAM.api.setCustomData;
 
 		this.props.setValidation();
 	}
@@ -199,13 +234,12 @@ class FaEditor extends Component {
 				// ***********************************************
 				publish('onFaSelect', [this.state.activeFa]);
 				// ***********************************************
-
-				let IdsToLoad = Object.keys(resp_attachment || {});
+				let IdsToLoad = Object.keys(resp_attachment.products || {});
 				// If attachment is present
 				if (IdsToLoad.length) {
 					// Mend null values, its loaded now
-					for (var key in resp_attachment) {
-						resp_attachment[key] = resp_attachment[key] || {};
+					for (var key in resp_attachment.products) {
+						resp_attachment.products[key] = resp_attachment.products[key] || {};
 					}
 					// Get data for commercial products
 					this.props.getCommercialProductData(IdsToLoad).then(r => {
@@ -248,7 +282,9 @@ class FaEditor extends Component {
 				}
 			});
 		} else {
-			let IdsToLoad = Object.keys(this.state.activeFa._ui.attachment || {});
+			let IdsToLoad = Object.keys(
+				this.state.activeFa._ui.attachment.products || {}
+			);
 			let _commercialProducts = this.props.commercialProducts.filter(cp => {
 				return IdsToLoad.includes(cp.Id);
 			});
@@ -386,7 +422,7 @@ class FaEditor extends Component {
 	/**************************************************/
 	async onDecompose() {
 		// 1) Create a structure that is matching one element -> one pipra
-		let _attachment = this.state.activeFa._ui.attachment;
+		let _attachment = this.state.activeFa._ui.attachment.producs;
 		console.log(_attachment);
 
 		let structure = [];
@@ -674,7 +710,10 @@ class FaEditor extends Component {
 								],
 								attachment: {
 									...this.state.activeFa._ui.attachment,
-									..._attachment
+									products: {
+										...this.state.activeFa._ui.attachment,
+										..._attachment
+									}
 								}
 							}
 						}
@@ -864,7 +903,11 @@ class FaEditor extends Component {
 	async onNegotiate(priceItemId, type, data) {
 		console.log(data);
 		let attachment = this.state.activeFa._ui.attachment;
-		attachment[priceItemId] = { ...attachment[priceItemId], [type]: data };
+
+		attachment.products[priceItemId] = {
+			...attachment.products[priceItemId],
+			[type]: data
+		};
 
 		attachment = await publish('onBeforeNegotiate', attachment);
 		this.setState(
@@ -902,7 +945,7 @@ class FaEditor extends Component {
 		// RateCard (1,5,6,8)
 		return new Promise(async (resolve, reject) => {
 			// ********************************** BASIC VALIDATION
-			let _attachment = this.state.activeFa._ui.attachment;
+			let _attachment = this.state.activeFa._ui.attachment.products;
 			let cp = this.state.activeFa._ui.commercialProducts.find(
 				_cp => _cp.Id === data.priceItemId
 			);
@@ -990,12 +1033,18 @@ class FaEditor extends Component {
 					actionTaken: true,
 					activeFa: {
 						...this.state.activeFa,
-						_ui: { ...this.state.activeFa._ui, _attachment }
+						_ui: {
+							...this.state.activeFa._ui,
+							attachment: {
+								...this.state.activeFa._ui.attachment,
+								products: _attachment
+							}
+						}
 					}
 				},
 				async () => {
 					publish('onAfterNegotiate', this.state.activeFa._ui.attachment);
-					resolve(_attachment);
+					resolve(this.state.activeFa._ui.attachment);
 				}
 			);
 		});
@@ -1005,7 +1054,7 @@ class FaEditor extends Component {
 
 	async onBulkNegotiate(data) {
 		console.log(data);
-		let attachment = this.state.activeFa._ui.attachment;
+		let attachment = this.state.activeFa._ui.attachment.products;
 		for (var key in attachment) {
 			if (data[key]._addons) {
 				attachment[key]._addons = attachment[key]._addons || {};
@@ -1039,11 +1088,17 @@ class FaEditor extends Component {
 				actionTaken: true,
 				activeFa: {
 					...this.state.activeFa,
-					_ui: { ...this.state.activeFa._ui, attachment }
+					_ui: {
+						...this.state.activeFa._ui,
+						attachment: {
+							...this.state.activeFa._ui.attachment,
+							products: attachment
+						}
+					}
 				}
 			},
 			() => {
-				let attachment = this.state.activeFa._ui.attachment;
+				let attachment = this.state.activeFa._ui.attachment.products;
 
 				let bulkValidation = {};
 
@@ -1078,7 +1133,10 @@ class FaEditor extends Component {
 				// this.onCloseModal();
 
 				setTimeout(async () => {
-					await publish('onAfterBulkNegotiation', attachment);
+					await publish(
+						'onAfterBulkNegotiation',
+						this.state.activeFa._ui.attachment
+					);
 					this.onCloseModal();
 				});
 			}
@@ -1142,6 +1200,7 @@ class FaEditor extends Component {
 						window.SF.labels.toast_success_title,
 						window.SF.labels.toast_saved_fa
 					);
+					return 'Success';
 				});
 		} else {
 			return this.props.createFrameAgreement(data).then(upsertedFa => {
@@ -1162,6 +1221,7 @@ class FaEditor extends Component {
 						this.props.history.push('/agreement/' + upsertedFa.Id);
 						this.faId = upsertedFa.Id;
 						// window.location.reload();
+						return 'Success';
 					}
 				);
 			});
@@ -1308,7 +1368,7 @@ class FaEditor extends Component {
 				<NegotiationModal
 					open={this.state.negotiateModal}
 					products={Object.keys(this.state.selectedProducts)}
-					attachment={this.state.activeFa._ui.attachment}
+					attachment={this.state.activeFa._ui.attachment.products}
 					onNegotiate={this.onBulkNegotiate}
 					onCloseModal={this.onCloseModal}
 				/>
@@ -1460,7 +1520,9 @@ class FaEditor extends Component {
 										this.onNegotiate(cp.Id, type, data)
 									}
 									key={'cp-' + cp.Id}
-									attachment={this.state.activeFa._ui.attachment[cp.Id]}
+									attachment={
+										this.state.activeFa._ui.attachment.products[cp.Id]
+									}
 									product={cp}
 									open={this.state.openCommercialProduct === cp.Id}
 									readOnly={!this.editable}

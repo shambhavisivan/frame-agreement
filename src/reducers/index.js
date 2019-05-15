@@ -303,6 +303,9 @@ const rootReducer = (state = initialState, action) => {
 
 		case 'RECIEVE_SETTINGS':
 			action.payload.HeaderData = validateJSONData(action.payload.HeaderData);
+			action.payload.CustomTabsData = validateJSONData(
+				action.payload.CustomTabsData
+			);
 
 			let _productFields = [];
 			// _productFields.push({name:"Name", visible: true})
@@ -396,6 +399,14 @@ const rootReducer = (state = initialState, action) => {
 				  }, {})
 				: {};
 
+			// ***************************************************************************************************************
+			// Validate custom tabs
+			action.payload.CustomTabsData.forEach((tab, i) => {
+				tab.label = tab.label || 'Custom tab #' + i;
+				tab.container_id = tab.container_id || 'tab-' + makeId(6);
+				tab.onMount = tab.onMount || null;
+				tab.onEnter = tab.onEnter || null;
+			});
 			// ***************************************************************************************************************
 			// Validate standard buttons
 			const standardButtonsDefault = [

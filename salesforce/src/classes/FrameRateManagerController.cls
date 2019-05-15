@@ -90,6 +90,20 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
+	@TestVisible private static csutil__JSON_Data__c getCustomTabsData() {
+		List<csutil__JSON_Data__c> json_data = [
+			select csutil__value__c
+			from csutil__JSON_Data__c
+			where Name = 'FA-Custom-Tabs'
+		];
+
+		if(json_data.isEmpty()) {
+			return null;
+		} else {
+			return json_data[0];
+		}
+	}
+
 	@TestVisible private static csutil__JSON_Data__c getStandardPricebook() {
 		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
@@ -139,7 +153,7 @@ global with sharing class FrameRateManagerController {
 		csconta__Account_Frame_Agreement_Association__c association = [select Id from csconta__Account_Frame_Agreement_Association__c where Id = :assocId limit 1];
 
 		try {
-		    delete association;
+			delete association;
 		} catch (Exception e) {
 		   result = e.getMessage();
 		}
@@ -153,7 +167,7 @@ global with sharing class FrameRateManagerController {
 		csconta__Account_Frame_Agreement_Association__c  association;
 			try {
 				association = new csconta__Account_Frame_Agreement_Association__c (csconta__Account__c=accountId, csconta__Frame_Agreement__c=faId);
-			    insert association;
+				insert association;
 			} catch (Exception e) {
 			   // result = e.getMessage();
 				system.debug(e.getMessage());
@@ -362,12 +376,13 @@ global with sharing class FrameRateManagerController {
 	@TestVisible public static String parseNumberFromName(String faName) {
 		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 		String prefix = (String) FACSettings.get('csfam__fa_number_prefix__c');
+		String result = faName.split('-')[1];
 
-		if (prefix == null) {
-			prefix = 'FA';
+		if (prefix != null) {
+			result = prefix = result;
 		}
 
-		return prefix + '-' + faName.split('-')[1];
+		return result;
 	}
 
 	@RemoteAction
@@ -653,11 +668,13 @@ global with sharing class FrameRateManagerController {
 		List < Object > buttonCustom = new List < Object > ();
 		Map < String, Object > buttonStandard = new Map < String, Object > ();
 		List < Object > categorizationData = new List < Object > ();
+		List < Object > customTabs = new List < Object > ();
 
 		csutil__JSON_Data__c header_data = getHeaderData();
 		csutil__JSON_Data__c button_custom = getCustomButtonData();
 		csutil__JSON_Data__c button_standard = getStandardButtonData();
 		csutil__JSON_Data__c categorization_data = getCategorizationData();
+		csutil__JSON_Data__c custom_tabs = getCustomTabsData();
 
 		if (header_data != null && header_data.csutil__value__c != null) {
 			headerData = (List < Object >) JSON.deserializeUntyped(header_data.csutil__value__c);
@@ -675,10 +692,15 @@ global with sharing class FrameRateManagerController {
 			categorizationData = (List < Object >) JSON.deserializeUntyped(categorization_data.csutil__value__c);
 		}
 
+		if (custom_tabs != null && custom_tabs.csutil__value__c != null) {
+			customTabs = (List < Object >) JSON.deserializeUntyped(custom_tabs.csutil__value__c);
+		}
+
 		count.put('commercialProductCount', cp_count);
 		count.put('frameAgreementsCount', fa_count);
 		count.put('account', acc);
 		count.put('HeaderData', headerData);
+		count.put('CustomTabsData', customTabs);
 		count.put('ButtonCustomData', buttonCustom);
 		count.put('ButtonStandardData', buttonStandard);
 		count.put('CategorizationData', categorizationData);

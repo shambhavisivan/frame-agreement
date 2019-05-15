@@ -769,6 +769,11 @@ const DiscLevels = [{
     "priceItemId": "a1F1t0000001JC8EAM"
 }];
 
+const CustomTabsData = [{
+    "label": "Custom tab",
+    "container_id": "customTab1",
+    "onEnter": "customTabEnter"
+}]
 const HeaderData = [{
         "field": "csconta__Agreement_Name__c",
         "readOnly": false,
@@ -916,19 +921,19 @@ const ButtonStandardData = {
 };
 
 /*
-    window.FAC.registerMethod("RedirectFunction", () => {
+    window.FAM.registerMethod("RedirectFunction", () => {
          return new Promise(resolve => {
              setTimeout(() => {resolve("https://stackoverflow.com/questions/503093/how-do-i-redirect-to-another-webpage")});
          });
     })
 
-    window.FAC.registerMethod("iFrameFunction", () => {
+    window.FAM.registerMethod("iFrameFunction", () => {
          return new Promise(resolve => {
              setTimeout(() => {resolve("http://localhost:8080/#/agreement")});
          });
     })
 
-    window.FAC.registerMethod("ActionFunction", () => {
+    window.FAM.registerMethod("ActionFunction", () => {
          return new Promise(resolve => {
              setTimeout(() => {resolve("ActionFunction called")});
          });
@@ -1265,6 +1270,7 @@ window.SF = SF = {
                     ButtonStandardData: ButtonStandardData,
                     CategorizationData: CategorizationData,
                     HeaderData: HeaderData,
+                    CustomTabsData: CustomTabsData,
                     account: { Id: "aaaa", Name: "aaaa" },
                     DiscLevels: DiscLevels,
                     AuthLevels: [{

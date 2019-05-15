@@ -10,6 +10,10 @@ class Tab extends React.Component {
 	handleTabClick(event) {
 		event.preventDefault();
 		this.props.onClick(this.props.tabIndex);
+
+		if (!this.props.isActive && this.props.hasOwnProperty('onEnter')) {
+			this.props.onEnter();
+		}
 	}
 
 	render() {

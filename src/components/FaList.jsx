@@ -8,6 +8,7 @@ import { withRouter } from 'react-router-dom';
 import {
 	createToast,
 	clearToasts,
+	registerMethod,
 	getFrameAgreements,
 	cloneFrameAgreement,
 	saveFrameAgreement,
@@ -34,6 +35,7 @@ class FaList extends Component {
 
 		window.FAM.api.toast = this.props.createToast;
 		window.FAM.api.clearToasts = this.props.clearToasts;
+		window.FAM.registerMethod = this.props.registerMethod;
 	}
 
 	componentWillUnmount() {
@@ -250,7 +252,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
 	createToast,
-	clearToasts,
+	createToast,
+	registerMethod,
 	getFrameAgreements,
 	saveFrameAgreement,
 	cloneFrameAgreement,

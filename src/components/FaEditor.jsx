@@ -50,6 +50,9 @@ import NegotiationModal from './modals/NegotiationModal';
 import { confirmAlert } from 'react-confirm-alert';
 import ConfirmationModal from './modals/ConfirmationModal';
 
+import Tabs from './utillity/tabs/Tabs';
+import Tab from './utillity/tabs/Tab';
+
 // Skeletons
 import CommercialProductSkeleton from './skeletons/CommercialProductSkeleton';
 
@@ -711,7 +714,7 @@ class FaEditor extends Component {
 								attachment: {
 									...this.state.activeFa._ui.attachment,
 									products: {
-										...this.state.activeFa._ui.attachment,
+										...this.state.activeFa._ui.attachment.products,
 										..._attachment
 									}
 								}
@@ -1143,17 +1146,17 @@ class FaEditor extends Component {
 		);
 	}
 	/**************************************************/
-	async callHandler(name, actionType) {
-		if (!this.props.handlers.hasOwnProperty(name)) {
+	async callHandler(handlerName, actionType) {
+		if (!this.props.handlers.hasOwnProperty(handlerName)) {
 			this.props.createToast(
 				'error',
 				window.SF.labels.toast_invalid_handler_title,
-				window.SF.labels.toast_invalid_handler + ' (' + name + ')'
+				window.SF.labels.toast_invalid_handler + ' (' + handlerName + ')'
 			);
 			return;
 		}
 
-		let result = await this.props.handlers[name]();
+		let result = await this.props.handlers[handlerName]();
 		switch (actionType) {
 			case 'action':
 				console.log(result);
@@ -1167,6 +1170,14 @@ class FaEditor extends Component {
 				break;
 			default:
 		}
+	}
+
+	async callTabHandler(handlerName, Id) {
+		let result = null;
+		if (handlerName && this.props.handlers.hasOwnProperty(handlerName)) {
+			result = await this.props.handlers[handlerName](Id);
+		}
+		return result;
 	}
 	/**************************************************/
 
@@ -1547,6 +1558,65 @@ class FaEditor extends Component {
 		}
 
 		// *******************************************************
+		// *can be standalone
+		let productsTab = (
+			<div className="card products-card">
+				{commercialProducts}
+				<Pagination
+					totalSize={this.getCommercialProductsCount()}
+					pageSize={this.state.pagination.pageSize}
+					page={this.state.pagination.page}
+					onPageSizeChange={newPageSize => {
+						this.setState({
+							pagination: {
+								...this.state.pagination,
+								page: 1,
+								pageSize: newPageSize
+							}
+						});
+					}}
+					onPageChange={newPage => {
+						this.setState({
+							pagination: { ...this.state.pagination, page: newPage }
+						});
+					}}
+				/>
+			</div>
+		);
+
+		let customTabs = '';
+
+		if (
+			this.state.loading.attachment &&
+			this.props.settings.CustomTabsData.length
+		) {
+			customTabs = (
+				<Tabs initial={0}>
+					<Tab label="Products">{productsTab}</Tab>
+
+					{this.props.settings.CustomTabsData.map(tab => {
+						return (
+							<Tab
+								key={'tab-' + tab.container_id}
+								label={tab.label}
+								onEnter={() => {
+									this.callTabHandler(tab.onEnter, tab.container_id);
+								}}
+							>
+								<div
+									key={tab.container_id}
+									className="card products-card"
+									id={tab.container_id}
+								/>
+							</Tab>
+						);
+					})}
+				</Tabs>
+			);
+		} else {
+			customTabs = productsTab;
+		}
+		// *******************************************************
 
 		return (
 			<div className="fa-app">
@@ -1641,28 +1711,8 @@ class FaEditor extends Component {
 							''
 						)}
 						{approvalHistory}
-						<div className="card products-card">
-							{commercialProducts}
-							<Pagination
-								totalSize={this.getCommercialProductsCount()}
-								pageSize={this.state.pagination.pageSize}
-								page={this.state.pagination.page}
-								onPageSizeChange={newPageSize => {
-									this.setState({
-										pagination: {
-											...this.state.pagination,
-											page: 1,
-											pageSize: newPageSize
-										}
-									});
-								}}
-								onPageChange={newPage => {
-									this.setState({
-										pagination: { ...this.state.pagination, page: newPage }
-									});
-								}}
-							/>
-						</div>
+						{customTabs}
+
 						{productModal}
 						{negotiateModal}
 					</div>

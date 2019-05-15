@@ -16,7 +16,7 @@
 		.table-list-header {
 			@include sbg(--table-header-bg);
 			@include css4 {
-				border-top: 1px solid cvar(--table-row-br);
+				border-top: 1px solid cvar(--table-br);
 			}
 
 			.list-cell {

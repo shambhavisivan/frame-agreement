@@ -3,6 +3,7 @@ import Modal from 'react-responsive-modal';
 import { connect } from 'react-redux';
 
 import InputSearch from './InputSearch';
+import Icon from '../Icon';
 
 import Pagination from '../Pagination';
 import { truncateCPField, decodeEntities } from '../../../utils/shared-service';
@@ -297,24 +298,30 @@ class Lookup extends React.Component {
 		return (
 			<div className="input-group">
 				<input
+					className="fa-lookup fa-input-border"
 					type="text"
 					placeholder="No record selected"
 					aria-describedby=""
 					readOnly={true}
+					onClick={this.onOpenLookupModal}
 					value={
 						this.state.loadedInput
 							? decodeEntities(this.state.recordLabel)
 							: '-'
 					}
-				/>
-				<button
-					className="fa-btn fa-button-brand"
-					onClick={this.onOpenLookupModal}
-					disabled={!this.state.loadedInput}
-				>
-					Choose
-				</button>
 
+				/>
+				<div
+					className="fa-lookup-icon"
+					onClick={this.onOpenLookupModal}
+				>
+					<Icon
+						svg-class="icon-search"
+						name="search"
+						width="14"
+						height="14"
+					/>
+				</div>
 				<Modal
 					classNames={{
 						overlay: 'overlay',

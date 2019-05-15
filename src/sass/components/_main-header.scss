@@ -56,6 +56,10 @@
 				.fa-main-header__search {
 					display: flex;
 					flex: 1;
+
+					button {
+						margin-left: 0.5rem;
+					}
 				}
 			}
 		}

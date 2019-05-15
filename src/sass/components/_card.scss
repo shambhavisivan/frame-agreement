@@ -59,7 +59,8 @@
 					> textarea {
 						min-width: 100%;
 						max-width: 100%;
-						min-height: 4.25rem !important;
+						min-height: 2rem;
+						height: 2rem;
 						overflow: auto;
 						padding: 0.25rem 0 0;
 					}
@@ -79,7 +80,51 @@
 
 						&:focus {
 							@include css4 {
-								border-bottom: 1px solid cvar(--input-hover);
+								border-bottom: 1px solid cvar(--input-hover-br);
+							}
+						}
+					}
+
+					.input-group {
+						flex: 1;
+						display: flex;
+
+
+						.fa-lookup {
+							flex: 1;
+							cursor: pointer;
+							@include css4 {
+								border-bottom: 1px solid cvar(--main-br);
+							}
+
+							&:focus,
+							&:focus + .fa-lookup-icon {
+								@include css4 {
+									border-bottom: 1px solid cvar(--input-hover-br);
+								}
+							}
+						}
+
+						.fa-lookup-icon {
+							display: flex;
+							align-items: center;
+							background: none;
+							border: none;
+							cursor: pointer;
+							@include css4 {
+								border-bottom: 1px solid cvar(--main-br);
+							}
+
+							svg {
+								@include css4 {
+									fill: cvar(--card-icon-bg);
+								}
+							}
+
+							&:focus {
+								outline: none;
+								border: none;
+								box-shadow: none;
 							}
 						}
 					}

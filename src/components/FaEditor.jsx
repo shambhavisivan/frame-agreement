@@ -25,11 +25,12 @@ import {
 	createNewVersionOfFrameAgrement
 } from '../actions';
 
+import { publish } from '../api';
+
 import { truncateCPField } from '../utils/shared-service';
 
-import FaSidebar from './FaSidebar';
-import CommercialProduct from './negotiation/CommercialProduct';
 import ApprovalProcess from './ApprovalProcess';
+import CommercialProduct from './negotiation/CommercialProduct';
 
 import Toaster from './utillity/Toaster';
 import Header from './utillity/Header';
@@ -63,8 +64,6 @@ import {
 	validateRateCardLines
 } from './negotiation/Validation';
 
-import { publish } from '../api';
-
 window.activeFa = {};
 window.editor = {};
 
@@ -80,7 +79,10 @@ class FrameAgreement {
 				listProcess: []
 			},
 			commercialProducts: [],
-			attachment: {}
+			attachment: {
+				custom: '',
+				products: {}
+			}
 		};
 	}
 }
@@ -279,7 +281,7 @@ class FaEditor extends Component {
 						},
 						activeFa: {
 							...this.state.activeFa,
-							_ui: { ...this.state.activeFa._ui, attachment: {} }
+							_ui: { ...this.state.activeFa._ui, attachment: resp_attachment }
 						}
 					});
 				}
@@ -465,8 +467,6 @@ class FaEditor extends Component {
 			item => item.recurring !== null || item.oneOff !== null
 		);
 
-		console.log(structure);
-
 		// Create pricing rule group, pricing rule and association between them. Return pricing rule id to be used in next stage
 		const PR_ID = await this.props.createPricingRuleGroup(
 			this.state.activeFa.Id
@@ -585,7 +585,6 @@ class FaEditor extends Component {
 	}
 	/**************************************************/
 	onOpenNegotiationModal() {
-		console.log(this.state.selectedProducts);
 		if (this.state.activeFa.Id) {
 			this.setState({ negotiateModal: true });
 		}
@@ -686,7 +685,6 @@ class FaEditor extends Component {
 					});
 				}
 			});
-			console.log(_att);
 			return _att;
 		}
 
@@ -1200,8 +1198,10 @@ class FaEditor extends Component {
 				)
 			])
 				.then(async responseArr => {
-					this.setState({ actionTaken: false });
-					await this.refreshFa();
+					this.setState({
+						actionTaken: false,
+						activeFa: { ...this.state.activeFa, ...responseArr[0] }
+					});
 					return responseArr;
 				})
 				.then(async responseArr => {

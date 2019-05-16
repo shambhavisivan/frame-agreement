@@ -135,20 +135,20 @@ window.mandatory = function mandatory(funName) {
 //   }
 // ]
 
-subscribe('onLoad', data => {
-	return new Promise(resolve => {
-		window.FAM.registerMethod('customTabEnter', id => {
-			return new Promise(resolve => {
-				setTimeout(() => {
-					// ****************************
-					console.log('Entered tab with id:' + id);
-					document.getElementById(id).innerHTML =
-						'<h1>Some Title</h1><span>test</span>';
-					// ****************************
-					resolve();
-				});
-			});
-		});
-		resolve(data);
-	});
-});
+// subscribe('onLoad', data => {
+// 	return new Promise(resolve => {
+// 		window.FAM.registerMethod('customTabEnter', id => {
+// 			return new Promise(resolve => {
+// 				setTimeout(() => {
+// 					// ****************************
+// 					console.log('Entered tab with id:' + id);
+// 					document.getElementById(id).innerHTML =
+// 						'<h1>Some Title</h1><span>test</span>';
+// 					// ****************************
+// 					resolve();
+// 				});
+// 			});
+// 		});
+// 		resolve(data);
+// 	});
+// });

@@ -309,18 +309,9 @@ class Lookup extends React.Component {
 							? decodeEntities(this.state.recordLabel)
 							: '-'
 					}
-
 				/>
-				<div
-					className="fa-lookup-icon"
-					onClick={this.onOpenLookupModal}
-				>
-					<Icon
-						svg-class="icon-search"
-						name="search"
-						width="14"
-						height="14"
-					/>
+				<div className="fa-lookup-icon" onClick={this.onOpenLookupModal}>
+					<Icon svg-class="icon-search" name="search" width="14" height="14" />
 				</div>
 				<Modal
 					classNames={{

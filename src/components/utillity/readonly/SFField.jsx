@@ -12,18 +12,9 @@ class SFField extends Component {
 		super(props);
 
 		this.onChange = this.onChange.bind(this);
-
-		// this.props.editable
-
-		this.state = {
-			value: this.props.value
-		};
 	}
 
 	onChange(value) {
-		this.setState({
-			value: value
-		});
 		this.props.onChange(this.props.field.field, value);
 	}
 
@@ -33,7 +24,7 @@ class SFField extends Component {
 			field = (
 				<SFDatePicker
 					disabled={!this.props.editable}
-					initialDate={this.state.value}
+					initialDate={this.props.value}
 					onDateChange={this.onChange}
 					placeholderText="Enter date from"
 				/>
@@ -50,7 +41,7 @@ class SFField extends Component {
 					onBlur={() => {
 						this.setState({ edit: false });
 					}}
-					value={this.state.value}
+					value={this.props.value}
 				/>
 			);
 		} else if (this.props.field.type === 'boolean') {
@@ -58,7 +49,7 @@ class SFField extends Component {
 				<Toggle
 					onChange={this.onChange}
 					disabled={!this.props.editable}
-					value={this.state.value}
+					value={this.props.value}
 				/>
 			);
 		} else if (this.props.field.type === 'textarea') {
@@ -69,7 +60,15 @@ class SFField extends Component {
 					onBlur={() => {
 						this.setState({ edit: false });
 					}}
-					value={this.state.value}
+					value={this.props.value}
+				/>
+			);
+		} else if (this.props.field.type === 'formula') {
+			field = (
+				<InputText
+					disabled={true}
+					onChange={this.onChange}
+					value={this.props.value}
 				/>
 			);
 		} else if (this.props.field.type === 'lookup') {
@@ -91,7 +90,7 @@ class SFField extends Component {
 					field={this.props.field.field}
 					columns={this.props.field.lookupData.columns}
 					filter={this.props.field.lookupData.whereClause}
-					value={this.state.value}
+					value={this.props.value}
 				/>
 			);
 		}

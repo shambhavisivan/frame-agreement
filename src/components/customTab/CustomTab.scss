@@ -1,0 +1,52 @@
+#dynamic-group-tab {
+    .commercial-product-description {
+        display: flex;
+        align-items: center;
+
+        span {
+            font-size: 13px;
+            margin-right: 10px;
+        }
+
+        pre {
+
+            white-space: pre-wrap;
+            background-color: #eff0f1;
+            color: #393318;
+            border-radius: 3px;
+            font-size: 13px;
+            padding: 3px 6px;
+            border: 1px solid #e4e6e8;
+        }
+    }
+
+    .dg-select {
+        width: 100%;
+    }
+
+    .container__checkbox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .dynamic-group-description {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 1.5rem 0.5rem 1.5rem;
+
+        &>div {
+            min-width: 200px;
+        }
+
+        select {
+            width: 80%;
+        }
+
+        label {
+            display: block;
+        }
+    }
+}

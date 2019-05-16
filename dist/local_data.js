@@ -6,7 +6,7 @@ function createPromise(result, timeout = 500) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(result);
-        }, timeout);
+        }, 10);
     });
 }
 

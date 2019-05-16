@@ -213,7 +213,9 @@ class ApprovalProcess extends React.Component {
 									onClick={() => this.approvalAction('Reject')}
 								>
 									<Icon name="dislike" height="14" width="14" />
-									<span className="fa-padding-left-xsm">{window.SF.labels.approval_action_reject}</span>
+									<span className="fa-padding-left-xsm">
+										{window.SF.labels.approval_action_reject}
+									</span>
 								</button>
 							)}
 						</div>
@@ -222,22 +224,42 @@ class ApprovalProcess extends React.Component {
 				{this.state.open && (
 					<div className="approval-table-list-container">
 						<div className="table-list-header">
-							<div className="list-cell" title={window.SF.labels.approval_table_header_action}>
+							<div
+								className="list-cell"
+								title={window.SF.labels.approval_table_header_action}
+							>
 								<span>{window.SF.labels.approval_table_header_action}</span>
 							</div>
-							<div className="list-cell" title={window.SF.labels.approval_table_header_date}>
+							<div
+								className="list-cell"
+								title={window.SF.labels.approval_table_header_date}
+							>
 								<span>{window.SF.labels.approval_table_header_date}</span>
 							</div>
-							<div className="list-cell" title={window.SF.labels.approval_table_header_status}>
+							<div
+								className="list-cell"
+								title={window.SF.labels.approval_table_header_status}
+							>
 								<span>{window.SF.labels.approval_table_header_status}</span>
 							</div>
-							<div className="list-cell" title={window.SF.labels.approval_table_header_assignedTo}>
+							<div
+								className="list-cell"
+								title={window.SF.labels.approval_table_header_assignedTo}
+							>
 								<span>{window.SF.labels.approval_table_header_assignedTo}</span>
 							</div>
-							<div className="list-cell" title={window.SF.labels.approval_table_header_actualApprover}>
-								<span>{window.SF.labels.approval_table_header_actualApprover}</span>
+							<div
+								className="list-cell"
+								title={window.SF.labels.approval_table_header_actualApprover}
+							>
+								<span>
+									{window.SF.labels.approval_table_header_actualApprover}
+								</span>
 							</div>
-							<div className="list-cell" title={window.SF.labels.approval_table_header_comments}>
+							<div
+								className="list-cell"
+								title={window.SF.labels.approval_table_header_comments}
+							>
 								<span>{window.SF.labels.approval_table_header_comments}</span>
 							</div>
 						</div>
@@ -247,20 +269,52 @@ class ApprovalProcess extends React.Component {
 									{process.StepsAndWorkitems.map((step, i) => {
 										return (
 											<li key={'approvalStep' + i} className="list-row">
-												<div className="list-cell" title={(step.ProcessNode && step.ProcessNode.Name) || 'Approval Request Submitted '}>
-													<span>{(step.ProcessNode && step.ProcessNode.Name) || 'Approval Request Submitted '}</span>
+												<div
+													className="list-cell"
+													title={
+														(step.ProcessNode && step.ProcessNode.Name) ||
+														'Approval Request Submitted '
+													}
+												>
+													<span>
+														{(step.ProcessNode && step.ProcessNode.Name) ||
+															'Approval Request Submitted '}
+													</span>
 												</div>
-												<div className="list-cell" title={moment(step.CreatedDate).format('MM/D/YYYY, HH:mm')}>
-													<span>{moment(step.CreatedDate).format('MM/D/YYYY, HH:mm')}</span>
+												<div
+													className="list-cell"
+													title={moment(step.CreatedDate).format(
+														'MM/D/YYYY, HH:mm'
+													)}
+												>
+													<span>
+														{moment(step.CreatedDate).format(
+															'MM/D/YYYY, HH:mm'
+														)}
+													</span>
 												</div>
-												<div className="list-cell" title={'status ' + step.StepStatus}>{step.StepStatus}>
-													<span className={'status ' + step.StepStatus}>{step.StepStatus}</span>
+												<div
+													className="list-cell"
+													title={'status ' + step.StepStatus}
+												>
+													{step.StepStatus}>
+													<span className={'status ' + step.StepStatus}>
+														{step.StepStatus}
+													</span>
 												</div>
-												<div className="list-cell" title={step.Actor && step.Actor.Name}>
+												<div
+													className="list-cell"
+													title={step.Actor && step.Actor.Name}
+												>
 													<span>{step.Actor && step.Actor.Name}</span>
 												</div>
-												<div className="list-cell" title={step.OriginalActor && step.OriginalActor.Name}>
-													<span>{step.OriginalActor && step.OriginalActor.Name}</span>
+												<div
+													className="list-cell"
+													title={step.OriginalActor && step.OriginalActor.Name}
+												>
+													<span>
+														{step.OriginalActor && step.OriginalActor.Name}
+													</span>
 												</div>
 												<div className="list-cell" title={step.Comments}>
 													<span>{step.Comments || '-/-'}</span>

@@ -441,6 +441,14 @@ export function getAttachment(priceItemId) {
 						// No attachment
 						response = {};
 					}
+
+					if (!response.hasOwnProperty('custom')) {
+						let _attachment = {};
+						_attachment.products = JSON.parse(JSON.stringify(response));
+						_attachment.custom = '';
+						response = _attachment;
+					}
+
 					dispatch(recieveGetAttachment(priceItemId, response));
 					resolve(response);
 					return response;

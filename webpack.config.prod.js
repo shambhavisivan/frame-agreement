@@ -2,7 +2,10 @@ const webpack = require('webpack');
 // var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.js',
+    entry: {
+        bundle: './src/index.js',
+        CustomTab: './src/components/customTab/CustomTab.js'
+    },
     // devtool: 'eval-source-map',
     module: {
         rules: [{
@@ -54,7 +57,7 @@ module.exports = {
     output: {
         path: __dirname + '/dist',
         publicPath: '/',
-        filename: 'bundle.js'
+        filename: '[name].js',
     },
     plugins: [
         // new webpack.DefinePlugin({

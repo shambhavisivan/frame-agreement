@@ -1258,6 +1258,9 @@ global with sharing class FrameRateManagerController {
 
 			if (dataMap.get(key) == null) {
 				fa.put(key, null);
+			} else if (fieldMap.get(key).getDescribe().isCalculated()) {
+				// fa.put(key, dataMap.get(key));
+				// formula, do not update
 			} else if (dataType == 'Date') {
 				DateTime a = DateTime.newInstance((Long) dataMap.get(key));
 				Date dateConvert = Date.newinstance(a.year(), a.month(), a.day());
@@ -1265,9 +1268,8 @@ global with sharing class FrameRateManagerController {
 			} else if (dataType == 'Datetime') {
 				DateTime a = DateTime.newInstance((Long) dataMap.get(key));
 				fa.put(key, a);
-				// } else if (dataType == 'Integer') {
-				//     fa.put(key, dataMap.get(key));
-				// } else if (dataType == 'String') {
+			}
+				//else if (dataType == 'String') {
 				//     fa.put(key, dataMap.get(key));
 				// } else if (dataType == 'Long') {
 				//     fa.put(key, dataMap.get(key));
@@ -1295,7 +1297,7 @@ global with sharing class FrameRateManagerController {
 			update fa;
 		}
 
-		return fa;
+		return getFrameAgreement(fa.Id);
 	}
 
 	@RemoteAction

@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
+import { DebounceInput } from 'react-debounce-input';
 
 class InputText extends React.Component {
 	constructor(props) {
 		super(props);
 		this.onTextChange = this.onTextChange.bind(this);
-		this.state = {
-			value: this.props.value
-		};
 	}
 
 	onTextChange(event) {
@@ -14,24 +12,23 @@ class InputText extends React.Component {
 		if (event.target.type === 'number') {
 			value = +value;
 		}
-		this.setState({
-			value: value
-		});
 		this.props.onChange(value);
 	}
 
 	render() {
 		return (
-			<input
+			<DebounceInput
+				minLength={1}
 				disabled={this.props.disabled}
-				spellCheck="false"
 				placeholder={
 					window.SF.labels.util_input_text_enter + ' ' + this.props.type
 				}
+				debounceTimeout={200}
+				spellCheck="false"
 				className="fa-input-border"
 				type={this.props.type}
 				onChange={this.onTextChange}
-				value={this.state.value}
+				value={this.props.value}
 			/>
 		);
 	}

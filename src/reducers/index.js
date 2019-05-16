@@ -683,7 +683,7 @@ const rootReducer = (state = initialState, action) => {
 
 		case 'RECIEVE_GET_ATTACHMENT':
 			var priceItemId = action.payload.priceItemId;
-			var attachment = action.payload.data;
+			var attachment = action.payload.data || {};
 
 			return {
 				...state,

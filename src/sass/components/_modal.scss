@@ -85,6 +85,7 @@
 }
 
 .fa-modal-body.fa-product-modal {
+	padding: 0;
 	@include sbg(--modal-light-bg);
 }
 
@@ -133,9 +134,11 @@
 	width: 100%;
 	display: flex;
 	padding-bottom: 1rem;
+	padding: 1rem 1rem 0.5rem;
+	align-items: center;
 
 	.fa-modal-body.panel-open & {
-		padding: 1rem 0.5rem 0.5rem 0.5rem;
+		padding: 1rem 0.5rem 0.5rem;
 	}
 
 	.search-container {
@@ -199,13 +202,10 @@
 	display: flex;
 	justify-content: space-between;
 	height: 1.75rem;
+	padding: 0 1rem;
 	@include sc(--modal-dark-c);
 	@include css4 {
 		border-bottom: 1px solid cvar(--modal-br);
-	}
-
-	.fa-modal-body.panel-open & {
-		padding: 0 1rem;
 	}
 
 	.header-th {
@@ -220,11 +220,7 @@
 	max-height: 20rem;
 	overflow-y: auto;
 	flex: 1;
-	padding-top: 1rem;
-
-	.fa-modal-body.panel-open & {
-		padding: 1rem;
-	}
+	padding: 1rem;
 
 	> .product-row {
 		height: 1.75rem;
@@ -368,16 +364,13 @@
 		cursor: pointer;
 		height: 1.875rem;
 		padding-left: 1rem;
-	}
+		margin-bottom: calc(0.5rem + 1px);
 
-	.panel-navigation--close > span {
-		font-size: 0.8125rem;
-		padding-left: 0.5rem;
-		@include sc(--modal-primary-c);
-	}
-
-	.fa-modal-product-list-header {
-		height: 2.45rem;
+		> span {
+			font-size: 0.8125rem;
+			padding-left: 0.5rem;
+			@include sc(--modal-primary-c);
+		}
 	}
 }
 

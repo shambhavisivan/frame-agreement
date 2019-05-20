@@ -33,33 +33,35 @@
 	flex: 2;
 	position: relative;
 	margin-right: 1rem;
-}
 
-.fa-input-search-border-bottom .fa-input {
-	border: 0;
-	border-radius: 0;
-	@include css4 {
-		border-bottom: 1px solid cvar(--input-br);
+	.fa-input {
+		border: none;
 	}
 
 	> .icon-search {
-		bottom: 50%;
 		left: 0.5rem;
+		top: 25%;
 		pointer-events: none;
 		position: absolute;
-		transform: translateY(50%);
 	}
 
-	> .icon-close	{
-		bottom: 50%;
-		right: 1rem;
+	> .icon-close {
+		bottom: 25%;
+		right: 0.5rem;
 		position: absolute;
-		transform: translateY(50%);
 		cursor: pointer;
 	}
 
 	&:focus {
 		border-radius: 0.25rem;
+	}
+}
+
+.fa-input-search-border-bottom {
+	border: 0;
+	border-radius: 0;
+	@include css4 {
+		border-bottom: 1px solid cvar(--input-br);
 	}
 }
 

@@ -1,5 +1,10 @@
 .fa-tab-group {
+	border-radius: 0.25rem 0.25rem 0 0;
 	padding: 0 0.75rem;
+	@include sbg(--tab-bg);
+	@include css4 {
+		border-bottom: 1px solid cvar(--table-br);
+	}
 
 	.fa-tabs-primary {
 		display: flex;
@@ -73,5 +78,23 @@
 				}
 			}
 		}
+	}
+}
+
+.fa-tab-content > .table-container .table-list-header {
+	border-top: none;
+}
+
+.fa-tab-content > .card {
+	border-radius: 0 0 0.25rem 0.25rem;
+
+	.products-card__inner .products-card__header {
+		border-radius: 0;
+	}
+}
+
+.fa-main-body__inner > .fa-tab-group-wrapper > .fa-tab-group {
+	@include css4 {
+		box-shadow: 0 1px 2px 0 cvar(--shadow-opaque);
 	}
 }

@@ -27,7 +27,11 @@ import {
 
 import { publish } from '../api';
 
-import { truncateCPField } from '../utils/shared-service';
+import {
+	truncateCPField,
+	organizeHeaderFields,
+	log
+} from '../utils/shared-service';
 
 import ApprovalProcess from './ApprovalProcess';
 import CommercialProduct from './negotiation/CommercialProduct';
@@ -36,10 +40,10 @@ import Toaster from './utillity/Toaster';
 import Header from './utillity/Header';
 import Pagination from './utillity/Pagination';
 import Icon from './utillity/Icon';
+import SFField from './utillity/SFField';
 import CustomButtonDropdown from './utillity/CustomButtonDropdown';
 
 import SFDatePicker from './utillity/datepicker/SFDatePicker';
-import SFField from './utillity/readonly/SFField';
 import InputSearch from './utillity/inputs/InputSearch';
 import Checkbox from './utillity/inputs/Checkbox';
 import DropdownCheckbox from './utillity/inputs/DropdownCheckbox';
@@ -54,6 +58,9 @@ import ConfirmationModal from './modals/ConfirmationModal';
 import Tabs from './utillity/tabs/Tabs';
 import Tab from './utillity/tabs/Tab';
 
+import AddProductCTA from './FaEditor/AddProductCTA';
+import FaFooter from './FaEditor/FaFooter';
+
 // Skeletons
 import CommercialProductSkeleton from './skeletons/CommercialProductSkeleton';
 
@@ -64,7 +71,6 @@ import {
 	validateRateCardLines
 } from './negotiation/Validation';
 
-window.activeFa = {};
 window.editor = {};
 
 class FrameAgreement {
@@ -116,7 +122,7 @@ class FaEditor extends Component {
 			this
 		);
 
-		// API
+		// ****************************************** API ******************************************
 		window.FAM.registerMethod = this.props.registerMethod;
 		window.FAM.api.performAction = this.props.performAction;
 
@@ -166,6 +172,8 @@ class FaEditor extends Component {
 			});
 		};
 
+		// ****************************************** API END ******************************************
+
 		this.faId = this.props.match.params.id || null;
 		let _frameAgreement;
 
@@ -196,6 +204,7 @@ class FaEditor extends Component {
 			selectedProducts: {},
 			loadingProducts: [],
 			openCommercialProduct: '',
+			headerRows: [],
 			loading: {
 				attachment: false
 			},
@@ -204,14 +213,6 @@ class FaEditor extends Component {
 				pageSize: 10
 			}
 		};
-
-		this._chargeTypes = [
-			'_addons',
-			'_charges',
-			'_rateCards',
-			'_product',
-			'_volume'
-		];
 	}
 
 	componentWillUnmount() {
@@ -268,7 +269,11 @@ class FaEditor extends Component {
 										commercialProducts: _commercialProducts,
 										attachment: resp_attachment
 									}
-								}
+								},
+								headerRows: organizeHeaderFields(
+									this.props.settings.HeaderData,
+									this.state.activeFa
+								)
 							});
 						});
 					});
@@ -307,7 +312,11 @@ class FaEditor extends Component {
 							...this.state.activeFa._ui,
 							commercialProducts: _commercialProducts
 						}
-					}
+					},
+					headerRows: organizeHeaderFields(
+						this.props.settings.HeaderData,
+						this.state.activeFa
+					)
 				},
 				() => {
 					publish('onFaSelect', [this.state.activeFa]);
@@ -332,34 +341,11 @@ class FaEditor extends Component {
 				this.state.activeFa.csconta__Status__c
 			) || !this.state.activeFa.Id;
 		// **************************************
-
-		// Organize the header grid
-		var field_rows = [];
-		var row = [];
-		var row_grid_count = 0;
-
-		this.props.settings.HeaderData.forEach(f => {
-			if (row_grid_count + f.grid > 12) {
-				field_rows.push([...row]);
-				row = [];
-				row_grid_count = 0;
-			}
-			row_grid_count += f.grid;
-			row.push(f);
-		});
-
-		if (row.length) {
-			field_rows.push(row);
-		}
-		this.header_rows = field_rows;
-		// **************************************
-		window.activeFa = this.state.activeFa;
 		window.editor = this;
 	}
 
 	componentWillUpdate() {
 		try {
-			// Mostly for local
 			if (
 				this.editable !==
 					this.props.settings.FACSettings.fa_editable_statuses.has(
@@ -865,7 +851,11 @@ class FaEditor extends Component {
 	onFieldChange(field, value) {
 		this.setState({
 			actionTaken: true,
-			activeFa: { ...this.state.activeFa, [field]: value }
+			activeFa: { ...this.state.activeFa, [field]: value },
+			headerRows: organizeHeaderFields(this.props.settings.HeaderData, {
+				...this.state.activeFa,
+				[field]: value
+			})
 		});
 	}
 
@@ -875,7 +865,13 @@ class FaEditor extends Component {
 			let newFa = await this.props.getFrameAgreement(faId);
 			if (newFa) {
 				this.setState(
-					{ activeFa: { ...this.state.activeFa, ...newFa } },
+					{
+						activeFa: { ...this.state.activeFa, ...newFa },
+						headerRows: organizeHeaderFields(this.props.settings.HeaderData, {
+							...this.state.activeFa,
+							...newFa
+						})
+					},
 					() => {
 						resolve(newFa);
 					}
@@ -927,130 +923,178 @@ class FaEditor extends Component {
 
 	async _apiNegotiate(data = window.mandatory('negotiate()')) {
 		// {
-		// 	priceItemId: _______, (1)
-		// 	cpAddon: ___________, (2)
-		// 	addon: _____________, (3) X
-		// 	charge: ____________, (4)
-		// 	rateCard: __________, (5)
-		// 	rateCardLine: ______, (6)
-		// 	value: {              (7)
-		// 		recurring: _____,
-		// 		oneOff: ________
-		// 	},
-		// 	value: _____________  (8)
+		//  priceItemId: _______, (1)
+		//  cpAddon: ___________, (2)
+		//  addon: _____________, (3) X
+		//  charge: ____________, (4)
+		//  rateCard: __________, (5)
+		//  rateCardLine: ______, (6)
+		//  value: {              (7)
+		//    recurring: _____,
+		//    oneOff: ________
+		//  },
+		//  value: _____________  (8)
 		// }
 		// **************************
 		// Product (1,7)
 		// Addons (1,2,7) || (1,3,7)
 		// Charges (1,4,7)
 		// RateCard (1,5,6,8)
+		let self = this;
 		return new Promise(async (resolve, reject) => {
 			// ********************************** BASIC VALIDATION
-			let _attachment = this.state.activeFa._ui.attachment.products;
-			let cp = this.state.activeFa._ui.commercialProducts.find(
-				_cp => _cp.Id === data.priceItemId
-			);
+			let _attachment = self.state.activeFa._ui.attachment.products;
 
-			if (!cp) {
-				console.error(
-					'Cannot find commercial product with Id ' +
-						data.priceItemId +
-						' in active Frame Agreement!'
+			function negotiateData(dataObject) {
+				let cp = self.state.activeFa._ui.commercialProducts.find(
+					_cp => _cp.Id === dataObject.priceItemId
 				);
-				reject();
-				return;
-			}
-			if (!data.hasOwnProperty('value')) {
-				console.error('No value provided for negotiation!');
-				reject();
-				return;
-			}
-			// ********************************** Addons
-			if (data.hasOwnProperty('cpAddon')) {
-				if (data.value.hasOwnProperty('oneOff')) {
-					_attachment[data.priceItemId]._addons[data.cpAddon].oneOff =
-						data.value.oneOff;
-				}
-				if (data.value.hasOwnProperty('recurring')) {
-					_attachment[data.priceItemId]._addons[data.cpAddon].recurring =
-						data.value.recurring;
-				}
-			}
-			// ********************************* Charge
-			else if (data.hasOwnProperty('charge')) {
-				// Charge validation
-				let charge = cp._charges.find(_ch => _ch.Id === data.charge);
-				let type;
-				if (charge.chargeType === 'One-off Charge') {
-					type = 'oneOff';
-				}
-				if (charge.chargeType === 'Recurring Charge') {
-					type = 'recurring';
-				}
-				if (!data.value.hasOwnProperty(type)) {
+
+				if (!cp) {
 					console.error(
-						'Pricing element ' + charge.Id + ' has invalid charge type!'
+						'Cannot find commercial product with Id ' +
+							dataObject.priceItemId +
+							' in active Frame Agreement!'
 					);
 					reject();
 					return;
 				}
-
-				_attachment[data.priceItemId]._charges[data.charge][type] =
-					data.value[type];
-			}
-			// *********************************
-			else if (data.hasOwnProperty('rateCard')) {
-				// RCL
-				if (!data.hasOwnProperty('rateCardLine')) {
-					console.error('No rate card line Id provided!');
+				if (!dataObject.hasOwnProperty('value')) {
+					console.error('No value provided for negotiation!');
 					reject();
 					return;
 				}
-
-				if (typeof data.value !== 'number') {
-					console.error('Value for RCL not integer!');
-					reject();
-					return;
+				// ********************************** Addons
+				if (dataObject.hasOwnProperty('cpAddon')) {
+					if (dataObject.value.hasOwnProperty('oneOff')) {
+						_attachment[dataObject.priceItemId]._addons[
+							dataObject.cpAddon
+						].oneOff = dataObject.value.oneOff;
+					}
+					if (dataObject.value.hasOwnProperty('recurring')) {
+						_attachment[dataObject.priceItemId]._addons[
+							dataObject.cpAddon
+						].recurring = dataObject.value.recurring;
+					}
 				}
+				// ********************************* Charge
+				else if (dataObject.hasOwnProperty('charge')) {
+					// Charge validation
+					let charge = cp._charges.find(_ch => _ch.Id === dataObject.charge);
+					let type;
+					if (charge.chargeType === 'One-off Charge') {
+						type = 'oneOff';
+					}
+					if (charge.chargeType === 'Recurring Charge') {
+						type = 'recurring';
+					}
+					if (!dataObject.value.hasOwnProperty(type)) {
+						console.error(
+							'Pricing element ' + charge.Id + ' has invalid charge type!'
+						);
+						reject();
+						return;
+					}
 
-				_attachment[data.priceItemId]._rateCards[data.rateCard][
-					data.rateCardLine
-				] = data.value;
+					_attachment[dataObject.priceItemId]._charges[dataObject.charge][
+						type
+					] = dataObject.value[type];
+				}
+				// *********************************
+				else if (dataObject.hasOwnProperty('rateCard')) {
+					// RCL
+					if (!dataObject.hasOwnProperty('rateCardLine')) {
+						console.error('No rate card line Id provided!');
+						reject();
+						return;
+					}
+
+					if (typeof dataObject.value !== 'number') {
+						console.error('Value for RCL not integer!');
+						reject();
+						return;
+					}
+
+					_attachment[dataObject.priceItemId]._rateCards[dataObject.rateCard][
+						dataObject.rateCardLine
+					] = dataObject.value;
+				}
+				// *********************************
+				else {
+					// Product negotiation
+					_attachment[dataObject.priceItemId]._product = {
+						..._attachment[dataObject.priceItemId]._product,
+						...dataObject.value
+					};
+				}
+				// *********************************
 			}
-			// *********************************
-			else {
-				// Product negotiation
-				_attachment[data.priceItemId]._product = {
-					..._attachment[data.priceItemId]._product,
-					...data.value
-				};
+
+			if (Array.isArray(data)) {
+				data.forEach(negotiateData);
+			} else {
+				negotiateData(data);
 			}
-			// *********************************
 
 			_attachment = await publish('onBeforeNegotiate', _attachment);
 
-			this.setState(
+			self.setState(
 				{
 					actionTaken: true,
 					activeFa: {
-						...this.state.activeFa,
+						...self.state.activeFa,
 						_ui: {
-							...this.state.activeFa._ui,
+							...self.state.activeFa._ui,
 							attachment: {
-								...this.state.activeFa._ui.attachment,
+								...self.state.activeFa._ui.attachment,
 								products: _attachment
 							}
 						}
 					}
 				},
 				async () => {
-					publish('onAfterNegotiate', this.state.activeFa._ui.attachment);
-					resolve(this.state.activeFa._ui.attachment);
+					publish('onAfterNegotiate', self.state.activeFa._ui.attachment);
+					self.validateActiveFa();
+					resolve(self.state.activeFa._ui.attachment);
 				}
 			);
 		});
 	}
 
+	/**************************************************/
+	validateActiveFa() {
+		let attachment = this.state.activeFa._ui.attachment.products;
+
+		let bulkValidation = {};
+
+		this.state.activeFa._ui.commercialProducts.forEach(cp => {
+			bulkValidation[cp.Id] = {
+				addons: validateAddons(cp._addons, attachment[cp.Id]._addons || {}),
+				rated: validateRateCardLines(
+					cp._rateCards,
+					attachment[cp.Id]._rateCards || {}
+				),
+				charges: validateCharges(
+					cp._charges,
+					cp.cspmb__Authorization_Level__c,
+					attachment[cp.Id]._charges || {}
+				)
+			};
+
+			if (attachment[cp.Id].hasOwnProperty('_product')) {
+				bulkValidation[cp.Id].product = validateProduct({
+					oneOff: cp.cspmb__One_Off_Charge__c,
+					negotiatedOneOff: attachment[cp.Id]._product.oneOff,
+					recurring: cp.cspmb__Recurring_Charge__c,
+					negotiatedRecurring: attachment[cp.Id]._product.recurring,
+					authLevel: cp.cspmb__Authorization_Level__c || null,
+					Name: cp.Name
+				});
+			}
+		});
+
+		this.props.setValidation(bulkValidation);
+	}
 	/**************************************************/
 
 	async onBulkNegotiate(data) {
@@ -1099,35 +1143,7 @@ class FaEditor extends Component {
 				}
 			},
 			() => {
-				let attachment = this.state.activeFa._ui.attachment.products;
-
-				let bulkValidation = {};
-
-				Object.values(this.state.selectedProducts).forEach(cp => {
-					bulkValidation[cp.Id] = {
-						addons: validateAddons(cp._addons, attachment[cp.Id]._addons || {}),
-						rated: validateRateCardLines(
-							cp._rateCards,
-							attachment[cp.Id]._rateCards || {}
-						),
-						charges: validateCharges(
-							cp._charges,
-							cp.cspmb__Authorization_Level__c,
-							attachment[cp.Id]._charges || {}
-						)
-					};
-
-					if (attachment[cp.Id].hasOwnProperty('_product')) {
-						bulkValidation[cp.Id].product = validateProduct({
-							oneOff: cp.cspmb__One_Off_Charge__c,
-							negotiatedOneOff: attachment[cp.Id]._product.oneOff,
-							recurring: cp.cspmb__Recurring_Charge__c,
-							negotiatedRecurring: attachment[cp.Id]._product.recurring,
-							authLevel: cp.cspmb__Authorization_Level__c || null,
-							Name: cp.Name
-						});
-					}
-				});
+				this.validateActiveFa();
 
 				this.props.setValidation(bulkValidation);
 
@@ -1200,7 +1216,11 @@ class FaEditor extends Component {
 				.then(async responseArr => {
 					this.setState({
 						actionTaken: false,
-						activeFa: { ...this.state.activeFa, ...responseArr[0] }
+						activeFa: { ...this.state.activeFa, ...responseArr[0] },
+						headerRows: organizeHeaderFields(this.props.settings.HeaderData, {
+							...this.state.activeFa,
+							...responseArr[0]
+						})
 					});
 					return responseArr;
 				})
@@ -1242,122 +1262,6 @@ class FaEditor extends Component {
 	// <SFDatePicker editable={this.editable} initialDate={true} onDateChange={this.onDateChange} labelText="Effective date from" placeholderText="Enter date from"/>
 
 	render() {
-		// *******************************************************
-		// Add product call to action
-		let addProductCTA = '';
-		if (!this.state.activeFa._ui.commercialProducts.length) {
-			addProductCTA = (
-				<div className="add-product-box">
-					<span className="box-header-1">There are no Products in here</span>
-					{(() => {
-						if (!this.state.activeFa.Id) {
-							return (
-								<span className="box-header-2">
-									{window.SF.labels.save_fa_message}
-								</span>
-							);
-						} else {
-							return (
-								<span className="box-header-2">
-									{window.SF.labels.save_fa_products_message}
-								</span>
-							);
-						}
-					})()}
-					<div className="box-button-container">
-						<button
-							className="fa-button fa-button--brand"
-							onClick={this.onOpenCommercialProductModal}
-							disabled={!this.state.activeFa.Id}
-						>
-							{window.SF.labels.btn_AddProducts}
-						</button>
-					</div>
-				</div>
-			);
-		}
-		// *******************************************************
-		let customButtonFooterComponent = '';
-
-		let customButtonsFooter = this.props.settings.ButtonCustomData.filter(
-			btnObj =>
-				!btnObj.hidden.has(this.state.activeFa.csconta__Status__c) &&
-				btnObj.location === 'Footer'
-		);
-
-		customButtonFooterComponent = (
-			<React.Fragment>
-				{customButtonsFooter.map((btnObj, i) => {
-					return (
-						<button
-							key={btnObj.id + i}
-							id={btnObj.id}
-							className="fa-button fa-button--default"
-							onClick={() => {
-								this.callHandler(btnObj.method, btnObj.type);
-							}}
-						>
-							<Icon name="salesforce1" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">{btnObj.label}</span>
-						</button>
-					);
-				})}
-			</React.Fragment>
-		);
-
-		// *******************************************************
-		let footer = '';
-		if (this.state.activeFa._ui.commercialProducts.length) {
-			footer = (
-				<div className="fa-main-footer">
-					{this.props.settings.ButtonStandardData.AddProducts.has(
-						this.state.activeFa.csconta__Status__c
-					) && (
-						<button
-							className="fa-button fa-button--default"
-							onClick={this.onOpenCommercialProductModal}
-						>
-							<Icon name="add" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">
-								{window.SF.labels.btn_AddProducts}
-							</span>
-						</button>
-					)}
-
-					{this.props.settings.ButtonStandardData.BulkNegotiate.has(
-						this.state.activeFa.csconta__Status__c
-					) && (
-						<button
-							disabled={!Object.keys(this.state.selectedProducts).length}
-							className="fa-button fa-button--default"
-							onClick={this.onOpenNegotiationModal}
-						>
-							<Icon name="user" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">
-								{window.SF.labels.btn_BulkNegotiate}
-							</span>
-						</button>
-					)}
-
-					{this.props.settings.ButtonStandardData.DeleteProducts.has(
-						this.state.activeFa.csconta__Status__c
-					) && (
-						<button
-							disabled={!Object.keys(this.state.selectedProducts).length}
-							className="fa-button fa-button--default"
-							onClick={this.onRemoveProducts}
-						>
-							<Icon name="delete" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">
-								{window.SF.labels.btn_DeleteProducts}
-							</span>
-						</button>
-					)}
-
-					{customButtonFooterComponent}
-				</div>
-			);
-		}
 		// *******************************************************
 		// Modal needs to be conditionally rendered to activate its lifecycle
 		let productModal = '';
@@ -1552,7 +1456,12 @@ class FaEditor extends Component {
 					<div>
 						<span>{window.SF.labels.products_title_empty} </span>
 					</div>
-					{addProductCTA}
+
+					<AddProductCTA
+						render={!this.state.activeFa._ui.commercialProducts.length}
+						disabled={!this.state.activeFa.Id}
+						onClick={this.onOpenCommercialProductModal}
+					/>
 				</div>
 			);
 		}
@@ -1683,9 +1592,9 @@ class FaEditor extends Component {
 				</Header>
 				<div className="fa-main-body">
 					<div className="fa-main-body__inner">
-						{this.header_rows.length ? (
+						{this.state.headerRows.length ? (
 							<section className="card basket-details-card">
-								{this.header_rows.map((row, i) => {
+								{this.state.headerRows.map((row, i) => {
 									return (
 										<div
 											className="basket-details-card__row"
@@ -1725,7 +1634,22 @@ class FaEditor extends Component {
 						url={this.state.actionIframeUrl}
 					/>
 				)}
-				{this.editable && footer}
+
+				{this.editable && (
+					<FaFooter
+						standardData={this.props.settings.ButtonStandardData}
+						customData={this.props.settings.ButtonCustomData}
+						faStatus={this.state.activeFa.csconta__Status__c}
+						render={!!this.state.activeFa._ui.commercialProducts.length}
+						disabled={!Object.keys(this.state.selectedProducts).length}
+						onCallHandler={(method, type) => this.callHandler(method, type)}
+						onOpenCommercialProductModal={() =>
+							this.onOpenCommercialProductModal()
+						}
+						onOpenNegotiationModal={() => this.onOpenNegotiationModal()}
+						onRemoveProducts={() => this.onRemoveProducts()}
+					/>
+				)}
 			</div>
 		);
 	}

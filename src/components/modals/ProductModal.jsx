@@ -267,10 +267,7 @@ class ProductModal extends Component {
 				center
 			>
 				<div className="fa-modal-header">
-					<button
-						className="close-modal-button"
-						onClick={this.onCloseModal}
-					>
+					<button className="close-modal-button" onClick={this.onCloseModal}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"
@@ -322,19 +319,26 @@ class ProductModal extends Component {
 										let category = this.state.filter[key];
 
 										return (
-											<div className="fa-modal-product-list-categories" key={key}>
+											<div
+												className="fa-modal-product-list-categories"
+												key={key}
+											>
 												<div
 													onClick={() => {
 														this.toggleCategoryCollapse(key);
 													}}
 												>
 													<Icon
-														name={category.open ? 'chevrondown' : 'chevronright'}
+														name={
+															category.open ? 'chevrondown' : 'chevronright'
+														}
 														width="12"
 														height="12"
 														color="#747474"
 													/>
-													<span className="fa-modal-product-list-categories-item">{category.label}</span>
+													<span className="fa-modal-product-list-categories-item">
+														{category.label}
+													</span>
 												</div>
 
 												{category.open && (
@@ -426,11 +430,7 @@ class ProductModal extends Component {
 								{this.priceItemFields.map(f => {
 									return (
 										<div key={f.name} className="header-th">
-											<span>
-												{this.props.settings.FACSettings.truncate_product_fields
-													? truncateCPField(f.name)
-													: f.name}
-											</span>
+											<span>{truncateCPField(f.name)}</span>
 										</div>
 									);
 								})}

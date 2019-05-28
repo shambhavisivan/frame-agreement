@@ -51,7 +51,7 @@ class CommercialProduct extends React.Component {
 				this.props.attachment._addons || {}
 			),
 			rated: validateRateCardLines(
-				this.props._rateCards,
+				this.props.product._rateCards,
 				this.props.attachment._rateCards || {}
 			)
 		};

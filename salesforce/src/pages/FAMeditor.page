@@ -63,6 +63,7 @@
 				getAccountsInformation: "{!$RemoteAction.FrameRateManagerController.getAccountsInformation}",
 				deleteAccountAssociation: "{!$RemoteAction.FrameRateManagerController.deleteAccountAssociation}",
 				addAccountAssociation: "{!$RemoteAction.FrameRateManagerController.addAccountAssociation}",
+				getPicklistOptions: "{!$RemoteAction.FrameRateManagerController.getPicklistOptions}",
 				getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
 			},
 			labels: {

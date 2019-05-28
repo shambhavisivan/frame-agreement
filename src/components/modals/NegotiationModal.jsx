@@ -838,7 +838,9 @@ class NegotiationModal extends Component {
 									<div className="title-content">
 										<Icon name="announcement" width="14" color="#706e6b" />
 										{rc.Name}
-										<span className="fa-modal-product-count">{this._rcCpMap[rc.Id].length}</span>
+										<span className="fa-modal-product-count">
+											{this._rcCpMap[rc.Id].length}
+										</span>
 									</div>
 									<div className="title-lower"> </div>
 								</div>
@@ -1022,10 +1024,7 @@ class NegotiationModal extends Component {
 				onClose={this.onCloseModal}
 			>
 				<div className="fa-modal-header">
-					<button
-						className="close-modal-button"
-						onClick={this.onCloseModal}
-					>
+					<button className="close-modal-button" onClick={this.onCloseModal}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"
@@ -1135,7 +1134,9 @@ class NegotiationModal extends Component {
 					<div className="fa-modal-action-container">
 						<div className="fa-modal-discount">
 							<div className="fa-modal-discount-item">
-								<h4 className="fa-modal-discount-title">{window.SF.labels.modal_bulk_discount_title}</h4>
+								<h4 className="fa-modal-discount-title">
+									{window.SF.labels.modal_bulk_discount_title}
+								</h4>
 								<div className="fa-button-group">
 									<button
 										className={

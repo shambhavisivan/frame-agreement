@@ -69,21 +69,22 @@ class AccountsModal extends Component {
 		window.SF.invokeAction('getAccountsInformation', [this.props.faId]).then(
 			r => {
 				console.log(r);
+				let associated_accounts = [];
 				if (r.associated_accounts && r.associated_accounts.length) {
-					let associated_accounts = r.associated_accounts.map(acc => {
+					associated_accounts = r.associated_accounts.map(acc => {
 						return {
 							Id: acc.Id, // Id of association
 							accId: acc.csconta__Account__r.Id,
 							accName: acc.csconta__Account__r.Name
 						};
 					});
-
-					this.setState({
-						count: r.count,
-						main_acc: r.main_account,
-						associated_accounts
-					});
 				}
+
+				this.setState({
+					count: r.count,
+					main_acc: r.main_account,
+					associated_accounts
+				});
 			},
 			err => {}
 		);
@@ -463,7 +464,7 @@ class AccountsModal extends Component {
 						{this.state.associated_accounts.map(acc => {
 							return (
 								<p key={acc.Id}>
-									{acc.accName}{' '}
+									{acc.accName}
 									<Icon
 										onClick={() => this.onRemoveAssociation(acc.Id)}
 										name="delete"

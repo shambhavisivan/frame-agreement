@@ -5,6 +5,7 @@ import { Switch, Route } from 'react-router-dom';
 import {
 	getFrameAgreements,
 	getCommercialProducts,
+	getPicklistOptions,
 	getAppSettings
 } from './actions';
 // import { editModalWidth } from "./actions";
@@ -26,10 +27,21 @@ class App extends Component {
 
 		this.props.getAppSettings().then(response => {
 			window.SF.AuthLevels = response.AuthLevels;
-			Promise.all([
+
+			let _promiseArray = [
 				this.props.getFrameAgreements(),
 				this.props.getCommercialProducts()
-			]).then(responseArr => {
+			];
+
+			let picklists = response.HeaderData.filter(
+				f => f.type === 'picklist'
+			).map(f => f.field);
+
+			if (picklists.length) {
+				_promiseArray.push(this.props.getPicklistOptions(picklists));
+			}
+
+			Promise.all(_promiseArray).then(responseArr => {
 				publish('onLoad', [responseArr]);
 			});
 		});
@@ -55,12 +67,12 @@ class App extends Component {
 			);
 		}
 
-		const loading =
+		const loaded =
 			this.props.initialised.fa_loaded &&
 			this.props.initialised.cp_loaded &&
 			this.props.initialised.settings_loaded;
 
-		return loading ? (
+		return loaded ? (
 			<div className="fa-app-wrapper">
 				<Switch>
 					<Route exact path="/" component={FaList} />
@@ -76,6 +88,7 @@ class App extends Component {
 
 const mapDispatchToProps = {
 	getFrameAgreements,
+	getPicklistOptions,
 	getCommercialProducts,
 	getAppSettings
 };

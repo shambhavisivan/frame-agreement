@@ -43,7 +43,17 @@ export const publish = async (eventType, arg = null) => {
 	}
 
 	log.green('Subscriber found for event: ' + eventType);
-	return await subscriptions[eventType](arg);
+	let _promise = subscriptions[eventType]();
+
+	if (!!_promise.then) {
+		return await _promise;
+	} else {
+		console.error('Subscription to ' + eventType + ' does not return promise!');
+		return new Promise(resolve => {
+			resolve(arg);
+			return arg;
+		});
+	}
 	// return await subscriptions[eventType].apply(null, arg);
 };
 
@@ -75,6 +85,12 @@ export const initialiseApi = () => {
 
 /*********************************************************/
 // subscribe("Test", (data) => Promise.resolve(data || "N/A"))
+
+// subscribe("Test", (data) => {
+//     return new Promise(resolve => {
+//         resolve(data);
+//     });
+// })
 
 // subscribe("Test", (data) => {
 //     return new Promise(resolve => {

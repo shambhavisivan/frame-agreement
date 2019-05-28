@@ -95,7 +95,7 @@ class Rates extends React.Component {
 									<div className="fa-modal-title">
 										<div className="title-upper" />
 										<div className="title-content">
-											<Icon name="announcement" width="14" color="#706e6b" />{' '}
+											<Icon name="announcement" width="14" color="#706e6b" />
 											{rc.Name}
 										</div>
 										<div className="title-lower"> </div>
@@ -118,12 +118,12 @@ class Rates extends React.Component {
 															name="priority"
 															width="14"
 															color={flagColor}
-														/>{' '}
+														/>
 														{rcl.Name}
 													</div>
 													<div className="list-cell">
-														{rcl.hasOwnProperty('rcl.cspmb__rate_value__c')
-															? rcl.rcl.cspmb__rate_value__c
+														{rcl.hasOwnProperty('cspmb__rate_value__c')
+															? rcl.cspmb__rate_value__c
 															: 'N/A'}
 													</div>
 													<div className="list-cell negotiable">

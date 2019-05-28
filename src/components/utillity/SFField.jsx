@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Icon from '../Icon';
-import SFDatePicker from '../datepicker/SFDatePicker';
-import InputText from '../inputs/InputText';
-import InputTextArea from '../inputs/InputTextArea';
-import Lookup from '../inputs/Lookup';
-import Toggle from '../inputs/Toggle';
+
+import Icon from './Icon';
+import SFDatePicker from './datepicker/SFDatePicker';
+import InputText from './inputs/InputText';
+import InputTextArea from './inputs/InputTextArea';
+import Lookup from './inputs/Lookup';
+import Toggle from './inputs/Toggle';
 
 class SFField extends Component {
 	constructor(props) {
 		super(props);
-
 		this.onChange = this.onChange.bind(this);
+
+		this.state = {
+			render: true
+		};
 	}
 
 	onChange(value) {
@@ -71,6 +75,23 @@ class SFField extends Component {
 					value={this.props.value}
 				/>
 			);
+		} else if (this.props.field.type === 'picklist') {
+			field = (
+				<select
+					className="fa-select fa-input-border"
+					value={this.props.value}
+					onChange={e => this.onChange(e.target.value)}
+				>
+					<option value="">-none</option>
+					{this.props.field.options.map(option => {
+						return (
+							<option key={option.value} value={option.value}>
+								{option.label}
+							</option>
+						);
+					})}
+				</select>
+			);
 		} else if (this.props.field.type === 'lookup') {
 			// "field": "csconta__Account__c",
 			// "readOnly": false,
@@ -110,7 +131,7 @@ class SFField extends Component {
 						color="#4bca81"
 					/>
 				</label>
-				<div className="element__field">{field}</div>
+				<div className="element__field">{this.state.render ? field : ''}</div>
 			</div>
 		);
 	}

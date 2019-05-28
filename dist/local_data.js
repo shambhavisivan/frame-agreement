@@ -290,14 +290,14 @@ const frameAgreements = [{
         csconta__Status__c: "Draft",
         csconta__Valid_From__c: 1547424000000,
         csconta__Valid_To__c: 1568419200000,
-        Arb_Field_Bool__c: true,
-        Arb_Field_Integer__c: 48,
-        Arb_Field_Text__c: "Arb Text",
-        Arb_Field_Date__c: 1547510400000,
-        Arb_Field_Text_2__c: "Arb Text 2 - change 2",
-        Arb_Field_Text_3__c: "Arb Text 3 - change 1",
+        csfam__Arb_Field_Bool__c: true,
+        csfam__Arb_Field_Integer__c: 48,
+        csfam__Arb_Field_Text__c: "Arb Text",
+        csfam__Arb_Field_Date__c: 1547510400000,
+        csfam__Arb_Field_Text_2__c: "Arb Text 2 - change 2",
+        csfam__Arb_Field_Text_3__c: "Arb Text 3 - change 1",
         csconta__replaced_frame_agreement__c: "a1t1t000000EOuxAAG",
-        Arb_Field_Textarea__c: "Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget",
+        csfam__Arb_Field_Textarea__c: "Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget",
         csconta__Account__r: {
             Name: "Test Account",
             Id: "0011t00000DSEtnAAH"
@@ -311,13 +311,13 @@ const frameAgreements = [{
         csconta__Status__c: "Active",
         csconta__Valid_From__c: 1547424000000,
         csconta__Valid_To__c: 1568419200000,
-        Arb_Field_Bool__c: true,
-        Arb_Field_Integer__c: 144,
-        Arb_Field_Text__c: "Arb Text",
-        Arb_Field_Date__c: 1547424000000,
-        Arb_Field_Text_2__c: "Arb Text 2 - change 1dsfsdf",
-        Arb_Field_Text_3__c: "Arb Text 3 - change 1",
-        Arb_Field_Textarea__c: "Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget",
+        csfam__Arb_Field_Bool__c: true,
+        csfam__Arb_Field_Integer__c: 144,
+        csfam__Arb_Field_Text__c: "Arb Text",
+        csfam__Arb_Field_Date__c: 1547424000000,
+        csfam__Arb_Field_Text_2__c: "Arb Text 2 - change 1dsfsdf",
+        csfam__Arb_Field_Text_3__c: "Arb Text 3 - change 1",
+        csfam__Arb_Field_Textarea__c: "Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget",
         csconta__Account__r: {
             Name: "Test Account",
             Id: "0011t00000DSEtnAAH"
@@ -331,13 +331,13 @@ const frameAgreements = [{
         csconta__Status__c: "Active",
         csconta__Valid_From__c: 1547424000000,
         csconta__Valid_To__c: 1568419200000,
-        Arb_Field_Bool__c: true,
-        Arb_Field_Integer__c: 22,
-        Arb_Field_Text__c: "Arb Text",
-        Arb_Field_Date__c: 1547424000000,
-        Arb_Field_Text_2__c: "Arb Text 2 - change 1dsfsdf",
-        Arb_Field_Text_3__c: "Arb Text 3 - change 1",
-        Arb_Field_Textarea__c: "Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget",
+        csfam__Arb_Field_Bool__c: true,
+        csfam__Arb_Field_Integer__c: 22,
+        csfam__Arb_Field_Text__c: "Arb Text",
+        csfam__Arb_Field_Date__c: 1547424000000,
+        csfam__Arb_Field_Text_2__c: "Arb Text 2 - change 1dsfsdf",
+        csfam__Arb_Field_Text_3__c: "Arb Text 3 - change 1",
+        csfam__Arb_Field_Textarea__c: "Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget",
         csconta__Account__r: {
             Name: "Test Account",
             Id: "0011t00000DSEtnAAH"
@@ -774,76 +774,98 @@ const CustomTabsData = [{
     "container_id": "customTab1",
     "onEnter": "customTabEnter"
 }]
-const HeaderData = [{
-        "field": "csconta__Agreement_Name__c",
-        "readOnly": false,
-        "label": "Agreement Name",
-        "type": "text",
-        "grid": 4
+const HeaderData = [
+  {
+    "field": "csconta__Agreement_Name__c",
+    "readOnly": false,
+    "label": "Agreement Name",
+    "type": "text",
+    "grid": 2
+  },
+  {
+    "field": "csfam__Arb_Field_Integer__c",
+    "readOnly": false,
+    "label": "Arb Field Integer",
+    "type": "number",
+    "visible": "csfam__Arb_Field_Bool__c==true",
+    "grid": 1
+  },
+  {
+    "field": "csfam__Arb_Field_Bool__c",
+    "readOnly": false,
+    "label": "Arb Field Bool",
+    "type": "boolean",
+    "grid": 2
+  },
+  {
+    "field": "csfam__Arb_Field_Text__c",
+    "readOnly": false,
+    "label": "Arb Field Text",
+    "type": "text",
+    "grid": 4
+  },
+  {
+    "field": "csfam__Arb_Field_Date__c",
+    "readOnly": false,
+    "label": "Arb Field Date",
+    "type": "date",
+    "grid": 2
+  },
+  {
+    "field": "csfam__Arb_Picklist__c",
+    "readOnly": false,
+    "label": "Arb Field Picklist",
+    "type": "picklist",
+    "grid": 3
     },
-    {
-        "field": "csfam__Arb_Field_Integer__c",
-        "readOnly": false,
-        "label": "Arb Field Integer",
-        "type": "number",
-        "grid": 1
-    },
-    {
-        "field": "csfam__Arb_Field_Bool__c",
-        "readOnly": false,
-        "label": "Arb Field Bool",
-        "type": "boolean",
-        "grid": 1
-    },
-    {
-        "field": "csfam__Arb_Field_Text__c",
-        "readOnly": false,
-        "label": "Arb Field Text",
-        "type": "text",
-        "grid": 2
-    },
-    {
-        "field": "csfam__Arb_Field_Date__c",
-        "readOnly": false,
-        "label": "Arb Field Date",
-        "type": "date",
-        "grid": 2
-    },
-    {
-        "field": "csfam__Arb_Field_Text_3__c",
-        "readOnly": false,
-        "label": "Arb Field Text 3",
-        "type": "text",
-        "grid": 2
-    },
-    {
-        "field": "csfam__Arb_Field_Textarea__c",
-        "readOnly": false,
-        "label": "Arb Field Textarea",
-        "type": "textarea",
-        "grid": 4
-    },
-    {
-        "field": "csconta__Account__c",
-        "readOnly": false,
-        "label": "Account",
-        "type": "lookup",
-        "grid": 4,
-        "lookupData": {
-            "columns": ["Name", "Type"],
-            "whereClause": "name != 'invalidTest'"
-        }
-    },
-    {
-        "field": "csconta__replaced_frame_agreement__c",
-        "readOnly": false,
-        "label": "Replaced FA",
-        "type": "lookup",
-        "grid": 4,
-        "lookupData": {
-            "columns": ["csconta__Agreement_Name__c"]
-        }
+  {
+    "field": "csfam__Arb_Field_Text_3__c",
+    "readOnly": false,
+    "label": "Arb Field Text 3",
+    "type": "text",
+    "visible": "csfam__Arb_Field_Text__c==hide",
+    "grid": 4
+  },
+  {
+    "field": "csfam__Arb_Field_Textarea__c",
+    "readOnly": false,
+    "label": "Arb Field Textarea",
+    "type": "textarea",
+    "grid": 4
+  },  {
+    "field": "csfam__Arb_Formula__c",
+    "readOnly": true,
+    "label": "Arb Formula",
+    "type": "formula",
+    "grid": 4
+  },
+  {
+    "field": "csconta__Account__c",
+    "readOnly": false,
+    "label": "Account",
+    "type": "lookup",
+    "grid": 4,
+    "lookupData": {
+      "columns": [
+        "Name",
+        "Type"
+      ],
+      "whereClause": "name != 'invalidTest'"
     }
+  },
+  {
+    "field": "csconta__replaced_frame_agreement__c",
+    "readOnly": false,
+    "label": "Replaced FA",
+    "type": "lookup",
+    "grid": 4,
+    "lookupData": {
+      "columns": [
+        "csconta__Agreement_Name__c",
+        "Id"
+      ]
+    }
+  }
 ];
 
 const CategorizationData = [{
@@ -1431,6 +1453,15 @@ window.SF = SF = {
                 }
 
                 return createPromise(lookupInformation);
+
+            case "getPicklistOptions":
+                const OPTIONS = [{"label":"OptionA","value":"OptionA"},{"label":"OptionB","value":"OptionB"},{"label":"OptionC","value":"OptionC"}];
+                var result = {};
+                parametersArr[0].forEach(f => {
+                    result[f] = OPTIONS;
+                });
+
+                return createPromise(result);
 
             case "getAccountsInformation":
                 var accountsInformation = {"main_account":{"Id":"0011t00000DQdZEAA1","Name":"Pyramid Construction Inc."},"associated_accounts":[{"Id":"a1o1t000000jDS5AAM","csconta__Account__c":"0011t00000Pq1WRAAZ","csconta__Account__r":{"Id":"0011t00000Pq1WRAAZ","Name":"Test Account"}}],"count":2014};

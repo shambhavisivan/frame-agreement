@@ -301,6 +301,23 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
+		case 'RECIEVE_PICKLIST_OPTIONS':
+			var options = action.payload;
+			// {'fieldName': [{'label': optionlabel, 'value': optionValue}, ...]}
+
+			var headerData = state.settings.HeaderData;
+			headerData.forEach(f => {
+				if (f.type === 'picklist' && options.hasOwnProperty(f.field)) {
+					f.options = options[f.field];
+				}
+			});
+
+			return {
+				...state,
+				settings: { ...state.settings, HeaderData: headerData },
+				initialised: { ...state.initialised, ...{ settings_loaded: true } }
+			};
+
 		case 'RECIEVE_SETTINGS':
 			action.payload.HeaderData = validateJSONData(action.payload.HeaderData);
 			action.payload.CustomTabsData = validateJSONData(
@@ -552,13 +569,21 @@ const rootReducer = (state = initialState, action) => {
 
 			action.payload.DiscLevels = DiscLevels;
 
+			var settings_loaded = true;
+			var _atLeastOnePicklist = action.payload.HeaderData.find(
+				f => f.type === 'picklist'
+			);
+			if (_atLeastOnePicklist) {
+				settings_loaded = false;
+			}
+
 			// ***************************************************************************************************************
 
 			return {
 				...state,
 				settings: action.payload,
 				productFields: _productFields,
-				initialised: { ...state.initialised, ...{ settings_loaded: true } }
+				initialised: { ...state.initialised, settings_loaded: settings_loaded }
 			};
 
 		case 'RECIEVE_PRICE_ITEM_DATA':

@@ -207,6 +207,7 @@ class CustomTab extends React.Component {
 						<div className="header__inputs">
 							<Select
 								className="dg-select"
+								placeholder="Add group..."
 								value={this.blank}
 								options={this.state.selectGroups}
 								onChange={this.onAddGroup}

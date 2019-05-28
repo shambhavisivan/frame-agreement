@@ -35,6 +35,7 @@ private class FrameRateManagerControllerTest {
 		Date invalidEndDate = Date.newInstance(1992, 3, 14);
 		cspmb__Price_Item__c cp_3 = new cspmb__Price_Item__c(Name = 'cp_3', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00, cspmb__Effective_End_Date__c = invalidEndDate);
 
+
 		insert cp_1;
 		insert cp_2;
 		insert cp_3;
@@ -112,11 +113,11 @@ private class FrameRateManagerControllerTest {
 
 		cspmb__Price_Item_Add_On_Price_Item_Association__c add1assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_1.Id, cspmb__Overrides_Add_On_Charges__c = false);
 		cspmb__Price_Item_Add_On_Price_Item_Association__c add2assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_2.Id, cspmb__Price_Item__c = cp_3.Id);
-		
+
 		cspmb__Price_Item_Add_On_Price_Item_Association__c addValassocStart = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id);
 		cspmb__Price_Item_Add_On_Price_Item_Association__c addInvassocStart = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id, cspmb__effective_start_date__c = Date.today().addDays(1));
 		cspmb__Price_Item_Add_On_Price_Item_Association__c addInvassocEnd = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_2.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id, cspmb__effective_end_date__c = Date.today().addDays(-1));
-		
+
 		cspmb__Price_Item_Add_On_Price_Item_Association__c add3assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_invalid_start.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
 		cspmb__Price_Item_Add_On_Price_Item_Association__c add4assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_invalid_end.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
 		cspmb__Price_Item_Add_On_Price_Item_Association__c add5assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_inactive.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
@@ -136,10 +137,12 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1', csconta__Account__c = test_account.Id);
 		csconta__Frame_Agreement__c fa_2 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA2');
 		csconta__Frame_Agreement__c fa_3 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA3');
+		csconta__Frame_Agreement__c fA_account = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA_account', csconta__Account__c=test_account.Id);
 
 		insert fa_1;
 		insert fa_2;
 		insert fa_3;
+		insert fA_account;
 
 		/*********/
 		String decomposeData = '[{"cpId":"' + cp_1.Id + '","recurring":266,"oneOff":null},{"cpId":"' + cp_1.Id + '","recurring":263,"oneOff":null},{"peId":"' + pricingElement_1.Id + '","recurring":12,"oneOff":null},{"peId":"' + pricingElement_1.Id + '","recurring":null,"oneOff":12},{"cpaoaId":"' + add1assoc.Id + '","recurring":null,"oneOff":12},{"cpaoaId":"' + add1assoc.Id + '","recurring":12,"oneOff":null}]';
@@ -152,11 +155,13 @@ private class FrameRateManagerControllerTest {
 		csutil__JSON_Data__c categorizationData = new csutil__JSON_Data__c(Name = 'FA-Categorization', csutil__value__c = '[{"name":"Alpha","field":"Categorization_Alpha__c","values":["Fixed","Mobile","Static"]},{"name":"Beta","field":"Categorization_Beta__c","values":["10GB","20GB","50GB","100GB"]}]');
 		csutil__JSON_Data__c customButtonData = new csutil__JSON_Data__c(Name = 'FA-Custom-Buttons', csutil__value__c = '[{"type":"action","label":"Action button","id":"bta1","method":"ActionFunction","hidden":["Active"]},{"type":"iframe","label":"iFrame button","id":"bta2","method":"iFrameFunction","hidden":["Active"]},{"type":"redirect","label":"Redirect button","id":"bta3","method":"RedirectFunction","hidden":["Active"]}]');
 		csutil__JSON_Data__c standardButtonData = new csutil__JSON_Data__c(Name = 'FA-Standard-Buttons', csutil__value__c = '{"Save":["Draft","Requires Approval"],"SubmitForApproval":["Requires Approval"],"Submit":["Approved"],"DeleteProducts":["Draft","Requires Approval"],"BulkNegotiate":["Draft","Requires Approval"],"AddProducts":["Draft","Requires Approval"]}');
+		csutil__JSON_Data__c customTabsData = new csutil__JSON_Data__c(Name = 'FA-Custom-Tabs', csutil__value__c = '[{"label":"Custom tab","container_id":"customTab1","onEnter":"customTabEnter"}]');
 
 		insert headerData;
 		insert customButtonData;
 		insert standardButtonData;
 		insert categorizationData;
+		insert customTabsData;
 
 		csfam__fac_settings__c FACSettings = new csfam__fac_settings__c();
 		FACSettings.csfam__active_status__c = 'Active';
@@ -209,11 +214,13 @@ private class FrameRateManagerControllerTest {
 	public static testMethod void testGetPriceItemCharges() {
 		setupPricingModel();
 
-		cspmb__Price_Item__c cp_1 = [select Id,Name from cspmb__Price_Item__c where Name = 'cp_1' limit 1];
+  Map<Id, cspmb__Price_Item__c> cp_1 = new Map<Id, cspmb__Price_Item__c>([select Id,Name from cspmb__Price_Item__c where Name = 'cp_1']);
+  List <Id> cpIdList = new List<Id>(cp_1.keySet());
+
 
 		Test.startTest();
-
-		FrameRateManagerController.ProductPricebookCharges picMap = FrameRateManagerController.getPriceItemCharges(cp_1.Id);
+		// Map < Id, List < PricingElementWrapper >>
+		Map < Id, List < FrameRateManagerController.PricingElementWrapper >> picMap = FrameRateManagerController.getPriceItemCharges(cpIdList);
 
 		Test.stopTest();
 
@@ -221,9 +228,106 @@ private class FrameRateManagerControllerTest {
 
 	}
 
+	public static testMethod void testGetAccountsInformation() {
+		setupPricingModel();
+
+		Account testAcc = [Select Id, Name from Account where Name='TestAcc' limit 1];
+		csconta__Frame_Agreement__c fA_account = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'fA_account' limit 1];
+
+		Test.startTest();
+		// Map < Id, List < PricingElementWrapper >>
+		Map <String, Object> accountsInfo = FrameRateManagerController.getAccountsInformation(fA_account.Id);
+
+		Test.stopTest();
+
+		Account resultMainAccount = (Account) accountsInfo.get('main_account');
+		List <csconta__Account_Frame_Agreement_Association__c> associatedAcc = (List <csconta__Account_Frame_Agreement_Association__c>) accountsInfo.get('associated_accounts');
+
+		system.assertEquals((String) testAcc.Id, resultMainAccount.Id);
+		system.assertEquals(1, accountsInfo.get('count'));
+		system.assertEquals(0, associatedAcc.size());
+
+	}
+
+		// deleteAccountAssociation(String assocId)
+		// addAccountAssociation(String faId, String accountId)
+
+	public static testMethod void testAddDeleteAccountAssociation() {
+		setupPricingModel();
+
+		Account testAcc = [Select Id, Name from Account where Name='TestAcc' limit 1];
+
+		csconta__Frame_Agreement__c fa_3 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA3' limit 1];
+		csconta__Frame_Agreement__c fA_account = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'fA_account' limit 1];
+
+		Test.startTest();
+		// Map < Id, List < PricingElementWrapper >>
+		csconta__Account_Frame_Agreement_Association__c assoc_1 = FrameRateManagerController.addAccountAssociation(fA_account.Id, testAcc.Id);
+		csconta__Account_Frame_Agreement_Association__c assoc_2 = FrameRateManagerController.addAccountAssociation(fa_3.Id, testAcc.Id);
+
+		FrameRateManagerController.deleteAccountAssociation(assoc_2.Id);
+
+		Map <String, Object> accountsInfo_1 = FrameRateManagerController.getAccountsInformation(fA_account.Id);
+		Map <String, Object> accountsInfo_2 = FrameRateManagerController.getAccountsInformation(fa_3.Id);
+
+		Test.stopTest();
+
+		List <csconta__Account_Frame_Agreement_Association__c> associatedAcc_1 = (List <csconta__Account_Frame_Agreement_Association__c>) accountsInfo_1.get('associated_accounts');
+		List <csconta__Account_Frame_Agreement_Association__c> associatedAcc_2 = (List <csconta__Account_Frame_Agreement_Association__c>) accountsInfo_2.get('associated_accounts');
+
+		system.assertEquals(1, associatedAcc_1.size());
+		system.assertEquals(0, associatedAcc_2.size());
+
+	}
+
+	public static testMethod void testGetLookupInformation() {
+		setupPricingModel();
+		setupSettings();
+
+		Account testAcc = [Select Id, Name from Account where Name='TestAcc' limit 1];
+
+		String field = 'csconta__Account__c';
+		String column = 'Name';
+		String whereClause = 'name != null';
+		String initValId = testAcc.Id;
+
+		Map <String, Object> params = new Map <String, Object> ();
+		params.put('pointedObject', 'Account');
+		params.put('columns', new List <String> {'Name', 'Type'});
+		params.put('whereClause', whereClause);
+		params.put('search', null);
+		params.put('lastId', null);
+		params.put('offset', 20);
+
+		Map <String, Object> params_2 = new Map <String, Object> ();
+		params_2.put('field', field);
+		params_2.put('columns', new List <String> {'Name', 'Type'});
+		params_2.put('whereClause', null);
+		params_2.put('search', null);
+		params_2.put('lastId', null);
+		params_2.put('offset', 20);
+
+		Test.startTest();
+
+		Map <String, Object> info_1 = FrameRateManagerController.getLookupInformation(field, column, null, null);
+		Map <String, Object> info_2 = FrameRateManagerController.getLookupInformation(field, column, whereClause, initValId);
+		List <Object> lookup_records_1 = FrameRateManagerController.getLookupRecords(JSON.serialize(params));
+		List <Object> lookup_records_2 = FrameRateManagerController.getLookupRecords(JSON.serialize(params_2));
+
+		// initialLabel
+		// count
+
+		Test.stopTest();
+
+		// system.assertEquals(1, info_1.size());
+		// system.assertEquals(0, associatedAcc_2.size());
+
+	}
+
+
 	// public static testMethod void testGetApprovalHistory() {
 
-	//     cspmb__Price_Item__c cp_1 = [select Id,Name from cspmb__Price_Item__c where Name='cp_1' limit 1];
+	//     cspmb__Price_Item__c cp_1 = [select Id,Name from cspmb__Price_Item__c where Name='cp_accounts' limit 1];
 
 	//     Approval.ProcessSubmitRequest app = new Approval.ProcessSubmitRequest();
 	//     app.setObjectId(cp_1.id);
@@ -259,11 +363,11 @@ private class FrameRateManagerControllerTest {
 
 		Boolean isUserAdmin = FrameRateManagerController.isUserAdmin();
 		Set < Id > isUserDelegate = FrameRateManagerController.isUserDelegate(userId);
-		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList[0]);
-		
-		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonsInvalid = FrameRateManagerController.getAddons(cp_addon_inv.Id);
-		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonsValid = FrameRateManagerController.getAddons(cp_1.Id);
-		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addons2InvalidAssoc1Valid = FrameRateManagerController.getAddons(cp_addon_assoc_inv.Id);
+		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList);
+
+		Map < Id, List < cspmb__Price_Item_Add_On_Price_Item_Association__c >> addonsInvalid = FrameRateManagerController.getAddons(new List <Id> {cp_addon_inv.Id});
+		Map < Id, List < cspmb__Price_Item_Add_On_Price_Item_Association__c >> addonsValid = FrameRateManagerController.getAddons(new List <Id> {cp_1.Id});
+		Map < Id, List < cspmb__Price_Item_Add_On_Price_Item_Association__c >> addons2InvalidAssoc1Valid = FrameRateManagerController.getAddons(new List <Id> {cp_addon_assoc_inv.Id});
 
 		List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonAssoc_cp_addon_inv = [
 			select Id, cspmb__Price_Item__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c
@@ -274,9 +378,9 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		system.assertEquals(addonAssoc_cp_addon_inv.size(), 2);
-		system.assertEquals(addonsInvalid.size(), 0);
-		system.assertEquals(addonsValid.size(), 1);
-		system.assertEquals(addons2InvalidAssoc1Valid.size(), 1);
+		system.assertEquals(addonsInvalid.keySet().size(), 0);
+		system.assertEquals(addonsValid.keySet().size(), 1);
+		system.assertEquals(addons2InvalidAssoc1Valid.keySet().size(), 1);
 		//system.assertEquals(1, isUserDelegate.size());
 		//system.assertEquals(3, commercialProductData.keySet().size());
 
@@ -321,7 +425,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest(); /**********/
 
-		system.assertEquals(1, faList.size());
+		system.assertEquals(2, faList.size());
 		system.assertEquals(fa_1.Id, fa.Id);
 
 		fa_1 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
@@ -358,6 +462,21 @@ private class FrameRateManagerControllerTest {
 		setupPricingModel();
 
 		setupSettings();
+		Account acc = [select Id from Account where Name = 'TestAcc' limit 1];
+
+		Test.startTest();
+
+		Map<String, Object> appSetting = FrameRateManagerController.getAppSettings(acc.Id);
+
+		Test.stopTest();
+
+		system.assertNotEquals(null, appSetting);
+
+	}
+
+	public static testMethod void testGetAppSettingsNull() {
+		setupPricingModel();
+
 		Account acc = [select Id from Account where Name = 'TestAcc' limit 1];
 
 		Test.startTest();
@@ -580,11 +699,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 		FrameRateManagerController.getCustomSettings();
-		FrameRateManagerController.getPriceItemCharges(cp_1.Id);
+		FrameRateManagerController.getPriceItemCharges(new List <Id> {cp_1.Id});
 
-		FrameRateManagerController.getAddons('01p1t00000M4Gqp');
-		FrameRateManagerController.getPriceItemCharges('01p1t00000M4Gqp');
-		FrameRateManagerController.getRateCards('01p1t00000M4Gqp');
+		FrameRateManagerController.getAddons(new List <Id> {'01p1t00000M4Gqp'});
+		FrameRateManagerController.getPriceItemCharges(new List <Id> {'01p1t00000M4Gqp'});
+		FrameRateManagerController.getRateCards(new List <Id> {'01p1t00000M4Gqp'});
+		FrameRateManagerController.getPicklistOptions(new List <String> {'csfam__Arb_Picklist__c'});
 
 
 		FrameRateManagerController.getFrameAgreement(fa_1.Id);
@@ -592,7 +712,7 @@ private class FrameRateManagerControllerTest {
 		FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
 		FrameRateManagerController.deleteFrameAgreement(fa_1.Id);
 
-		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData('01p1t00000M4Gqp');
+		Map < Id, FrameRateManagerController.cpData > commercialProductData = FrameRateManagerController.getCommercialProductData(new List <Id> {'01p1t00000M4Gqp'});
 
 
 		Test.stopTest();

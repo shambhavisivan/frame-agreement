@@ -92,14 +92,12 @@ class InputNegotiate extends React.Component {
 		if (this.state.fixed) {
 			_discount = (
 				<span className="discount-amount">
-					{' '}
 					-{(this.props.originalValue - this.props.negotiatedValue).toFixed(2)}
 				</span>
 			);
 		} else {
 			_discount = (
 				<span className="discount-amount">
-					{' '}
 					-
 					{(
 						((this.props.originalValue - this.props.negotiatedValue) /

@@ -357,11 +357,7 @@ class Lookup extends React.Component {
 									{this.props.columns.map(c => {
 										return (
 											<div key={c} className="header-th">
-												<span>
-													{this.props.settings.truncate
-														? truncateCPField(c)
-														: c}
-												</span>
+												<span>{truncateCPField(c)}</span>
 											</div>
 										);
 									})}

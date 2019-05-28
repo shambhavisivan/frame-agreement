@@ -82,7 +82,6 @@ class ProductCharges extends React.Component {
 							<Icon name="priority" width="14" color={flagColor} /> On product
 						</div>
 						<div className="list-cell">
-							{' '}
 							{this.props.product.hasOwnProperty('cspmb__One_Off_Charge__c')
 								? this.props.product.cspmb__One_Off_Charge__c
 								: 'N/A'}
@@ -144,7 +143,6 @@ class ProductCharges extends React.Component {
 							})()}
 						</div>
 						<div className="list-cell">
-							{' '}
 							{this.props.product.hasOwnProperty('cspmb__Recurring_Charge__c')
 								? this.props.product.cspmb__Recurring_Charge__c
 								: 'N/A'}

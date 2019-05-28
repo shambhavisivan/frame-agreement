@@ -180,20 +180,17 @@ class Charges extends React.Component {
 							return (
 								<li key={charge.Id} className="list-row">
 									<div className="list-cell align-left">
-										<Icon name="priority" width="14" color={flagColor} />{' '}
+										<Icon name="priority" width="14" color={flagColor} />
 										{charge.Name}
 									</div>
 									<div className="list-cell align-left">
-										{' '}
 										{charge.chargeType}
 									</div>
 									<div className="list-cell">
-										{' '}
 										{charge.hasOwnProperty('oneOff') ? charge.oneOff : 'N/A'}
 									</div>
 									<div className="list-cell negotiable">{oneOffRow}</div>
 									<div className="list-cell">
-										{' '}
 										{charge.hasOwnProperty('recurring')
 											? charge.recurring
 											: 'N/A'}

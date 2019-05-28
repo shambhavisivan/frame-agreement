@@ -268,13 +268,34 @@ export function getAppSettings() {
 						dispatch(recieveAppSettings(response));
 						resolve(response);
 						return response;
-					}, 1000);
+					});
 				}
 			);
 		});
 	};
 }
+// ***********************************************************************
+export const recievePicklistOptions = result => ({
+	type: 'RECIEVE_PICKLIST_OPTIONS',
+	payload: result
+});
 
+export function getPicklistOptions(picklistFields) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('getPicklistOptions', [picklistFields]).then(
+				response => {
+					setTimeout(() => {
+						dispatch(recievePicklistOptions(response));
+						resolve(response);
+						return response;
+					});
+				}
+			);
+		});
+	};
+}
+// ***********************************************************************
 export const recieveCloneFrameAgreement = result => ({
 	type: 'RECIEVE_CLONE_FA',
 	payload: result

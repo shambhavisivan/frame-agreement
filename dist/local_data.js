@@ -366,6 +366,17 @@ const productData = {
         ],
         "rateCards": [
 
+        ],
+        "allowances": [{
+                Id: "a1x1t0000001iWkAAI",
+                Name: "ALL1",
+                cspmb__usage_type__c: "a201t0000009ryNAAQ"
+            },
+            {
+                Id: "a1x1t0000001iWkAAO",
+                Name: "ALL2",
+                cspmb__usage_type__c: "a201t0000009ryNAAE"
+            }
         ]
     },
     "a1F1t0000001JBUEA2": {
@@ -403,6 +414,17 @@ const productData = {
         "charges": [
 
         ],
+        "allowances": [{
+                Id: "a1x1t0000001iWkAAI",
+                Name: "ALL1",
+                cspmb__usage_type__c: "a201t0000009ryNAAQ"
+            },
+            {
+                Id: "a1x1t0000001iWkAAO",
+                Name: "ALL2",
+                cspmb__usage_type__c: "a201t0000009ryNAAE"
+            }
+        ],
         "rateCards": [{
                 "authId": "a0x1t000001RjC9AAK",
                 "Id": "a1N1t0000001QxrEAE",
@@ -414,7 +436,12 @@ const productData = {
                         "cspmb__rate_value__c": 124.99,
                         "cspmb__Rate_Card__c": "a1N1t0000001QxrEAE",
                         "cspmb__Currency_Code__c": "Sample Code",
-                        "cspmb__Weekend__c": 12
+                        "cspmb__Weekend__c": 12,
+                        cspmb__usage_type__c: "a201t0000009ryNAAQ",
+                        cspmb__usage_type__r: {
+                            Name: "UT1",
+                            Id: "a201t0000009ryNAAQ"
+                        }
                     },
                     {
                         "Id": "a1M1t000000peaJEAQ",
@@ -443,7 +470,12 @@ const productData = {
                         "cspmb__rate_value__c": 65.43,
                         "cspmb__Rate_Card__c": "a1N1t0000001X2dEAE",
                         "cspmb__Currency_Code__c": "Sample Code",
-                        "cspmb__Weekend__c": 14
+                        "cspmb__Weekend__c": 14,
+                        cspmb__usage_type__c: "a201t0000009ryNAAQ",
+                        cspmb__usage_type__r: {
+                            Name: "UT1",
+                            Id: "a201t0000009ryNAAQ"
+                        }
                     },
                     {
                         "Id": "a1M1t000000peXeEAI",
@@ -477,7 +509,12 @@ const productData = {
                         "Name": "RCL4.2",
                         "cspmb__rate_value__c": 14.55,
                         "cspmb__Rate_Card__c": "a1N1t000000GUYgEAO",
-                        "cspmb__Currency_Code__c": "Sample Code"
+                        "cspmb__Currency_Code__c": "Sample Code",
+                        cspmb__usage_type__c: "a201t0000009ryNAAQ",
+                        cspmb__usage_type__r: {
+                            Name: "UT1",
+                            Id: "a201t0000009ryNAAQ"
+                        }
                     },
                     {
                         "Id": "a1M1t000000WwSNEA0",
@@ -665,7 +702,12 @@ const productData = {
                     "Name": "RCL3.3",
                     "cspmb__rate_value__c": 12.9,
                     "cspmb__Rate_Card__c": "a1N1t000000GUYbEAO",
-                    "cspmb__Currency_Code__c": "Sample Code"
+                    "cspmb__Currency_Code__c": "Sample Code",
+                    cspmb__usage_type__c: "a201t0000009ryNAAQ",
+                    cspmb__usage_type__r: {
+                        Name: "UT1",
+                        Id: "a201t0000009ryNAAQ"
+                    }
                 },
                 {
                     "Id": "a1M1t000000WwRyEAK",
@@ -675,7 +717,18 @@ const productData = {
                     "cspmb__Currency_Code__c": "Sample Code"
                 }
             ]
-        }]
+        }],
+        "allowances": [{
+                Id: "a1x1t0000001iWkAAI",
+                Name: "ALL1",
+                cspmb__usage_type__c: "a201t0000009ryNAAQ"
+            },
+            {
+                Id: "a1x1t0000001iWkAAO",
+                Name: "ALL2",
+                cspmb__usage_type__c: "a201t0000009ryNAAE"
+            }
+        ],
     }
 };
 
@@ -774,98 +827,97 @@ const CustomTabsData = [{
     "container_id": "customTab1",
     "onEnter": "customTabEnter"
 }]
-const HeaderData = [
-  {
-    "field": "csconta__Agreement_Name__c",
-    "readOnly": false,
-    "label": "Agreement Name",
-    "type": "text",
-    "grid": 2
-  },
-  {
-    "field": "csfam__Arb_Field_Integer__c",
-    "readOnly": false,
-    "label": "Arb Field Integer",
-    "type": "number",
-    "visible": "csfam__Arb_Field_Bool__c==true",
-    "grid": 1
-  },
-  {
-    "field": "csfam__Arb_Field_Bool__c",
-    "readOnly": false,
-    "label": "Arb Field Bool",
-    "type": "boolean",
-    "grid": 2
-  },
-  {
-    "field": "csfam__Arb_Field_Text__c",
-    "readOnly": false,
-    "label": "Arb Field Text",
-    "type": "text",
-    "grid": 4
-  },
-  {
-    "field": "csfam__Arb_Field_Date__c",
-    "readOnly": false,
-    "label": "Arb Field Date",
-    "type": "date",
-    "grid": 2
-  },
-  {
-    "field": "csfam__Arb_Picklist__c",
-    "readOnly": false,
-    "label": "Arb Field Picklist",
-    "type": "picklist",
-    "grid": 3
+const HeaderData = [{
+        "field": "csconta__Agreement_Name__c",
+        "readOnly": false,
+        "label": "Agreement Name",
+        "type": "text",
+        "grid": 2
     },
-  {
-    "field": "csfam__Arb_Field_Text_3__c",
-    "readOnly": false,
-    "label": "Arb Field Text 3",
-    "type": "text",
-    "visible": "csfam__Arb_Field_Text__c==hide",
-    "grid": 4
-  },
-  {
-    "field": "csfam__Arb_Field_Textarea__c",
-    "readOnly": false,
-    "label": "Arb Field Textarea",
-    "type": "textarea",
-    "grid": 4
-  },  {
-    "field": "csfam__Arb_Formula__c",
-    "readOnly": true,
-    "label": "Arb Formula",
-    "type": "formula",
-    "grid": 4
-  },
-  {
-    "field": "csconta__Account__c",
-    "readOnly": false,
-    "label": "Account",
-    "type": "lookup",
-    "grid": 4,
-    "lookupData": {
-      "columns": [
-        "Name",
-        "Type"
-      ],
-      "whereClause": "name != 'invalidTest'"
+    {
+        "field": "csfam__Arb_Field_Integer__c",
+        "readOnly": false,
+        "label": "Arb Field Integer",
+        "type": "number",
+        "visible": "csfam__Arb_Field_Bool__c==true",
+        "grid": 1
+    },
+    {
+        "field": "csfam__Arb_Field_Bool__c",
+        "readOnly": false,
+        "label": "Arb Field Bool",
+        "type": "boolean",
+        "grid": 2
+    },
+    {
+        "field": "csfam__Arb_Field_Text__c",
+        "readOnly": false,
+        "label": "Arb Field Text",
+        "type": "text",
+        "grid": 4
+    },
+    {
+        "field": "csfam__Arb_Field_Date__c",
+        "readOnly": false,
+        "label": "Arb Field Date",
+        "type": "date",
+        "grid": 2
+    },
+    {
+        "field": "csfam__Arb_Picklist__c",
+        "readOnly": false,
+        "label": "Arb Field Picklist",
+        "type": "picklist",
+        "grid": 3
+    },
+    {
+        "field": "csfam__Arb_Field_Text_3__c",
+        "readOnly": false,
+        "label": "Arb Field Text 3",
+        "type": "text",
+        "visible": "csfam__Arb_Field_Text__c==hide",
+        "grid": 4
+    },
+    {
+        "field": "csfam__Arb_Field_Textarea__c",
+        "readOnly": false,
+        "label": "Arb Field Textarea",
+        "type": "textarea",
+        "grid": 4
+    }, {
+        "field": "csfam__Arb_Formula__c",
+        "readOnly": true,
+        "label": "Arb Formula",
+        "type": "formula",
+        "grid": 4
+    },
+    {
+        "field": "csconta__Account__c",
+        "readOnly": false,
+        "label": "Account",
+        "type": "lookup",
+        "grid": 4,
+        "lookupData": {
+            "columns": [
+                "Name",
+                "Type"
+            ],
+            "whereClause": "name != 'invalidTest'"
+        }
+    },
+    {
+        "field": "csconta__replaced_frame_agreement__c",
+        "readOnly": false,
+        "label": "Replaced FA",
+        "type": "lookup",
+        "grid": 4,
+        "lookupData": {
+            "columns": [
+                "csconta__Agreement_Name__c",
+                "Id"
+            ]
+        }
     }
-  },
-  {
-    "field": "csconta__replaced_frame_agreement__c",
-    "readOnly": false,
-    "label": "Replaced FA",
-    "type": "lookup",
-    "grid": 4,
-    "lookupData": {
-      "columns": [
-        "csconta__Agreement_Name__c",
-        "Id"
-      ]
-    }
-  }
 ];
 
 const CategorizationData = [{
@@ -878,57 +930,56 @@ const CategorizationData = [{
     "values": ["10GB", "20GB", "50GB", "100GB"]
 }];
 
-const ButtonCustomData = [
-  {
-    "type": "action",
-    "label": "Action button",
-    "id": "bta1",
-    "location": "Editor",
-    "method": "ActionFunction",
-    "hidden": [
-      "Active"
-    ]
-  },
-  {
-    "type": "iframe",
-    "label": "iFrame button",
-    "id": "bta2",
-    "location": "Editor",
-    "method": "iFrameFunction",
-    "hidden": [
-      "Active"
-    ]
-  },
-  {
-    "type": "redirect",
-    "label": "Redirect button",
-    "id": "bta3",
-    "location": "Editor",
-    "method": "RedirectFunction",
-    "hidden": [
-      "Active"
-    ]
-  },
-  {
-    "type": "redirect",
-    "label": "Redirect 2",
-    "id": "bta4",
-    "method": "ActionFunction",
-    "location": "List",
-    "hidden": [
-      "Active"
-    ]
-  },
-  {
-    "type": "redirect",
-    "label": "Action button",
-    "id": "bta5",
-    "location": "Footer",
-    "method": "ActionFunction",
-    "hidden": [
-      "Active"
-    ]
-  }
+const ButtonCustomData = [{
+        "type": "action",
+        "label": "Action button",
+        "id": "bta1",
+        "location": "Editor",
+        "method": "ActionFunction",
+        "hidden": [
+            "Active"
+        ]
+    },
+    {
+        "type": "iframe",
+        "label": "iFrame button",
+        "id": "bta2",
+        "location": "Editor",
+        "method": "iFrameFunction",
+        "hidden": [
+            "Active"
+        ]
+    },
+    {
+        "type": "redirect",
+        "label": "Redirect button",
+        "id": "bta3",
+        "location": "Editor",
+        "method": "RedirectFunction",
+        "hidden": [
+            "Active"
+        ]
+    },
+    {
+        "type": "redirect",
+        "label": "Redirect 2",
+        "id": "bta4",
+        "method": "ActionFunction",
+        "location": "List",
+        "hidden": [
+            "Active"
+        ]
+    },
+    {
+        "type": "redirect",
+        "label": "Action button",
+        "id": "bta5",
+        "location": "Footer",
+        "method": "ActionFunction",
+        "hidden": [
+            "Active"
+        ]
+    }
 ];
 
 
@@ -1104,7 +1155,1067 @@ const commercialProducts = [{
     "cspmb__Contract_Term__c": "24 Months"
 }];
 
-const commercialProducts_large = [{ "Id": "a273E000000BHcTQAW", "Name": "Elisa Netti Lite SLA P1K24", "cspmb__Recurring_Charge__c": 0, "cspmb__One_Off_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Contract_Term__c": "None", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000BHacQAG", "Name": "ElisaNettitemp Lite Elisa Elisa 30M 5M VDSL", "cspmb__Recurring_Charge__c": 37.5, "cspmb__One_Off_Charge__c": 80, "cspmb__Is_Authorization_Required__c": false, "cspmb__Contract_Term__c": "None", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000BHbfQAG", "Name": "Elisa Netti Lite Elisa Elisa 24M 3M ADSL", "cspmb__Recurring_Charge__c": 36.25, "cspmb__One_Off_Charge__c": 80, "cspmb__Is_Authorization_Required__c": false, "cspmb__Contract_Term__c": "None", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000BHPAQA4", "Name": "Acer Aspire E5-574G valkoinen", "cspmb__Recurring_Charge__c": 0, "cspmb__One_Off_Charge__c": 648, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Acer Aspire E5-574G valkoinen", "cspmb__Contract_Term__c": "1", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Vo7uQAC", "Name": "Elisa Mobiililaajakaistaliittymä 4G Plus", "cspmb__Recurring_Charge__c": 0, "cspmb__One_Off_Charge__c": 3.15, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "4G Plus", "Sub_Type__c": "Mobile Broadband", "cspmb__Contract_Term__c": "None", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000ug2AQAQ", "Name": "Change of SIM card", "cspmb__One_Off_Charge__c": 3.9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "SIM-kortin vaihto", "Sub_Type__c": "Mobile Voice", "cspmb__Contract_Term__c": "None", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx0QAC", "Name": "Varmistuskapasiteetti, lähtö data, Default plan 3 kk", "cspmb__Recurring_Charge__c": 115, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Default plan 3 kk", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx1QAC", "Name": "Varmistuskapasiteetti, lähtö data, Default plan 6 kk", "cspmb__Recurring_Charge__c": 160, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Default plan 6 kk", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx2QAC", "Name": "Palvelunhallinta Ketterä +, Kausimaksu", "cspmb__Recurring_Charge__c": 1250, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx4QAC", "Name": "Asiantuntija, Kertamaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx5QAC", "Name": "Asentaja, Kertamaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx6QAC", "Name": "Asennus- ja logistiikka, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx7QAC", "Name": "Varmistuskapasiteetti, lähtö data, Default plan 12 kk", "cspmb__Recurring_Charge__c": 260, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Default plan 12 kk", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx8QAC", "Name": "Omaisuudenhallinta, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azx9QAC", "Name": "Päätelaitehallinta, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxAQAS", "Name": "Vakiointi, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxBQAS", "Name": "Käyttäjätuki, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxCQAS", "Name": "Lähituki, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxDQAS", "Name": "Virtuaalinen työpöytä, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxEQAS", "Name": "Muisti, Kausimaksu", "cspmb__Recurring_Charge__c": 10.03, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxFQAS", "Name": "Prosessoriteho, Kausimaksu", "cspmb__Recurring_Charge__c": 6.06, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxGQAS", "Name": "Levyjärjestelmätaso, Taso 3", "cspmb__Recurring_Charge__c": 0.13, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Taso 3", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxHQAS", "Name": "Levyjärjestelmätaso, Taso 2", "cspmb__Recurring_Charge__c": 0.29, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Taso 2", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxIQAS", "Name": "Levyjärjestelmätaso, Taso 1", "cspmb__Recurring_Charge__c": 0.59, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Taso 1", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxJQAS", "Name": "Elisa Kassa Kauppiaan paketti tabletti, Peruspalvelu, yksi toimipaikka", "cspmb__Recurring_Charge__c": 84, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Peruspalvelu, yksi toimipaikka", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxKQAS", "Name": "Elisa Kassa Kauppiaan paketti tabletti, Samsung tabletti", "cspmb__Recurring_Charge__c": 9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Samsung tabletti", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxLQAS", "Name": "Elisa Kassa Kauppiaan paketti tabletti, Kuittiprintteri: kiinteä, Star mPOP", "cspmb__Recurring_Charge__c": 16, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kuittiprintteri: kiinteä, Star mPOP", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxMQAS", "Name": "Elisa Kassa Kauppiaan paketti tabletti, Mobiilidata", "cspmb__Recurring_Charge__c": 10, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Mobiilidata", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxNQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Peruspalvelu, yski toimipiste", "cspmb__Recurring_Charge__c": 84, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Peruspalvelu, yski toimipiste", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxOQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Elisa Tietoturva", "cspmb__Recurring_Charge__c": 5.1, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Elisa Tietoturva", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxPQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Dell OptiPlex 3030", "cspmb__Recurring_Charge__c": 33, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Dell OptiPlex 3030", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxQQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Kassalaatikko Star CB2002FN", "cspmb__Recurring_Charge__c": 3, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kassalaatikko Star CB2002FN", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxRQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Termokuittitulostin Star TSP654 USB", "cspmb__Recurring_Charge__c": 9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Termokuittitulostin Star TSP654 USB", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxSQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Viivakoodinlukija Newland NLS-HR22 Dorad", "cspmb__Recurring_Charge__c": 4.9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Viivakoodinlukija Newland NLS-HR22 Dorada", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxTQAS", "Name": "Elisa Kassa viivakoodin lukija, viivakoodinlukija Newland NLS-HR22 Dorada", "cspmb__Recurring_Charge__c": 144, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "viivakoodinlukija Newland NLS-HR22 Dorada", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxUQAS", "Name": "Elisa Kassa kassalaatikko, Star CB2002FN", "cspmb__Recurring_Charge__c": 3, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Star CB2002FN", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxVQAS", "Name": "Elisa Kassa Toimitusprojekti, Kertamaksu", "cspmb__One_Off_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxWQAS", "Name": "Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 Bluetooth", "cspmb__One_Off_Charge__c": 360, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "termokuittitulostin Star TSP654 Bluetooth", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxXQAS", "Name": "Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 USB", "cspmb__One_Off_Charge__c": 272, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "termokuittitulostin Star TSP654 USB", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxYQAS", "Name": "Puheensiirtoyhteydet, 2-johdinliittymä", "cspmb__Recurring_Charge__c": 8, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "2-johdinliittymä", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxZQAS", "Name": "Puheensiirtoyhteydet, 4-johdinliittymä", "cspmb__Recurring_Charge__c": 25.23, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "4-johdinliittymä", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxcQAC", "Name": "Elisa Yritystietoturva, Paketti  45 laitteelle", "cspmb__Recurring_Charge__c": 33.62, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Paketti  45 laitteelle", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxdQAC", "Name": "Puheensiirtoyhteydet, 2-johdinliittymä, avaus", "cspmb__One_Off_Charge__c": 201.83, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "2-johdinliittymä, avaus", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxeQAC", "Name": "Puheensiirtoyhteydet, 4-johdinliittymä, avaus", "cspmb__One_Off_Charge__c": 201.83, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "4-johdinliittymä, avaus", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxfQAC", "Name": "Elisa Netti Plus lisäantenni, Sisäantennipaketti", "cspmb__Recurring_Charge__c": 10, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Sisäantennipaketti", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxgQAC", "Name": "Elisa Tiedonvälitys 1-way SMS Elisa, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxhQAC", "Name": "Elisa Tiedonvälitys 1-way SMS Open, Kausimaksu", "cspmb__Recurring_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxiQAC", "Name": "Zeendo kotisivut, Kausimaksu", "cspmb__Recurring_Charge__c": 8.99, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxjQAC", "Name": "Elisa Netti Plus lisäantenni, Ulkoantennipaketti", "cspmb__One_Off_Charge__c": 790, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Ulkoantennipaketti", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxkQAC", "Name": "Verkkokaupan asennuspalvelu, Kertamaksu", "cspmb__One_Off_Charge__c": 3000, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxlQAC", "Name": "Elisa Toimisto 365, Project Online Essentials", "cspmb__Recurring_Charge__c": 5.9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Project Online Essentials", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxmQAC", "Name": "Elisa Toimisto 365, Project Online Professional", "cspmb__Recurring_Charge__c": 25.3, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Project Online Professional", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxnQAC", "Name": "Elisa Toimisto 365, Project Online Premium", "cspmb__Recurring_Charge__c": 46.4, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Project Online Premium", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxoQAC", "Name": "Elisa Toimisto 365, Enterprise Mobility + Security E3", "cspmb__Recurring_Charge__c": 7.4, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Enterprise Mobility + Security E3", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxpQAC", "Name": "Elisa Toimisto 365, Enterprise Mobility + Security E5", "cspmb__Recurring_Charge__c": 14.5, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Enterprise Mobility + Security E5", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxqQAC", "Name": "Elisa Toimisto 365, Windows 10 Enterprise E3", "cspmb__Recurring_Charge__c": 5.9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Windows 10 Enterprise E3", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxrQAC", "Name": "Elisa Toimisto 365, Windows 10 Enterprise E5", "cspmb__Recurring_Charge__c": 13.8, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Windows 10 Enterprise E5", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzCQAS", "Name": "Mitta-läpikävely, Kertamaksu", "cspmb__One_Off_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzDQAS", "Name": "Toimisto 365 Sähköpostin luontipalvelu, Kertamaksu", "cspmb__One_Off_Charge__c": 19, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzEQAS", "Name": "Toimisto 365 Sähköpostin luonti- ja siirtopalvelu, Kertamaksu", "cspmb__One_Off_Charge__c": 49, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzFQAS", "Name": "Toimisto 365 Essential käyttöönottopalvelu, Kertamaksu", "cspmb__One_Off_Charge__c": 59, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzGQAS", "Name": "Toimisto 365 Premium käyttöönottopalvelu, Kertamaksu", "cspmb__One_Off_Charge__c": 79, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzHQAS", "Name": "Puheratkaisu Vakio käyttöönotto, Kertamaksu", "cspmb__One_Off_Charge__c": 52.5, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzIQAS", "Name": "Elisa Kassa, Yhden toimipaikan ratkaisu", "cspmb__Recurring_Charge__c": 69, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Yhden toimipaikan ratkaisu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzJQAS", "Name": "Elisa Kassa Kauppiaan paketti tabletti, Peruspalvelu, yksi toimipaikka", "cspmb__Recurring_Charge__c": 84, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Peruspalvelu, yksi toimipaikka", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzKQAS", "Name": "Elisa Kassa Kauppiaan paketti tabletti, Samsung tabletti", "cspmb__Recurring_Charge__c": 9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Samsung tabletti", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzLQAS", "Name": "Elisa Kassa Kauppiaan paketti tabletti, Kuittiprintteri: kiinteä, Star mPOP", "cspmb__Recurring_Charge__c": 16, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kuittiprintteri: kiinteä, Star mPOP", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzMQAS", "Name": "Elisa Kassa Kauppiaan paketti tabletti, Mobiilidata", "cspmb__Recurring_Charge__c": 10, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Mobiilidata", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzNQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Peruspalvelu, yski toimipiste", "cspmb__Recurring_Charge__c": 84, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Peruspalvelu, yski toimipiste", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzOQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Elisa Tietoturva", "cspmb__Recurring_Charge__c": 5.1, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Elisa Tietoturva", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzPQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Dell OptiPlex 3030", "cspmb__Recurring_Charge__c": 33, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Dell OptiPlex 3030", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzQQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Kassalaatikko Star CB2002FN", "cspmb__Recurring_Charge__c": 3, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kassalaatikko Star CB2002FN", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzRQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Termokuittitulostin Star TSP654 USB", "cspmb__Recurring_Charge__c": 9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Termokuittitulostin Star TSP654 USB", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzSQAS", "Name": "Elisa Kassa Kauppiaan paketti työasema, Viivakoodinlukija Newland NLS-HR22 Dorad", "cspmb__Recurring_Charge__c": 4.9, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Viivakoodinlukija Newland NLS-HR22 Dorada", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzTQAS", "Name": "Elisa Kassa viivakoodin lukija, viivakoodinlukija Newland NLS-HR22 Dorada", "cspmb__Recurring_Charge__c": 144, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "viivakoodinlukija Newland NLS-HR22 Dorada", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzUQAS", "Name": "Elisa Kassa kassalaatikko, Star CB2002FN", "cspmb__Recurring_Charge__c": 3, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Star CB2002FN", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzVQAS", "Name": "Elisa Kassa Toimitusprojekti, Kertamaksu", "cspmb__One_Off_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzWQAS", "Name": "Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 Bluetooth", "cspmb__One_Off_Charge__c": 360, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "termokuittitulostin Star TSP654 Bluetooth", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzXQAS", "Name": "Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 USB", "cspmb__One_Off_Charge__c": 272, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "termokuittitulostin Star TSP654 USB", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzYQAS", "Name": "Elisa Yritystietoturva, Paketti 25 laitteelle", "cspmb__Recurring_Charge__c": 18.7, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Paketti 25 laitteelle", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzZQAS", "Name": "Elisa Yritystietoturva, Paketti 35 laitteelle", "cspmb__Recurring_Charge__c": 26.2, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Paketti 35 laitteelle", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzaQAC", "Name": "Elisa Yritystietoturva, Paketti 45 laitteelle", "cspmb__Recurring_Charge__c": 33.6, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Paketti 45 laitteelle", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzzbQAC", "Name": "Elisa Kassa, Yhden toimipaikan ratkaisu", "cspmb__Recurring_Charge__c": 69, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Yhden toimipaikan ratkaisu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxsQAC", "Name": "Elisa Toimisto 365, Skype for Business PSTN Conferencing, AddOn", "cspmb__Recurring_Charge__c": 4, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Skype for Business PSTN Conferencing, AddOn", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxtQAC", "Name": "Elisa Toimisto 365, Skype for Business Cloud PBX, AddOn", "cspmb__Recurring_Charge__c": 6.8, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Skype for Business Cloud PBX, AddOn", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzxuQAC", "Name": "Elisa Toimisto 365, Azure Active Directory Premium P1", "cspmb__Recurring_Charge__c": 5.1, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Azure Active Directory Premium P1", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy0QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa2V2R8", "cspmb__Recurring_Charge__c": 60, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa2V2R8", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy1QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa3V2R8", "cspmb__Recurring_Charge__c": 55, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa3V2R8", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy2QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa4V2R8", "cspmb__Recurring_Charge__c": 47, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa4V2R8", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy3QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa1V4R16", "cspmb__Recurring_Charge__c": 66, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa1V4R16", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy4QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa2V4R16", "cspmb__Recurring_Charge__c": 55, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa2V4R16", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy5QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa3V4R16", "cspmb__Recurring_Charge__c": 49, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa3V4R16", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy6QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa4V4R16", "cspmb__Recurring_Charge__c": 43, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa4V4R16", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy7QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa1V8R32", "cspmb__Recurring_Charge__c": 59, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa1V8R32", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy8QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa2V8R32", "cspmb__Recurring_Charge__c": 49, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa2V8R32", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azy9QAC", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa3V8R32", "cspmb__Recurring_Charge__c": 40, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa3V8R32", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyAQAS", "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa4V8R32", "cspmb__Recurring_Charge__c": 34, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa4V8R32", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyBQAS", "Name": "Oracle - tietokantojen hallinta ja valvonta, Erittäin kriittinen", "cspmb__Recurring_Charge__c": 70, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Erittäin kriittinen", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyCQAS", "Name": "Oracle - tietokantojen hallinta ja valvonta, Kriittinen", "cspmb__Recurring_Charge__c": 65, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kriittinen", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyDQAS", "Name": "Oracle - tietokantojen hallinta ja valvonta, Laajennettu", "cspmb__Recurring_Charge__c": 58, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Laajennettu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyEQAS", "Name": "Oracle - tietokantojen hallinta ja valvonta, Normaali", "cspmb__Recurring_Charge__c": 47, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Normaali", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyFQAS", "Name": "Oracle - tietokantojen hallinta ja valvonta, Lähtötaso", "cspmb__Recurring_Charge__c": 37, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Lähtötaso", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyGQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa1V1R4", "cspmb__Recurring_Charge__c": 50, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa1V1R4", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyHQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa2V1R4", "cspmb__Recurring_Charge__c": 45, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa2V1R4", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyIQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa3V1R4", "cspmb__Recurring_Charge__c": 42, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa3V1R4", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyJQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa4V1R4", "cspmb__Recurring_Charge__c": 37, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa4V1R4", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyKQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa1V2R8", "cspmb__Recurring_Charge__c": 50, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa1V2R8", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyLQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa2V2R8", "cspmb__Recurring_Charge__c": 43, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa2V2R8", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyMQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa3V2R8", "cspmb__Recurring_Charge__c": 39, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa3V2R8", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyNQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa4V2R8", "cspmb__Recurring_Charge__c": 34, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa4V2R8", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyOQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa1V4R16", "cspmb__Recurring_Charge__c": 47, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa1V4R16", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyPQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa2V4R16", "cspmb__Recurring_Charge__c": 40, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa2V4R16", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyQQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa3V4R16", "cspmb__Recurring_Charge__c": 36, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa3V4R16", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyRQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa4V4R16", "cspmb__Recurring_Charge__c": 30, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa4V4R16", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzySQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa1V8R32", "cspmb__Recurring_Charge__c": 44, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa1V8R32", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyTQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa2V8R32", "cspmb__Recurring_Charge__c": 38, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa2V8R32", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyUQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa3V8R32", "cspmb__Recurring_Charge__c": 33, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa3V8R32", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyVQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Pa4V8R32", "cspmb__Recurring_Charge__c": 28, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Pa4V8R32", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyWQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Erittäin kriittinen", "cspmb__Recurring_Charge__c": 49, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Erittäin kriittinen", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyXQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Kriittinen", "cspmb__Recurring_Charge__c": 46, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kriittinen", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyYQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Laajennettu", "cspmb__Recurring_Charge__c": 40, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Laajennettu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyZQAS", "Name": "SQL - tietokantojen hallinta ja valvonta, Normaali", "cspmb__Recurring_Charge__c": 34, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Normaali", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyaQAC", "Name": "SQL - tietokantojen hallinta ja valvonta, Lähtötaso", "cspmb__Recurring_Charge__c": 27, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Lähtötaso", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzybQAC", "Name": "42U räkki asiakkaan laitteille, Kausimaksu", "cspmb__Recurring_Charge__c": 900, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzycQAC", "Name": "RU-paikka asiakkaan laitteille, Kausimaksu", "cspmb__Recurring_Charge__c": 35, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzydQAC", "Name": "Sähköenergia ja jäähdytys, Kausimaksu", "cspmb__Recurring_Charge__c": 0.24, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyeQAC", "Name": "Räkkipaikka asiakkaan laitteille, Laite", "cspmb__Recurring_Charge__c": 65, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Laite", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyfQAC", "Name": "Räkkipaikka asiakkaan laitteille, Tietoliikennelaite", "cspmb__Recurring_Charge__c": 45, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Tietoliikennelaite", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzygQAC", "Name": "Räkkipaikka asiakkaan laitteille, Blade Server", "cspmb__Recurring_Charge__c": 65, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Blade Server", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyhQAC", "Name": "Konesaliverkko kytkentä, 1 Gbps", "cspmb__Recurring_Charge__c": 15, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "1 Gbps", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyiQAC", "Name": "Konesaliverkko kytkentä, 10 Gbps", "cspmb__Recurring_Charge__c": 30, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "10 Gbps", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyjQAC", "Name": "Konesaliverkko kytkentä, Blade Server", "cspmb__Recurring_Charge__c": 12, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Blade Server", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzykQAC", "Name": "Virtuaalipalomuuri, Kausimaksu", "cspmb__Recurring_Charge__c": 320, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzylQAC", "Name": "Virtuaalipalomuurin lisä-zone, Kausimaksu", "cspmb__Recurring_Charge__c": 50, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzymQAC", "Name": "Virtuaalipalomuurin IPS suojaus, Kausimaksu", "cspmb__Recurring_Charge__c": 40, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzynQAC", "Name": "Kahden konesalin välinen CWDM yhteys, 10 Gbps", "cspmb__Recurring_Charge__c": 380, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "10 Gbps", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyoQAC", "Name": "Kahden konesalin välinen CWDM yhteys, SAN", "cspmb__Recurring_Charge__c": 380, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "SAN", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzypQAC", "Name": "Kuormanjakopalvelu, F5", "cspmb__Recurring_Charge__c": 250, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "F5", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyqQAC", "Name": "Kuormanjakopalvelu, 50 Mbps", "cspmb__Recurring_Charge__c": 250, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "50 Mbps", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyrQAC", "Name": "Kuormanjakopalvelu, 200 Mbps", "cspmb__Recurring_Charge__c": 330, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "200 Mbps", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzysQAC", "Name": "Citrix Netscaler SDX, 50 Mbps", "cspmb__Recurring_Charge__c": 600, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "50 Mbps", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzytQAC", "Name": "Citrix Netscaler SDX, 200 Mbps", "cspmb__Recurring_Charge__c": 720, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "200 Mbps", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyuQAC", "Name": "Citrix Netscaler SDX, 1000 Mbps", "cspmb__Recurring_Charge__c": 900, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "1000 Mbps", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyvQAC", "Name": "Oma Datalasku, Kertamaksu", "cspmb__One_Off_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzywQAC", "Name": "Oma Laitelasku, Kertamaksu", "cspmb__One_Off_Charge__c": 0, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kertamaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyxQAC", "Name": "Palomuuriraportointi, Kausimaksu", "cspmb__Recurring_Charge__c": 50, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Kausimaksu", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyyQAC", "Name": "Elisa Kansainvälinen liikenne palvelu, Käyttöönotto", "cspmb__One_Off_Charge__c": 2000, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Käyttöönotto", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000AzyzQAC", "Name": "Elisa Kansainvälinen liikenne, Dial-In, Avaus, maakori 1", "cspmb__One_Off_Charge__c": 5, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Avaus, maakori 1", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azz0QAC", "Name": "Elisa Kansainvälinen liikenne, Dial-In, Avaus, maakori 2", "cspmb__One_Off_Charge__c": 5, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Avaus, maakori 2", "CurrencyIsoCode": "EUR" }, { "Id": "a273E000000Azz1QAC", "Name": "Elisa Kansainvälinen liikenne, Dial-In, Avaus, maakori 3", "cspmb__One_Off_Charge__c": 15, "cspmb__Is_Authorization_Required__c": false, "cspmb__Price_Item_Description__c": "Avaus, maakori 3", "CurrencyIsoCode": "EUR" }];
+const commercialProducts_large = [{
+    "Id": "a273E000000BHcTQAW",
+    "Name": "Elisa Netti Lite SLA P1K24",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__One_Off_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Contract_Term__c": "None",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000BHacQAG",
+    "Name": "ElisaNettitemp Lite Elisa Elisa 30M 5M VDSL",
+    "cspmb__Recurring_Charge__c": 37.5,
+    "cspmb__One_Off_Charge__c": 80,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Contract_Term__c": "None",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000BHbfQAG",
+    "Name": "Elisa Netti Lite Elisa Elisa 24M 3M ADSL",
+    "cspmb__Recurring_Charge__c": 36.25,
+    "cspmb__One_Off_Charge__c": 80,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Contract_Term__c": "None",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000BHPAQA4",
+    "Name": "Acer Aspire E5-574G valkoinen",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__One_Off_Charge__c": 648,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Acer Aspire E5-574G valkoinen",
+    "cspmb__Contract_Term__c": "1",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Vo7uQAC",
+    "Name": "Elisa Mobiililaajakaistaliittymä 4G Plus",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__One_Off_Charge__c": 3.15,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "4G Plus",
+    "Sub_Type__c": "Mobile Broadband",
+    "cspmb__Contract_Term__c": "None",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000ug2AQAQ",
+    "Name": "Change of SIM card",
+    "cspmb__One_Off_Charge__c": 3.9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "SIM-kortin vaihto",
+    "Sub_Type__c": "Mobile Voice",
+    "cspmb__Contract_Term__c": "None",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx0QAC",
+    "Name": "Varmistuskapasiteetti, lähtö data, Default plan 3 kk",
+    "cspmb__Recurring_Charge__c": 115,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Default plan 3 kk",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx1QAC",
+    "Name": "Varmistuskapasiteetti, lähtö data, Default plan 6 kk",
+    "cspmb__Recurring_Charge__c": 160,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Default plan 6 kk",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx2QAC",
+    "Name": "Palvelunhallinta Ketterä +, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 1250,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx4QAC",
+    "Name": "Asiantuntija, Kertamaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx5QAC",
+    "Name": "Asentaja, Kertamaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx6QAC",
+    "Name": "Asennus- ja logistiikka, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx7QAC",
+    "Name": "Varmistuskapasiteetti, lähtö data, Default plan 12 kk",
+    "cspmb__Recurring_Charge__c": 260,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Default plan 12 kk",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx8QAC",
+    "Name": "Omaisuudenhallinta, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azx9QAC",
+    "Name": "Päätelaitehallinta, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxAQAS",
+    "Name": "Vakiointi, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxBQAS",
+    "Name": "Käyttäjätuki, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxCQAS",
+    "Name": "Lähituki, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxDQAS",
+    "Name": "Virtuaalinen työpöytä, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxEQAS",
+    "Name": "Muisti, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 10.03,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxFQAS",
+    "Name": "Prosessoriteho, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 6.06,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxGQAS",
+    "Name": "Levyjärjestelmätaso, Taso 3",
+    "cspmb__Recurring_Charge__c": 0.13,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Taso 3",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxHQAS",
+    "Name": "Levyjärjestelmätaso, Taso 2",
+    "cspmb__Recurring_Charge__c": 0.29,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Taso 2",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxIQAS",
+    "Name": "Levyjärjestelmätaso, Taso 1",
+    "cspmb__Recurring_Charge__c": 0.59,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Taso 1",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxJQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti tabletti, Peruspalvelu, yksi toimipaikka",
+    "cspmb__Recurring_Charge__c": 84,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Peruspalvelu, yksi toimipaikka",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxKQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti tabletti, Samsung tabletti",
+    "cspmb__Recurring_Charge__c": 9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Samsung tabletti",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxLQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti tabletti, Kuittiprintteri: kiinteä, Star mPOP",
+    "cspmb__Recurring_Charge__c": 16,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kuittiprintteri: kiinteä, Star mPOP",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxMQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti tabletti, Mobiilidata",
+    "cspmb__Recurring_Charge__c": 10,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Mobiilidata",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxNQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Peruspalvelu, yski toimipiste",
+    "cspmb__Recurring_Charge__c": 84,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Peruspalvelu, yski toimipiste",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxOQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Elisa Tietoturva",
+    "cspmb__Recurring_Charge__c": 5.1,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Elisa Tietoturva",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxPQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Dell OptiPlex 3030",
+    "cspmb__Recurring_Charge__c": 33,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Dell OptiPlex 3030",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxQQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Kassalaatikko Star CB2002FN",
+    "cspmb__Recurring_Charge__c": 3,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kassalaatikko Star CB2002FN",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxRQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Termokuittitulostin Star TSP654 USB",
+    "cspmb__Recurring_Charge__c": 9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Termokuittitulostin Star TSP654 USB",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxSQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Viivakoodinlukija Newland NLS-HR22 Dorad",
+    "cspmb__Recurring_Charge__c": 4.9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Viivakoodinlukija Newland NLS-HR22 Dorada",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxTQAS",
+    "Name": "Elisa Kassa viivakoodin lukija, viivakoodinlukija Newland NLS-HR22 Dorada",
+    "cspmb__Recurring_Charge__c": 144,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "viivakoodinlukija Newland NLS-HR22 Dorada",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxUQAS",
+    "Name": "Elisa Kassa kassalaatikko, Star CB2002FN",
+    "cspmb__Recurring_Charge__c": 3,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Star CB2002FN",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxVQAS",
+    "Name": "Elisa Kassa Toimitusprojekti, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxWQAS",
+    "Name": "Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 Bluetooth",
+    "cspmb__One_Off_Charge__c": 360,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "termokuittitulostin Star TSP654 Bluetooth",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxXQAS",
+    "Name": "Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 USB",
+    "cspmb__One_Off_Charge__c": 272,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "termokuittitulostin Star TSP654 USB",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxYQAS",
+    "Name": "Puheensiirtoyhteydet, 2-johdinliittymä",
+    "cspmb__Recurring_Charge__c": 8,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "2-johdinliittymä",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxZQAS",
+    "Name": "Puheensiirtoyhteydet, 4-johdinliittymä",
+    "cspmb__Recurring_Charge__c": 25.23,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "4-johdinliittymä",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxcQAC",
+    "Name": "Elisa Yritystietoturva, Paketti  45 laitteelle",
+    "cspmb__Recurring_Charge__c": 33.62,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Paketti  45 laitteelle",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxdQAC",
+    "Name": "Puheensiirtoyhteydet, 2-johdinliittymä, avaus",
+    "cspmb__One_Off_Charge__c": 201.83,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "2-johdinliittymä, avaus",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxeQAC",
+    "Name": "Puheensiirtoyhteydet, 4-johdinliittymä, avaus",
+    "cspmb__One_Off_Charge__c": 201.83,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "4-johdinliittymä, avaus",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxfQAC",
+    "Name": "Elisa Netti Plus lisäantenni, Sisäantennipaketti",
+    "cspmb__Recurring_Charge__c": 10,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Sisäantennipaketti",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxgQAC",
+    "Name": "Elisa Tiedonvälitys 1-way SMS Elisa, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxhQAC",
+    "Name": "Elisa Tiedonvälitys 1-way SMS Open, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxiQAC",
+    "Name": "Zeendo kotisivut, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 8.99,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxjQAC",
+    "Name": "Elisa Netti Plus lisäantenni, Ulkoantennipaketti",
+    "cspmb__One_Off_Charge__c": 790,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Ulkoantennipaketti",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxkQAC",
+    "Name": "Verkkokaupan asennuspalvelu, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 3000,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxlQAC",
+    "Name": "Elisa Toimisto 365, Project Online Essentials",
+    "cspmb__Recurring_Charge__c": 5.9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Project Online Essentials",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxmQAC",
+    "Name": "Elisa Toimisto 365, Project Online Professional",
+    "cspmb__Recurring_Charge__c": 25.3,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Project Online Professional",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxnQAC",
+    "Name": "Elisa Toimisto 365, Project Online Premium",
+    "cspmb__Recurring_Charge__c": 46.4,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Project Online Premium",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxoQAC",
+    "Name": "Elisa Toimisto 365, Enterprise Mobility + Security E3",
+    "cspmb__Recurring_Charge__c": 7.4,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Enterprise Mobility + Security E3",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxpQAC",
+    "Name": "Elisa Toimisto 365, Enterprise Mobility + Security E5",
+    "cspmb__Recurring_Charge__c": 14.5,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Enterprise Mobility + Security E5",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxqQAC",
+    "Name": "Elisa Toimisto 365, Windows 10 Enterprise E3",
+    "cspmb__Recurring_Charge__c": 5.9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Windows 10 Enterprise E3",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxrQAC",
+    "Name": "Elisa Toimisto 365, Windows 10 Enterprise E5",
+    "cspmb__Recurring_Charge__c": 13.8,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Windows 10 Enterprise E5",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzCQAS",
+    "Name": "Mitta-läpikävely, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzDQAS",
+    "Name": "Toimisto 365 Sähköpostin luontipalvelu, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 19,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzEQAS",
+    "Name": "Toimisto 365 Sähköpostin luonti- ja siirtopalvelu, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 49,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzFQAS",
+    "Name": "Toimisto 365 Essential käyttöönottopalvelu, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 59,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzGQAS",
+    "Name": "Toimisto 365 Premium käyttöönottopalvelu, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 79,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzHQAS",
+    "Name": "Puheratkaisu Vakio käyttöönotto, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 52.5,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzIQAS",
+    "Name": "Elisa Kassa, Yhden toimipaikan ratkaisu",
+    "cspmb__Recurring_Charge__c": 69,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Yhden toimipaikan ratkaisu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzJQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti tabletti, Peruspalvelu, yksi toimipaikka",
+    "cspmb__Recurring_Charge__c": 84,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Peruspalvelu, yksi toimipaikka",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzKQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti tabletti, Samsung tabletti",
+    "cspmb__Recurring_Charge__c": 9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Samsung tabletti",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzLQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti tabletti, Kuittiprintteri: kiinteä, Star mPOP",
+    "cspmb__Recurring_Charge__c": 16,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kuittiprintteri: kiinteä, Star mPOP",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzMQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti tabletti, Mobiilidata",
+    "cspmb__Recurring_Charge__c": 10,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Mobiilidata",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzNQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Peruspalvelu, yski toimipiste",
+    "cspmb__Recurring_Charge__c": 84,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Peruspalvelu, yski toimipiste",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzOQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Elisa Tietoturva",
+    "cspmb__Recurring_Charge__c": 5.1,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Elisa Tietoturva",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzPQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Dell OptiPlex 3030",
+    "cspmb__Recurring_Charge__c": 33,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Dell OptiPlex 3030",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzQQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Kassalaatikko Star CB2002FN",
+    "cspmb__Recurring_Charge__c": 3,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kassalaatikko Star CB2002FN",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzRQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Termokuittitulostin Star TSP654 USB",
+    "cspmb__Recurring_Charge__c": 9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Termokuittitulostin Star TSP654 USB",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzSQAS",
+    "Name": "Elisa Kassa Kauppiaan paketti työasema, Viivakoodinlukija Newland NLS-HR22 Dorad",
+    "cspmb__Recurring_Charge__c": 4.9,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Viivakoodinlukija Newland NLS-HR22 Dorada",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzTQAS",
+    "Name": "Elisa Kassa viivakoodin lukija, viivakoodinlukija Newland NLS-HR22 Dorada",
+    "cspmb__Recurring_Charge__c": 144,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "viivakoodinlukija Newland NLS-HR22 Dorada",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzUQAS",
+    "Name": "Elisa Kassa kassalaatikko, Star CB2002FN",
+    "cspmb__Recurring_Charge__c": 3,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Star CB2002FN",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzVQAS",
+    "Name": "Elisa Kassa Toimitusprojekti, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzWQAS",
+    "Name": "Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 Bluetooth",
+    "cspmb__One_Off_Charge__c": 360,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "termokuittitulostin Star TSP654 Bluetooth",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzXQAS",
+    "Name": "Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 USB",
+    "cspmb__One_Off_Charge__c": 272,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "termokuittitulostin Star TSP654 USB",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzYQAS",
+    "Name": "Elisa Yritystietoturva, Paketti 25 laitteelle",
+    "cspmb__Recurring_Charge__c": 18.7,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Paketti 25 laitteelle",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzZQAS",
+    "Name": "Elisa Yritystietoturva, Paketti 35 laitteelle",
+    "cspmb__Recurring_Charge__c": 26.2,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Paketti 35 laitteelle",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzaQAC",
+    "Name": "Elisa Yritystietoturva, Paketti 45 laitteelle",
+    "cspmb__Recurring_Charge__c": 33.6,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Paketti 45 laitteelle",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzzbQAC",
+    "Name": "Elisa Kassa, Yhden toimipaikan ratkaisu",
+    "cspmb__Recurring_Charge__c": 69,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Yhden toimipaikan ratkaisu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxsQAC",
+    "Name": "Elisa Toimisto 365, Skype for Business PSTN Conferencing, AddOn",
+    "cspmb__Recurring_Charge__c": 4,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Skype for Business PSTN Conferencing, AddOn",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxtQAC",
+    "Name": "Elisa Toimisto 365, Skype for Business Cloud PBX, AddOn",
+    "cspmb__Recurring_Charge__c": 6.8,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Skype for Business Cloud PBX, AddOn",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzxuQAC",
+    "Name": "Elisa Toimisto 365, Azure Active Directory Premium P1",
+    "cspmb__Recurring_Charge__c": 5.1,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Azure Active Directory Premium P1",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy0QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa2V2R8",
+    "cspmb__Recurring_Charge__c": 60,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa2V2R8",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy1QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa3V2R8",
+    "cspmb__Recurring_Charge__c": 55,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa3V2R8",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy2QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa4V2R8",
+    "cspmb__Recurring_Charge__c": 47,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa4V2R8",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy3QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa1V4R16",
+    "cspmb__Recurring_Charge__c": 66,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa1V4R16",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy4QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa2V4R16",
+    "cspmb__Recurring_Charge__c": 55,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa2V4R16",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy5QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa3V4R16",
+    "cspmb__Recurring_Charge__c": 49,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa3V4R16",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy6QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa4V4R16",
+    "cspmb__Recurring_Charge__c": 43,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa4V4R16",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy7QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa1V8R32",
+    "cspmb__Recurring_Charge__c": 59,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa1V8R32",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy8QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa2V8R32",
+    "cspmb__Recurring_Charge__c": 49,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa2V8R32",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azy9QAC",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa3V8R32",
+    "cspmb__Recurring_Charge__c": 40,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa3V8R32",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyAQAS",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Pa4V8R32",
+    "cspmb__Recurring_Charge__c": 34,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa4V8R32",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyBQAS",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Erittäin kriittinen",
+    "cspmb__Recurring_Charge__c": 70,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Erittäin kriittinen",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyCQAS",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Kriittinen",
+    "cspmb__Recurring_Charge__c": 65,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kriittinen",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyDQAS",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Laajennettu",
+    "cspmb__Recurring_Charge__c": 58,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Laajennettu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyEQAS",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Normaali",
+    "cspmb__Recurring_Charge__c": 47,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Normaali",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyFQAS",
+    "Name": "Oracle - tietokantojen hallinta ja valvonta, Lähtötaso",
+    "cspmb__Recurring_Charge__c": 37,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Lähtötaso",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyGQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa1V1R4",
+    "cspmb__Recurring_Charge__c": 50,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa1V1R4",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyHQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa2V1R4",
+    "cspmb__Recurring_Charge__c": 45,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa2V1R4",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyIQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa3V1R4",
+    "cspmb__Recurring_Charge__c": 42,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa3V1R4",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyJQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa4V1R4",
+    "cspmb__Recurring_Charge__c": 37,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa4V1R4",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyKQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa1V2R8",
+    "cspmb__Recurring_Charge__c": 50,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa1V2R8",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyLQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa2V2R8",
+    "cspmb__Recurring_Charge__c": 43,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa2V2R8",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyMQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa3V2R8",
+    "cspmb__Recurring_Charge__c": 39,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa3V2R8",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyNQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa4V2R8",
+    "cspmb__Recurring_Charge__c": 34,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa4V2R8",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyOQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa1V4R16",
+    "cspmb__Recurring_Charge__c": 47,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa1V4R16",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyPQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa2V4R16",
+    "cspmb__Recurring_Charge__c": 40,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa2V4R16",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyQQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa3V4R16",
+    "cspmb__Recurring_Charge__c": 36,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa3V4R16",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyRQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa4V4R16",
+    "cspmb__Recurring_Charge__c": 30,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa4V4R16",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzySQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa1V8R32",
+    "cspmb__Recurring_Charge__c": 44,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa1V8R32",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyTQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa2V8R32",
+    "cspmb__Recurring_Charge__c": 38,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa2V8R32",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyUQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa3V8R32",
+    "cspmb__Recurring_Charge__c": 33,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa3V8R32",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyVQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Pa4V8R32",
+    "cspmb__Recurring_Charge__c": 28,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Pa4V8R32",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyWQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Erittäin kriittinen",
+    "cspmb__Recurring_Charge__c": 49,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Erittäin kriittinen",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyXQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Kriittinen",
+    "cspmb__Recurring_Charge__c": 46,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kriittinen",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyYQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Laajennettu",
+    "cspmb__Recurring_Charge__c": 40,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Laajennettu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyZQAS",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Normaali",
+    "cspmb__Recurring_Charge__c": 34,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Normaali",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyaQAC",
+    "Name": "SQL - tietokantojen hallinta ja valvonta, Lähtötaso",
+    "cspmb__Recurring_Charge__c": 27,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Lähtötaso",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzybQAC",
+    "Name": "42U räkki asiakkaan laitteille, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 900,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzycQAC",
+    "Name": "RU-paikka asiakkaan laitteille, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 35,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzydQAC",
+    "Name": "Sähköenergia ja jäähdytys, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 0.24,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyeQAC",
+    "Name": "Räkkipaikka asiakkaan laitteille, Laite",
+    "cspmb__Recurring_Charge__c": 65,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Laite",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyfQAC",
+    "Name": "Räkkipaikka asiakkaan laitteille, Tietoliikennelaite",
+    "cspmb__Recurring_Charge__c": 45,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Tietoliikennelaite",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzygQAC",
+    "Name": "Räkkipaikka asiakkaan laitteille, Blade Server",
+    "cspmb__Recurring_Charge__c": 65,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Blade Server",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyhQAC",
+    "Name": "Konesaliverkko kytkentä, 1 Gbps",
+    "cspmb__Recurring_Charge__c": 15,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "1 Gbps",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyiQAC",
+    "Name": "Konesaliverkko kytkentä, 10 Gbps",
+    "cspmb__Recurring_Charge__c": 30,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "10 Gbps",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyjQAC",
+    "Name": "Konesaliverkko kytkentä, Blade Server",
+    "cspmb__Recurring_Charge__c": 12,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Blade Server",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzykQAC",
+    "Name": "Virtuaalipalomuuri, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 320,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzylQAC",
+    "Name": "Virtuaalipalomuurin lisä-zone, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 50,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzymQAC",
+    "Name": "Virtuaalipalomuurin IPS suojaus, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 40,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzynQAC",
+    "Name": "Kahden konesalin välinen CWDM yhteys, 10 Gbps",
+    "cspmb__Recurring_Charge__c": 380,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "10 Gbps",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyoQAC",
+    "Name": "Kahden konesalin välinen CWDM yhteys, SAN",
+    "cspmb__Recurring_Charge__c": 380,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "SAN",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzypQAC",
+    "Name": "Kuormanjakopalvelu, F5",
+    "cspmb__Recurring_Charge__c": 250,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "F5",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyqQAC",
+    "Name": "Kuormanjakopalvelu, 50 Mbps",
+    "cspmb__Recurring_Charge__c": 250,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "50 Mbps",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyrQAC",
+    "Name": "Kuormanjakopalvelu, 200 Mbps",
+    "cspmb__Recurring_Charge__c": 330,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "200 Mbps",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzysQAC",
+    "Name": "Citrix Netscaler SDX, 50 Mbps",
+    "cspmb__Recurring_Charge__c": 600,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "50 Mbps",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzytQAC",
+    "Name": "Citrix Netscaler SDX, 200 Mbps",
+    "cspmb__Recurring_Charge__c": 720,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "200 Mbps",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyuQAC",
+    "Name": "Citrix Netscaler SDX, 1000 Mbps",
+    "cspmb__Recurring_Charge__c": 900,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "1000 Mbps",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyvQAC",
+    "Name": "Oma Datalasku, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzywQAC",
+    "Name": "Oma Laitelasku, Kertamaksu",
+    "cspmb__One_Off_Charge__c": 0,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kertamaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyxQAC",
+    "Name": "Palomuuriraportointi, Kausimaksu",
+    "cspmb__Recurring_Charge__c": 50,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Kausimaksu",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyyQAC",
+    "Name": "Elisa Kansainvälinen liikenne palvelu, Käyttöönotto",
+    "cspmb__One_Off_Charge__c": 2000,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Käyttöönotto",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000AzyzQAC",
+    "Name": "Elisa Kansainvälinen liikenne, Dial-In, Avaus, maakori 1",
+    "cspmb__One_Off_Charge__c": 5,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Avaus, maakori 1",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azz0QAC",
+    "Name": "Elisa Kansainvälinen liikenne, Dial-In, Avaus, maakori 2",
+    "cspmb__One_Off_Charge__c": 5,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Avaus, maakori 2",
+    "CurrencyIsoCode": "EUR"
+}, {
+    "Id": "a273E000000Azz1QAC",
+    "Name": "Elisa Kansainvälinen liikenne, Dial-In, Avaus, maakori 3",
+    "cspmb__One_Off_Charge__c": 15,
+    "cspmb__Is_Authorization_Required__c": false,
+    "cspmb__Price_Item_Description__c": "Avaus, maakori 3",
+    "CurrencyIsoCode": "EUR"
+}];
 
 const newFA = {
     Id: "newFaId",
@@ -1127,9 +2238,13 @@ const newFA = {
 
 const lookupAccountData = [];
 for (var i = 0; i < 2000; i++) {
-    lookupAccountData.push({'Name': getRandomFromArr(["Pyramid Construction #", "Express Logistics #", "University no.", "United Oil &amp; Gas Corp. "]) + i, 'Type': 'Customer-' + getRandomFromArr(["Prospect", "Direct", "Channel", "Consumer", "Random", "Schmustomer"]), 'Id': makeId(15)});
+    lookupAccountData.push({
+        'Name': getRandomFromArr(["Pyramid Construction #", "Express Logistics #", "University no.", "United Oil &amp; Gas Corp. "]) + i,
+        'Type': 'Customer-' + getRandomFromArr(["Prospect", "Direct", "Channel", "Consumer", "Random", "Schmustomer"]),
+        'Id': makeId(15)
+    });
 }
-lookupAccountData.sort((a,b) => (a.Id > b.Id) ? 1 : ((b.Id > a.Id) ? -1 : 0));
+lookupAccountData.sort((a, b) => (a.Id > b.Id) ? 1 : ((b.Id > a.Id) ? -1 : 0));
 
 // const priceItemData = {"a1F1t00000017Y0EAI":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t00000017Y0EAI","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001QxrEAE","Name":"RC1","rateCardLines":[{"Id":"a1M1t000000BFrVEAW","Name":"RCL1.1","cspmb__Cap_Unit__c":"Sample Cap Unit","cspmb__rate_value__c":124.99,"cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"},{"Id":"a1M1t000000peaJEAQ","Name":"RCL_1_1","cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"}]}]},"a1F1t0000001JBUEA2":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBUEA2","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":12.99,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]},"a1F1t0000001JBeEAM":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnhAAE","Name":"ADD3","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBeEAM","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":12.99,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]}};
 
@@ -1181,6 +2296,7 @@ window.SF = SF = {
         products_charges: "Charges",
         products_product_charges: "Charges (product)",
         products_rates: "Rate Cards",
+        products_allowances: "Allowances",
         modal_addProduct_title: "Add Product to Frame Agreement",
         modal_addProduct_input_search_placeholder: "Filter products",
         modal_categorization_switch: "Product categorisation panel",
@@ -1239,6 +2355,7 @@ window.SF = SF = {
         product_charge_header_recc: "Recurring Adjustment",
         product_charge_header_recc_neg: "Negotiated Recurring",
         rate_cards_header_name: "Name",
+        rate_cards_header_usage: "Usage Type",
         rate_cards_header_value: "Rate Value",
         rate_cards_header_value_neg: "Negotiated Value",
         util_datepicker_today: "Today",
@@ -1293,7 +2410,10 @@ window.SF = SF = {
                     CategorizationData: CategorizationData,
                     HeaderData: HeaderData,
                     CustomTabsData: CustomTabsData,
-                    account: { Id: "aaaa", Name: "aaaa" },
+                    account: {
+                        Id: "aaaa",
+                        Name: "aaaa"
+                    },
                     DiscLevels: DiscLevels,
                     AuthLevels: [{
                         "Id": "a151t000000rmV7AAI",
@@ -1364,115 +2484,244 @@ window.SF = SF = {
                     return createPromise(newFA);
                 }
 
-            case "getAttachmentBody":
-                return createPromise(attachment, 1000);
+                case "getAttachmentBody":
+                    return createPromise(attachment, 1000);
 
-            case "getApprovalHistory":
-                return createPromise(getRandomFromArr([approval, approval]));
+                case "getApprovalHistory":
+                    return createPromise(getRandomFromArr([approval, approval]));
 
-            case "getRateCards": // Obsolete
-                return createPromise(rateCards);
+                case "getRateCards": // Obsolete
+                    return createPromise(rateCards);
 
-            case "approveRejectRecallRecord": // Obsolete
-                return createPromise(true);
+                case "approveRejectRecallRecord": // Obsolete
+                    return createPromise(true);
 
-            case "reassignApproval": // Obsolete
-                return createPromise(true);
+                case "reassignApproval": // Obsolete
+                    return createPromise(true);
 
-            case "submitForApproval": // Obsolete
-                return createPromise(getRandomFromArr([true, true, false]));
+                case "submitForApproval": // Obsolete
+                    return createPromise(getRandomFromArr([true, true, false]));
 
-            case "saveAttachment":
-                return createPromise(parametersArr[1]);
+                case "saveAttachment":
+                    return createPromise(parametersArr[1]);
 
-            case "createPricingRuleGroup":
-                return createPromise("pricingRuleId");
+                case "createPricingRuleGroup":
+                    return createPromise("pricingRuleId");
 
-            case "decomposeAttachment":
-                return createPromise(getRandomFromArr(["Success", "Success", "Success", "Fail"]), 1000);
+                case "decomposeAttachment":
+                    return createPromise(getRandomFromArr(["Success", "Success", "Success", "Fail"]), 1000);
 
-            case "undoDecomposition":
-                return createPromise("Success", 2000);
+                case "undoDecomposition":
+                    return createPromise("Success", 2000);
 
-            case "filterCommercialProducts":
-                return createPromise(filterProducts(parametersArr[0]));
+                case "filterCommercialProducts":
+                    return createPromise(filterProducts(parametersArr[0]));
 
-            case "setFrameAgreementState":
-                return createPromise(getRandomFromArr(["Success", "Failure"]));
+                case "setFrameAgreementState":
+                    return createPromise(getRandomFromArr(["Success", "Failure"]));
 
-            case "createNewVersionOfFrameAgrement":
-                let newFa = JSON.parse(JSON.stringify(frameAgreements.filter(fa => fa.Id === parametersArr[0])[0]));
+                case "createNewVersionOfFrameAgrement":
+                    let newFa = JSON.parse(JSON.stringify(frameAgreements.filter(fa => fa.Id === parametersArr[0])[0]));
 
-                newFa.Id = makeId(15);
-                newFa.csconta__Status__c = "Draft";
-                newFa.csconta__Agreement_Name__c = newFa.csconta__Agreement_Name__c + '_v2';
+                    newFa.Id = makeId(15);
+                    newFa.csconta__Status__c = "Draft";
+                    newFa.csconta__Agreement_Name__c = newFa.csconta__Agreement_Name__c + '_v2';
 
-                return createPromise(newFa);
+                    return createPromise(newFa);
 
-            case "getFrameAgreement":
-                var fa = frameAgreements.filter(fa => fa.Id === parametersArr[0])[0];
-                fa = JSON.parse(JSON.stringify(fa));
-                delete fa._ui;
-                return createPromise(fa);
+                case "getFrameAgreement":
+                    var fa = frameAgreements.filter(fa => fa.Id === parametersArr[0])[0];
+                    fa = JSON.parse(JSON.stringify(fa));
+                    delete fa._ui;
+                    return createPromise(fa);
 
-            case "deleteFrameAgreement":
-                return createPromise("Success");
+                case "deleteFrameAgreement":
+                    return createPromise("Success");
 
-            case "getCommercialProductData":
-                var priceItemData = {};
+                case "getCommercialProductData":
+                    var priceItemData = {};
 
-                var priceItemIdList = parametersArr[0];
+                    var priceItemIdList = parametersArr[0];
 
-                priceItemIdList.forEach(priceItemId => {
-                    priceItemData[priceItemId] = productData[priceItemId]
-                });
+                    priceItemIdList.forEach(priceItemId => {
+                        priceItemData[priceItemId] = productData[priceItemId]
+                    });
 
-                return createPromise(priceItemData);
+                    return createPromise(priceItemData);
 
-            case "getLookupRecords":
-                var getLookupRecordsData;
-                var param = JSON.parse(parametersArr[0]);
-                var lastIndex;
+                case "getLookupRecords":
+                    var getLookupRecordsData;
+                    var param = JSON.parse(parametersArr[0]);
+                    var lastIndex;
 
-                if (param.field === "csconta__replaced_frame_agreement__c") {
-                    getLookupRecordsData = [{"csconta__Agreement_Name__c":"My Agreement","Id":"a1t1t000000ZRdPAAW"},{"csconta__Agreement_Name__c":"Test A","Id":"a1t1t000000ZRafAAG"},{"csconta__Agreement_Name__c":"Test A","Id":"a1t1t000000ZRaaAAG"},{"csconta__Agreement_Name__c":"Test A","Id":"a1t1t000000ZRaVAAW"},{"csconta__Agreement_Name__c":"IBM Frame Agreement","Id":"a1t1t000000EOtBAAW"},{"Id":"a1t1t000000EPvDAAW"},{"csconta__Agreement_Name__c":"Test #3","Id":"a1t1t000000EP9nAAG"},{"csconta__Agreement_Name__c":"Test #3","Id":"a1t1t000000EOuxAAG"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSNjAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSNyAAO"},{"csconta__Agreement_Name__c":".....","Id":"a1t1t000000ZSMHAA4"},{"csconta__Agreement_Name__c":"dsgsdg","Id":"a1t1t000000ZSOcAAO"},{"Id":"a1t1t000000ZSP6AAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSMgAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSMlAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSMMAA4"},{"csconta__Agreement_Name__c":".....","Id":"a1t1t000000ZSMbAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSNtAAO"},{"csconta__Agreement_Name__c":";lk;l","Id":"a1t1t000000ZSNoAAO"},{"csconta__Agreement_Name__c":".....","Id":"a1t1t000000ZSO8AAO"},{"Id":"a1t1t000000ZSQEAA4"},{"csconta__Agreement_Name__c":"Test #1","Id":"a1t1t000000ZSQ4AAO"},{"csconta__Agreement_Name__c":"123213","Id":"a1t1t000000ZSR2AAO"},{"csconta__Agreement_Name__c":"FA 1","Id":"a1t1t000000ZSQnAAO"},{"csconta__Agreement_Name__c":"Test 1","Id":"a1t1t000000ZSPkAAO"},{"csconta__Agreement_Name__c":"Frame Agreement #1","Id":"a1t1t000000ZR7LAAW"},{"Id":"a1t1t000000ZSM2AAO"},{"Id":"a1t1t000000ZSPXAA4"},{"csconta__Agreement_Name__c":".....","Id":"a1t1t000000ZSO3AAO"},{"csconta__Agreement_Name__c":"SIMON","Id":"a1t1t000000ZSPuAAO"},{"csconta__Agreement_Name__c":"Test #2","Id":"a1t1t000000ZSUQAA4"},{"csconta__Agreement_Name__c":"Test #1","Id":"a1t1t000000ZSTmAAO"},{"csconta__Agreement_Name__c":"Test #2","Id":"a1t1t000000ZSUaAAO"}];
-                } else if (param.field === "csconta__Account__c" || param.pointedObject === "Account") {
-                    lastIndex = lookupAccountData.findIndex(r => r.Id === param.lastId);
-                    lastIndex = lastIndex === -1 ? 0 : lastIndex;
-                    getLookupRecordsData = lookupAccountData.slice(lastIndex + 1, lastIndex + param.offset + 1);
-                }
+                    if (param.field === "csconta__replaced_frame_agreement__c") {
+                        getLookupRecordsData = [{
+                            "csconta__Agreement_Name__c": "My Agreement",
+                            "Id": "a1t1t000000ZRdPAAW"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test A",
+                            "Id": "a1t1t000000ZRafAAG"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test A",
+                            "Id": "a1t1t000000ZRaaAAG"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test A",
+                            "Id": "a1t1t000000ZRaVAAW"
+                        }, {
+                            "csconta__Agreement_Name__c": "IBM Frame Agreement",
+                            "Id": "a1t1t000000EOtBAAW"
+                        }, {
+                            "Id": "a1t1t000000EPvDAAW"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test #3",
+                            "Id": "a1t1t000000EP9nAAG"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test #3",
+                            "Id": "a1t1t000000EOuxAAG"
+                        }, {
+                            "csconta__Agreement_Name__c": ";lk;l",
+                            "Id": "a1t1t000000ZSNjAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": ";lk;l",
+                            "Id": "a1t1t000000ZSNyAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": ".....",
+                            "Id": "a1t1t000000ZSMHAA4"
+                        }, {
+                            "csconta__Agreement_Name__c": "dsgsdg",
+                            "Id": "a1t1t000000ZSOcAAO"
+                        }, {
+                            "Id": "a1t1t000000ZSP6AAO"
+                        }, {
+                            "csconta__Agreement_Name__c": ";lk;l",
+                            "Id": "a1t1t000000ZSMgAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": ";lk;l",
+                            "Id": "a1t1t000000ZSMlAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": ";lk;l",
+                            "Id": "a1t1t000000ZSMMAA4"
+                        }, {
+                            "csconta__Agreement_Name__c": ".....",
+                            "Id": "a1t1t000000ZSMbAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": ";lk;l",
+                            "Id": "a1t1t000000ZSNtAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": ";lk;l",
+                            "Id": "a1t1t000000ZSNoAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": ".....",
+                            "Id": "a1t1t000000ZSO8AAO"
+                        }, {
+                            "Id": "a1t1t000000ZSQEAA4"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test #1",
+                            "Id": "a1t1t000000ZSQ4AAO"
+                        }, {
+                            "csconta__Agreement_Name__c": "123213",
+                            "Id": "a1t1t000000ZSR2AAO"
+                        }, {
+                            "csconta__Agreement_Name__c": "FA 1",
+                            "Id": "a1t1t000000ZSQnAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test 1",
+                            "Id": "a1t1t000000ZSPkAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": "Frame Agreement #1",
+                            "Id": "a1t1t000000ZR7LAAW"
+                        }, {
+                            "Id": "a1t1t000000ZSM2AAO"
+                        }, {
+                            "Id": "a1t1t000000ZSPXAA4"
+                        }, {
+                            "csconta__Agreement_Name__c": ".....",
+                            "Id": "a1t1t000000ZSO3AAO"
+                        }, {
+                            "csconta__Agreement_Name__c": "SIMON",
+                            "Id": "a1t1t000000ZSPuAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test #2",
+                            "Id": "a1t1t000000ZSUQAA4"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test #1",
+                            "Id": "a1t1t000000ZSTmAAO"
+                        }, {
+                            "csconta__Agreement_Name__c": "Test #2",
+                            "Id": "a1t1t000000ZSUaAAO"
+                        }];
+                    } else if (param.field === "csconta__Account__c" || param.pointedObject === "Account") {
+                        lastIndex = lookupAccountData.findIndex(r => r.Id === param.lastId);
+                        lastIndex = lastIndex === -1 ? 0 : lastIndex;
+                        getLookupRecordsData = lookupAccountData.slice(lastIndex + 1, lastIndex + param.offset + 1);
+                    }
 
-                return createPromise(getLookupRecordsData, 1000);
+                    return createPromise(getLookupRecordsData, 1000);
 
-            case "getLookupInformation":
-                var lookupInformation;
-                if (parametersArr[0] === "csconta__replaced_frame_agreement__c") {
-                    lookupInformation = {count: 33};
-                } else if (parametersArr[0] === "csconta__Account__c" || parametersArr[0] === "Account") {
-                    lookupInformation = {initialLabel: "Test Account", count: 2000};
-                }
+                case "getLookupInformation":
+                    var lookupInformation;
+                    if (parametersArr[0] === "csconta__replaced_frame_agreement__c") {
+                        lookupInformation = {
+                            count: 33
+                        };
+                    } else if (parametersArr[0] === "csconta__Account__c" || parametersArr[0] === "Account") {
+                        lookupInformation = {
+                            initialLabel: "Test Account",
+                            count: 2000
+                        };
+                    }
 
-                return createPromise(lookupInformation);
+                    return createPromise(lookupInformation);
 
-            case "getPicklistOptions":
-                const OPTIONS = [{"label":"OptionA","value":"OptionA"},{"label":"OptionB","value":"OptionB"},{"label":"OptionC","value":"OptionC"}];
-                var result = {};
-                parametersArr[0].forEach(f => {
-                    result[f] = OPTIONS;
-                });
+                case "getPicklistOptions":
+                    const OPTIONS = [{
+                        "label": "OptionA",
+                        "value": "OptionA"
+                    }, {
+                        "label": "OptionB",
+                        "value": "OptionB"
+                    }, {
+                        "label": "OptionC",
+                        "value": "OptionC"
+                    }];
+                    var result = {};
+                    parametersArr[0].forEach(f => {
+                        result[f] = OPTIONS;
+                    });
 
-                return createPromise(result);
+                    return createPromise(result);
 
-            case "getAccountsInformation":
-                var accountsInformation = {"main_account":{"Id":"0011t00000DQdZEAA1","Name":"Pyramid Construction Inc."},"associated_accounts":[{"Id":"a1o1t000000jDS5AAM","csconta__Account__c":"0011t00000Pq1WRAAZ","csconta__Account__r":{"Id":"0011t00000Pq1WRAAZ","Name":"Test Account"}}],"count":2014};
-                return createPromise(accountsInformation);
+                case "getAccountsInformation":
+                    var accountsInformation = {
+                        "main_account": {
+                            "Id": "0011t00000DQdZEAA1",
+                            "Name": "Pyramid Construction Inc."
+                        },
+                        "associated_accounts": [{
+                            "Id": "a1o1t000000jDS5AAM",
+                            "csconta__Account__c": "0011t00000Pq1WRAAZ",
+                            "csconta__Account__r": {
+                                "Id": "0011t00000Pq1WRAAZ",
+                                "Name": "Test Account"
+                            }
+                        }],
+                        "count": 2014
+                    };
+                    return createPromise(accountsInformation);
 
-            case "addAccountAssociation":
-                var newAssociation = {"Id":makeId(8),"csconta__Account__c":parametersArr[1],"csconta__Account__r":{"Id":parametersArr[1],"Name":"Universal name"}};
-                return createPromise(newAssociation);
+                case "addAccountAssociation":
+                    var newAssociation = {
+                        "Id": makeId(8),
+                        "csconta__Account__c": parametersArr[1],
+                        "csconta__Account__r": {
+                            "Id": parametersArr[1],
+                            "Name": "Universal name"
+                        }
+                    };
+                    return createPromise(newAssociation);
 
-            default:
-                return createPromise("Success");
+                default:
+                    return createPromise("Success");
 
         }
     }

@@ -608,7 +608,7 @@ class FaEditor extends Component {
 		let IdsToLoad = this.props.commercialProducts.reduce((acc, cp) => {
 			if (_productsSet.has(cp.Id)) {
 				_attachment[cp.Id] = {};
-				if (!cp.dataLoaded) {
+				if (!cp._dataLoaded) {
 					return acc.concat([cp.Id]);
 				} else {
 					return acc;

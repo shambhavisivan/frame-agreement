@@ -694,11 +694,23 @@ const rootReducer = (state = initialState, action) => {
 				);
 
 				// **********************************************
-				state.commercialProducts[priceItemIndex]._rateCards =
-					priceItemData[key].rateCards;
+				state.commercialProducts[priceItemIndex]._rateCards = priceItemData[
+					key
+				].rateCards.map(rc => {
+					rc.rateCardLines.forEach(rcl => {
+						rcl.usageTypeName = rcl.hasOwnProperty('cspmb__usage_type__r')
+							? rcl.cspmb__usage_type__r.Name
+							: null;
+					});
+					return rc;
+				});
 
 				// **********************************************
-				state.commercialProducts[priceItemIndex].dataLoaded = true;
+				state.commercialProducts[priceItemIndex]._allowances =
+					priceItemData[key].allowances || [];
+
+				// **********************************************
+				state.commercialProducts[priceItemIndex]._dataLoaded = true;
 			}
 			// **********************************************
 

@@ -297,7 +297,6 @@ class ApprovalProcess extends React.Component {
 													className="list-cell"
 													title={'status ' + step.StepStatus}
 												>
-													{step.StepStatus}>
 													<span className={'status ' + step.StepStatus}>
 														{step.StepStatus}
 													</span>

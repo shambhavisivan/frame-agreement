@@ -15,6 +15,7 @@ import ProductCharges from './ProductCharges';
 import Addons from './Addons';
 import Charges from './Charges';
 import Rates from './Rates';
+import Allowances from './Allowances';
 
 import {
 	validateAddons,
@@ -279,6 +280,12 @@ class CommercialProduct extends React.Component {
 										this.onNegotiate('_rateCards', data);
 									}}
 								/>
+							</Tab>
+							<Tab
+								label={window.SF.labels.products_allowances}
+								disabled={!this.props.product._allowances.length}
+							>
+								<Allowances data={this.props.product._allowances} />
 							</Tab>
 						</Tabs>
 					</div>

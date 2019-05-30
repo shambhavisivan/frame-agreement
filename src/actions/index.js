@@ -264,6 +264,10 @@ export function getAppSettings() {
 		return new Promise((resolve, reject) => {
 			window.SF.invokeAction('getAppSettings', [window.SF.param.account]).then(
 				response => {
+					if (!response) {
+						reject('Cannot get app settings!');
+						return response;
+					}
 					setTimeout(() => {
 						dispatch(recieveAppSettings(response));
 						resolve(response);

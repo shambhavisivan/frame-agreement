@@ -35,6 +35,9 @@ global with sharing class FrameRateManagerController {
 	public class InvalidParamException extends Exception {
 	}
 
+	public class ApplicationException extends Exception {
+	}
+
 	@TestVisible private static csutil__JSON_Data__c getHeaderData() {
 		List<csutil__JSON_Data__c> json_data = [
 				select csutil__value__c
@@ -701,7 +704,12 @@ global with sharing class FrameRateManagerController {
 		Integer cp_count = database.countQuery(cp_query);
 		Integer fa_count = database.countQuery('select count() from csconta__Frame_Agreement__c');
 
-		Account acc = [select Id, Name from Account where Id = :accountId];
+		Account acc;
+		try {
+			acc = [select Id, Name from Account where Id = :accountId];
+		} catch (QueryException e) {
+			throw new ApplicationException('Cannot find account with Id:' + accountId);
+		}
 
 		List < Object > headerData = new List < Object > ();
 		List < Object > buttonCustom = new List < Object > ();
@@ -913,6 +921,7 @@ global with sharing class FrameRateManagerController {
 		Map < Id, List < cspmb__Price_Item_Add_On_Price_Item_Association__c >> addons = getAddons(priceItemIdList);
 		Map < Id, List < PricingElementWrapper >> charges = getPriceItemCharges(priceItemIdList);
 		Map <Id, List <RateCard>> rateCards = getRateCards(priceItemIdList);
+		Map <Id, List <cspmb__Allowance__c>> allowances = getAllowances(priceItemIdList);
 
 		for (String priceItemId : priceItemIdList) {
 			List < cspmb__Price_Item_Add_On_Price_Item_Association__c > this_addons = addons.get(priceItemId);
@@ -930,7 +939,12 @@ global with sharing class FrameRateManagerController {
 				this_rateCards = new List <RateCard> ();
 			}
 
-			cpDataMap.put(priceItemId, new cpData(this_addons, this_charges, this_rateCards));
+			List <cspmb__Allowance__c> this_allowances = allowances.get(priceItemId);
+			if (this_allowances == null) {
+				this_allowances = new List <cspmb__Allowance__c> ();
+			}
+
+			cpDataMap.put(priceItemId, new cpData(this_addons, this_charges, this_rateCards, this_allowances));
 		}
 
 		return cpDataMap;
@@ -1023,6 +1037,28 @@ global with sharing class FrameRateManagerController {
 		return prId_RateCards;
 	}
 
+	public static Map <Id, List <cspmb__Allowance__c>> getAllowances(List <Id> priceItemIdList) {
+		List <cspmb__Commercial_Product_Allowance_Assoc__c> cpao = new List <cspmb__Commercial_Product_Allowance_Assoc__c> ();
+		cpao = [select Id, cspmb__allowance__c, cspmb__commercial_product__c from cspmb__Commercial_Product_Allowance_Assoc__c where cspmb__commercial_product__c in :priceItemIdList];
+
+		Map<Id, cspmb__Allowance__c> allowanceMap = new Map<Id, cspmb__Allowance__c>([select Id, Name, cspmb__amount__c, cspmb__priority__c, cspmb__usage_type__c from cspmb__Allowance__c]);
+
+		Map <Id, List <cspmb__Allowance__c>> resultMap = new Map <Id, List <cspmb__Allowance__c>>();
+
+		for (cspmb__Commercial_Product_Allowance_Assoc__c cpallow : cpao) {
+				if (resultMap.containsKey(cpallow.cspmb__commercial_product__c)) {
+					// get addons lines for this price item
+					List <cspmb__Allowance__c> tempAllowList = resultMap.get(cpallow.cspmb__commercial_product__c);
+					tempAllowList.add(allowanceMap.get(cpallow.cspmb__allowance__c));
+					resultMap.put(cpallow.cspmb__commercial_product__c, tempAllowList);
+				} else {
+					resultMap.put(cpallow.cspmb__commercial_product__c, new List <cspmb__Allowance__c>{ allowanceMap.get(cpallow.cspmb__allowance__c) });
+				}
+		}
+
+		return resultMap;
+	}
+
 	public static List < cspmb__Rate_Card_Line__c > getRateCardLines(List <String> rateCardLinesIdList) {
 
 		List < String > standardFields = new List < String >{
@@ -1030,6 +1066,7 @@ global with sharing class FrameRateManagerController {
 				'Name',
 				'cspmb__Cap_Unit__c',
 				'cspmb__rate_value__c',
+				'cspmb__usage_type__r.Name',
 				'cspmb__Rate_Card__c'
 		};
 
@@ -1659,11 +1696,16 @@ global with sharing class FrameRateManagerController {
 			get;
 			set;
 		}
+		public List < cspmb__Allowance__c > allowances {
+			get;
+			set;
+		}
 
-		public cpData(List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonList, List < PricingElementWrapper > charges, List < RateCard > rateCardList) {
+		public cpData(List < cspmb__Price_Item_Add_On_Price_Item_Association__c > addonList, List < PricingElementWrapper > charges, List < RateCard > rateCardList, List < cspmb__Allowance__c > allowances) {
 			this.addons = addonList;
 			this.charges = charges;
 			this.rateCards = rateCardList;
+			this.allowances = allowances;
 		}
 	}
 

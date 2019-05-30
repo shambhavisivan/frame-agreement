@@ -25,26 +25,31 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 
-		this.props.getAppSettings().then(response => {
-			window.SF.AuthLevels = response.AuthLevels;
+		this.props.getAppSettings().then(
+			response => {
+				window.SF.AuthLevels = response.AuthLevels;
 
-			let _promiseArray = [
-				this.props.getFrameAgreements(),
-				this.props.getCommercialProducts()
-			];
+				let _promiseArray = [
+					this.props.getFrameAgreements(),
+					this.props.getCommercialProducts()
+				];
 
-			let picklists = response.HeaderData.filter(
-				f => f.type === 'picklist'
-			).map(f => f.field);
+				let picklists = response.HeaderData.filter(
+					f => f.type === 'picklist'
+				).map(f => f.field);
 
-			if (picklists.length) {
-				_promiseArray.push(this.props.getPicklistOptions(picklists));
+				if (picklists.length) {
+					_promiseArray.push(this.props.getPicklistOptions(picklists));
+				}
+
+				Promise.all(_promiseArray).then(responseArr => {
+					publish('onLoad', [responseArr]);
+				});
+			},
+			reject => {
+				console.warn(reject);
 			}
-
-			Promise.all(_promiseArray).then(responseArr => {
-				publish('onLoad', [responseArr]);
-			});
-		});
+		);
 
 		this.landing = this.props.history.location.pathname === '/';
 	}

@@ -81,6 +81,9 @@ class Rates extends React.Component {
 						{window.SF.labels.rate_cards_header_name}
 					</div>
 					<div className="list-cell">
+						{window.SF.labels.rate_cards_header_usage}
+					</div>
+					<div className="list-cell">
 						{window.SF.labels.rate_cards_header_value}
 					</div>
 					<div className="list-cell">
@@ -120,6 +123,9 @@ class Rates extends React.Component {
 															color={flagColor}
 														/>
 														{rcl.Name}
+													</div>
+													<div className="list-cell">
+														{rcl.usageTypeName ? rcl.usageTypeName : 'N/A'}
 													</div>
 													<div className="list-cell">
 														{rcl.hasOwnProperty('cspmb__rate_value__c')

@@ -324,22 +324,16 @@ class AccountsModal extends Component {
 		if (this.state.lookupOpen) {
 			footer = (
 				<div className="fa-modal-footer">
-					{this.state.count && this.state.count > 20 ? (
-						<Pagination
-							totalSize={this.state.count}
-							pageSize={20}
-							page={this.state.page}
-							restricted={true}
-							disabled={this.state.loadingRecords}
-							onPageChange={newPage => {
-								this.onPageChange(newPage);
-							}}
-						/>
-					) : (
-						''
-					)}
 					<button
-						className="fa-button"
+						className="fa-button fa-button--default"
+						onClick={() => {
+							this.setState({ lookupOpen: false });
+						}}
+					>
+						Close
+					</button>
+					<button
+						className="fa-button fa-button--brand"
 						disabled={!this.state.selected.Id}
 						onClick={() => {
 							this.onSave();
@@ -347,20 +341,12 @@ class AccountsModal extends Component {
 					>
 						Save
 					</button>
-					<button
-						onClick={() => {
-							this.setState({ lookupOpen: false });
-						}}
-						className="fa-button"
-					>
-						Close
-					</button>
 				</div>
 			);
 		} else {
 			footer = (
 				<div className="fa-modal-footer">
-					<button className="fa-button" onClick={this.onCloseModal}>
+					<button className="fa-button fa-button--default" onClick={this.onCloseModal}>
 						Done
 					</button>
 				</div>
@@ -386,35 +372,46 @@ class AccountsModal extends Component {
 		//   );
 		// } else {
 		lookup = (
-			<div className="accounts-lookup">
-				<InputSearch
-					placeholder={'Filter accounts'}
-					value={this.state.searchValue}
-					onChange={val => {
-						this.onSearchChange(val);
-					}}
-				/>
-
-				{(() =>
-					this.state.searchValue
-						? this.state.searchedRecords
-						: this.props.records)()
-					.paginate(this.state.page, 20)
-					.map(record => {
-						return (
-							<div
-								key={record.Id}
-								className={
-									'product-row' +
-									(this.state.selected.Id === record.Id ? ' selected' : '')
-								}
-								onClick={() => this.selectRecord(record)}
-							>
-								<span>{record.Id}</span>
-								<span>{record.Name}</span>
-							</div>
-						);
-					})}
+			<div className="accounts-lookup modal-table-container">
+				<div className="modal-navigation">
+					<div className="search-container">
+						<InputSearch
+							placeholder={'Filter accounts'}
+							value={this.state.searchValue}
+							onChange={val => {
+								this.onSearchChange(val);
+							}}
+						/>
+					</div>
+				</div>
+				<div>
+					<div className="fa-modal-product-list-header">
+						<span>Name</span>
+					</div>
+					<div className="fa-modal-product-list">
+						{(() =>
+							this.state.searchValue
+								? this.state.searchedRecords
+								: this.props.records)()
+							.paginate(this.state.page, 20)
+							.map(record => {
+								return (
+									<div
+										key={record.Id}
+										className={
+											'product-row' +
+											(this.state.selected.Id === record.Id ? ' selected' : '')
+										}
+										onClick={() => this.selectRecord(record)}
+									>
+										<span>{record.Id}</span>
+										<span>{record.Name}</span>
+									</div>
+								);
+							})
+						}
+					</div>
+				</div>
 			</div>
 		);
 
@@ -433,59 +430,92 @@ class AccountsModal extends Component {
 				center
 			>
 				<div className="fa-modal-header">
-					<h2 className="fa-modal-header-title">{'window.SF.labels.'}</h2>
+					<button className="close-modal-button" onClick={this.onCloseModal}>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 52 52"
+						>
+							<path
+								fill="#fff"
+								d="m31 25.4l13-13.1c0.6-0.6 0.6-1.5 0-2.1l-2-2.1c-0.6-0.6-1.5-0.6-2.1 0l-13.1 13.1c-0.4 0.4-1 0.4-1.4 0l-13.1-13.2c-0.6-0.6-1.5-0.6-2.1 0l-2.1 2.1c-0.6 0.6-0.6 1.5 0 2.1l13.1 13.1c0.4 0.4 0.4 1 0 1.4l-13.2 13.2c-0.6 0.6-0.6 1.5 0 2.1l2.1 2.1c0.6 0.6 1.5 0.6 2.1 0l13.1-13.1c0.4-0.4 1-0.4 1.4 0l13.1 13.1c0.6 0.6 1.5 0.6 2.1 0l2.1-2.1c0.6-0.6 0.6-1.5 0-2.1l-13-13.1c-0.4-0.4-0.4-1 0-1.4z"
+							/>
+						</svg>
+					</button>
+					<h2 className="fa-modal-header-title">Accounts</h2>
 				</div>
 
-				<div className="product-modal fa-modal-body">
-					<h3>Account</h3>
-					<div>
-						<p>{this.state.main_acc.Id}</p>
-						<p>{this.state.main_acc.Name}</p>
+				<div className="accounts-modal fa-modal-body">
+					<div className="accounts-modal--left">
+						<div className="accounts-modal-tab">
+							<h3>Account</h3>
+							<div>
+								<p>{this.state.main_acc.Id}</p>
+								<p>{this.state.main_acc.Name}</p>
 
-						<div className="input-group">
-							<input
-								type="text"
-								placeholder="No record selected"
-								aria-describedby=""
-								readOnly={true}
-								value={this.state.main_acc.Name || ''}
-							/>
-							<button
-								className="fa-button fa-button--brand"
-								onClick={() => this.onOpenAccounts('main')}
-							>
-								Choose
-							</button>
+								<div className="input-group">
+									<input
+										type="text"
+										placeholder="No record selected"
+										aria-describedby=""
+										readOnly={true}
+										value={this.state.main_acc.Name || ''}
+									/>
+									<button
+										className="fa-button fa-button--brand"
+										onClick={() => this.onOpenAccounts('main')}
+									>
+										Choose
+									</button>
+								</div>
+							</div>
+						</div>
+						<div className="accounts-modal-tab">
+							<h3>Associations</h3>
+							<div>
+								{this.state.associated_accounts.map(acc => {
+									return (
+										<p key={acc.Id}>
+											{acc.accName}
+											<Icon
+												onClick={() => this.onRemoveAssociation(acc.Id)}
+												name="delete"
+												height="14"
+												width="14"
+												color="#0070d2"
+											/>
+										</p>
+									);
+								})}
+								<p>
+									<button
+										className="fa-button fa-button--default"
+										onClick={() => this.onOpenAccounts('association')}
+									>
+										Add
+									</button>
+								</p>
+							</div>
 						</div>
 					</div>
-
-					<h3>Associations</h3>
-					<div>
-						{this.state.associated_accounts.map(acc => {
-							return (
-								<p key={acc.Id}>
-									{acc.accName}
-									<Icon
-										onClick={() => this.onRemoveAssociation(acc.Id)}
-										name="delete"
-										height="14"
-										width="14"
-										color="#0070d2"
-									/>
-								</p>
-							);
-						})}
-						<p>
-							<button
-								className="fa-button fa-button--default"
-								onClick={() => this.onOpenAccounts('association')}
-							>
-								Add
-							</button>
-						</p>
+					<div className="accounts-modal--right">
+						{this.state.lookupOpen ? lookup : ''}
+						{this.state.count && this.state.count > 20 ? (
+						<Pagination
+							totalSize={this.state.count}
+							pageSize={20}
+							page={this.state.page}
+							restricted={true}
+							disabled={this.state.loadingRecords}
+							onPageChange={newPage => {
+								this.onPageChange(newPage);
+							}}
+						/>
+					) : (
+						''
+					)}
 					</div>
-
-					{this.state.lookupOpen ? lookup : ''}
 				</div>
 
 				{footer}

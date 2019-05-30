@@ -5,7 +5,7 @@ import Icon from './Icon';
 import SFDatePicker from './datepicker/SFDatePicker';
 import InputText from './inputs/InputText';
 import InputTextArea from './inputs/InputTextArea';
-import Lookup from './inputs/Lookup';
+import LookupField from './inputs/LookupField';
 import Toggle from './inputs/Toggle';
 
 class SFField extends Component {
@@ -104,7 +104,7 @@ class SFField extends Component {
 			// }
 
 			field = (
-				<Lookup
+				<LookupField
 					disabled={!this.props.editable}
 					label={this.props.field.label}
 					onChange={this.onChange}

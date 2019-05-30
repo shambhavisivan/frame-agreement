@@ -191,7 +191,7 @@ class CommercialProduct extends React.Component {
 											onClick={this.onExpandProduct}
 											key={'facp-' + this.props.product.Id + '-' + f + i}
 										>
-											{this.props.product[f.name] || '-'}
+											{this.props.product[f.name].toString() || '-'}
 										</div>
 									);
 								}

@@ -481,6 +481,10 @@
 		}
 	}
 
+	.selected-mode {
+		border: 2px solid red;
+	}
+
 	.accounts-modal--right {
 		display: flex;
 		flex-direction: column;

@@ -7,7 +7,7 @@ let sharedService = {
 };
 
 export const truncateCPField = field => {
-	if (redux_store.getState().settings.FACSettings.truncate_product_fields) {
+	if (!redux_store.getState().settings.FACSettings.truncate_product_fields) {
 		return field;
 	}
 
@@ -30,6 +30,10 @@ export const decodeEntities = (() => {
 
 	function decodeHTMLEntities(str) {
 		let flagString = true;
+
+		if (!str) {
+			return str;
+		}
 
 		if (typeof str !== 'string') {
 			flagString = false;

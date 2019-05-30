@@ -123,7 +123,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, Object> getAccountsInformation(String faId) {
+	@TestVisible public static Map <String, Object> getAccountsInformation(String faId, String whereClause) {
 		// NEED
 		// count
 		// initial labels for associations
@@ -145,6 +145,10 @@ global with sharing class FrameRateManagerController {
 
 		// Get count for accounts
 		String query_count = 'select count() from Account';
+		if (whereClause != null) {
+			query_count = query_count + ' where ' + whereClause;
+
+		}
 		returnValues.put('count', database.countQuery(query_count));
 
 		return returnValues;

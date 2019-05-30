@@ -1,7 +1,27 @@
 .fa-pagination-container {
 	display: flex;
 	justify-content: flex-end;
+	position: relative;
 	padding: 1rem 1.25rem;
+
+	.pagination-overlay {
+	    display: none;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    bottom: 0;
+	    right: 0;
+	}
+
+	&.disabled  {
+	.pagination-overlay {
+	    display: block;
+	}
+		.fa-pagination li a {
+			/*DISABLED*/
+			color: var(--button-bg-disabled);
+		}
+	}
 
 	.fa-pagination {
 		display: flex;

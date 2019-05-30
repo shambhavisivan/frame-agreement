@@ -36,8 +36,12 @@ class Pagination extends Component {
 		let pagination = '';
 		if (this.props.totalSize > this.pageSizes[0]) {
 			pagination = (
-				<div className="fa-pagination-container">
-					{this.props.disabled ? <div className="pagination-overlay" /> : ''}
+				<div
+					className={
+						'fa-pagination-container ' + (this.props.disabled ? 'disabled' : '')
+					}
+				>
+					<div className="pagination-overlay" />
 
 					<ReactPaginate
 						previousLabel={

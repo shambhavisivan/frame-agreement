@@ -1,5 +1,5 @@
 import axios from 'axios';
-import sharedService from '../utils/shared-service';
+import { decodeEntities } from '../utils/shared-service';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
 
@@ -22,6 +22,26 @@ export function performAction(className, params) {
 				response => {
 					resolve(response);
 					return response;
+				}
+			);
+		});
+	};
+}
+// ***********************************************************************
+export const _loadAccounts = data => ({
+	type: 'LOAD_ACCOUNTS',
+	payload: { data }
+});
+
+export function loadAccounts(params) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]).then(
+				data => {
+					data = decodeEntities(data);
+					dispatch(_loadAccounts(data));
+					resolve(data);
+					return data;
 				}
 			);
 		});
@@ -326,9 +346,6 @@ export const recieveSaveAttachment = (parentId, data) => ({
 });
 
 export function saveAttachment(parentId, data) {
-	console.log(parentId);
-	console.log(data);
-
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
 			if (typeof data !== 'string') {

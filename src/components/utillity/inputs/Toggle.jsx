@@ -30,7 +30,7 @@ class Toggle extends React.Component {
 				/>
 				<span className="switch-style" />
 			</label>
-		)
+		);
 	}
 }
 

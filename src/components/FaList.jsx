@@ -9,6 +9,7 @@ import {
 	createToast,
 	clearToasts,
 	registerMethod,
+	loadAccounts,
 	getFrameAgreements,
 	cloneFrameAgreement,
 	saveFrameAgreement,
@@ -38,28 +39,30 @@ class FaList extends Component {
 		window.FAM.registerMethod = this.props.registerMethod;
 	}
 
+	componentWillMount() {
+		// initial load accounts loadAccounts
+		let params = {};
+		params.pointedObject = 'Account';
+		params.columns = ['Name'];
+		params.whereClause = null;
+		params.lastId = null;
+		params.offset = 20 * 10;
+
+		this.props.loadAccounts(params);
+	}
+
 	componentWillUnmount() {
 		delete window.FAM.api.toast;
 		delete window.FAM.api.clearToasts;
 	}
 
 	onSearchChange(value) {
-		console.log(value);
 		this.setState({
 			searchTerm: value
 		});
 	}
 
-	onLoadRecords(newRecords) {
-		this.setState({
-			loadedAccounts: [...this.state.loadedAccounts, ...newRecords]
-		});
-	}
-
 	onAccountsSave(faId, newAccId) {
-		console.log(faId);
-		console.log(newAccId);
-
 		let data = {
 			Id: faId,
 			csconta__Account__c: newAccId
@@ -158,11 +161,11 @@ class FaList extends Component {
 					<AccountsModal
 						open={!!this.state.accountsModal}
 						faId={this.state.accountsModal}
-						onSave={this.onAccountsSave}
-						onLoadRecords={newRecords => {
-							this.onLoadRecords(newRecords);
+						onAccountsSave={this.onAccountsSave}
+						onLoadRecords={params => {
+							return this.props.loadAccounts(params);
 						}}
-						records={this.state.loadedAccounts}
+						records={this.props.accounts}
 						onCloseModal={() => this.onCloseAccountsModal()}
 					/>
 				)}
@@ -247,13 +250,18 @@ class FaList extends Component {
 }
 
 const mapStateToProps = state => {
-	return { frameAgreements: state.frameAgreements, settings: state.settings };
+	return {
+		frameAgreements: state.frameAgreements,
+		settings: state.settings,
+		accounts: state.accounts
+	};
 };
 
 const mapDispatchToProps = {
 	createToast,
 	createToast,
 	registerMethod,
+	loadAccounts,
 	getFrameAgreements,
 	saveFrameAgreement,
 	cloneFrameAgreement,

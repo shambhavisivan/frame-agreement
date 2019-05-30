@@ -7,6 +7,7 @@ const initialState = {
 		settings_loaded: false
 	},
 	settings: {},
+	accounts: [],
 	frameAgreements: {},
 	commercialProducts: null,
 	productFields: [],
@@ -164,6 +165,13 @@ const rootReducer = (state = initialState, action) => {
 				...{ frameAgreements: frameAgreementMap },
 				...{ initialised: { ...state.initialised, ...{ fa_loaded: true } } }
 			};
+
+		case 'LOAD_ACCOUNTS':
+			return {
+				...state,
+				accounts: [...state.accounts, ...action.payload.data]
+			};
+
 		case 'ADD_TOAST':
 			// action.payload.type;
 			// action.payload.title;

@@ -1,40 +1,12 @@
 import React, { Component } from 'react';
 import Modal from 'react-responsive-modal';
-import { connect } from 'react-redux';
 
-import InputSearch from './InputSearch';
 import Icon from '../Icon';
+import Lookup from '../Lookup';
 
-import Pagination from '../Pagination';
 import { truncateCPField, decodeEntities } from '../../../utils/shared-service';
 
-const RecordSkeletonRow = () => {
-	let skeletonStyle = {
-		width: '120px',
-		height: '16px'
-	};
-
-	let skeletonContainerStyle = {
-		width: '100%',
-		borderRadius: '2px',
-		background: 'white',
-		boxShadow: '0 1px 0 0 rgba(0, 0, 0, 0.22)',
-		justifyContent: 'space-between',
-		marginBottom: '6px',
-		padding: '6px 12px'
-	};
-
-	return (
-		<div className="skeleton-table-item" style={skeletonContainerStyle}>
-			<div className="skeleton-shape" style={skeletonStyle} />
-			<div className="skeleton-shape" style={skeletonStyle} />
-			<div className="skeleton-shape" style={skeletonStyle} />
-			<div className="skeleton-shape" style={skeletonStyle} />
-		</div>
-	);
-};
-
-class Lookup extends React.Component {
+class LookupField extends React.Component {
 	// disabled={!this.props.editable}
 	// onChange={this.onChange}
 	// field={this.props.field.field}
@@ -50,6 +22,7 @@ class Lookup extends React.Component {
 
 		this.onSave = this.onSave.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
+		this.onSearchChange = this.onSearchChange.bind(this);
 		this.onOpenLookupModal = this.onOpenLookupModal.bind(this);
 
 		this.filter = null;
@@ -68,8 +41,8 @@ class Lookup extends React.Component {
 			searchValue: '',
 			selected: {},
 			loadedInput: false,
-			loadedModal: false,
-			loadingRecords: false,
+			fetchingRecords: false,
+			loadingOverlay: false,
 			count: 0,
 			pagination: {
 				page: 1
@@ -87,7 +60,8 @@ class Lookup extends React.Component {
 			this.setState({
 				recordLabel: response.initialLabel || '',
 				count: response.count,
-				loadedInput: true
+				loadedInput: true,
+				loadingOverlay: false
 			});
 		});
 	}
@@ -109,8 +83,8 @@ class Lookup extends React.Component {
 					page: 1
 				},
 				searchValue: val,
-				loadingRecords: true,
-				loadedModal: false
+				fetchingRecords: true,
+				loadingOverlay: true
 			},
 			() => {
 				let params = {};
@@ -144,14 +118,14 @@ class Lookup extends React.Component {
 						this.setState({
 							count: info.count,
 							records: records,
-							loadedModal: true,
-							loadingRecords: false
+							fetchingRecords: false,
+							loadingOverlay: false
 						});
 					},
 					error => {
 						this.setState({
-							loadedModal: true,
-							loadingRecords: false
+							fetchingRecords: false,
+							loadingOverlay: false
 						});
 					}
 				);
@@ -160,7 +134,7 @@ class Lookup extends React.Component {
 	}
 
 	async onPageChange(newPage) {
-		if (this.state.loadingRecords) {
+		if (this.state.fetchingRecords) {
 			return;
 		}
 
@@ -168,7 +142,7 @@ class Lookup extends React.Component {
 
 		this.setState({
 			pagination: { ...this.state.pagination, page: newPage },
-			loadingRecords: needToLoad
+			fetchingRecords: needToLoad
 		});
 
 		if (needToLoad) {
@@ -177,7 +151,7 @@ class Lookup extends React.Component {
 			this.setState(
 				{
 					records: [...this.state.records, ...newSet],
-					loadingRecords: false
+					fetchingRecords: false
 				},
 				() => {
 					//     	function hasDuplicates(array) {
@@ -192,8 +166,9 @@ class Lookup extends React.Component {
 	}
 
 	onSave() {
-		this.setState({ recordLabel: this.state.selected[this.labelField] }, () => {
-			this.props.onChange(this.state.selected.Id);
+		let _records = Object.values(this.state.selected)[0];
+		this.setState({ recordLabel: _records[this.labelField] }, () => {
+			this.props.onChange(_records);
 			this.onCloseModal();
 		});
 	}
@@ -201,9 +176,9 @@ class Lookup extends React.Component {
 	onOpenLookupModal() {
 		this.setState(
 			{
-				loadedModal: !!this.state.records.length,
 				searchValue: '',
 				open: true,
+				loadingOverlay: true,
 				pagination: {
 					page: 1
 				}
@@ -226,16 +201,17 @@ class Lookup extends React.Component {
 
 							this.setState({
 								records: response,
-								loadedModal: true
+								loadingOverlay: false
 							});
 						},
 						error => {
 							console.error(error);
-							this.setState({
-								loadedModal: true
-							});
 						}
 					);
+				} else {
+					this.setState({
+						loadingOverlay: false
+					});
 				}
 			}
 		);
@@ -244,7 +220,9 @@ class Lookup extends React.Component {
 	// **************************************************************
 
 	selectRecord(record) {
-		this.setState({ selected: record });
+		let _selected = {};
+		_selected[record.Id] = record;
+		this.setState({ selected: _selected });
 	}
 
 	pagesToLoad(newPage) {
@@ -296,27 +274,35 @@ class Lookup extends React.Component {
 
 	render() {
 		return (
-			<div className="input-group">
-				<input
-					className="fa-lookup fa-input-border"
-					type="text"
-					placeholder="No record selected"
-					aria-describedby=""
-					readOnly={true}
-					onClick={this.onOpenLookupModal}
-					value={
-						this.state.loadedInput
-							? decodeEntities(this.state.recordLabel)
-							: '-'
-					}
-				/>
-				<div className="fa-lookup-icon" onClick={this.onOpenLookupModal}>
-					<Icon svg-class="icon-search" name="search" width="14" height="14" />
+			<React.Fragment>
+				<div className="input-group">
+					<input
+						className="fa-lookup fa-input-border"
+						type="text"
+						placeholder="No record selected"
+						aria-describedby=""
+						readOnly={true}
+						onClick={this.onOpenLookupModal}
+						value={
+							this.state.loadedInput
+								? decodeEntities(this.state.recordLabel)
+								: '-'
+						}
+					/>
+					<div className="fa-lookup-icon" onClick={this.onOpenLookupModal}>
+						<Icon
+							svg-class="icon-search"
+							name="search"
+							width="14"
+							height="14"
+						/>
+					</div>
 				</div>
+
 				<Modal
 					classNames={{
 						overlay: 'overlay',
-						modal: 'modal fa-modal',
+						modal: 'modal fa-modal lookup-modal',
 						closeButton: 'close-button'
 					}}
 					closeIconSvgPath={
@@ -334,125 +320,32 @@ class Lookup extends React.Component {
 					</div>
 
 					<div className="product-modal fa-modal-body">
-						<div className="modal-table-container">
-							<div className="modal-navigation">
-								<div className="search-container">
-									<InputSearch
-										placeholder={
-											'Filter ' + this.props.label.toLowerCase() + ' records'
-										}
-										value={this.state.searchValue}
-										onChange={val => {
-											this.onSearchChange(val);
-										}}
-									/>
-								</div>
-							</div>
-
-							<div className="modal-product-list">
-								<div className="product-list-header">
-									<div className="header-th">
-										<span>Id</span>
-									</div>
-									{this.props.columns.map(c => {
-										return (
-											<div key={c} className="header-th">
-												<span>{truncateCPField(c)}</span>
-											</div>
-										);
-									})}
-								</div>
-
-								{this.state.loadedModal && (
-									<div className="product-list">
-										{this.state.records
-											.paginate(this.state.pagination.page, 20)
-											.map(record => {
-												return (
-													<div
-														key={record.Id}
-														className={
-															'product-row' +
-															(this.state.selected.Id === record.Id
-																? ' selected'
-																: '')
-														}
-														onClick={() => this.selectRecord(record)}
-													>
-														<span>{record.Id}</span>
-
-														{this.props.columns.map(f => {
-															return (
-																<span key={'field-' + f}>{record[f]}</span>
-															);
-														})}
-													</div>
-												);
-											})}
-									</div>
-								)}
-
-								{!this.state.loadedModal && (
-									<div className="product-list">
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-										<RecordSkeletonRow />
-									</div>
-								)}
-							</div>
-						</div>
+						<Lookup
+							onChange={record => this.selectRecord(record)}
+							onSearch={this.onSearchChange}
+							onPageChange={newPage => this.onPageChange(newPage)}
+							data={this.state.records}
+							count={this.state.count}
+							columns={this.props.columns}
+							selected={this.state.selected}
+							disabled={this.state.fetchingRecords}
+							loading={this.state.loadingOverlay}
+						/>
 					</div>
 
 					<div className="fa-modal-footer">
-						{this.state.records.length && this.state.count ? (
-							<Pagination
-								totalSize={this.state.count}
-								pageSize={20}
-								page={this.state.pagination.page}
-								restricted={true}
-								disabled={this.state.loadingRecords}
-								onPageChange={newPage => {
-									this.onPageChange(newPage);
-								}}
-							/>
-						) : (
-							''
-						)}
-
 						<button
-							className="fa-button"
-							disabled={!this.state.selected.Id}
+							className="fa-button fa-button--brand"
+							disabled={!Object.values(this.state.selected).length}
 							onClick={this.onSave}
 						>
 							Save
 						</button>
 					</div>
 				</Modal>
-			</div>
+			</React.Fragment>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	return {
-		settings: state.settings
-	};
-};
-
-export default connect(
-	mapStateToProps,
-	null
-)(Lookup);
-
-// onPageChange={newPage => {
-//   this.setState({
-//     pagination: { ...this.state.pagination, page: newPage }
-//   });
-// }}
+export default LookupField;

@@ -6,7 +6,7 @@ function createPromise(result, timeout = 500) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(result);
-        }, 10);
+        }, timeout);
     });
 }
 
@@ -2651,12 +2651,23 @@ window.SF = SF = {
                             "Id": "a1t1t000000ZSUaAAO"
                         }];
                     } else if (param.field === "csconta__Account__c" || param.pointedObject === "Account") {
-                        lastIndex = lookupAccountData.findIndex(r => r.Id === param.lastId);
+                        let data;
+                        if (param.search) {
+                            param.search = param.search.substring(
+                                param.search.indexOf("%") + 1,
+                                param.search.lastIndexOf("%")
+                            );
+                            data = lookupAccountData.filter(r => r.Name.toLowerCase().includes(param.search ));
+                        } else {
+                            data = lookupAccountData.map(r => r);
+                        }
+
+                        lastIndex = data.findIndex(r => r.Id === param.lastId);
                         lastIndex = lastIndex === -1 ? 0 : lastIndex;
-                        getLookupRecordsData = lookupAccountData.slice(lastIndex + 1, lastIndex + param.offset + 1);
+                        getLookupRecordsData = data.slice(lastIndex + 1, lastIndex + param.offset + 1);
                     }
 
-                    return createPromise(getLookupRecordsData, 1000);
+                    return createPromise(getLookupRecordsData, 2000);
 
                 case "getLookupInformation":
                     var lookupInformation;

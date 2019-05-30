@@ -2,35 +2,8 @@ import React, { Component } from 'react';
 import Modal from 'react-responsive-modal';
 
 import { decodeEntities } from '../../utils/shared-service';
-import Pagination from '../utillity/Pagination';
+import Lookup from '../utillity/Lookup';
 import Icon from '../utillity/Icon';
-import InputSearch from '../utillity/inputs/InputSearch';
-
-const RecordSkeletonRow = () => {
-	let skeletonStyle = {
-		width: '120px',
-		height: '16px'
-	};
-
-	let skeletonContainerStyle = {
-		width: '100%',
-		borderRadius: '2px',
-		background: 'white',
-		boxShadow: '0 1px 0 0 rgba(0, 0, 0, 0.22)',
-		justifyContent: 'space-between',
-		marginBottom: '6px',
-		padding: '6px 12px'
-	};
-
-	return (
-		<div className="skeleton-table-item" style={skeletonContainerStyle}>
-			<div className="skeleton-shape" style={skeletonStyle} />
-			<div className="skeleton-shape" style={skeletonStyle} />
-			<div className="skeleton-shape" style={skeletonStyle} />
-			<div className="skeleton-shape" style={skeletonStyle} />
-		</div>
-	);
-};
 
 class AccountsModal extends Component {
 	constructor(props) {
@@ -39,26 +12,21 @@ class AccountsModal extends Component {
 		// this.props.faId
 		// this.props.open
 		// this.props.onCloseModal
-		// this.props.onSave
+		// this.props.onAccountsSave
 		// this.props.records
 		// this.props.onLoadRecords
 
-		/*	To implement:
-			deleteAccountAssociation(String assocId)
-			addAccountAssociation(String faId, String accountId)
-		*/
-
-		this.onOpenAccounts = this.onOpenAccounts.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
-		this.onSave = this.onSave.bind(this);
+		this.onSearchChange = this.onSearchChange.bind(this);
 
 		this.state = {
+			mode: 'main',
 			main_acc: {},
-			associated_accounts: [],
+			associated_accounts: {},
 			selected: {},
 			count: 0,
 			loadingRecords: false,
-			lookupOpen: false,
+			loadingOverlay: true,
 			searchValue: '',
 			searchedRecords: [],
 			page: 1
@@ -66,16 +34,18 @@ class AccountsModal extends Component {
 	}
 
 	componentDidMount() {
-		window.SF.invokeAction('getAccountsInformation', [this.props.faId]).then(
+		window.SF.invokeAction('getAccountsInformation', [
+			this.props.faId,
+			null
+		]).then(
 			r => {
-				console.log(r);
-				let associated_accounts = [];
+				let associated_accounts = {};
 				if (r.associated_accounts && r.associated_accounts.length) {
-					associated_accounts = r.associated_accounts.map(acc => {
-						return {
+					r.associated_accounts.forEach(acc => {
+						associated_accounts[acc.Id] = {
 							Id: acc.Id, // Id of association
 							accId: acc.csconta__Account__r.Id,
-							accName: acc.csconta__Account__r.Name
+							accName: decodeEntities(acc.csconta__Account__r.Name)
 						};
 					});
 				}
@@ -83,6 +53,7 @@ class AccountsModal extends Component {
 				this.setState({
 					count: r.count,
 					main_acc: r.main_account,
+					loadingOverlay: false,
 					associated_accounts
 				});
 			},
@@ -94,8 +65,7 @@ class AccountsModal extends Component {
 		this.setState(
 			{
 				selected: {},
-				loadingRecords: false,
-				lookupOpen: false,
+				loadingOverlay: false,
 				searchValue: '',
 				page: 1
 			},
@@ -105,90 +75,89 @@ class AccountsModal extends Component {
 		);
 	}
 
+	_delayUnload(callback = () => {}) {
+		// The actions of add/remove associations are as cheap, quick and easy to do on UI.
+		// But for the sake of governing limits, we cannot afford spamming of this action.
+		// therefore there is a motivation to make this action harder to abuse.
+		setTimeout(() => {
+			this.setState({ loadingOverlay: false }, () => {
+				callback();
+			});
+		}, 1000);
+	}
+
 	selectRecord(record) {
-		this.setState({ selected: record });
-	}
+		this.setState({ loadingOverlay: true });
 
-	onLoadRecords(newRecords) {
-		this.props.onLoadRecords(newRecords);
-	}
-
-	onOpenAccounts(type) {
-		this.setState({ lookupOpen: type, page: 1, loadingRecords: true }, () => {
-			if (!this.props.records.length) {
-				let params = {};
-				params.pointedObject = 'Account';
-				params.columns = ['Name'];
-				params.whereClause = null;
-				params.lastId = null;
-				params.offset = 20 * 10;
-
-				// Call remote action
-				window.SF.invokeAction('getLookupRecords', [
-					JSON.stringify(params)
-				]).then(response => {
-					this.setState({ loadingRecords: false });
-
-					response = decodeEntities(response);
-					this.onLoadRecords(response);
-				});
+		if (this.state.mode === 'main') {
+			this.props.onAccountsSave(this.props.faId, record.Id).then(
+				response => {
+					this._delayUnload(() => {
+						this.setState({
+							main_acc: record
+						});
+					});
+				},
+				error => {
+					this.setState({ loadingOverlay: false });
+				}
+			);
+		} else {
+			if (this.state.associated_accounts[record.Id]) {
+				this.onRemoveAssociation(record.Id);
 			} else {
-				this.setState({ loadingRecords: false });
+				window.SF.invokeAction('addAccountAssociation', [
+					this.props.faId,
+					record.Id
+				]).then(
+					response => {
+						let _newAccountAssoc = {
+							Id: response.Id,
+							accId: response.csconta__Account__c,
+							accName: decodeEntities(response.csconta__Account__r.Name)
+						};
+						let _associations = this.state.associated_accounts;
+						_associations[response.Id] = _newAccountAssoc;
+
+						this._delayUnload(() => {
+							this.setState({
+								associated_accounts: _associations
+							});
+						});
+					},
+					error => {
+						this.setState({ loadingOverlay: false });
+					}
+				);
 			}
-		});
+		}
 	}
 
 	onRemoveAssociation(assocId) {
 		// deleteAccountAssociation(String assocId)
+		this.setState({ loadingOverlay: true });
+
+		let associated_accounts = this.state.associated_accounts;
+		delete associated_accounts[assocId];
+		this.setState({ associated_accounts });
+
 		window.SF.invokeAction('deleteAccountAssociation', [assocId]).then(
 			response => {
-				this.setState({
-					associated_accounts: [
-						...this.state.associated_accounts.filter(acc => acc.Id !== assocId)
-					]
-				});
+				this._delayUnload();
 			}
 		);
 	}
 
-	onSave() {
-		if (this.state.lookupOpen === 'main') {
-			// call remote
-			let tempAcc = JSON.parse(JSON.stringify(this.state.selected));
-			this.props.onSave(this.props.faId, tempAcc.Id).then(r => {
-				this.setState({
-					main_acc: tempAcc,
-					selected: {},
-					lookupOpen: false,
-					searchValue: ''
-				});
-			});
-		} else if (this.state.lookupOpen === 'association') {
-			// onAddAssociation
-			window.SF.invokeAction('addAccountAssociation', [
-				this.props.faId,
-				this.state.selected.Id
-			]).then(
-				response => {
-					this.setState({
-						selected: {},
-						searchValue: '',
-						lookupOpen: false,
-						associated_accounts: [
-							...this.state.associated_accounts,
-							...[
-								{
-									Id: response.Id,
-									accId: response.csconta__Account__c,
-									accName: response.csconta__Account__r.Name
-								}
-							]
-						]
-					});
-				},
-				error => {}
-			);
-		}
+	changeMode(mode) {
+		this.setState({
+			mode: mode,
+			page: 1,
+			searchValue: '',
+			loadingRecords: false,
+			loadingOverlay: false,
+			searchedRecords: [],
+			selected: {}
+		});
 	}
 
 	pagesToLoad(newPage) {
@@ -198,8 +167,12 @@ class AccountsModal extends Component {
 
 		let min_pages = page >= 7 ? page + 4 : 10;
 
+		let _data = this.state.searchValue
+			? this.state.searchedRecords
+			: this.props.records;
+
 		var _needPages = Math.min(min_pages, max_pages);
-		var _availablePages = Math.ceil(this.props.records.length / 20);
+		var _availablePages = Math.ceil(_data.length / 20);
 
 		console.log('*****************************************');
 		console.log('You need this much pages:', _needPages);
@@ -224,20 +197,21 @@ class AccountsModal extends Component {
 		parameter.pointedObject = 'Account';
 		parameter.columns = ['Name'];
 		parameter.whereClause = null;
-
-		if (this.state.searchValue) {
-			parameter.search = "Name  like '%" + this.state.searchValue + "%'";
-		}
-
 		parameter.lastId = this.props.records[this.props.records.length - 1].Id;
 		parameter.offset = 20 * pagesToLoad;
 
-		return window.SF.invokeAction('getLookupRecords', [
-			JSON.stringify(parameter)
-		]);
+		if (this.state.searchValue) {
+			parameter.search = "Name  like '%" + this.state.searchValue + "%'";
+			return window.SF.invokeAction('getLookupRecords', [
+				JSON.stringify(parameter)
+			]);
+		} else {
+			return this.props.onLoadRecords(parameter);
+		}
 	}
 
 	onPageChange(newPage) {
+		// Fallback for clicky users
 		if (this.state.loadingRecords) {
 			return;
 		}
@@ -251,66 +225,75 @@ class AccountsModal extends Component {
 
 		if (needToLoad) {
 			this.getRecordPage(newPage).then(newSet => {
-				if (!this.state.searchValue) {
-					this.onLoadRecords(newSet);
-				} else {
-					this.setState({
-						searchedRecords: [...this.state.searchedRecords, ...newSet]
-					});
-				}
-				this.setState({ loadingRecords: false });
+				this.setState({
+					searchedRecords: this.state.searchValue
+						? [...this.state.searchedRecords, ...newSet]
+						: [],
+					loadingRecords: false
+				});
 			});
 		}
 	}
 
 	onSearchChange(val) {
+		// onSearchChange is isolated event
+		// it will not be bubbled to parent component as the scope of lookup results
+		// is relevant to this component only
+
+		// onSearchChange is, in comparison to add/remove association actions, already
 		this.setState(
 			{
 				page: 1,
 				searchValue: val,
-				// loadedModal: false,
-				loadingRecords: true,
-				searchedRecords: val && val !== '' ? this.state.searchedRecords : []
+				loadingOverlay: true,
+				loadingRecords: val && val !== ''
 			},
 			() => {
 				let params = {};
-				let infoMergedWhere = null;
-
-				params.pointedObject = 'Account';
-				params.columns = ['Name'];
-				params.whereClause = null;
 
 				if (val && val !== '') {
 					params.search = "Name like '%" + val + "%'";
 				} else {
 					this.setState({ searchedRecords: [] });
+					return;
 				}
 
+				params.pointedObject = 'Account';
+				params.columns = ['Name'];
+				params.whereClause = null;
 				params.lastId = null;
 				params.offset = 20 * 10;
 
-				Promise.all([
-					window.SF.invokeAction('getAccountsInformation', [[this.props.faId]]),
-					window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)])
-				]).then(
-					response => {
-						let info = response[0];
-						let records = decodeEntities(response[1]);
+				let _promiseArr = [];
 
-						if (!params.search) {
-							this.props.onLoadRecords(records);
-						}
+				_promiseArr.push(
+					window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)])
+				);
+
+				if (params.search) {
+					_promiseArr.push(
+						window.SF.invokeAction('getAccountsInformation', [
+							this.props.faId,
+							params.search
+						])
+					);
+				}
+
+				Promise.all(_promiseArr).then(
+					response => {
+						let records = response[0];
+						let info = response[1] || {};
 
 						this.setState({
-							count: info.count,
-							// loadedModal: true,
+							count: params.search ? info.count : this.props.count,
 							searchedRecords: records,
+							loadingOverlay: false,
 							loadingRecords: false
 						});
 					},
 					error => {
 						this.setState({
-							// loadedModal: true,
+							loadingOverlay: false,
 							loadingRecords: false
 						});
 					}
@@ -320,100 +303,18 @@ class AccountsModal extends Component {
 	}
 
 	render() {
-		let footer;
-		if (this.state.lookupOpen) {
-			footer = (
-				<div className="fa-modal-footer">
-					<button
-						className="fa-button fa-button--default"
-						onClick={() => {
-							this.setState({ lookupOpen: false });
-						}}
-					>
-						Close
-					</button>
-					<button
-						className="fa-button fa-button--brand"
-						disabled={!this.state.selected.Id}
-						onClick={() => {
-							this.onSave();
-						}}
-					>
-						Save
-					</button>
-				</div>
+		let _main;
+
+		if (this.state.main_acc.Id) {
+			_main = (
+				<p>
+					<Icon name="check" height="12" width="12" color="#4bca81" />
+					{this.state.main_acc.Name}
+				</p>
 			);
 		} else {
-			footer = (
-				<div className="fa-modal-footer">
-					<button className="fa-button fa-button--default" onClick={this.onCloseModal}>
-						Done
-					</button>
-				</div>
-			);
+			_main = <p>--no account</p>;
 		}
-
-		let lookup;
-
-		// if ((() => (this.state.searchValue ? this.state.searchedRecords : this.props.records))().length) {
-		//   lookup = (
-		//     <div className='accounts-lookup'>
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//       <RecordSkeletonRow />
-		//     </div>
-		//   );
-		// } else {
-		lookup = (
-			<div className="accounts-lookup modal-table-container">
-				<div className="modal-navigation">
-					<div className="search-container">
-						<InputSearch
-							placeholder={'Filter accounts'}
-							value={this.state.searchValue}
-							onChange={val => {
-								this.onSearchChange(val);
-							}}
-						/>
-					</div>
-				</div>
-				<div>
-					<div className="fa-modal-product-list-header">
-						<span>Name</span>
-					</div>
-					<div className="fa-modal-product-list">
-						{(() =>
-							this.state.searchValue
-								? this.state.searchedRecords
-								: this.props.records)()
-							.paginate(this.state.page, 20)
-							.map(record => {
-								return (
-									<div
-										key={record.Id}
-										className={
-											'product-row' +
-											(this.state.selected.Id === record.Id ? ' selected' : '')
-										}
-										onClick={() => this.selectRecord(record)}
-									>
-										<span>{record.Id}</span>
-										<span>{record.Name}</span>
-									</div>
-								);
-							})
-						}
-					</div>
-				</div>
-			</div>
-		);
 
 		return (
 			<Modal
@@ -448,39 +349,33 @@ class AccountsModal extends Component {
 
 				<div className="accounts-modal fa-modal-body">
 					<div className="accounts-modal--left">
-						<div className="accounts-modal-tab">
+						<div
+							className={
+								'accounts-modal-tab ' +
+								(this.state.mode === 'main' ? 'selected-mode' : '')
+							}
+							onClick={() => this.changeMode('main')}
+						>
 							<h3>Account</h3>
-							<div>
-								<p>{this.state.main_acc.Id}</p>
-								<p>{this.state.main_acc.Name}</p>
-
-								<div className="input-group">
-									<input
-										type="text"
-										placeholder="No record selected"
-										aria-describedby=""
-										readOnly={true}
-										value={this.state.main_acc.Name || ''}
-									/>
-									<button
-										className="fa-button fa-button--brand"
-										onClick={() => this.onOpenAccounts('main')}
-									>
-										Choose
-									</button>
-								</div>
-							</div>
+							<div>{_main}</div>
 						</div>
-						<div className="accounts-modal-tab">
+
+						<div
+							className={
+								'accounts-modal-tab ' +
+								(this.state.mode === 'assoc' ? 'selected-mode' : '')
+							}
+							onClick={() => this.changeMode('assoc')}
+						>
 							<h3>Associations</h3>
 							<div>
-								{this.state.associated_accounts.map(acc => {
+								{Object.values(this.state.associated_accounts).map(acc => {
 									return (
 										<p key={acc.Id}>
 											{acc.accName}
 											<Icon
 												onClick={() => this.onRemoveAssociation(acc.Id)}
-												name="delete"
+												name="close"
 												height="14"
 												width="14"
 												color="#0070d2"
@@ -488,37 +383,37 @@ class AccountsModal extends Component {
 										</p>
 									);
 								})}
-								<p>
-									<button
-										className="fa-button fa-button--default"
-										onClick={() => this.onOpenAccounts('association')}
-									>
-										Add
-									</button>
-								</p>
 							</div>
 						</div>
 					</div>
 					<div className="accounts-modal--right">
-						{this.state.lookupOpen ? lookup : ''}
-						{this.state.count && this.state.count > 20 ? (
-						<Pagination
-							totalSize={this.state.count}
-							pageSize={20}
-							page={this.state.page}
-							restricted={true}
+						<Lookup
+							key={this.state.mode}
+							onChange={record => this.selectRecord(record)}
+							onSearch={this.onSearchChange}
+							onPageChange={newPage => this.onPageChange(newPage)}
+							data={
+								this.state.searchValue
+									? this.state.searchedRecords
+									: this.props.records
+							}
+							count={this.state.count}
+							columns={['Name']}
+							selected={this.state.mode === 'main' ? this.state.main_acc : {}}
 							disabled={this.state.loadingRecords}
-							onPageChange={newPage => {
-								this.onPageChange(newPage);
-							}}
+							loading={this.state.loadingOverlay}
 						/>
-					) : (
-						''
-					)}
 					</div>
 				</div>
 
-				{footer}
+				<div className="fa-modal-footer">
+					<button
+						className="fa-button fa-button--default"
+						onClick={this.onCloseModal}
+					>
+						Done
+					</button>
+				</div>
 			</Modal>
 		);
 	}

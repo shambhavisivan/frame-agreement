@@ -314,9 +314,7 @@
 							font-size: 0.85rem;
 							max-width: 100%;
 							overflow: hidden;
-							display: flex;
 							align-self: center;
-							line-height: 1;
 							@include overflow-ellipsis;
 
 							&.fields__item--title {

@@ -6,6 +6,7 @@
 	font-size: 0.75rem;
 	font-weight: $font-weight-normal;
 	border-radius: 0.25rem;
+	margin: 0;
 	min-height: 2rem;
 	padding: 0.25rem 1rem;
 	text-decoration: none;
@@ -73,6 +74,7 @@
 	&:active,
 	&:focus {
 		@include sbg(--button-bg-brand-hover);
+		@include sc(--button-c-brand-hover);
 	}
 }
 

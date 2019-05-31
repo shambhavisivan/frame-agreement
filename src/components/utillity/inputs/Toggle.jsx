@@ -19,37 +19,18 @@ class Toggle extends React.Component {
 	}
 
 	render() {
-		let field;
-		if (this.props.disabled) {
-			field = (
-				<label
-					className={'switch disabled ' + (this.state.value ? 'checked' : '')}
-				>
-					<input type="checkbox" value={this.state.value} />
-					<span className="slider round">
-						{this.state.value && (
-							<Icon name="check" width="14" height="14" color="white" />
-						)}
-					</span>
-				</label>
-			);
-		} else {
-			field = (
-				<label className={'switch ' + (this.state.value ? 'checked' : '')}>
-					<input
-						type="checkbox"
-						onClick={() => this.onChange(!this.state.value)}
-						value={this.state.value}
-					/>
-					<span className="slider round">
-						{this.state.value && (
-							<Icon name="check" width="14" height="14" color="white" />
-						)}
-					</span>
-				</label>
-			);
-		}
-		return <div>{field}</div>;
+		return (
+			<label className="switch-wrapper">
+				<input
+					className="switch-checkbox"
+					type="checkbox"
+					onClick={() => this.onChange(!this.state.value)}
+					value={this.state.value}
+					disabled={this.props.disabled}
+				/>
+				<span className="switch-style" />
+			</label>
+		)
 	}
 }
 

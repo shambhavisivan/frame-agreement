@@ -159,7 +159,7 @@ $variables: (
 	--checkbox-disabled-bg: $gray-medium-1,
 	--checkbox-disabled-circle-bg: $gray-light-5,
 
-	--transparent: rgba($black, 0),
+	--transparent: transparent,
 
 	--toast-bg: $gray-dark-9,
 	--toast-c: $white,
@@ -203,9 +203,15 @@ $variables: (
 	--input-primary-bg: $blue-sf,
 	--input-invalid-c: $red-medium-3,
 
-	--switch-bg: $gray-light-5,
-	--switch-primary-bg: $blue-sf,
-	--switch-light-c: $white,
+	--switch-bg: $gray-medium-7,
+	--switch-hover-bg: $gray-medium-2,
+	--switch-checked-bg: $blue-sf,
+	--switch-checked-hover-bg: $blue-medium-1,
+	--switch-disabled-bg: $gray-medium-1,
+	--switch-br: $gray-medium-7,
+	--switch-circle-bg: $white,
+	--switch-disabled-circle-bg: $gray-light-5,
+	--switch-tick-br: $white,
 
 	--datepicker-primary-c: $blue-sf,
 	--datepicker-primary-bg: $blue-sf,

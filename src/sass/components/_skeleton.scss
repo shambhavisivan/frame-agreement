@@ -202,30 +202,30 @@
 
 	.skeleton-landing-cp {
 		@include centered;
+	}
+}
 
-		.skeleton-cp {
+.skeleton-cp {
 
-			.skeleton-header {
-				padding: 1rem;
-				display: flex;
-				flex-direction: row;
-				justify-content: space-between;
-				@include sbg(--skeleton-bg-alt);
-			}
+	.skeleton-header {
+		padding: 1rem;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		@include sbg(--skeleton-bg-alt);
+	}
 
-			.skeleton-table-item {
-				display: flex;
-				flex-direction: row;
-				position: relative;
-				overflow: hidden;
-				justify-content: space-between;
-				padding: 1rem;
-				@include sbg(--skeleton-bg-alt);
+	.skeleton-table-item {
+		display: flex;
+		flex-direction: row;
+		position: relative;
+		overflow: hidden;
+		justify-content: space-between;
+		padding: 1rem;
+		@include sbg(--skeleton-bg-alt);
 
-				.skeleton-right {
-					display: flex;
-				}
-			}
+		.skeleton-right {
+			display: flex;
 		}
 	}
 }

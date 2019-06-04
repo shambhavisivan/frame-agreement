@@ -188,9 +188,9 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	@TestVisible public static String deleteAccountAssociation(String assocId) {
 		String result = 'Success';
-		csconta__Account_Frame_Agreement_Association__c association = [select Id from csconta__Account_Frame_Agreement_Association__c where Id = :assocId limit 1];
 
 		try {
+			csconta__Account_Frame_Agreement_Association__c association = [select Id from csconta__Account_Frame_Agreement_Association__c where Id = :assocId limit 1];
 			delete association;
 		} catch (Exception e) {
 			result = e.getMessage();
@@ -206,12 +206,13 @@ global with sharing class FrameRateManagerController {
 		try {
 			association = new csconta__Account_Frame_Agreement_Association__c (csconta__Account__c = accountId, csconta__Frame_Agreement__c = faId);
 			insert association;
+			association = [select id, csconta__Account__r.Id, csconta__Account__r.Name from csconta__Account_Frame_Agreement_Association__c where Id = :association.Id];
 		} catch (Exception e) {
 			// result = e.getMessage();
 			system.debug(e.getMessage());
 		}
 
-		return [select id, csconta__Account__r.Id, csconta__Account__r.Name from csconta__Account_Frame_Agreement_Association__c where Id = :association.Id];
+		return association;
 	}
 
 	@RemoteAction
@@ -275,13 +276,6 @@ global with sharing class FrameRateManagerController {
 				Map<String, Schema.SObjectField> fieldMap = res.fields.getMap();
 
 				String field = (String) parameters.get('field');
-				system.debug('**************************');
-				system.debug(field);
-				system.debug(fieldMap.get(field).getDescribe());
-				system.debug(fieldMap.get(field).getDescribe().getReferenceTo());
-				system.debug(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
-				system.debug(String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]));
-				system.debug('**************************');
 				pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
 			}
 		}

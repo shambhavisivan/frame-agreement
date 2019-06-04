@@ -166,9 +166,9 @@ class LookupField extends React.Component {
 	}
 
 	onSave() {
-		let _records = Object.values(this.state.selected)[0];
-		this.setState({ recordLabel: _records[this.labelField] }, () => {
-			this.props.onChange(_records);
+		let _record = this.state.selected;
+		this.setState({ recordLabel: _record[this.labelField] }, () => {
+			this.props.onChange(_record);
 			this.onCloseModal();
 		});
 	}
@@ -220,9 +220,7 @@ class LookupField extends React.Component {
 	// **************************************************************
 
 	selectRecord(record) {
-		let _selected = {};
-		_selected[record.Id] = record;
-		this.setState({ selected: _selected });
+		this.setState({ selected: record });
 	}
 
 	pagesToLoad(newPage) {
@@ -279,6 +277,7 @@ class LookupField extends React.Component {
 					<input
 						className="fa-lookup fa-input-border"
 						type="text"
+						disabled={this.props.disabled}
 						placeholder="No record selected"
 						aria-describedby=""
 						readOnly={true}
@@ -336,7 +335,7 @@ class LookupField extends React.Component {
 					<div className="fa-modal-footer">
 						<button
 							className="fa-button fa-button--brand"
-							disabled={!Object.values(this.state.selected).length}
+							disabled={!this.state.selected.Id}
 							onClick={this.onSave}
 						>
 							Save

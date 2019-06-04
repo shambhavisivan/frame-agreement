@@ -16,7 +16,7 @@ class CommercialProductSkeleton extends Component {
 		return (
 			<div className="skeleton-container skeleton-cp">
 				<div className="skeleton-header">
-					<Shape width={145} height={28} />
+					<Shape width={153} height={28} />
 					<Shape width={515} height={28} />
 				</div>
 

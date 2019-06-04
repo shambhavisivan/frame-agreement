@@ -127,8 +127,28 @@
 			padding: 0.25rem 1rem 1rem;
 
 			.skeleton-ed-fields {
-				height: 200px;
+				/*height: 200px;*/
+				padding: 0.5rem;
 				@include centered;
+				@include sbg(--skeleton-bg-alt);
+
+				.skeleton-header-fields-row {
+				    display: flex;
+				    width: 100%;
+				    margin-bottom: 6px;
+
+				    .skeleton-header-field {
+						height: 66px;
+						position: relative;
+						padding: 0.5rem;
+				    }
+				}
+			}
+
+			.skeleton-approval-fields {
+				padding: 0.75rem;
+				@include centered;
+				margin-top: 1rem;
 				@include sbg(--skeleton-bg-alt);
 			}
 		}
@@ -226,6 +246,9 @@
 
 		.skeleton-right {
 			display: flex;
+			.skeleton-shape {
+				margin-right: 0.5rem;
+			}
 		}
 	}
 }

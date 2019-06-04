@@ -85,16 +85,6 @@ export const organizeHeaderFields = (headerData, _activeFa) => {
 						_b = lc.split('!=');
 					}
 
-					if (!_activeFa.hasOwnProperty(_b[0])) {
-						log.red(
-							'Field ' + _b[0] + ' is not included in this frame agreement!'
-						);
-						log.orange(
-							'Verify that it is added to JSON Data > FA-Header (put visible="" if you do not want to show it.)'
-						);
-						retValue = false;
-					}
-
 					if (['true', 'false'].includes(_b[1])) {
 						_b[1] = JSON.parse(_b[1]);
 					}

@@ -236,7 +236,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 		// Map < Id, List < PricingElementWrapper >>
-		Map <String, Object> accountsInfo = FrameRateManagerController.getAccountsInformation(fA_account.Id);
+		Map <String, Object> accountsInfo = FrameRateManagerController.getAccountsInformation(fA_account.Id, null);
 
 		Test.stopTest();
 
@@ -267,8 +267,8 @@ private class FrameRateManagerControllerTest {
 
 		FrameRateManagerController.deleteAccountAssociation(assoc_2.Id);
 
-		Map <String, Object> accountsInfo_1 = FrameRateManagerController.getAccountsInformation(fA_account.Id);
-		Map <String, Object> accountsInfo_2 = FrameRateManagerController.getAccountsInformation(fa_3.Id);
+		Map <String, Object> accountsInfo_1 = FrameRateManagerController.getAccountsInformation(fA_account.Id, null);
+		Map <String, Object> accountsInfo_2 = FrameRateManagerController.getAccountsInformation(fa_3.Id, 'Name != null');
 
 		Test.stopTest();
 
@@ -307,20 +307,35 @@ private class FrameRateManagerControllerTest {
 		params_2.put('lastId', null);
 		params_2.put('offset', 20);
 
+
+		Map <String, Object> params_3 = new Map <String, Object> ();
+		params_3.put('pointedObject', 'Account');
+		params_3.put('columns', new List <String> {'Name', 'Type'});
+		params_3.put('whereClause', null);
+		params_3.put('search', 'Name != null');
+		params_3.put('lastId', testAcc.Id);
+		params_3.put('offset', 20);
+
 		Test.startTest();
 
 		Map <String, Object> info_1 = FrameRateManagerController.getLookupInformation(field, column, null, null);
 		Map <String, Object> info_2 = FrameRateManagerController.getLookupInformation(field, column, whereClause, initValId);
+
 		List <Object> lookup_records_1 = FrameRateManagerController.getLookupRecords(JSON.serialize(params));
 		List <Object> lookup_records_2 = FrameRateManagerController.getLookupRecords(JSON.serialize(params_2));
+		List <Object> lookup_records_3 = FrameRateManagerController.getLookupRecords(JSON.serialize(params_3));
 
 		// initialLabel
 		// count
 
 		Test.stopTest();
 
-		// system.assertEquals(1, info_1.size());
-		// system.assertEquals(0, associatedAcc_2.size());
+		system.assertEquals(1, info_1.size());
+		system.assertEquals(2, info_2.size());
+
+		system.assertEquals(1, lookup_records_1.size());
+		system.assertEquals(1, lookup_records_2.size());
+		system.assertEquals(0, lookup_records_3.size());
 
 	}
 
@@ -689,7 +704,7 @@ private class FrameRateManagerControllerTest {
 
 	}
 
-	public static testMethod void temporary() {
+	public static testMethod void testErrors() {
 
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c();
 		insert cp_1;
@@ -705,6 +720,9 @@ private class FrameRateManagerControllerTest {
 		FrameRateManagerController.getPriceItemCharges(new List <Id> {'01p1t00000M4Gqp'});
 		FrameRateManagerController.getRateCards(new List <Id> {'01p1t00000M4Gqp'});
 		FrameRateManagerController.getPicklistOptions(new List <String> {'csfam__Arb_Picklist__c'});
+		// Not account association
+		FrameRateManagerController.deleteAccountAssociation('01p1t00000M4Gqp');
+		FrameRateManagerController.addAccountAssociation('01p1t00000M4Gqp', '01p1t00000M4Gqp');
 
 
 		FrameRateManagerController.getFrameAgreement(fa_1.Id);

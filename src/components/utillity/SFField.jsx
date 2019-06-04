@@ -71,6 +71,7 @@ class SFField extends Component {
 			field = (
 				<InputText
 					disabled={true}
+					formula={true}
 					onChange={this.onChange}
 					value={this.props.value}
 				/>

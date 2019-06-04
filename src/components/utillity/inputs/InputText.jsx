@@ -21,7 +21,9 @@ class InputText extends React.Component {
 				minLength={1}
 				disabled={this.props.disabled}
 				placeholder={
-					window.SF.labels.util_input_text_enter + ' ' + this.props.type
+					this.props.formula
+						? '--not calculated'
+						: window.SF.labels.util_input_text_enter + ' ' + this.props.type
 				}
 				debounceTimeout={200}
 				spellCheck="false"

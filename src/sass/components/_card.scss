@@ -103,6 +103,10 @@
 									border-bottom: 1px solid cvar(--input-hover-br);
 								}
 							}
+
+							&:disabled {
+								cursor: default;
+							}
 						}
 
 						.fa-lookup-icon {

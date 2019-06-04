@@ -40,7 +40,6 @@ import Toaster from './utillity/Toaster';
 import Header from './utillity/Header';
 import Pagination from './utillity/Pagination';
 import Icon from './utillity/Icon';
-import SFField from './utillity/SFField';
 import CustomButtonDropdown from './utillity/CustomButtonDropdown';
 
 import SFDatePicker from './utillity/datepicker/SFDatePicker';
@@ -59,6 +58,7 @@ import Tabs from './utillity/tabs/Tabs';
 import Tab from './utillity/tabs/Tab';
 
 import AddProductCTA from './FaEditor/AddProductCTA';
+import FaFields from './FaEditor/FaFields';
 import FaFooter from './FaEditor/FaFooter';
 
 // Skeletons
@@ -192,6 +192,11 @@ class FaEditor extends Component {
 			_frameAgreement = new FrameAgreement(this.props);
 		}
 
+		let _headerRows = organizeHeaderFields(
+			this.props.settings.HeaderData,
+			_frameAgreement
+		);
+
 		// Ref active FA from store
 		this.state = {
 			activeFa: _frameAgreement,
@@ -204,7 +209,7 @@ class FaEditor extends Component {
 			selectedProducts: {},
 			loadingProducts: [],
 			openCommercialProduct: '',
-			headerRows: [],
+			headerRows: _headerRows,
 			loading: {
 				attachment: false
 			},
@@ -269,11 +274,7 @@ class FaEditor extends Component {
 										commercialProducts: _commercialProducts,
 										attachment: resp_attachment
 									}
-								},
-								headerRows: organizeHeaderFields(
-									this.props.settings.HeaderData,
-									this.state.activeFa
-								)
+								}
 							});
 						});
 					});
@@ -312,11 +313,7 @@ class FaEditor extends Component {
 							...this.state.activeFa._ui,
 							commercialProducts: _commercialProducts
 						}
-					},
-					headerRows: organizeHeaderFields(
-						this.props.settings.HeaderData,
-						this.state.activeFa
-					)
+					}
 				},
 				() => {
 					publish('onFaSelect', [this.state.activeFa]);
@@ -1327,7 +1324,6 @@ class FaEditor extends Component {
 			);
 		}
 		// *******************************************************
-		// Modal needs to be conditionally rendered to activate its lifecycle
 		let approvalHistory = '';
 		if (
 			this.state.activeFa._ui.approval &&
@@ -1453,10 +1449,6 @@ class FaEditor extends Component {
 		} else if (this.state.loading.attachment) {
 			commercialProducts = (
 				<div>
-					<div>
-						<span>{window.SF.labels.products_title_empty} </span>
-					</div>
-
 					<AddProductCTA
 						render={!this.state.activeFa._ui.commercialProducts.length}
 						disabled={!this.state.activeFa.Id}
@@ -1471,6 +1463,7 @@ class FaEditor extends Component {
 		let productsTab = (
 			<div className="card products-card">
 				{commercialProducts}
+
 				<Pagination
 					totalSize={this.getCommercialProductsCount()}
 					pageSize={this.state.pagination.pageSize}
@@ -1533,6 +1526,7 @@ class FaEditor extends Component {
 					when={this.state.actionTaken && this.faId && this.editable}
 					message={window.SF.labels.modal_unsavedChanges_alert}
 				/>
+
 				<Header
 					onBackClick={this.onBackClick}
 					disabled={!this.editable}
@@ -1590,43 +1584,24 @@ class FaEditor extends Component {
 						</button>
 					)}
 				</Header>
+
 				<div className="fa-main-body">
 					<div className="fa-main-body__inner">
-						{this.state.headerRows.length ? (
-							<section className="card basket-details-card">
-								{this.state.headerRows.map((row, i) => {
-									return (
-										<div
-											className="basket-details-card__row"
-											key={'header-row-' + i}
-										>
-											{row.map(f => {
-												var editable = !f.readOnly && this.editable;
-												return (
-													<SFField
-														editable={editable}
-														onChange={this.onFieldChange}
-														key={f.field}
-														field={f}
-														value={this.state.activeFa[f.field] || ''}
-													/>
-												);
-											})}
-										</div>
-									);
-								})}
-							</section>
-						) : (
-							''
-						)}
+						<FaFields
+							rows={this.state.headerRows}
+							onChange={this.onFieldChange}
+							fa={this.state.activeFa}
+							editable={this.editable}
+						/>
 						{approvalHistory}
 						{customTabs}
-
 						{productModal}
 						{negotiateModal}
 					</div>
 				</div>
+
 				<Toaster />
+
 				{this.state.actionIframe && this.state.actionIframeUrl && (
 					<ActionIframe
 						onCloseModal={this.onCloseModal}

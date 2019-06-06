@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { decodeEntities } from '../utils/shared-service';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE

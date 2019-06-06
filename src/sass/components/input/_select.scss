@@ -6,6 +6,7 @@
 	padding-left: 0.5rem;
 	padding-right: 1.5rem;
 	width: 100%;
+	cursor: pointer;
 	@include sbg(--select-bg);
 	@include css4 {
 		border: 1px solid cvar(--select-br);

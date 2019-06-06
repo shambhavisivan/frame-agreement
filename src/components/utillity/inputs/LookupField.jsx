@@ -278,7 +278,7 @@ class LookupField extends React.Component {
 						className="fa-lookup fa-input-border"
 						type="text"
 						disabled={this.props.disabled}
-						placeholder="No record selected"
+						placeholder={window.SF.labels.util_input_lookup_placehoder}
 						aria-describedby=""
 						readOnly={true}
 						onClick={this.onOpenLookupModal}
@@ -338,7 +338,7 @@ class LookupField extends React.Component {
 							disabled={!this.state.selected.Id}
 							onClick={this.onSave}
 						>
-							Save
+							{window.SF.labels.btn_Save}
 						</button>
 					</div>
 				</Modal>

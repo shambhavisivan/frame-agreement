@@ -410,7 +410,7 @@ class FaEditor extends Component {
 	/**************************************************/
 	async onDecompose() {
 		// 1) Create a structure that is matching one element -> one pipra
-		let _attachment = this.state.activeFa._ui.attachment.producs;
+		let _attachment = this.state.activeFa._ui.attachment.products;
 		console.log(_attachment);
 
 		let structure = [];
@@ -1494,7 +1494,7 @@ class FaEditor extends Component {
 		) {
 			customTabs = (
 				<Tabs initial={0}>
-					<Tab label="Products">{productsTab}</Tab>
+					<Tab label={window.SF.labels.products_tab_title}>{productsTab}</Tab>
 
 					{this.props.settings.CustomTabsData.map(tab => {
 						return (

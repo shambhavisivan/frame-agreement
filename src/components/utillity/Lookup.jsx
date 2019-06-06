@@ -91,7 +91,9 @@ class Lookup extends React.Component {
 				<div className="modal-navigation">
 					<div className="search-container">
 						<InputSearch
-							placeholder="Filter records..."
+							placeholder={
+								window.SF.labels.modal_addProduct_input_search_placeholder
+							}
 							value={this.state.searchValue}
 							onChange={this.onSearch}
 						/>

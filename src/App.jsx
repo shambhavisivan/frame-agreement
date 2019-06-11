@@ -4,6 +4,9 @@ import { Switch, Route } from 'react-router-dom';
 
 import {
 	getFrameAgreements,
+	createToast,
+	clearToasts,
+	cloneFrameAgreement,
 	getCommercialProducts,
 	getPicklistOptions,
 	getAppSettings
@@ -24,6 +27,10 @@ import { publish } from './api';
 class App extends Component {
 	constructor(props) {
 		super(props);
+
+		window.FAM.api.cloneFrameAgreement = this.props.cloneFrameAgreement;
+		window.FAM.api.toast = this.props.createToast;
+		window.FAM.api.clearToasts = this.props.clearToasts;
 
 		this.props.getAppSettings().then(
 			response => {
@@ -93,6 +100,9 @@ class App extends Component {
 
 const mapDispatchToProps = {
 	getFrameAgreements,
+	createToast,
+	clearToasts,
+	cloneFrameAgreement,
 	getPicklistOptions,
 	getCommercialProducts,
 	getAppSettings

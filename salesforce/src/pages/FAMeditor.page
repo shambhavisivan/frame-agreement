@@ -72,6 +72,8 @@
 			faMenuActionClone: '{!$Label.faMenuActionClone}',
 			faMenuActionEdit: '{!$Label.faMenuActionEdit}',
 			faMenuActionAccounts: '{!$Label.faMenuActionAccounts}',
+			accounts_modal_no_main: '{!$Label.accounts_modal_no_main}',
+			accounts_modal_no_assoc: '{!$Label.accounts_modal_no_assoc}',
 			btn_AddNewAgreement: '{!$Label.btn_AddNewAgreement}',
 			header_frameAgreementEditorTitle: '{!$Label.header_frameAgreementEditorTitle}',
 			header_customDropdownPlaceholder: '{!$Label.header_customDropdownPlaceholder}',

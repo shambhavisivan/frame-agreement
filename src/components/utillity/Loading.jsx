@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Icon from './Icon';
 
 class Loading extends Component {
@@ -9,7 +9,12 @@ class Loading extends Component {
 	render() {
 		return this.props.loading ? (
 			<div className="spinner-overlay">
-				<div className="spinner medium" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+				<div
+					className="spinner medium"
+					role="progressbar"
+					aria-valuemin="0"
+					aria-valuemax="100"
+				>
 					<div className="spinner-dot a" />
 					<div className="spinner-dot b" />
 				</div>

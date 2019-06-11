@@ -6,8 +6,6 @@ import CloudSenseLogo from '../../dist/cloudsense.png';
 
 import { withRouter } from 'react-router-dom';
 import {
-	createToast,
-	clearToasts,
 	registerMethod,
 	loadAccounts,
 	getFrameAgreements,
@@ -34,8 +32,6 @@ class FaList extends Component {
 		this.onSearchChange = this.onSearchChange.bind(this);
 		this.onAccountsSave = this.onAccountsSave.bind(this);
 
-		window.FAM.api.toast = this.props.createToast;
-		window.FAM.api.clearToasts = this.props.clearToasts;
 		window.FAM.registerMethod = this.props.registerMethod;
 	}
 
@@ -49,11 +45,6 @@ class FaList extends Component {
 		params.offset = 20 * 10;
 
 		this.props.loadAccounts(params);
-	}
-
-	componentWillUnmount() {
-		delete window.FAM.api.toast;
-		delete window.FAM.api.clearToasts;
 	}
 
 	onSearchChange(value) {
@@ -258,8 +249,6 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	createToast,
-	createToast,
 	registerMethod,
 	loadAccounts,
 	getFrameAgreements,

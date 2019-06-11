@@ -2262,6 +2262,8 @@ window.SF = SF = {
         faMenuActionClone: "Clone",
         faMenuActionEdit: "Edit",
         faMenuActionAccounts: "Accounts",
+        accounts_modal_no_main: "--no account",
+        accounts_modal_no_assoc: "--no associated accounts",
         btn_AddNewAgreement: "Add new Agreement",
         header_frameAgreementEditorTitle: "Frame Agreement Details",
         header_customDropdownPlaceholder: "Custom",

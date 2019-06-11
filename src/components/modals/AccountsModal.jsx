@@ -304,6 +304,7 @@ class AccountsModal extends Component {
 
 	render() {
 		let _main;
+		let _empty_assoc;
 
 		if (this.state.main_acc.Id) {
 			_main = (
@@ -312,9 +313,25 @@ class AccountsModal extends Component {
 					<Icon name="check" height="12" width="12" color="#4bca81" />
 				</p>
 			);
+		} else if (this.state.loadingOverlay) {
+			_main = <p className="vertical-tab-subtitle" />;
 		} else {
-			_main = <p>--no account</p>;
+			_main = (
+				<p className="vertical-tab-subtitle">
+					{window.SF.labels.accounts_modal_no_main}
+				</p>
+			);
 		}
+
+		_empty_assoc = (
+			<p className="vertical-tab-subtitle">
+				<span>
+					{this.state.loadingOverlay
+						? ''
+						: window.SF.labels.accounts_modal_no_assoc}
+				</span>
+			</p>
+		);
 
 		return (
 			<Modal
@@ -383,6 +400,9 @@ class AccountsModal extends Component {
 										</p>
 									);
 								})}
+								{Object.values(this.state.associated_accounts).length
+									? ''
+									: _empty_assoc}
 							</div>
 						</div>
 					</div>

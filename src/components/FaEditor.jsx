@@ -129,10 +129,9 @@ class FaEditor extends Component {
 		window.FAM.api.addProducts = this.onAddProducts;
 		window.FAM.api.removeProducts = this._removeProducts;
 		window.FAM.api.negotiate = this._apiNegotiate.bind(this);
-		window.FAM.api.toast = this.props.createToast;
-		window.FAM.api.clearToasts = this.props.clearToasts;
 		window.FAM.api.refreshFa = this.refreshFa;
 		window.FAM.api.setStatusOfFrameAgreement = this.setStateOFFa;
+
 		window.FAM.api.saveFrameAgreement = this.upsertFrameAgreements;
 
 		window.FAM.api.getActiveFrameAgreement = () =>
@@ -225,8 +224,6 @@ class FaEditor extends Component {
 
 		delete window.FAM.api.addProducts;
 		delete window.FAM.api.negotiate;
-		delete window.FAM.api.toast;
-		delete window.FAM.api.clearToasts;
 		delete window.FAM.api.refreshFa;
 		delete window.FAM.api.setStatusOfFrameAgreement;
 		delete window.FAM.api.getActiveFrameAgreement;

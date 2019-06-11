@@ -307,9 +307,9 @@ class AccountsModal extends Component {
 
 		if (this.state.main_acc.Id) {
 			_main = (
-				<p>
+				<p className="vertical-tab-subtitle">
+					<span>{this.state.main_acc.Name}</span>
 					<Icon name="check" height="12" width="12" color="#4bca81" />
-					{this.state.main_acc.Name}
 				</p>
 			);
 		} else {
@@ -351,28 +351,28 @@ class AccountsModal extends Component {
 					<div className="accounts-modal--left">
 						<div
 							className={
-								'accounts-modal-tab ' +
-								(this.state.mode === 'main' ? 'selected-mode' : '')
+								'vertical-tab ' +
+								(this.state.mode === 'main' ? 'vertical-tab-selected' : '')
 							}
 							onClick={() => this.changeMode('main')}
 						>
 							<h3>Account</h3>
-							<div>{_main}</div>
+							<div className="vertical-tab-subtitle-wrapper">{_main}</div>
 						</div>
 
 						<div
 							className={
-								'accounts-modal-tab ' +
-								(this.state.mode === 'assoc' ? 'selected-mode' : '')
+								'vertical-tab ' +
+								(this.state.mode === 'assoc' ? 'vertical-tab-selected' : '')
 							}
 							onClick={() => this.changeMode('assoc')}
 						>
 							<h3>Associations</h3>
-							<div>
+							<div className="vertical-tab-subtitle-wrapper">
 								{Object.values(this.state.associated_accounts).map(acc => {
 									return (
-										<p key={acc.Id}>
-											{acc.accName}
+										<p key={acc.Id} className="vertical-tab-subtitle">
+											<span>{acc.accName}</span>
 											<Icon
 												onClick={() => this.onRemoveAssociation(acc.Id)}
 												name="close"

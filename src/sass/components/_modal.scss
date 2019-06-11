@@ -89,10 +89,6 @@
 	@include sbg(--modal-light-bg);
 }
 
-.fa-modal-body.panel-closed .fa-modal-panel {
-	display: none;
-}
-
 /* MODAL BUTTON GROUP */
 .fa-modal-button-group {
 	display: flex;
@@ -116,6 +112,10 @@
 	}
 }
 
+.fa-modal-body.panel-closed .fa-modal-panel {
+	display: none;
+}
+
 .fa-modal-body.panel-open {
 	padding: 0;
 }
@@ -133,7 +133,6 @@
 .fa-modal-navigation {
 	width: 100%;
 	display: flex;
-	padding-bottom: 1rem;
 	padding: 1rem 1rem 0.5rem;
 	align-items: center;
 
@@ -151,37 +150,29 @@
 }
 
 /* TITLE */
-.fa-modal-title {
-	text-align: center;
+.rate-card-title {
 	display: flex;
-	flex-direction: column;
-	align-items: stretch;
+	align-items: center;
+	justify-content: center;
 	width: 100%;
 	position: relative;
 	padding: 0 1.25rem;
-	box-sizing: border-box;
 	@include sc(--modal-title-c);
-
-	> .title-upper,
-	> .title-lower {
-		height: 1.25rem;
-		flex: 1;
-	}
+	@include sbg(--modal-light-bg);
 
 	> .title-content {
 		font-size: 0.875rem;
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
 		padding: 0.25rem;
 		display: flex;
 		align-items: center;
-		@include sbg(--modal-light-bg);
 
 		svg {
 			margin-right: 0.5rem;
 		}
+	}
+
+	.fa-modal-product-count {
+		text-align: center;
 	}
 }
 
@@ -319,7 +310,6 @@
 	position: absolute;
 	top: -2.25rem;
 	right: 2.5rem;
-
 	@media (max-width: 50rem) {
 		.icon {
 			display: none;
@@ -376,27 +366,27 @@
 
 /* MODAL FILTER */
 .fa-modal-filter-container {
-	padding: 1rem 1.5rem;
+	padding: 0.75rem 1.5rem 1rem;
 	@include sbg(--modal-light-bg);
 	@include css4 {
-		box-shadow: 0 4rem 0 0 cvar(--modal-lighter-c);
+		border: 1px solid var(--list-row-br);
 	}
-}
 
-.fa-modal .fa-modal-filter-container > h4 {
-	margin: 0;
-	width: 100%;
-	font-size: 0.875rem;
-	font-weight: $font-weight-bold;
-	padding-bottom: 0.25rem;
-	display: inline-block;
-	@include sc(--modal-dark-c);
-}
+	> h4 {
+		display: inline-block;
+		width: 100%;
+		padding-bottom: 0.25rem;
+		margin: 0;
+		font-size: 0.875rem;
+		font-weight: $font-weight-bold;
+		@include sc(--modal-dark-c);
 
-.fa-modal-filter-container > h4 span {
-	margin-left: 0.25rem;
-	font-weight: $font-weight-bold;
-	@include sc(--modal-primary-c);
+		span {
+			margin-left: 0.25rem;
+			font-weight: $font-weight-bold;
+			@include sc(--modal-primary-c);
+		}
+	}
 }
 
 .fa-modal-filter-section {
@@ -452,7 +442,6 @@
 }
 
 .lookup-modal {
-
 	.fa-modal-body {
 		padding: 0;
 
@@ -460,7 +449,7 @@
 			width: 100%;
 
 			.modal-navigation {
-				padding: 1rem;
+				padding: 1rem 1rem 0.5rem 1rem;
 				@include sbg(--modal-light-bg);
 
 				.fa-input-search {
@@ -476,13 +465,10 @@
 
 	.accounts-modal--left {
 		min-width: 250px;
+		max-width: 300px;
 		@include css4 {
 			border-right: 1px solid cvar(--modal-br);
 		}
-	}
-
-	.selected-mode {
-		border: 2px solid red;
 	}
 
 	.accounts-modal--right {
@@ -491,56 +477,107 @@
 		overflow-y: hidden;
 		flex: 1;
 		align-items: stretch;
+	}
+}
 
-		.accounts-lookup.modal-table-container {
-			overflow-y: hidden;
-			display: flex;
-			flex-direction: column;
+.accounts-lookup.modal-table-container {
+	overflow-y: hidden;
+	display: flex;
+	flex-direction: column;
+	position: relative;
 
-			.modal-navigation {
-				padding: 1rem;
-				min-height: 63px;
-				@include sbg(--modal-light-bg);
+	.modal-navigation {
+		padding: 1rem 1rem 0.5rem 1rem;
+		@include sbg(--modal-light-bg);
 
-				.search-container .fa-input-search {
-					margin: 0;
-				}
-			}
+		.search-container .fa-input-search {
+			margin: 0;
+		}
+	}
 
-			> div {
-				overflow-y: hidden;
-				display: flex;
-				flex-direction: column;
+	> div {
+		overflow-y: hidden;
+		display: flex;
+		flex-direction: column;
 
-				.fa-modal-product-list-header,
-				.fa-modal-product-list {
-					@include sbg(--modal-light-bg);
-				}
-			}
+		.fa-modal-product-list-header,
+		.fa-modal-product-list {
+			@include sbg(--modal-light-bg);
 		}
 
-		.fa-pagination-container {
-			padding: 1rem;
+		&.fa-pagination-container {
+			padding: 0.5rem 1rem;
 			@include sbg(--modal-light-bg);
 			@include css4 {
 				border-top: 1px solid cvar(--modal-br);
 			}
+		}
+	}
+}
 
-			.fa-pagination {
-				padding-right: 0;
+.vertical-tab {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	padding: 0.75rem 1rem;
+	@include sbg(--vertical-tab-bg);
+	@include sc(--vertical-tab-c);
+
+	h3 {
+		cursor: pointer;
+		font-size: 0.8125rem;
+	}
+
+	.vertical-tab-subtitle-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-end;
+
+		.vertical-tab-subtitle {
+			display: flex;
+			margin: 0.1rem 0 0.1rem 0.5rem;
+			font-size: 0.75rem;
+			@include sc(--vertical-tab-subtitle-c);
+
+			span {
+				flex: 1;
+				display: inline-block;
+				text-align: right;
+			}
+
+			svg {
+				margin-left: 0.25rem;
+				margin-top: 1px;
+
+				&.icon-close {
+					cursor: pointer;
+
+					&:hover {
+						fill: #005fb2 !important;
+					}
+				}
 			}
 		}
 	}
-}
 
-.fa-modal {
+	&.vertical-tab-selected {
+		@include sbg(--vertical-tab-selected-bg);
+		@include sc(--vertical-tab-selected-c);
 
-	div.fa-pagination-container {
-		padding: 0;
+		.vertical-tab-subtitle {
+			@include sc(--vertical-tab-selected-subtitle-c);
+		}
 
-		ul.fa-pagination {
-			padding-right: 0.5rem;
+		&::before {
+			display: inline-block;
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 4px;
+			height: 100%;
+			@include sbg(--vertical-tab-selected-br);
 		}
 	}
 }
-

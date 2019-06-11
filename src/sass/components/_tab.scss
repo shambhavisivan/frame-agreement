@@ -64,6 +64,10 @@
 				border-bottom: 2px solid cvar(--transparent);
 			}
 
+			span {
+				margin-left: 0.25rem;
+			}
+
 			&:hover {
 				@include css4 {
 					border-bottom: 2px solid cvar(--tab-br);

@@ -93,7 +93,7 @@
 			outline: none;
 		}
 
-		> li  {
+		> li {
 			display: flex;
 			font-size: 0.75rem;
 			padding: 0.75rem;
@@ -103,7 +103,7 @@
 				margin-right: 0.3125rem;
 			}
 
-			&:not(:last-child)  {
+			&:not(:last-child) {
 				margin-bottom: 0.3125rem;
 			}
 		}
@@ -113,10 +113,14 @@
 		display: flex;
 		align-items: center;
 		cursor: pointer;
+
+		> .icon {
+			margin-left: 0.25rem;
+		}
 	}
 }
 
-.dropdown-negotiate	.discount-amount {
+.dropdown-negotiate .discount-amount {
 	@include sc(--dropdown-negotiate-bg);
 }
 

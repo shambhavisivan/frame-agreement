@@ -1,0 +1,217 @@
+/* LIGHTNING SPINNER */
+.spinner-overlay {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	-webkit-backface-visibility: hidden;
+	-webkit-animation: ngdialog-fadein 0.5s;
+	animation: ngdialog-fadein 0.5s;
+	z-index: 9000;
+	@include sbg(--spinner-overlay-bg);
+}
+.spinner {
+	position: absolute;
+	z-index: 10;
+	width: 2.75rem;
+	height: 0;
+	transform: translate(-50%, -50%) rotate(90deg);
+	transform-origin: 50% 50%;
+	top: 50%;
+	left: 50%;
+
+	&::before {
+		position: absolute;
+		content: '';
+		border-radius: 50%;
+		animation-duration: 1000ms;
+		animation-iteration-count: infinite;
+		animation-delay: -83.33333ms;
+		width: 0.55rem;
+		height: 0.55rem;
+		@include sbg(--spinner-dot-bg);
+	}
+	&::after {
+		position: absolute;
+		content: '';
+		border-radius: 50%;
+		animation-duration: 1000ms;
+		animation-iteration-count: infinite;
+		animation-delay: 416.66667ms;
+		width: 0.55rem;
+		height: 0.55rem;
+		@include sbg(--spinner-dot-bg);
+	}
+	&.medium {
+		&::before {
+			animation-name: dotsBounceBefore-medium;
+			top: -0.25rem;
+			left: -0.25rem;
+		}
+		&::after {
+			animation-name: dotsBounceAfter-medium;
+			top: -0.25rem;
+			right: -0.25rem;
+		}
+	}
+	&.small {
+		width: 0.9rem;
+		&::before {
+			animation-name: dotsBounceBefore-small;
+			top: -0.0625rem;
+			left: -0.0625rem;
+			width: 0.125rem;
+			height: 0.125rem;
+		}
+		&::after {
+			animation-name: dotsBounceBefore-small;
+			top: -0.0625rem;
+			right: -0.0625rem;
+			width: 0.125rem;
+			height: 0.125rem;
+		}
+		.spinner-dot {
+			width: 1rem;
+			&::before, &::after {
+				animation-name: dotsBounceBefore-small;
+				width: 0.125rem;
+				height: 0.125rem;
+			}
+			&.a, &.b {
+				&::before {
+					top: -0.0625rem;
+					left: -0.0625rem;
+				}
+				&::after {
+					top: -0.0625rem;
+					right: -0.0625rem;
+				}
+			}
+		}
+	}
+	.spinner-dot {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 2rem;
+		transform-origin: 50% 50%;
+		&::before {
+			position: absolute;
+			content: '';
+			border-radius: 50%;
+			animation-duration: 1000ms;
+			animation-iteration-count: infinite;
+			animation-name: dotsBounceBefore-medium;
+			width: 0.55rem;
+			height: 0.55rem;
+			@include sbg(--spinner-dot-bg);
+		}
+		&::after {
+			position: absolute;
+			content: '';
+			border-radius: 50%;
+			animation-duration: 1000ms;
+			animation-iteration-count: infinite;
+			animation-name: dotsBounceAfter-medium;
+			width: 0.55rem;
+			height: 0.55rem;
+			@include sbg(--spinner-dot-bg);
+		}
+		&.a {
+			transform: rotate(60deg) translateY(0);
+			width: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			&::before {
+				animation-delay: 83.33333ms;
+				top: -0.25rem;
+				left: -0.25rem;
+			}
+			&::after {
+				animation-delay: 583.33333ms;
+				top: -0.25rem;
+				right: -0.25rem;
+			}
+		}
+		&.b {
+			transform: rotate(120deg) translateY(0);
+			width: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			&::before {
+				animation-delay: 250ms;
+				top: -0.25rem;
+				left: -0.25rem;
+			}
+			&::after {
+				animation-delay: 750ms;
+				top: -0.25rem;
+				right: -0.25rem;
+			}
+		}
+	}
+}
+
+@keyframes dotsBounceBefore-medium {
+	60% {
+		transform: translateX(0);
+		animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+	}
+	80% {
+		animation-timing-function: cubic-bezier(0, 1.11, 0.7, 1.43);
+		transform: translateX(-0.5rem);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+@keyframes dotsBounceAfter-medium {
+	60% {
+		animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+		transform: translateX(0);
+	}
+	80% {
+		animation-timing-function: cubic-bezier(0, 1.11, 0.7, 1.43);
+		transform: translateX(0.5rem);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+@keyframes dotsBounceBefore-small {
+	60% {
+		transform: translateX(0);
+		animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+	}
+	80% {
+		animation-timing-function: cubic-bezier(0, 1.11, 0.7, 1.43);
+		transform: translateX(-0.375rem);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+@keyframes dotsBounceAfter-small {
+	60% {
+		animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+		transform: translateX(0);
+	}
+	80% {
+		animation-timing-function: cubic-bezier(0, 1.11, 0.7, 1.43);
+		transform: translateX(0.375rem);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+
+/* HTML TO USE */
+/*
+<div class="spinner medium">
+	<div class="spinner-dot a"></div>
+	<div class="spinner-dot b"></div>
+</div>
+*/

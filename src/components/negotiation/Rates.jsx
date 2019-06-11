@@ -95,7 +95,7 @@ class Rates extends React.Component {
 						(rc, i) => {
 							return (
 								<li key={rc.Id} className="list-item">
-									<div className="fa-modal-title">
+									<div className="rate-card-title">
 										<div className="title-upper" />
 										<div className="title-content">
 											<Icon name="announcement" width="14" color="#706e6b" />

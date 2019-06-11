@@ -8,8 +8,6 @@ import Pagination from './Pagination';
 import { truncateCPField, decodeEntities } from '../../utils/shared-service';
 import { LookupSkeleton } from '../skeletons/LookupSkeleton';
 
-import './Lookup.scss';
-
 class Lookup extends React.Component {
 	// this.props.onChange X
 	// this.props.onSearch

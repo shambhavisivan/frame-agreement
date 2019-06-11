@@ -236,7 +236,20 @@ $variables: (
 	--list-row-selected-bg: $gray-light-15,
 	--list-row-highlight-bg: $gray-light-20,
 	--list-cell-valid-c: $green-light-3,
-	--list-cell-invalid-c: $red-medium-3
+	--list-cell-invalid-c: $red-medium-3,
+
+	--spinner-overlay-bg: rgba($white, 0.5),
+	--spinner-dot-bg: $blue-sf,
+
+	--vertical-tab-bg: $white,
+	--vertical-tab-c: $gray-dark-1,
+	--vertical-tab-subtitle-c: $gray-dark-6,
+	--vertical-tab-selected-bg: #f0f8fc,
+	--vertical-tab-selected-br: $blue-sf,
+	--vertical-tab-selected-c: $blue-sf,
+	--vertical-tab-selected-subtitle-c: $gray-dark-8,
+	--vertical-tab-hover-bg: $gray-light-26,
+	--vertical-tab-icon-hover-c: $blue-medium-1,
 );
 
 // This will be used later for dark theme support

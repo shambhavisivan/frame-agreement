@@ -226,6 +226,10 @@ const mapStateToProps = state => {
 	};
 };
 
+// const mapDispatchToProps = {
+//     setValidation
+// };
+
 export default connect(
 	mapStateToProps,
 	null

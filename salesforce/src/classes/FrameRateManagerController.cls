@@ -17,11 +17,12 @@ global with sharing class FrameRateManagerController {
 			'csconta__Status__c',
 			'csconta__Valid_From__c',
 			'csconta__Valid_To__c',
+			'csconta__replaced_by__c',
 			'csconta__replaced_frame_agreement__c',
 			'csconta__effective_end_date__c',
 			'csconta__effective_start_date__c',
 			'csconta__frame_agreement_number__c',
-			'csfam__Frame_Agreement_Type__c'
+			'csconta__agreement_level__c'
 	};
 
 
@@ -39,7 +40,25 @@ global with sharing class FrameRateManagerController {
 	public class ApplicationException extends Exception {
 	}
 
+	public static String getUserProfile() {
+		Id profileId = userinfo.getProfileId();
+		String profileName = [Select Name from Profile where Id=:profileId].Name;
+		return profileName;
+	}
+
 	@TestVisible private static csutil__JSON_Data__c getHeaderData() {
+
+		String profile = getUserProfile();
+
+		// List<csutil__JSON_Data__c> json_data = [
+		//      select csutil__value__c
+		//      from csutil__JSON_Data__c
+		//      where Name = 'FA-Header'
+		//      and (csfam__Profile__c = null OR csfam__Profile__c = :profile)
+		//      order by csfam__Profile__c
+		//      NULLS LAST
+		// ];
+
 		List<csutil__JSON_Data__c> json_data = [
 				select csutil__value__c
 				from csutil__JSON_Data__c
@@ -54,6 +73,18 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getCustomButtonData() {
+
+		String profile = getUserProfile();
+
+		// List<csutil__JSON_Data__c> json_data = [
+		//      select csutil__value__c
+		//      from csutil__JSON_Data__c
+		//      where Name = 'FA-Custom-Buttons'
+		//      and (csfam__Profile__c = null OR csfam__Profile__c = :profile)
+		//      order by csfam__Profile__c
+		//      NULLS LAST
+		// ];
+
 		List<csutil__JSON_Data__c> json_data = [
 				select csutil__value__c
 				from csutil__JSON_Data__c
@@ -68,6 +99,18 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getStandardButtonData() {
+
+		String profile = getUserProfile();
+
+		// List<csutil__JSON_Data__c> json_data = [
+		//      select csutil__value__c
+		//      from csutil__JSON_Data__c
+		//      where Name = 'FA-Standard-Buttons'
+		//      and (csfam__Profile__c = null OR csfam__Profile__c = :profile)
+		//      order by csfam__Profile__c
+		//      NULLS LAST
+		// ];
+
 		List<csutil__JSON_Data__c> json_data = [
 				select csutil__value__c
 				from csutil__JSON_Data__c
@@ -96,6 +139,18 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getCustomTabsData() {
+
+		String profile = getUserProfile();
+
+		// List<csutil__JSON_Data__c> json_data = [
+		//      select csutil__value__c
+		//      from csutil__JSON_Data__c
+		//      where Name = 'FA-Custom-Tabs'
+		//      and (csfam__Profile__c = null OR csfam__Profile__c = :profile)
+		//      order by csfam__Profile__c
+		//      NULLS LAST
+		// ];
+
 		List<csutil__JSON_Data__c> json_data = [
 				select csutil__value__c
 				from csutil__JSON_Data__c
@@ -399,6 +454,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
 		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
 		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
+		settingMap.put('discount_as_price', FACSettings.get('csfam__discount_as_price__c'));
 		settingMap.put('new_frame_agreement', FACSettings.get('csfam__new_frame_agreement__c'));
 
 		settingMap.put('fa_editable_statuses', FACSettings.get('csfam__fa_editable_statuses__c'));
@@ -1185,11 +1241,11 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static String addFaToMaster(String faId, List <String> faIds) {
 		List < csconta__Frame_Agreement__c > faList = new List < csconta__Frame_Agreement__c > ();
-		// faList = [select Id, csfam_master_frame_agreement__c from csconta__Frame_Agreement__c where Id in :faIds];
+		faList = [select Id, csconta__master_frame_agreement__c from csconta__Frame_Agreement__c where Id in :faIds];
 
 		// Test validity of Id
 		for (csconta__Frame_Agreement__c fa : faList) {
-			// fa.csfam_master_frame_agreement__c = faId;
+			fa.csconta__master_frame_agreement__c = faId;
 		}
 
 		upsert faList;
@@ -1217,7 +1273,7 @@ global with sharing class FrameRateManagerController {
 	public static String setFrameAgreementState(Id faId, String status) {
 		String retString = 'Success';
 		try {
-			csconta__Frame_Agreement__c fa = [select Id, csconta__replaced_frame_agreement__c,csconta__effective_start_date__c from csconta__Frame_Agreement__c where Id = :faId limit 1];
+			csconta__Frame_Agreement__c fa = [select Id, csconta__effective_start_date__c from csconta__Frame_Agreement__c where Id = :faId limit 1];
 			fa.csconta__Status__c = status;
 			update fa;
 
@@ -1260,6 +1316,7 @@ global with sharing class FrameRateManagerController {
 		csconta__Frame_Agreement__c cloned = original.clone(false, false, false, false);
 		cloned.csconta__Status__c = 'Draft';
 		cloned.csconta__replaced_frame_agreement__c = null;
+		cloned.csconta__replaced_by__c = null;
 		insert cloned;
 
 		cloned.csconta__frame_agreement_number__c = parseNumberFromName(original.Name);
@@ -1290,7 +1347,7 @@ global with sharing class FrameRateManagerController {
 			}
 		}
 
-		return cloned;
+		return getFrameAgreement(cloned.Id);
 	}
 
 	/**
@@ -1312,7 +1369,10 @@ global with sharing class FrameRateManagerController {
 		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 		clonedFa.csconta__Status__c = (String) FACSettings.get('csfam__draft_status__c');
 		clonedFa.csconta__replaced_frame_agreement__c = faId;
+
+		original.csconta__replaced_by__c = clonedFa.Id;
 		original.csconta__effective_end_date__c = datetime.now();
+
 		clonedFa.csconta__frame_agreement_number__c = parseNumberFromName(original.Name);
 
 		update original;
@@ -1607,12 +1667,12 @@ global with sharing class FrameRateManagerController {
 				insert pipraList;
 				csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 
-// Set active status to FA, and if its replacing another fa, set its effective start date
+				// Set active status to FA, and if its replacing another fa, set its effective start date
 				csconta__Frame_Agreement__c fa = [select Id, csconta__Status__c, csconta__replaced_frame_agreement__c from csconta__Frame_Agreement__c where Id = :faId limit 1];
 				fa.csconta__Status__c = (String) FACSettings.get('csfam__active_status__c');
 				update fa;
 
-// If this was a version of another fa we need to set the original to replaced/closed
+				// If this was a version of another fa we need to set the original to replaced/closed
 				if (fa.csconta__replaced_frame_agreement__c != null) {
 					fa.csconta__effective_start_date__c = datetime.now();
 					csconta__Frame_Agreement__c original = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where Id = :fa.csconta__replaced_frame_agreement__c limit 1];

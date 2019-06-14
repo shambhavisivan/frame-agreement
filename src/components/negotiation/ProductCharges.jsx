@@ -5,8 +5,9 @@ import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 
-import { validateProduct } from '../../utils/validation-service';
+import { validateProduct } from './Validation';
 
+import { setValidation } from '../../actions';
 import { connect } from 'react-redux';
 
 class ProductCharges extends React.Component {
@@ -218,6 +219,10 @@ const mapStateToProps = state => {
 		settings: state.settings
 	};
 };
+
+// const mapDispatchToProps = {
+//     setValidation
+// };
 
 export default connect(
 	mapStateToProps,

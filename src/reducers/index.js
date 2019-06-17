@@ -404,7 +404,6 @@ const rootReducer = (state = initialState, action) => {
 					action.payload.FACSettings.statuses.requires_approval_status
 				];
 			}
-
 			// ***************************************************************************************************************
 			action.payload.FACSettings.decomposition_chunk_size =
 				action.payload.FACSettings.decomposition_chunk_size || 1000;

@@ -108,6 +108,9 @@ class Addons extends React.Component {
 											onChange={val => {
 												this.negotiateInline(add, 'oneOff', val);
 											}}
+											discAsPrice={
+												this.props.settings.FACSettings.discount_as_price
+											}
 											negotiatedValue={negValue}
 											originalValue={add.cspmb__One_Off_Charge__c}
 										/>
@@ -142,6 +145,9 @@ class Addons extends React.Component {
 											onChange={val => {
 												this.negotiateInline(add, 'recurring', val);
 											}}
+											discAsPrice={
+												this.props.settings.FACSettings.discount_as_price
+											}
 											negotiatedValue={negValue}
 											originalValue={add.cspmb__Recurring_Charge__c}
 										/>

@@ -106,6 +106,9 @@ class Charges extends React.Component {
 											onChange={val => {
 												this.negotiateInline(charge, val);
 											}}
+											discAsPrice={
+												this.props.settings.FACSettings.discount_as_price
+											}
 											negotiatedValue={value}
 											originalValue={charge.oneOff}
 										/>
@@ -148,6 +151,9 @@ class Charges extends React.Component {
 												this.negotiateInline(charge, val);
 											}}
 											negotiatedValue={value}
+											discAsPrice={
+												this.props.settings.FACSettings.discount_as_price
+											}
 											originalValue={charge.recurring}
 										/>
 									);

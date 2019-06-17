@@ -113,6 +113,9 @@ class ProductCharges extends React.Component {
 											onChange={val => {
 												this.negotiateInline('oneOff', val);
 											}}
+											discAsPrice={
+												this.props.settings.FACSettings.discount_as_price
+											}
 											negotiatedValue={negValue}
 											originalValue={
 												this.props.product.cspmb__One_Off_Charge__c
@@ -171,6 +174,9 @@ class ProductCharges extends React.Component {
 											onChange={val => {
 												this.negotiateInline('recurring', val);
 											}}
+											discAsPrice={
+												this.props.settings.FACSettings.discount_as_price
+											}
 											negotiatedValue={negValue}
 											originalValue={
 												this.props.product.cspmb__Recurring_Charge__c

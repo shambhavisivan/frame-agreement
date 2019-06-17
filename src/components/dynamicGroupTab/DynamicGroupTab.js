@@ -3,14 +3,20 @@ import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import Select from 'react-select';
 
-import { decodeEntities } from '../../utils/shared-service';
-import Group from './Group';
+import {
+	decodeEntities,
+	IsJsonString,
+	makeId
+} from '../../utils/shared-service';
 import Checkbox from '../utillity/inputs/Checkbox';
 import Icon from '../utillity/Icon';
+import LogicForm from './LogicForm';
 
-import './CustomTab.scss';
+import './DynamicGroupTab.scss';
 
-class CustomTab extends React.Component {
+const BLANK_CIRCUITS = '{"logic":"","circuits":[]}';
+
+class DynamicGroupTab extends React.Component {
 	constructor(props, context) {
 		super(props, context);
 		this.state = {
@@ -25,6 +31,18 @@ class CustomTab extends React.Component {
 		this.updateCustomData = this.updateCustomData.bind(this);
 		this.onAddGroup = this.onAddGroup.bind(this);
 		this.blank = '';
+
+		window.FAM.api.getProductsForFrameAgreement = async () => {
+			let activFa = await window.FAM.api.getActiveFrameAgreement();
+
+			let param = {};
+			param.method = 'getProductsForFrameAgreement';
+			param.faId = activFa.Id;
+
+			return window.FAM.api
+				.performAction('DynamicGroupDataProvider', JSON.stringify(param))
+				.then(r => JSON.parse(decodeEntities(r)));
+		};
 	}
 
 	componentWillMount() {
@@ -36,6 +54,7 @@ class CustomTab extends React.Component {
 			)
 			.then(response => {
 				let errorFlag = false;
+
 				try {
 					response = JSON.parse(decodeEntities(response));
 				} catch (err) {
@@ -47,6 +66,7 @@ class CustomTab extends React.Component {
 				}
 
 				if (!errorFlag) {
+					response = response.map(g => this.processGroup(g));
 					return response;
 				}
 			});
@@ -81,14 +101,9 @@ class CustomTab extends React.Component {
 
 				if (_addedGroups.length) {
 					let dynamicGroupsMap = {};
+
 					_response_groups.forEach(group => {
 						dynamicGroupsMap[group.Id] = group;
-
-						if (_addedMap[group.Id]) {
-							group.discount = _addedMap[group.Id].discount || '';
-							group.oneOff = _addedMap[group.Id].oneOff || 0;
-							group.recurring = _addedMap[group.Id].recurring || 0;
-						}
 					});
 
 					// Validate custom data (in case some groups are deleted)
@@ -117,6 +132,7 @@ class CustomTab extends React.Component {
 					},
 					() => {
 						if (_needsUpdateFlag) {
+							console.log(this.state);
 							this.updateCustomData();
 						}
 					}
@@ -124,6 +140,30 @@ class CustomTab extends React.Component {
 			}
 		);
 		// ****************************
+	}
+
+	processGroup(g) {
+		g = JSON.parse(JSON.stringify(g));
+		if (IsJsonString(g.Logic_Components_JSON__c)) {
+			g.Logic_Components_JSON__c = JSON.parse(g.Logic_Components_JSON__c);
+		} else {
+			g.Logic_Components_JSON__c = JSON.parse(BLANK_CIRCUITS);
+		}
+
+		g.logic = g.Logic_Components_JSON__c.logic;
+
+		g.circuits = g.Logic_Components_JSON__c.circuits.map(circ => {
+			circ.Id = 'cc-' + makeId();
+			circ.parsable = IsJsonString(circ.value);
+
+			if (circ.parsable) {
+				circ.parsed = circ.parsed;
+			}
+			return circ;
+		});
+
+		delete g.Logic_Components_JSON__c;
+		return g;
 	}
 
 	onAddGroup(selected_group) {
@@ -196,6 +236,135 @@ class CustomTab extends React.Component {
 		});
 	}
 
+	// **************************************************** DG EDITOR ***************************************************************************
+	generateExpression(dgId) {
+		let _expression = '';
+		let _logic = this.state.added[dgId].logic;
+		let _circuits = this.state.added[dgId].circuits;
+
+		if (_logic && _logic.length >= 5) {
+			const generateCircuitString = index => {
+				let circ = _circuits[index];
+				let _circuitString = '[' + index + ']';
+				try {
+					_circuitString =
+						circ.field +
+						' ' +
+						circ.operator +
+						' ' +
+						(circ.parsed ? circ.value : "'" + circ.value + "'");
+				} catch (err) {}
+				return _circuitString;
+			};
+
+			let _body = _logic.replace(new RegExp('[0-9]', 'g'), match => {
+				return generateCircuitString(+match);
+			});
+
+			_expression += _body;
+		} else {
+			_circuits.forEach((circ, i) => {
+				_expression +=
+					circ.field +
+					' ' +
+					circ.operator +
+					' ' +
+					(circ.parsed ? circ.value : "'" + circ.value + "'");
+				_expression += _circuits.length - 1 !== i ? ' OR ' : '';
+			});
+		}
+		console.log(_circuits);
+
+		this.setState({
+			added: {
+				...this.state.added,
+				[dgId]: { ...this.state.added[dgId], Expression__c: _expression }
+			}
+		});
+	}
+
+	setParse(dgId, circId, bool) {
+		let _circuits = this.state.added[dgId].circuits;
+
+		_circuits.forEach(circ => {
+			if (circ.Id === circId) {
+				circ.parsed = bool;
+			}
+		});
+
+		this.setState(
+			{
+				added: {
+					...this.state.added,
+					[dgId]: { ...this.state.added[dgId], circuits: _circuits }
+				}
+			},
+			() => {
+				this.updateCustomData();
+				this.generateExpression(dgId);
+			}
+		);
+	}
+
+	onChangeLogic(dgId, value) {
+		this.setState(
+			{
+				added: {
+					...this.state.added,
+					[dgId]: { ...this.state.added[dgId], logic: value }
+				}
+			},
+			() => {
+				this.updateCustomData();
+				this.generateExpression(dgId);
+			}
+		);
+	}
+
+	onRemoveLogicCircuit(dgId, circuit) {
+		let _circuits = this.state.added[dgId].circuits.filter(
+			circ => circ.Id !== circuit.Id
+		);
+		this.setState(
+			{
+				added: {
+					...this.state.added,
+					[dgId]: { ...this.state.added[dgId], circuits: _circuits }
+				}
+			},
+			() => {
+				this.updateCustomData();
+				this.generateExpression(dgId);
+			}
+		);
+	}
+
+	onAddLogicCircuit(dgId, circuit) {
+		circuit.Id = 'cc-' + makeId();
+
+		circuit.parsable = IsJsonString(circuit.value);
+
+		if (circuit.parsable) {
+			circuit.parsed = false;
+		}
+
+		this.setState(
+			{
+				added: {
+					...this.state.added,
+					[dgId]: {
+						...this.state.added[dgId],
+						circuits: [...this.state.added[dgId].circuits, ...[circuit]]
+					}
+				}
+			},
+			() => {
+				this.updateCustomData();
+				this.generateExpression(dgId);
+			}
+		);
+	}
+	// **************************************************** DG EDITOR ***************************************************************************
 	render() {
 		return this.state.loading ? (
 			''
@@ -220,22 +389,28 @@ class CustomTab extends React.Component {
 							<div className="container__fields">
 								<span className="list-cell">Group name</span>
 								<span className="list-cell">Group id</span>
-								<span className="list-cell" />
 							</div>
 						</div>
 					</div>
 
 					{Object.values(this.state.added).map(group => (
-						<div className="product-card__container" key={group.Id}>
-							<div className="container__header">
-								<div
-									className="container__fields"
-									onClick={() => {
-										this.setState({
-											open: this.state.open === group.Id ? null : group.Id
-										});
-									}}
-								>
+						<div
+							className={
+								'product-card__container' +
+								(this.state.open === group.Id ? ' product-open' : '')
+							}
+							key={group.Id}
+						>
+							<div
+								className="container__header"
+								onClick={() => {
+									console.log(this.state);
+									this.setState({
+										open: this.state.open === group.Id ? null : group.Id
+									});
+								}}
+							>
+								<div className="container__fields">
 									<div className="fields__item fields__item--title">
 										{group.Name}
 									</div>
@@ -254,17 +429,118 @@ class CustomTab extends React.Component {
 
 							{this.state.open === group.Id ? (
 								<div className="commercial-product-body">
-									{group.csfam__Expression__c ? (
-										<div className="commercial-product-description">
-											<span>Expression: </span>
-											<pre>{group.csfam__Expression__c}</pre>
+									{group.Expression__c ? (
+										<div className="input-box big">
+											<label className="dg-label">Expression</label>
+											<div className="">
+												<pre>{group.Expression__c}</pre>
+											</div>
 										</div>
 									) : (
 										''
 									)}
 
-									<div className="dynamic-group-description">
-										<div className="negotiate-select-wrapper">
+									{group.fam_editable__c ? (
+										<React.Fragment>
+											<div className="input-box big">
+												<label className="dg-label">Logic</label>
+												<div className="input-field">
+													<input
+														spellCheck="false"
+														placeholder="(0 OR 1) AND (2 OR 3)"
+														className="dg-input dg-input-large"
+														type="text"
+														disabled={!group.circuits.length}
+														value={group.logic}
+														onChange={e => {
+															this.onChangeLogic(group.Id, e.target.value);
+														}}
+													/>
+												</div>
+											</div>
+
+											{group.circuits.length ? (
+												<div className="input-box big">
+													<label className="dg-label">
+														Expression components
+													</label>
+
+													<div className="dg-group-circuits">
+														{group.circuits.map((circ, i) => {
+															return (
+																<div className="dg-circuit" key={circ.Id}>
+																	<div className="dg-circuit-index">
+																		{i + ') '}
+																	</div>
+																	<div className="dg-circuit-configuration">
+																		{' '}
+																		{circ.field +
+																			' ' +
+																			circ.operator +
+																			' ' +
+																			circ.value}
+																	</div>
+
+																	{circ.parsable ? (
+																		<div
+																			className={
+																				'dg-circuit-parsed ' +
+																				(circ.parsed ? 'checked' : '')
+																			}
+																			onClick={() => {
+																				this.setParse(
+																					group.Id,
+																					circ.Id,
+																					!circ.parsed
+																				);
+																			}}
+																		>
+																			<span>
+																				Parse: {circ.parsed ? 'On' : 'Off'}
+																			</span>
+																		</div>
+																	) : (
+																		''
+																	)}
+
+																	<div className="dg-circuit-remove">
+																		<Icon
+																			name="delete"
+																			height="14"
+																			width="14"
+																			color="white"
+																			onClick={() =>
+																				this.onRemoveLogicCircuit(
+																					group.Id,
+																					circ
+																				)
+																			}
+																		/>
+																	</div>
+																</div>
+															);
+														})}
+													</div>
+												</div>
+											) : (
+												''
+											)}
+
+											<div className="input-box big">
+												<label className="dg-label">Add new component</label>
+												<LogicForm
+													onAdd={circuit =>
+														this.onAddLogicCircuit(group.Id, circuit)
+													}
+												/>
+											</div>
+										</React.Fragment>
+									) : (
+										''
+									)}
+
+									<div className="input-box big dynamic-group-discounts">
+										<div>
 											<label>Discount type</label>
 											<select
 												value={group.discount}
@@ -282,6 +558,7 @@ class CustomTab extends React.Component {
 												<option value={'Percentage'}>Percentage</option>
 											</select>
 										</div>
+
 										<div>
 											<label>One-Off charge</label>
 											<DebounceInput
@@ -299,6 +576,7 @@ class CustomTab extends React.Component {
 												value={group.oneOff}
 											/>
 										</div>
+
 										<div>
 											<label>Recurring charge</label>
 											<DebounceInput
@@ -329,12 +607,13 @@ class CustomTab extends React.Component {
 	}
 }
 
-function initialiseCustomTab(id) {
-	ReactDOM.render(<CustomTab />, document.getElementById(id));
+function initialiseDynamicGroupTab(id) {
+	ReactDOM.render(<DynamicGroupTab />, document.getElementById(id));
 }
 
 window.FAM.subscribe('onLoad', data => {
 	window.FAM.dynamicGroup = {};
+
 	window.FAM.dynamicGroup.getCommercialProductsByDynamicGroup = () => {
 		return new Promise(async resolve => {
 			// ****************************
@@ -346,7 +625,7 @@ window.FAM.subscribe('onLoad', data => {
 			}
 
 			let _groups = JSON.parse(_customData).group;
-			let _expressions = _groups.map(group => group.csfam__Expression__c);
+			let _expressions = _groups.map(group => group.Expression__c);
 
 			if (_expressions.length > 1) {
 				_expressions = _expressions.join(') OR (');
@@ -361,19 +640,20 @@ window.FAM.subscribe('onLoad', data => {
 
 			window.FAM.api
 				.performAction('DynamicGroupDataProvider', JSON.stringify(_params))
-				.then(function(response) {
-					resolve(response);
+				.then(response => {
+					// FILTER DYNAMIC GROUPS ONLY FOR DYNAMIC GROUPS
+					resolve(JSON.parse(decodeEntities(response)));
 				});
 		});
 	};
 
 	return new Promise(resolve => {
-		window.FAM.registerMethod('customTabEnter', id => {
+		window.FAM.registerMethod('dynamicGroupTabEnter', id => {
 			return new Promise(resolve => {
 				setTimeout(() => {
 					// ****************************
 					console.log('Entered tab with id:' + id);
-					initialiseCustomTab(id);
+					initialiseDynamicGroupTab(id);
 					// ****************************
 					resolve();
 				});

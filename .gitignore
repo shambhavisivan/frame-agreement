@@ -1,6 +1,7 @@
 /node_modules
 /dist/bundle.js
-/dist/CustomTab.js
+/dist/DiscountCodes.js
+/dist/DynamicGroup.js
 /.tmp
 /.sass-cache
 /bower_components

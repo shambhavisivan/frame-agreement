@@ -24,6 +24,15 @@ export const truncateCPField = field => {
 	return returnString;
 };
 
+export const IsJsonString = str => {
+	try {
+		JSON.parse(str);
+	} catch (e) {
+		return false;
+	}
+	return true;
+};
+
 export const decodeEntities = (() => {
 	// this prevents any overhead from creating the object each time
 	var element = document.createElement('div');
@@ -116,6 +125,16 @@ export const organizeHeaderFields = (headerData, _activeFa) => {
 	}
 
 	return field_rows;
+};
+
+export const makeId = (n = 8) => {
+	var text = '';
+	var possible =
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+	for (var i = 0; i < n; i++)
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	return text;
 };
 
 export const log = {

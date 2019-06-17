@@ -187,9 +187,22 @@ class DropdownNegotiate extends React.Component {
 					>
 						<option value="none">--none</option>
 						{this.discounts.map((disc, index) => {
+							let _discount =
+								'-' +
+								disc.value.toFixed(2) +
+								(disc.type === 'Percentage' ? '%' : '');
+							if (this.props.discAsPrice) {
+								_discount =
+									disc.type === 'Percentage'
+										? this.props.originalValue -
+										  this.props.originalValue * (disc.value / 100)
+										: this.props.originalValue - disc.value;
+								_discount = _discount.toFixed(2);
+							}
+
 							return (
 								<option key={disc.Id + disc.value} value={index}>
-									-{disc.value + (disc.type === 'Percentage' ? '%' : '')}
+									{_discount}
 								</option>
 							);
 						})}

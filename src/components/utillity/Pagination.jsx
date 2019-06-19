@@ -71,7 +71,7 @@ class Pagination extends Component {
 						activeClassName={'active'}
 					/>
 
-					{!this.props.restricted ? (
+					{!this.props.restricted && this.props.onPageSizeChange ? (
 						<select
 							value={this.props.pageSize}
 							onChange={this.onPageSizeChange}

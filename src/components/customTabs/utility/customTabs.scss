@@ -74,6 +74,8 @@
 
 .dg-results-container {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     background: var(--modal-light-bg);
 }
 
@@ -103,12 +105,23 @@
 
             .fa-modal-product-list {
                 max-height: 24rem;
+                flex: 1;
                 background: var(--modal-light-bg);
                 padding: 0.5rem;
             }
 
             .fa-modal-product-list > .product-row {
                 cursor: default;
+            }
+
+            .fa-modal-footer {
+                justify-content: space-between;
+                padding: 0.5rem;
+                box-shadow: none;
+
+                .fa-button {
+                    margin-left: 0;
+                }
             }
         }
     }

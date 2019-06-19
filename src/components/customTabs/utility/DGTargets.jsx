@@ -39,17 +39,24 @@ class DGTargets extends React.Component {
 
 					{!this.props.results.length ? <div className='product-row'>No targets found for this group!</div> : ""}
 				</div>
-				<div className='pagination-container'>
-					<Pagination
-						totalSize={this.props.results.length}
-						pageSize={10}
-						page={this.state.page}
-						onPageChange={newPage => {
-							this.setState({
-								page: newPage
-							});
-						}}
-					/>
+
+				<div className="fa-modal-footer">
+
+					<button className="fa-button fa-button--brand" onClick={this.props.onTest}>Test Group</button>
+
+					{this.props.results.length > 10 ? (<div className='pagination-container'>
+						<Pagination
+							totalSize={this.props.results.length}
+							pageSize={10}
+							page={this.state.page}
+							onPageChange={newPage => {
+								this.setState({
+									page: newPage
+								});
+							}}
+						/>
+					</div>) : ''}
+
 				</div>
 			</div>
 		);

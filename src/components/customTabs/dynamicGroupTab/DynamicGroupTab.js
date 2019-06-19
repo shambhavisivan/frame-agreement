@@ -58,6 +58,7 @@ class DynamicGroupTab extends React.Component {
 			}
 
 			if (!errorFlag) {
+				response = response.filter(g => g.group_type__c === 'Dynamic Group');
 				response = response.map(g => this.processGroup(g));
 				return response;
 			}
@@ -350,11 +351,33 @@ class DynamicGroupTab extends React.Component {
 	}
 	// **************************************************** DG EDITOR ***************************************************************************
 
+	getTargetObjectCode() {
+		let str;
+		if (this.state.added[this.state.open].target_object__c === 'Commercial Product') {
+			str = 'pi';
+		} else if (this.state.added[this.state.open].target_object__c === 'Rate Card Line') {
+			str = 'rcl'
+		}
+
+		return str;
+	}
+
 	testTargeting() {
-		// let fromCode = this.state.open.xxxx
-		let fromCode = 'pi'
-		window.FAM.dynamicGroup.getCommercialProductsByDynamicGroup(fromCode).then(
-			response => {
+		let fromCode = this.getTargetObjectCode();
+
+		console.log(fromCode);
+
+		/******************************/
+		let _params = {};
+		_params.method = "executeQuery";
+		_params.whereClause = this.state.added[this.state.open].Expression__c;
+		_params.fromCode = fromCode;
+
+		window.FAM.api.performAction("DynamicGroupDataProvider", JSON.stringify(_params))
+		.then(response => {
+			return JSON.parse(decodeEntities(response));
+		})
+		.then(response => {
 				console.log(response);
 				response.results = response.results || [];
 
@@ -373,6 +396,8 @@ class DynamicGroupTab extends React.Component {
 	}
 
 	render() {
+		let _active = this.state.added[this.state.open];
+
 		return this.state.loading ? (
 			""
 		) : (
@@ -394,8 +419,14 @@ class DynamicGroupTab extends React.Component {
 					<div className='product-card__container commercial-product-container-bare product-card__container--header'>
 						<div className='container__header'>
 							<div className='container__fields'>
-								<span className='list-cell'>Group name</span>
-								<span className='list-cell'>Group id</span>
+								<span className='list-cell'>Group Name</span>
+								{this.customSetting.dynamic_group_fields.map(f => {
+									return (
+										<div key={f} className='list-cell'>
+											<span>{truncateCPField(f)}</span>
+										</div>
+									);
+								})}
 							</div>
 						</div>
 					</div>
@@ -412,7 +443,13 @@ class DynamicGroupTab extends React.Component {
 								}}>
 								<div className='container__fields'>
 									<div className='fields__item fields__item--title'>{group.Name}</div>
-									<div className='fields__item'>{group.Id}</div>
+									{this.customSetting.dynamic_group_fields.map(f => {
+										return (
+											<div key={f} className='fields__item'>
+												<span>{group.hasOwnProperty(f) ? group[f].toString() : '-'}</span>
+											</div>
+										);
+									})}
 								</div>
 								<div
 									className='container__checkbox'
@@ -553,14 +590,8 @@ class DynamicGroupTab extends React.Component {
 										</div>
 									</div>
 									<div className='tab-body-right'>
-										{this.state.targetingResults ? (<React.Fragment>
-												<DGTargets results={this.state.targetingResults} fields={this.customSetting.price_item_fields}/>
-												<div className='box-button-container'>
-													<button className='fa-button fa-button--brand' onClick={this.testTargeting}>
-														Test targeting
-													</button>
-												</div>
-											</React.Fragment>) : (
+										{this.state.targetingResults ? (<DGTargets results={this.state.targetingResults}
+											fields={this.customSetting[_active.target_object__c === 'Commercial Product' ? 'price_item_fields' : 'rcl_fields']} onTest={this.testTargeting}/>) : (
 											<div className='add-product-box'>
 												<span className='box-header-1'>Lorem ipsum dolor sit amett</span>
 												<span className='box-header-2'>sed do eiusmod tempor incididunt ut labore</span>
@@ -592,7 +623,7 @@ function initialiseDynamicGroupTab(id) {
 window.FAM.subscribe("onLoad", data => {
 	window.FAM.dynamicGroup = {};
 
-	window.FAM.dynamicGroup.getCommercialProductsByDynamicGroup = (fromCode) => {
+	window.FAM.dynamicGroup.getRecordsFromDynamicGroup = (fromCode) => {
 		return new Promise(async resolve => {
 			// ****************************
 			let _customData = await window.FAM.api.getCustomData();

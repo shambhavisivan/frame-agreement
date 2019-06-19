@@ -26,7 +26,12 @@ const subscribe = (eventType, callback) => {
 		console.warn('Cannot find event:', eventType);
 		return false;
 	}
-	subscriptions[eventType] = callback;
+
+	if (!subscriptions.hasOwnProperty(eventType)) {
+		subscriptions[eventType] = [];
+	}
+
+	subscriptions[eventType].push(callback);
 
 	return {
 		unsubscribe: () => {
@@ -38,22 +43,18 @@ const subscribe = (eventType, callback) => {
 export const publish = async (eventType, arg = null) => {
 	log.green('Event triggered: ' + eventType);
 
-	if (!subscriptions[eventType]) {
+	if (!subscriptions[eventType] || !subscriptions[eventType].length) {
 		return Promise.resolve(arg);
 	}
 
 	log.green('Subscriber found for event: ' + eventType);
-	let _promise = subscriptions[eventType]();
 
-	if (!!_promise.then) {
-		return await _promise;
-	} else {
-		console.error('Subscription to ' + eventType + ' does not return promise!');
-		return new Promise(resolve => {
-			resolve(arg);
-			return arg;
-		});
-	}
+	// let _promise = subscriptions[eventType]();
+
+	Promise.all(subscriptions[eventType].map(e => e())).then(r => {
+		console.log(r);
+	})
+
 	// return await subscriptions[eventType].apply(null, arg);
 };
 

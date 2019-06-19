@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Icon from '../utillity/Icon';
+import Icon from '../../utillity/Icon';
 
 const OPERATORS = [
 	{

@@ -4,8 +4,8 @@ const webpack = require('webpack');
 module.exports = {
     entry: {
         bundle: './src/index.js',
-        DynamicGroup: './src/components/dynamicGroupTab/DynamicGroupTab.js',
-        DiscountCodes: './src/components/discountCodesTab/DiscountCodesTab.js'
+        DynamicGroup: './src/components/customTabs/dynamicGroupTab/DynamicGroupTab.js',
+        DiscountCodes: './src/components/customTabs/discountCodesTab/DiscountCodesTab.js'
     },
     // devtool: 'eval-source-map',
     module: {

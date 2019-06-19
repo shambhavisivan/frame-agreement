@@ -7,16 +7,16 @@ import {
 	decodeEntities,
 	IsJsonString,
 	makeId
-} from '../../utils/shared-service';
-import Checkbox from '../utillity/inputs/Checkbox';
-import Icon from '../utillity/Icon';
-import LogicForm from './LogicForm';
+} from '../../../utils/shared-service';
+import Checkbox from '../../utillity/inputs/Checkbox';
+import Icon from '../../utillity/Icon';
+import LogicForm from '../utility/LogicForm';
 
-import './DynamicGroupTab.scss';
+import './DiscountCodesTab.scss';
 
 const BLANK_CIRCUITS = '{"logic":"","circuits":[]}';
 
-class DynamicGroupTab extends React.Component {
+class DiscountCodesTab extends React.Component {
 	constructor(props, context) {
 		super(props, context);
 		this.state = {
@@ -31,18 +31,6 @@ class DynamicGroupTab extends React.Component {
 		this.updateCustomData = this.updateCustomData.bind(this);
 		this.onAddGroup = this.onAddGroup.bind(this);
 		this.blank = '';
-
-		window.FAM.api.getProductsForFrameAgreement = async () => {
-			let activFa = await window.FAM.api.getActiveFrameAgreement();
-
-			let param = {};
-			param.method = 'getProductsForFrameAgreement';
-			param.faId = activFa.Id;
-
-			return window.FAM.api
-				.performAction('DynamicGroupDataProvider', JSON.stringify(param))
-				.then(r => JSON.parse(decodeEntities(r)));
-		};
 	}
 
 	componentWillMount() {
@@ -365,11 +353,12 @@ class DynamicGroupTab extends React.Component {
 		);
 	}
 	// **************************************************** DG EDITOR ***************************************************************************
+
 	render() {
 		return this.state.loading ? (
 			''
 		) : (
-			<div id="dynamic-group-tab" className="card products-card">
+			<div id="discount-codes-tab" className="card products-card">
 				<div className="products-card__inner">
 					<div className="products-card__header">
 						<span className="products__title">Dynamic groups</span>
@@ -607,13 +596,12 @@ class DynamicGroupTab extends React.Component {
 	}
 }
 
-function initialiseDynamicGroupTab(id) {
-	ReactDOM.render(<DynamicGroupTab />, document.getElementById(id));
+function initialiseDiscountCodesTab(id) {
+	ReactDOM.render(<DiscountCodesTab />, document.getElementById(id));
 }
 
 window.FAM.subscribe('onLoad', data => {
 	window.FAM.dynamicGroup = {};
-
 	window.FAM.dynamicGroup.getCommercialProductsByDynamicGroup = () => {
 		return new Promise(async resolve => {
 			// ****************************
@@ -641,19 +629,19 @@ window.FAM.subscribe('onLoad', data => {
 			window.FAM.api
 				.performAction('DynamicGroupDataProvider', JSON.stringify(_params))
 				.then(response => {
-					// FILTER DYNAMIC GROUPS ONLY FOR DYNAMIC GROUPS
-					resolve(JSON.parse(decodeEntities(response)));
+					// FILTER DYNAMIC GROUPS ONLY FOR DISCOUNT CODES
+					resolve(response);
 				});
 		});
 	};
 
 	return new Promise(resolve => {
-		window.FAM.registerMethod('dynamicGroupTabEnter', id => {
+		window.FAM.registerMethod('discountCodesTabEnter', id => {
 			return new Promise(resolve => {
 				setTimeout(() => {
 					// ****************************
 					console.log('Entered tab with id:' + id);
-					initialiseDynamicGroupTab(id);
+					initialiseDiscountCodesTab(id);
 					// ****************************
 					resolve();
 				});

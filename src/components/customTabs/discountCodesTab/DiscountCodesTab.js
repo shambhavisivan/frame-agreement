@@ -12,7 +12,7 @@ import Checkbox from '../../utillity/inputs/Checkbox';
 import Icon from '../../utillity/Icon';
 import LogicForm from '../utility/LogicForm';
 
-import './DiscountCodesTab.scss';
+import "../utility/customTabs.scss";
 
 const BLANK_CIRCUITS = '{"logic":"","circuits":[]}';
 

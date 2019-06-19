@@ -72,32 +72,56 @@
         padding: 0 1.5rem 0.5rem 1.5rem;
     }*/
 
+.dg-results-container {
+    flex: 1;
+    background: var(--modal-light-bg);
+}
+
     .commercial-product-body {
-        padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+        /*padding: 0.5rem 1.5rem 1.5rem 1.5rem;*/
+        display: flex;
+
+        .tab-body-left {
+            flex: 1;
+            padding: 0.5rem 0.5rem 1.5rem 1.5rem;
+        }
+
+        .tab-body-right {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            padding: 0.5rem 1.5rem 1.5rem 0.5rem;
+
+            .add-product-box {
+                background: var(--main-bg);
+                flex: 1;
+            }
+
+            .box-button-container {
+                padding: 0;
+            }
+
+            .fa-modal-product-list {
+                max-height: 24rem;
+                background: var(--modal-light-bg);
+                padding: 0.5rem;
+            }
+
+            .fa-modal-product-list > .product-row {
+                cursor: default;
+            }
+        }
     }
 
 /***********************************/
 
 .input-box {
 
-    &.normal {
-        min-width: 150px;
-        max-width: 300px;
-        flex-basis: auto;
-        /* default value */
-        flex-grow: 1;
+    flex: 1;
+    padding: 5px 0px;
 
-        padding: 5px 10px;
-    }
-
-    &.big {
-        min-width: 300px;
-        max-width: 620px;
-        flex-basis: auto;
-        /* default value */
-        flex-grow: 1;
+    &:not(:last-of-type) {
         margin-bottom: 10px;
-        padding: 5px 0px;
     }
 
     .dg-label {

@@ -11,6 +11,7 @@ import {
 } from '../../../utils/shared-service';
 import Icon from '../../utillity/Icon';
 import DGTargets from "../utility/DGTargets";
+import { CustomOption, filterOptions } from "../utility/CustomOption";
 
 import "../utility/customTabs.scss";
 
@@ -82,18 +83,20 @@ class DiscountCodesTab extends React.Component {
 				let _response_data = response[2];
 
 				// Enrich the groups
-				_response_groups = _response_groups.map(group => {
-					return { ...group, discount: '', oneOff: 0, recurring: 0 };
+				_response_groups.forEach(group => {
+					group.one_off_charge__c = group.one_off_charge__c || 0;
+					group.recurring_charge__c = group.recurring_charge__c || 0;
+					group.rate_value__c = group.rate_value__c || 0;
 				});
 
 				let _selectGroups = _response_groups.map(group => {
-					return { value: group.Id, label: group.Name };
+					return { value: group.Id, label: group.Name, description: group.Description__c || '' }
 				});
 
 				let _addedGroups = [];
 
 				try {
-					_addedGroups = JSON.parse(_response_data).group;
+					_addedGroups = JSON.parse(_response_data).codes || [];
 				} catch (err) { }
 
 				let _addedMap = _addedGroups.reduce(
@@ -210,7 +213,7 @@ class DiscountCodesTab extends React.Component {
 				.filter(group => {
 					return !this.state.added[group.Id];
 				})
-				.map(group => ({ value: group.Id, label: group.Name }))
+				.map(group => ({ value: group.Id, label: group.Name, description: group.Description__c }))
 		});
 	}
 
@@ -229,7 +232,7 @@ class DiscountCodesTab extends React.Component {
 	updateCustomData() {
 		window.FAM.api.getCustomData().then(response => {
 			let customData = response === '' ? {} : JSON.parse(response);
-			customData.group = Object.values(this.state.added);
+			customData.codes = Object.values(this.state.added);
 
 			window.FAM.api
 				.setCustomData(JSON.stringify(customData))
@@ -300,6 +303,8 @@ class DiscountCodesTab extends React.Component {
 									value={this.blank}
 									options={this.state.selectGroups}
 									onChange={this.onAddGroup}
+									formatOptionLabel={CustomOption}
+									filterOption={filterOptions}
 								/>
 							</div>
 						</div>

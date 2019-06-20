@@ -127,6 +127,21 @@
     }
 
 /***********************************/
+.custom-option {
+    display: flex;
+
+    > span {
+        padding: 0px 5px;
+    }
+}
+
+.custom-option-description {
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/***********************************/
 
 .input-box {
 

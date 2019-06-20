@@ -9,6 +9,8 @@ import Icon from "../../utillity/Icon";
 import LogicForm from "../utility/LogicForm";
 import DGTargets from "../utility/DGTargets";
 
+import { CustomOption, filterOptions } from "../utility/CustomOption";
+
 import "../utility/customTabs.scss";
 
 const BLANK_CIRCUITS = '{"logic":"","circuits":[]}';
@@ -58,37 +60,38 @@ class DynamicGroupTab extends React.Component {
 			}
 
 			if (!errorFlag) {
-				response = response.filter(g => g.group_type__c === 'Dynamic Group');
+				response = response.filter(g => g.group_type__c === "Dynamic Group");
 				response = response.map(g => this.processGroup(g));
 				return response;
 			}
 		});
 		// ************************************
-		let _getCustomSettingsPromise = window.FAM.api.performAction("DynamicGroupDataProvider", '{"method": "getCustomSettings"}')
-		.then(response => JSON.parse(decodeEntities(response)))
-		.then(response => {
-			for (var key in response) {
-				response[key] = response[key] ? response[key].replace(/\s/g, '').split(',') : [];
-			}
-			return response;
-		});
+		let _getCustomSettingsPromise = window.FAM.api
+			.performAction("DynamicGroupDataProvider", '{"method": "getCustomSettings"}')
+			.then(response => JSON.parse(decodeEntities(response)))
+			.then(response => {
+				for (var key in response) {
+					response[key] = response[key] ? response[key].replace(/\s/g, "").split(",") : [];
+				}
+				return response;
+			});
 		// ************************************
 
 		Promise.all([_getCustomSettingsPromise, _getGroupsPromise, window.FAM.api.getCustomData()]).then(response => {
-
 			this.customSetting = response[0];
 
 			let _response_groups = response[1] || [];
 			let _response_data = response[2];
 
-
 			// Enrich the groups
-			_response_groups = _response_groups.map(group => {
-				return { ...group, discount: "", oneOff: 0, recurring: 0 };
+			_response_groups.forEach(group => {
+				group.one_off_charge__c = group.one_off_charge__c || 0;
+				group.recurring_charge__c = group.recurring_charge__c || 0;
+				group.rate_value__c = group.rate_value__c || 0;
 			});
 
 			let _selectGroups = _response_groups.map(group => {
-				return { value: group.Id, label: group.Name };
+				return { value: group.Id, label: group.Name, description: group.Description__c || '' };
 			});
 
 			let _addedGroups = [];
@@ -97,7 +100,7 @@ class DynamicGroupTab extends React.Component {
 				_addedGroups = JSON.parse(_response_data).group;
 			} catch (err) {}
 
-			let _addedMap = _addedGroups.reduce((acc, iter) => ({ ...acc, [iter.Id]: iter}), {});
+			let _addedMap = _addedGroups.reduce((acc, iter) => ({ ...acc, [iter.Id]: iter }), {});
 
 			let _needsUpdateFlag = false;
 
@@ -171,6 +174,8 @@ class DynamicGroupTab extends React.Component {
 		// Find group
 		let _group = this.state.groups.find(group => group.Id === selected_group.value);
 
+		console.log(_group);
+
 		this.setState(
 			{
 				added: { ...this.state.added, [_group.Id]: _group }
@@ -205,7 +210,7 @@ class DynamicGroupTab extends React.Component {
 				.filter(group => {
 					return !this.state.added[group.Id];
 				})
-				.map(group => ({ value: group.Id, label: group.Name }))
+				.map(group => ({ value: group.Id, label: group.Name, description: group.Description__c }))
 		});
 	}
 
@@ -353,10 +358,10 @@ class DynamicGroupTab extends React.Component {
 
 	getTargetObjectCode() {
 		let str;
-		if (this.state.added[this.state.open].target_object__c === 'Commercial Product') {
-			str = 'pi';
-		} else if (this.state.added[this.state.open].target_object__c === 'Rate Card Line') {
-			str = 'rcl'
+		if (this.state.added[this.state.open].target_object__c === "Commercial Product") {
+			str = "pi";
+		} else if (this.state.added[this.state.open].target_object__c === "Rate Card Line") {
+			str = "rcl";
 		}
 
 		return str;
@@ -373,26 +378,28 @@ class DynamicGroupTab extends React.Component {
 		_params.whereClause = this.state.added[this.state.open].Expression__c;
 		_params.fromCode = fromCode;
 
-		window.FAM.api.performAction("DynamicGroupDataProvider", JSON.stringify(_params))
-		.then(response => {
-			return JSON.parse(decodeEntities(response));
-		})
-		.then(response => {
-				console.log(response);
-				response.results = response.results || [];
+		window.FAM.api
+			.performAction("DynamicGroupDataProvider", JSON.stringify(_params))
+			.then(response => {
+				return JSON.parse(decodeEntities(response));
+			})
+			.then(
+				response => {
+					console.log(response);
+					response.results = response.results || [];
 
-				let _results = response.results.map(cp => {
-					let _cp = JSON.parse(JSON.stringify(cp));
-					delete _cp.attributes;
-					return cp;
-				})
+					let _results = response.results.map(cp => {
+						let _cp = JSON.parse(JSON.stringify(cp));
+						delete _cp.attributes;
+						return cp;
+					});
 
-				this.setState({
-					targetingResults: _results
-				});
-			},
-			error => {}
-		);
+					this.setState({
+						targetingResults: _results
+					});
+				},
+				error => {}
+			);
 	}
 
 	render() {
@@ -412,6 +419,8 @@ class DynamicGroupTab extends React.Component {
 								value={this.blank}
 								options={this.state.selectGroups}
 								onChange={this.onAddGroup}
+								formatOptionLabel={CustomOption}
+								filterOption={filterOptions}
 							/>
 						</div>
 					</div>
@@ -446,7 +455,7 @@ class DynamicGroupTab extends React.Component {
 									{this.customSetting.dynamic_group_fields.map(f => {
 										return (
 											<div key={f} className='fields__item'>
-												<span>{group.hasOwnProperty(f) ? group[f].toString() : '-'}</span>
+												<span>{group.hasOwnProperty(f) ? group[f].toString() : "-"}</span>
 											</div>
 										);
 									})}
@@ -518,12 +527,7 @@ class DynamicGroupTab extends React.Component {
 																		)}
 
 																		<div className='dg-circuit-remove' onClick={() => this.onRemoveLogicCircuit(group.Id, circ)}>
-																			<Icon
-																				name='delete'
-																				height='14'
-																				width='14'
-																				color='white'
-																			/>
+																			<Icon name='delete' height='14' width='14' color='white' />
 																		</div>
 																	</div>
 																);
@@ -547,10 +551,10 @@ class DynamicGroupTab extends React.Component {
 											<div>
 												<label>Discount type</label>
 												<select
-													value={group.discount}
+													value={group.discount_type__c}
 													placeholder='Add Dynamic Group'
 													onChange={e => {
-														this.onChangeDiscount(group.Id, "discount", e.target.value);
+														this.onChangeDiscount(group.Id, "discount_type__c", e.target.value);
 													}}>
 													<option value=''>--none</option>
 													<option value={"Amount"}>Amount</option>
@@ -558,40 +562,65 @@ class DynamicGroupTab extends React.Component {
 												</select>
 											</div>
 
-											<div>
-												<label>One-Off charge</label>
-												<DebounceInput
-													debounceTimeout={300}
-													minLength={1}
-													spellCheck='false'
-													className=''
-													type='number'
-													onChange={e => {
-														this.onChangeDiscount(group.Id, "oneOff", +e.target.value);
-													}}
-													value={group.oneOff}
-												/>
-											</div>
+											{group.target_object__c === "Commercial Product" ? (
+												<React.Fragment>
+													<div>
+														<label>One-Off charge</label>
+														<DebounceInput
+															debounceTimeout={300}
+															minLength={1}
+															spellCheck='false'
+															className=''
+															type='number'
+															onChange={e => {
+																this.onChangeDiscount(group.Id, "one_off_charge__c", +e.target.value);
+															}}
+															value={group.one_off_charge__c}
+														/>
+													</div>
 
-											<div>
-												<label>Recurring charge</label>
-												<DebounceInput
-													debounceTimeout={300}
-													minLength={1}
-													spellCheck='false'
-													className=''
-													type='number'
-													onChange={e => {
-														this.onChangeDiscount(group.Id, "recurring", +e.target.value);
-													}}
-													value={group.recurring}
-												/>
-											</div>
+													<div>
+														<label>Recurring charge</label>
+														<DebounceInput
+															debounceTimeout={300}
+															minLength={1}
+															spellCheck='false'
+															className=''
+															type='number'
+															onChange={e => {
+																this.onChangeDiscount(group.Id, "recurring_charge__c", +e.target.value);
+															}}
+															value={group.recurring_charge__c}
+														/>
+													</div>
+												</React.Fragment>
+											) : (
+												<div>
+													<label>Recurring charge</label>
+													<DebounceInput
+														debounceTimeout={300}
+														minLength={1}
+														spellCheck='false'
+														className=''
+														type='number'
+														onChange={e => {
+															this.onChangeDiscount(group.Id, "recurring_charge__c", +e.target.value);
+														}}
+														value={group.recurring_charge__c}
+													/>
+												</div>
+											)}
+
 										</div>
 									</div>
 									<div className='tab-body-right'>
-										{this.state.targetingResults ? (<DGTargets results={this.state.targetingResults}
-											fields={this.customSetting[_active.target_object__c === 'Commercial Product' ? 'price_item_fields' : 'rcl_fields']} onTest={this.testTargeting}/>) : (
+										{this.state.targetingResults ? (
+											<DGTargets
+												results={this.state.targetingResults}
+												fields={this.customSetting[_active.target_object__c === "Commercial Product" ? "price_item_fields" : "rcl_fields"]}
+												onTest={this.testTargeting}
+											/>
+										) : (
 											<div className='add-product-box'>
 												<span className='box-header-1'>Lorem ipsum dolor sit amett</span>
 												<span className='box-header-2'>sed do eiusmod tempor incididunt ut labore</span>
@@ -623,7 +652,7 @@ function initialiseDynamicGroupTab(id) {
 window.FAM.subscribe("onLoad", data => {
 	window.FAM.dynamicGroup = {};
 
-	window.FAM.dynamicGroup.getRecordsFromDynamicGroup = (fromCode) => {
+	window.FAM.dynamicGroup.getRecordsFromDynamicGroup = fromCode => {
 		return new Promise(async resolve => {
 			// ****************************
 			let _customData = await window.FAM.api.getCustomData();

@@ -24,7 +24,7 @@ class DynamicGroupTab extends React.Component {
 			groups: [],
 			added: {},
 			open: null,
-			targetingResults: null
+			targetingResults: {}
 		};
 
 		this.customSettings = {};
@@ -395,7 +395,7 @@ class DynamicGroupTab extends React.Component {
 					});
 
 					this.setState({
-						targetingResults: _results
+						targetingResults: {...this.state.targetingResults, [this.state.added[this.state.open].Id]: _results}
 					});
 				},
 				error => {}
@@ -614,9 +614,9 @@ class DynamicGroupTab extends React.Component {
 										</div>
 									</div>
 									<div className='tab-body-right'>
-										{this.state.targetingResults ? (
+										{this.state.targetingResults[this.state.added[this.state.open].Id] ? (
 											<DGTargets
-												results={this.state.targetingResults}
+												results={this.state.targetingResults[this.state.added[this.state.open].Id]}
 												fields={this.customSetting[_active.target_object__c === "Commercial Product" ? "price_item_fields" : "rcl_fields"]}
 												onTest={this.testTargeting}
 											/>

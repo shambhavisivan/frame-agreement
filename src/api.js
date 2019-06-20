@@ -51,9 +51,13 @@ export const publish = async (eventType, arg = null) => {
 
 	// let _promise = subscriptions[eventType]();
 
-	Promise.all(subscriptions[eventType].map(e => e())).then(r => {
-		console.log(r);
-	})
+	// Promise.all(subscriptions[eventType].map(e => e())).then(r => {
+
+	// })
+
+	subscriptions[eventType].forEach(e => {
+		e(arg);
+	});
 
 	// return await subscriptions[eventType].apply(null, arg);
 };

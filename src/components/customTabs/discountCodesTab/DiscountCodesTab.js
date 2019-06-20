@@ -377,15 +377,9 @@ class DiscountCodesTab extends React.Component {
 												<div>
 													<label>Discount type</label>
 													<select
-														value={group.discount}
+														value={group.discount_type__c}
 														placeholder="Add Dynamic Group"
-														onChange={e => {
-															this.onChangeDiscount(
-																group.Id,
-																'discount',
-																e.target.value
-															);
-														}}
+														disabled
 													>
 														<option value="">--none</option>
 														<option value={'Amount'}>Amount</option>
@@ -393,41 +387,69 @@ class DiscountCodesTab extends React.Component {
 													</select>
 												</div>
 
-												<div>
-													<label>One-Off charge</label>
-													<DebounceInput
-														debounceTimeout={300}
-														spellCheck="false"
-														className=""
-														type="number"
-														onChange={e => {
-															this.onChangeDiscount(
-																group.Id,
-																'oneOff',
-																+e.target.value
-															);
-														}}
-														value={group.oneOff}
-													/>
-												</div>
+												{group.target_object__c === 'Commercial Product' ? (
+													<React.Fragment>
+														<div>
+															<label>One-Off charge</label>
+															<DebounceInput
+																debounceTimeout={300}
+																spellCheck="false"
+																className=""
+																type="number"
+																onChange={e => {
+																	this.onChangeDiscount(
+																		group.Id,
+																		'one_off_charge__c',
+																		+e.target.value
+																	);
+																}}
+																value={group.one_off_charge__c}
+															/>
+														</div>
 
-												<div>
-													<label>Recurring charge</label>
-													<DebounceInput
-														debounceTimeout={300}
-														spellCheck="false"
-														className=""
-														type="number"
-														onChange={e => {
-															this.onChangeDiscount(
-																group.Id,
-																'recurring',
-																+e.target.value
-															);
-														}}
-														value={group.recurring}
-													/>
-												</div>
+														<div>
+															<label>Recurring charge</label>
+															<DebounceInput
+																debounceTimeout={300}
+																spellCheck="false"
+																className=""
+																type="number"
+																onChange={e => {
+																	this.onChangeDiscount(
+																		group.Id,
+																		'recurring_charge__c',
+																		+e.target.value
+																	);
+																}}
+																value={group.recurring_charge__c}
+															/>
+														</div>
+													</React.Fragment>
+												) : (
+													''
+												)}
+
+												{group.target_object__c === 'Rate Card Line' ? (
+													<div>
+														<label>Value</label>
+														<DebounceInput
+															debounceTimeout={300}
+															spellCheck="false"
+															className=""
+															type="number"
+															onChange={e => {
+																this.onChangeDiscount(
+																	group.Id,
+																	'rate_value__c',
+																	+e.target.value
+																);
+															}}
+															value={group.rate_value__c}
+														/>
+													</div>
+												) : (
+													''
+												)}
 											</div>
 										</div>
 										<div className='tab-body-right'>

@@ -595,6 +595,7 @@ class FaEditor extends Component {
 	/**************************************************/
 	async onAddProducts(products = []) {
 		products = await publish('onBeforeAddProducts', products);
+		console.log(products);
 		let _productsSet = new Set(products);
 
 		let _attachment = {};
@@ -755,10 +756,10 @@ class FaEditor extends Component {
 
 			let productsToDelete = await publish('onBeforeDeleteProducts', products);
 
-			let _attachment = this.state.activeFa._ui.attachment;
+			let _products = this.state.activeFa._ui.attachment.products;
 
 			for (var key in productsToDelete) {
-				delete _attachment[key];
+				delete _products[key];
 			}
 
 			this.setState(
@@ -774,7 +775,7 @@ class FaEditor extends Component {
 									cp => !productsToDelete[cp.Id]
 								)
 							],
-							attachment: _attachment
+							attachment: {...this.state.activeFa._ui.attachment, products: _products}
 						}
 					}
 				},

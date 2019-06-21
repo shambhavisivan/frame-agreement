@@ -26,7 +26,7 @@ class DiscountCodesTab extends React.Component {
 			groups: [],
 			added: {},
 			open: null,
-			targetingResults: null
+			targetingResults: {}
 		};
 
 		this.customSettings = {};
@@ -34,7 +34,7 @@ class DiscountCodesTab extends React.Component {
 		this.updateSelectListGroups = this.updateSelectListGroups.bind(this);
 		this.updateCustomData = this.updateCustomData.bind(this);
 		this.onAddGroup = this.onAddGroup.bind(this);
-		this.testTargeting = this.testTargeting.bind(this);
+		this.targetRecords = this.targetRecords.bind(this);
 		this.blank = '';
 	}
 
@@ -149,6 +149,14 @@ class DiscountCodesTab extends React.Component {
 		// ****************************
 	}
 
+	componentDidUpdate(prevProps, prevState) {
+		if (this.state.open && this.state.added[this.state.open] && prevState.open !== this.state.open) {
+			if (!this.state.targetingResults.hasOwnProperty([this.state.added[this.state.open].Id])) {
+				this.targetRecords();
+			}
+		}
+	}
+
 	processGroup(g) {
 		g = JSON.parse(JSON.stringify(g));
 		if (IsJsonString(g.Logic_Components_JSON__c)) {
@@ -173,22 +181,83 @@ class DiscountCodesTab extends React.Component {
 		return g;
 	}
 
+	getTargetObjectCode(targetObject) {
+		let str;
+		if (targetObject === 'Commercial Product') {
+			str = 'pi';
+		} else if (targetObject === 'Rate Card Line') {
+			str = 'rcl'
+		}
+
+		return str;
+	}
+
+	getTargetRecords(fromCode, whereClause) {
+		return new Promise(resolve => {
+			let _params = {};
+			_params.method = "executeQuery";
+			_params.whereClause = whereClause
+			_params.fromCode = fromCode;
+
+			window.FAM.api.performAction("DynamicGroupDataProvider", JSON.stringify(_params))
+			.then(response => {
+				return JSON.parse(decodeEntities(response));
+			})
+			.then(response => {
+					response.results = response.results || [];
+
+					let _results = response.results.map(cp => {
+						let _cp = JSON.parse(JSON.stringify(cp));
+						delete _cp.attributes;
+						return cp;
+					})
+
+					resolve(_results);
+				},
+				error => {}
+			);
+		});
+	}
+
+	targetRecords() {
+		let fromCode = this.getTargetObjectCode(this.state.added[this.state.open].target_object__c);
+		this.getTargetRecords(fromCode, this.state.added[this.state.open].Expression__c)
+		.then(response => {
+			this.setState({
+				targetingResults: {...this.state.targetingResults, [this.state.added[this.state.open].Id]: response}
+			});
+		})
+	}
+
 	onAddGroup(selected_group) {
 		// Find group
 		let _group = this.state.groups.find(
 			group => group.Id === selected_group.value
 		);
 
-		this.setState(
-			{
-				added: { ...this.state.added, [_group.Id]: _group }
-			},
-			() => {
-				this.blank = '';
-				this.updateCustomData();
-				this.updateSelectListGroups();
-			}
-		);
+		_group.records = {};
+
+		let fromCode = this.getTargetObjectCode(_group.target_object__c);
+
+		this.getTargetRecords(fromCode, _group.Expression__c)
+		.then(response => {
+			//apply records
+			response.forEach((target) => {
+				_group.records[target.Id] = target.Id;
+			});
+
+			this.setState(
+				{
+					added: { ...this.state.added, [_group.Id]: _group },
+					targetingResults: {...this.state.targetingResults, [_group.Id]: response}
+				},
+				() => {
+					this.blank = '';
+					this.updateCustomData();
+					this.updateSelectListGroups();
+				}
+			);
+		})
 	}
 
 	onRemoveGroup(removed_group) {
@@ -241,50 +310,6 @@ class DiscountCodesTab extends React.Component {
 					console.log(this.state);
 				});
 		});
-	}
-
-	getTargetObjectCode() {
-		let str;
-		if (this.state.added[this.state.open].target_object__c === 'Commercial Product') {
-			str = 'pi';
-		} else if (this.state.added[this.state.open].target_object__c === 'Rate Card Line') {
-			str = 'rcl'
-		}
-
-		return str;
-	}
-
-	testTargeting() {
-		let fromCode = this.getTargetObjectCode();
-
-		console.log(fromCode);
-
-		/******************************/
-		let _params = {};
-		_params.method = "executeQuery";
-		_params.whereClause = this.state.added[this.state.open].Expression__c;
-		_params.fromCode = fromCode;
-
-		window.FAM.api.performAction("DynamicGroupDataProvider", JSON.stringify(_params))
-		.then(response => {
-			return JSON.parse(decodeEntities(response));
-		})
-		.then(response => {
-				console.log(response);
-				response.results = response.results || [];
-
-				let _results = response.results.map(cp => {
-					let _cp = JSON.parse(JSON.stringify(cp));
-					delete _cp.attributes;
-					return cp;
-				})
-
-				this.setState({
-					targetingResults: _results
-				});
-			},
-			error => {}
-		);
 	}
 
 	render() {
@@ -458,19 +483,11 @@ class DiscountCodesTab extends React.Component {
 											</div>
 										</div>
 										<div className='tab-body-right'>
-											{this.state.targetingResults ? (<DGTargets results={this.state.targetingResults}
-												fields={this.customSetting[_active.target_object__c === 'Commercial Product' ? 'price_item_fields' : 'rcl_fields']} onTest={this.testTargeting}/>) : (
-												<div className='add-product-box'>
-													<span className='box-header-1'>Lorem ipsum dolor sit amett</span>
-													<span className='box-header-2'>sed do eiusmod tempor incididunt ut labore</span>
-
-													<div className='box-button-container'>
-														<button className='fa-button fa-button--brand' onClick={this.testTargeting}>
-															Test targeting
-														</button>
-													</div>
-												</div>
-											)}
+											{this.state.targetingResults[this.state.added[this.state.open].Id] ? (
+												<DGTargets results={this.state.targetingResults[this.state.added[this.state.open].Id]}
+													fields={this.customSetting[_active.target_object__c === 'Commercial Product' ? 'price_item_fields' : 'rcl_fields']} onTest={this.targetRecords} />) : (
+													''
+												)}
 										</div>
 									</div>
 								) : (

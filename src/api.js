@@ -54,15 +54,15 @@ export const publish = async (eventType, arg = null) => {
 	let _finalArg;
 	// Idiomatic way
 	let _promiseChain = subscriptions[eventType].reduce((chain, event) => {
-	  return chain.then(async r => {
-	  	  _finalArg = await event(r)
-	      return _finalArg;
-	  });
+		return chain.then(async r => {
+			_finalArg = await event(r);
+			return _finalArg;
+		});
 	}, Promise.resolve(arg));
 
 	return _promiseChain.finally(r => {
 		return r || _finalArg;
-	})
+	});
 
 	// return Promise.resolve(arg);
 	// return await subscriptions[eventType].apply(null, arg);

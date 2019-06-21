@@ -176,6 +176,16 @@ class FaEditor extends Component {
 		this.faId = this.props.match.params.id || null;
 		let _frameAgreement;
 
+		this._productFilter = cp => {
+			if (this.state.productFilter && this.state.productFilter.length >= 2) {
+				return cp.Name.toLowerCase().includes(
+					this.state.productFilter.toLowerCase()
+				);
+			} else {
+				return true;
+			}
+		};
+
 		if (this.faId) {
 			if (!this.props.frameAgreements[this.faId]) {
 				console.error('Non existing frame agreement!');
@@ -775,7 +785,10 @@ class FaEditor extends Component {
 									cp => !productsToDelete[cp.Id]
 								)
 							],
-							attachment: {...this.state.activeFa._ui.attachment, products: _products}
+							attachment: {
+								...this.state.activeFa._ui.attachment,
+								products: _products
+							}
 						}
 					}
 				},
@@ -805,29 +818,19 @@ class FaEditor extends Component {
 
 	onSelectAllProducts() {
 		let selectedProducts = this.state.selectedProducts;
+		let _filteredProducts = this.state.activeFa._ui.commercialProducts.filter(
+			this._productFilter
+		);
 
 		if (
-			this.state.activeFa._ui.commercialProducts.length ===
+			_filteredProducts.length ===
 			Object.keys(this.state.selectedProducts).length
 		) {
 			selectedProducts = {};
 		} else {
-			this.state.activeFa._ui.commercialProducts
-				.filter(cp => {
-					if (
-						this.state.productFilter.length >= 2 &&
-						this.state.productFilter
-					) {
-						return cp.Name.toLowerCase().includes(
-							this.state.productFilter.toLowerCase()
-						);
-					} else {
-						return true;
-					}
-				})
-				.forEach(cp => {
-					selectedProducts[cp.Id] = cp;
-				});
+			_filteredProducts.forEach(cp => {
+				selectedProducts[cp.Id] = cp;
+			});
 		}
 
 		this.setState({
@@ -1373,8 +1376,9 @@ class FaEditor extends Component {
 								<Checkbox
 									className="fa-margin-right-sm"
 									value={
-										this.state.activeFa._ui.commercialProducts.length ===
-										Object.keys(this.state.selectedProducts).length
+										this.state.activeFa._ui.commercialProducts.filter(
+											this._productFilter
+										).length === Object.keys(this.state.selectedProducts).length
 									}
 									onChange={() => {
 										this.onSelectAllProducts();
@@ -1401,18 +1405,7 @@ class FaEditor extends Component {
 						</div>
 					</div>
 					{this.state.activeFa._ui.commercialProducts
-						.filter(cp => {
-							if (
-								this.state.productFilter &&
-								this.state.productFilter.length >= 2
-							) {
-								return cp.Name.toLowerCase().includes(
-									this.state.productFilter.toLowerCase()
-								);
-							} else {
-								return true;
-							}
-						})
+						.filter(this._productFilter)
 						.paginate(
 							this.state.pagination.page,
 							this.state.pagination.pageSize

@@ -250,8 +250,6 @@ class FaEditor extends Component {
 			// IF not, load attachment for FA
 			this.props.getAttachment(this.faId).then(resp_attachment => {
 				// ***********************************************
-				publish('onFaSelect', [this.state.activeFa]);
-				// ***********************************************
 				let IdsToLoad = Object.keys(resp_attachment.products || {});
 				// If attachment is present
 				if (IdsToLoad.length) {
@@ -268,8 +266,9 @@ class FaEditor extends Component {
 							}
 						);
 						// Update active FA with data
-						setTimeout(() => {
-							this.setState({
+
+						this.setState(
+							{
 								loading: {
 									...this.state.loading,
 									attachment: true
@@ -282,21 +281,29 @@ class FaEditor extends Component {
 										attachment: resp_attachment
 									}
 								}
-							});
-						});
+							},
+							() => {
+								publish('onFaSelect', [this.state.activeFa]);
+							}
+						);
 					});
 				} else {
 					// No attachment
-					this.setState({
-						loading: {
-							...this.state.loading,
-							attachment: true
+					this.setState(
+						{
+							loading: {
+								...this.state.loading,
+								attachment: true
+							},
+							activeFa: {
+								...this.state.activeFa,
+								_ui: { ...this.state.activeFa._ui, attachment: resp_attachment }
+							}
 						},
-						activeFa: {
-							...this.state.activeFa,
-							_ui: { ...this.state.activeFa._ui, attachment: resp_attachment }
+						() => {
+							publish('onFaSelect', [this.state.activeFa]);
 						}
-					});
+					);
 				}
 			});
 		} else {

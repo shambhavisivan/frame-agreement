@@ -106,11 +106,16 @@ class DynamicGroupTab extends React.Component {
 			let _response_groups = response[1] || [];
 			let _response_data = response[2];
 
+			let _needsUpdateFlag = false;
+
+			let _groupsMap = {};
 			// Enrich the groups
 			_response_groups.forEach(group => {
 				group.one_off_charge__c = group.one_off_charge__c || 0;
 				group.recurring_charge__c = group.recurring_charge__c || 0;
 				group.rate_value__c = group.rate_value__c || 0;
+
+				_groupsMap[group.Id] = group;
 			});
 
 			let _selectGroups = _response_groups.map(group => {
@@ -125,37 +130,41 @@ class DynamicGroupTab extends React.Component {
 
 			try {
 				_addedGroups = JSON.parse(_response_data).group;
-			} catch (err) {}
+			} catch (err) {
+				console.warn('Cannot parse discount codes from attachment.');
+				console.warn(_response_data);
+				console.warn('********************************************');
+				_addedGroups = [];
+			}
+
+			(() => {
+				let _preFilterLength = _addedGroups.length;
+				// Check if added discount codes are deleted or critically changed
+				_addedGroups = _addedGroups.filter(
+					dc =>
+						_groupsMap[dc.Id] &&
+						_groupsMap[dc.Id].group_type__c === 'Discount Code'
+				);
+				// Check if target object has changed for any added types
+				_addedGroups.forEach(dc => {
+					dc.target_object__c = _groupsMap[dc.Id].target_object__c;
+				});
+
+				if (_addedGroups.length !== _preFilterLength) {
+					console.warn('Some codes have been discarded or changed!');
+					_needsUpdateFlag = true;
+				}
+			})();
 
 			let _addedMap = _addedGroups.reduce(
 				(acc, iter) => ({ ...acc, [iter.Id]: iter }),
 				{}
 			);
 
-			let _needsUpdateFlag = false;
-
-			if (_addedGroups.length) {
-				let dynamicGroupsMap = {};
-
-				_response_groups.forEach(group => {
-					dynamicGroupsMap[group.Id] = group;
-				});
-
-				// Validate custom data (in case some groups are deleted)
-				// _groups
-				let _groupsFiltered = _addedGroups.filter(group => {
-					return !!dynamicGroupsMap[group.Id];
-				});
-
-				// reject groups that are already added from select options
-				_selectGroups = _selectGroups.filter(group => {
-					return !_addedMap.hasOwnProperty(group.value);
-				});
-
-				if (_groupsFiltered.length !== _addedGroups.length) {
-					_needsUpdateFlag = true;
-				}
-			}
+			// reject groups that are already added from select options
+			_selectGroups = _selectGroups.filter(group => {
+				return !_addedMap.hasOwnProperty(group.value);
+			});
 
 			this.setState(
 				{
@@ -168,7 +177,7 @@ class DynamicGroupTab extends React.Component {
 				() => {
 					if (_needsUpdateFlag) {
 						console.log(this.state);
-						this.updateCustomData();
+						this.updateCustomData(true);
 					}
 				}
 			);
@@ -262,18 +271,18 @@ class DynamicGroupTab extends React.Component {
 		);
 	}
 
-	updateCustomData() {
-		window.FAM.api.getCustomData().then(response => {
-			let customData = response === '' ? {} : JSON.parse(response);
-			customData.group = Object.values(this.state.added);
+	async updateCustomData(enforceSave) {
+		let customData = await window.FAM.api.getCustomData();
+		customData = customData === '' ? {} : JSON.parse(customData);
+		customData.group = Object.values(this.state.added);
 
-			window.FAM.api
-				.setCustomData(JSON.stringify(customData))
-				.then(response => {
-					console.log('Custom data saved!');
-					console.log(this.state);
-				});
-		});
+		let setResponse = await window.FAM.api.setCustomData(
+			JSON.stringify(customData)
+		);
+		console.log('Custom data saved:', this.state);
+		if (enforceSave) {
+			window.FAM.api.saveFrameAgreement();
+		}
 	}
 
 	// **************************************************** DG EDITOR ***************************************************************************
@@ -452,7 +461,7 @@ class DynamicGroupTab extends React.Component {
 					this.setState({
 						targetingResults: {
 							...this.state.targetingResults,
-							[this.state.added[this.state.open].Id]: _results
+							[this.state.open]: _results
 						}
 					});
 				},

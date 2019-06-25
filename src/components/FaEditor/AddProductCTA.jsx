@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+import { toggleFieldVisibility, toggleModals } from '../../actions';
 
 class AddProductCTA extends React.Component {
 	constructor(props) {
@@ -6,6 +9,11 @@ class AddProductCTA extends React.Component {
 		// this.props.render
 		// this.props.disabled
 		// this.props.onClick
+	}
+
+	onAddClick(e) {
+		e.stopPropagation();
+		this.props.toggleModals({ productModal: true });
 	}
 
 	render() {
@@ -32,7 +40,7 @@ class AddProductCTA extends React.Component {
 					<div className="box-button-container">
 						<button
 							className="fa-button fa-button--brand"
-							onClick={this.props.onClick}
+							onClick={e => this.onAddClick(e)}
 							disabled={this.props.disabled}
 						>
 							{window.SF.labels.btn_AddProducts}
@@ -46,4 +54,11 @@ class AddProductCTA extends React.Component {
 	}
 }
 
-export default AddProductCTA;
+const mapDispatchToProps = {
+	toggleModals
+};
+
+export default connect(
+	null,
+	mapDispatchToProps
+)(AddProductCTA);

@@ -13,6 +13,18 @@ gulp.task('prettier', () => {
     .pipe(gulp.dest('src'));
 });
 
+gulp.task('prettierDist', () => {
+  return gulp.src(['dist/DiscountCodes.js', 'dist/DynamicGroup.js', 'dist/local_data.js'])
+    .pipe(prettier({ singleQuote: true , useTabs: true}))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('prettierLocal', () => {
+  return gulp.src(['src/**/*.jsx', 'src/**/*.js'])
+    .pipe(prettier({ singleQuote: true , useTabs: true, parser: "babel", printWidth: 140}))
+    .pipe(gulp.dest('src'));
+});
+
 gulp.task('beautify-scss', () => {
   return gulp.src('src/**/*.scss')
     .pipe(sassbeautify())
@@ -41,7 +53,8 @@ gulp.task('deploy', function (callback) {
 });
 
 gulp.task('default', ['deploy']);
-gulp.task('pretty', ['prettier', 'beautify-scss']);
+gulp.task('pretty', ['prettier', 'prettierDist', 'beautify-scss']);
+gulp.task('format', ['prettierLocal', 'prettierDist']);
 
 // credentials.js:
 // ---------------

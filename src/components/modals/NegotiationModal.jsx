@@ -13,8 +13,8 @@ import {
 	validateAddons,
 	validateCharges,
 	validateRateCardLines
-} from '../negotiation/Validation';
-import { setValidation, createToast } from '../../actions';
+} from '../../utils/validation-service';
+import { createToast } from '../../actions';
 
 // import { getFrameAgreements } from '../../actions';
 
@@ -1216,7 +1216,6 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	setValidation,
 	createToast
 };
 

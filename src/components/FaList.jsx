@@ -11,6 +11,7 @@ import {
 	getFrameAgreements,
 	cloneFrameAgreement,
 	saveFrameAgreement,
+	createFrameAgreement,
 	deleteFrameAgreement
 } from '../actions';
 
@@ -20,6 +21,29 @@ import Toaster from './utillity/Toaster';
 
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsModal from './modals/AccountsModal';
+
+class FrameAgreement {
+	constructor(status) {
+		this.Id = null;
+		this.csconta__Agreement_Name__c = '';
+		this.csconta__Status__c = status;
+		this.csconta__Account__c = window.SF.param.account;
+		this.csconta__Status__c = status;
+		this.csconta__Valid_From__c = null;
+		this.csconta__Valid_To__c = null;
+		this._ui = {
+			approval: {
+				listProcess: []
+			},
+			approvalNeeded: false,
+			commercialProducts: [],
+			attachment: {
+				custom: '',
+				products: {}
+			}
+		};
+	}
+}
 
 class FaList extends Component {
 	constructor(props) {
@@ -31,6 +55,7 @@ class FaList extends Component {
 		};
 		this.onSearchChange = this.onSearchChange.bind(this);
 		this.onAccountsSave = this.onAccountsSave.bind(this);
+		this.createFrameAgreement = this.createFrameAgreement.bind(this);
 
 		window.FAM.registerMethod = this.props.registerMethod;
 	}
@@ -44,12 +69,24 @@ class FaList extends Component {
 		params.lastId = null;
 		params.offset = 20 * 10;
 
-		this.props.loadAccounts(params);
+		if (!this.props.accounts.length) {
+			this.props.loadAccounts(params);
+		}
 	}
 
 	onSearchChange(value) {
 		this.setState({
 			searchTerm: value
+		});
+	}
+
+	createFrameAgreement() {
+		let newFa = new FrameAgreement(
+			this.props.settings.FACSettings.statuses.draft_status
+		);
+
+		this.props.createFrameAgreement(newFa).then(upsertedFa => {
+			this.props.history.push('/agreement/' + upsertedFa.Id);
 		});
 	}
 
@@ -59,7 +96,7 @@ class FaList extends Component {
 			csconta__Account__c: newAccId
 		};
 
-		return this.props.saveFrameAgreement(data, faId);
+		return this.props.saveFrameAgreement(faId, data);
 	}
 
 	faMenuAction(action, faId) {
@@ -182,9 +219,12 @@ class FaList extends Component {
 								<InputSearch onChange={this.onSearchChange} bordered={true} />
 
 								{this.props.settings.FACSettings.new_frame_agreement ? (
-									<Link className="fa-button fa-button--brand" to="/agreement">
+									<button
+										className="fa-button fa-button--brand"
+										onClick={this.createFrameAgreement}
+									>
 										{window.SF.labels.btn_AddNewAgreement}
-									</Link>
+									</button>
 								) : (
 									''
 								)}
@@ -244,6 +284,7 @@ const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
 		settings: state.settings,
+		accounts: state.accounts,
 		accounts: state.accounts
 	};
 };
@@ -254,6 +295,7 @@ const mapDispatchToProps = {
 	getFrameAgreements,
 	saveFrameAgreement,
 	cloneFrameAgreement,
+	createFrameAgreement,
 	deleteFrameAgreement
 };
 

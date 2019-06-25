@@ -11,6 +11,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 import InputVolume from '../utillity/inputs/InputVolume';
 
 import ProductCharges from './ProductCharges';
+import CommercialProductSkeleton from '../skeletons/CommercialProductSkeleton';
 
 import Addons from './Addons';
 import Charges from './Charges';
@@ -22,8 +23,9 @@ import {
 	validateProduct,
 	validateCharges,
 	validateRateCardLines
-} from './Validation';
-import { setValidation } from '../../actions';
+} from '../../utils/validation-service';
+
+import { setValidation, negotiate } from '../../actions';
 
 class CommercialProduct extends React.Component {
 	constructor(props) {
@@ -42,59 +44,62 @@ class CommercialProduct extends React.Component {
 		this.validation = this.props.validation || {};
 
 		this.state = {
-			loading: false
+			loading: false,
+			open: false
 		};
 
-		let bulkValidation = {};
-		bulkValidation[this.productId] = {
-			addons: validateAddons(
-				this.props.product._addons,
-				this.props.attachment._addons || {}
-			),
-			rated: validateRateCardLines(
-				this.props.product._rateCards,
-				this.props.attachment._rateCards || {}
-			)
-		};
+		// let bulkValidation = {};
+		// bulkValidation[this.productId] = {
+		// 	addons: validateAddons(
+		// 		this.props.product._addons,
+		// 		this.props.attachment._addons || {}
+		// 	),
+		// 	rated: validateRateCardLines(
+		// 		this.props.product._rateCards,
+		// 		this.props.attachment._rateCards || {}
+		// 	)
+		// };
 
-		if (this.props.product._charges.length) {
-			bulkValidation[this.productId].charges = validateCharges(
-				this.props.product._charges,
-				this.props.product.cspmb__Authorization_Level__c,
-				this.props.attachment._charges || {}
-			);
-		} else {
-			bulkValidation[this.productId].product = validateProduct({
-				oneOff: this.props.product.cspmb__One_Off_Charge__c,
-				negotiatedOneOff: this.props.attachment._product
-					? this.props.attachment._product.oneOff
-					: null,
-				recurring: this.props.product.cspmb__Recurring_Charge__c,
-				negotiatedRecurring: this.props.attachment._product
-					? this.props.attachment._product.recurring
-					: null,
-				authLevel: this.props.product.cspmb__Authorization_Level__c || null,
-				Name: this.props.product.Name
-			});
-		}
+		// if (this.props.product._charges.length) {
+		// 	bulkValidation[this.productId].charges = validateCharges(
+		// 		this.props.product._charges,
+		// 		this.props.product.cspmb__Authorization_Level__c,
+		// 		this.props.attachment._charges || {}
+		// 	);
+		// } else {
+		// 	bulkValidation[this.productId].product = validateProduct({
+		// 		oneOff: this.props.product.cspmb__One_Off_Charge__c,
+		// 		negotiatedOneOff: this.props.attachment._product
+		// 			? this.props.attachment._product.oneOff
+		// 			: null,
+		// 		recurring: this.props.product.cspmb__Recurring_Charge__c,
+		// 		negotiatedRecurring: this.props.attachment._product
+		// 			? this.props.attachment._product.recurring
+		// 			: null,
+		// 		authLevel: this.props.product.cspmb__Authorization_Level__c || null,
+		// 		Name: this.props.product.Name
+		// 	});
+		// }
 
-		this.props.setValidation(bulkValidation);
+		// this.props.setValidation(this.props.faId, bulkValidation);
 	}
 
 	onExpandProduct(e) {
-		this.props.onOpen(!this.props.open);
+		this.setState({ open: !this.state.open });
 		e.stopPropagation();
 	}
 
 	updateVolume(volume, value) {
-		let _volume = this.props.attachment._volume;
+		let _volume = this.props.frameAgreements[this.props.faId]._ui.attachment
+			.products[this.productId]._volume;
 		_volume[volume] = value;
-		this.props.onNegotiate('_volume', _volume);
+		this.onNegotiate('_volume', _volume);
 	}
 
 	onNegotiate(type, data) {
 		if (type === '_addons') {
 			this.props.setValidation(
+				this.props.faId,
 				this.productId,
 				'addons',
 				validateAddons(this.props.product._addons, data)
@@ -103,6 +108,7 @@ class CommercialProduct extends React.Component {
 
 		if (type === '_charges') {
 			this.props.setValidation(
+				this.props.faId,
 				this.productId,
 				'charges',
 				validateCharges(
@@ -115,6 +121,7 @@ class CommercialProduct extends React.Component {
 
 		if (type === '_rateCards') {
 			this.props.setValidation(
+				this.props.faId,
 				this.productId,
 				'rated',
 				validateRateCardLines(this.props.product._rateCards, data)
@@ -123,6 +130,7 @@ class CommercialProduct extends React.Component {
 
 		if (type === '_product') {
 			this.props.setValidation(
+				this.props.faId,
 				this.productId,
 				'product',
 				validateProduct({
@@ -136,22 +144,30 @@ class CommercialProduct extends React.Component {
 			);
 		}
 
-		this.props.onNegotiate(type, data);
+		this.props.negotiate(this.props.faId, this.productId, type, data);
 	}
 
 	render() {
+		let _attachment = this.props.frameAgreements[this.props.faId]._ui.attachment
+			.products[this.productId];
+		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
+			this.props.frameAgreements[this.props.faId].csconta__Status__c
+		);
+
 		return (
 			<div
 				className={
 					'product-card__container' +
-					(this.props.open ? ' product-open' : '') +
-					(this.props.invalid ? ' invalid-product' : '')
+					(this.state.open ? ' product-open' : '') +
+					(this.props.validationProduct[this.productId]
+						? ' invalid-product'
+						: '')
 				}
 			>
 				<div className="container__header">
 					<div className="container__checkbox">
 						<Checkbox
-							disabled={!this.props.editable}
+							disabled={!_editable}
 							value={this.props.selected}
 							onChange={() => {
 								this.props.onSelect(this.props.product);
@@ -169,15 +185,15 @@ class CommercialProduct extends React.Component {
 							.filter(f => f.visible)
 							.map((f, i) => {
 								let _field;
-								if (f.volume) {
+								if (f.volume && _attachment) {
 									_field = (
 										<div
 											className="fields__item volume-fields"
 											key={'facp-' + this.props.product.Id + '-' + f + i}
 										>
 											<InputVolume
-												readOnly={this.props.readOnly}
-												value={this.props.attachment._volume[f.volume]}
+												readOnly={!_editable}
+												value={_attachment._volume[f.volume]}
 												onChange={val => {
 													this.updateVolume(f.volume, val);
 												}}
@@ -201,7 +217,7 @@ class CommercialProduct extends React.Component {
 							})}
 					</div>
 				</div>
-				{this.props.open && (
+				{this.state.open && (
 					<div className="commercial-product-body">
 						{this.props.product.cspmb__Price_Item_Description__c && (
 							<div className="commercial-product-description">
@@ -216,9 +232,9 @@ class CommercialProduct extends React.Component {
 								disabled={!this.props.product._addons.length}
 							>
 								<Addons
-									readOnly={this.props.readOnly}
+									readOnly={!_editable}
 									validation={this.props.validation[this.productId].addons}
-									attachment={this.props.attachment._addons || {}}
+									attachment={_attachment._addons || {}}
 									addons={this.props.product._addons}
 									onNegotiate={data => {
 										this.onNegotiate('_addons', data);
@@ -234,7 +250,7 @@ class CommercialProduct extends React.Component {
 							>
 								{this.props.product._charges.length ? (
 									<Charges
-										readOnly={this.props.readOnly}
+										readOnly={!_editable}
 										oneOffAllowed={
 											this.props.product.cspmb__Is_One_Off_Discount_Allowed__c
 										}
@@ -243,7 +259,7 @@ class CommercialProduct extends React.Component {
 										}
 										level={this.props.product._levelId}
 										validation={this.props.validation[this.productId].charges}
-										attachment={this.props.attachment._charges || {}}
+										attachment={_attachment._charges || {}}
 										onNegotiate={data => {
 											this.onNegotiate('_charges', data);
 										}}
@@ -260,9 +276,9 @@ class CommercialProduct extends React.Component {
 											this.props.product.cspmb__Is_Recurring_Discount_Allowed__c
 										}
 										level={this.props.product._levelId}
-										readOnly={this.props.readOnly}
+										readOnly={!_editable}
 										validation={this.props.validation[this.productId].product}
-										attachment={this.props.attachment._product || {}}
+										attachment={_attachment._product || {}}
 										onNegotiate={data => {
 											this.onNegotiate('_product', data);
 										}}
@@ -274,9 +290,9 @@ class CommercialProduct extends React.Component {
 								disabled={!this.props.product._rateCards.length}
 							>
 								<Rates
-									readOnly={this.props.readOnly}
+									readOnly={!_editable}
 									validation={this.props.validation[this.productId].rated}
-									attachment={this.props.attachment._rateCards || {}}
+									attachment={_attachment._rateCards || {}}
 									rateCards={this.props.product._rateCards}
 									onNegotiate={data => {
 										this.onNegotiate('_rateCards', data);
@@ -299,14 +315,17 @@ class CommercialProduct extends React.Component {
 
 const mapStateToProps = state => {
 	return {
+		frameAgreements: state.frameAgreements,
 		validation: state.validation,
+		validationProduct: state.validationProduct,
 		productFields: state.productFields,
 		settings: state.settings
 	};
 };
 
 const mapDispatchToProps = {
-	setValidation
+	setValidation,
+	negotiate
 };
 
 export default connect(

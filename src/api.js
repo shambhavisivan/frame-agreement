@@ -73,7 +73,7 @@ export const initialiseApi = () => {
 	window.FAM.api = {};
 	window.FAM.eventList = eventList;
 	window.FAM.subscribe = subscribe;
-	window.FAM.api.invokeAction = window.SF.invokeAction.bind(window.SF);
+	// window.FAM.api.invokeAction = window.SF.invokeAction.bind(window.SF);
 
 	// FROM OTHER COMPONENTS
 	// window.FAM.toaster = ToastsStore;

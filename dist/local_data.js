@@ -2507,7 +2507,7 @@ window.SF = SF = {
                     return createPromise(true);
 
                 case "submitForApproval": // Obsolete
-                    return createPromise(getRandomFromArr([true, true, false]));
+                    return createPromise(getRandomFromArr([false, true, true, true]));
 
                 case "saveAttachment":
                     return createPromise(parametersArr[1]);

@@ -37,7 +37,6 @@ class CommercialProductsTab extends React.Component {
 				return true;
 			}
 		};
-		console.log('Selected', this.props.selectedProducts);
 	}
 
 	getCommercialProductsCount() {
@@ -57,10 +56,6 @@ class CommercialProductsTab extends React.Component {
 			}).length;
 		}
 		return cpSize;
-	}
-
-	componentWillUpdate() {
-		console.log('Selected', this.props.selectedProducts);
 	}
 
 	render() {
@@ -161,7 +156,6 @@ class CommercialProductsTab extends React.Component {
 							!this.props.frameAgreements[this.props.faId]._ui
 								.commercialProducts.length
 						}
-						disabled={!this.props.frameAgreements[this.props.faId].Id}
 					/>
 				</div>
 			);

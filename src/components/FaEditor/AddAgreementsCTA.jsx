@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { toggleFieldVisibility, toggleModals } from '../../actions';
 
-class AddProductCTA extends React.Component {
+class AddAgreementsCTA extends React.Component {
 	constructor(props) {
 		super(props);
 		// this.props.render
@@ -13,7 +13,7 @@ class AddProductCTA extends React.Component {
 
 	onAddClick(e) {
 		e.stopPropagation();
-		this.props.toggleModals({ productModal: true });
+		this.props.toggleModals({ frameModal: true });
 	}
 
 	render() {
@@ -22,7 +22,7 @@ class AddProductCTA extends React.Component {
 			addProductCTA = (
 				<div className="add-product-box">
 					<span className="box-header-1">
-						{window.SF.labels.addProductCTAMessage}
+						{window.SF.labels.addAgreementsCTAMessage}
 					</span>
 					<span className="box-header-2">
 						{window.SF.labels.save_fa_products_message}
@@ -33,7 +33,7 @@ class AddProductCTA extends React.Component {
 							onClick={e => this.onAddClick(e)}
 							disabled={this.props.disabled}
 						>
-							{window.SF.labels.btn_AddProducts}
+							{window.SF.labels.btn_AddFa}
 						</button>
 					</div>
 				</div>
@@ -51,4 +51,4 @@ const mapDispatchToProps = {
 export default connect(
 	null,
 	mapDispatchToProps
-)(AddProductCTA);
+)(AddAgreementsCTA);

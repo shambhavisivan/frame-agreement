@@ -14,7 +14,6 @@ class Toggle extends React.Component {
 		this.setState({
 			value: val || false
 		});
-		console.log(this.state.value);
 		this.props.onChange(val);
 	}
 

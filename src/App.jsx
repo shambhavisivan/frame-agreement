@@ -29,6 +29,7 @@ import {
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
 import FaEditor from './components/FaEditor';
+import FaMaster from './components/FaMaster';
 import Icon from './components/utillity/Icon';
 
 import LandingSkeleton from './components/skeletons/LandingSkeleton';
@@ -281,6 +282,7 @@ class App extends Component {
 				<Switch>
 					<Route exact path="/" component={FaList} />
 					<Route exact path="/agreement/:id" component={FaEditor} />
+					<Route exact path="/master/:id" component={FaMaster} />
 				</Switch>
 			</div>
 		) : (

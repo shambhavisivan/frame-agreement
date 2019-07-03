@@ -15,4 +15,10 @@
 		@include sbg(--chip-active-bg);
 		@include sc(--chip-active-c);
 	}
+
+	&.fa-chip--master {
+		@include sbg(--chip-master-bg);
+		@include sc(--chip-active-c);
+		margin-right: 10px;
+	}
 }

@@ -350,16 +350,18 @@ class FaHeader extends React.Component {
 				this.props.frameAgreements[this.props.faId].csconta__Status__c
 			) || !this.props.frameAgreements[this.props.faId].Id;
 
+		let master = this.props.frameAgreements[
+			this.props.faId
+		].csfam__Frame_Agreement_Type__c.includes('Master');
+
+		let headerClass = _editable ? '' : ' error fa-disabled';
+		headerClass +=
+			this.props.frameAgreements[this.props.faId]._ui.approvalNeeded && !master
+				? 'error fa-invalid'
+				: '';
+
 		return (
-			<div
-				className={`fa-secondary-header ${
-					!_editable ? 'error fa-disabled' : ''
-				} ${
-					this.props.frameAgreements[this.props.faId]._ui.approvalNeeded
-						? 'error fa-invalid'
-						: ''
-				}`}
-			>
+			<div className={'fa-secondary-header ' + headerClass}>
 				<div className="fa-secondary-header__inner">
 					<div
 						className="fa-secondary-header__prev"
@@ -370,7 +372,9 @@ class FaHeader extends React.Component {
 					<div className="fa-secondary-header__item">
 						<div className="fa-secondary-header__title-wrapper">
 							<div className="fa-secondary-header__subtitle">
-								{window.SF.labels.header_frameAgreementEditorTitle}
+								{master
+									? window.SF.labels.header_frameAgreementMasterTitle
+									: window.SF.labels.header_frameAgreementEditorTitle}
 							</div>
 							<div className="fa-secondary-header__title">
 								{this.props.frameAgreements[this.props.faId]
@@ -379,7 +383,10 @@ class FaHeader extends React.Component {
 						</div>
 						{this.props.frameAgreements[this.props.faId].csconta__Status__c ? (
 							<span className="fa-chip fa-chip--draft">
-								{this.props.frameAgreements[this.props.faId].csconta__Status__c}
+								{master
+									? 'Master'
+									: this.props.frameAgreements[this.props.faId]
+											.csconta__Status__c}
 							</span>
 						) : (
 							''
@@ -418,7 +425,8 @@ class FaHeader extends React.Component {
 						{this.props.settings.ButtonStandardData.Submit.has(
 							this.props.frameAgreements[this.props.faId].csconta__Status__c
 						) &&
-							this.props.faId && (
+							this.props.faId &&
+							!master && (
 								<button
 									className="fa-button fa-button--transparent"
 									onClick={this.onDecompose}
@@ -428,14 +436,15 @@ class FaHeader extends React.Component {
 							)}
 						{this.props.settings.ButtonStandardData.NewVersion.has(
 							this.props.frameAgreements[this.props.faId].csconta__Status__c
-						) && (
-							<button
-								className="fa-button fa-button--transparent"
-								onClick={this.createNewVersion}
-							>
-								{window.SF.labels.btn_NewVersion}
-							</button>
-						)}
+						) &&
+							!master && (
+								<button
+									className="fa-button fa-button--transparent"
+									onClick={this.createNewVersion}
+								>
+									{window.SF.labels.btn_NewVersion}
+								</button>
+							)}
 					</div>
 				</div>
 

@@ -7,8 +7,10 @@ import { publish } from '../../api';
 import ActionIframe from '../modals/ActionIframe';
 import ProductModal from '../modals/ProductModal';
 import NegotiationModal from '../modals/NegotiationModal';
+import FrameModal from '../modals/FrameModal';
 
 import {
+	addFaToMaster,
 	createToast,
 	toggleModals,
 	bulkNegotiate,
@@ -21,6 +23,7 @@ class FaModals extends React.Component {
 	constructor(props) {
 		super(props);
 
+		this.onAddFa = this.onAddFa.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.onAddProducts = this.onAddProducts.bind(this);
 		this.onBulkNegotiate = this.onBulkNegotiate.bind(this);
@@ -70,6 +73,11 @@ class FaModals extends React.Component {
 		);
 		this.onCloseModal();
 		return this.props.frameAgreements[this.props.faId];
+	}
+
+	async onAddFa(agreements) {
+		await this.props.addFaToMaster(this.props.faId, agreements);
+		publish('onAfterAddProducts', agreements);
 	}
 
 	onCloseModal() {
@@ -122,10 +130,24 @@ class FaModals extends React.Component {
 			);
 		}
 		// *******************************************************
+		// Modal needs to be conditionally rendered to activate its lifecycle
+		let faModal = null;
+		if (this.props.modals.frameModal) {
+			faModal = (
+				<FrameModal
+					faId={this.props.faId}
+					onCloseModal={this.onCloseModal}
+					onAddFa={this.onAddFa}
+					open={this.props.modals.frameModal}
+				/>
+			);
+		}
+		// *******************************************************
 
 		return (
 			<React.Fragment>
 				{actionModal}
+				{faModal}
 				{productModal}
 				{negotiateModal}
 			</React.Fragment>
@@ -142,6 +164,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
+	addFaToMaster,
 	createToast,
 	toggleModals,
 	bulkNegotiate,

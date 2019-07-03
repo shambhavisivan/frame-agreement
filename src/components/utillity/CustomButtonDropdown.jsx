@@ -51,7 +51,10 @@ class CustomButtonDropdown extends React.Component {
 		return (
 			<div className="fa-dropdown-group" ref={this.setWrapperRef}>
 				<button
-					className="fa-button fa-button--transparent"
+					className={
+						'fa-button fa-button--' +
+						(this.props.brand ? 'brand' : 'transparent')
+					}
 					onClick={this.showMenu}
 				>
 					<span>{window.SF.labels.header_customDropdownPlaceholder}</span>

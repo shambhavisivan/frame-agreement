@@ -13,7 +13,7 @@
 
 			invokeActionArgs = invokeActionArgs.concat(parametersArr);
 
-			parametersArr = parametersArr.map(param => {
+			parametersArr = parametersArr.map(function (param) {
 				if (typeof param === 'string' && param.length > 100) {
 					param = param.substring(0, 97) + "...";
 				}
@@ -23,7 +23,7 @@
 			console.log('Invoking action:%c ' + remoteActionName + '%c with params: [' + parametersArr.join(' ,') + ']', 'color: #ffa429', 'color:initial');
 
 			return new Promise(function(resolve, reject) {
-				Visualforce.remoting.Manager.invokeAction(...invokeActionArgs, (result, event) => {
+				Visualforce.remoting.Manager.invokeAction(...invokeActionArgs, function (result, event) {
 					resolve(result);
 					return result;
 				}), { escape: true, buffer: false }
@@ -62,6 +62,7 @@
 			deleteAccountAssociation: "{!$RemoteAction.FrameRateManagerController.deleteAccountAssociation}",
 			addAccountAssociation: "{!$RemoteAction.FrameRateManagerController.addAccountAssociation}",
 			getPicklistOptions: "{!$RemoteAction.FrameRateManagerController.getPicklistOptions}",
+			addFaToMaster: "{!$RemoteAction.FrameRateManagerController.addFaToMaster}",
 			getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
 		},
 		labels: {
@@ -147,9 +148,16 @@
 			alert_cloneFa_message: '{!$Label.alert_cloneFa_message}',
 			alert_cloneFa_btn_action: '{!$Label.alert_cloneFa_btn_action}',
 			alert_btn_cancel: '{!$Label.alert_btn_cancel}',
+			frame_agreements_title: '{!$Label.frame_agreements_title}',
+			header_frameAgreementMasterTitle: '{!$Label.header_frameAgreementMasterTitle}',
+			modal_addFa_title: '{!$Label.modal_addFa_title}',
+			faNameHeaderCell: '{!$Label.faNameHeaderCell}',
+			btn_AddFa: '{!$Label.btn_AddFa}',
 			modal_charge_table_header_name: '{!$Label.modal_charge_table_header_name}',
 			products_title_empty: '{!$Label.products_title_empty}',
 			save_fa_message: '{!$Label.save_fa_message}',
+			addProductCTAMessage: '{!$Label.addProductCTAMessage}',
+			addAgreementsCTAMessage: '{!$Label.addAgreementsCTAMessage}',
 			save_fa_products_message: '{!$Label.save_fa_products_message}',
 			no_fa_message: '{!$Label.no_fa_message}',
 			no_fa_message_2: '{!$Label.no_fa_message_2}',

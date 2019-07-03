@@ -19,8 +19,6 @@ class FaFields extends React.Component {
 		this.editable = this.props.settings.FACSettings.fa_editable_statuses.has(
 			this.props.frameAgreements[this.props.faId].csconta__Status__c
 		);
-
-		console.log(props.rows);
 	}
 
 	// componentWillUpdate(a,b) {

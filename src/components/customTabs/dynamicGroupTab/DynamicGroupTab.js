@@ -19,6 +19,7 @@ import { CustomOption, filterOptions } from '../utility/CustomOption';
 import '../utility/customTabs.scss';
 
 const BLANK_CIRCUITS = '{"logic":"","circuits":[]}';
+let ACTIVE_FA = null;
 
 class DynamicGroupTab extends React.Component {
 	constructor(props, context) {
@@ -99,7 +100,7 @@ class DynamicGroupTab extends React.Component {
 		Promise.all([
 			_getCustomSettingsPromise,
 			_getGroupsPromise,
-			window.FAM.api.getCustomData()
+			window.FAM.api.getCustomData(ACTIVE_FA.Id)
 		]).then(response => {
 			this.customSetting = response[0];
 
@@ -129,7 +130,7 @@ class DynamicGroupTab extends React.Component {
 			let _addedGroups = [];
 
 			try {
-				_addedGroups = JSON.parse(_response_data).group;
+				_addedGroups = _response_data.group;
 			} catch (err) {
 				console.warn('Cannot parse discount codes from attachment.');
 				console.warn(_response_data);
@@ -272,11 +273,12 @@ class DynamicGroupTab extends React.Component {
 	}
 
 	async updateCustomData(enforceSave) {
-		let customData = await window.FAM.api.getCustomData();
-		customData = customData === '' ? {} : JSON.parse(customData);
+		let customData = await window.FAM.api.getCustomData(ACTIVE_FA.Id);
+		customData = customData === '' ? {} : customData;
 		customData.group = Object.values(this.state.added);
 
 		let setResponse = await window.FAM.api.setCustomData(
+			ACTIVE_FA.Id,
 			JSON.stringify(customData)
 		);
 		console.log('Custom data saved:', this.state);
@@ -807,14 +809,15 @@ window.FAM.subscribe('onLoad', data => {
 	window.FAM.dynamicGroup.getRecordsFromDynamicGroup = fromCode => {
 		return new Promise(async resolve => {
 			// ****************************
-			let _customData = await window.FAM.api.getCustomData();
+
+			let _customData = await window.FAM.api.getCustomData(ACTIVE_FA.Id);
 			// ****************************
 			if (!_customData) {
 				resolve([]);
 				return [];
 			}
 
-			let _groups = JSON.parse(_customData).group;
+			let _groups = _customData.group;
 			let _expressions = _groups.map(group => group.Expression__c);
 
 			if (_expressions.length > 1) {
@@ -840,7 +843,9 @@ window.FAM.subscribe('onLoad', data => {
 
 	return new Promise(resolve => {
 		window.FAM.registerMethod('dynamicGroupTabEnter', id => {
-			return new Promise(resolve => {
+			return new Promise(async resolve => {
+				ACTIVE_FA = await window.FAM.api.getActiveFrameAgreement();
+
 				setTimeout(() => {
 					// ****************************
 					console.log('Entered tab with id:' + id);

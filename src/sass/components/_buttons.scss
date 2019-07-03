@@ -76,6 +76,12 @@
 		@include sbg(--button-bg-brand-hover);
 		@include sc(--button-c-brand-hover);
 	}
+
+	svg {
+		@include css4 {
+			fill: cvar(--button-icon-alt);
+		}
+	}
 }
 
 .fa-button--transparent {

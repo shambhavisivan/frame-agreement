@@ -331,6 +331,31 @@
 								margin-left: 0.75rem;
 							}
 						}
+
+						.master-redirect-icon {
+						    visibility: hidden;
+						    display: flex;
+						    opacity: 0;
+						    padding-left: 15px;
+							svg {
+								fill: var(--main-c);
+							}
+						}
+						.master-name-field {
+							display: flex;
+						    align-items: center;
+						    /*justify-content: space-between;*/
+						}
+
+						.master-name-field:hover{
+							color: #0070d2!important;
+						}
+
+						.master-name-field:hover .master-redirect-icon {
+							 visibility: visible;
+							 opacity: 1;
+							 transition: opacity 0.5s;
+						}
 					}
 				}
 

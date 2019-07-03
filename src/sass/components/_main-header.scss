@@ -51,12 +51,18 @@
 				}
 			}
 
+			.fa-dropdown-group {
+				span {
+					 margin-right: 0.25rem;
+				}
+			}
+
 			&:last-child {
 				.fa-main-header__search {
 					display: flex;
 					flex: 1;
 
-					button {
+					> button, > .fa-dropdown-group {
 						margin-left: 0.5rem;
 					}
 				}

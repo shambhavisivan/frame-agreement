@@ -19,11 +19,13 @@ import FrameAgreementRow from './FrameAgreementRow';
 import InputSearch from './utillity/inputs/InputSearch';
 import Toaster from './utillity/Toaster';
 
+import CustomButtonDropdown from './utillity/CustomButtonDropdown';
+
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsModal from './modals/AccountsModal';
 
 class FrameAgreement {
-	constructor(status) {
+	constructor(status, type) {
 		this.Id = null;
 		this.csconta__Agreement_Name__c = '';
 		this.csconta__Status__c = status;
@@ -31,6 +33,7 @@ class FrameAgreement {
 		this.csconta__Status__c = status;
 		this.csconta__Valid_From__c = null;
 		this.csconta__Valid_To__c = null;
+		this.csfam__Frame_Agreement_Type__c = type;
 		this._ui = {
 			approval: {
 				listProcess: []
@@ -80,9 +83,12 @@ class FaList extends Component {
 		});
 	}
 
-	createFrameAgreement() {
+	createFrameAgreement(type) {
+		type =
+			type === 'master' ? 'Master Frame Agreement' : 'Child Frame Agreement';
 		let newFa = new FrameAgreement(
-			this.props.settings.FACSettings.statuses.draft_status
+			this.props.settings.FACSettings.statuses.draft_status,
+			type
 		);
 
 		this.props.createFrameAgreement(newFa).then(upsertedFa => {
@@ -181,6 +187,21 @@ class FaList extends Component {
 		);
 		// *******************************************************
 
+		let _createFaDropdownData = [
+			{
+				type: 'child',
+				label: 'Child',
+				id: 'createnewchild',
+				method: null
+			},
+			{
+				type: 'master',
+				label: 'Master',
+				id: 'createnewmaster',
+				method: null
+			}
+		];
+
 		return (
 			<div className="fa-app">
 				<Toaster />
@@ -228,6 +249,15 @@ class FaList extends Component {
 								) : (
 									''
 								)}
+
+								<CustomButtonDropdown
+									className="fa-dropdown"
+									brand={true}
+									buttons={_createFaDropdownData}
+									onAction={(method, type) => {
+										this.createFrameAgreement(type);
+									}}
+								/>
 
 								{customButtonContainer}
 							</div>

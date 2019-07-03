@@ -4,6 +4,7 @@ import 'babel-polyfill';
 import { log } from './utils/shared-service';
 
 const subscriptions = {};
+window.subscriptions = subscriptions;
 const eventList = [
 	'onLoad',
 	'onFaSelect',
@@ -31,11 +32,11 @@ const subscribe = (eventType, callback) => {
 		subscriptions[eventType] = [];
 	}
 
-	subscriptions[eventType].push(callback);
+	let newIndex = subscriptions[eventType].push(callback) - 1;
 
 	return {
 		unsubscribe: () => {
-			delete subscriptions[eventType];
+			subscriptions[eventType].splice(newIndex, 1);
 		}
 	};
 };

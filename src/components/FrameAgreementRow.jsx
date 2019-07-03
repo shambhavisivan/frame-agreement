@@ -74,13 +74,22 @@ class FrameAgreementRow extends React.Component {
 									'-- anonymous --'}
 							</span>
 						</div>
-						{this.props.agreement.csconta__Status__c ? (
-							<span className={this.statusClass}>
-								{this.props.agreement.csconta__Status__c}
-							</span>
-						) : (
-							''
-						)}
+						<div>
+							{this.props.agreement.csfam__Frame_Agreement_Type__c.includes(
+								'Master'
+							) ? (
+								<span className="fa-chip fa-chip--master">Master</span>
+							) : (
+								''
+							)}
+							{this.props.agreement.csconta__Status__c ? (
+								<span className={this.statusClass}>
+									{this.props.agreement.csconta__Status__c}
+								</span>
+							) : (
+								''
+							)}
+						</div>
 					</div>
 				</Link>
 				<div className="fa-icon fa-icon-group" onClick={this.showMenu}>

@@ -21,17 +21,8 @@ import { truncateCPField, log } from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
 import ApprovalProcess from './ApprovalProcess';
-import CommercialProduct from './negotiation/CommercialProduct';
 
 import Toaster from './utillity/Toaster';
-import Header from './utillity/Header';
-import Pagination from './utillity/Pagination';
-import Icon from './utillity/Icon';
-
-import SFDatePicker from './utillity/datepicker/SFDatePicker';
-import InputSearch from './utillity/inputs/InputSearch';
-import Checkbox from './utillity/inputs/Checkbox';
-import DropdownCheckbox from './utillity/inputs/DropdownCheckbox';
 
 import ConfirmationModal from './modals/ConfirmationModal';
 
@@ -45,14 +36,9 @@ import FaModals from './FaEditor/FaModals';
 // Skeletons
 import CommercialProductSkeleton from './skeletons/CommercialProductSkeleton';
 
-import {
-	validateAddons,
-	validateProduct,
-	validateCharges,
-	validateRateCardLines
-} from '../utils/validation-service';
-
 window.editor = {};
+
+const SUBSCRIPTIONS = {};
 
 class FaEditor extends Component {
 	constructor(props) {
@@ -81,14 +67,17 @@ class FaEditor extends Component {
 			window.location.reload();
 		}
 
+		if (
+			this.props.frameAgreements[this.faId].csfam__Frame_Agreement_Type__c ===
+			'Master Frame Agreement'
+		) {
+			this.props.history.push('/master/' + this.faId);
+		}
+
 		// Ref active FA from store
 		this.state = {
-			// activeFa: "",
 			actionTaken: false,
 			selectedProducts: {},
-			loadingProducts: [],
-			openCommercialProduct: '',
-			// headerRows: _headerRows,
 			loading: {
 				attachment: true
 			},
@@ -99,22 +88,28 @@ class FaEditor extends Component {
 		};
 	}
 
-	componentWillUnount() {
+	componentWillUnmount() {
 		delete window.FAM.api.getActiveFrameAgreement;
+		for (var key in SUBSCRIPTIONS) {
+			SUBSCRIPTIONS[key].unsubscribe();
+		}
 	}
 
 	componentWillMount() {
 		// Disable onLeavePage prompt when saved
-		window.FAM.subscribe('onAfterSaveFrameAgreement', data => {
-			return new Promise(resolve => {
-				this.setState({
-					actionTaken: false
+		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(
+			'onAfterSaveFrameAgreement',
+			data => {
+				return new Promise(resolve => {
+					this.setState({
+						actionTaken: false
+					});
+					resolve(data);
 				});
-				resolve(data);
-			});
-		});
+			}
+		);
 		// Enable save on events
-		window.FAM.subscribe('onAfterAddProducts', data => {
+		SUBSCRIPTIONS['sub2'] = window.FAM.subscribe('onAfterAddProducts', data => {
 			return new Promise(resolve => {
 				this.setState({
 					actionTaken: true
@@ -123,23 +118,29 @@ class FaEditor extends Component {
 			});
 		});
 		// Enable save on events
-		window.FAM.subscribe('onAfterBulkNegotiation', data => {
-			return new Promise(resolve => {
-				this.setState({
-					actionTaken: true
+		SUBSCRIPTIONS['sub3'] = window.FAM.subscribe(
+			'onAfterBulkNegotiation',
+			data => {
+				return new Promise(resolve => {
+					this.setState({
+						actionTaken: true
+					});
+					resolve(data);
 				});
-				resolve(data);
-			});
-		});
+			}
+		);
 		// Enable save on events
-		window.FAM.subscribe('onAfterDeleteProducts', data => {
-			return new Promise(resolve => {
-				this.setState({
-					actionTaken: true
+		SUBSCRIPTIONS['sub4'] = window.FAM.subscribe(
+			'onAfterDeleteProducts',
+			data => {
+				return new Promise(resolve => {
+					this.setState({
+						actionTaken: true
+					});
+					resolve(data);
 				});
-				resolve(data);
-			});
-		});
+			}
+		);
 
 		// Check if FA info is loaded already
 		// if (this.faId && this.props.frameAgreements[this.faId]._ui.attachment === null) {

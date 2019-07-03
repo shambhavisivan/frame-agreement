@@ -15,6 +15,8 @@ import { CustomOption, filterOptions } from '../utility/CustomOption';
 
 import '../utility/customTabs.scss';
 
+let ACTIVE_FA = null;
+
 const getTargetObjectCode = targetObject => {
 	let str;
 	if (targetObject === 'Commercial Product') {
@@ -26,7 +28,7 @@ const getTargetObjectCode = targetObject => {
 	return str;
 };
 
-const negotiateDiscountCodesForProducts = async (data, resetCode) => {
+const negotiateDiscountCodesForProducts = async data => {
 	// get discount codes
 	// group all rcl codes
 	// group all cp codes
@@ -57,13 +59,15 @@ const negotiateDiscountCodesForProducts = async (data, resetCode) => {
 
 	// resetCode is used for removing discount code, it will reset the product negotiation and then refresh all negotiation
 
-	let _activeFa = await window.FAM.api.getActiveFrameAgreement();
 	let _commercialProducts;
+	let active_fa = await window.FAM.api.getActiveFrameAgreement();
+
+	window.FAM.api.resetNegotiation(active_fa.Id);
 
 	if (!data) {
-		_commercialProducts = _activeFa._ui.commercialProducts;
+		_commercialProducts = active_fa._ui.commercialProducts;
 	} else {
-		_commercialProducts = _activeFa._ui.commercialProducts.filter(cp =>
+		_commercialProducts = active_fa._ui.commercialProducts.filter(cp =>
 			data.includes(cp.Id)
 		);
 	}
@@ -106,17 +110,10 @@ const negotiateDiscountCodesForProducts = async (data, resetCode) => {
 	// Will hold negotiation API compliant structure
 	let _negoArray = [];
 
-	let discountCodes = await window.FAM.api.getCustomData();
-	try {
-		discountCodes = JSON.parse(discountCodes).codes || [];
-	} catch (err) {
-		console.warn(err);
-		// WE'RE DONE HERE
-		Promise.resolve(data);
-		return;
-	}
+	let discountCodes = await window.FAM.api.getCustomData(active_fa.Id);
+	discountCodes = discountCodes.codes || [];
 
-	if (!discountCodes.length && !resetCode) {
+	if (!discountCodes.length) {
 		// WE'RE DONE HERE
 		Promise.resolve(data);
 		return;
@@ -131,7 +128,7 @@ const negotiateDiscountCodesForProducts = async (data, resetCode) => {
 	);
 
 	// Generate map of original charges for product
-	let _originalProductValues = _activeFa._ui.commercialProducts.reduce(
+	let _originalProductValues = active_fa._ui.commercialProducts.reduce(
 		(acc, iter) => {
 			let _data = {};
 			if (iter.hasOwnProperty('cspmb__Recurring_Charge__c')) {
@@ -146,11 +143,7 @@ const negotiateDiscountCodesForProducts = async (data, resetCode) => {
 	);
 
 	_commercialProducts.forEach(cp => {
-		if (
-			cp._rateCards &&
-			cp._rateCards.length &&
-			(rcl_codes.length || resetCode)
-		) {
+		if (cp._rateCards && cp._rateCards.length && rcl_codes.length) {
 			// rcl is nested inside rc, flatten this structure to avoid nested loop
 			let _rateCardLines = cp._rateCards.reduce(
 				(acc, iter) => [...acc, ...iter.rateCardLines],
@@ -159,16 +152,16 @@ const negotiateDiscountCodesForProducts = async (data, resetCode) => {
 
 			_rateCardLines.forEach(rcl => {
 				// REVERT VALUES IN CASE OF REMOVAL
-				if (resetCode && resetCode.target_object__c === 'Rate Card Line') {
-					if (resetCode.records[rcl.Id]) {
-						_negoArray.unshift({
-							priceItemId: cp.Id,
-							rateCard: rcl.cspmb__Rate_Card__c,
-							rateCardLine: rcl.Id,
-							value: calculateDiscount('Amount', 0, rcl.cspmb__rate_value__c)
-						});
-					}
-				}
+				// if (resetCode && resetCode.target_object__c === 'Rate Card Line') {
+				// 	if (resetCode.records[rcl.Id]) {
+				// 		_negoArray.unshift({
+				// 			priceItemId: cp.Id,
+				// 			rateCard: rcl.cspmb__Rate_Card__c,
+				// 			rateCardLine: rcl.Id,
+				// 			value: calculateDiscount('Amount', 0, rcl.cspmb__rate_value__c)
+				// 		});
+				// 	}
+				// }
 
 				// This will be overriten for every discount code, last one will be applied
 				let _negoFormatRcl = null;
@@ -190,24 +183,23 @@ const negotiateDiscountCodesForProducts = async (data, resetCode) => {
 		}
 
 		// REVERT VALUES IN CASE OF REMOVAL
-		if (resetCode && resetCode.target_object__c === 'Commercial Product') {
-			if (resetCode.records[cp.Id]) {
-				let _removalData = {};
-				_removalData.priceItemId = cp.Id;
-				_removalData.value = {};
+		// if (resetCode && resetCode.target_object__c === 'Commercial Product') {
+		// 	if (resetCode.records[cp.Id]) {
+		// 		let _removalData = {};
+		// 		_removalData.priceItemId = cp.Id;
+		// 		_removalData.value = {};
 
-				if (resetCode.recurring_charge__c) {
-					_removalData.value.recurring =
-						_originalProductValues[cp.Id].recurring;
-				}
+		// 		if (resetCode.recurring_charge__c) {
+		// 			_removalData.value.recurring = _originalProductValues[cp.Id].recurring;
+		// 		}
 
-				if (resetCode.one_off_charge__c) {
-					_removalData.value.oneOff = _originalProductValues[cp.Id].oneOff;
-				}
+		// 		if (resetCode.one_off_charge__c) {
+		// 			_removalData.value.oneOff = _originalProductValues[cp.Id].oneOff;
+		// 		}
 
-				_negoArray.unshift(_removalData);
-			}
-		}
+		// 		_negoArray.unshift(_removalData);
+		// 	}
+		// }
 
 		let _negoFormatCp = null;
 		cp_codes.forEach(cpc => {
@@ -246,12 +238,15 @@ const negotiateDiscountCodesForProducts = async (data, resetCode) => {
 	});
 	// Return length of applied groups
 	console.log('Discount negotiating:', _negoArray);
-	return window.FAM.api.negotiate(_negoArray).then(r => _negoArray.length);
+	return window.FAM.api
+		.negotiate(active_fa.Id, _negoArray)
+		.then(r => _negoArray.length);
 };
 
 window.FAM.subscribe('onAfterAddProducts', data => {
 	return new Promise(async resolve => {
 		negotiateDiscountCodesForProducts(data).then(r => {
+			window.FAM.api.toast('info', 'Discount codes applied!', '');
 			resolve(data);
 		});
 	});
@@ -276,10 +271,12 @@ class DiscountCodesTab extends React.Component {
 		this.onAddGroup = this.onAddGroup.bind(this);
 		this.targetRecords = this.targetRecords.bind(this);
 		this.blank = '';
+		this.activeFa = null;
 	}
 
 	componentWillMount() {
-		// ************************************
+		// ***********************************
+
 		let _getGroupsPromise = window.FAM.api
 			.performAction(
 				'DynamicGroupDataProvider',
@@ -323,7 +320,7 @@ class DiscountCodesTab extends React.Component {
 		Promise.all([
 			_getCustomSettingsPromise,
 			_getGroupsPromise,
-			window.FAM.api.getCustomData()
+			window.FAM.api.getCustomData(ACTIVE_FA.Id)
 		]).then(response => {
 			this.customSetting = response[0];
 
@@ -350,16 +347,16 @@ class DiscountCodesTab extends React.Component {
 				};
 			});
 
-			let _addedCodes = [];
+			let _addedCodes = _response_data.codes;
 
-			try {
-				_addedCodes = JSON.parse(_response_data).codes || [];
-			} catch (err) {
-				console.warn('Cannot parse groups from attachment.');
-				console.warn(_response_data);
-				console.warn('********************************************');
-				_addedCodes = [];
-			}
+			// try {
+			// 	_addedCodes = JSON.parse(_response_data).codes || [];
+			// } catch (err) {
+			// 	console.warn('Cannot parse groups from attachment.');
+			// 	console.warn(_response_data);
+			// 	console.warn('********************************************');
+			// 	_addedCodes = [];
+			// }
 
 			(() => {
 				let _preFilterLength = _addedCodes.length;
@@ -503,16 +500,22 @@ class DiscountCodesTab extends React.Component {
 					this.blank = '';
 					this.updateSelectListGroups();
 					this.updateCustomData().then(response => {
-						negotiateDiscountCodesForProducts().then(r => {
-							window.FAM.api.toast(
-								'info',
-								'Discount codes',
-								'applied to ' + Object.keys(_group.records).length + ' items!'
-							);
-						});
+						// negotiateDiscountCodesForProducts().then(r => {
+						// 	window.FAM.api.toast(
+						// 		'info',
+						// 		'Discount codes',
+						// 		'applied to ' + Object.keys(_group.records).length + ' items!'
+						// 	);
+						// });
 					});
 				}
 			);
+		});
+	}
+
+	onApplyCodes() {
+		negotiateDiscountCodesForProducts().then(r => {
+			window.FAM.api.toast('info', 'Discount codes applied!', '');
 		});
 	}
 
@@ -528,15 +531,7 @@ class DiscountCodesTab extends React.Component {
 				this.blank = '';
 				this.updateSelectListGroups();
 				this.updateCustomData().then(response => {
-					negotiateDiscountCodesForProducts(null, removed_group).then(r => {
-						window.FAM.api.toast(
-							'info',
-							'Discount codes',
-							'applied to ' +
-								Object.keys(removed_group.records).length +
-								' items!'
-						);
-					});
+					negotiateDiscountCodesForProducts(null, removed_group);
 				});
 			}
 		);
@@ -569,11 +564,12 @@ class DiscountCodesTab extends React.Component {
 	}
 
 	async updateCustomData(enforceSave) {
-		let customData = await window.FAM.api.getCustomData();
-		customData = customData === '' ? {} : JSON.parse(customData);
+		let customData = await window.FAM.api.getCustomData(ACTIVE_FA.Id);
+		customData = customData === '' ? {} : customData;
 		customData.codes = Object.values(this.state.added);
 
 		let setResponse = await window.FAM.api.setCustomData(
+			ACTIVE_FA.Id,
 			JSON.stringify(customData)
 		);
 		console.log('Custom data saved:', this.state);
@@ -586,9 +582,12 @@ class DiscountCodesTab extends React.Component {
 
 	render() {
 		let _active = this.state.added[this.state.open];
-		return this.state.loading ? (
-			''
-		) : (
+
+		if (this.state.loading) {
+			return null;
+		}
+
+		return (
 			<div id="dynamic-group-tab" className="card products-card">
 				<div className="products-card__inner">
 					<div className="products-card__header">
@@ -672,9 +671,7 @@ class DiscountCodesTab extends React.Component {
 													<pre>{group.Expression__c}</pre>
 												</div>
 											</div>
-										) : (
-											''
-										)}
+										) : null}
 
 										<div className="input-box big dynamic-group-discounts">
 											<div>
@@ -779,12 +776,20 @@ class DiscountCodesTab extends React.Component {
 										)}
 									</div>
 								</div>
-							) : (
-								''
-							)}
+							) : null}
 						</div>
 					))}
 				</div>
+				{Object.values(this.state.added).length ? (
+					<div className="discount-codes-footer">
+						<button
+							className="fa-button fa-button--brand"
+							onClick={() => this.onApplyCodes()}
+						>
+							Apply
+						</button>
+					</div>
+				) : null}
 			</div>
 		);
 	}
@@ -797,14 +802,11 @@ function initialiseDiscountCodesTab(id) {
 window.FAM.subscribe('onLoad', data => {
 	return new Promise(resolve => {
 		window.FAM.registerMethod('discountCodesTabEnter', id => {
-			return new Promise(resolve => {
-				setTimeout(() => {
-					// ****************************
-					console.log('Entered tab with id:' + id);
-					initialiseDiscountCodesTab(id);
-					// ****************************
-					resolve();
-				});
+			return new Promise(async resolve => {
+				ACTIVE_FA = await window.FAM.api.getActiveFrameAgreement();
+				console.log('Entered tab with id:' + id);
+				initialiseDiscountCodesTab(id);
+				resolve();
 			});
 		});
 		resolve(data);

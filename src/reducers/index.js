@@ -17,6 +17,7 @@ const initialState = {
 	frameAgreements: {},
 	commercialProducts: null,
 	productFields: [],
+	faFields: [],
 	activeFa: null,
 	validation: {},
 	validationProduct: {},
@@ -26,6 +27,7 @@ const initialState = {
 		actionIframe: false,
 		actionIframeUrl: '',
 		productModal: false,
+		frameModal: false,
 		negotiateModal: false
 	},
 	toasts: []
@@ -841,6 +843,7 @@ const rootReducer = (state = initialState, action) => {
 			);
 
 			let _productFields = [];
+			let _faFields = [];
 			// _productFields.push({name:"Name", visible: true})
 
 			if (
@@ -855,25 +858,17 @@ const rootReducer = (state = initialState, action) => {
 			}
 
 			if (validateCSV(action.payload.FACSettings.price_item_fields)) {
-				action.payload.FACSettings.price_item_fields = action.payload.FACSettings.price_item_fields
+			}
+
+			if (validateCSV(action.payload.FACSettings.frame_agreement_fields)) {
+				action.payload.FACSettings.frame_agreement_fields = action.payload.FACSettings.frame_agreement_fields
 					.replace(/ /g, '')
 					.split(',');
 
-				action.payload.FACSettings.price_item_fields.forEach(f => {
-					_productFields.push({ name: f, visible: true });
+				action.payload.FACSettings.frame_agreement_fields.forEach(f => {
+					_faFields.push({ name: f, visible: true });
 				});
-
-				if (action.payload.FACSettings.show_volume_fields) {
-					VOLUME_FIELDS.forEach(f => {
-						_productFields.push({
-							name: f.label,
-							visible: true,
-							volume: f.name
-						});
-					});
-				}
 			} else {
-				console.warn('Price item fields is not valid CSV!');
 				action.payload.FACSettings.price_item_fields = [];
 			}
 
@@ -948,6 +943,7 @@ const rootReducer = (state = initialState, action) => {
 				'DeleteProducts',
 				'BulkNegotiate',
 				'AddProducts',
+				'AddFrameAgreement',
 				'NewVersion'
 			];
 
@@ -1098,6 +1094,7 @@ const rootReducer = (state = initialState, action) => {
 				...state,
 				settings: action.payload,
 				productFields: _productFields,
+				faFields: _faFields,
 				initialised: { ...state.initialised, settings_loaded: settings_loaded }
 			};
 
@@ -1266,6 +1263,35 @@ const rootReducer = (state = initialState, action) => {
 								...state.frameAgreements[faId]._ui.commercialProducts,
 								...newCps
 							]
+						}
+					}
+				}
+			};
+
+		case 'ADD_FA':
+			var faId = action.payload.faId;
+			var agreements = action.payload.agreements;
+
+			var _attachment = {
+				...(state.frameAgreements[faId]._ui.attachment || {
+					custom: '',
+					products: {}
+				})
+			};
+
+			agreements.forEach(fa => {
+				_attachment.products[fa] = fa;
+			});
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: _attachment
 						}
 					}
 				}

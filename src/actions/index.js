@@ -5,6 +5,7 @@ const _defaultModals = {
 	actionIframe: false,
 	actionIframeUrl: '',
 	productModal: false,
+	frameModal: false,
 	negotiateModal: false
 };
 
@@ -486,6 +487,23 @@ export const getCommercialProductData = priceItemIdList => {
 		);
 	};
 };
+
+// ***********************************************************************
+
+export const _addFaToMaster = (faId, agreements) => ({
+	type: 'ADD_FA',
+	payload: { faId, agreements }
+});
+
+export function addFaToMaster(faId, agreements) {
+	return function(dispatch) {
+		return new Promise(async resolve => {
+			await window.SF.invokeAction('addFaToMaster', [faId, agreements]);
+			dispatch(_addFaToMaster(faId, agreements));
+			resolve(agreements);
+		});
+	};
+}
 
 // ***********************************************************************
 

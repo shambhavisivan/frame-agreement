@@ -15,6 +15,7 @@ class FaFooter extends React.Component {
 	constructor(props) {
 		super(props);
 
+		this.onOpenFrameModal = this.onOpenFrameModal.bind(this);
 		this.onOpenNegotiationModal = this.onOpenNegotiationModal.bind(this);
 		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(
 			this
@@ -58,9 +59,16 @@ class FaFooter extends React.Component {
 		this.props.toggleModals({ productModal: true });
 	}
 
+	onOpenFrameModal() {
+		this.props.toggleModals({ frameModal: true });
+	}
+
 	render() {
 		let _fa = this.props.frameAgreements[this.props.faId];
-		if (!_fa._ui.commercialProducts.length) {
+		let master =
+			_fa.csfam__Frame_Agreement_Type__c === 'Master Frame Agreement';
+
+		if (!_fa._ui.commercialProducts.length && !master) {
 			return null;
 		}
 
@@ -78,7 +86,17 @@ class FaFooter extends React.Component {
 
 		footer = (
 			<div className="fa-main-footer">
-				{standardData.AddProducts.has(_fa.csconta__Status__c) && (
+				{standardData.AddFrameAgreement.has(_fa.csconta__Status__c) && master && (
+					<button
+						className="fa-button fa-button--default"
+						onClick={this.onOpenFrameModal}
+					>
+						<Icon name="add" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_AddFa}</span>
+					</button>
+				)}
+
+				{standardData.AddProducts.has(_fa.csconta__Status__c) && !master && (
 					<button
 						className="fa-button fa-button--default"
 						onClick={this.onOpenCommercialProductModal}
@@ -90,7 +108,7 @@ class FaFooter extends React.Component {
 					</button>
 				)}
 
-				{standardData.BulkNegotiate.has(_fa.csconta__Status__c) && (
+				{standardData.BulkNegotiate.has(_fa.csconta__Status__c) && !master && (
 					<button
 						disabled={_disabled}
 						className="fa-button fa-button--default"

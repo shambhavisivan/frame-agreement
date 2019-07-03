@@ -20,7 +20,8 @@ global with sharing class FrameRateManagerController {
 			'csconta__replaced_frame_agreement__c',
 			'csconta__effective_end_date__c',
 			'csconta__effective_start_date__c',
-			'csconta__frame_agreement_number__c'
+			'csconta__frame_agreement_number__c',
+			'csfam__Frame_Agreement_Type__c'
 	};
 
 
@@ -392,6 +393,7 @@ global with sharing class FrameRateManagerController {
 		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 
 		settingMap.put('price_item_fields', FACSettings.get('csfam__price_item_fields__c'));
+		settingMap.put('frame_agreement_fields', FACSettings.get('csfam__frame_agreement_fields__c'));
 		settingMap.put('truncate_product_fields', FACSettings.get('csfam__truncate_product_fields__c'));
 		settingMap.put('show_volume_fields', FACSettings.get('csfam__show_volume_fields__c'));
 		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
@@ -407,7 +409,6 @@ global with sharing class FrameRateManagerController {
 		statuses.put('draft_status', FACSettings.get('csfam__draft_status__c'));
 		statuses.put('closed_status', FACSettings.get('csfam__closed_status__c'));
 		statuses.put('requires_approval_status', FACSettings.get('csfam__requires_approval_status__c'));
-		statuses.put('fa_number_prefix', FACSettings.get('csfam__fa_number_prefix__c'));
 
 		settingMap.put('statuses', statuses);
 
@@ -1179,6 +1180,20 @@ global with sharing class FrameRateManagerController {
 		query = query + ' order by LastModifiedDate DESC';
 
 		return database.query(query);
+	}
+
+	@RemoteAction
+	public static String addFaToMaster(String faId, List <String> faIds) {
+		List < csconta__Frame_Agreement__c > faList = new List < csconta__Frame_Agreement__c > ();
+		// faList = [select Id, csfam_master_frame_agreement__c from csconta__Frame_Agreement__c where Id in :faIds];
+
+		// Test validity of Id
+		for (csconta__Frame_Agreement__c fa : faList) {
+			// fa.csfam_master_frame_agreement__c = faId;
+		}
+
+		upsert faList;
+		return 'Success';
 	}
 
 	@RemoteAction

@@ -19,6 +19,5 @@
 	&.fa-chip--master {
 		@include sbg(--chip-master-bg);
 		@include sc(--chip-active-c);
-		margin-right: 10px;
 	}
 }

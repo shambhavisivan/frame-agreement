@@ -7,19 +7,20 @@ import {
 	addFaToMaster,
 	createToast,
 	toggleModals,
+	toggleFaFieldVisibility,
 	validateFrameAgreement,
 	getAttachment,
 	getApprovalHistory,
 	saveFrameAgreement,
 	addProductsToFa,
-	removeProductsFromFa,
+	removeFaFromMaster,
 	negotiate,
 	getCommercialProductData
 } from '../actions';
 
 import { publish } from '../api';
 
-import { truncateCPField, log } from '../utils/shared-service';
+import { truncateCPField, log, isMaster } from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
 // import ApprovalProcess from './ApprovalProcess';
@@ -62,6 +63,7 @@ class FaMaster extends Component {
 		this.onRemoveAgreements = this.onRemoveAgreements.bind(this);
 		this.toggleVisibility = this.toggleVisibility.bind(this);
 		this.onActionTaken = this.onActionTaken.bind(this);
+		this._setState = this._setState.bind(this);
 
 		this._faFilterMethod = cp => {
 			if (this.state.faFilter && this.state.faFilter.length >= 2) {
@@ -89,10 +91,7 @@ class FaMaster extends Component {
 			window.location.reload();
 		}
 
-		if (
-			this.props.frameAgreements[this.faId].csfam__Frame_Agreement_Type__c ===
-			'Child Frame Agreement'
-		) {
+		if (!isMaster(this.props.frameAgreements[this.faId])) {
 			this.props.history.push('/agreement/' + this.faId);
 		}
 
@@ -104,13 +103,13 @@ class FaMaster extends Component {
 			loading: {
 				attachment: true
 			},
-
 			page: 1,
 			pageSize: 10
 		};
 	}
 
 	componentWillUnmount() {
+		this.mounted = false;
 		delete window.FAM.api.getActiveFrameAgreement;
 		for (var key in SUBSCRIPTIONS) {
 			SUBSCRIPTIONS[key].unsubscribe();
@@ -118,12 +117,13 @@ class FaMaster extends Component {
 	}
 
 	componentWillMount() {
+		this.mounted = true;
 		// Disable onLeavePage prompt when saved
 		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(
 			'onAfterSaveFrameAgreement',
 			data => {
 				return new Promise(resolve => {
-					this.setState({
+					this._setState({
 						actionTaken: false
 					});
 					resolve(data);
@@ -133,7 +133,7 @@ class FaMaster extends Component {
 		// Enable save on events
 		SUBSCRIPTIONS['sub2'] = window.FAM.subscribe('onAfterAddProducts', data => {
 			return new Promise(resolve => {
-				this.setState({
+				this._setState({
 					actionTaken: true
 				});
 				resolve(data);
@@ -144,7 +144,7 @@ class FaMaster extends Component {
 			'onAfterBulkNegotiation',
 			data => {
 				return new Promise(resolve => {
-					this.setState({
+					this._setState({
 						actionTaken: true
 					});
 					resolve(data);
@@ -156,7 +156,7 @@ class FaMaster extends Component {
 			'onAfterDeleteProducts',
 			data => {
 				return new Promise(resolve => {
-					this.setState({
+					this._setState({
 						actionTaken: true
 					});
 					resolve(data);
@@ -166,7 +166,7 @@ class FaMaster extends Component {
 
 		this.props.getAttachment(this.faId).then(response => {
 			// this.props.addFaToMaster(this.faId, Object.keys(response.products));
-			this.setState(
+			this._setState(
 				{
 					loading: {
 						...this.state.loading,
@@ -182,8 +182,16 @@ class FaMaster extends Component {
 		window.editor = this;
 	}
 
+	_setState(newState, callback) {
+		if (this.mounted) {
+			this.setState(newState, () => {
+				callback ? callback() : null;
+			});
+		}
+	}
+
 	onActionTaken() {
-		this.setState({
+		this._setState({
 			actionTaken: true
 		});
 	}
@@ -214,9 +222,9 @@ class FaMaster extends Component {
 				Object.keys(this.state.selectedAgreements)
 			);
 
-			await this.props.removeProductsFromFa(this.faId, productsToDelete);
+			await this.props.removeFaFromMaster(this.faId, productsToDelete);
 
-			this.setState(
+			this._setState(
 				{
 					selectedAgreements: {}
 				},
@@ -241,7 +249,7 @@ class FaMaster extends Component {
 		} else {
 			selectedAgreements[fa.Id] = fa;
 		}
-		this.setState({
+		this._setState({
 			selectedAgreements
 		});
 	}
@@ -254,12 +262,12 @@ class FaMaster extends Component {
 		) {
 			selectedAgreements = {};
 		} else {
-			allAgreements.forEach(cp => {
-				selectedAgreements[cp.Id] = cp;
+			allAgreements.forEach(fa => {
+				selectedAgreements[fa.Id] = this.props.frameAgreements[fa.Id];
 			});
 		}
 
-		this.setState({
+		this._setState({
 			selectedAgreements
 		});
 	}
@@ -278,7 +286,7 @@ class FaMaster extends Component {
 
 		this.props.negotiate(this.faId, priceItemId, type, data);
 
-		this.setState(
+		this._setState(
 			{
 				actionTaken: true
 			},
@@ -308,7 +316,7 @@ class FaMaster extends Component {
 		this.props
 			.saveFrameAgreement(data)
 			.then(async responseArr => {
-				this.setState({
+				this._setState({
 					actionTaken: false
 				});
 				return responseArr;
@@ -356,9 +364,13 @@ class FaMaster extends Component {
 									value={this.state.faFilter}
 									bordered={true}
 									onChange={val => {
-										this.setState({ faFilter: val });
+										this._setState({ faFilter: val });
 									}}
 									placeholder={window.SF.labels.input_quickSearchPlaceholder}
+								/>
+								<DropdownCheckbox
+									options={this.props.faFields}
+									onChange={this.props.toggleFaFieldVisibility}
 								/>
 							</div>
 						</div>
@@ -374,9 +386,7 @@ class FaMaster extends Component {
 										}
 										onChange={() => {
 											this.onSelectAllAgreements(
-												this.props.frameAgreements[
-													this.faId
-												]._ui.commercialProducts.filter(this._faFilterMethod)
+												addedFa.filter(this._faFilterMethod)
 											);
 										}}
 									/>
@@ -426,7 +436,7 @@ class FaMaster extends Component {
 													className="fields__item fields__item--title master-name-field"
 													onClick={() => this.onRedirect(fa.Id)}
 												>
-													{fa.csconta__Agreement_Name__c}
+													{fa.csconta__Agreement_Name__c || '-- anonymous --'}
 													<span className="master-redirect-icon">
 														<Icon name="forward" height="16" width="16" />
 													</span>
@@ -512,12 +522,13 @@ const mapDispatchToProps = {
 	addFaToMaster,
 	createToast,
 	toggleModals,
+	toggleFaFieldVisibility,
 	validateFrameAgreement,
 	getAttachment,
 	getApprovalHistory,
 	saveFrameAgreement,
 	addProductsToFa,
-	removeProductsFromFa,
+	removeFaFromMaster,
 	negotiate,
 	getCommercialProductData
 };

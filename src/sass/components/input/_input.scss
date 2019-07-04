@@ -212,6 +212,10 @@ input.negotiate-input::-webkit-outer-spin-button {
 .discount {
 	font-size: 0.8125rem;
 	@include sc(--input-state-c);
+
+	> div {
+		margin-right: 5px;
+	}
 }
 
 .invalid .discount-amount {

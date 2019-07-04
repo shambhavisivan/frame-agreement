@@ -9,7 +9,7 @@ import Icon from '../utillity/Icon';
 import Checkbox from '../utillity/inputs/Checkbox';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
-import { truncateCPField } from '../../utils/shared-service';
+import { truncateCPField, isMaster } from '../../utils/shared-service';
 
 class FrameModal extends Component {
 	constructor(props) {
@@ -41,10 +41,7 @@ class FrameModal extends Component {
 
 	getFramesCount() {
 		let eligableFa = Object.values(this.props.frameAgreements).filter(fa => {
-			return (
-				fa.Id !== this.props.faId &&
-				fa.csfam__Frame_Agreement_Type__c.includes('Child')
-			);
+			return fa.Id !== this.props.faId && !isMaster(fa);
 		});
 
 		let faSize = eligableFa.length;
@@ -166,7 +163,7 @@ class FrameModal extends Component {
 									.filter(fa => {
 										return (
 											fa.Id !== this.props.faId &&
-											fa.csfam__Frame_Agreement_Type__c.includes('Child') &&
+											!isMaster(fa) &&
 											!this.props.frameAgreements[
 												this.props.faId
 											]._ui.attachment.products.hasOwnProperty(fa.Id)
@@ -198,7 +195,9 @@ class FrameModal extends Component {
 												}
 												onClick={() => this.selectFa(fa)}
 											>
-												<span>{fa.csconta__Agreement_Name__c}</span>
+												<span>
+													{fa.csconta__Agreement_Name__c || '-- anonymous --'}
+												</span>
 												{this.props.faFields.map(f => {
 													return (
 														<span key={fa.Id + '-' + f.name}>

@@ -21,6 +21,7 @@ class LookupField extends React.Component {
 		// save original response for filter reset
 
 		this.onSave = this.onSave.bind(this);
+		this._setState = this._setState.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.onSearchChange = this.onSearchChange.bind(this);
 		this.onOpenLookupModal = this.onOpenLookupModal.bind(this);
@@ -51,13 +52,15 @@ class LookupField extends React.Component {
 	}
 
 	componentWillMount() {
+		this.mounted = true;
+
 		window.SF.invokeAction('getLookupInformation', [
 			this.props.field,
 			this.props.columns[0],
 			this.filter,
 			this.props.value || null
 		]).then(response => {
-			this.setState({
+			this._setState({
 				recordLabel: response.initialLabel || '',
 				count: response.count,
 				loadedInput: true,
@@ -66,9 +69,21 @@ class LookupField extends React.Component {
 		});
 	}
 
+	componentWillUnmount() {
+		this.mounted = false;
+	}
+
+	_setState(newState, callback) {
+		if (this.mounted) {
+			this.setState(newState, () => {
+				callback ? callback() : null;
+			});
+		}
+	}
+
 	// **************************************************************
 	onCloseModal(event) {
-		this.setState({
+		this._setState({
 			open: false,
 			pagination: {
 				page: 1
@@ -77,7 +92,7 @@ class LookupField extends React.Component {
 	}
 
 	onSearchChange(val) {
-		this.setState(
+		this._setState(
 			{
 				pagination: {
 					page: 1
@@ -115,7 +130,7 @@ class LookupField extends React.Component {
 						let info = response[0];
 						let records = decodeEntities(response[1]);
 
-						this.setState({
+						this._setState({
 							count: info.count,
 							records: records,
 							fetchingRecords: false,
@@ -123,7 +138,7 @@ class LookupField extends React.Component {
 						});
 					},
 					error => {
-						this.setState({
+						this._setState({
 							fetchingRecords: false,
 							loadingOverlay: false
 						});
@@ -140,7 +155,7 @@ class LookupField extends React.Component {
 
 		let needToLoad = !!this.pagesToLoad(newPage);
 
-		this.setState({
+		this._setState({
 			pagination: { ...this.state.pagination, page: newPage },
 			fetchingRecords: needToLoad
 		});
@@ -148,7 +163,7 @@ class LookupField extends React.Component {
 		if (needToLoad) {
 			let newSet = await this.getRecordPage(newPage);
 
-			this.setState(
+			this._setState(
 				{
 					records: [...this.state.records, ...newSet],
 					fetchingRecords: false
@@ -167,14 +182,14 @@ class LookupField extends React.Component {
 
 	onSave() {
 		let _record = this.state.selected;
-		this.setState({ recordLabel: _record[this.labelField] }, () => {
-			this.props.onChange(_record);
+		this._setState({ recordLabel: _record[this.labelField] }, () => {
+			this.props.onChange(_record.Id);
 			this.onCloseModal();
 		});
 	}
 
 	onOpenLookupModal() {
-		this.setState(
+		this._setState(
 			{
 				searchValue: '',
 				open: true,
@@ -199,7 +214,7 @@ class LookupField extends React.Component {
 						response => {
 							response = decodeEntities(response);
 
-							this.setState({
+							this._setState({
 								records: response,
 								loadingOverlay: false
 							});
@@ -209,7 +224,7 @@ class LookupField extends React.Component {
 						}
 					);
 				} else {
-					this.setState({
+					this._setState({
 						loadingOverlay: false
 					});
 				}
@@ -220,7 +235,7 @@ class LookupField extends React.Component {
 	// **************************************************************
 
 	selectRecord(record) {
-		this.setState({ selected: record });
+		this._setState({ selected: record });
 	}
 
 	pagesToLoad(newPage) {

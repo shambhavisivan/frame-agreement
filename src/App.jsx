@@ -171,7 +171,7 @@ class App extends Component {
 		};
 
 		window.FAM.api.saveFrameAgreement = faId => {
-			return this.props.saveFrameAgreement([this.props.frameAgreements[faId]]);
+			return this.props.saveFrameAgreement(this.props.frameAgreements[faId]);
 		};
 
 		window.FAM.api.getCustomData = (

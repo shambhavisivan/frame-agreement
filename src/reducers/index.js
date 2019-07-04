@@ -1,4 +1,10 @@
 import sharedService from '../utils/shared-service';
+import {
+	validateAddons,
+	validateProduct,
+	validateCharges,
+	validateRateCardLines
+} from '../utils/validation-service';
 
 const initialState = {
 	initialised: {
@@ -11,11 +17,19 @@ const initialState = {
 	frameAgreements: {},
 	commercialProducts: null,
 	productFields: [],
+	faFields: [],
 	activeFa: null,
 	validation: {},
 	validationProduct: {},
-	approvalFlag: false, // true -> needs validation
+	// approvalNeeded: false, // true -> needs validation
 	handlers: {},
+	modals: {
+		actionIframe: false,
+		actionIframeUrl: '',
+		productModal: false,
+		frameModal: false,
+		negotiateModal: false
+	},
 	toasts: []
 	// activeId: null
 };
@@ -36,6 +50,165 @@ function makeId(n) {
 		text += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return text;
+}
+
+function organizeHeaderFields(headerData, _activeFa) {
+	// Organize the header grid
+	var field_rows = [];
+	var row = [];
+	var row_grid_count = 0;
+
+	headerData = headerData.filter(f => {
+		let retValue = true;
+
+		if (f.hasOwnProperty('visible')) {
+			if (f.visible === '') {
+				return false;
+			}
+
+			// logic component
+			f.visible
+				.replace(/\s/g, '')
+				.split(';')
+				.forEach(lc => {
+					let _b;
+					let _operator;
+
+					if (lc.includes('==')) {
+						_operator = '==';
+						_b = lc.split('==');
+					} else {
+						_operator = '!=';
+						_b = lc.split('!=');
+					}
+
+					if (['true', 'false'].includes(_b[1])) {
+						_b[1] = JSON.parse(_b[1]);
+					}
+
+					let _fieldValue = _activeFa[_b[0]];
+					if ((_operator = '==')) {
+						retValue = retValue && _fieldValue == _b[1];
+					} else {
+						retValue = retValue && _fieldValue != _b[1];
+					}
+				});
+		}
+
+		return retValue;
+	});
+
+	headerData.forEach(f => {
+		if (row_grid_count + f.grid > 12) {
+			field_rows.push([...row]);
+			row = [];
+			row_grid_count = 0;
+		}
+		row_grid_count += f.grid;
+		row.push(f);
+	});
+
+	if (row.length) {
+		field_rows.push(row);
+	}
+
+	return field_rows;
+}
+
+function getapprovalNeeded(validation) {
+	return Object.keys(validation)
+		.reduce((acc, key) => {
+			let collection = [];
+			if (validation[key].addons) {
+				Object.values(validation[key].addons).forEach(item => {
+					item.hasOwnProperty('oneOff') && collection.push(item.oneOff);
+					item.hasOwnProperty('recurring') && collection.push(item.recurring);
+				});
+			}
+			if (validation[key].charges) {
+				collection = [...collection, ...Object.values(validation[key].charges)];
+			}
+			if (validation[key].rated) {
+				collection = [...collection, ...Object.values(validation[key].rated)];
+			}
+			return [...acc, ...collection];
+		}, [])
+		.some(r => r === true);
+}
+
+function getProductValidation(validation) {
+	let _productValidation = {};
+	for (var key in validation) {
+		_productValidation[key] = getapprovalNeeded({
+			[key]: validation[key]
+		});
+	}
+	return _productValidation;
+}
+
+function getNewAttachment(headerData, fa) {
+	return {
+		commercialProducts: [],
+		approvalNeeded: [],
+		headerRows: organizeHeaderFields(headerData, fa),
+		attachment: null
+	};
+}
+
+function enrichAttachment(cp) {
+	let _att = {};
+	// ****************************************
+	_att._volume = {
+		mv: null,
+		mvp: null,
+		muc: null,
+		mucp: null
+	};
+	// ****************************************
+	if (cp._addons.length) {
+		_att._addons = {};
+	}
+	cp._addons.forEach(addon => {
+		_att._addons[addon.Id] = {
+			oneOff: addon.cspmb__One_Off_Charge__c,
+			recurring: addon.cspmb__Recurring_Charge__c
+		};
+	});
+	// ****************************************
+	if (cp._charges.length) {
+		_att._charges = {};
+	} else {
+		_att._product = {};
+		if (cp.cspmb__One_Off_Charge__c) {
+			_att._product.oneOff = cp.cspmb__One_Off_Charge__c;
+		}
+		if (cp.cspmb__Recurring_Charge__c) {
+			_att._product.recurring = cp.cspmb__Recurring_Charge__c;
+		}
+	}
+
+	cp._charges.forEach(charge => {
+		_att._charges[charge.Id] = {};
+		if (charge.chargeType === 'One-off Charge') {
+			_att._charges[charge.Id].oneOff = charge.oneOff;
+		}
+		if (charge.chargeType === 'Recurring Charge') {
+			_att._charges[charge.Id].recurring = charge.recurring;
+		}
+	});
+	// ****************************************
+	if (cp._rateCards.length) {
+		_att._rateCards = {};
+	}
+	cp._rateCards.forEach(rc => {
+		if (rc.rateCardLines.length) {
+			_att._rateCards[rc.Id] = {};
+			rc.rateCardLines.forEach(rcl => {
+				_att._rateCards[rc.Id][rcl.Id] = rcl.cspmb__rate_value__c;
+			});
+		}
+	});
+	return _att;
 }
 
 function validateJSONData(data) {
@@ -70,13 +243,6 @@ function validateCSV(str) {
 const rootReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case 'REGISTER_METHOD':
-			/*
-            window.FAM.registerMethod("ActionFunction", () => {
-            	 return new Promise(resolve => {
-            		 setTimeout(() => {resolve("ActionFunction result")}, 2000);
-            	 });
-            })
-            */
 			return {
 				...state,
 				handlers: {
@@ -85,53 +251,121 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
-		case 'SET_VALIDATION':
-			function getApprovalFlag(validation) {
-				return Object.keys(validation)
-					.reduce((acc, key) => {
-						let collection = [];
-						if (validation[key].addons) {
-							Object.values(validation[key].addons).forEach(item => {
-								item.hasOwnProperty('oneOff') && collection.push(item.oneOff);
-								item.hasOwnProperty('recurring') &&
-									collection.push(item.recurring);
-							});
+		case 'VALIDATE_FA':
+			var faId = action.payload.faId;
+			var priceItemId = action.payload.priceItemId;
+			var type = action.payload.type;
+			var data = action.payload.data;
+
+			if (faId === null && priceItemId === null) {
+				return {
+					...state,
+					validation: {},
+					frameAgreements: {
+						...state.frameAgreements,
+						[faId]: {
+							...state.frameAgreements[faId],
+							_ui: { ...state.frameAgreements[faId]._ui, approvalNeeded: false }
 						}
-						if (validation[key].charges) {
-							collection = [
-								...collection,
-								...Object.values(validation[key].charges)
-							];
-						}
-						if (validation[key].rated) {
-							collection = [
-								...collection,
-								...Object.values(validation[key].rated)
-							];
-						}
-						return [...acc, ...collection];
-					}, [])
-					.some(r => r === true);
+					}
+				};
 			}
 
-			function getProductValidation(validation) {
-				let _productValidation = {};
-				for (var key in validation) {
-					_productValidation[key] = getApprovalFlag({
-						[key]: validation[key]
-					});
-				}
-				return _productValidation;
+			var validation;
+
+			if (priceItemId === null) {
+				var _fa = state.frameAgreements[faId];
+				var _products = _fa._ui.attachment.products;
+				var bulkValidation = {};
+
+				_fa._ui.commercialProducts.forEach(cp => {
+					bulkValidation[cp.Id] = {
+						addons: validateAddons(cp._addons, _products[cp.Id]._addons || {}),
+						rated: validateRateCardLines(
+							cp._rateCards,
+							_products[cp.Id]._rateCards || {}
+						),
+						charges: validateCharges(
+							cp._charges,
+							cp.cspmb__Authorization_Level__c,
+							_products[cp.Id]._charges || {}
+						)
+					};
+
+					if (_products[cp.Id].hasOwnProperty('_product')) {
+						bulkValidation[cp.Id].product = validateProduct({
+							oneOff: cp.cspmb__One_Off_Charge__c,
+							negotiatedOneOff: _products[cp.Id]._product.oneOff,
+							recurring: cp.cspmb__Recurring_Charge__c,
+							negotiatedRecurring: _products[cp.Id]._product.recurring,
+							authLevel: cp.cspmb__Authorization_Level__c || null,
+							Name: cp.Name
+						});
+					}
+				});
+
+				validation = { ...state.validation, ...bulkValidation };
+			} else {
+				validation = {
+					...state.validation,
+					[priceItemId]: {
+						...state.validation[priceItemId],
+						[type]: {
+							...state.validation[priceItemId][type],
+							...data
+						}
+					}
+				};
 			}
+
+			var approvalNeeded = getapprovalNeeded(validation);
+			var validationProduct = getProductValidation(validation);
+
+			return {
+				...state,
+				validation,
+				validationProduct,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: { ...state.frameAgreements[faId]._ui, approvalNeeded }
+					}
+				}
+			};
+
+		case 'SET_VALIDATION':
+			var faId = action.payload.faId;
 
 			if (action.payload.priceItemId === null) {
-				return { ...state, validation: {}, approvalFlag: false };
+				return {
+					...state,
+					validation: {},
+					frameAgreements: {
+						...state.frameAgreements,
+						[faId]: {
+							...state.frameAgreements[faId],
+							_ui: { ...state.frameAgreements[faId]._ui, approvalNeeded: false }
+						}
+					}
+				};
 			} else if (action.payload.type === null) {
 				var validation = { ...state.validation, ...action.payload.priceItemId };
-				var approvalFlag = getApprovalFlag(validation);
+				var approvalNeeded = getapprovalNeeded(validation);
 				var validationProduct = getProductValidation(validation);
 
-				return { ...state, validation, approvalFlag, validationProduct };
+				return {
+					...state,
+					validation,
+					validationProduct,
+					frameAgreements: {
+						...state.frameAgreements,
+						[faId]: {
+							...state.frameAgreements[faId],
+							_ui: { ...state.frameAgreements[faId]._ui, approvalNeeded }
+						}
+					}
+				};
 			} else {
 				var validation = {
 					...state.validation,
@@ -145,19 +379,27 @@ const rootReducer = (state = initialState, action) => {
 						}
 					}
 				};
-				var approvalFlag = getApprovalFlag(validation);
+				var approvalNeeded = getapprovalNeeded(validation);
 				var validationProduct = getProductValidation(validation);
-				return { ...state, validation, approvalFlag, validationProduct };
+				return {
+					...state,
+					validation,
+					validationProduct,
+					frameAgreements: {
+						...state.frameAgreements,
+						[faId]: {
+							...state.frameAgreements[faId],
+							_ui: { ...state.frameAgreements[faId]._ui, approvalNeeded }
+						}
+					}
+				};
 			}
 
 		// ASYNC RECIEVE
 		case 'RECIEVE_FRAME_AGREEMENTS':
 			let frameAgreementMap = {};
 			action.payload.forEach(fa => {
-				fa._ui = {
-					commercialProducts: [],
-					attachment: null
-				};
+				fa._ui = getNewAttachment(state.settings.HeaderData, fa);
 				frameAgreementMap[fa.Id] = fa;
 			});
 			return {
@@ -170,6 +412,13 @@ const rootReducer = (state = initialState, action) => {
 			return {
 				...state,
 				accounts: [...state.accounts, ...action.payload.data]
+			};
+
+		case 'TOGGLE_MODALS':
+			// action.payload
+			return {
+				...state,
+				modals: { ...state.modals, ...action.payload }
 			};
 
 		case 'ADD_TOAST':
@@ -195,10 +444,7 @@ const rootReducer = (state = initialState, action) => {
 		case 'RECIEVE_CLONE_FA':
 			// action.payload;
 			let clonedFa = action.payload;
-			clonedFa._ui = {
-				commercialProducts: [],
-				attachment: null
-			};
+			clonedFa._ui = getNewAttachment(state.settings.HeaderData, clonedFa);
 
 			return {
 				...state,
@@ -210,6 +456,15 @@ const rootReducer = (state = initialState, action) => {
 			return {
 				...state,
 				productFields: state.productFields.map((f, i) =>
+					i === index ? { ...f, visible: !f.visible } : f
+				)
+			};
+
+		case 'TOGGLE_FA_FIELD_VISIBILITY':
+			var index = action.payload;
+			return {
+				...state,
+				faFields: state.faFields.map((f, i) =>
 					i === index ? { ...f, visible: !f.visible } : f
 				)
 			};
@@ -241,11 +496,6 @@ const rootReducer = (state = initialState, action) => {
 				return { ...state };
 			}
 
-			upsertedFa._ui = {
-				commercialProducts: [],
-				attachment: null
-			};
-
 			return {
 				...state,
 				...{ activeFa: upsertedFa },
@@ -253,7 +503,16 @@ const rootReducer = (state = initialState, action) => {
 					frameAgreements: {
 						...state.frameAgreements,
 						...{
-							[upsertedFa.Id]: upsertedFa
+							[upsertedFa.Id]: {
+								...upsertedFa,
+								_ui: {
+									...upsertedFa._ui,
+									headerRows: organizeHeaderFields(
+										state.settings.HeaderData,
+										upsertedFa
+									)
+								}
+							}
 						}
 					}
 				}
@@ -271,6 +530,77 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
+		case 'REFRESH_FA':
+			var updatedFa = {
+				...state.frameAgreements[action.payload.Id],
+				...action.payload
+			};
+			updatedFa = {
+				...updatedFa,
+				_ui: {
+					...updatedFa._ui,
+					headerRows: organizeHeaderFields(state.settings.HeaderData, updatedFa)
+				}
+			};
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[updatedFa.Id]: updatedFa
+				}
+			};
+
+		case 'UPDATE_FA':
+			var faId = action.payload.faId;
+			var field = action.payload.field;
+			var value = action.payload.value;
+
+			// console.log(JSON.parse(JSON.stringify({ ...state.frameAgreements[faId], [field]: value })));
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						[field]: value,
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							headerRows: organizeHeaderFields(state.settings.HeaderData, {
+								...state.frameAgreements[faId],
+								[field]: value
+							})
+						}
+					}
+				}
+			};
+
+		case 'SET_CD':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			if (typeof data !== 'string') {
+				data = JSON.stringify(data);
+			}
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: {
+								...state.frameAgreements[faId]._ui.attachment,
+								custom: data
+							}
+						}
+					}
+				}
+			};
+
 		case 'DELETE_FA':
 			var {
 				[action.payload]: value,
@@ -280,34 +610,223 @@ const rootReducer = (state = initialState, action) => {
 
 		case 'NEW_VERSION':
 			let newVersion = action.payload;
-			newVersion._ui = {
-				commercialProducts: [],
-				attachment: null
-			};
+			newVersion._ui = getNewAttachment(state.settings.HeaderData, newVersion);
 			return {
 				...state,
 				frameAgreements: {
 					...state.frameAgreements,
-					[action.payload.Id]: newVersion
+					[newVersion.Id]: newVersion
 				}
 			};
 
 		case 'SAVE_FA':
-			var upsertedFa = action.payload;
-			upsertedFa._ui = {
-				commercialProducts: [],
-				attachment: null
+			var _frameAgreement = action.payload;
+			var upsertData = {
+				..._frameAgreement,
+				_ui: state.frameAgreements[_frameAgreement.Id]._ui
 			};
+
+			upsertData = {
+				...upsertData,
+				_ui: {
+					...upsertData._ui,
+					headerRows: organizeHeaderFields(
+						state.settings.HeaderData,
+						upsertData
+					)
+				}
+			};
+
 			return {
 				...state,
 				frameAgreements: {
 					...state.frameAgreements,
-					[upsertedFa.Id]: {
-						...upsertedFa,
-						_ui: state.frameAgreements[upsertedFa.Id]._ui
+					[_frameAgreement.Id]: upsertData
+				}
+			};
+
+		// *************************************
+		case 'NEGOTIATE':
+			var faId = action.payload.faId;
+			var priceItemId = action.payload.priceItemId;
+			var type = action.payload.type;
+			var data = action.payload.data;
+
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+
+			// attachment.products[priceItemId] = {
+			// 	...attachment.products[priceItemId],
+			// 	[type]: data
+			// };
+
+			_attachment.products = {
+				..._attachment.products,
+				[priceItemId]: { ..._attachment.products[priceItemId], [type]: data }
+			};
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: _attachment
 					}
 				}
 			};
+
+		case 'NEGOTIATE_BULK':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			var _products = state.frameAgreements[faId]._ui.attachment.products;
+
+			for (var key in _products) {
+				if (data[key]._addons) {
+					_products[key]._addons = _products[key]._addons || {};
+					_products[key]._addons = {
+						..._products[key]._addons,
+						...data[key]._addons
+					};
+				}
+				if (data[key]._charges) {
+					_products[key]._charges = _products[key]._charges || {};
+					_products[key]._charges = {
+						..._products[key]._charges,
+						...data[key]._charges
+					};
+				}
+				if (data[key]._rateCards) {
+					_products[key]._rateCards = _products[key]._rateCards || {};
+					for (var rcId in data[key]._rateCards) {
+						_products[key]._rateCards[rcId] = data[key]._rateCards[rcId];
+					}
+				}
+			}
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: {
+							...state.frameAgreements[faId]._ui.attachment,
+							products: _products
+						}
+					}
+				}
+			};
+
+		case 'NEGOTIATE_API':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			var _fa = state.frameAgreements[faId];
+			var _products = _fa._ui.attachment.products;
+
+			function negotiateData(dataObject) {
+				let cp = _fa._ui.commercialProducts.find(
+					_cp => _cp.Id === dataObject.priceItemId
+				);
+
+				if (!cp) {
+					console.error(
+						'Cannot find commercial product with Id ' +
+							dataObject.priceItemId +
+							' in active Frame Agreement!'
+					);
+					return;
+				}
+				if (!dataObject.hasOwnProperty('value')) {
+					console.error('No value provided for negotiation!');
+					return;
+				}
+				// ********************************** Addons
+				if (dataObject.hasOwnProperty('cpAddon')) {
+					if (dataObject.value.hasOwnProperty('oneOff')) {
+						_products[dataObject.priceItemId]._addons[
+							dataObject.cpAddon
+						].oneOff = dataObject.value.oneOff;
+					}
+					if (dataObject.value.hasOwnProperty('recurring')) {
+						_products[dataObject.priceItemId]._addons[
+							dataObject.cpAddon
+						].recurring = dataObject.value.recurring;
+					}
+				}
+				// ********************************* Charge
+				else if (dataObject.hasOwnProperty('charge')) {
+					// Charge validation
+					let charge = cp._charges.find(_ch => _ch.Id === dataObject.charge);
+					let type;
+					if (charge.chargeType === 'One-off Charge') {
+						type = 'oneOff';
+					}
+					if (charge.chargeType === 'Recurring Charge') {
+						type = 'recurring';
+					}
+					if (!dataObject.value.hasOwnProperty(type)) {
+						console.error(
+							'Pricing element ' + charge.Id + ' has invalid charge type!'
+						);
+						return;
+					}
+
+					_products[dataObject.priceItemId]._charges[dataObject.charge][type] =
+						dataObject.value[type];
+				}
+				// *********************************
+				else if (dataObject.hasOwnProperty('rateCard')) {
+					// RCL
+					if (!dataObject.hasOwnProperty('rateCardLine')) {
+						console.error('No rate card line Id provided!');
+						return;
+					}
+
+					if (typeof dataObject.value !== 'number') {
+						console.error('Value for RCL not integer!');
+						return;
+					}
+
+					_products[dataObject.priceItemId]._rateCards[dataObject.rateCard][
+						dataObject.rateCardLine
+					] = dataObject.value;
+				}
+				// *********************************
+				else {
+					// Product negotiation
+					_products[dataObject.priceItemId]._product = {
+						..._products[dataObject.priceItemId]._product,
+						...dataObject.value
+					};
+				}
+				// *********************************
+			}
+
+			if (Array.isArray(data)) {
+				data.forEach(negotiateData);
+			} else {
+				negotiateData(data);
+			}
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: {
+							...state.frameAgreements[faId]._ui.attachment,
+							products: _products
+						}
+					}
+				}
+			};
+		// *************************************
 
 		case 'RECIEVE_PICKLIST_OPTIONS':
 			var options = action.payload;
@@ -333,6 +852,7 @@ const rootReducer = (state = initialState, action) => {
 			);
 
 			let _productFields = [];
+			let _faFields = [];
 			// _productFields.push({name:"Name", visible: true})
 
 			if (
@@ -354,19 +874,20 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.price_item_fields.forEach(f => {
 					_productFields.push({ name: f, visible: true });
 				});
-
-				if (action.payload.FACSettings.show_volume_fields) {
-					VOLUME_FIELDS.forEach(f => {
-						_productFields.push({
-							name: f.label,
-							visible: true,
-							volume: f.name
-						});
-					});
-				}
 			} else {
-				console.warn('Price item fields is not valid CSV!');
 				action.payload.FACSettings.price_item_fields = [];
+			}
+
+			if (validateCSV(action.payload.FACSettings.frame_agreement_fields)) {
+				action.payload.FACSettings.frame_agreement_fields = action.payload.FACSettings.frame_agreement_fields
+					.replace(/ /g, '')
+					.split(',');
+
+				action.payload.FACSettings.frame_agreement_fields.forEach(f => {
+					_faFields.push({ name: f, visible: true });
+				});
+			} else {
+				action.payload.FACSettings.frame_agreement_fields = [];
 			}
 
 			if (validateCSV(action.payload.FACSettings.fa_editable_statuses)) {
@@ -440,6 +961,7 @@ const rootReducer = (state = initialState, action) => {
 				'DeleteProducts',
 				'BulkNegotiate',
 				'AddProducts',
+				'AddFrameAgreement',
 				'NewVersion'
 			];
 
@@ -590,6 +1112,7 @@ const rootReducer = (state = initialState, action) => {
 				...state,
 				settings: action.payload,
 				productFields: _productFields,
+				faFields: _faFields,
 				initialised: { ...state.initialised, settings_loaded: settings_loaded }
 			};
 
@@ -604,7 +1127,7 @@ const rootReducer = (state = initialState, action) => {
 				}
 			}
 
-			var priceItemData = action.payload;
+			var priceItemData = action.payload.result;
 			// *********************************************************
 			for (var key in priceItemData) {
 				// *********************************************************
@@ -721,21 +1244,171 @@ const rootReducer = (state = initialState, action) => {
 			}
 			// **********************************************
 
-			return { ...state, ...{ commercialProducts: state.commercialProducts } };
+			return {
+				...state,
+				...{ commercialProducts: state.commercialProducts }
+			};
 
 		// **********************************************
+		case 'ADD_PRODUCTS':
+			var faId = action.payload.faId;
+			var productIds = new Set(action.payload.products);
 
-		case 'RECIEVE_GET_ATTACHMENT':
-			var priceItemId = action.payload.priceItemId;
-			var attachment = action.payload.data || {};
+			var _attachment = { ...state.frameAgreements[faId]._ui.attachment } || {
+				custom: '',
+				products: {}
+			};
+
+			var newCps = [];
+
+			state.commercialProducts.forEach(cp => {
+				if (productIds.has(cp.Id)) {
+					_attachment.products[cp.Id] = enrichAttachment(cp);
+					newCps.push(cp);
+				}
+			});
 
 			return {
 				...state,
 				frameAgreements: {
 					...state.frameAgreements,
-					[priceItemId]: {
-						...state.frameAgreements[priceItemId],
-						_ui: { ...state.frameAgreements[priceItemId]._ui, attachment }
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: _attachment,
+							commercialProducts: [
+								...state.frameAgreements[faId]._ui.commercialProducts,
+								...newCps
+							]
+						}
+					}
+				}
+			};
+
+		case 'ADD_FA':
+			var faId = action.payload.faId;
+			var agreements = action.payload.agreements;
+
+			var _attachment = {
+				...(state.frameAgreements[faId]._ui.attachment || {
+					custom: '',
+					products: {}
+				})
+			};
+
+			agreements.forEach(fa => {
+				_attachment.products[fa] = fa;
+			});
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: _attachment
+						}
+					}
+				}
+			};
+
+		case 'RESET_NEGOTIATION':
+			var faId = action.payload.faId;
+
+			var _attachment = { ...state.frameAgreements[faId]._ui.attachment };
+
+			state.frameAgreements[faId]._ui.commercialProducts.forEach(cp => {
+				_attachment.products[cp.Id] = enrichAttachment(cp);
+			});
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: _attachment
+						}
+					}
+				}
+			};
+		// **********************************************
+		case 'REMOVE_PRODUCTS':
+			var faId = action.payload.faId;
+			var productIds = action.payload.products;
+
+			var _products = state.frameAgreements[faId]._ui.attachment.products;
+
+			var _commercialProducts =
+				state.frameAgreements[faId]._ui.commercialProducts;
+			_commercialProducts = _commercialProducts.filter(
+				cp => !productIds.includes(cp.Id)
+			);
+
+			productIds.forEach(cpId => {
+				delete _products[cpId];
+			});
+
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+			var _attachment = { ..._attachment, products: _products };
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							commercialProducts: _commercialProducts,
+							attachment: _attachment
+						}
+					}
+				}
+			};
+		// **********************************************
+
+		case 'RECIEVE_GET_ATTACHMENT':
+			var faId = action.payload.faId;
+			var attachment = action.payload.data || {};
+
+			var _commercialProducts =
+				state.frameAgreements[faId]._ui.commercialProducts;
+			_commercialProducts = _commercialProducts.filter(
+				cp => attachment.products[cp.Id]
+			);
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment,
+							commercialProducts: _commercialProducts
+						}
+					}
+				}
+			};
+
+		case 'GET_APPROVAL_HISTORY':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: { ...state.frameAgreements[faId]._ui, approval: data }
 					}
 				}
 			};

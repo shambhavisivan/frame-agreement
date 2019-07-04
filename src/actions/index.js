@@ -244,10 +244,6 @@ export function createNewVersionOfFrameAgrement(faId) {
 			window.SF.invokeAction('createNewVersionOfFrameAgrement', [faId]).then(
 				response => {
 					dispatch(_createNewVersionOfFrameAgrement(response));
-					response._ui = {
-						commercialProducts: [],
-						attachment: null
-					};
 					resolve(response);
 					return response;
 				}
@@ -285,6 +281,11 @@ export function submitForApproval(faId) {
 // ***********************************************************************
 export const toggleFieldVisibility = index => ({
 	type: 'TOGGLE_FIELD_VISIBILITY',
+	payload: index
+});
+
+export const toggleFaFieldVisibility = index => ({
+	type: 'TOGGLE_FA_FIELD_VISIBILITY',
 	payload: index
 });
 
@@ -505,6 +506,21 @@ export function addFaToMaster(faId, agreements) {
 	};
 }
 
+export const _removeFaFromMaster = faId => ({
+	type: 'REMOVE_FA',
+	payload: faId
+});
+
+export function removeFaFromMaster(faId, agreements) {
+	return function(dispatch) {
+		return new Promise(async resolve => {
+			await window.SF.invokeAction('removeFaFromMaster', [faId, agreements]);
+			dispatch(_removeProductsFromFa(faId, agreements));
+			resolve(agreements);
+		});
+	};
+}
+
 // ***********************************************************************
 
 export const _addProductsToFa = (faId, products) => ({
@@ -691,10 +707,22 @@ export function saveFrameAgreement(frameAgreement) {
 		);
 
 		if (frameAgreement.Id) {
+			let _attachment = frameAgreement._ui.attachment;
+
+			frameAgreement._ui.commercialProducts.forEach(cp => {
+				_attachment.products[cp.Id]._allowances = {};
+				cp._allowances.forEach(all => {
+					_attachment.products[cp.Id]._allowances[all.Id] = {
+						Name: all.Name,
+						value: all.cspmb__amount__c || null
+					};
+				});
+			});
+
 			promiseArray.push(
 				window.SF.invokeAction('saveAttachment', [
 					frameAgreement.Id,
-					JSON.stringify(frameAgreement._ui.attachment)
+					JSON.stringify(_attachment)
 				])
 			);
 		}
@@ -737,7 +765,7 @@ export function createFrameAgreement(faData) {
 				...newFa,
 				_ui: {
 					commercialProducts: [],
-					attachment: { custom: '', products: [] }
+					attachment: { custom: '', products: {} }
 				}
 			};
 

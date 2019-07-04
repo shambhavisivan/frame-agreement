@@ -64,6 +64,7 @@ class FaModals extends React.Component {
 
 		await this.props.getCommercialProductData(IdsToLoad);
 		await this.props.addProductsToFa(this.props.faId, Array.from(_productsSet));
+		this.props.validateFrameAgreement(this.props.faId);
 
 		publish(
 			'onAfterAddProducts',

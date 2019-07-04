@@ -49,7 +49,10 @@ class DynamicGroupTab extends React.Component {
 			param.faId = activFa.Id;
 
 			return window.FAM.api
-				.performAction('DynamicGroupDataProvider', JSON.stringify(param))
+				.performAction(
+					'csfamext.DynamicGroupDataProvider',
+					JSON.stringify(param)
+				)
 				.then(r => JSON.parse(decodeEntities(r)));
 		};
 	}
@@ -58,7 +61,7 @@ class DynamicGroupTab extends React.Component {
 		// ************************************
 		let _getGroupsPromise = window.FAM.api
 			.performAction(
-				'DynamicGroupDataProvider',
+				'csfamext.DynamicGroupDataProvider',
 				'{"method": "getDynamicGroups"}'
 			)
 			.then(response => {
@@ -75,7 +78,9 @@ class DynamicGroupTab extends React.Component {
 				}
 
 				if (!errorFlag) {
-					response = response.filter(g => g.group_type__c === 'Dynamic Group');
+					response = response.filter(
+						g => g.csfamext__group_type__c === 'Dynamic Group'
+					);
 					response = response.map(g => this.processGroup(g));
 					return response;
 				}
@@ -83,7 +88,7 @@ class DynamicGroupTab extends React.Component {
 		// ************************************
 		let _getCustomSettingsPromise = window.FAM.api
 			.performAction(
-				'DynamicGroupDataProvider',
+				'csfamext.DynamicGroupDataProvider',
 				'{"method": "getCustomSettings"}'
 			)
 			.then(response => JSON.parse(decodeEntities(response)))
@@ -112,9 +117,11 @@ class DynamicGroupTab extends React.Component {
 			let _groupsMap = {};
 			// Enrich the groups
 			_response_groups.forEach(group => {
-				group.one_off_charge__c = group.one_off_charge__c || 0;
-				group.recurring_charge__c = group.recurring_charge__c || 0;
-				group.rate_value__c = group.rate_value__c || 0;
+				group.csfamext__one_off_charge__c =
+					group.csfamext__one_off_charge__c || 0;
+				group.csfamext__recurring_charge__c =
+					group.csfamext__recurring_charge__c || 0;
+				group.csfamext__rate_value__c = group.csfamext__rate_value__c || 0;
 
 				_groupsMap[group.Id] = group;
 			});
@@ -123,7 +130,7 @@ class DynamicGroupTab extends React.Component {
 				return {
 					value: group.Id,
 					label: group.Name,
-					description: group.Description__c || ''
+					description: group.csfamext__description__c || ''
 				};
 			});
 
@@ -144,11 +151,12 @@ class DynamicGroupTab extends React.Component {
 				_addedGroups = _addedGroups.filter(
 					dc =>
 						_groupsMap[dc.Id] &&
-						_groupsMap[dc.Id].group_type__c === 'Discount Code'
+						_groupsMap[dc.Id].csfamext__group_type__c === 'Dynamic Group'
 				);
 				// Check if target object has changed for any added types
 				_addedGroups.forEach(dc => {
-					dc.target_object__c = _groupsMap[dc.Id].target_object__c;
+					dc.csfamext__target_object__c =
+						_groupsMap[dc.Id].csfamext__target_object__c;
 				});
 
 				if (_addedGroups.length !== _preFilterLength) {
@@ -188,15 +196,17 @@ class DynamicGroupTab extends React.Component {
 
 	processGroup(g) {
 		g = JSON.parse(JSON.stringify(g));
-		if (IsJsonString(g.Logic_Components_JSON__c)) {
-			g.Logic_Components_JSON__c = JSON.parse(g.Logic_Components_JSON__c);
+		if (IsJsonString(g.csfamext__logic_components_JSON__c)) {
+			g.csfamext__logic_components_JSON__c = JSON.parse(
+				g.csfamext__logic_components_JSON__c
+			);
 		} else {
-			g.Logic_Components_JSON__c = JSON.parse(BLANK_CIRCUITS);
+			g.csfamext__logic_components_JSON__c = JSON.parse(BLANK_CIRCUITS);
 		}
 
-		g.logic = g.Logic_Components_JSON__c.logic;
+		g.logic = g.csfamext__logic_components_JSON__c.logic;
 
-		g.circuits = g.Logic_Components_JSON__c.circuits.map(circ => {
+		g.circuits = g.csfamext__logic_components_JSON__c.circuits.map(circ => {
 			circ.Id = 'cc-' + makeId();
 			circ.parsable = IsJsonString(circ.value);
 
@@ -206,7 +216,7 @@ class DynamicGroupTab extends React.Component {
 			return circ;
 		});
 
-		delete g.Logic_Components_JSON__c;
+		delete g.csfamext__logic_components_JSON__c;
 		return g;
 	}
 
@@ -255,7 +265,7 @@ class DynamicGroupTab extends React.Component {
 				.map(group => ({
 					value: group.Id,
 					label: group.Name,
-					description: group.Description__c
+					description: group.csfamext__description__c
 				}))
 		});
 	}
@@ -283,7 +293,7 @@ class DynamicGroupTab extends React.Component {
 		);
 		console.log('Custom data saved:', this.state);
 		if (enforceSave) {
-			window.FAM.api.saveFrameAgreement();
+			window.FAM.api.saveFrameAgreement(ACTIVE_FA.Id);
 		}
 	}
 
@@ -329,7 +339,10 @@ class DynamicGroupTab extends React.Component {
 		this.setState({
 			added: {
 				...this.state.added,
-				[dgId]: { ...this.state.added[dgId], Expression__c: _expression }
+				[dgId]: {
+					...this.state.added[dgId],
+					csfamext__expression__c: _expression
+				}
 			}
 		});
 	}
@@ -420,12 +433,13 @@ class DynamicGroupTab extends React.Component {
 	getTargetObjectCode() {
 		let str;
 		if (
-			this.state.added[this.state.open].target_object__c ===
+			this.state.added[this.state.open].csfamext__target_object__c ===
 			'Commercial Product'
 		) {
 			str = 'pi';
 		} else if (
-			this.state.added[this.state.open].target_object__c === 'Rate Card Line'
+			this.state.added[this.state.open].csfamext__target_object__c ===
+			'Rate Card Line'
 		) {
 			str = 'rcl';
 		}
@@ -441,11 +455,16 @@ class DynamicGroupTab extends React.Component {
 		/******************************/
 		let _params = {};
 		_params.method = 'executeQuery';
-		_params.whereClause = this.state.added[this.state.open].Expression__c;
+		_params.whereClause = this.state.added[
+			this.state.open
+		].csfamext__expression__c;
 		_params.fromCode = fromCode;
 
 		window.FAM.api
-			.performAction('DynamicGroupDataProvider', JSON.stringify(_params))
+			.performAction(
+				'csfamext.DynamicGroupDataProvider',
+				JSON.stringify(_params)
+			)
 			.then(response => {
 				return JSON.parse(decodeEntities(response));
 			})
@@ -554,18 +573,18 @@ class DynamicGroupTab extends React.Component {
 							{this.state.open === group.Id ? (
 								<div className="commercial-product-body">
 									<div className="tab-body-left">
-										{group.Expression__c ? (
+										{group.csfamext__expression__c ? (
 											<div className="input-box">
 												<label className="dg-label">Expression</label>
 												<div className="">
-													<pre>{group.Expression__c}</pre>
+													<pre>{group.csfamext__expression__c}</pre>
 												</div>
 											</div>
 										) : (
 											''
 										)}
 
-										{group.fam_editable__c ? (
+										{group.csfamext__fam_editable__c ? (
 											<React.Fragment>
 												<div className="input-box">
 													<label className="dg-label">Logic</label>
@@ -670,12 +689,12 @@ class DynamicGroupTab extends React.Component {
 											<div>
 												<label>Discount type</label>
 												<select
-													value={group.discount_type__c}
+													value={group.csfamext__discount_type__c}
 													placeholder="Add Dynamic Group"
 													onChange={e => {
 														this.onChangeDiscount(
 															group.Id,
-															'discount_type__c',
+															'csfamext__discount_type__c',
 															e.target.value
 														);
 													}}
@@ -686,7 +705,8 @@ class DynamicGroupTab extends React.Component {
 												</select>
 											</div>
 
-											{group.target_object__c === 'Commercial Product' ? (
+											{group.csfamext__target_object__c ===
+											'Commercial Product' ? (
 												<React.Fragment>
 													<div>
 														<label>One-Off charge</label>
@@ -699,11 +719,11 @@ class DynamicGroupTab extends React.Component {
 															onChange={e => {
 																this.onChangeDiscount(
 																	group.Id,
-																	'one_off_charge__c',
+																	'csfamext__one_off_charge__c',
 																	+e.target.value
 																);
 															}}
-															value={group.one_off_charge__c}
+															value={group.csfamext__one_off_charge__c}
 														/>
 													</div>
 
@@ -718,11 +738,11 @@ class DynamicGroupTab extends React.Component {
 															onChange={e => {
 																this.onChangeDiscount(
 																	group.Id,
-																	'recurring_charge__c',
+																	'csfamext__recurring_charge__c',
 																	+e.target.value
 																);
 															}}
-															value={group.recurring_charge__c}
+															value={group.csfamext__recurring_charge__c}
 														/>
 													</div>
 												</React.Fragment>
@@ -738,11 +758,11 @@ class DynamicGroupTab extends React.Component {
 														onChange={e => {
 															this.onChangeDiscount(
 																group.Id,
-																'recurring_charge__c',
+																'csfamext__recurring_charge__c',
 																+e.target.value
 															);
 														}}
-														value={group.recurring_charge__c}
+														value={group.csfamext__recurring_charge__c}
 													/>
 												</div>
 											)}
@@ -760,7 +780,8 @@ class DynamicGroupTab extends React.Component {
 												}
 												fields={
 													this.customSetting[
-														_active.target_object__c === 'Commercial Product'
+														_active.csfamext__target_object__c ===
+														'Commercial Product'
 															? 'price_item_fields'
 															: 'rcl_fields'
 													]
@@ -818,7 +839,7 @@ window.FAM.subscribe('onLoad', data => {
 			}
 
 			let _groups = _customData.group;
-			let _expressions = _groups.map(group => group.Expression__c);
+			let _expressions = _groups.map(group => group.csfamext__expression__c);
 
 			if (_expressions.length > 1) {
 				_expressions = _expressions.join(') OR (');
@@ -833,7 +854,10 @@ window.FAM.subscribe('onLoad', data => {
 			_params.fromCode = fromCode;
 
 			window.FAM.api
-				.performAction('DynamicGroupDataProvider', JSON.stringify(_params))
+				.performAction(
+					'csfamext.DynamicGroupDataProvider',
+					JSON.stringify(_params)
+				)
 				.then(response => {
 					// FILTER DYNAMIC GROUPS ONLY FOR DYNAMIC GROUPS
 					resolve(JSON.parse(decodeEntities(response)));

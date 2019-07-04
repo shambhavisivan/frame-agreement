@@ -37,6 +37,9 @@ global with sharing class FrameRateManagerController {
 	public class InvalidParamException extends Exception {
 	}
 
+	public class AgreementNotMasterException extends Exception {
+	}
+
 	public class ApplicationException extends Exception {
 	}
 
@@ -50,20 +53,20 @@ global with sharing class FrameRateManagerController {
 
 		String profile = getUserProfile();
 
-		// List<csutil__JSON_Data__c> json_data = [
-		//      select csutil__value__c
-		//      from csutil__JSON_Data__c
-		//      where Name = 'FA-Header'
-		//      and (csfam__Profile__c = null OR csfam__Profile__c = :profile)
-		//      order by csfam__Profile__c
-		//      NULLS LAST
-		// ];
-
 		List<csutil__JSON_Data__c> json_data = [
-				select csutil__value__c
-				from csutil__JSON_Data__c
-				where Name = 'FA-Header'
+		     select csutil__value__c
+		     from csutil__JSON_Data__c
+		     where Name = 'FA-Header'
+		     and (csutil__profile_name__c = null OR csutil__profile_name__c = :profile)
+		     order by csutil__profile_name__c
+		     NULLS LAST
 		];
+
+		// List<csutil__JSON_Data__c> json_data = [
+		// 		select csutil__value__c
+		// 		from csutil__JSON_Data__c
+		// 		where Name = 'FA-Header'
+		// ];
 
 		if (json_data.isEmpty()) {
 			return null;
@@ -76,20 +79,20 @@ global with sharing class FrameRateManagerController {
 
 		String profile = getUserProfile();
 
-		// List<csutil__JSON_Data__c> json_data = [
-		//      select csutil__value__c
-		//      from csutil__JSON_Data__c
-		//      where Name = 'FA-Custom-Buttons'
-		//      and (csfam__Profile__c = null OR csfam__Profile__c = :profile)
-		//      order by csfam__Profile__c
-		//      NULLS LAST
-		// ];
-
 		List<csutil__JSON_Data__c> json_data = [
-				select csutil__value__c
-				from csutil__JSON_Data__c
-				where Name = 'FA-Custom-Buttons'
+		     select csutil__value__c
+		     from csutil__JSON_Data__c
+		     where Name = 'FA-Custom-Buttons'
+		     and (csutil__profile_name__c = null OR csutil__profile_name__c = :profile)
+		     order by csutil__profile_name__c
+		     NULLS LAST
 		];
+
+		// List<csutil__JSON_Data__c> json_data = [
+		// 		select csutil__value__c
+		// 		from csutil__JSON_Data__c
+		// 		where Name = 'FA-Custom-Buttons'
+		// ];
 
 		if (json_data.isEmpty()) {
 			return null;
@@ -102,20 +105,20 @@ global with sharing class FrameRateManagerController {
 
 		String profile = getUserProfile();
 
-		// List<csutil__JSON_Data__c> json_data = [
-		//      select csutil__value__c
-		//      from csutil__JSON_Data__c
-		//      where Name = 'FA-Standard-Buttons'
-		//      and (csfam__Profile__c = null OR csfam__Profile__c = :profile)
-		//      order by csfam__Profile__c
-		//      NULLS LAST
-		// ];
-
 		List<csutil__JSON_Data__c> json_data = [
-				select csutil__value__c
-				from csutil__JSON_Data__c
-				where Name = 'FA-Standard-Buttons'
+		     select csutil__value__c
+		     from csutil__JSON_Data__c
+		     where Name = 'FA-Standard-Buttons'
+		     and (csutil__profile_name__c = null OR csutil__profile_name__c = :profile)
+		     order by csutil__profile_name__c
+		     NULLS LAST
 		];
+
+		// List<csutil__JSON_Data__c> json_data = [
+		// 		select csutil__value__c
+		// 		from csutil__JSON_Data__c
+		// 		where Name = 'FA-Standard-Buttons'
+		// ];
 
 		if (json_data.isEmpty()) {
 			return null;
@@ -142,20 +145,20 @@ global with sharing class FrameRateManagerController {
 
 		String profile = getUserProfile();
 
-		// List<csutil__JSON_Data__c> json_data = [
-		//      select csutil__value__c
-		//      from csutil__JSON_Data__c
-		//      where Name = 'FA-Custom-Tabs'
-		//      and (csfam__Profile__c = null OR csfam__Profile__c = :profile)
-		//      order by csfam__Profile__c
-		//      NULLS LAST
-		// ];
-
 		List<csutil__JSON_Data__c> json_data = [
-				select csutil__value__c
-				from csutil__JSON_Data__c
-				where Name = 'FA-Custom-Tabs'
+		     select csutil__value__c
+		     from csutil__JSON_Data__c
+		     where Name = 'FA-Custom-Tabs'
+		     and (csutil__profile_name__c = null OR csutil__profile_name__c = :profile)
+		     order by csutil__profile_name__c
+		     NULLS LAST
 		];
+
+		// List<csutil__JSON_Data__c> json_data = [
+		// 		select csutil__value__c
+		// 		from csutil__JSON_Data__c
+		// 		where Name = 'FA-Custom-Tabs'
+		// ];
 
 		if (json_data.isEmpty()) {
 			return null;
@@ -1240,12 +1243,37 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static String addFaToMaster(String faId, List <String> faIds) {
+		// Check if fa is master
+
+		csconta__Frame_Agreement__c master = getFrameAgreement(faId);
+
+		if (master.csconta__agreement_level__c != 'Master Agreement') {
+			throw new AgreementNotMasterException('Frame agreement ' + faId + ' is not of level "Master Agreement" and may not recieve children.');
+		}
+
 		List < csconta__Frame_Agreement__c > faList = new List < csconta__Frame_Agreement__c > ();
 		faList = [select Id, csconta__master_frame_agreement__c from csconta__Frame_Agreement__c where Id in :faIds];
 
 		// Test validity of Id
 		for (csconta__Frame_Agreement__c fa : faList) {
 			fa.csconta__master_frame_agreement__c = faId;
+			fa.csconta__agreement_level__c = 'Frame Agreement';
+		}
+
+		upsert faList;
+		return 'Success';
+	}
+
+	@RemoteAction
+	public static String removeFaFromMaster(String faId, List <String> faIds) {
+
+		List < csconta__Frame_Agreement__c > faList = new List < csconta__Frame_Agreement__c > ();
+		faList = [select Id, csconta__master_frame_agreement__c from csconta__Frame_Agreement__c where Id in :faIds];
+
+		// Test validity of Id
+		for (csconta__Frame_Agreement__c fa : faList) {
+			fa.csconta__master_frame_agreement__c = null;
+			fa.csconta__agreement_level__c = 'Frame Agreement';
 		}
 
 		upsert faList;
@@ -1325,9 +1353,7 @@ global with sharing class FrameRateManagerController {
 		Attachment originalAttachment = getAttachment(faId);
 
 
-		if (originalAttachment == null) {
-
-		} else {
+		if (originalAttachment != null) {
 			// pCreateAttachment(Id parentId, String name, String description, Blob body, String content)
 			pCreateAttachment(cloned.Id, FAC_ATTACHMENT_NAME, FAC_ATTACHMENT_DESC, originalAttachment.Body, 'text/plain');
 		}
@@ -1369,6 +1395,9 @@ global with sharing class FrameRateManagerController {
 		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 		clonedFa.csconta__Status__c = (String) FACSettings.get('csfam__draft_status__c');
 		clonedFa.csconta__replaced_frame_agreement__c = faId;
+
+		// String attachmentBody = getAttachmentBody(faId);
+		// saveAttachment(clonedFa.Id, attachmentBody);
 
 		original.csconta__replaced_by__c = clonedFa.Id;
 		original.csconta__effective_end_date__c = datetime.now();

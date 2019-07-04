@@ -286,6 +286,7 @@ const FACSettings = {
 	// price_item_fields: "Name, cspmb__Contract_Term__c, cspmb__Price_Item_Description__c, cspmb__Is_Authorization_Required__c, CurrencyIsoCode",
 	price_item_fields: 'cspmb__Contract_Term__c',
 	show_volume_fields: true,
+	frame_agreement_fields: 'Id, csconta__Account__c',
 	decomposition_chunk_size: 2,
 	discount_as_price: true,
 	new_frame_agreement: true,
@@ -317,6 +318,7 @@ const frameAgreements = [
 		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 2',
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
 		csconta__replaced_frame_agreement__c: 'a1t1t000000EOuxAAG',
+		csconta__agreement_level__c: 'Master Agreement',
 		csfam__Arb_Field_Textarea__c:
 			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
 		csconta__Account__r: {
@@ -338,6 +340,7 @@ const frameAgreements = [
 		csfam__Arb_Field_Date__c: 1547424000000,
 		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 1dsfsdf',
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
+		csconta__agreement_level__c: 'Frame Agreement',
 		csfam__Arb_Field_Textarea__c:
 			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
 		csconta__Account__r: {
@@ -350,7 +353,7 @@ const frameAgreements = [
 		Name: 'AGR-000002',
 		csconta__Account__c: '0011t00000DSEtnAAH',
 		csconta__Agreement_Name__c: 'Frame Agreement - Test #3',
-		csconta__Status__c: 'Active',
+		csconta__Status__c: 'Draft',
 		csconta__Valid_From__c: 1547424000000,
 		csconta__Valid_To__c: 1568419200000,
 		csfam__Arb_Field_Bool__c: true,
@@ -722,6 +725,9 @@ const productData = {
 const attachment =
 	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMUYxdDAwMDAwMDFKQmpFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwM1NibkVBRSI6e319LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2Nn19LCJhMUYxdDAwMDAwMDFKQ0RFQTIiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2M319LCJhMUYxdDAwMDAwMDFKQzhFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjIzOS40MX19LCJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwMmNJTUVBWSI6eyJvbmVPZmYiOjcuNjQsInJlY3VycmluZyI6Ny43NX0sImExQTF0MDAwMDAwM1NjZkVBRSI6eyJvbmVPZmYiOjcuNDksInJlY3VycmluZyI6NzkuNDR9fSwiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6N30sImExSTF0MDAwMDAxV2t6akVBQyI6eyJyZWN1cnJpbmciOjEyfX0sIl9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxUXhyRUFFIjp7ImExTTF0MDAwMDAwQkZyVkVBVyI6MTI0Ljk5fX19fX0=';
 
+const attachmentMaster =
+	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMXQxdDAwMDAwMEEwZ09BQVMiOiJhMXQxdDAwMDAwMEEwZ09BQVMifX0';
+
 const DiscLevels = [
 	{
 		discountLevel: {
@@ -978,6 +984,7 @@ const ButtonStandardData = {
 	DeleteProducts: ['Draft', 'Requires Approval'],
 	BulkNegotiate: ['Draft', 'Requires Approval'],
 	AddProducts: ['Draft', 'Requires Approval'],
+	AddFrameAgreement: ['Draft', 'Requires Approval'],
 	NewVersion: ['Active']
 };
 
@@ -2454,13 +2461,17 @@ window.SF = SF = {
 		accounts_modal_no_assoc: '--no associated accounts',
 		btn_AddNewAgreement: 'Add new Agreement',
 		header_frameAgreementEditorTitle: 'Frame Agreement Details',
+		header_frameAgreementMasterTitle: 'Master Frame Agreement',
 		header_customDropdownPlaceholder: 'Custom',
 		btn_Save: 'Save',
 		btn_SubmitForApproval: 'Submit For Approval',
 		btn_Submit: 'Activate',
 		btn_BulkNegotiate: 'Negotiate Products',
 		btn_DeleteProducts: 'Delete Products',
+		btn_DeleteAgreements: 'Delete Agreements',
 		btn_AddProducts: 'Add Products',
+		btn_AddFa: 'Add Frame Agreements',
+		frame_agreements_title: 'Frame Agreements',
 		btn_NewVersion: 'Create New Version',
 		approval_title: 'Approval history',
 		approval_action_approve: 'Approve',
@@ -2482,6 +2493,7 @@ window.SF = SF = {
 		products_volume_minUsageComm: 'Min. usage commitment',
 		products_volume_minUsageCommPeriod: 'Min. usage commitment period',
 		products_productNameHeaderCell: 'Product name',
+		faNameHeaderCell: 'FA name',
 		products_tab_title: 'Products',
 		products_addons: 'Add-Ons',
 		products_charges: 'Charges',
@@ -2489,6 +2501,7 @@ window.SF = SF = {
 		products_rates: 'Rate Cards',
 		products_allowances: 'Allowances',
 		modal_addProduct_title: 'Add Product to Frame Agreement',
+		modal_addFa_title: 'Add Frame Agreements',
 		modal_addProduct_input_search_placeholder: 'Filter products',
 		modal_lookup_input_search_placeholder: 'Filter records...',
 		modal_categorization_switch: 'Product categorisation panel',
@@ -2530,6 +2543,8 @@ window.SF = SF = {
 		alert_btn_cancel: 'Cancel',
 		modal_charge_table_header_name: 'Name',
 		products_title_empty: 'Product Negotiation',
+		addProductCTAMessage: 'There are no Products in here',
+		addAgreementsCTAMessage: 'There are no Agreements in here',
 		save_fa_message: 'Save frame agreement before adding products!',
 		save_fa_products_message:
 			'They will be visible as soon as you create them.',
@@ -2690,7 +2705,20 @@ window.SF = SF = {
 				if (parametersArr[0] !== null) {
 					return createPromise(JSON.parse(parametersArr[1]));
 				} else {
-					return createPromise(newFA);
+					return createPromise({
+						...newFA,
+						csconta__agreement_level__c: parametersArr[1]
+					});
+				}
+
+			case 'getAttachmentBody':
+				var fa = frameAgreements.find(fa => fa.Id === parametersArr[0]);
+				var master = fa.csconta__agreement_level__c === 'Master Frame';
+
+				if (master) {
+					return createPromise(attachmentMaster, 500);
+				} else {
+					return createPromise(attachment, 500);
 				}
 
 			case 'getAttachmentBody':
@@ -2709,7 +2737,7 @@ window.SF = SF = {
 				return createPromise(true);
 
 			case 'submitForApproval': // Obsolete
-				return createPromise(getRandomFromArr([true, true, false]));
+				return createPromise(getRandomFromArr([false, true, true, true]));
 
 			case 'saveAttachment':
 				return createPromise(parametersArr[1]);

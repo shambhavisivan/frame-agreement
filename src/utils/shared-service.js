@@ -137,6 +137,14 @@ export const makeId = (n = 8) => {
 	return text;
 };
 
+export const isMaster = fa => {
+	// "Master Agreement" / "Frame Agreement"
+	return (
+		fa.hasOwnProperty('csconta__agreement_level__c') &&
+		fa.csconta__agreement_level__c === 'Master Agreement'
+	);
+};
+
 export const log = {
 	blue: log => {
 		console.log('%c' + log, 'color: #0070d2');

@@ -121,10 +121,10 @@ const negotiateDiscountCodesForProducts = async data => {
 
 	// Group codes by target to avoid wasteful looping
 	let rcl_codes = discountCodes.filter(
-		dc => dc.target_object__c === 'Rate Card Line'
+		dc => dc.csfamext__target_object__c === 'Rate Card Line'
 	);
 	let cp_codes = discountCodes.filter(
-		dc => dc.target_object__c === 'Commercial Product'
+		dc => dc.csfamext__target_object__c === 'Commercial Product'
 	);
 
 	// Generate map of original charges for product
@@ -151,18 +151,6 @@ const negotiateDiscountCodesForProducts = async data => {
 			);
 
 			_rateCardLines.forEach(rcl => {
-				// REVERT VALUES IN CASE OF REMOVAL
-				// if (resetCode && resetCode.target_object__c === 'Rate Card Line') {
-				// 	if (resetCode.records[rcl.Id]) {
-				// 		_negoArray.unshift({
-				// 			priceItemId: cp.Id,
-				// 			rateCard: rcl.cspmb__Rate_Card__c,
-				// 			rateCardLine: rcl.Id,
-				// 			value: calculateDiscount('Amount', 0, rcl.cspmb__rate_value__c)
-				// 		});
-				// 	}
-				// }
-
 				// This will be overriten for every discount code, last one will be applied
 				let _negoFormatRcl = null;
 				rcl_codes.forEach(rclc => {
@@ -172,8 +160,8 @@ const negotiateDiscountCodesForProducts = async data => {
 						_negoFormatRcl.rateCard = rcl.cspmb__Rate_Card__c;
 						_negoFormatRcl.rateCardLine = rcl.Id;
 						_negoFormatRcl.value = calculateDiscount(
-							rclc.discount_type__c,
-							rclc.rate_value__c,
+							rclc.csfamext__discount_type__c,
+							rclc.csfamext__rate_value__c,
 							rcl.cspmb__rate_value__c
 						);
 					}
@@ -181,25 +169,6 @@ const negotiateDiscountCodesForProducts = async data => {
 				_negoFormatRcl && _negoArray.push(_negoFormatRcl);
 			});
 		}
-
-		// REVERT VALUES IN CASE OF REMOVAL
-		// if (resetCode && resetCode.target_object__c === 'Commercial Product') {
-		// 	if (resetCode.records[cp.Id]) {
-		// 		let _removalData = {};
-		// 		_removalData.priceItemId = cp.Id;
-		// 		_removalData.value = {};
-
-		// 		if (resetCode.recurring_charge__c) {
-		// 			_removalData.value.recurring = _originalProductValues[cp.Id].recurring;
-		// 		}
-
-		// 		if (resetCode.one_off_charge__c) {
-		// 			_removalData.value.oneOff = _originalProductValues[cp.Id].oneOff;
-		// 		}
-
-		// 		_negoArray.unshift(_removalData);
-		// 	}
-		// }
 
 		let _negoFormatCp = null;
 		cp_codes.forEach(cpc => {
@@ -209,25 +178,25 @@ const negotiateDiscountCodesForProducts = async data => {
 				_negoFormatCp.value = {};
 
 				if (
-					cpc.hasOwnProperty('recurring_charge__c') &&
-					!!cpc.recurring_charge__c &&
+					cpc.hasOwnProperty('csfamext__recurring_charge__c') &&
+					!!cpc.csfamext__recurring_charge__c &&
 					_originalProductValues[cp.Id].hasOwnProperty('recurring')
 				) {
 					_negoFormatCp.value.recurring = calculateDiscount(
-						cpc.discount_type__c,
-						cpc.recurring_charge__c,
+						cpc.csfamext__discount_type__c,
+						cpc.csfamext__recurring_charge__c,
 						_originalProductValues[cp.Id].recurring
 					);
 				}
 
 				if (
-					cpc.hasOwnProperty('one_off_charge__c') &&
-					!!cpc.one_off_charge__c &&
+					cpc.hasOwnProperty('csfamext__one_off_charge__c') &&
+					!!cpc.csfamext__one_off_charge__c &&
 					_originalProductValues[cp.Id].hasOwnProperty('oneOff')
 				) {
 					_negoFormatCp.value.oneOff = calculateDiscount(
-						cpc.discount_type__c,
-						cpc.one_off_charge__c,
+						cpc.csfamext__discount_type__c,
+						cpc.csfamext__one_off_charge__c,
 						_originalProductValues[cp.Id].oneOff
 					);
 				}
@@ -279,7 +248,7 @@ class DiscountCodesTab extends React.Component {
 
 		let _getGroupsPromise = window.FAM.api
 			.performAction(
-				'DynamicGroupDataProvider',
+				'csfamext.DynamicGroupDataProvider',
 				'{"method": "getDynamicGroups"}'
 			)
 			.then(response => {
@@ -296,14 +265,16 @@ class DiscountCodesTab extends React.Component {
 				}
 
 				if (!errorFlag) {
-					response = response.filter(g => g.group_type__c === 'Discount Code');
+					response = response.filter(
+						g => g.csfamext__group_type__c === 'Discount Code'
+					);
 					return response;
 				}
 			});
 		// ************************************
 		let _getCustomSettingsPromise = window.FAM.api
 			.performAction(
-				'DynamicGroupDataProvider',
+				'csfamext.DynamicGroupDataProvider',
 				'{"method": "getCustomSettings"}'
 			)
 			.then(response => JSON.parse(decodeEntities(response)))
@@ -332,9 +303,11 @@ class DiscountCodesTab extends React.Component {
 			let _codesMap = {};
 			// Enrich the groups
 			_response_codes.forEach(group => {
-				group.one_off_charge__c = group.one_off_charge__c || 0;
-				group.recurring_charge__c = group.recurring_charge__c || 0;
-				group.rate_value__c = group.rate_value__c || 0;
+				group.csfamext__one_off_charge__c =
+					group.csfamext__one_off_charge__c || 0;
+				group.csfamext__recurring_charge__c =
+					group.csfamext__recurring_charge__c || 0;
+				group.csfamext__rate_value__c = group.csfamext__rate_value__c || 0;
 
 				_codesMap[group.Id] = group;
 			});
@@ -343,7 +316,7 @@ class DiscountCodesTab extends React.Component {
 				return {
 					value: group.Id,
 					label: group.Name,
-					description: group.Description__c || ''
+					description: group.csfamext__description__c || ''
 				};
 			});
 
@@ -364,11 +337,12 @@ class DiscountCodesTab extends React.Component {
 				_addedCodes = _addedCodes.filter(
 					dc =>
 						_codesMap[dc.Id] &&
-						_codesMap[dc.Id].group_type__c === 'Discount Code'
+						_codesMap[dc.Id].csfamext__group_type__c === 'Discount Code'
 				);
 				// Check if target object has changed for any added types
 				_addedCodes.forEach(dc => {
-					dc.target_object__c = _codesMap[dc.Id].target_object__c;
+					dc.csfamext__target_object__c =
+						_codesMap[dc.Id].csfamext__target_object__c;
 				});
 
 				if (_addedCodes.length !== _preFilterLength) {
@@ -430,7 +404,10 @@ class DiscountCodesTab extends React.Component {
 			_params.fromCode = fromCode;
 
 			window.FAM.api
-				.performAction('DynamicGroupDataProvider', JSON.stringify(_params))
+				.performAction(
+					'csfamext.DynamicGroupDataProvider',
+					JSON.stringify(_params)
+				)
 				.then(response => {
 					return JSON.parse(decodeEntities(response));
 				})
@@ -453,7 +430,7 @@ class DiscountCodesTab extends React.Component {
 
 	targetRecords() {
 		let fromCode = getTargetObjectCode(
-			this.state.added[this.state.open].target_object__c
+			this.state.added[this.state.open].csfamext__target_object__c
 		);
 
 		console.log('********************');
@@ -461,7 +438,7 @@ class DiscountCodesTab extends React.Component {
 
 		this.getTargetRecords(
 			fromCode,
-			this.state.added[this.state.open].Expression__c
+			this.state.added[this.state.open].csfamext__expression__c
 		).then(response => {
 			this.setState({
 				targetingResults: {
@@ -480,37 +457,39 @@ class DiscountCodesTab extends React.Component {
 
 		_group.records = {};
 
-		let fromCode = getTargetObjectCode(_group.target_object__c);
+		let fromCode = getTargetObjectCode(_group.csfamext__target_object__c);
 
-		this.getTargetRecords(fromCode, _group.Expression__c).then(response => {
-			//apply records
-			response.forEach(target => {
-				_group.records[target.Id] = target.Id;
-			});
+		this.getTargetRecords(fromCode, _group.csfamext__expression__c).then(
+			response => {
+				//apply records
+				response.forEach(target => {
+					_group.records[target.Id] = target.Id;
+				});
 
-			this.setState(
-				{
-					added: { ...this.state.added, [_group.Id]: _group },
-					targetingResults: {
-						...this.state.targetingResults,
-						[_group.Id]: response
+				this.setState(
+					{
+						added: { ...this.state.added, [_group.Id]: _group },
+						targetingResults: {
+							...this.state.targetingResults,
+							[_group.Id]: response
+						}
+					},
+					() => {
+						this.blank = '';
+						this.updateSelectListGroups();
+						this.updateCustomData().then(response => {
+							// negotiateDiscountCodesForProducts().then(r => {
+							// 	window.FAM.api.toast(
+							// 		'info',
+							// 		'Discount codes',
+							// 		'applied to ' + Object.keys(_group.records).length + ' items!'
+							// 	);
+							// });
+						});
 					}
-				},
-				() => {
-					this.blank = '';
-					this.updateSelectListGroups();
-					this.updateCustomData().then(response => {
-						// negotiateDiscountCodesForProducts().then(r => {
-						// 	window.FAM.api.toast(
-						// 		'info',
-						// 		'Discount codes',
-						// 		'applied to ' + Object.keys(_group.records).length + ' items!'
-						// 	);
-						// });
-					});
-				}
-			);
-		});
+				);
+			}
+		);
 	}
 
 	onApplyCodes() {
@@ -546,7 +525,7 @@ class DiscountCodesTab extends React.Component {
 				.map(group => ({
 					value: group.Id,
 					label: group.Name,
-					description: group.Description__c
+					description: group.csfamext__description__c
 				}))
 		});
 	}
@@ -664,11 +643,11 @@ class DiscountCodesTab extends React.Component {
 							{this.state.open === group.Id ? (
 								<div className="commercial-product-body">
 									<div className="tab-body-left">
-										{group.Expression__c ? (
+										{group.csfamext__expression__c ? (
 											<div className="input-box big">
 												<label className="dg-label">Expression</label>
 												<div className="">
-													<pre>{group.Expression__c}</pre>
+													<pre>{group.csfamext__expression__c}</pre>
 												</div>
 											</div>
 										) : null}
@@ -677,7 +656,7 @@ class DiscountCodesTab extends React.Component {
 											<div>
 												<label>Discount type</label>
 												<select
-													value={group.discount_type__c}
+													value={group.csfamext__discount_type__c}
 													placeholder="Add Dynamic Group"
 													disabled
 												>
@@ -687,7 +666,8 @@ class DiscountCodesTab extends React.Component {
 												</select>
 											</div>
 
-											{group.target_object__c === 'Commercial Product' ? (
+											{group.csfamext__target_object__c ===
+											'Commercial Product' ? (
 												<React.Fragment>
 													<div>
 														<label>One-Off charge</label>
@@ -699,11 +679,11 @@ class DiscountCodesTab extends React.Component {
 															onChange={e => {
 																this.onChangeDiscount(
 																	group.Id,
-																	'one_off_charge__c',
+																	'csfamext__one_off_charge__c',
 																	+e.target.value
 																);
 															}}
-															value={group.one_off_charge__c}
+															value={group.csfamext__one_off_charge__c}
 														/>
 													</div>
 
@@ -717,11 +697,11 @@ class DiscountCodesTab extends React.Component {
 															onChange={e => {
 																this.onChangeDiscount(
 																	group.Id,
-																	'recurring_charge__c',
+																	'csfamext__recurring_charge__c',
 																	+e.target.value
 																);
 															}}
-															value={group.recurring_charge__c}
+															value={group.csfamext__recurring_charge__c}
 														/>
 													</div>
 												</React.Fragment>
@@ -729,7 +709,7 @@ class DiscountCodesTab extends React.Component {
 												''
 											)}
 
-											{group.target_object__c === 'Rate Card Line' ? (
+											{group.csfamext__target_object__c === 'Rate Card Line' ? (
 												<div>
 													<label>Value</label>
 													<DebounceInput
@@ -740,11 +720,11 @@ class DiscountCodesTab extends React.Component {
 														onChange={e => {
 															this.onChangeDiscount(
 																group.Id,
-																'rate_value__c',
+																'csfamext__rate_value__c',
 																+e.target.value
 															);
 														}}
-														value={group.rate_value__c}
+														value={group.csfamext__rate_value__c}
 													/>
 												</div>
 											) : (
@@ -764,7 +744,8 @@ class DiscountCodesTab extends React.Component {
 												}
 												fields={
 													this.customSetting[
-														_active.target_object__c === 'Commercial Product'
+														_active.csfamext__target_object__c ===
+														'Commercial Product'
 															? 'price_item_fields'
 															: 'rcl_fields'
 													]
@@ -816,11 +797,12 @@ window.FAM.subscribe('onLoad', data => {
 window.FAM.subscribe('onFaSelect', data => {
 	return new Promise(resolve => {
 		negotiateDiscountCodesForProducts().then(r => {
-			window.FAM.api.toast(
-				'info',
-				'Discount codes',
-				'applied to ' + r + ' items!'
-			);
+			r &&
+				window.FAM.api.toast(
+					'info',
+					'Discount codes',
+					'applied to ' + r + ' items!'
+				);
 		});
 		resolve(data);
 	});

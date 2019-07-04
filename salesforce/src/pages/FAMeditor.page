@@ -63,6 +63,7 @@
 			addAccountAssociation: "{!$RemoteAction.FrameRateManagerController.addAccountAssociation}",
 			getPicklistOptions: "{!$RemoteAction.FrameRateManagerController.getPicklistOptions}",
 			addFaToMaster: "{!$RemoteAction.FrameRateManagerController.addFaToMaster}",
+			removeFaFromMaster: "{!$RemoteAction.FrameRateManagerController.removeFaFromMaster}",
 			getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
 		},
 		labels: {
@@ -83,6 +84,7 @@
 			btn_Submit: '{!$Label.btn_Submit}',
 			btn_BulkNegotiate: '{!$Label.btn_BulkNegotiate}',
 			btn_DeleteProducts: '{!$Label.btn_DeleteProducts}',
+			btn_DeleteAgreements: '{!$Label.btn_DeleteAgreements}',
 			btn_AddProducts: '{!$Label.btn_AddProducts}',
 			btn_NewVersion: '{!$Label.btn_NewVersion}',
 			approval_title: '{!$Label.approval_title}',

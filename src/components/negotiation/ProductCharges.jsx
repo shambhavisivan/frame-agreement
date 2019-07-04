@@ -5,7 +5,7 @@ import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 
-import { validateProduct } from './Validation';
+import { validateProduct } from '../../utils/validation-service';
 
 import { setValidation } from '../../actions';
 import { connect } from 'react-redux';

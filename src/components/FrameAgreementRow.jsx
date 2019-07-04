@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { isMaster } from '../utils/shared-service';
 
 import Icon from './utillity/Icon';
 
@@ -61,6 +62,8 @@ class FrameAgreementRow extends React.Component {
 	}
 
 	render() {
+		let _master = isMaster(this.props.agreement);
+
 		return (
 			<div className="fa-panel">
 				<Link
@@ -75,14 +78,11 @@ class FrameAgreementRow extends React.Component {
 							</span>
 						</div>
 						<div>
-							{this.props.agreement.csfam__Frame_Agreement_Type__c.includes(
-								'Master'
-							) ? (
+							{_master ? (
 								<span className="fa-chip fa-chip--master">Master</span>
-							) : (
-								''
-							)}
-							{this.props.agreement.csconta__Status__c ? (
+							) : null}
+
+							{!_master && this.props.agreement.csconta__Status__c ? (
 								<span className={this.statusClass}>
 									{this.props.agreement.csconta__Status__c}
 								</span>

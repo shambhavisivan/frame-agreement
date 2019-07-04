@@ -5,16 +5,10 @@ import Icon from '../Icon';
 class Toggle extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			value: this.props.value
-		};
 	}
 
 	onChange(val) {
-		this.setState({
-			value: val || false
-		});
-		this.props.onChange(val);
+		this.props.onChange(val || false);
 	}
 
 	render() {
@@ -23,8 +17,8 @@ class Toggle extends React.Component {
 				<input
 					className="switch-checkbox"
 					type="checkbox"
-					onClick={() => this.onChange(!this.state.value)}
-					value={this.state.value}
+					onChange={() => this.onChange(!this.props.value)}
+					checked={this.props.value}
 					disabled={this.props.disabled}
 				/>
 				<span className="switch-style" />

@@ -87,7 +87,7 @@ class CommercialProductsTab extends React.Component {
 							/>
 							<DropdownCheckbox
 								options={this.props.productFields}
-								onChange={this.props.toggleVisibility}
+								onChange={this.props.toggleFieldVisibility}
 							/>
 						</div>
 					</div>

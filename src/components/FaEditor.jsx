@@ -17,7 +17,7 @@ import {
 
 import { publish } from '../api';
 
-import { truncateCPField, log } from '../utils/shared-service';
+import { truncateCPField, log, isMaster } from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
 import ApprovalProcess from './ApprovalProcess';
@@ -50,6 +50,7 @@ class FaEditor extends Component {
 		this.onRemoveProducts = this.onRemoveProducts.bind(this);
 		this.toggleVisibility = this.toggleVisibility.bind(this);
 		this.onActionTaken = this.onActionTaken.bind(this);
+		this._setState = this._setState.bind(this);
 
 		// ****************************************** API ******************************************
 		window.FAM.api.getActiveFrameAgreement = () =>
@@ -67,10 +68,7 @@ class FaEditor extends Component {
 			window.location.reload();
 		}
 
-		if (
-			this.props.frameAgreements[this.faId].csfam__Frame_Agreement_Type__c ===
-			'Master Frame Agreement'
-		) {
+		if (isMaster(this.props.frameAgreements[this.faId])) {
 			this.props.history.push('/master/' + this.faId);
 		}
 
@@ -89,6 +87,8 @@ class FaEditor extends Component {
 	}
 
 	componentWillUnmount() {
+		this.mounted = false;
+
 		delete window.FAM.api.getActiveFrameAgreement;
 		for (var key in SUBSCRIPTIONS) {
 			SUBSCRIPTIONS[key].unsubscribe();
@@ -96,12 +96,13 @@ class FaEditor extends Component {
 	}
 
 	componentWillMount() {
+		this.mounted = true;
 		// Disable onLeavePage prompt when saved
 		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(
 			'onAfterSaveFrameAgreement',
 			data => {
 				return new Promise(resolve => {
-					this.setState({
+					this._setState({
 						actionTaken: false
 					});
 					resolve(data);
@@ -111,7 +112,7 @@ class FaEditor extends Component {
 		// Enable save on events
 		SUBSCRIPTIONS['sub2'] = window.FAM.subscribe('onAfterAddProducts', data => {
 			return new Promise(resolve => {
-				this.setState({
+				this._setState({
 					actionTaken: true
 				});
 				resolve(data);
@@ -122,7 +123,7 @@ class FaEditor extends Component {
 			'onAfterBulkNegotiation',
 			data => {
 				return new Promise(resolve => {
-					this.setState({
+					this._setState({
 						actionTaken: true
 					});
 					resolve(data);
@@ -134,7 +135,7 @@ class FaEditor extends Component {
 			'onAfterDeleteProducts',
 			data => {
 				return new Promise(resolve => {
-					this.setState({
+					this._setState({
 						actionTaken: true
 					});
 					resolve(data);
@@ -159,18 +160,17 @@ class FaEditor extends Component {
 				// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
 				this.props.getCommercialProductData(IdsToLoad).then(async r => {
 					await this.props.addProductsToFa(this.faId, IdsToLoad);
-					this.setState(
+					this._setState(
 						{ loading: { ...this.state.loading, attachment: false } },
 						() => {
 							publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
 						}
 					);
-					publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
 					this.props.validateFrameAgreement(this.faId);
 				});
 			});
 		} else {
-			this.setState(
+			this._setState(
 				{
 					loading: {
 						...this.state.loading,
@@ -209,8 +209,16 @@ class FaEditor extends Component {
 		} catch (e) {}
 	}
 
+	_setState(newState, callback) {
+		if (this.mounted) {
+			this.setState(newState, () => {
+				callback ? callback() : null;
+			});
+		}
+	}
+
 	onActionTaken() {
-		this.setState({
+		this._setState({
 			actionTaken: true
 		});
 	}
@@ -243,7 +251,7 @@ class FaEditor extends Component {
 
 			await this.props.removeProductsFromFa(this.faId, productsToDelete);
 
-			this.setState(
+			this._setState(
 				{
 					selectedProducts: {}
 				},
@@ -268,7 +276,7 @@ class FaEditor extends Component {
 		} else {
 			selectedProducts[product.Id] = product;
 		}
-		this.setState({
+		this._setState({
 			selectedProducts
 		});
 	}
@@ -286,7 +294,7 @@ class FaEditor extends Component {
 			});
 		}
 
-		this.setState({
+		this._setState({
 			selectedProducts
 		});
 	}
@@ -301,7 +309,7 @@ class FaEditor extends Component {
 
 		this.props.negotiate(this.faId, priceItemId, type, data);
 
-		this.setState(
+		this._setState(
 			{
 				actionTaken: true
 			},
@@ -329,7 +337,7 @@ class FaEditor extends Component {
 		this.props
 			.saveFrameAgreement(data)
 			.then(async responseArr => {
-				this.setState({
+				this._setState({
 					actionTaken: false
 				});
 				return responseArr;

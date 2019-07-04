@@ -172,7 +172,7 @@ class DropdownNegotiate extends React.Component {
 									this.setState({ fixed: !this.state.fixed });
 								}}
 							>
-								<div>{window.SF.labels.util_negotiation_input_diff_label} </div>
+								<div>{window.SF.labels.util_negotiation_input_diff_label}</div>
 								{_discount}
 							</div>
 						</div>

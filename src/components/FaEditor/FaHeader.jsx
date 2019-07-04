@@ -11,6 +11,7 @@ import {
 	undoDecomposition,
 	getApprovalHistory,
 	refreshFrameAgreement,
+	setFrameAgreementState,
 	createNewVersionOfFrameAgrement
 } from '../../actions';
 
@@ -19,6 +20,7 @@ import Icon from '../utillity/Icon';
 import CustomButtonDropdown from '../utillity/CustomButtonDropdown';
 
 import ActionIframe from '../modals/ActionIframe';
+import { isMaster } from '../../utils/shared-service';
 
 class FaHeader extends React.Component {
 	constructor(props) {
@@ -350,9 +352,7 @@ class FaHeader extends React.Component {
 				this.props.frameAgreements[this.props.faId].csconta__Status__c
 			) || !this.props.frameAgreements[this.props.faId].Id;
 
-		let master = this.props.frameAgreements[
-			this.props.faId
-		].csfam__Frame_Agreement_Type__c.includes('Master');
+		let master = isMaster(this.props.frameAgreements[this.props.faId]);
 
 		let headerClass = _editable ? '' : ' error fa-disabled';
 		headerClass +=
@@ -406,22 +406,23 @@ class FaHeader extends React.Component {
 								{window.SF.labels.btn_Save}
 							</button>
 						)}
-						{this.props.settings.ButtonStandardData.SubmitForApproval.has(
-							this.props.frameAgreements[this.props.faId].csconta__Status__c
-						) && (
-							<button
-								className="fa-button fa-button--transparent"
-								disabled={
-									!this.props.frameAgreements[this.props.faId]._ui
-										.approvalNeeded ||
-									!this.props.frameAgreements[this.props.faId]._ui
-										.commercialProducts.length
-								}
-								onClick={this.onSubmitForApproval}
-							>
-								{window.SF.labels.btn_SubmitForApproval}
-							</button>
-						)}
+						{!master &&
+							this.props.settings.ButtonStandardData.SubmitForApproval.has(
+								this.props.frameAgreements[this.props.faId].csconta__Status__c
+							) && (
+								<button
+									className="fa-button fa-button--transparent"
+									disabled={
+										!this.props.frameAgreements[this.props.faId]._ui
+											.approvalNeeded ||
+										!this.props.frameAgreements[this.props.faId]._ui
+											.commercialProducts.length
+									}
+									onClick={this.onSubmitForApproval}
+								>
+									{window.SF.labels.btn_SubmitForApproval}
+								</button>
+							)}
 						{this.props.settings.ButtonStandardData.Submit.has(
 							this.props.frameAgreements[this.props.faId].csconta__Status__c
 						) &&
@@ -471,12 +472,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
 	createToast,
+	createPricingRuleGroup,
 	saveFrameAgreement,
 	decomposeAttachment,
 	refreshFrameAgreement,
 	submitForApproval,
 	getApprovalHistory,
 	undoDecomposition,
+	setFrameAgreementState,
 	createNewVersionOfFrameAgrement
 };
 

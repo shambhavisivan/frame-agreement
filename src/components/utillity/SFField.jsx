@@ -42,9 +42,6 @@ class SFField extends Component {
 					disabled={!this.props.editable}
 					type={this.props.field.type}
 					onChange={this.onChange}
-					onBlur={() => {
-						this.setState({ edit: false });
-					}}
 					value={this.props.value}
 				/>
 			);
@@ -61,9 +58,6 @@ class SFField extends Component {
 				<InputTextArea
 					disabled={!this.props.editable}
 					onChange={this.onChange}
-					onBlur={() => {
-						this.setState({ edit: false });
-					}}
 					value={this.props.value}
 				/>
 			);

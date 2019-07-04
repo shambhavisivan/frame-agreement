@@ -56,7 +56,11 @@ class FaTabs extends React.Component {
 				</Tabs>
 			);
 		} else {
-			customTabs = <React.Fragment>{this.props.children}</React.Fragment>;
+			customTabs = this.props.loading ? (
+				<CommercialProductSkeleton count={5} />
+			) : (
+				<React.Fragment>{this.props.children}</React.Fragment>
+			);
 		}
 
 		return customTabs;

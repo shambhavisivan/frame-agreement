@@ -24,6 +24,15 @@ import CustomButtonDropdown from './utillity/CustomButtonDropdown';
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsModal from './modals/AccountsModal';
 
+const faSort = (ob1, ob2) => {
+	if (ob1.LastModifiedDate < ob2.LastModifiedDate) {
+		return 1;
+	} else if (ob1.LastModifiedDate > ob2.LastModifiedDate) {
+		return -1;
+	}
+	return 0;
+};
+
 class FrameAgreement {
 	constructor(status, type) {
 		this.Id = null;
@@ -33,7 +42,7 @@ class FrameAgreement {
 		this.csconta__Status__c = status;
 		this.csconta__Valid_From__c = null;
 		this.csconta__Valid_To__c = null;
-		this.csfam__Frame_Agreement_Type__c = type;
+		this.csconta__agreement_level__c = type;
 		this._ui = {
 			approval: {
 				listProcess: []
@@ -84,8 +93,7 @@ class FaList extends Component {
 	}
 
 	createFrameAgreement(type) {
-		type =
-			type === 'master' ? 'Master Frame Agreement' : 'Child Frame Agreement';
+		type = type === 'master' ? 'Master Agreement' : 'Frame Agreement';
 		let newFa = new FrameAgreement(
 			this.props.settings.FACSettings.statuses.draft_status,
 			type
@@ -190,13 +198,13 @@ class FaList extends Component {
 		let _createFaDropdownData = [
 			{
 				type: 'child',
-				label: 'Child',
+				label: 'Frame Agreement',
 				id: 'createnewchild',
 				method: null
 			},
 			{
 				type: 'master',
-				label: 'Master',
+				label: 'Master Agreement',
 				id: 'createnewmaster',
 				method: null
 			}
@@ -240,24 +248,18 @@ class FaList extends Component {
 								<InputSearch onChange={this.onSearchChange} bordered={true} />
 
 								{this.props.settings.FACSettings.new_frame_agreement ? (
-									<button
-										className="fa-button fa-button--brand"
-										onClick={this.createFrameAgreement}
-									>
-										{window.SF.labels.btn_AddNewAgreement}
-									</button>
+									<CustomButtonDropdown
+										className="fa-dropdown"
+										brand={true}
+										label={window.SF.labels.btn_AddNewAgreement}
+										buttons={_createFaDropdownData}
+										onAction={(method, type) => {
+											this.createFrameAgreement(type);
+										}}
+									/>
 								) : (
 									''
 								)}
-
-								<CustomButtonDropdown
-									className="fa-dropdown"
-									brand={true}
-									buttons={_createFaDropdownData}
-									onAction={(method, type) => {
-										this.createFrameAgreement(type);
-									}}
-								/>
 
 								{customButtonContainer}
 							</div>
@@ -267,6 +269,7 @@ class FaList extends Component {
 				<div className="fa-main-body">
 					<div className="fa-main-body__inner">
 						{Object.values(this.props.frameAgreements)
+							.sort(faSort)
 							.filter(fa => {
 								if (this.state.searchTerm) {
 									if (

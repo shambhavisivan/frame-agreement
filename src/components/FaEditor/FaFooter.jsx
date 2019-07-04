@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Icon from '../utillity/Icon';
+import { isMaster } from '../../utils/shared-service';
 
 import { publish } from '../../api';
 
@@ -65,8 +66,7 @@ class FaFooter extends React.Component {
 
 	render() {
 		let _fa = this.props.frameAgreements[this.props.faId];
-		let master =
-			_fa.csfam__Frame_Agreement_Type__c === 'Master Frame Agreement';
+		let master = isMaster(_fa);
 
 		if (!_fa._ui.commercialProducts.length && !master) {
 			return null;
@@ -129,7 +129,9 @@ class FaFooter extends React.Component {
 					>
 						<Icon name="delete" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">
-							{window.SF.labels.btn_DeleteProducts}
+							{master
+								? window.SF.labels.btn_DeleteAgreements
+								: window.SF.labels.btn_DeleteProducts}
 						</span>
 					</button>
 				)}

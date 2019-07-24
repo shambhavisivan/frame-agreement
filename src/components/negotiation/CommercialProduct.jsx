@@ -31,13 +31,6 @@ class CommercialProduct extends React.Component {
 	constructor(props) {
 		super(props);
 
-		// if (this.props.settings.FACSettings.show_volume_fields) {
-		//   this.fields.push("Minimum vol.");
-		//   this.fields.push("Minimum vol. period");
-		//   this.fields.push("Minimum usage commitment");
-		//   this.fields.push("Minimum usage commitment period");
-		// }
-
 		this.onExpandProduct = this.onExpandProduct.bind(this);
 
 		this.productId = this.props.product.Id;
@@ -47,41 +40,6 @@ class CommercialProduct extends React.Component {
 			loading: false,
 			open: false
 		};
-
-		// let bulkValidation = {};
-		// bulkValidation[this.productId] = {
-		// 	addons: validateAddons(
-		// 		this.props.product._addons,
-		// 		this.props.attachment._addons || {}
-		// 	),
-		// 	rated: validateRateCardLines(
-		// 		this.props.product._rateCards,
-		// 		this.props.attachment._rateCards || {}
-		// 	)
-		// };
-
-		// if (this.props.product._charges.length) {
-		// 	bulkValidation[this.productId].charges = validateCharges(
-		// 		this.props.product._charges,
-		// 		this.props.product.cspmb__Authorization_Level__c,
-		// 		this.props.attachment._charges || {}
-		// 	);
-		// } else {
-		// 	bulkValidation[this.productId].product = validateProduct({
-		// 		oneOff: this.props.product.cspmb__One_Off_Charge__c,
-		// 		negotiatedOneOff: this.props.attachment._product
-		// 			? this.props.attachment._product.oneOff
-		// 			: null,
-		// 		recurring: this.props.product.cspmb__Recurring_Charge__c,
-		// 		negotiatedRecurring: this.props.attachment._product
-		// 			? this.props.attachment._product.recurring
-		// 			: null,
-		// 		authLevel: this.props.product.cspmb__Authorization_Level__c || null,
-		// 		Name: this.props.product.Name
-		// 	});
-		// }
-
-		// this.props.setValidation(this.props.faId, bulkValidation);
 	}
 
 	onExpandProduct(e) {

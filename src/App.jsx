@@ -184,7 +184,7 @@ class App extends Component {
 					_attachment = _fa._ui.attachment.custom;
 					_attachment = JSON.parse(_attachment || '{}');
 				} catch (err) {
-					console.warn('Attachemnt not loaded for FA:', faId);
+					console.warn('Attachemnt cannot be loaded for FA:', faId);
 					console.warn(err);
 					reject(null);
 				}

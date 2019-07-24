@@ -1086,6 +1086,13 @@ const rootReducer = (state = initialState, action) => {
 						}
 					} else {
 						failure = true;
+						error.message =
+							'Missing crucial fields on discount level ' + dl.levelId;
+						error.targets = [
+							'cspmb__Discount_Increment__c',
+							'cspmb__Maximum_Discount_Value__c',
+							'cspmb__Minimum_Discount_Value__c'
+						];
 					}
 
 					if (!failure) {
@@ -1263,7 +1270,9 @@ const rootReducer = (state = initialState, action) => {
 
 			state.commercialProducts.forEach(cp => {
 				if (productIds.has(cp.Id)) {
-					_attachment.products[cp.Id] = enrichAttachment(cp);
+					if (!_attachment.products.hasOwnProperty(cp.Id)) {
+						_attachment.products[cp.Id] = enrichAttachment(cp);
+					}
 					newCps.push(cp);
 				}
 			});

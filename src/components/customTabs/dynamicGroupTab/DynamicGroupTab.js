@@ -134,16 +134,7 @@ class DynamicGroupTab extends React.Component {
 				};
 			});
 
-			let _addedGroups = [];
-
-			try {
-				_addedGroups = _response_data.group;
-			} catch (err) {
-				console.warn('Cannot parse discount codes from attachment.');
-				console.warn(_response_data);
-				console.warn('********************************************');
-				_addedGroups = [];
-			}
+			let _addedGroups = _response_data.group || [];
 
 			(() => {
 				let _preFilterLength = _addedGroups.length;
@@ -157,6 +148,8 @@ class DynamicGroupTab extends React.Component {
 				_addedGroups.forEach(dc => {
 					dc.csfamext__target_object__c =
 						_groupsMap[dc.Id].csfamext__target_object__c;
+					dc.csfamext__fam_editable__c =
+						_groupsMap[dc.Id].csfamext__fam_editable__c;
 				});
 
 				if (_addedGroups.length !== _preFilterLength) {
@@ -230,6 +223,7 @@ class DynamicGroupTab extends React.Component {
 
 		this.setState(
 			{
+				open: null,
 				added: { ...this.state.added, [_group.Id]: _group }
 			},
 			() => {
@@ -303,7 +297,7 @@ class DynamicGroupTab extends React.Component {
 		let _logic = this.state.added[dgId].logic;
 		let _circuits = this.state.added[dgId].circuits;
 
-		if (_logic && _logic.length >= 5) {
+		if (_logic && _logic.length >= 1) {
 			const generateCircuitString = index => {
 				let circ = _circuits[index];
 				let _circuitString = '[' + index + ']';
@@ -471,6 +465,21 @@ class DynamicGroupTab extends React.Component {
 			.then(
 				response => {
 					console.log(response);
+
+					if (response.hasOwnProperty('error')) {
+
+						let _errArr = response.error.split(': ');
+						let _errTitle = _errArr.splice(0,1);
+						let _errBody = _errArr.join(': ');
+
+						window.FAM.api.toast(
+							'error',
+							_errTitle,
+							_errBody
+						);
+					}
+
+
 					response.results = response.results || [];
 
 					let _results = response.results.map(cp => {

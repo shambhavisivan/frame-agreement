@@ -85,10 +85,12 @@ class CommercialProductsTab extends React.Component {
 								}}
 								placeholder={window.SF.labels.input_quickSearchPlaceholder}
 							/>
-							<DropdownCheckbox
-								options={this.props.productFields}
-								onChange={this.props.toggleFieldVisibility}
-							/>
+							{this.props.productFields.length ? (
+								<DropdownCheckbox
+									options={this.props.productFields}
+									onChange={this.props.toggleFieldVisibility}
+								/>
+							) : null}
 						</div>
 					</div>
 					<div className="product-card__container commercial-product-container-bare product-card__container--header">

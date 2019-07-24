@@ -320,16 +320,7 @@ class DiscountCodesTab extends React.Component {
 				};
 			});
 
-			let _addedCodes = _response_data.codes;
-
-			// try {
-			// 	_addedCodes = JSON.parse(_response_data).codes || [];
-			// } catch (err) {
-			// 	console.warn('Cannot parse groups from attachment.');
-			// 	console.warn(_response_data);
-			// 	console.warn('********************************************');
-			// 	_addedCodes = [];
-			// }
+			let _addedCodes = _response_data.codes || [];
 
 			(() => {
 				let _preFilterLength = _addedCodes.length;

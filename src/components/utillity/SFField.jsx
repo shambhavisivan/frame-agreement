@@ -30,7 +30,7 @@ class SFField extends Component {
 					disabled={!this.props.editable}
 					initialDate={this.props.value}
 					onDateChange={this.onChange}
-					placeholderText="Enter date from"
+					placeholderText={this.props.editable ? 'Enter date from' : '-'}
 				/>
 			);
 		} else if (
@@ -76,6 +76,7 @@ class SFField extends Component {
 					className="fa-select fa-input-border"
 					value={this.props.value}
 					onChange={e => this.onChange(e.target.value)}
+					disabled={!this.props.editable}
 				>
 					<option value="">-none</option>
 					{this.props.field.options.map(option => {

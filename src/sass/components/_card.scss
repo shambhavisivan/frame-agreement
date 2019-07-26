@@ -75,7 +75,7 @@
 						@include sbg(--transparent);
 						@include css4 {
 							border-top: 1px solid cvar(--transparent);
-							border-bottom: 1px solid cvar(--transparent);
+							border-bottom: 1px solid cvar(--main-bg);
 						}
 
 						&:focus {

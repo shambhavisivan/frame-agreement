@@ -157,6 +157,32 @@ export const log = {
 	},
 	orange: log => {
 		console.log('%c' + log, 'color: #ffa429');
+	},
+	bg: {
+		blue: log => {
+			console.log(
+				'%c' + log,
+				'background: #0070d2; color: white; padding: 1px 4px 1px 0px'
+			);
+		},
+		green: log => {
+			console.log(
+				'%c' + log,
+				'background: #4bca81; color: white; padding: 1px 4px 1px 0px'
+			);
+		},
+		red: log => {
+			console.log(
+				'%c' + log,
+				'background: #d9675d; color: white; padding: 1px 4px 1px 0px'
+			);
+		},
+		orange: log => {
+			console.log(
+				'%c' + log,
+				'background: #ffa429; color: white; padding: 1px 4px 1px 0px'
+			);
+		}
 	}
 };
 

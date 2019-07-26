@@ -22,6 +22,9 @@ class InputTextArea extends React.Component {
 		return (
 			<textarea
 				disabled={this.props.disabled}
+				placeholder={
+					this.props.disabled ? '-' : window.SF.labels.util_input_text_enter
+				}
 				spellCheck="false"
 				onKeyPress={this._handleKeyPress}
 				className="fa-input-border"

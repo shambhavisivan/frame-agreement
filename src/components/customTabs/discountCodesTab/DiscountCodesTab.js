@@ -5,12 +5,14 @@ import Select from 'react-select';
 
 import {
 	decodeEntities,
-	IsJsonString,
-	makeId,
+	log,
 	truncateCPField
 } from '../../../utils/shared-service';
 import Icon from '../../utillity/Icon';
 import DGTargets from '../utility/DGTargets';
+
+import CommercialProductSkeleton from '../../skeletons/CommercialProductSkeleton';
+
 import { CustomOption, filterOptions } from '../utility/CustomOption';
 
 import '../utility/customTabs.scss';
@@ -62,7 +64,7 @@ const negotiateDiscountCodesForProducts = async data => {
 	let _commercialProducts;
 	let active_fa = await window.FAM.api.getActiveFrameAgreement();
 
-	window.FAM.api.resetNegotiation(active_fa.Id);
+	// window.FAM.api.resetNegotiation(active_fa.Id);
 
 	if (!data) {
 		_commercialProducts = active_fa._ui.commercialProducts;
@@ -118,6 +120,9 @@ const negotiateDiscountCodesForProducts = async data => {
 		Promise.resolve(data);
 		return;
 	}
+
+	window.FAM.api.resetNegotiation(active_fa.Id);
+	log.bg.red('---NEGOTIATION RESET');
 
 	// Group codes by target to avoid wasteful looping
 	let rcl_codes = discountCodes.filter(
@@ -404,6 +409,14 @@ class DiscountCodesTab extends React.Component {
 				})
 				.then(
 					response => {
+						if (response.hasOwnProperty('error')) {
+							let _errArr = response.error.split(': ');
+							let _errTitle = _errArr.splice(0, 1);
+							let _errBody = _errArr.join(': ');
+
+							window.FAM.api.toast('error', _errTitle, _errBody, 8000);
+						}
+
 						response.results = response.results || [];
 
 						let _results = response.results.map(cp => {
@@ -554,7 +567,7 @@ class DiscountCodesTab extends React.Component {
 		let _active = this.state.added[this.state.open];
 
 		if (this.state.loading) {
-			return null;
+			return <CommercialProductSkeleton count={1} />;
 		}
 
 		return (

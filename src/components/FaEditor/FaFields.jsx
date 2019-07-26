@@ -16,9 +16,6 @@ class FaFields extends React.Component {
 		// this.props.editable
 
 		this.onFieldChange = this.onFieldChange.bind(this);
-		this.editable = this.props.settings.FACSettings.fa_editable_statuses.has(
-			this.props.frameAgreements[this.props.faId].csconta__Status__c
-		);
 	}
 
 	// componentWillUpdate(a,b) {
@@ -34,6 +31,10 @@ class FaFields extends React.Component {
 
 	render() {
 		let _faFields = '';
+		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
+			this.props.frameAgreements[this.props.faId].csconta__Status__c
+		);
+
 		if (this.props.frameAgreements[this.props.faId]._ui.headerRows.length) {
 			_faFields = (
 				<section className="card basket-details-card">
@@ -45,10 +46,9 @@ class FaFields extends React.Component {
 									key={'header-row-' + i}
 								>
 									{row.map(f => {
-										var editable = !f.readOnly && this.editable;
 										return (
 											<SFField
-												editable={editable}
+												editable={!f.readOnly && _editable}
 												onChange={this.onFieldChange}
 												key={f.field}
 												field={f}

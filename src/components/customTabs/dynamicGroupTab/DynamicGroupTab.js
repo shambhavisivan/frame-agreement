@@ -9,10 +9,11 @@ import {
 	makeId,
 	truncateCPField
 } from '../../../utils/shared-service';
-import Checkbox from '../../utillity/inputs/Checkbox';
 import Icon from '../../utillity/Icon';
 import LogicForm from '../utility/LogicForm';
 import DGTargets from '../utility/DGTargets';
+
+import CommercialProductSkeleton from '../../skeletons/CommercialProductSkeleton';
 
 import { CustomOption, filterOptions } from '../utility/CustomOption';
 
@@ -467,18 +468,12 @@ class DynamicGroupTab extends React.Component {
 					console.log(response);
 
 					if (response.hasOwnProperty('error')) {
-
 						let _errArr = response.error.split(': ');
-						let _errTitle = _errArr.splice(0,1);
+						let _errTitle = _errArr.splice(0, 1);
 						let _errBody = _errArr.join(': ');
 
-						window.FAM.api.toast(
-							'error',
-							_errTitle,
-							_errBody
-						);
+						window.FAM.api.toast('error', _errTitle, _errBody, 8000);
 					}
-
 
 					response.results = response.results || [];
 
@@ -503,7 +498,7 @@ class DynamicGroupTab extends React.Component {
 		let _active = this.state.added[this.state.open];
 
 		return this.state.loading ? (
-			''
+			<CommercialProductSkeleton count={1} />
 		) : (
 			<div id="dynamic-group-tab" className="card products-card">
 				<div className="products-card__inner">
@@ -757,7 +752,7 @@ class DynamicGroupTab extends React.Component {
 												</React.Fragment>
 											) : (
 												<div>
-													<label>Recurring charge</label>
+													<label>Value</label>
 													<DebounceInput
 														debounceTimeout={300}
 														minLength={1}
@@ -767,11 +762,11 @@ class DynamicGroupTab extends React.Component {
 														onChange={e => {
 															this.onChangeDiscount(
 																group.Id,
-																'csfamext__recurring_charge__c',
+																'csfamext__rate_value__c',
 																+e.target.value
 															);
 														}}
-														value={group.csfamext__recurring_charge__c}
+														value={group.csfamext__rate_value__c}
 													/>
 												</div>
 											)}

@@ -65,7 +65,8 @@ class App extends Component {
 				if (_productsSet.has(cp.Id)) {
 					// _attachment[cp.Id] = {};
 					if (!cp._dataLoaded) {
-						return acc.concat([cp.Id]);
+						// return acc.concat([cp.Id]);
+						return [...acc, ...[cp.Id]];
 					} else {
 						return acc;
 					}
@@ -74,19 +75,14 @@ class App extends Component {
 				}
 			}, []);
 
-			let IdsToAdd = [...IdsToLoad];
-
 			// IF not, load attachment for FA
 			if (this.props.frameAgreements[faId]._ui.attachment === null) {
 				let resp_attachment = await this.props.getAttachment(faId);
-				IdsToLoad = IdsToAdd = [
-					...IdsToLoad,
-					...Object.keys(resp_attachment.products)
-				];
+				IdsToLoad = [...IdsToLoad, ...Object.keys(resp_attachment.products)];
 			}
 
 			await this.props.getCommercialProductData(IdsToLoad);
-			await this.props.addProductsToFa(faId, IdsToAdd);
+			await this.props.addProductsToFa(faId, products);
 
 			publish(
 				'onAfterAddProducts',

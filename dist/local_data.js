@@ -284,7 +284,7 @@ const approval2 = {
 const FACSettings = {
 	fa_editable_statuses: 'Draft',
 	// price_item_fields: "Name, cspmb__Contract_Term__c, cspmb__Price_Item_Description__c, cspmb__Is_Authorization_Required__c, CurrencyIsoCode",
-	price_item_fields: 'cspmb__Contract_Term__c',
+	price_item_fields: 'Id, cspmb__Contract_Term__c',
 	show_volume_fields: true,
 	frame_agreement_fields: 'Id, csconta__Account__c',
 	decomposition_chunk_size: 2,

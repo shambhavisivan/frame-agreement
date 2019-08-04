@@ -1277,6 +1277,12 @@ const rootReducer = (state = initialState, action) => {
 				}
 			});
 
+			newCps = new Set([
+				...state.frameAgreements[faId]._ui.commercialProducts,
+				...newCps
+			]);
+			newCps = Array.from(newCps);
+
 			return {
 				...state,
 				frameAgreements: {
@@ -1286,10 +1292,7 @@ const rootReducer = (state = initialState, action) => {
 						_ui: {
 							...state.frameAgreements[faId]._ui,
 							attachment: _attachment,
-							commercialProducts: [
-								...state.frameAgreements[faId]._ui.commercialProducts,
-								...newCps
-							]
+							commercialProducts: newCps
 						}
 					}
 				}

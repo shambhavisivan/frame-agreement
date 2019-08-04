@@ -28,6 +28,7 @@ class FaHeader extends React.Component {
 		this.createNewVersion = this.createNewVersion.bind(this);
 		this.onDecompose = this.onDecompose.bind(this);
 		this.onSubmitForApproval = this.onSubmitForApproval.bind(this);
+		this.callHandler = this.callHandler.bind(this);
 		// this.props.faId
 		this.editable =
 			this.props.settings.FACSettings.fa_editable_statuses.has(

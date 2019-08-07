@@ -467,7 +467,25 @@ class ProductModal extends Component {
 												{this.priceItemFields.map(f => {
 													return (
 														<span key={cp.Id + '-' + f.name}>
-															{cp[f.name] || '-'}
+															{(() => {
+																if (cp.hasOwnProperty(f.name)) {
+																	if (typeof cp[f.name] === 'boolean') {
+																		let _val = cp[f.name];
+																		return (
+																			<Icon
+																				name={_val ? 'success' : 'clear'}
+																				height="14"
+																				width="14"
+																				color={_val ? '#4bca81' : '#d9675d'}
+																			/>
+																		);
+																	} else {
+																		return cp[f.name].toString();
+																	}
+																} else {
+																	return '-';
+																}
+															})()}
 														</span>
 													);
 												})}

@@ -165,9 +165,25 @@ class CommercialProduct extends React.Component {
 											onClick={this.onExpandProduct}
 											key={'facp-' + this.props.product.Id + '-' + f + i}
 										>
-											{this.props.product.hasOwnProperty(f.name)
-												? this.props.product[f.name].toString()
-												: '-'}
+											{(() => {
+												if (this.props.product.hasOwnProperty(f.name)) {
+													if (typeof this.props.product[f.name] === 'boolean') {
+														let _val = this.props.product[f.name];
+														return (
+															<Icon
+																name={_val ? 'success' : 'clear'}
+																height="18"
+																width="18"
+																color={_val ? '#4bca81' : '#d9675d'}
+															/>
+														);
+													} else {
+														return this.props.product[f.name].toString();
+													}
+												} else {
+													return '-';
+												}
+											})()}
 										</div>
 									);
 								}

@@ -175,40 +175,77 @@ const negotiateDiscountCodesForProducts = async data => {
 			});
 		}
 
-		let _negoFormatCp = null;
-		cp_codes.forEach(cpc => {
-			if (cpc.records[cp.Id]) {
-				_negoFormatCp = {};
-				_negoFormatCp.priceItemId = cp.Id;
-				_negoFormatCp.value = {};
+		if (cp._charges.length) {
+			// Apply to charges
 
-				if (
-					cpc.hasOwnProperty('csfamext__recurring_charge__c') &&
-					!!cpc.csfamext__recurring_charge__c &&
-					_originalProductValues[cp.Id].hasOwnProperty('recurring')
-				) {
-					_negoFormatCp.value.recurring = calculateDiscount(
-						cpc.csfamext__discount_type__c,
-						cpc.csfamext__recurring_charge__c,
-						_originalProductValues[cp.Id].recurring
-					);
+			cp._charges.forEach(charge => {
+				cp_codes.forEach(cpc => {
+					if (cpc.records[cp.Id]) {
+						let _negoFormatCharge = {};
+						_negoFormatCharge.priceItemId = cp.Id;
+						_negoFormatCharge.charge = charge.Id;
+						_negoFormatCharge.value = {};
+
+						if (
+							!!cpc.csfamext__recurring_charge__c &&
+							charge.hasOwnProperty('recurring')
+						) {
+							_negoFormatCharge.value.recurring = calculateDiscount(
+								cpc.csfamext__discount_type__c,
+								cpc.csfamext__recurring_charge__c,
+								charge.recurring
+							);
+						}
+
+						if (
+							!!cpc.csfamext__one_off_charge__c &&
+							charge.hasOwnProperty('oneOff')
+						) {
+							_negoFormatCharge.value.oneOff = calculateDiscount(
+								cpc.csfamext__discount_type__c,
+								cpc.csfamext__one_off_charge__c,
+								charge.oneOff
+							);
+						}
+
+						_negoArray.push(_negoFormatCharge);
+					}
+				});
+			});
+		} else {
+			// Apply to product charges
+			cp_codes.forEach(cpc => {
+				if (cpc.records[cp.Id]) {
+					let _negoFormatCp = {};
+					_negoFormatCp.priceItemId = cp.Id;
+					_negoFormatCp.value = {};
+
+					if (
+						!!cpc.csfamext__recurring_charge__c &&
+						_originalProductValues[cp.Id].hasOwnProperty('recurring')
+					) {
+						_negoFormatCp.value.recurring = calculateDiscount(
+							cpc.csfamext__discount_type__c,
+							cpc.csfamext__recurring_charge__c,
+							_originalProductValues[cp.Id].recurring
+						);
+					}
+
+					if (
+						!!cpc.csfamext__one_off_charge__c &&
+						_originalProductValues[cp.Id].hasOwnProperty('oneOff')
+					) {
+						_negoFormatCp.value.oneOff = calculateDiscount(
+							cpc.csfamext__discount_type__c,
+							cpc.csfamext__one_off_charge__c,
+							_originalProductValues[cp.Id].oneOff
+						);
+					}
+
+					_negoArray.push(_negoFormatCp);
 				}
-
-				if (
-					cpc.hasOwnProperty('csfamext__one_off_charge__c') &&
-					!!cpc.csfamext__one_off_charge__c &&
-					_originalProductValues[cp.Id].hasOwnProperty('oneOff')
-				) {
-					_negoFormatCp.value.oneOff = calculateDiscount(
-						cpc.csfamext__discount_type__c,
-						cpc.csfamext__one_off_charge__c,
-						_originalProductValues[cp.Id].oneOff
-					);
-				}
-
-				_negoArray.push(_negoFormatCp);
-			}
-		});
+			});
+		}
 	});
 	// Return length of applied groups
 	console.log('Discount negotiating:', _negoArray);

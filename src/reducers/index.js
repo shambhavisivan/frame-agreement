@@ -874,7 +874,18 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.price_item_fields.forEach(f => {
 					_productFields.push({ name: f, visible: true });
 				});
+
+				if (action.payload.FACSettings.show_volume_fields) {
+					VOLUME_FIELDS.forEach(f => {
+						_productFields.push({
+							name: f.label,
+							visible: true,
+							volume: f.name
+						});
+					});
+				}
 			} else {
+				console.warn('Price item fields is not valid CSV!');
 				action.payload.FACSettings.price_item_fields = [];
 			}
 

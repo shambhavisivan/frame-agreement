@@ -57,6 +57,23 @@ class App extends Component {
 		) => {
 			products = await publish('onBeforeAddProducts', products);
 
+			if (products.some(cp_id => cp_id.length === 15)) {
+				console.warn('Converting to 18 char Id...');
+				// Generate 15: 18 map
+				let charMap = {};
+				this.props.commercialProducts.forEach(cp => {
+					charMap[cp.Id.substring(0, 15)] = cp.Id;
+				});
+
+				products = products.map(cp_id => {
+					if (cp_id.length === 15) {
+						return charMap[cp_id];
+					}
+
+					return cp_id;
+				});
+			}
+
 			let _productsSet = new Set(products);
 
 			// let _attachment = {};

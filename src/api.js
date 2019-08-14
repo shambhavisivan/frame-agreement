@@ -3,7 +3,7 @@
 import 'babel-polyfill';
 import { log } from './utils/shared-service';
 
-const subscriptions = {};
+export const subscriptions = {};
 window.subscriptions = subscriptions;
 const eventList = [
 	'onLoad',

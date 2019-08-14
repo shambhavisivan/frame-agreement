@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Icon from '../Icon';
 
-import DatePicker from './react-datepicker';
+import DatePicker from 'react-datepicker';
 
 class DatePickerInput extends React.Component {
 	constructor(props) {

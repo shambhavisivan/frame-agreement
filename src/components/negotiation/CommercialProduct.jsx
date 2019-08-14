@@ -27,7 +27,7 @@ import {
 
 import { setValidation, negotiate } from '../../actions';
 
-class CommercialProduct extends React.Component {
+export class CommercialProduct extends React.Component {
 	constructor(props) {
 		super(props);
 

@@ -3,7 +3,7 @@ const zip = require('gulp-zip');
 const rename = require('gulp-rename');
 const runSequence = require('run-sequence');
 const forceDeploy = require('gulp-jsforce-deploy');
-const credentials = require('./credentials.js');
+// const credentials = require('./credentials.js');
 const prettier = require('gulp-prettier');
 const sassbeautify = require('gulp-sassbeautify');
 
@@ -20,9 +20,15 @@ gulp.task('prettierDist', () => {
 });
 
 gulp.task('prettierLocal', () => {
-  return gulp.src(['src/**/*.jsx', 'src/**/*.js'])
+  return gulp.src(['src/**/*.{js,jsx}'])
     .pipe(prettier({ singleQuote: true , useTabs: true, parser: "babel", printWidth: 140}))
     .pipe(gulp.dest('src'));
+});
+
+gulp.task('prettierTest', () => {
+  return gulp.src(['__tests__/**/*.{js,jsx}'])
+    .pipe(prettier({ singleQuote: true , useTabs: true, parser: "babel", printWidth: 140}))
+    .pipe(gulp.dest('__tests__'));
 });
 
 gulp.task('beautify-scss', () => {
@@ -54,7 +60,7 @@ gulp.task('deploy', function (callback) {
 
 gulp.task('default', ['deploy']);
 gulp.task('pretty', ['prettier', 'prettierDist', 'beautify-scss']);
-gulp.task('format', ['prettierLocal', 'prettierDist']);
+gulp.task('format', ['prettierLocal', 'prettierDist', 'prettierTest']);
 
 // credentials.js:
 // ---------------

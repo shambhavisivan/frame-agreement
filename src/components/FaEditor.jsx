@@ -40,7 +40,7 @@ window.editor = {};
 
 const SUBSCRIPTIONS = {};
 
-class FaEditor extends Component {
+export class FaEditor extends Component {
 	constructor(props) {
 		super(props);
 
@@ -334,7 +334,7 @@ class FaEditor extends Component {
 			data.csconta__Status__c = this.props.settings.FACSettings.statuses.requires_approval_status;
 		}
 
-		this.props
+		return this.props
 			.saveFrameAgreement(data)
 			.then(async responseArr => {
 				this._setState({

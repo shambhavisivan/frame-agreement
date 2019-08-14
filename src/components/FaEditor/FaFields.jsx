@@ -7,7 +7,7 @@ import SFField from '../utillity/SFField';
 import Icon from '../utillity/Icon';
 import Shape from '../skeletons/Shape';
 
-class FaFields extends React.Component {
+export class FaFields extends React.Component {
 	constructor(props) {
 		super(props);
 		// this.props.rows
@@ -26,11 +26,11 @@ class FaFields extends React.Component {
 
 	onFieldChange(field, value) {
 		this.props.updateFrameAgreement(this.props.faId, field, value);
-		this.props.onActionTaken();
+		this.props.onActionTaken(field, value);
 	}
 
 	render() {
-		let _faFields = '';
+		let _faFields = null;
 		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
 			this.props.frameAgreements[this.props.faId].csconta__Status__c
 		);

@@ -3,13 +3,10 @@ import { connect } from 'react-redux';
 
 import { toggleFieldVisibility, toggleModals } from '../../actions';
 
-class AddProductCTA extends React.Component {
-	constructor(props) {
-		super(props);
-		// this.props.render
-		// this.props.disabled
-		// this.props.onClick
-	}
+export class AddProductCTA extends React.Component {
+	// constructor(props) {
+	// 	super(props);
+	// }
 
 	onAddClick(e) {
 		e.stopPropagation();

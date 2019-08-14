@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { confirmAlert } from 'react-confirm-alert';
-import CloudSenseLogo from '../../dist/cloudsense.png';
+// import CloudSenseLogo from '../../dist/cloudsense.png';
 
 import { withRouter } from 'react-router-dom';
 import {

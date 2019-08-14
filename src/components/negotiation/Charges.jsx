@@ -7,7 +7,7 @@ import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 import Pagination from '../utillity/Pagination';
 
-class Charges extends React.Component {
+export class Charges extends React.Component {
 	constructor(props) {
 		super(props);
 

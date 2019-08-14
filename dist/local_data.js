@@ -2737,7 +2737,7 @@ window.SF = SF = {
 				return createPromise(true);
 
 			case 'submitForApproval': // Obsolete
-				return createPromise(getRandomFromArr([false, true, true, true]));
+				return createPromise(getRandomFromArr([true, true, true]));
 
 			case 'saveAttachment':
 				return createPromise(parametersArr[1]);
@@ -2746,10 +2746,7 @@ window.SF = SF = {
 				return createPromise('pricingRuleId');
 
 			case 'decomposeAttachment':
-				return createPromise(
-					getRandomFromArr(['Success', 'Success', 'Success', 'Fail']),
-					1000
-				);
+				return createPromise('Success', 1000);
 
 			case 'undoDecomposition':
 				return createPromise('Success', 2000);
@@ -2758,7 +2755,7 @@ window.SF = SF = {
 				return createPromise(filterProducts(parametersArr[0]));
 
 			case 'setFrameAgreementState':
-				return createPromise(getRandomFromArr(['Success', 'Failure']));
+				return createPromise(getRandomFromArr(['Success']));
 
 			case 'createNewVersionOfFrameAgrement':
 				let newFa = JSON.parse(

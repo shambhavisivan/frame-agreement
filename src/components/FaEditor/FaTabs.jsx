@@ -9,7 +9,7 @@ import Tab from '../utillity/tabs/Tab';
 
 // import CommercialProductsTab from './CommercialProductsTab';
 
-class FaTabs extends React.Component {
+export class FaTabs extends React.Component {
 	constructor(props) {
 		super(props);
 	}

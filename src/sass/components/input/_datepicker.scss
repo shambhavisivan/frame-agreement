@@ -151,6 +151,7 @@
 
 .react-datepicker__header {
 	text-align: center;
+	background-color: unset;
 	border-top-left-radius: 0.3125rem;
 	border-top-right-radius: 0.3125rem;
 	padding-top: 0.5rem;
@@ -656,6 +657,7 @@
 
 .react-datepicker__today-button {
 	cursor: pointer;
+	background: unset;
 	text-align: center;
 	padding: 0.3125rem 0;
 	clear: left;

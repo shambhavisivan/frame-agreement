@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import Pagination from '../utillity/Pagination';
 import Icon from '../utillity/Icon';
 
-class Allowances extends React.Component {
+export class Allowances extends React.Component {
 	constructor(props) {
 		super(props);
 

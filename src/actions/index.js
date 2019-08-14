@@ -22,16 +22,14 @@ export function registerMethod(name, method) {
 }
 
 export function performAction(className, params) {
-	return function(dispatch) {
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('performAction', [className, params]).then(
-				response => {
-					resolve(response);
-					return response;
-				}
-			);
-		});
-	};
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('performAction', [className, params]).then(
+			response => {
+				resolve(response);
+				return response;
+			}
+		);
+	});
 }
 // ***********************************************************************
 export const _loadAccounts = data => ({
@@ -55,57 +53,39 @@ export function loadAccounts(params) {
 }
 // ***********************************************************************
 
-export const _createPricingRuleGroup = () => ({
-	type: 'CREATEA_PRG',
-	payload: {}
-});
-
-export const _decomposeAttachment = (data, prId) => ({
-	type: 'DECOMPOSE_ATTACHMENT',
-	payload: { data, prId }
-});
-
 export function createPricingRuleGroup(faId) {
-	return function(dispatch) {
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('createPricingRuleGroup', [faId]).then(prId => {
-				resolve(prId);
-				return prId;
-			});
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('createPricingRuleGroup', [faId]).then(prId => {
+			resolve(prId);
+			return prId;
 		});
-	};
+	});
 }
 
 export function decomposeAttachment(data, prId, faId) {
-	return function(dispatch) {
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('decomposeAttachment', [
-				JSON.stringify(data),
-				prId,
-				faId
-			]).then(message => {
-				// dispatch(_decomposeAttachment(data, prId));
-				resolve(message);
-				return message;
-			});
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('decomposeAttachment', [
+			JSON.stringify(data),
+			prId,
+			faId
+		]).then(message => {
+			resolve(message);
+			return message;
 		});
-	};
+	});
 }
 
 export function undoDecomposition(prId) {
-	return function(dispatch) {
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('undoDecomposition', [prId]).then(message => {
-				// dispatch(_decomposeAttachment(data, prId));
-				resolve(message);
-				return message;
-			});
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('undoDecomposition', [prId]).then(message => {
+			resolve(message);
+			return message;
 		});
-	};
+	});
 }
 
 // ***********************************************************************
-export const recieveApprovalHistory = (faId, data) => ({
+export const _recieveApprovalHistory = (faId, data) => ({
 	type: 'GET_APPROVAL_HISTORY',
 	payload: { faId, data }
 });
@@ -118,7 +98,7 @@ export function getApprovalHistory(faId) {
 					try {
 						response.listProcess = response.listProcess || [];
 					} catch (err) {}
-					dispatch(recieveApprovalHistory(faId, response));
+					dispatch(_recieveApprovalHistory(faId, response));
 					resolve(response);
 					return response;
 				}
@@ -130,18 +110,16 @@ export function getApprovalHistory(faId) {
 /*, Reject, Removed, Approve
  */
 export function approveRejectRecallRecord(recordId, comments, action) {
-	return function(dispatch) {
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('approveRejectRecallRecord', [
-				recordId.slice(0, 15),
-				comments,
-				action
-			]).then(response => {
-				resolve(response);
-				return response;
-			});
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('approveRejectRecallRecord', [
+			recordId.slice(0, 15),
+			comments,
+			action
+		]).then(response => {
+			resolve(response);
+			return response;
 		});
-	};
+	});
 }
 // ***********************************************************************
 export const _setCustomData = (faId, data) => ({
@@ -253,30 +231,26 @@ export function createNewVersionOfFrameAgrement(faId) {
 }
 
 export function reassignApproval(recordId, newActorId) {
-	return function(dispatch) {
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('reassignApproval', [
-				recordId.slice(0, 15),
-				newActorId
-			]).then(response => {
-				resolve(response);
-				return response;
-			});
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('reassignApproval', [
+			recordId.slice(0, 15),
+			newActorId
+		]).then(response => {
+			resolve(response);
+			return response;
 		});
-	};
+	});
 }
 
 export function submitForApproval(faId) {
-	return function(dispatch) {
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('submitForApproval', [faId.slice(0, 15)]).then(
-				response => {
-					resolve(response);
-					return response;
-				}
-			);
-		});
-	};
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('submitForApproval', [faId.slice(0, 15)]).then(
+			response => {
+				resolve(response);
+				return response;
+			}
+		);
+	});
 }
 // ***********************************************************************
 export const toggleFieldVisibility = index => ({
@@ -325,12 +299,10 @@ export const _clearToasts = () => ({
 	payload: {}
 });
 
-export const addToast = (type, title, message, timeout) => {
-	return {
-		type: 'ADD_TOAST',
-		payload: { type, title, message, timeout }
-	};
-};
+export const addToast = (type, title, message, timeout) => ({
+	type: 'ADD_TOAST',
+	payload: { type, title, message, timeout }
+});
 
 export function toggleModals(data = _defaultModals) {
 	return function(dispatch) {
@@ -426,27 +398,25 @@ export function cloneFrameAgreement(faId) {
 
 // ***********************************************************************
 
-export const _deleteFrameAgreement = priceItemId => ({
+export const _deleteFrameAgreement = faId => ({
 	type: 'DELETE_FA',
-	payload: priceItemId
+	payload: faId
 });
 
-export function deleteFrameAgreement(priceItemId) {
+export function deleteFrameAgreement(faId) {
 	return function(dispatch) {
 		// dispatch(requestPriceItemData());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('deleteFrameAgreement', [priceItemId]).then(
-				response => {
-					if (response === 'Success') {
-						dispatch(_deleteFrameAgreement(priceItemId));
-					} else {
-						console.error('Could not delete Frame Agreement', response);
-					}
-					resolve(response);
-					return response;
+			window.SF.invokeAction('deleteFrameAgreement', [faId]).then(response => {
+				if (response === 'Success') {
+					dispatch(_deleteFrameAgreement(faId));
+				} else {
+					console.error('Could not delete Frame Agreement', response);
 				}
-			);
+				resolve(response);
+				return response;
+			});
 		});
 	};
 }
@@ -515,7 +485,7 @@ export function removeFaFromMaster(faId, agreements) {
 	return function(dispatch) {
 		return new Promise(async resolve => {
 			await window.SF.invokeAction('removeFaFromMaster', [faId, agreements]);
-			dispatch(_removeProductsFromFa(faId, agreements));
+			dispatch(_removeFaFromMaster(faId, agreements));
 			resolve(agreements);
 		});
 	};

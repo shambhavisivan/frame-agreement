@@ -10,7 +10,7 @@ import { validateProduct } from '../../utils/validation-service';
 import { setValidation } from '../../actions';
 import { connect } from 'react-redux';
 
-class ProductCharges extends React.Component {
+export class ProductCharges extends React.Component {
 	constructor(props) {
 		super(props);
 

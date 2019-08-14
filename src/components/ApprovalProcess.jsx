@@ -10,7 +10,7 @@ import {
 	createToast
 } from '../actions';
 
-class ApprovalProcess extends React.Component {
+export class ApprovalProcess extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -94,7 +94,7 @@ class ApprovalProcess extends React.Component {
 			Promise.all([
 				this.props.getApprovalHistory(this.props.faId),
 				this.props.refreshFrameAgreement(this.props.faId)
-			]).finally(r => {
+			]).then(r => {
 				setTimeout(() => {
 					this.setState({ loading: false });
 				}, 500);

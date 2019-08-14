@@ -5,7 +5,7 @@ import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import Pagination from '../utillity/Pagination';
 
-class Rates extends React.Component {
+export class Rates extends React.Component {
 	constructor(props) {
 		super(props);
 

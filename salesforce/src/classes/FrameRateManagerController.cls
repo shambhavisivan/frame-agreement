@@ -1099,7 +1099,7 @@ global with sharing class FrameRateManagerController {
 		List <cspmb__Commercial_Product_Allowance_Assoc__c> cpao = new List <cspmb__Commercial_Product_Allowance_Assoc__c> ();
 		cpao = [select Id, cspmb__allowance__c, cspmb__commercial_product__c from cspmb__Commercial_Product_Allowance_Assoc__c where cspmb__commercial_product__c in :priceItemIdList];
 
-		Map<Id, cspmb__Allowance__c> allowanceMap = new Map<Id, cspmb__Allowance__c>([select Id, Name, cspmb__amount__c, cspmb__priority__c, cspmb__usage_type__c from cspmb__Allowance__c]);
+		Map<Id, cspmb__Allowance__c> allowanceMap = new Map<Id, cspmb__Allowance__c>([select Id, Name, cspmb__amount__c, cspmb__priority__c, cspmb__usage_type__c, cspmb__usage_type__r.cspmb__unit_of_measure__c from cspmb__Allowance__c]);
 
 		Map <Id, List <cspmb__Allowance__c>> resultMap = new Map <Id, List <cspmb__Allowance__c>>();
 

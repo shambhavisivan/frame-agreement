@@ -1254,6 +1254,16 @@ const rootReducer = (state = initialState, action) => {
 				});
 
 				// **********************************************
+				try {
+					priceItemData[key].allowances.forEach(all => {
+						all.cspmb__unit_of_measure__c =
+							all.cspmb__usage_type__r.cspmb__unit_of_measure__c;
+						delete priceItemData[key].allowances.cspmb__usage_type__r;
+					});
+				} catch (err) {
+					// benign; no allowances
+				}
+
 				state.commercialProducts[priceItemIndex]._allowances =
 					priceItemData[key].allowances || [];
 

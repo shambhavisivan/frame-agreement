@@ -24,6 +24,7 @@ class Allowances extends React.Component {
 					<div className="list-cell">Name</div>
 					<div className="list-cell">Priority</div>
 					<div className="list-cell">Amount</div>
+					<div className="list-cell">Unit Of Measure</div>
 				</div>
 
 				<ul className="table-list">
@@ -49,6 +50,12 @@ class Allowances extends React.Component {
 									<div className="list-cell negotiable">
 										{allowance.hasOwnProperty('cspmb__amount__c')
 											? allowance.cspmb__amount__c
+											: 'N/A'}
+									</div>
+
+									<div className="list-cell negotiable">
+										{allowance.hasOwnProperty('cspmb__unit_of_measure__c')
+											? allowance.cspmb__unit_of_measure__c
 											: 'N/A'}
 									</div>
 								</li>

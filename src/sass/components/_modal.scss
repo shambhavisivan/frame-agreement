@@ -29,14 +29,33 @@
 	padding: 1rem 0;
 	text-align: center;
 	border-radius: 0.25rem 0.25rem 0 0;
+
 	@include css4 {
 		border-bottom: 2px solid cvar(--modal-br);
 	}
 }
 
+.no-title .fa-modal-header {
+	padding: 0;
+}
+
+
 .fa-modal-header-title {
 	font-size: 1.25rem;
 	font-weight: $font-weight-normal;
+}
+
+.fa-modal.iframe-modal {
+
+	.fa-modal-body {
+    	height: calc(100% - 60px);
+	}
+
+	&.no-title {
+		.fa-modal-body {
+	    	height: 100%;
+		}
+	}
 }
 
 /* FOOTER */

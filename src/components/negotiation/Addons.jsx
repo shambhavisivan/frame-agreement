@@ -99,7 +99,7 @@ export class Addons extends React.Component {
 									this.props.attachment[add.Id].hasOwnProperty('oneOff')
 										? this.props.attachment[add.Id].oneOff
 										: add.cspmb__One_Off_Charge__c;
-								if (oneOffDiscounts) {
+								if (oneOffDiscounts && !this.props.disableLevels) {
 									oneOffRow = (
 										<DropdownNegotiate
 											readOnly={this.props.readOnly}
@@ -136,7 +136,7 @@ export class Addons extends React.Component {
 									this.props.attachment[add.Id].hasOwnProperty('recurring')
 										? this.props.attachment[add.Id].recurring
 										: add.cspmb__Recurring_Charge__c;
-								if (recurringDiscounts) {
+								if (recurringDiscounts && !this.props.disableLevels) {
 									recurringRow = (
 										<DropdownNegotiate
 											readOnly={this.props.readOnly}

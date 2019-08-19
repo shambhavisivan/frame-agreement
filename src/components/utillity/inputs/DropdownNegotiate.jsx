@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Icon from '../Icon';
+import { log } from '~/src/utils/shared-service';
 
 /*
 
@@ -38,21 +39,21 @@ class DropdownNegotiate extends React.Component {
 					discount.cspmb__Discount_Type__c === 'Amount' &&
 					val > this.props.originalValue
 				) {
-					console.warn(
+					log.orange(
 						'Discount level "' +
 							discount.Name +
 							'" contains discount greater than original charge value.'
 					);
-					console.warn('Removing discount value -' + val);
+					log.orange('Removing discount value -' + val);
 					return;
 				}
 				if (discount.cspmb__Discount_Type__c === 'Percentage' && val > 100) {
-					console.warn(
+					log.orange(
 						'Discount level "' +
 							discount.Name +
 							'" contains discount greater than original charge value.'
 					);
-					console.warn('Removing discount value %' + val);
+					log.orange('Removing discount value %' + val);
 					return;
 				}
 				// Carry on
@@ -65,7 +66,6 @@ class DropdownNegotiate extends React.Component {
 		});
 
 		// Check if values are 0
-
 		this.discountNulled =
 			this.props.discounts.length === 1 &&
 			!this.props.discounts.reduce((a, b) => a + b, 0);
@@ -83,8 +83,6 @@ class DropdownNegotiate extends React.Component {
 				initialDiscount = index;
 			}
 		});
-
-		console.log(initialDiscount);
 
 		this.state = {
 			selected: initialDiscount,
@@ -110,14 +108,9 @@ class DropdownNegotiate extends React.Component {
 			}
 		}
 
-		this.setState(
-			{
-				selected: newIndex
-			},
-			() => {
-				console.log(this.state.selected);
-			}
-		);
+		this.setState({
+			selected: newIndex
+		});
 
 		this.props.onChange(+newPrice.toFixed(2));
 	}

@@ -119,6 +119,10 @@
 								border-bottom: 1px solid cvar(--main-br);
 							}
 
+							&.forward {
+								padding: 0px 5px;
+							}
+
 							svg {
 								@include css4 {
 									fill: cvar(--card-icon-bg);

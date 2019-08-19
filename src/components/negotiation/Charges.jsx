@@ -94,7 +94,7 @@ export class Charges extends React.Component {
 									this.props.attachment[charge.Id].hasOwnProperty('oneOff')
 										? this.props.attachment[charge.Id].oneOff
 										: charge.oneOff;
-								if (this.discounts[charge.Name]) {
+								if (this.discounts[charge.Name] && this.props.disableLevels) {
 									oneOffRow = (
 										<DropdownNegotiate
 											readOnly={
@@ -137,7 +137,7 @@ export class Charges extends React.Component {
 									this.props.attachment[charge.Id].hasOwnProperty('recurring')
 										? this.props.attachment[charge.Id].recurring
 										: charge.recurring;
-								if (this.discounts[charge.Name]) {
+								if (this.discounts[charge.Name] && !this.props.disableLevels) {
 									// BINGO
 									recurringRow = (
 										<DropdownNegotiate

@@ -15,7 +15,6 @@ import {
 	getCommercialProducts,
 	getFrameAgreements,
 	getPicklistOptions,
-	performAction,
 	registerMethod,
 	refreshFrameAgreement,
 	resetNegotiation,
@@ -38,7 +37,13 @@ import CommercialProductSkeleton from './components/skeletons/CommercialProductS
 
 import { withRouter } from 'react-router-dom';
 
-import { publish } from './api';
+import {
+	publish,
+	performAction,
+	createPricingRuleGroup,
+	decomposeAttachment,
+	undoDecomposition
+} from './api';
 
 export class App extends Component {
 	constructor(props) {
@@ -147,11 +152,141 @@ export class App extends Component {
 
 		// ****************************************** API END ******************************************
 
+		window.FAM.api.performAction = performAction;
+
 		window.FAM.api.cloneFrameAgreement = this.props.cloneFrameAgreement;
 		window.FAM.api.toast = this.props.createToast;
 		window.FAM.registerMethod = this.props.registerMethod;
-		window.FAM.api.performAction = this.props.performAction;
 		window.FAM.api.getAttachment = this.props.getAttachment;
+
+		window.FAM.api.activateFrameAgreement = async faId => {
+			// 1) Create a structure that is matching one element -> one pipra
+			let _attachment = this.props.frameAgreements[faId]._ui.attachment
+				.products;
+
+			let structure = [];
+			for (var cpId in _attachment) {
+				if (_attachment[cpId].hasOwnProperty('_addons')) {
+					let addons = _attachment[cpId]._addons;
+					for (var cpaoa in addons) {
+						structure.push({
+							cpaoaId: cpaoa,
+							recurring: addons[cpaoa].recurring || null,
+							oneOff: addons[cpaoa].oneOff || null
+						});
+					}
+				}
+
+				if (_attachment[cpId].hasOwnProperty('_charges')) {
+					let charges = _attachment[cpId]._charges;
+					for (var chId in charges) {
+						structure.push({
+							peId: chId,
+							recurring: charges[chId].recurring || null,
+							oneOff: charges[chId].oneOff || null
+						});
+					}
+				}
+
+				if (_attachment[cpId].hasOwnProperty('_product')) {
+					structure.push({
+						cpId: cpId,
+						recurring: _attachment[cpId]._product.recurring || null,
+						oneOff: _attachment[cpId]._product.oneOff || null
+					});
+				}
+			}
+			// 2) Remove items that have no charge value
+			structure = structure.filter(
+				item => item.recurring !== null || item.oneOff !== null
+			);
+
+			// Create pricing rule group, pricing rule and association between them. Return pricing rule id to be used in next stage
+			const PR_ID = await createPricingRuleGroup(faId);
+
+			if (typeof PR_ID !== 'string') {
+				console.error('Activation failed, invalid pricing rule Id!');
+				return false;
+			}
+
+			// This will hold the structure in chunks on n
+			let decompositionDataChunked = [];
+			// This will be filled with promises
+			let decompositionPromiseArray = [];
+
+			// CHUNK THE STRUCTURE
+			for (
+				let i = 0;
+				i < structure.length;
+				i += this.props.settings.FACSettings.decomposition_chunk_size
+			) {
+				decompositionDataChunked.push(
+					structure.slice(
+						i,
+						i + this.props.settings.FACSettings.decomposition_chunk_size
+					)
+				);
+			}
+
+			console.log(decompositionDataChunked);
+
+			// Fill the promise array
+			decompositionDataChunked.forEach(chunk => {
+				decompositionPromiseArray.push(decomposeAttachment(chunk, PR_ID, faId));
+			});
+
+			//********************************************
+			// Wait for all to resolve
+			let result = await Promise.all(decompositionPromiseArray);
+			result = new Set(result);
+			//********************************************
+
+			console.log('Merged results:', result);
+
+			// If the decomposition was successful
+			if (!result.has('Success') || result.size > 1) {
+				console.error('Decomposition failed, undoing...!');
+
+				this.props.createToast(
+					'error',
+					window.SF.labels.toast_decomposition_title_failed,
+					window.SF.labels.toast_decomposition_failed
+				);
+
+				let undoArray = [];
+				let undoPromiseArray = [];
+				// CHUNK THE STRUCTURE
+				for (let i = 0; i < structure.length; i += 10000) {
+					undoArray.push(structure.slice(i, i + 10000));
+				}
+
+				undoArray.forEach(chunk => {
+					undoPromiseArray.push(undoDecomposition(PR_ID));
+				});
+
+				let undo_result = await Promise.all(undoPromiseArray);
+				this.props.createToast(
+					'warning',
+					window.SF.labels.toast_decomposition_title_revered,
+					window.SF.labels.toast_decomposition_revered
+				);
+			} else {
+				await this.props.setFrameAgreementState(
+					faId,
+					this.props.settings.FACSettings.statuses.active_status
+				);
+				await this.props.refreshFrameAgreement(faId);
+
+				this.props.createToast(
+					'success',
+					window.SF.labels.toast_decomposition_title_success,
+					window.SF.labels.toast_decomposition_success +
+						' (' +
+						structure.length +
+						')'
+				);
+			}
+		};
 
 		window.FAM.api.submitForApproval = async faId => {
 			let res1 = await this.props.submitForApproval(faId);
@@ -175,6 +310,24 @@ export class App extends Component {
 			return res1;
 		};
 
+		window.FAM.api.getCommercialProducts = async faId => {
+			if (!faId) {
+				return this.props.getCommercialProducts();
+			} else {
+				if (this.props.frameAgreements[faId]._ui.attachment === null) {
+					let resp_attachment = await this.props.getAttachment(faId);
+					// No need to wait for this one, we only need products
+					this.props.getCommercialProductData(
+						Object.keys(resp_attachment.products)
+					);
+
+					return this.props.frameAgreements[faId]._ui.commercialProducts;
+				} else {
+					return this.props.frameAgreements[faId]._ui.commercialProducts;
+				}
+			}
+		};
+
 		window.FAM.api.refreshFa = faId => {
 			return this.props.refreshFrameAgreement(faId);
 		};
@@ -195,7 +348,6 @@ export class App extends Component {
 				let _attachment = null;
 				try {
 					_attachment = _fa._ui.attachment.custom;
-					_attachment = JSON.parse(_attachment || '{}');
 				} catch (err) {
 					console.warn('Attachemnt cannot be loaded for FA:', faId);
 					console.warn(err);
@@ -312,7 +464,6 @@ const mapDispatchToProps = {
 	getCommercialProducts,
 	getFrameAgreements,
 	getPicklistOptions,
-	performAction,
 	registerMethod,
 	refreshFrameAgreement,
 	resetNegotiation,
@@ -328,6 +479,7 @@ const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
 		commercialProducts: state.commercialProducts,
+		settings: state.settings,
 		initialised: state.initialised
 	};
 };

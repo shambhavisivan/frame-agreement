@@ -17,7 +17,7 @@ import {
 	validateFrameAgreement,
 	addProductsToFa,
 	getCommercialProductData
-} from '../../actions';
+} from '~/src/actions';
 
 class FaModals extends React.Component {
 	constructor(props) {

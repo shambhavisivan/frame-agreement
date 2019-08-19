@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import Modal from 'react-responsive-modal';
 
-import { filterCommercialProducts } from '../../actions';
+import { filterCommercialProducts } from '~/src/actions';
 
 import Icon from '../utillity/Icon';
 import Checkbox from '../utillity/inputs/Checkbox';

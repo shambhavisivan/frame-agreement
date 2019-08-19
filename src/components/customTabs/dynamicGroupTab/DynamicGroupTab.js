@@ -58,7 +58,7 @@ class DynamicGroupTab extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// ************************************
 		let _getGroupsPromise = window.FAM.api
 			.performAction(
@@ -284,7 +284,7 @@ class DynamicGroupTab extends React.Component {
 
 		let setResponse = await window.FAM.api.setCustomData(
 			ACTIVE_FA.Id,
-			JSON.stringify(customData)
+			customData
 		);
 		console.log('Custom data saved:', this.state);
 		if (enforceSave) {

@@ -25,7 +25,7 @@ import {
 	validateRateCardLines
 } from '../../utils/validation-service';
 
-import { setValidation, negotiate } from '../../actions';
+import { setValidation, negotiate } from '~/src/actions';
 
 export class CommercialProduct extends React.Component {
 	constructor(props) {
@@ -111,6 +111,8 @@ export class CommercialProduct extends React.Component {
 		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
 			this.props.frameAgreements[this.props.faId].csconta__Status__c
 		);
+
+		let _ignoreProducts = new Set(this.props.ignoreSettings.products || []);
 
 		return (
 			<div
@@ -207,6 +209,7 @@ export class CommercialProduct extends React.Component {
 							>
 								<Addons
 									readOnly={!_editable}
+									disableLevels={_ignoreProducts.has(this.productId)}
 									validation={this.props.validation[this.productId].addons}
 									attachment={_attachment._addons || {}}
 									addons={this.props.product._addons}
@@ -225,6 +228,7 @@ export class CommercialProduct extends React.Component {
 								{this.props.product._charges.length ? (
 									<Charges
 										readOnly={!_editable}
+										disableLevels={_ignoreProducts.has(this.productId)}
 										oneOffAllowed={
 											this.props.product.cspmb__Is_One_Off_Discount_Allowed__c
 										}
@@ -243,6 +247,7 @@ export class CommercialProduct extends React.Component {
 								) : (
 									<ProductCharges
 										product={this.props.product}
+										disableLevels={_ignoreProducts.has(this.productId)}
 										oneOffAllowed={
 											this.props.product.cspmb__Is_One_Off_Discount_Allowed__c
 										}
@@ -293,6 +298,7 @@ const mapStateToProps = state => {
 		validation: state.validation,
 		validationProduct: state.validationProduct,
 		productFields: state.productFields,
+		ignoreSettings: state.ignoreSettings,
 		settings: state.settings
 	};
 };

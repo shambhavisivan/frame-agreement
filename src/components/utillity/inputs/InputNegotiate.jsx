@@ -74,7 +74,7 @@ class InputNegotiate extends React.Component {
 					/>
 					<DebounceInput
 						debounceTimeout={300}
-						placeholder="0"
+						placeholder={0}
 						spellCheck="false"
 						className="negotiate-input"
 						type="number"

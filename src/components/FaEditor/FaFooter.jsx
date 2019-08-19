@@ -3,45 +3,55 @@ import { connect } from 'react-redux';
 import Icon from '../utillity/Icon';
 import { isMaster } from '../../utils/shared-service';
 
-import { publish } from '../../api';
+import { publish } from '~/src/api';
+import ActionIframe from '~/src/components/modals/ActionIframe';
 
 import {
 	createToast,
 	toggleModals,
 	validateFrameAgreement,
 	getCommercialProductData
-} from '../../actions';
+} from '~/src/actions';
 
 class FaFooter extends React.Component {
 	constructor(props) {
 		super(props);
 
+		this.callHandler = this.callHandler.bind(this);
+		this.onCloseIframe = this.onCloseIframe.bind(this);
 		this.onOpenFrameModal = this.onOpenFrameModal.bind(this);
 		this.onOpenNegotiationModal = this.onOpenNegotiationModal.bind(this);
 		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(
 			this
 		);
+
+		this.state = {
+			actionIframe: false,
+			actionIframeUrl: null,
+			actionIframeObject: null
+		};
 	}
 
-	async callHandler(handlerName, actionType) {
-		if (!this.props.handlers.hasOwnProperty(handlerName)) {
+	async callHandler(btnObj) {
+		if (!this.props.handlers.hasOwnProperty(btnObj.method)) {
 			this.props.createToast(
 				'error',
 				window.SF.labels.toast_invalid_handler_title,
-				window.SF.labels.toast_invalid_handler + ' (' + handlerName + ')'
+				window.SF.labels.toast_invalid_handler + ' (' + btnObj.method + ')'
 			);
 			return;
 		}
 
-		let result = await this.props.handlers[handlerName]();
-		switch (actionType) {
+		let result = await this.props.handlers[btnObj.method]();
+		switch (btnObj.type) {
 			case 'action':
 				console.log(result);
 				break;
 			case 'iframe':
 				this.setState({
 					actionIframe: true,
-					actionIframeUrl: result
+					actionIframeUrl: result,
+					actionIframeObject: btnObj
 				});
 				break;
 			case 'redirect':
@@ -50,6 +60,16 @@ class FaFooter extends React.Component {
 				break;
 			default:
 		}
+	}
+
+	onCloseIframe() {
+		publish('onIframeClose', this.state.actionIframeObject.id);
+
+		this.setState({
+			actionIframe: false,
+			actionIframeUrl: null,
+			actionIframeObject: null
+		});
 	}
 
 	onOpenNegotiationModal() {
@@ -142,13 +162,22 @@ class FaFooter extends React.Component {
 							key={btnObj.id + i}
 							id={btnObj.id}
 							className="fa-button fa-button--default"
-							onClick={() => this.callHandler(btnObj.method, btnObj.type)}
+							onClick={() => this.callHandler(btnObj)}
 						>
 							<Icon name="salesforce1" width="16" height="16" color="#0070d2" />
 							<span className="fa-button-icon">{btnObj.label}</span>
 						</button>
 					);
 				})}
+
+				{this.state.actionIframe && this.state.actionIframeUrl && (
+					<ActionIframe
+						onCloseIframe={this.onCloseIframe}
+						open={this.state.actionIframe}
+						config={this.state.actionIframeObject}
+						url={this.state.actionIframeUrl}
+					/>
+				)}
 			</div>
 		);
 

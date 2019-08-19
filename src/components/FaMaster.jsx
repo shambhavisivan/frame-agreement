@@ -116,7 +116,7 @@ class FaMaster extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.mounted = true;
 		// Disable onLeavePage prompt when saved
 		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(

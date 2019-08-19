@@ -15,6 +15,8 @@ import {
 	deleteFrameAgreement
 } from '../actions';
 
+import { publish } from '~/src/api';
+
 import FrameAgreementRow from './FrameAgreementRow';
 import InputSearch from './utillity/inputs/InputSearch';
 import Toaster from './utillity/Toaster';
@@ -23,6 +25,7 @@ import CustomButtonDropdown from './utillity/CustomButtonDropdown';
 
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsModal from './modals/AccountsModal';
+import ActionIframe from '~/src/components/modals/ActionIframe';
 
 const faSort = (ob1, ob2) => {
 	if (ob1.LastModifiedDate < ob2.LastModifiedDate) {
@@ -43,6 +46,7 @@ class FrameAgreement {
 		this.csconta__Valid_From__c = null;
 		this.csconta__Valid_To__c = null;
 		this.csconta__agreement_level__c = type;
+
 		this._ui = {
 			approval: {
 				listProcess: []
@@ -63,16 +67,22 @@ class FaList extends Component {
 		this.state = {
 			searchTerm: '',
 			accountsModal: false,
-			loadedAccounts: []
+			loadedAccounts: [],
+			actionIframe: false,
+			actionIframeUrl: '',
+			actionIframeObject: null
 		};
 		this.onSearchChange = this.onSearchChange.bind(this);
 		this.onAccountsSave = this.onAccountsSave.bind(this);
 		this.createFrameAgreement = this.createFrameAgreement.bind(this);
 
+		this.callHandler = this.callHandler.bind(this);
+		this.onCloseIframe = this.onCloseIframe.bind(this);
+
 		window.FAM.registerMethod = this.props.registerMethod;
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// initial load accounts loadAccounts
 		let params = {};
 		params.pointedObject = 'Account';
@@ -84,6 +94,46 @@ class FaList extends Component {
 		if (!this.props.accounts.length) {
 			this.props.loadAccounts(params);
 		}
+	}
+
+	async callHandler(btnObj) {
+		if (!this.props.handlers.hasOwnProperty(btnObj.method)) {
+			this.props.createToast(
+				'error',
+				window.SF.labels.toast_invalid_handler_title,
+				window.SF.labels.toast_invalid_handler + ' (' + btnObj.method + ')'
+			);
+			return;
+		}
+
+		let result = await this.props.handlers[btnObj.method]();
+		switch (btnObj.type) {
+			case 'action':
+				console.log(result);
+				break;
+			case 'iframe':
+				this.setState({
+					actionIframe: true,
+					actionIframeUrl: result,
+					actionIframeObject: btnObj
+				});
+				break;
+			case 'redirect':
+				console.log(result);
+				window.location.replace(result);
+				break;
+			default:
+		}
+	}
+
+	onCloseIframe() {
+		publish('onIframeClose', this.state.actionIframeObject.id);
+
+		this.setState({
+			actionIframe: false,
+			actionIframeUrl: null,
+			actionIframeObject: null
+		});
 	}
 
 	onSearchChange(value) {
@@ -183,7 +233,7 @@ class FaList extends Component {
 							key={btnObj.id + i}
 							id={btnObj.id}
 							onClick={() => {
-								this.callHandler(btnObj.method, btnObj.type);
+								this.callHandler(btnObj);
 							}}
 							className="fa-button fa-button--brand"
 						>
@@ -253,8 +303,8 @@ class FaList extends Component {
 										brand={true}
 										label={window.SF.labels.btn_AddNewAgreement}
 										buttons={_createFaDropdownData}
-										onAction={(method, type) => {
-											this.createFrameAgreement(type);
+										onAction={btnObj => {
+											this.createFrameAgreement(btnObj.type);
 										}}
 									/>
 								) : (
@@ -308,6 +358,15 @@ class FaList extends Component {
 						)}
 					</div>
 				</div>
+
+				{this.state.actionIframe && this.state.actionIframeUrl && (
+					<ActionIframe
+						onCloseIframe={this.onCloseIframe}
+						open={this.state.actionIframe}
+						config={this.state.actionIframeObject}
+						url={this.state.actionIframeUrl}
+					/>
+				)}
 			</div>
 		);
 	}
@@ -318,7 +377,7 @@ const mapStateToProps = state => {
 		frameAgreements: state.frameAgreements,
 		settings: state.settings,
 		accounts: state.accounts,
-		accounts: state.accounts
+		handlers: state.handlers
 	};
 };
 

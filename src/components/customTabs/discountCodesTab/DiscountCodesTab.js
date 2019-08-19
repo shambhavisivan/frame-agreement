@@ -285,7 +285,7 @@ class DiscountCodesTab extends React.Component {
 		this.activeFa = null;
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// ***********************************
 
 		let _getGroupsPromise = window.FAM.api
@@ -310,6 +310,13 @@ class DiscountCodesTab extends React.Component {
 					response = response.filter(
 						g => g.csfamext__group_type__c === 'Discount Code'
 					);
+
+					response = response.map(dg => {
+						delete dg.csfamext__logic_components_JSON__c;
+						delete dg.attributes;
+						return dg;
+					});
+
 					return response;
 				}
 			});
@@ -363,6 +370,12 @@ class DiscountCodesTab extends React.Component {
 			});
 
 			let _addedCodes = _response_data.codes || [];
+
+			_addedCodes = _addedCodes.map(dg => {
+				delete dg.csfamext__logic_components_JSON__c;
+				delete dg.attributes;
+				return dg;
+			});
 
 			(() => {
 				let _preFilterLength = _addedCodes.length;
@@ -590,7 +603,7 @@ class DiscountCodesTab extends React.Component {
 
 		let setResponse = await window.FAM.api.setCustomData(
 			ACTIVE_FA.Id,
-			JSON.stringify(customData)
+			customData
 		);
 		console.log('Custom data saved:', this.state);
 		if (enforceSave) {

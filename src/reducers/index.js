@@ -1,4 +1,4 @@
-import sharedService from '../utils/shared-service';
+import { log } from '../utils/shared-service';
 import {
 	validateAddons,
 	validateProduct,
@@ -13,6 +13,7 @@ const initialState = {
 		settings_loaded: false
 	},
 	settings: {},
+	ignoreSettings: {},
 	accounts: [],
 	frameAgreements: {},
 	commercialProducts: null,
@@ -576,13 +577,15 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
+		case 'UPDATE_IGNORE':
+			return {
+				...state,
+				ignoreSettings: { ...state.ignoreSettings, ...action.payload }
+			};
+
 		case 'SET_CD':
 			var faId = action.payload.faId;
 			var data = action.payload.data;
-
-			if (typeof data !== 'string') {
-				data = JSON.stringify(data);
-			}
 
 			return {
 				...state,
@@ -1011,9 +1014,11 @@ const rootReducer = (state = initialState, action) => {
 				List: true
 			};
 
-			action.payload.ButtonCustomData.forEach(cb => {
+			action.payload.ButtonCustomData.forEach((cb, i) => {
 				cb.hidden = new Set(cb.hidden || []);
-				cb.id = cb.id || cb.label.replace(/ /g, '').toLowerCase();
+				cb.id =
+					cb.id ||
+					(cb.label || 'unlabeled-' + i).replace(/ /g, '').toLowerCase();
 
 				if (!cb.location || !LOCATIONS[cb.location]) {
 					cb.location = 'Editor';
@@ -1109,7 +1114,7 @@ const rootReducer = (state = initialState, action) => {
 					if (!failure) {
 						DiscLevels[discount.levelId] = discount;
 					} else {
-						console.error(error.message, error.targets);
+						log.red(error.message, error.targets);
 					}
 				});
 			})();
@@ -1410,9 +1415,7 @@ const rootReducer = (state = initialState, action) => {
 			var faId = action.payload.faId;
 			var attachment = action.payload.data || {};
 
-			var _commercialProducts =
-				state.frameAgreements[faId]._ui.commercialProducts;
-			_commercialProducts = _commercialProducts.filter(
+			var _commercialProducts = state.commercialProducts.filter(
 				cp => attachment.products[cp.Id]
 			);
 

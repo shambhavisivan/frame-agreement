@@ -27,7 +27,7 @@ export class Rates extends React.Component {
 		this.props.onNegotiate(negotiation);
 	}
 
-	componentWillUpdate(nextProps, nextState) {
+	UNSAFE_componentWillUpdate(nextProps, nextState) {
 		if (nextState.pagination.pageSize !== this.state.pagination.pageSize) {
 			this.paginationFormat = this.paginateRateCards(
 				nextState.pagination.pageSize
@@ -114,6 +114,16 @@ export class Rates extends React.Component {
 												flagColor = '#ccc';
 											}
 
+											let _negValue;
+											if (
+												this.props.attachment.hasOwnProperty(rc.Id) &&
+												this.props.attachment[rc.Id].hasOwnProperty(rcl.Id)
+											) {
+												_negValue = this.props.attachment[rc.Id][rcl.Id];
+											} else {
+												_negValue = rcl.cspmb__rate_value__c || 0;
+											}
+
 											return (
 												<li key={rcl.Id} className="list-row">
 													<div className="list-cell">
@@ -136,15 +146,11 @@ export class Rates extends React.Component {
 														<InputNegotiate
 															readOnly={this.props.readOnly}
 															invalid={this.props.validation[rcl.Id]}
+															max={rcl.cspmb__rate_value__c}
 															onChange={val => {
 																this.negotiateInline(rc, rcl, val);
 															}}
-															negotiatedValue={
-																(this.props.attachment[rc.Id] &&
-																	this.props.attachment[rc.Id][rcl.Id]) ||
-																rcl.cspmb__rate_value__c ||
-																0
-															}
+															negotiatedValue={_negValue}
 															originalValue={rcl.cspmb__rate_value__c}
 														/>
 													</div>

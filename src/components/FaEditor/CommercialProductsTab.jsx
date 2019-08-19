@@ -10,7 +10,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 import CommercialProduct from '../negotiation/CommercialProduct';
 
 import { truncateCPField, log } from '../../utils/shared-service';
-import { toggleFieldVisibility } from '../../actions';
+import { toggleFieldVisibility } from '~/src/actions';
 
 import AddProductCTA from './AddProductCTA';
 

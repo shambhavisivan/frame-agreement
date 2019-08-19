@@ -4,10 +4,13 @@ import 'babel-polyfill';
 import { log } from './utils/shared-service';
 
 export const subscriptions = {};
+
 window.subscriptions = subscriptions;
+
 const eventList = [
 	'onLoad',
 	'onFaSelect',
+	'onFaUpdate',
 	'onBeforeAddProducts',
 	'onBeforeDeleteProducts',
 	'onAfterAddProducts',
@@ -19,8 +22,13 @@ const eventList = [
 	'onBeforeBulkNegotiation',
 	'onAfterBulkNegotiation',
 	'onBeforeSubmit',
-	'onAfterSubmit'
+	'onAfterSubmit',
+	'onIframeClose'
 ];
+
+export const hasSubscription = event => {
+	return subscriptions.hasOwnProperty(event);
+};
 
 const subscribe = (eventType, callback) => {
 	if (!eventList.includes(eventType)) {
@@ -50,8 +58,6 @@ export const publish = async (eventType, arg = null) => {
 
 	log.green('Subscriber found for event: ' + eventType);
 
-	// subscriptions[eventType].forEach(e => {e(arg)});
-
 	let _finalArg;
 	// Idiomatic way
 	let _promiseChain = subscriptions[eventType].reduce((chain, event) => {
@@ -64,9 +70,6 @@ export const publish = async (eventType, arg = null) => {
 	return _promiseChain.finally(r => {
 		return r || _finalArg;
 	});
-
-	// return Promise.resolve(arg);
-	// return await subscriptions[eventType].apply(null, arg);
 };
 
 export const initialiseApi = () => {
@@ -74,46 +77,9 @@ export const initialiseApi = () => {
 	window.FAM.api = {};
 	window.FAM.eventList = eventList;
 	window.FAM.subscribe = subscribe;
-	// window.FAM.api.invokeAction = window.SF.invokeAction.bind(window.SF);
-
-	// FROM OTHER COMPONENTS
-	// window.FAM.toaster = ToastsStore;
-	// window.FAM.addProducts = this.onAddProducts.bind(this);
-	// window.FAM.negotiate = this.onNegotiate.bind(this);
-	// window.FAM.toast = this.props.createToast;
-	// window.FAM.registerMethod = this.props.registerMethod;
-	// window.FAM.getActiveFrameAgreement = () => this.state.activeFa;
-
-	/*
-        window.FAM.registerMethod("ActionFunction", () => {
-             return new Promise(resolve => {
-                 setTimeout(() => {resolve("ActionFunction result")}, 2000);
-             });
-        })
-    */
 
 	log.blue('FAC API initialised!');
 };
-
-/*********************************************************/
-// subscribe("Test", (data) => Promise.resolve(data || "N/A"))
-
-// subscribe("Test", (data) => {
-//     return new Promise(resolve => {
-//         resolve(data);
-//     });
-// })
-
-// subscribe("Test", (data) => {
-//     return new Promise(resolve => {
-//         resolve(data);
-//     });
-// })
-
-// let a = await publish("Test", [1, 2, 3]);
-// console.log(a)
-
-/*********************************************************/
 
 Object.defineProperty(Array.prototype, 'paginate', {
 	value: function(page, pageSize) {
@@ -144,6 +110,77 @@ window.mandatory = function mandatory(funName) {
 			: 'Missing parameter!'
 	);
 };
+
+// ****************************************************************
+// NON store actions (pure remote actions)
+// ****************************************************************
+export function performAction(className, params) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('performAction', [className, params]).then(
+			response => {
+				resolve(response);
+				return response;
+			}
+		);
+	});
+}
+
+export function createPricingRuleGroup(faId) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('createPricingRuleGroup', [faId]).then(prId => {
+			resolve(prId);
+			return prId;
+		});
+	});
+}
+
+export function decomposeAttachment(data, prId, faId) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('decomposeAttachment', [
+			JSON.stringify(data),
+			prId,
+			faId
+		]).then(message => {
+			resolve(message);
+			return message;
+		});
+	});
+}
+
+export function undoDecomposition(prId) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('undoDecomposition', [prId]).then(message => {
+			resolve(message);
+			return message;
+		});
+	});
+}
+export function approveRejectRecallRecord(recordId, comments, action) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('approveRejectRecallRecord', [
+			recordId.slice(0, 15),
+			comments,
+			action
+		]).then(response => {
+			resolve(response);
+			return response;
+		});
+	});
+}
+
+export function reassignApproval(recordId, newActorId) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('reassignApproval', [
+			recordId.slice(0, 15),
+			newActorId
+		]).then(response => {
+			resolve(response);
+			return response;
+		});
+	});
+}
+
+// ****************************************************************
 
 // Object.defineProperty(Array.prototype, 'intercept', {
 //     value: function(callback) {
@@ -180,3 +217,14 @@ window.mandatory = function mandatory(funName) {
 // 		resolve(data);
 // 	});
 // });
+
+/*********************************************************/
+// subscribe("Test", (data) => Promise.resolve(data || "N/A"))
+
+// window.FAM.subscribe("Test", (data) => {
+//     return new Promise(resolve => {
+//         resolve(data);
+//     });
+// })
+
+/*********************************************************/

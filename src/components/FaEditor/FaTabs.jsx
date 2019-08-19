@@ -23,10 +23,21 @@ export class FaTabs extends React.Component {
 	}
 
 	render() {
-		let customTabs;
+		let customTabsComponent;
+		let _tabs = this.props.settings.CustomTabsData || [];
 
-		if (this.props.settings.CustomTabsData.length) {
-			customTabs = (
+		_tabs = _tabs.filter(tab => {
+			if (
+				this.props.ignoreSettings.hasOwnProperty('tabs') &&
+				this.props.ignoreSettings.tabs.length
+			) {
+				return !(this.props.ignoreSettings.tabs.indexOf(tab.container_id) + 1);
+			}
+			return true;
+		});
+
+		if (_tabs.length) {
+			customTabsComponent = (
 				<Tabs initial={0}>
 					<Tab label={window.SF.labels.products_tab_title}>
 						{this.props.loading ? (
@@ -36,7 +47,7 @@ export class FaTabs extends React.Component {
 						)}
 					</Tab>
 
-					{this.props.settings.CustomTabsData.map(tab => {
+					{_tabs.map(tab => {
 						return (
 							<Tab
 								key={'tab-' + tab.container_id}
@@ -56,20 +67,21 @@ export class FaTabs extends React.Component {
 				</Tabs>
 			);
 		} else {
-			customTabs = this.props.loading ? (
+			customTabsComponent = this.props.loading ? (
 				<CommercialProductSkeleton count={5} />
 			) : (
 				<React.Fragment>{this.props.children}</React.Fragment>
 			);
 		}
 
-		return customTabs;
+		return customTabsComponent;
 	}
 }
 
 const mapStateToProps = state => {
 	return {
 		settings: state.settings,
+		ignoreSettings: state.ignoreSettings,
 		handlers: state.handlers
 	};
 };

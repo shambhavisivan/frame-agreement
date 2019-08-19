@@ -73,7 +73,7 @@ class CustomButtonDropdown extends React.Component {
 									key={btnObj.id + i}
 									id={btnObj.id}
 									onClick={() => {
-										this.props.onAction(btnObj.method, btnObj.type);
+										this.props.onAction(btnObj);
 									}}
 								>
 									{btnObj.label}

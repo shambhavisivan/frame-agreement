@@ -95,7 +95,7 @@ export class FaEditor extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.mounted = true;
 		// Disable onLeavePage prompt when saved
 		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(
@@ -194,7 +194,7 @@ export class FaEditor extends Component {
 		window.editor = this;
 	}
 
-	componentWillUpdate() {
+	UNSAFE_componentWillUpdate() {
 		try {
 			if (
 				this.editable !==

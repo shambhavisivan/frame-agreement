@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { toggleFieldVisibility, toggleModals } from '../../actions';
+import { toggleFieldVisibility, toggleModals } from '~/src/actions';
 
 export class AddProductCTA extends React.Component {
 	// constructor(props) {

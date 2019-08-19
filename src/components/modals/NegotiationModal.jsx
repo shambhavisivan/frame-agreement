@@ -14,9 +14,9 @@ import {
 	validateCharges,
 	validateRateCardLines
 } from '../../utils/validation-service';
-import { createToast } from '../../actions';
+import { createToast } from '~/src/actions';
 
-// import { getFrameAgreements } from '../../actions';
+// import { getFrameAgreements } from '~/src/actions';
 
 const ADDON_VALUE_FIELD = 'cspmb__Recurring_Charge__c';
 const RATE_VALUE_FIELD = 'cspmb__rate_value__c';
@@ -194,24 +194,9 @@ class NegotiationModal extends Component {
 				true
 			)
 		};
-		// this.priceItemFields = [
-		//   ...this.props.settings.FACSettings.price_item_fields
-		// ];
-		// this.priceItemFields.unshift('Name');
-		// console.warn(this.priceItemFields);
-		console.log('***********************************');
-		console.warn(this.state.attachment);
-		console.log('***********************************');
-		console.warn(this._addons);
-		console.warn(this._charges);
-		console.warn(this._rateCards);
-		console.log('***********************************');
 	}
 
-	componentWillMount() {
-		// this._addons
-		// this._charges
-		// this._rateCards
+	UNSAFE_componentWillMount() {
 
 		let charges = {};
 

@@ -41,11 +41,6 @@ describe('select_actions', () => {
 			expect(store.getActions()).toEqual([expectedAction]);
 		});
 
-		it('should call performAction without error', () => {
-			// performAction
-			return expect(actions.performAction('getFrameAgreements', [])).resolves.toBe('Success');
-		});
-
 		it('should call actions for creating custom rule group without error', () => {
 			return actions
 				.loadAccounts({ field: 'csconta__replaced_frame_agreement__c' })(store.dispatch)
@@ -56,20 +51,6 @@ describe('select_actions', () => {
 				});
 		});
 
-		describe('create pricing rule actions', () => {
-			it('should be called without error (createPricingRuleGroup)', () => {
-				return expect(actions.createPricingRuleGroup()).resolves.toBe('pricingRuleId');
-			});
-
-			it('should be called without error (decomposeAttachment)', () => {
-				return expect(actions.decomposeAttachment()).resolves.toBe('Success');
-			});
-
-			it('should be called without error (undoDecomposition)', () => {
-				return expect(actions.undoDecomposition()).resolves.toBe('Success');
-			});
-		});
-
 		it('should call getApprovalHistory without an error', () => {
 			return actions
 				.getApprovalHistory('faId')(store.dispatch)
@@ -78,10 +59,6 @@ describe('select_actions', () => {
 					expect(executed_actions[0].type).toEqual('GET_APPROVAL_HISTORY');
 					expect(resp.currentUser).toEqual('0051t0000025wM9AAI');
 				});
-		});
-
-		it('should call approveRejectRecallRecord without an error', () => {
-			return expect(actions.approveRejectRecallRecord('recordId')).resolves.toBeTruthy();
 		});
 
 		it('should create an action setCustomData using function that returns dispatch', () => {
@@ -171,10 +148,6 @@ describe('select_actions', () => {
 					expect(executed_actions[0].type).toEqual('NEW_VERSION');
 					expect(resp.csconta__Agreement_Name__c.endsWith('_v2')).toBeTruthy();
 				});
-		});
-
-		it('should call reassignApproval without an error', () => {
-			return expect(actions.reassignApproval('recordId')).resolves.toBeTruthy();
 		});
 
 		it('should call submitForApproval without an error', () => {

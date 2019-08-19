@@ -311,7 +311,8 @@ const frameAgreements = [
 		csconta__Status__c: 'Draft',
 		csconta__Valid_From__c: 1547424000000,
 		csconta__Valid_To__c: 1568419200000,
-		csfam__Arb_Field_Bool__c: true,
+		csfam__Disable_Levels__c: false,
+		csfam__Disable_Custom_Tabs__c: false,
 		csfam__Arb_Field_Integer__c: 48,
 		csfam__Arb_Field_Text__c: 'Arb Text',
 		csfam__Arb_Field_Date__c: 1547510400000,
@@ -334,7 +335,8 @@ const frameAgreements = [
 		csconta__Status__c: 'Active',
 		csconta__Valid_From__c: 1547424000000,
 		csconta__Valid_To__c: 1568419200000,
-		csfam__Arb_Field_Bool__c: true,
+		csfam__Disable_Levels__c: false,
+		csfam__Disable_Custom_Tabs__c: false,
 		csfam__Arb_Field_Integer__c: 144,
 		csfam__Arb_Field_Text__c: 'Arb Text',
 		csfam__Arb_Field_Date__c: 1547424000000,
@@ -356,7 +358,8 @@ const frameAgreements = [
 		csconta__Status__c: 'Draft',
 		csconta__Valid_From__c: 1547424000000,
 		csconta__Valid_To__c: 1568419200000,
-		csfam__Arb_Field_Bool__c: true,
+		csfam__Disable_Levels__c: true,
+		csfam__Disable_Custom_Tabs__c: false,
 		csfam__Arb_Field_Integer__c: 22,
 		csfam__Arb_Field_Text__c: 'Arb Text',
 		csfam__Arb_Field_Date__c: 1547424000000,
@@ -845,14 +848,22 @@ const HeaderData = [
 		readOnly: false,
 		label: 'Arb Field Integer',
 		type: 'number',
-		visible: 'csfam__Arb_Field_Bool__c==true',
+		visible: 'csfam__Disable_Levels__c==true',
 		grid: 1
 	},
 	{
-		field: 'csfam__Arb_Field_Bool__c',
+		field: 'csfam__Disable_Levels__c',
 		readOnly: false,
-		label: 'Arb Field Bool',
+		label: 'Disable Levels',
 		type: 'boolean',
+		grid: 2
+	},
+	{
+		field: 'csfam__Disable_Custom_Tabs__c',
+		readOnly: false,
+		label: 'Disable Tabs',
+		type: 'boolean',
+		visible: '',
 		grid: 2
 	},
 	{
@@ -948,6 +959,10 @@ const ButtonCustomData = [
 		label: 'iFrame button',
 		id: 'bta2',
 		location: 'Editor',
+		options: {
+			width: '100%',
+			height: '100%'
+		},
 		method: 'iFrameFunction',
 		hidden: ['Active']
 	},
@@ -987,26 +1002,6 @@ const ButtonStandardData = {
 	AddFrameAgreement: ['Draft', 'Requires Approval'],
 	NewVersion: ['Active']
 };
-
-/*
-    window.FAM.registerMethod("RedirectFunction", () => {
-         return new Promise(resolve => {
-             setTimeout(() => {resolve("https://stackoverflow.com/questions/503093/how-do-i-redirect-to-another-webpage")});
-         });
-    })
-
-    window.FAM.registerMethod("iFrameFunction", () => {
-         return new Promise(resolve => {
-             setTimeout(() => {resolve("http://localhost:8080/#/agreement")});
-         });
-    })
-
-    window.FAM.registerMethod("ActionFunction", () => {
-         return new Promise(resolve => {
-             setTimeout(() => {resolve("ActionFunction called")});
-         });
-    })
-*/
 
 const commercialProducts = [
 	{

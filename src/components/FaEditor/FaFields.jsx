@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { updateFrameAgreement } from '../../actions';
+import { updateFrameAgreement, updateIgnoreSettings } from '~/src/actions';
+import { publish, hasSubscription } from '~/src/api';
+import { log, copy, isObject } from '~/src/utils/shared-service.js';
 
 import SFField from '../utillity/SFField';
 import Icon from '../utillity/Icon';
@@ -16,9 +18,13 @@ export class FaFields extends React.Component {
 		// this.props.editable
 
 		this.onFieldChange = this.onFieldChange.bind(this);
+
+		if (hasSubscription('onFaUpdate')) {
+			this.handleIgnoreSettingsHook();
+		}
 	}
 
-	// componentWillUpdate(a,b) {
+	// UNSAFE_componentWillUpdate(a,b) {
 	// 	console.log(a);
 	// 	console.log(b);
 	// 	console.warn(this.props.frameAgreements[this.props.faId]);
@@ -26,7 +32,46 @@ export class FaFields extends React.Component {
 
 	onFieldChange(field, value) {
 		this.props.updateFrameAgreement(this.props.faId, field, value);
+
 		this.props.onActionTaken(field, value);
+
+		if (!hasSubscription('onFaUpdate')) {
+			return;
+		}
+
+		setTimeout(() => {
+			this.handleIgnoreSettingsHook();
+		});
+	}
+
+	async handleIgnoreSettingsHook() {
+		try {
+			let _ignoreSettings = await publish('onFaUpdate', {
+				ignoreSettings: copy(this.props.ignoreSettings)
+			});
+
+			if (!isObject(_ignoreSettings)) {
+				throw new Error('onFaUpdate response is not an object!');
+			}
+
+			if (!!_ignoreSettings.products) {
+				_ignoreSettings.products = Array.from(_ignoreSettings.products);
+			}
+			if (!!_ignoreSettings.tabs) {
+				_ignoreSettings.tabs = Array.from(_ignoreSettings.tabs);
+			}
+
+			this.props.updateIgnoreSettings(_ignoreSettings);
+		} catch (err) {
+			log.bg.red('Error on custom ignore settings hook:');
+			log.red(
+				err.message +
+					'\n' +
+					Array(err.message.length)
+						.fill('_')
+						.join('')
+			);
+		}
 	}
 
 	render() {
@@ -75,12 +120,14 @@ export class FaFields extends React.Component {
 const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
+		ignoreSettings: state.ignoreSettings,
 		settings: state.settings
 	};
 };
 
 const mapDispatchToProps = {
-	updateFrameAgreement
+	updateFrameAgreement,
+	updateIgnoreSettings
 };
 
 export default connect(

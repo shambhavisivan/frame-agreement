@@ -1,5 +1,5 @@
 'use strict';
-
+import { log } from './shared-service';
 // FALSE means valid
 
 const getMinValue = (value, discount, type) => {
@@ -79,7 +79,7 @@ export const validateAddons = (data, attachment) => {
 							negotiationFormat.negotiatedOneOff != null &&
 							negotiationFormat.negotiatedOneOff < minOneOff.toFixed(2)
 						) {
-							console.warn(
+							log.bg.orange(
 								'Minimal value for oneOff on ' +
 									addon.Name +
 									' is ' +
@@ -100,7 +100,7 @@ export const validateAddons = (data, attachment) => {
 							negotiationFormat.negotiatedRecurring != null &&
 							negotiationFormat.negotiatedRecurring < minRecurring.toFixed(2)
 						) {
-							console.warn(
+							log.bg.orange(
 								'Minimal value for recurring on ' +
 									addon.Name +
 									' is ' +
@@ -170,7 +170,7 @@ export const validateProduct = data => {
 					data.negotiatedOneOff != null &&
 					data.negotiatedOneOff < minOneOff.toFixed(2)
 				) {
-					console.warn(
+					log.bg.orange(
 						'Minimal value for oneOff on ' +
 							data.Name +
 							' is ' +
@@ -191,7 +191,7 @@ export const validateProduct = data => {
 					data.negotiatedRecurring != null &&
 					data.negotiatedRecurring < minRecurring.toFixed(2)
 				) {
-					console.warn(
+					log.bg.orange(
 						'Minimal value for recurring on ' +
 							data.Name +
 							' is ' +
@@ -284,7 +284,7 @@ export const validateCharges = (data, authLevel, attachment) => {
 						typeof negotiationFormat.negotiatedValue !== 'undefined' &&
 						negotiationFormat.negotiatedValue < minValue.toFixed(2)
 					) {
-						console.warn(
+						log.bg.orange(
 							'Minimal value for oneOff on ' +
 								charge.Name +
 								' is ' +
@@ -364,7 +364,7 @@ export const validateRateCardLines = (data, data2) => {
 						) || 0;
 
 					if (negotiationFormat.negotiatedValue < minValue.toFixed(2)) {
-						console.warn(
+						log.bg.orange(
 							'Minimal value for  ' +
 								rcl.Name +
 								' is ' +

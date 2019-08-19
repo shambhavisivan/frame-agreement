@@ -33,6 +33,10 @@ export const IsJsonString = str => {
 	return true;
 };
 
+export const isObject = a => !!a && a.constructor === Object;
+
+export const copy = obj => JSON.parse(JSON.stringify(obj));
+
 export const decodeEntities = (() => {
 	// this prevents any overhead from creating the object each time
 	var element = document.createElement('div');
@@ -162,25 +166,25 @@ export const log = {
 		blue: log => {
 			console.log(
 				'%c' + log,
-				'background: #0070d2; color: white; padding: 1px 4px 1px 0px'
+				'background: #0070d2; color: white; padding: 1px 4px 1px 2px'
 			);
 		},
 		green: log => {
 			console.log(
 				'%c' + log,
-				'background: #4bca81; color: white; padding: 1px 4px 1px 0px'
+				'background: #4bca81; color: white; padding: 1px 4px 1px 2px'
 			);
 		},
 		red: log => {
 			console.log(
 				'%c' + log,
-				'background: #d9675d; color: white; padding: 1px 4px 1px 0px'
+				'background: #d9675d; color: white; padding: 1px 4px 1px 2px'
 			);
 		},
 		orange: log => {
 			console.log(
 				'%c' + log,
-				'background: #ffa429; color: white; padding: 1px 4px 1px 0px'
+				'background: #ffa429; color: white; padding: 1px 4px 1px 2px'
 			);
 		}
 	}

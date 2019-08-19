@@ -24,7 +24,7 @@ class LookupField extends React.Component {
 		this._setState = this._setState.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.onSearchChange = this.onSearchChange.bind(this);
-		this.onOpenLookupModal = this.onOpenLookupModal.bind(this);
+		// this.onOpenLookupModal = this.onOpenLookupModal.bind(this);
 
 		this.filter = null;
 
@@ -51,7 +51,7 @@ class LookupField extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.mounted = true;
 
 		window.SF.invokeAction('getLookupInformation', [
@@ -188,7 +188,16 @@ class LookupField extends React.Component {
 		});
 	}
 
-	onOpenLookupModal() {
+	openRecord() {
+		console.log(this.state.value);
+		var win = window.open(
+			window.location.origin + '/' + this.state.value,
+			'_blank'
+		);
+		win.focus();
+	}
+
+	onOpenLookupModal(e) {
 		this._setState(
 			{
 				searchValue: '',
@@ -296,17 +305,31 @@ class LookupField extends React.Component {
 						placeholder={window.SF.labels.util_input_lookup_placehoder}
 						aria-describedby=""
 						readOnly={true}
-						onClick={this.onOpenLookupModal}
+						onClick={e => this.onOpenLookupModal(e)}
 						value={
 							this.state.loadedInput
 								? decodeEntities(this.state.recordLabel)
 								: '-'
 						}
 					/>
-					<div className="fa-lookup-icon" onClick={this.onOpenLookupModal}>
+					<div
+						className="fa-lookup-icon"
+						onClick={e => this.onOpenLookupModal(e)}
+					>
 						<Icon
 							svg-class="icon-search"
 							name="search"
+							width="14"
+							height="14"
+						/>
+					</div>
+					<div
+						className="fa-lookup-icon forward"
+						onClick={e => this.openRecord(e)}
+					>
+						<Icon
+							svg-class="icon-forward"
+							name="forward"
 							width="14"
 							height="14"
 						/>

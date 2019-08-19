@@ -21,16 +21,6 @@ export function registerMethod(name, method) {
 	};
 }
 
-export function performAction(className, params) {
-	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('performAction', [className, params]).then(
-			response => {
-				resolve(response);
-				return response;
-			}
-		);
-	});
-}
 // ***********************************************************************
 export const _loadAccounts = data => ({
 	type: 'LOAD_ACCOUNTS',
@@ -50,38 +40,6 @@ export function loadAccounts(params) {
 			);
 		});
 	};
-}
-// ***********************************************************************
-
-export function createPricingRuleGroup(faId) {
-	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('createPricingRuleGroup', [faId]).then(prId => {
-			resolve(prId);
-			return prId;
-		});
-	});
-}
-
-export function decomposeAttachment(data, prId, faId) {
-	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('decomposeAttachment', [
-			JSON.stringify(data),
-			prId,
-			faId
-		]).then(message => {
-			resolve(message);
-			return message;
-		});
-	});
-}
-
-export function undoDecomposition(prId) {
-	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('undoDecomposition', [prId]).then(message => {
-			resolve(message);
-			return message;
-		});
-	});
 }
 
 // ***********************************************************************
@@ -107,20 +65,6 @@ export function getApprovalHistory(faId) {
 	};
 }
 
-/*, Reject, Removed, Approve
- */
-export function approveRejectRecallRecord(recordId, comments, action) {
-	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('approveRejectRecallRecord', [
-			recordId.slice(0, 15),
-			comments,
-			action
-		]).then(response => {
-			resolve(response);
-			return response;
-		});
-	});
-}
 // ***********************************************************************
 export const _setCustomData = (faId, data) => ({
 	type: 'SET_CD',
@@ -228,18 +172,6 @@ export function createNewVersionOfFrameAgrement(faId) {
 			);
 		});
 	};
-}
-
-export function reassignApproval(recordId, newActorId) {
-	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('reassignApproval', [
-			recordId.slice(0, 15),
-			newActorId
-		]).then(response => {
-			resolve(response);
-			return response;
-		});
-	});
 }
 
 export function submitForApproval(faId) {
@@ -646,8 +578,6 @@ export const _saveFrameAgreement = upsertedFa => ({
 
 export function saveFrameAgreement(frameAgreement) {
 	return function(dispatch) {
-		// dispatch(requestUpsertFrameAgreements());
-
 		if (frameAgreement === undefined) {
 			console.error('No Frame agreement!');
 		}
@@ -716,6 +646,18 @@ export const _updateFrameAgreement = (faId, field, value) => ({
 export function updateFrameAgreement(faId, field, value) {
 	return function(dispatch) {
 		dispatch(_updateFrameAgreement(faId, field, value));
+	};
+}
+// ***********************************************************************
+
+export const _updateIgnoreSettings = data => ({
+	type: 'UPDATE_IGNORE',
+	payload: data
+});
+
+export function updateIgnoreSettings(newIgnoreSettings) {
+	return function(dispatch) {
+		dispatch(_updateIgnoreSettings(newIgnoreSettings));
 	};
 }
 // ***********************************************************************

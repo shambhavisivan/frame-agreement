@@ -16,7 +16,10 @@ import { Provider } from 'react-redux';
 function setupApp() {
 	let _frameAgreements = getMockStore(['frameAgreements']);
 	_frameAgreements.a1t1t0000009wpQAAQ = getFa();
-	_frameAgreements = {..._frameAgreements, ['a1t1t0000009wpQAAQ']: {..._frameAgreements.a1t1t0000009wpQAAQ, _ui: {..._frameAgreements.a1t1t0000009wpQAAQ._ui, approval: {}}}}
+	_frameAgreements = {
+		..._frameAgreements,
+		['a1t1t0000009wpQAAQ']: { ..._frameAgreements.a1t1t0000009wpQAAQ, _ui: { ..._frameAgreements.a1t1t0000009wpQAAQ._ui, approval: {} } }
+	};
 	_frameAgreements.a1t1t0000009wpQAAQ._ui.approval.listProcess = [];
 
 	const props = {
@@ -26,7 +29,7 @@ function setupApp() {
 		approveRejectRecallRecord: actions.approveRejectRecallRecord,
 		reassignApproval: actions.reassignApproval,
 		createToast: actions.createToast,
-		frameAgreements:  _frameAgreements
+		frameAgreements: _frameAgreements
 	};
 
 	const mockStore = configureStore();
@@ -45,7 +48,6 @@ describe('FaEditor component', () => {
 
 	it('should render without errors', () => {
 		return setupApp().then(response => {
-
 			const enzymeWrapper = response;
 			const instance = enzymeWrapper.instance();
 			instance.componentWillUpdate();
@@ -53,16 +55,12 @@ describe('FaEditor component', () => {
 			instance.refreshApprovalHistory();
 
 			instance.approvalAction();
-			instance.approvalAction("Reassign");
+			instance.approvalAction('Reassign');
 
 			expect(enzymeWrapper.find('.header__title')).toBeTruthy();
 			enzymeWrapper.find('.header__title').simulate('click');
 			enzymeWrapper.update();
 			expect(enzymeWrapper.state().open).toBe(true);
-
-
-
-
 		});
 	});
 });

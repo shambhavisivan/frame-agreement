@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { removeToast } from '../../actions';
+import { removeToast } from '~/src/actions';
 
 import Icon from './Icon';
 

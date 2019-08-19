@@ -7,7 +7,7 @@ import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 
 import { validateProduct } from '../../utils/validation-service';
 
-import { setValidation } from '../../actions';
+import { setValidation } from '~/src/actions';
 import { connect } from 'react-redux';
 
 export class ProductCharges extends React.Component {
@@ -97,6 +97,7 @@ export class ProductCharges extends React.Component {
 								// If there are any discounts and there one off is defined
 								if (
 									this.discounts.length &&
+									this.props.disableLevels &&
 									this.props.product.cspmb__One_Off_Charge__c != null
 								) {
 									// Filter only ones that have adequate type
@@ -159,6 +160,7 @@ export class ProductCharges extends React.Component {
 
 								if (
 									this.discounts.length &&
+									!this.props.disableLevels &&
 									this.props.product.cspmb__Recurring_Charge__c != null
 								) {
 									let recurringDiscount = this.discounts.filter(

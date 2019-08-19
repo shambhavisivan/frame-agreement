@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import {
 	getApprovalHistory,
 	refreshFrameAgreement,
-	approveRejectRecallRecord,
-	reassignApproval,
 	createToast
 } from '../actions';
+
+import { approveRejectRecallRecord, reassignApproval } from '~/src/api';
 
 export class ApprovalProcess extends React.Component {
 	constructor(props) {
@@ -52,7 +52,7 @@ export class ApprovalProcess extends React.Component {
 		};
 	}
 
-	componentWillUpdate(newProps) {
+	UNSAFE_componentWillUpdate(newProps) {
 		let newActionRequired = false;
 		let newIsInitiator = this.props.frameAgreements[this.props.faId]._ui
 			.approval.isAdmin;
@@ -104,18 +104,17 @@ export class ApprovalProcess extends React.Component {
 
 	approvalAction(actionType, reassignTo = null) {
 		if (actionType === 'Reassign') {
-			this.props.reassignApproval(
+			reassignApproval(
 				this.props.faId,
 				reassignTo ||
 					this.props.frameAgreements[this.props.faId]._ui.approval.currentUser
 			);
 		} else {
-			this.props
-				.approveRejectRecallRecord(
-					this.props.faId,
-					this.state.comment || null,
-					actionType
-				)
+			approveRejectRecallRecord(
+				this.props.faId,
+				this.state.comment || null,
+				actionType
+			)
 				.then(response => {
 					if (response) {
 						this.props.createToast(
@@ -365,8 +364,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	getApprovalHistory,
 	refreshFrameAgreement,
-	approveRejectRecallRecord,
-	reassignApproval,
 	createToast
 };
 

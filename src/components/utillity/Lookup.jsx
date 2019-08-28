@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import InputSearch from './inputs/InputSearch';
-import Icon from './Icon';
 import Loading from './Loading';
 
 import Pagination from './Pagination';

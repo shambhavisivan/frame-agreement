@@ -263,6 +263,10 @@
 			> span:first-child {
 				@include sc(--modal-lightest-c);
 			}
+
+			svg.icon-success {
+				fill: white!important;
+			}
 		}
 	}
 }

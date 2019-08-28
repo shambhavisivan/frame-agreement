@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import {
 	getApprovalHistory,
 	refreshFrameAgreement,
+	setFrameAgreementState,
 	createToast
 } from '../actions';
 
@@ -110,13 +111,36 @@ export class ApprovalProcess extends React.Component {
 					this.props.frameAgreements[this.props.faId]._ui.approval.currentUser
 			);
 		} else {
-			approveRejectRecallRecord(
-				this.props.faId,
-				this.state.comment || null,
-				actionType
-			)
+			let _nextFaState;
+
+			switch (actionType) {
+				case 'Reject':
+					_nextFaState = this.props.settings.FACSettings.statuses
+						.requires_approval_status;
+					break;
+				case 'Approve':
+					_nextFaState = this.props.settings.FACSettings.statuses
+						.approved_status;
+					break;
+				case 'Removed':
+					_nextFaState = this.props.settings.FACSettings.statuses
+						.requires_approval_status;
+					break;
+				default:
+					_nextFaState = this.props.frameAgreements[this.props.faId]
+						.csconta__Status__c;
+			}
+
+			Promise.all([
+				approveRejectRecallRecord(
+					this.props.faId,
+					this.state.comment || null,
+					actionType
+				),
+				this.props.setFrameAgreementState(this.props.faId, _nextFaState)
+			])
 				.then(response => {
-					if (response) {
+					if (response[0]) {
 						this.props.createToast(
 							'success',
 							actionType,
@@ -130,7 +154,7 @@ export class ApprovalProcess extends React.Component {
 						);
 					}
 				})
-				.then(response => {
+				.then(() => {
 					this.setState({ comment: '' });
 					this.refreshApprovalHistory();
 				});
@@ -357,6 +381,7 @@ export class ApprovalProcess extends React.Component {
 
 const mapStateToProps = state => {
 	return {
+		settings: state.settings,
 		frameAgreements: state.frameAgreements
 	};
 };
@@ -364,6 +389,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	getApprovalHistory,
 	refreshFrameAgreement,
+	setFrameAgreementState,
 	createToast
 };
 

@@ -22,7 +22,6 @@ import {
 	saveFrameAgreement,
 	setCustomData,
 	setFrameAgreementState,
-	submitForApproval,
 	validateFrameAgreement
 } from './actions';
 // import { editModalWidth } from "./actions";
@@ -42,7 +41,8 @@ import {
 	performAction,
 	createPricingRuleGroup,
 	decomposeAttachment,
-	undoDecomposition
+	undoDecomposition,
+	submitForApproval
 } from './api';
 
 export class App extends Component {
@@ -289,25 +289,12 @@ export class App extends Component {
 		};
 
 		window.FAM.api.submitForApproval = async faId => {
-			let res1 = await this.props.submitForApproval(faId);
-			if (res1) {
-				this.props.createToast(
-					'success',
-					window.SF.labels.toast_success_title,
-					window.SF.labels.toast_submitForApproval_success
-				);
-			} else {
-				this.props.createToast(
-					'error',
-					window.SF.labels.toast_failed_title,
-					window.SF.labels.toast_submitForApproval_failed
-				);
-			}
+			let response = await submitForApproval(faId);
 			await Promise.all([
 				this.props.getApprovalHistory(faId),
 				this.props.refreshFrameAgreement(faId)
 			]);
-			return res1;
+			return response;
 		};
 
 		window.FAM.api.getCommercialProducts = async faId => {
@@ -471,7 +458,6 @@ const mapDispatchToProps = {
 	saveFrameAgreement,
 	setCustomData,
 	setFrameAgreementState,
-	submitForApproval,
 	validateFrameAgreement
 };
 

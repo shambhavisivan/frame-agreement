@@ -180,6 +180,17 @@ export function reassignApproval(recordId, newActorId) {
 	});
 }
 
+export function submitForApproval(faId) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('submitForApproval', [faId.slice(0, 15)]).then(
+			response => {
+				resolve(response);
+				return response;
+			}
+		);
+	});
+}
+
 // ****************************************************************
 
 // Object.defineProperty(Array.prototype, 'intercept', {

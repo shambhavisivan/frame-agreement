@@ -197,7 +197,6 @@ class NegotiationModal extends Component {
 	}
 
 	UNSAFE_componentWillMount() {
-
 		let charges = {};
 
 		this.commercialProducts.forEach(cp => {

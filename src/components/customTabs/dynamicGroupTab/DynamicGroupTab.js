@@ -92,7 +92,15 @@ class DynamicGroupTab extends React.Component {
 				'csfamext.DynamicGroupDataProvider',
 				'{"method": "getCustomSettings"}'
 			)
-			.then(response => JSON.parse(decodeEntities(response)))
+			.then(response => {
+				response = decodeEntities(response);
+
+				if (typeof response === 'string' && IsJsonString(response)) {
+					response = JSON.parse(response);
+				}
+
+				return response;
+			})
 			.then(response => {
 				for (var key in response) {
 					response[key] = response[key]
@@ -279,6 +287,11 @@ class DynamicGroupTab extends React.Component {
 
 	async updateCustomData(enforceSave) {
 		let customData = await window.FAM.api.getCustomData(ACTIVE_FA.Id);
+
+		if (typeof customData === 'string' && IsJsonString(customData)) {
+			customData = JSON.parse(customData);
+		}
+
 		customData = customData === '' ? {} : customData;
 		customData.group = Object.values(this.state.added);
 

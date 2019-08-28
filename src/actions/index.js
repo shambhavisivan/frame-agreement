@@ -529,6 +529,8 @@ export function getAttachment(faId) {
 			window.SF.invokeAction('getAttachmentBody', [faId]).then(response => {
 				try {
 					response = JSON.parse(atob(response));
+					// In case of manual malicious modifications
+					response = response || {};
 				} catch (e) {
 					// No attachment
 					response = {};
@@ -673,12 +675,15 @@ export function createFrameAgreement(faData) {
 				null,
 				JSON.stringify(faData)
 			]);
+			// Needs to be done in series
+			await window.SF.invokeAction('saveAttachment', [
+				newFa.Id,
+				JSON.stringify(faData._ui.attachment)
+			]);
+
 			newFa = {
 				...newFa,
-				_ui: {
-					commercialProducts: [],
-					attachment: { custom: '', products: {} }
-				}
+				_ui: faData._ui
 			};
 
 			dispatch(_createFrameAgreement(newFa));

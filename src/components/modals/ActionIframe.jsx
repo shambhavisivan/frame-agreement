@@ -6,20 +6,26 @@ class ActionIframe extends Component {
 		super(props);
 
 		this.iframe = React.createRef();
-		this.state = {
-			iFrameTitle: null
-		};
 
 		this.options = this.props.config.hasOwnProperty('options')
 			? this.props.config.options
 			: null;
-		this.showTitle =
+
+		this.iFrameTitle =
 			this.options && this.options.hasOwnProperty('title')
 				? this.options.title
-				: true;
+				: null;
 
-		this.styles = {};
+		// Default styles
+		this.styles = {
+			modal: {
+				maxWidth: '90%',
+				width: '70%',
+				height: '70%'
+			}
+		};
 
+		// Override
 		if (this.options) {
 			let _modalStyles = {};
 
@@ -36,35 +42,13 @@ class ActionIframe extends Component {
 		}
 	}
 
-	componentDidMount() {
-		if (this.showTitle) {
-			var checkExist = setInterval(() => {
-				if (this.iframe.current.contentDocument.querySelector('head title')) {
-					let _title = null;
-					try {
-						_title = this.iframe.current.contentDocument.querySelector(
-							'head title'
-						).text;
-					} catch (err) {}
-					this.setState({ iFrameTitle: _title });
-					clearInterval(checkExist);
-				}
-			}, 100);
-
-			setTimeout(() => {
-				checkExist && clearInterval(checkExist);
-			}, 7500);
-		}
-	}
-
 	render() {
 		return (
 			<Modal
 				classNames={{
 					overlay: 'overlay',
 					modal:
-						'fa-modal iframe-modal ' +
-						(this.state.iFrameTitle ? '' : 'no-title'),
+						'fa-modal iframe-modal ' + (this.iFrameTitle ? '' : 'no-title'),
 					closeButton: 'close-button'
 				}}
 				styles={this.styles}
@@ -94,8 +78,8 @@ class ActionIframe extends Component {
 							/>
 						</svg>
 					</button>
-					{this.state.iFrameTitle ? (
-						<h2 className="fa-modal-header-title">{this.state.iFrameTitle}</h2>
+					{this.iFrameTitle ? (
+						<h2 className="fa-modal-header-title">{this.iFrameTitle}</h2>
 					) : null}
 				</div>
 				<div className="fa-product-modal fa-modal-body">

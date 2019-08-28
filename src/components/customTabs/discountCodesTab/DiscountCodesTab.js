@@ -6,6 +6,7 @@ import Select from 'react-select';
 import {
 	decodeEntities,
 	log,
+	IsJsonString,
 	truncateCPField
 } from '../../../utils/shared-service';
 import Icon from '../../utillity/Icon';
@@ -30,7 +31,7 @@ const getTargetObjectCode = targetObject => {
 	return str;
 };
 
-const negotiateDiscountCodesForProducts = async data => {
+const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	// get discount codes
 	// group all rcl codes
 	// group all cp codes
@@ -116,6 +117,11 @@ const negotiateDiscountCodesForProducts = async data => {
 	discountCodes = discountCodes.codes || [];
 
 	if (!discountCodes.length) {
+		if (removed_group) {
+			window.FAM.api.resetNegotiation(active_fa.Id);
+			log.bg.red('---NEGOTIATION RESET');
+		}
+
 		// WE'RE DONE HERE
 		Promise.resolve(data);
 		return;
@@ -347,6 +353,10 @@ class DiscountCodesTab extends React.Component {
 			let _response_codes = response[1] || [];
 			let _response_data = response[2];
 
+			if (typeof _response_data === 'string' && IsJsonString(_response_data)) {
+				_response_data = JSON.parse(_response_data);
+			}
+
 			let _needsUpdateFlag = false;
 
 			let _codesMap = {};
@@ -487,9 +497,6 @@ class DiscountCodesTab extends React.Component {
 			this.state.added[this.state.open].csfamext__target_object__c
 		);
 
-		console.log('********************');
-		console.log(fromCode);
-
 		this.getTargetRecords(
 			fromCode,
 			this.state.added[this.state.open].csfamext__expression__c
@@ -598,6 +605,11 @@ class DiscountCodesTab extends React.Component {
 
 	async updateCustomData(enforceSave) {
 		let customData = await window.FAM.api.getCustomData(ACTIVE_FA.Id);
+
+		if (typeof customData === 'string' && IsJsonString(customData)) {
+			customData = JSON.parse(customData);
+		}
+
 		customData = customData === '' ? {} : customData;
 		customData.codes = Object.values(this.state.added);
 
@@ -607,7 +619,7 @@ class DiscountCodesTab extends React.Component {
 		);
 		console.log('Custom data saved:', this.state);
 		if (enforceSave) {
-			return window.FAM.api.saveFrameAgreement();
+			return window.FAM.api.saveFrameAgreement(ACTIVE_FA.Id);
 		} else {
 			return Promise.resolve();
 		}

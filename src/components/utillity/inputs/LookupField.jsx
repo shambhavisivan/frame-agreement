@@ -63,6 +63,12 @@ class LookupField extends React.Component {
 			this._setState({
 				recordLabel: response.initialLabel || '',
 				count: response.count,
+				selected: this.props.value
+					? {
+							Id: this.props.value,
+							Name: response.initialLabel
+					  }
+					: {},
 				loadedInput: true,
 				loadingOverlay: false
 			});
@@ -189,9 +195,8 @@ class LookupField extends React.Component {
 	}
 
 	openRecord() {
-		console.log(this.state.value);
 		var win = window.open(
-			window.location.origin + '/' + this.state.value,
+			window.location.origin + '/' + this.state.selected.Id,
 			'_blank'
 		);
 		win.focus();
@@ -323,17 +328,20 @@ class LookupField extends React.Component {
 							height="14"
 						/>
 					</div>
-					<div
-						className="fa-lookup-icon forward"
-						onClick={e => this.openRecord(e)}
-					>
-						<Icon
-							svg-class="icon-forward"
-							name="forward"
-							width="14"
-							height="14"
-						/>
-					</div>
+
+					{this.state.selected.Id ? (
+						<div
+							className="fa-lookup-icon forward"
+							onClick={e => this.openRecord(e)}
+						>
+							<Icon
+								svg-class="icon-forward"
+								name="forward"
+								width="14"
+								height="14"
+							/>
+						</div>
+					) : null}
 				</div>
 
 				<Modal

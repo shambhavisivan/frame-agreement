@@ -8,12 +8,11 @@ import {
 	createToast,
 	saveFrameAgreement,
 	refreshFrameAgreement,
-	submitForApproval,
 	getApprovalHistory,
 	createNewVersionOfFrameAgrement
 } from '~/src/actions';
 
-import { publish } from '~/src/api';
+import { publish, submitForApproval } from '~/src/api';
 import { isMaster } from '~/src/utils/shared-service';
 
 import Icon from '../utillity/Icon';
@@ -79,14 +78,13 @@ class FaHeader extends React.Component {
 	}
 
 	async onSubmitForApproval() {
-		await this.upsertFrameAgreements();
+		await this.upsertFrameAgreements(true);
 		await publish('onBeforeSubmit');
 
 		let _result;
 
 		return new Promise((resolve, reject) => {
-			this.props
-				.submitForApproval(this.props.faId)
+			submitForApproval(this.props.faId)
 				.then(async response => {
 					_result = response;
 					if (response) {
@@ -148,7 +146,7 @@ class FaHeader extends React.Component {
 		}
 	}
 
-	async upsertFrameAgreements() {
+	async upsertFrameAgreements(suppress) {
 		var data = { ...this.props.frameAgreements[this.props.faId] };
 		data = await publish('onBeforeSaveFrameAgreement', data);
 
@@ -161,11 +159,12 @@ class FaHeader extends React.Component {
 
 		this.props.saveFrameAgreement(data).then(async responseArr => {
 			await publish('onAfterSaveFrameAgreement', responseArr);
-			this.props.createToast(
-				'success',
-				window.SF.labels.toast_success_title,
-				window.SF.labels.toast_saved_fa
-			);
+			!suppress &&
+				this.props.createToast(
+					'success',
+					window.SF.labels.toast_success_title,
+					window.SF.labels.toast_saved_fa
+				);
 			return 'Success';
 		});
 	}
@@ -340,7 +339,6 @@ const mapDispatchToProps = {
 	createToast,
 	saveFrameAgreement,
 	refreshFrameAgreement,
-	submitForApproval,
 	getApprovalHistory,
 	createNewVersionOfFrameAgrement
 };

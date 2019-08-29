@@ -51,7 +51,7 @@ class LookupField extends React.Component {
 		};
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.mounted = true;
 
 		window.SF.invokeAction('getLookupInformation', [

@@ -106,17 +106,7 @@ class FaMaster extends Component {
 			page: 1,
 			pageSize: 10
 		};
-	}
 
-	componentWillUnmount() {
-		this.mounted = false;
-		delete window.FAM.api.getActiveFrameAgreement;
-		for (var key in SUBSCRIPTIONS) {
-			SUBSCRIPTIONS[key].unsubscribe();
-		}
-	}
-
-	UNSAFE_componentWillMount() {
 		this.mounted = true;
 		// Disable onLeavePage prompt when saved
 		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(
@@ -163,7 +153,17 @@ class FaMaster extends Component {
 				});
 			}
 		);
+	}
 
+	componentWillUnmount() {
+		this.mounted = false;
+		delete window.FAM.api.getActiveFrameAgreement;
+		for (var key in SUBSCRIPTIONS) {
+			SUBSCRIPTIONS[key].unsubscribe();
+		}
+	}
+
+	componentDidMount() {
 		this.props.getAttachment(this.faId).then(response => {
 			// this.props.addFaToMaster(this.faId, Object.keys(response.products));
 			this._setState(

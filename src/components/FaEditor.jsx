@@ -84,18 +84,7 @@ export class FaEditor extends Component {
 				pageSize: 10
 			}
 		};
-	}
 
-	componentWillUnmount() {
-		this.mounted = false;
-
-		delete window.FAM.api.getActiveFrameAgreement;
-		for (var key in SUBSCRIPTIONS) {
-			SUBSCRIPTIONS[key].unsubscribe();
-		}
-	}
-
-	UNSAFE_componentWillMount() {
 		this.mounted = true;
 		// Disable onLeavePage prompt when saved
 		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(
@@ -142,7 +131,18 @@ export class FaEditor extends Component {
 				});
 			}
 		);
+	}
 
+	componentWillUnmount() {
+		this.mounted = false;
+
+		delete window.FAM.api.getActiveFrameAgreement;
+		for (var key in SUBSCRIPTIONS) {
+			SUBSCRIPTIONS[key].unsubscribe();
+		}
+	}
+
+	componentDidMount() {
 		// Check if FA info is loaded already
 		// if (this.faId && this.props.frameAgreements[this.faId]._ui.attachment === null) {
 		if (this.props.frameAgreements[this.faId]._ui.attachment === null) {
@@ -194,7 +194,7 @@ export class FaEditor extends Component {
 		window.editor = this;
 	}
 
-	UNSAFE_componentWillUpdate() {
+	componentDidUpdate() {
 		try {
 			if (
 				this.editable !==

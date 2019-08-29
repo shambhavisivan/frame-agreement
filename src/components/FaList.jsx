@@ -82,7 +82,7 @@ class FaList extends Component {
 		window.FAM.registerMethod = this.props.registerMethod;
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		// initial load accounts loadAccounts
 		let params = {};
 		params.pointedObject = 'Account';

@@ -27,10 +27,19 @@ export class Rates extends React.Component {
 		this.props.onNegotiate(negotiation);
 	}
 
-	UNSAFE_componentWillUpdate(nextProps, nextState) {
-		if (nextState.pagination.pageSize !== this.state.pagination.pageSize) {
+	// Might need to revert
+	// UNSAFE_componentWillUpdate(nextProps, nextState) {
+	// 	if (nextState.pagination.pageSize !== this.state.pagination.pageSize) {
+	// 		this.paginationFormat = this.paginateRateCards(
+	// 			nextState.pagination.pageSize
+	// 		);
+	// 	}
+	// }
+
+	componentWillUpdate(prevProps, prevState) {
+		if (prevProps.pagination.pageSize !== this.state.pagination.pageSize) {
 			this.paginationFormat = this.paginateRateCards(
-				nextState.pagination.pageSize
+				this.state.pagination.pageSize
 			);
 		}
 	}

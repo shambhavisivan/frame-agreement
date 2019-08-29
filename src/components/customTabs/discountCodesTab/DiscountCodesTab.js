@@ -291,7 +291,7 @@ class DiscountCodesTab extends React.Component {
 		this.activeFa = null;
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		// ***********************************
 
 		let _getGroupsPromise = window.FAM.api

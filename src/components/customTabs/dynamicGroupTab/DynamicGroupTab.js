@@ -58,7 +58,7 @@ class DynamicGroupTab extends React.Component {
 		};
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		// ************************************
 		let _getGroupsPromise = window.FAM.api
 			.performAction(

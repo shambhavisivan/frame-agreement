@@ -53,7 +53,7 @@ export class ApprovalProcess extends React.Component {
 		};
 	}
 
-	UNSAFE_componentWillUpdate(newProps) {
+	componentDidUpdate() {
 		let newActionRequired = false;
 		let newIsInitiator = this.props.frameAgreements[this.props.faId]._ui
 			.approval.isAdmin;

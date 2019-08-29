@@ -194,9 +194,7 @@ class NegotiationModal extends Component {
 				true
 			)
 		};
-	}
-
-	UNSAFE_componentWillMount() {
+		/*********************************************************************************************************************************************************/
 		let charges = {};
 
 		this.commercialProducts.forEach(cp => {
@@ -221,12 +219,6 @@ class NegotiationModal extends Component {
 				// rated
 			}
 		});
-	}
-
-	componentDidUpdate(nextProps, nextState) {
-		// if (nextState.pagination.pageSize !== this.state.pagination.pageSize) {
-		// 	this.rateCardsPaginationFormat = this.paginateRateCards(this._rateCards, nextState.pagination.pageSize);
-		// }
 	}
 
 	onCloseModal() {

@@ -24,12 +24,6 @@ export class FaFields extends React.Component {
 		}
 	}
 
-	// UNSAFE_componentWillUpdate(a,b) {
-	// 	console.log(a);
-	// 	console.log(b);
-	// 	console.warn(this.props.frameAgreements[this.props.faId]);
-	// }
-
 	onFieldChange(field, value) {
 		this.props.updateFrameAgreement(this.props.faId, field, value);
 

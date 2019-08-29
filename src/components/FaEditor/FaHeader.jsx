@@ -41,7 +41,7 @@ class FaHeader extends React.Component {
 		};
 	}
 
-	UNSAFE_componentWillUpdate() {
+	componentDidUpdate() {
 		try {
 			if (
 				this.editable !==

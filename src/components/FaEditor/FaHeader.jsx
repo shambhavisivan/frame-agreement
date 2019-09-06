@@ -219,10 +219,18 @@ class FaHeader extends React.Component {
 		let master = isMaster(this.props.frameAgreements[this.props.faId]);
 
 		let headerClass = _editable ? '' : ' error fa-disabled';
-		headerClass +=
-			this.props.frameAgreements[this.props.faId]._ui.approvalNeeded && !master
+
+		// If not master and is not approved
+		if (
+			!master &&
+			this.props.frameAgreements[this.props.faId].csconta__Status__c !==
+				this.props.settings.FACSettings.statuses.approved_status
+		) {
+			headerClass += this.props.frameAgreements[this.props.faId]._ui
+				.approvalNeeded
 				? 'error fa-invalid'
 				: '';
+		}
 
 		return (
 			<div className={'fa-secondary-header ' + headerClass}>

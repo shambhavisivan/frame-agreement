@@ -960,6 +960,7 @@ const ButtonCustomData = [
 		id: 'bta2',
 		location: 'Editor',
 		options: {
+			title: 'Saleforce VF Page Title',
 			width: '100%',
 			height: '100%'
 		},

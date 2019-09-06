@@ -150,6 +150,8 @@ export class App extends Component {
 			});
 		};
 
+		window.FAM.validation = this.props.validation;
+
 		// ****************************************** API END ******************************************
 
 		window.FAM.api.performAction = performAction;
@@ -466,6 +468,7 @@ const mapStateToProps = state => {
 		frameAgreements: state.frameAgreements,
 		commercialProducts: state.commercialProducts,
 		settings: state.settings,
+		validation: state.validation,
 		initialised: state.initialised
 	};
 };

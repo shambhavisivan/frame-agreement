@@ -250,6 +250,7 @@ export class FaEditor extends Component {
 			);
 
 			await this.props.removeProductsFromFa(this.faId, productsToDelete);
+			this.props.validateFrameAgreement(this.faId);
 
 			this._setState(
 				{

@@ -129,6 +129,9 @@ function getapprovalNeeded(validation) {
 			if (validation[key].charges) {
 				collection = [...collection, ...Object.values(validation[key].charges)];
 			}
+			if (validation[key].product) {
+				collection = [...collection, ...Object.values(validation[key].product)];
+			}
 			if (validation[key].rated) {
 				collection = [...collection, ...Object.values(validation[key].rated)];
 			}
@@ -150,7 +153,7 @@ function getProductValidation(validation) {
 function getNewAttachment(headerData, fa) {
 	return {
 		commercialProducts: [],
-		approvalNeeded: [],
+		approvalNeeded: false,
 		headerRows: organizeHeaderFields(headerData, fa),
 		attachment: null
 	};
@@ -305,7 +308,7 @@ const rootReducer = (state = initialState, action) => {
 					}
 				});
 
-				validation = { ...state.validation, ...bulkValidation };
+				validation = bulkValidation;
 			} else {
 				validation = {
 					...state.validation,

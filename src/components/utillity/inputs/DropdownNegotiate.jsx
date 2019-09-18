@@ -31,6 +31,7 @@ class DropdownNegotiate extends React.Component {
 		}
 
 		this.discounts = [];
+		let _logMessages = [];
 
 		this.props.discounts.forEach(discount => {
 			discount.cspmb__Discount_Values__c.forEach((val, index) => {
@@ -39,21 +40,21 @@ class DropdownNegotiate extends React.Component {
 					discount.cspmb__Discount_Type__c === 'Amount' &&
 					val > this.props.originalValue
 				) {
-					log.orange(
+					_logMessages.push(
 						'Discount level "' +
 							discount.Name +
 							'" contains discount greater than original charge value.'
 					);
-					log.orange('Removing discount value -' + val);
+					_logMessages.push('Removing discount value -' + val);
 					return;
 				}
 				if (discount.cspmb__Discount_Type__c === 'Percentage' && val > 100) {
-					log.orange(
+					_logMessages.push(
 						'Discount level "' +
 							discount.Name +
 							'" contains discount greater than original charge value.'
 					);
-					log.orange('Removing discount value %' + val);
+					_logMessages.push('Removing discount value %' + val);
 					return;
 				}
 				// Carry on
@@ -64,6 +65,14 @@ class DropdownNegotiate extends React.Component {
 				});
 			});
 		});
+
+		if (_logMessages.length > 1) {
+			console.group('Discount warnings:');
+			_logMessages.forEach(log.orange);
+			console.groupEnd();
+		} else {
+			_logMessages.forEach(log.orange);
+		}
 
 		// Check if values are 0
 		this.discountNulled =

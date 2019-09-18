@@ -9,8 +9,7 @@ import ActionIframe from '~/src/components/modals/ActionIframe';
 import {
 	createToast,
 	toggleModals,
-	validateFrameAgreement,
-	getCommercialProductData
+	validateFrameAgreement
 } from '~/src/actions';
 
 class FaFooter extends React.Component {
@@ -197,8 +196,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	createToast,
 	toggleModals,
-	validateFrameAgreement,
-	getCommercialProductData
+	validateFrameAgreement
 };
 
 export default connect(

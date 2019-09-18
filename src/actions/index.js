@@ -357,7 +357,7 @@ export function deleteFrameAgreement(faId) {
 
 export const _recievePriceItemData = result => ({
 	type: 'RECIEVE_PRICE_ITEM_DATA',
-	payload: { result }
+	payload: result
 });
 
 const _getCommercialProductData = priceItemIdList => {

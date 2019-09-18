@@ -12,7 +12,10 @@ const initialState = {
 		cp_loaded: false,
 		settings_loaded: false
 	},
-	settings: {},
+	settings: {
+		AuthLevels: {},
+		DiscLevels: {}
+	},
 	ignoreSettings: {},
 	accounts: [],
 	frameAgreements: {},
@@ -114,6 +117,110 @@ function organizeHeaderFields(headerData, _activeFa) {
 	}
 
 	return field_rows;
+}
+
+function formatDiscThresh(dtList = []) {
+	return dtList
+		? dtList.reduce(function(acc, level) {
+				(acc[level['cspmb__Authorization_Level__c']] =
+					acc[level['cspmb__Authorization_Level__c']] || []).push(level);
+				return acc;
+		  }, {})
+		: {};
+}
+
+function formatDiscLevels(dlList = []) {
+	let _DiscLevels = {};
+
+	let error = {
+		message: '',
+		targets: []
+	};
+
+	dlList.forEach(dl => {
+		let discount = JSON.parse(JSON.stringify(dl));
+		discount.discountLevel = {
+			Id: dl.discountLevel.Id,
+			Name: dl.discountLevel.Name,
+			cspmb__Charge_Type__c: dl.discountLevel.cspmb__Charge_Type__c,
+			cspmb__Discount_Type__c: dl.discountLevel.cspmb__Discount_Type__c
+		};
+
+		let failure = false;
+
+		function discountValid(values) {
+			let returnValues;
+			try {
+				returnValues = values
+					.replace(/ /g, '')
+					.split(',')
+					.map(num => {
+						let ret = +num;
+						if (!isNaN(ret)) {
+							return ret;
+						} else {
+							throw new Error();
+						}
+					});
+			} catch (err) {
+				error.message = 'Invalid discount values on ';
+				error.targets.push(dl.discountLevel.Id);
+				returnValues = false;
+			}
+			return returnValues;
+		}
+
+		if (
+			dl.discountLevel.cspmb__Discount_Values__c &&
+			discountValid(dl.discountLevel.cspmb__Discount_Values__c)
+		) {
+			discount.discountLevel.cspmb__Discount_Values__c = discountValid(
+				dl.discountLevel.cspmb__Discount_Values__c
+			);
+		} else if (
+			dl.discountLevel.cspmb__Discount_Increment__c &&
+			dl.discountLevel.cspmb__Maximum_Discount_Value__c &&
+			dl.discountLevel.cspmb__Minimum_Discount_Value__c
+		) {
+			// validate increment
+			if (
+				!isNaN(+dl.discountLevel.cspmb__Discount_Increment__c) &&
+				!isNaN(+dl.discountLevel.cspmb__Maximum_Discount_Value__c) &&
+				!isNaN(+dl.discountLevel.cspmb__Minimum_Discount_Value__c)
+			) {
+				discount.discountLevel.cspmb__Discount_Values__c = [];
+
+				for (
+					let i = dl.discountLevel.cspmb__Minimum_Discount_Value__c;
+					i <= dl.discountLevel.cspmb__Maximum_Discount_Value__c;
+					i += +dl.discountLevel.cspmb__Discount_Increment__c
+				) {
+					discount.discountLevel.cspmb__Discount_Values__c.push(i);
+				}
+			} else {
+				error.message = error.message || 'Invalid max/min/increment data on ';
+				failure = true;
+				error.targets.push(dl.discountLevel.Id);
+			}
+		} else {
+			failure = true;
+			error.message =
+				'Missing crucial fields on discount level ' + dl.discountLevel.Id;
+			error.targets = [
+				'cspmb__Discount_Increment__c',
+				'cspmb__Maximum_Discount_Value__c',
+				'cspmb__Minimum_Discount_Value__c'
+			];
+		}
+
+		if (!failure) {
+			_DiscLevels[discount.discountLevel.Id] = discount;
+		} else {
+			log.red(error.message, error.targets);
+		}
+	});
+
+	return _DiscLevels;
 }
 
 function getapprovalNeeded(validation) {
@@ -952,16 +1059,7 @@ const rootReducer = (state = initialState, action) => {
 			// Temporary until actions get access to store values
 			window.SF.product_chunk_size =
 				action.payload.FACSettings.product_chunk_size;
-			// ***************************************************************************************************************
-			action.payload.AuthLevels = action.payload.AuthLevels
-				? action.payload.AuthLevels.reduce(function(acc, level) {
-						(acc[level['cspmb__Authorization_Level__c']] =
-							acc[level['cspmb__Authorization_Level__c']] || []).push(level);
-						return acc;
-				  }, {})
-				: {};
 
-			// ***************************************************************************************************************
 			// Validate custom tabs
 			action.payload.CustomTabsData.forEach((tab, i) => {
 				tab.label = tab.label || 'Custom tab #' + i;
@@ -1028,102 +1126,6 @@ const rootReducer = (state = initialState, action) => {
 				}
 			});
 
-			// ***************************************************************************************************************
-			let DiscLevels = {};
-
-			let error = {
-				message: '',
-				targets: []
-			};
-
-			(() => {
-				action.payload.DiscLevels.forEach(dl => {
-					let discount = JSON.parse(JSON.stringify(dl));
-					discount.discountLevel = {
-						Id: dl.discountLevel.Id,
-						Name: dl.discountLevel.Name,
-						cspmb__Charge_Type__c: dl.discountLevel.cspmb__Charge_Type__c,
-						cspmb__Discount_Type__c: dl.discountLevel.cspmb__Discount_Type__c
-					};
-
-					let failure = false;
-
-					function discountValid(values) {
-						let returnValues;
-						try {
-							returnValues = values
-								.replace(/ /g, '')
-								.split(',')
-								.map(num => {
-									let ret = +num;
-									if (!isNaN(ret)) {
-										return ret;
-									} else {
-										throw new Error();
-									}
-								});
-						} catch (err) {
-							error.message = 'Invalid discount values on ';
-							error.targets.push(dl.levelId);
-							returnValues = false;
-						}
-						return returnValues;
-					}
-
-					if (
-						dl.discountLevel.cspmb__Discount_Values__c &&
-						discountValid(dl.discountLevel.cspmb__Discount_Values__c)
-					) {
-						discount.discountLevel.cspmb__Discount_Values__c = discountValid(
-							dl.discountLevel.cspmb__Discount_Values__c
-						);
-					} else if (
-						dl.discountLevel.cspmb__Discount_Increment__c &&
-						dl.discountLevel.cspmb__Maximum_Discount_Value__c &&
-						dl.discountLevel.cspmb__Minimum_Discount_Value__c
-					) {
-						// validate increment
-						if (
-							!isNaN(+dl.discountLevel.cspmb__Discount_Increment__c) &&
-							!isNaN(+dl.discountLevel.cspmb__Maximum_Discount_Value__c) &&
-							!isNaN(+dl.discountLevel.cspmb__Minimum_Discount_Value__c)
-						) {
-							discount.discountLevel.cspmb__Discount_Values__c = [];
-
-							for (
-								let i = dl.discountLevel.cspmb__Minimum_Discount_Value__c;
-								i <= dl.discountLevel.cspmb__Maximum_Discount_Value__c;
-								i += +dl.discountLevel.cspmb__Discount_Increment__c
-							) {
-								discount.discountLevel.cspmb__Discount_Values__c.push(i);
-							}
-						} else {
-							error.message =
-								error.message || 'Invalid max/min/increment data on ';
-							failure = true;
-							error.targets.push(dl.levelId);
-						}
-					} else {
-						failure = true;
-						error.message =
-							'Missing crucial fields on discount level ' + dl.levelId;
-						error.targets = [
-							'cspmb__Discount_Increment__c',
-							'cspmb__Maximum_Discount_Value__c',
-							'cspmb__Minimum_Discount_Value__c'
-						];
-					}
-
-					if (!failure) {
-						DiscLevels[discount.levelId] = discount;
-					} else {
-						log.red(error.message, error.targets);
-					}
-				});
-			})();
-
-			action.payload.DiscLevels = DiscLevels;
-
 			var settings_loaded = true;
 			var _atLeastOnePicklist = action.payload.HeaderData.find(
 				f => f.type === 'picklist'
@@ -1145,15 +1147,27 @@ const rootReducer = (state = initialState, action) => {
 		case 'RECIEVE_PRICE_ITEM_DATA':
 			const productVsDiscount = {};
 
-			for (let lv in state.settings.DiscLevels) {
-				if (state.settings.DiscLevels[lv].priceItemId) {
-					productVsDiscount[state.settings.DiscLevels[lv].priceItemId] =
-						productVsDiscount[state.settings.DiscLevels[lv].priceItemId] || [];
-					productVsDiscount[state.settings.DiscLevels[lv].priceItemId].push(lv);
+			var _DiscLevels = state.settings.DiscLevels;
+			_DiscLevels = {
+				..._DiscLevels,
+				...formatDiscLevels(action.payload.discLevels)
+			};
+
+			var _AuthLevels = state.settings.AuthLevels;
+			_AuthLevels = {
+				..._AuthLevels,
+				...formatDiscThresh(action.payload.discThresh)
+			};
+
+			for (let lv in _DiscLevels) {
+				if (_DiscLevels[lv].priceItemId) {
+					productVsDiscount[_DiscLevels[lv].priceItemId] =
+						productVsDiscount[_DiscLevels[lv].priceItemId] || [];
+					productVsDiscount[_DiscLevels[lv].priceItemId].push(lv);
 				}
 			}
 
-			var priceItemData = action.payload.result;
+			var priceItemData = action.payload.cpData;
 			// *********************************************************
 			for (var key in priceItemData) {
 				// *********************************************************
@@ -1178,11 +1192,11 @@ const rootReducer = (state = initialState, action) => {
 				}
 				// **********************************************
 				const addonVsDiscount = {};
-				for (let lv in state.settings.DiscLevels) {
-					if (state.settings.DiscLevels[lv].addonId) {
-						addonVsDiscount[state.settings.DiscLevels[lv].addonId] =
-							addonVsDiscount[state.settings.DiscLevels[lv].addonId] || [];
-						addonVsDiscount[state.settings.DiscLevels[lv].addonId].push(lv);
+				for (let lv in _DiscLevels) {
+					if (_DiscLevels[lv].addonId) {
+						addonVsDiscount[_DiscLevels[lv].addonId] =
+							addonVsDiscount[_DiscLevels[lv].addonId] || [];
+						addonVsDiscount[_DiscLevels[lv].addonId].push(lv);
 					}
 				}
 
@@ -1282,6 +1296,11 @@ const rootReducer = (state = initialState, action) => {
 
 			return {
 				...state,
+				settings: {
+					...state.settings,
+					DiscLevels: { ...state.settings.DiscLevels, ..._DiscLevels },
+					AuthLevels: { ...state.settings.AuthLevels, ..._AuthLevels }
+				},
 				...{ commercialProducts: state.commercialProducts }
 			};
 

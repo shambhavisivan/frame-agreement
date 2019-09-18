@@ -151,23 +151,32 @@ export class FaEditor extends Component {
 				// ***********************************************
 				let IdsToLoad = Object.keys(resp_attachment.products || {});
 				// If attachment is present
-				// if (IdsToLoad.length) {
 				// Mend null values, its loaded now
 				for (var key in resp_attachment.products) {
 					resp_attachment.products[key] = resp_attachment.products[key] || {};
 				}
-				// Get data for commercial products
-				// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
-				this.props.getCommercialProductData(IdsToLoad).then(async r => {
-					await this.props.addProductsToFa(this.faId, IdsToLoad);
+
+				if (IdsToLoad.length) {
+					// Get data for commercial products
+					// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
+					this.props.getCommercialProductData(IdsToLoad).then(async r => {
+						await this.props.addProductsToFa(this.faId, IdsToLoad);
+						this._setState(
+							{ loading: { ...this.state.loading, attachment: false } },
+							() => {
+								publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
+							}
+						);
+						this.props.validateFrameAgreement(this.faId);
+					});
+				} else {
 					this._setState(
 						{ loading: { ...this.state.loading, attachment: false } },
 						() => {
 							publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
 						}
 					);
-					this.props.validateFrameAgreement(this.faId);
-				});
+				}
 			});
 		} else {
 			this._setState(

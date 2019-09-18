@@ -379,9 +379,9 @@ export class App extends Component {
 			});
 		};
 
-		this.props.getAppSettings().then(response => {
-			window.SF.AuthLevels = response.AuthLevels;
+		window.SF.getAuthLevels = () => this.props.settings.AuthLevels || {};
 
+		this.props.getAppSettings().then(response => {
 			let _promiseArray = [
 				this.props.getFrameAgreements(),
 				this.props.getCommercialProducts()

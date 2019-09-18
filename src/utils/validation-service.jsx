@@ -17,7 +17,7 @@ const getMinValue = (value, discount, type) => {
 };
 
 export const validateAddons = (data, attachment) => {
-	let validation = window.SF.AuthLevels;
+	let validation = window.SF.getAuthLevels();
 
 	let detailedMap = {};
 
@@ -55,6 +55,8 @@ export const validateAddons = (data, attachment) => {
 			return errataMap;
 		}
 
+		let _logMessages = [];
+
 		validation[negotiationFormat.addon.cspmb__Authorization_Level__c] &&
 			validation[negotiationFormat.addon.cspmb__Authorization_Level__c].forEach(
 				thresh => {
@@ -79,7 +81,7 @@ export const validateAddons = (data, attachment) => {
 							negotiationFormat.negotiatedOneOff != null &&
 							negotiationFormat.negotiatedOneOff < minOneOff.toFixed(2)
 						) {
-							log.bg.orange(
+							_logMessages.push(
 								'Minimal value for oneOff on ' +
 									addon.Name +
 									' is ' +
@@ -100,7 +102,7 @@ export const validateAddons = (data, attachment) => {
 							negotiationFormat.negotiatedRecurring != null &&
 							negotiationFormat.negotiatedRecurring < minRecurring.toFixed(2)
 						) {
-							log.bg.orange(
+							_logMessages.push(
 								'Minimal value for recurring on ' +
 									addon.Name +
 									' is ' +
@@ -120,6 +122,14 @@ export const validateAddons = (data, attachment) => {
 				}
 			);
 
+		if (_logMessages.length > 1) {
+			console.group('Validation warnings:');
+			_logMessages.forEach(log.orange);
+			console.groupEnd();
+		} else {
+			_logMessages.forEach(log.orange);
+		}
+
 		return errataMap;
 	}
 	return detailedMap;
@@ -136,7 +146,7 @@ export const validateProduct = data => {
     	Name: String
     }
     */
-	let validation = window.SF.AuthLevels;
+	let validation = window.SF.getAuthLevels();
 
 	let errataMap = {
 		oneOff: false,
@@ -146,6 +156,9 @@ export const validateProduct = data => {
 	if (!data.authLevel) {
 		return errataMap;
 	}
+
+	let _logMessages = [];
+
 	validation[data.authLevel] &&
 		validation[data.authLevel].forEach(thresh => {
 			// Validate threshold
@@ -170,7 +183,7 @@ export const validateProduct = data => {
 					data.negotiatedOneOff != null &&
 					data.negotiatedOneOff < minOneOff.toFixed(2)
 				) {
-					log.bg.orange(
+					_logMessages.push(
 						'Minimal value for oneOff on ' +
 							data.Name +
 							' is ' +
@@ -191,7 +204,7 @@ export const validateProduct = data => {
 					data.negotiatedRecurring != null &&
 					data.negotiatedRecurring < minRecurring.toFixed(2)
 				) {
-					log.bg.orange(
+					_logMessages.push(
 						'Minimal value for recurring on ' +
 							data.Name +
 							' is ' +
@@ -210,11 +223,19 @@ export const validateProduct = data => {
 			}
 		});
 
+	if (_logMessages.length > 1) {
+		console.group('Validation warnings:');
+		_logMessages.forEach(log.orange);
+		console.groupEnd();
+	} else {
+		_logMessages.forEach(log.orange);
+	}
+
 	return errataMap;
 };
 
 export const validateCharges = (data, authLevel, attachment) => {
-	let validation = window.SF.AuthLevels;
+	let validation = window.SF.getAuthLevels();
 
 	/*
 	/*
@@ -267,6 +288,8 @@ export const validateCharges = (data, authLevel, attachment) => {
 			return errataMap;
 		}
 
+		let _logMessages = [];
+
 		validation[authLevel] &&
 			validation[authLevel].forEach(thresh => {
 				// Validate threshold
@@ -284,7 +307,7 @@ export const validateCharges = (data, authLevel, attachment) => {
 						typeof negotiationFormat.negotiatedValue !== 'undefined' &&
 						negotiationFormat.negotiatedValue < minValue.toFixed(2)
 					) {
-						log.bg.orange(
+						_logMessages.push(
 							'Minimal value for oneOff on ' +
 								charge.Name +
 								' is ' +
@@ -303,13 +326,21 @@ export const validateCharges = (data, authLevel, attachment) => {
 				}
 			});
 
+		if (_logMessages.length > 1) {
+			console.group('Validation warnings:');
+			_logMessages.forEach(log.orange);
+			console.groupEnd();
+		} else {
+			_logMessages.forEach(log.orange);
+		}
+
 		return errataMap;
 	}
 	return detailedMap;
 };
 
 export const validateRateCardLines = (data, data2) => {
-	let validation = window.SF.AuthLevels;
+	let validation = window.SF.getAuthLevels();
 
 	let detailedMap = {};
 	let rcArr, rcl, attachment, authLevel;
@@ -350,6 +381,8 @@ export const validateRateCardLines = (data, data2) => {
 			return errataMap;
 		}
 
+		let _logMessages = [];
+
 		validation[authLevel] &&
 			validation[authLevel].forEach(thresh => {
 				// Validate threshold
@@ -364,7 +397,7 @@ export const validateRateCardLines = (data, data2) => {
 						) || 0;
 
 					if (negotiationFormat.negotiatedValue < minValue.toFixed(2)) {
-						log.bg.orange(
+						_logMessages.push(
 							'Minimal value for  ' +
 								rcl.Name +
 								' is ' +
@@ -382,6 +415,14 @@ export const validateRateCardLines = (data, data2) => {
 					}
 				}
 			});
+
+		if (_logMessages.length > 1) {
+			console.group('Validation warnings:');
+			_logMessages.forEach(log.orange);
+			console.groupEnd();
+		} else {
+			_logMessages.forEach(log.orange);
+		}
 
 		return errataMap;
 	}

@@ -44,7 +44,6 @@
 			createNewVersionOfFrameAgrement: "{!$RemoteAction.FrameRateManagerController.createNewVersionOfFrameAgrement}",
 			getCommercialProducts: "{!$RemoteAction.FrameRateManagerController.getCommercialProducts}",
 			filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
-			getAuthorizationLevels: "{!$RemoteAction.FrameRateManagerController.getAuthorizationLevels}",
 			getPricingElements: "{!$RemoteAction.FrameRateManagerController.getPricingElements}",
 			getCommercialProductData: "{!$RemoteAction.FrameRateManagerController.getCommercialProductData}",
 			saveAttachment: "{!$RemoteAction.FrameRateManagerController.saveAttachment}",

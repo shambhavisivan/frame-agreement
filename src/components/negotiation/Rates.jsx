@@ -37,7 +37,7 @@ export class Rates extends React.Component {
 	// }
 
 	componentWillUpdate(prevProps, prevState) {
-		if (prevProps.pagination.pageSize !== this.state.pagination.pageSize) {
+		if (prevState.pagination.pageSize !== this.state.pagination.pageSize) {
 			this.paginationFormat = this.paginateRateCards(
 				this.state.pagination.pageSize
 			);

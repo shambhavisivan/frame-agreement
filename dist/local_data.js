@@ -731,6 +731,72 @@ const attachment =
 const attachmentMaster =
 	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMXQxdDAwMDAwMEEwZ09BQVMiOiJhMXQxdDAwMDAwMEEwZ09BQVMifX0';
 
+const AuthLevels = [
+	{
+		Id: 'a151t000000rmV7AAI',
+		Name: 'RCL1.1',
+		cspmb__Discount_Threshold__c: 10,
+		cspmb__Authorization_Level__c: 'a0x1t000000yZF3AAM',
+		cspmb__Discount_Type__c: 'Percentage'
+	},
+	{
+		Id: 'a151t000000y2MDAAY',
+		Name: 'RCL1.1',
+		cspmb__Discount_Threshold__c: 21,
+		cspmb__Authorization_Level__c: 'a0x1t000001RjC9AAK',
+		cspmb__Discount_Type__c: 'Percentage'
+	},
+	{
+		Id: 'a151t000000y2M8AAI',
+		Name: 'RCL_1_1',
+		cspmb__Discount_Threshold__c: 5,
+		cspmb__Authorization_Level__c: 'a0x1t000001RjC9AAK',
+		cspmb__Discount_Type__c: 'Amount'
+	},
+	{
+		Id: 'a151t000000y2M3AAI',
+		Name: 'Percentage',
+		cspmb__Discount_Threshold__c: 20,
+		cspmb__Authorization_Level__c: 'a0x1t000001RjC4AAK',
+		cspmb__Discount_Type__c: 'Percentage'
+	},
+	{
+		Id: 'a151t000000y2LyAAI',
+		Name: 'One-off charge',
+		cspmb__Discount_Threshold__c: 30,
+		cspmb__Authorization_Level__c: 'a0x1t000001RjBzAAK',
+		cspmb__Discount_Type__c: 'Percentage'
+	},
+	{
+		Id: 'a151t000000y2MNAAY',
+		Name: 'ADD1',
+		cspmb__Discount_Threshold__c: 12,
+		cspmb__Authorization_Level__c: 'a0x1t000001RjCJAA0',
+		cspmb__Discount_Type__c: 'Percentage'
+	},
+	{
+		Id: 'a151t000000y2LtAAI',
+		Name: 'Recurring Charge',
+		cspmb__Discount_Threshold__c: 5,
+		cspmb__Authorization_Level__c: 'a0x1t000001RjBzAAK',
+		cspmb__Discount_Type__c: 'Amount'
+	},
+	{
+		Id: 'a151t000000y2MIAAY',
+		Name: 'Amount',
+		cspmb__Discount_Threshold__c: 3,
+		cspmb__Authorization_Level__c: 'a0x1t000001RjCEAA0',
+		cspmb__Discount_Type__c: 'Amount'
+	},
+	{
+		Id: 'a151t000000y2MXAAY',
+		Name: 'ADD1',
+		cspmb__Discount_Threshold__c: 5,
+		cspmb__Authorization_Level__c: 'a0x1t000001RjCJAA0',
+		cspmb__Discount_Type__c: 'Amount'
+	}
+];
+
 const DiscLevels = [
 	{
 		discountLevel: {
@@ -740,7 +806,6 @@ const DiscLevels = [
 			cspmb__Discount_Type__c: 'Percentage',
 			cspmb__Discount_Values__c: '10,20,30'
 		},
-		levelId: 'a141t00000137a8AAA',
 		priceItemId: 'a1F1t00000017Y0EAI'
 	},
 	{
@@ -751,7 +816,6 @@ const DiscLevels = [
 			cspmb__Discount_Type__c: 'Percentage',
 			cspmb__Discount_Values__c: '12, 34, gg'
 		},
-		levelId: 'a141t00000137cWAAQ',
 		priceItemId: 'a1F1t0000001JBPEA2'
 	},
 	{
@@ -762,8 +826,7 @@ const DiscLevels = [
 			cspmb__Charge_Type__c: 'RC',
 			cspmb__Discount_Type__c: 'Amount',
 			cspmb__Discount_Values__c: '10,20,30'
-		},
-		levelId: 'a141t00000137e7AAA'
+		}
 	},
 	{
 		discountLevel: {
@@ -775,7 +838,6 @@ const DiscLevels = [
 			cspmb__Maximum_Discount_Value__c: 10,
 			cspmb__Minimum_Discount_Value__c: 5
 		},
-		levelId: 'a141t00000137cgAAA',
 		priceItemId: 'a1F1t00000017Y0EAI'
 	},
 	{
@@ -788,7 +850,6 @@ const DiscLevels = [
 			cspmb__Maximum_Discount_Value__c: 10,
 			cspmb__Minimum_Discount_Value__c: 1
 		},
-		levelId: 'a141t00000137hrAAA',
 		priceItemId: 'a1F1t00000017Y0EAI'
 	},
 	{
@@ -801,8 +862,7 @@ const DiscLevels = [
 			cspmb__Discount_Type__c: 'Percentage',
 			cspmb__Maximum_Discount_Value__c: 10,
 			cspmb__Minimum_Discount_Value__c: 1
-		},
-		levelId: 'a141t00000137hrAAA'
+		}
 	},
 	{
 		discountLevel: {
@@ -812,7 +872,6 @@ const DiscLevels = [
 			cspmb__Discount_Type__c: 'Percentage',
 			cspmb__Discount_Values__c: '10,20,30'
 		},
-		levelId: 'a141t00000137lLAAQ',
 		priceItemId: 'a1F1t00000017Y0EAI'
 	},
 	{
@@ -823,7 +882,6 @@ const DiscLevels = [
 			cspmb__Discount_Type__c: 'Percentage',
 			cspmb__Discount_Values__c: '10,20,30'
 		},
-		levelId: 'a141t00000137ycAAA',
 		priceItemId: 'a1F1t0000001JC8EAM'
 	}
 ];
@@ -2624,72 +2682,8 @@ window.SF = SF = {
 						Id: 'aaaa',
 						Name: 'aaaa'
 					},
-					DiscLevels: DiscLevels,
-					AuthLevels: [
-						{
-							Id: 'a151t000000rmV7AAI',
-							Name: 'RCL1.1',
-							cspmb__Discount_Threshold__c: 10,
-							cspmb__Authorization_Level__c: 'a0x1t000000yZF3AAM',
-							cspmb__Discount_Type__c: 'Percentage'
-						},
-						{
-							Id: 'a151t000000y2MDAAY',
-							Name: 'RCL1.1',
-							cspmb__Discount_Threshold__c: 21,
-							cspmb__Authorization_Level__c: 'a0x1t000001RjC9AAK',
-							cspmb__Discount_Type__c: 'Percentage'
-						},
-						{
-							Id: 'a151t000000y2M8AAI',
-							Name: 'RCL_1_1',
-							cspmb__Discount_Threshold__c: 5,
-							cspmb__Authorization_Level__c: 'a0x1t000001RjC9AAK',
-							cspmb__Discount_Type__c: 'Amount'
-						},
-						{
-							Id: 'a151t000000y2M3AAI',
-							Name: 'Percentage',
-							cspmb__Discount_Threshold__c: 20,
-							cspmb__Authorization_Level__c: 'a0x1t000001RjC4AAK',
-							cspmb__Discount_Type__c: 'Percentage'
-						},
-						{
-							Id: 'a151t000000y2LyAAI',
-							Name: 'One-off charge',
-							cspmb__Discount_Threshold__c: 30,
-							cspmb__Authorization_Level__c: 'a0x1t000001RjBzAAK',
-							cspmb__Discount_Type__c: 'Percentage'
-						},
-						{
-							Id: 'a151t000000y2MNAAY',
-							Name: 'ADD1',
-							cspmb__Discount_Threshold__c: 12,
-							cspmb__Authorization_Level__c: 'a0x1t000001RjCJAA0',
-							cspmb__Discount_Type__c: 'Percentage'
-						},
-						{
-							Id: 'a151t000000y2LtAAI',
-							Name: 'Recurring Charge',
-							cspmb__Discount_Threshold__c: 5,
-							cspmb__Authorization_Level__c: 'a0x1t000001RjBzAAK',
-							cspmb__Discount_Type__c: 'Amount'
-						},
-						{
-							Id: 'a151t000000y2MIAAY',
-							Name: 'Amount',
-							cspmb__Discount_Threshold__c: 3,
-							cspmb__Authorization_Level__c: 'a0x1t000001RjCEAA0',
-							cspmb__Discount_Type__c: 'Amount'
-						},
-						{
-							Id: 'a151t000000y2MXAAY',
-							Name: 'ADD1',
-							cspmb__Discount_Threshold__c: 5,
-							cspmb__Authorization_Level__c: 'a0x1t000001RjCJAA0',
-							cspmb__Discount_Type__c: 'Amount'
-						}
-					],
+					// DiscLevels: DiscLevels,
+					// AuthLevels: AuthLevels,
 					FACSettings: FACSettings
 				};
 				return createPromise(data, 500);
@@ -2777,15 +2771,19 @@ window.SF = SF = {
 				return createPromise('Success');
 
 			case 'getCommercialProductData':
-				var priceItemData = {};
+				var responseData = {
+					cpData: [],
+					discLevels: DiscLevels,
+					discThresh: AuthLevels
+				};
 
 				var priceItemIdList = parametersArr[0];
 
 				priceItemIdList.forEach(priceItemId => {
-					priceItemData[priceItemId] = productData[priceItemId];
+					responseData.cpData[priceItemId] = productData[priceItemId];
 				});
 
-				return createPromise(priceItemData);
+				return createPromise(responseData);
 
 			case 'getLookupRecords':
 				var getLookupRecordsData;

@@ -374,6 +374,21 @@ const frameAgreements = [
 	}
 ];
 
+const childUsageTypes = {
+	a201t0000009yECAAY: [
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: 'a201t0000009yEHAAY',
+			Name: 'UT-child-1',
+			cspmb__unit_of_measure__c: 'Minute'
+		}
+	]
+};
+
 const productData = {
 	a1F1t0000001JBoEAM: {
 		addons: [],
@@ -386,14 +401,50 @@ const productData = {
 		rateCards: [],
 		allowances: [
 			{
+				attributes: {
+					type: 'cspmb__Allowance__c',
+					url:
+						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t0000001iWkAAI'
+				},
 				Id: 'a1x1t0000001iWkAAI',
 				Name: 'ALL1',
-				cspmb__usage_type__c: 'a201t0000009ryNAAQ'
+				cspmb__amount__c: 14.0,
+				cspmb__priority__c: 3,
+				cspmb__usage_type__c: 'a201t0000009yECAAY',
+				cspmb__usage_type__r: {
+					attributes: {
+						type: 'cspmb__Usage_Type__c',
+						url:
+							'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yECAAY'
+					},
+					Id: 'a201t0000009yECAAY',
+					cspmb__unit_of_measure__c: 'Minute',
+					Name: 'UT2',
+					cspmb__type__c: 'Single'
+				}
 			},
 			{
-				Id: 'a1x1t0000001iWkAAO',
+				attributes: {
+					type: 'cspmb__Allowance__c',
+					url:
+						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t00000049NCAAY'
+				},
+				Id: 'a1x1t00000049NCAAY',
 				Name: 'ALL2',
-				cspmb__usage_type__c: 'a201t0000009ryNAAE'
+				cspmb__amount__c: 14.0,
+				cspmb__priority__c: 3,
+				cspmb__usage_type__c: 'a201t0000009ryNAAQ',
+				cspmb__usage_type__r: {
+					attributes: {
+						type: 'cspmb__Usage_Type__c',
+						url:
+							'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009ryNAAQ'
+					},
+					Id: 'a201t0000009ryNAAQ',
+					cspmb__unit_of_measure__c: 'Message',
+					Name: 'UT1',
+					cspmb__type__c: 'Group'
+				}
 			}
 		]
 	},
@@ -712,14 +763,50 @@ const productData = {
 		],
 		allowances: [
 			{
+				attributes: {
+					type: 'cspmb__Allowance__c',
+					url:
+						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t0000001iWkAAI'
+				},
 				Id: 'a1x1t0000001iWkAAI',
 				Name: 'ALL1',
-				cspmb__usage_type__c: 'a201t0000009ryNAAQ'
+				cspmb__amount__c: 14.0,
+				cspmb__priority__c: 3,
+				cspmb__usage_type__c: 'a201t0000009yECAAY',
+				cspmb__usage_type__r: {
+					attributes: {
+						type: 'cspmb__Usage_Type__c',
+						url:
+							'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yECAAY'
+					},
+					Id: 'a201t0000009yECAAY',
+					cspmb__unit_of_measure__c: 'Minute',
+					Name: 'UT2',
+					cspmb__type__c: 'Single'
+				}
 			},
 			{
-				Id: 'a1x1t0000001iWkAAO',
+				attributes: {
+					type: 'cspmb__Allowance__c',
+					url:
+						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t00000049NCAAY'
+				},
+				Id: 'a1x1t00000049NCAAY',
 				Name: 'ALL2',
-				cspmb__usage_type__c: 'a201t0000009ryNAAE'
+				cspmb__amount__c: 14.0,
+				cspmb__priority__c: 3,
+				cspmb__usage_type__c: 'a201t0000009ryNAAQ',
+				cspmb__usage_type__r: {
+					attributes: {
+						type: 'cspmb__Usage_Type__c',
+						url:
+							'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009ryNAAQ'
+					},
+					Id: 'a201t0000009ryNAAQ',
+					cspmb__unit_of_measure__c: 'Message',
+					Name: 'UT1',
+					cspmb__type__c: 'Group'
+				}
 			}
 		]
 	}
@@ -2774,6 +2861,7 @@ window.SF = SF = {
 				var responseData = {
 					cpData: [],
 					discLevels: DiscLevels,
+					childUsageTypes: childUsageTypes,
 					discThresh: AuthLevels
 				};
 

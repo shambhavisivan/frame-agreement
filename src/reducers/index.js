@@ -1276,15 +1276,31 @@ const rootReducer = (state = initialState, action) => {
 				});
 
 				// **********************************************
-				try {
-					priceItemData[key].allowances.forEach(all => {
-						all.cspmb__unit_of_measure__c =
-							all.cspmb__usage_type__r.cspmb__unit_of_measure__c;
-						delete priceItemData[key].allowances.cspmb__usage_type__r;
-					});
-				} catch (err) {
-					// benign; no allowances
-				}
+
+				priceItemData[key].allowances = priceItemData[key].allowances || [];
+
+				priceItemData[key].allowances.forEach(all => {
+					if (all.hasOwnProperty('cspmb__usage_type__r')) {
+						all.mainUsageType = JSON.parse(
+							JSON.stringify(all.cspmb__usage_type__r)
+						);
+						delete all.cspmb__usage_type__r;
+						delete all.mainUsageType.attributes;
+
+						// Associate child UT
+						if (
+							action.payload.childUsageTypes &&
+							action.payload.childUsageTypes.hasOwnProperty(
+								all.mainUsageType.Id
+							)
+						) {
+							all.mainUsageType.childUsageTypes =
+								action.payload.childUsageTypes[all.mainUsageType.Id];
+						} else {
+							all.mainUsageType.childUsageTypes = [];
+						}
+					}
+				});
 
 				state.commercialProducts[priceItemIndex]._allowances =
 					priceItemData[key].allowances || [];

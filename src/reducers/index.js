@@ -1187,7 +1187,7 @@ const rootReducer = (state = initialState, action) => {
 
 				// **********************************************
 				if (productVsDiscount[key]) {
-					state.commercialProducts[priceItemIndex]._levelId =
+					state.commercialProducts[priceItemIndex]._discountLvIds =
 						productVsDiscount[key];
 				}
 				// **********************************************
@@ -1213,7 +1213,8 @@ const rootReducer = (state = initialState, action) => {
 					_addon.Name = _addon.cspmb__Add_On_Price_Item__r.Name;
 
 					if (addonVsDiscount[addon.cspmb__Add_On_Price_Item__c]) {
-						_addon.levelId = addonVsDiscount[addon.cspmb__Add_On_Price_Item__c];
+						_addon._discountLvIds =
+							addonVsDiscount[addon.cspmb__Add_On_Price_Item__c];
 					}
 
 					delete _addon.cspmb__Add_On_Price_Item__r;

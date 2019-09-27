@@ -80,8 +80,8 @@ export class Addons extends React.Component {
 							let oneOffDiscounts;
 							let recurringDiscounts;
 
-							if (add.levelId) {
-								add.levelId.forEach(lv => {
+							if (add._discountLvIds) {
+								add._discountLvIds.forEach(lv => {
 									let info = this.props.settings.DiscLevels[lv].discountLevel;
 									if (info.cspmb__Charge_Type__c == 'NRC') {
 										oneOffDiscounts = oneOffDiscounts || [];

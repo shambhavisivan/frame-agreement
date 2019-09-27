@@ -235,7 +235,7 @@ export class CommercialProduct extends React.Component {
 										recurringAllowed={
 											this.props.product.cspmb__Is_Recurring_Discount_Allowed__c
 										}
-										level={this.props.product._levelId}
+										levels={this.props.product._discountLvIds}
 										validation={this.props.validation[this.productId].charges}
 										attachment={_attachment._charges || {}}
 										onNegotiate={data => {
@@ -254,7 +254,7 @@ export class CommercialProduct extends React.Component {
 										recurringAllowed={
 											this.props.product.cspmb__Is_Recurring_Discount_Allowed__c
 										}
-										level={this.props.product._levelId}
+										levels={this.props.product._discountLvIds}
 										readOnly={!_editable}
 										validation={this.props.validation[this.productId].product}
 										attachment={_attachment._product || {}}

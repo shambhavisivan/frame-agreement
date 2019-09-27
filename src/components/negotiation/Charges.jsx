@@ -13,8 +13,8 @@ export class Charges extends React.Component {
 
 		this.discounts = {};
 
-		if (this.props.level) {
-			this.props.level.forEach(lv => {
+		if (this.props.levels) {
+			this.props.levels.forEach(lv => {
 				let info = this.props.settings.DiscLevels[lv].discountLevel;
 				this.discounts[info.Name] = this.discounts[info.Name] || [];
 				this.discounts[info.Name].push(info);

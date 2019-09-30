@@ -25,6 +25,8 @@ import {
 	validateRateCardLines
 } from '../../utils/validation-service';
 
+import { publish } from '~/src/api';
+
 import { setValidation, negotiate } from '~/src/actions';
 
 export class CommercialProduct extends React.Component {
@@ -54,7 +56,7 @@ export class CommercialProduct extends React.Component {
 		this.onNegotiate('_volume', _volume);
 	}
 
-	onNegotiate(type, data) {
+	async onNegotiate(type, data) {
 		if (type === '_addons') {
 			this.props.setValidation(
 				this.props.faId,
@@ -101,7 +103,7 @@ export class CommercialProduct extends React.Component {
 				})
 			);
 		}
-
+		data = await publish('onBeforeNegotiate', data);
 		this.props.negotiate(this.props.faId, this.productId, type, data);
 	}
 

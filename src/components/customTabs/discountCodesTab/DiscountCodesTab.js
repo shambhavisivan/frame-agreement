@@ -127,6 +127,10 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 		return;
 	}
 
+	discountCodes.sort(
+		(a, b) => a.csfamext__sequence__c - b.csfamext__sequence__c
+	);
+
 	window.FAM.api.resetNegotiation(active_fa.Id);
 	log.bg.red('---NEGOTIATION RESET');
 
@@ -163,21 +167,28 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 
 			_rateCardLines.forEach(rcl => {
 				// This will be overriten for every discount code, last one will be applied
-				let _negoFormatRcl = null;
+				let _negoFormatRcl = {};
+				_negoFormatRcl.priceItemId = cp.Id;
+				_negoFormatRcl.rateCard = rcl.cspmb__Rate_Card__c;
+				_negoFormatRcl.rateCardLine = rcl.Id;
+				_negoFormatRcl.value = null;
+
+				let _value = rcl.cspmb__rate_value__c;
+
 				rcl_codes.forEach(rclc => {
 					if (rclc.records[rcl.Id]) {
-						_negoFormatRcl = {};
-						_negoFormatRcl.priceItemId = cp.Id;
-						_negoFormatRcl.rateCard = rcl.cspmb__Rate_Card__c;
-						_negoFormatRcl.rateCardLine = rcl.Id;
-						_negoFormatRcl.value = calculateDiscount(
+						_value = calculateDiscount(
 							rclc.csfamext__discount_type__c,
 							rclc.csfamext__rate_value__c,
-							rcl.cspmb__rate_value__c
+							_value
 						);
 					}
 				});
-				_negoFormatRcl && _negoArray.push(_negoFormatRcl);
+
+				if (rcl.cspmb__rate_value__c != _value) {
+					_negoFormatRcl.value = _value;
+					_negoArray.push(_negoFormatRcl);
+				}
 			});
 		}
 
@@ -185,21 +196,19 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			// Apply to charges
 
 			cp._charges.forEach(charge => {
+				let _recurring = charge.recurring;
+				let _oneOff = charge.oneOff;
+
 				cp_codes.forEach(cpc => {
 					if (cpc.records[cp.Id]) {
-						let _negoFormatCharge = {};
-						_negoFormatCharge.priceItemId = cp.Id;
-						_negoFormatCharge.charge = charge.Id;
-						_negoFormatCharge.value = {};
-
 						if (
 							!!cpc.csfamext__recurring_charge__c &&
 							charge.hasOwnProperty('recurring')
 						) {
-							_negoFormatCharge.value.recurring = calculateDiscount(
+							_recurring = calculateDiscount(
 								cpc.csfamext__discount_type__c,
 								cpc.csfamext__recurring_charge__c,
-								charge.recurring
+								_recurring
 							);
 						}
 
@@ -207,21 +216,46 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 							!!cpc.csfamext__one_off_charge__c &&
 							charge.hasOwnProperty('oneOff')
 						) {
-							_negoFormatCharge.value.oneOff = calculateDiscount(
+							_oneOff = calculateDiscount(
 								cpc.csfamext__discount_type__c,
 								cpc.csfamext__one_off_charge__c,
-								charge.oneOff
+								_oneOff
 							);
 						}
-
-						_negoArray.push(_negoFormatCharge);
 					}
 				});
+
+				let _negoFormatCharge = {};
+				_negoFormatCharge.priceItemId = cp.Id;
+				_negoFormatCharge.charge = charge.Id;
+				_negoFormatCharge.value = {};
+
+				if (
+					_recurring !== undefined &&
+					_recurring != _originalProductValues[cp.Id].recurring
+				) {
+					_negoFormatCharge.value.recurring = _recurring;
+				}
+
+				if (
+					_oneOff !== undefined &&
+					_oneOff != _originalProductValues[cp.Id].oneOff
+				) {
+					_negoFormatCharge.value.oneOff = _oneOff;
+				}
+
+				if (Object.keys(_negoFormatCharge.value).length) {
+					_negoArray.push(_negoFormatCharge);
+				}
 			});
 		} else {
 			// Apply to product charges
-			cp_codes.forEach(cpc => {
-				if (cpc.records[cp.Id]) {
+			let _recurring = _originalProductValues[cp.Id].recurring;
+			let _oneOff = _originalProductValues[cp.Id].oneOff;
+
+			cp_codes
+				.filter(cpc => cpc.records.hasOwnProperty(cp.Id))
+				.forEach(cpc => {
 					let _negoFormatCp = {};
 					_negoFormatCp.priceItemId = cp.Id;
 					_negoFormatCp.value = {};
@@ -230,10 +264,10 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 						!!cpc.csfamext__recurring_charge__c &&
 						_originalProductValues[cp.Id].hasOwnProperty('recurring')
 					) {
-						_negoFormatCp.value.recurring = calculateDiscount(
+						_recurring = calculateDiscount(
 							cpc.csfamext__discount_type__c,
 							cpc.csfamext__recurring_charge__c,
-							_originalProductValues[cp.Id].recurring
+							_recurring
 						);
 					}
 
@@ -241,16 +275,35 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 						!!cpc.csfamext__one_off_charge__c &&
 						_originalProductValues[cp.Id].hasOwnProperty('oneOff')
 					) {
-						_negoFormatCp.value.oneOff = calculateDiscount(
+						_oneOff = calculateDiscount(
 							cpc.csfamext__discount_type__c,
 							cpc.csfamext__one_off_charge__c,
-							_originalProductValues[cp.Id].oneOff
+							_oneOff
 						);
 					}
+				});
 
-					_negoArray.push(_negoFormatCp);
-				}
-			});
+			let _negoFormatCp = {};
+			_negoFormatCp.priceItemId = cp.Id;
+			_negoFormatCp.value = {};
+
+			if (
+				_recurring !== undefined &&
+				_recurring != _originalProductValues[cp.Id].recurring
+			) {
+				_negoFormatCp.value.recurring = _recurring;
+			}
+
+			if (
+				_oneOff !== undefined &&
+				_oneOff != _originalProductValues[cp.Id].oneOff
+			) {
+				_negoFormatCp.value.oneOff = _oneOff;
+			}
+
+			if (Object.keys(_negoFormatCp.value).length) {
+				_negoArray.push(_negoFormatCp);
+			}
 		}
 	});
 	// Return length of applied groups

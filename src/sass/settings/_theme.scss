@@ -56,6 +56,7 @@ $red-medium-1: #c11a1a;
 $red-medium-2: #c23934;
 $red-medium-3: #d81c2a;
 $red-medium-4: #d9675d;
+$purple-medium-1: #7f8de1;
 $white: #fff;
 
 $css4: true;
@@ -95,11 +96,14 @@ $variables: (
 	--main-br: $gray-light-5,
 	--secondary-br: $white,
 
+	--link-c: $blue-sf,
+
 	--chip-draft-bg: $gray-light-11,
 	--chip-draft-c: $gray-dark-7,
 	--chip-active-bg: $gray-dark-7,
 	--chip-master-bg: $red-medium-4,
 	--chip-active-c: $white,
+	--chip-ut-bg: $purple-medium-1,
 	--chip-header-bg: $white,
 
 	--tab-bg: $white,
@@ -136,6 +140,7 @@ $variables: (
 	--table-row-bg-hover: $gray-light-26,
 	--table-br: $gray-light-5,
 	--table-c: $gray-dark-1,
+	--table-border: $gray-light-2,
 	--table-description-c: $gray-dark-5,
 
 	--shadow-light: rgba($black, 0.1),

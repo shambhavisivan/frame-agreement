@@ -6,7 +6,19 @@ let sharedService = {
 	SF: SF
 };
 
-export const truncateCPField = field => {
+export const toTitleCase = str => {
+	var splitStr = str.toLowerCase().split(' ');
+	for (var i = 0; i < splitStr.length; i++) {
+		// You do not need to check if i is larger than splitStr length, as your for does that for you
+		// Assign it back to the array
+		splitStr[i] =
+			splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+	}
+	// Directly return the joined string
+	return splitStr.join(' ');
+};
+
+export const truncateCPField = (field, titleCase) => {
 	if (!redux_store.getState().settings.FACSettings.truncate_product_fields) {
 		return field;
 	}
@@ -21,7 +33,8 @@ export const truncateCPField = field => {
 			returnString = field.split('__')[1].replace(/_/g, ' ');
 		}
 	} catch (err) {}
-	return returnString;
+
+	return titleCase ? toTitleCase(returnString) : returnString;
 };
 
 export const IsJsonString = str => {
@@ -31,6 +44,11 @@ export const IsJsonString = str => {
 		return false;
 	}
 	return true;
+};
+
+export const openSFLink = Id => {
+	var win = window.open(window.location.origin + '/' + Id, '_blank');
+	win.focus();
 };
 
 export const isObject = a => !!a && a.constructor === Object;

@@ -4,7 +4,11 @@ import Modal from 'react-responsive-modal';
 import Icon from '../Icon';
 import Lookup from '../Lookup';
 
-import { truncateCPField, decodeEntities } from '../../../utils/shared-service';
+import {
+	truncateCPField,
+	decodeEntities,
+	openSFLink
+} from '../../../utils/shared-service';
 
 class LookupField extends React.Component {
 	// disabled={!this.props.editable}
@@ -194,14 +198,6 @@ class LookupField extends React.Component {
 		});
 	}
 
-	openRecord() {
-		var win = window.open(
-			window.location.origin + '/' + this.state.selected.Id,
-			'_blank'
-		);
-		win.focus();
-	}
-
 	onOpenLookupModal(e) {
 		this._setState(
 			{
@@ -332,7 +328,7 @@ class LookupField extends React.Component {
 					{this.state.selected.Id ? (
 						<div
 							className="fa-lookup-icon forward"
-							onClick={e => this.openRecord(e)}
+							onClick={e => openSFLink(this.state.selected.Id)}
 						>
 							<Icon
 								svg-class="icon-forward"

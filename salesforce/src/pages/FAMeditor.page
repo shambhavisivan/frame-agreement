@@ -178,6 +178,8 @@
 			product_charge_header_oneOff_neg: '{!$Label.product_charge_header_oneOff_neg}',
 			product_charge_header_recc: '{!$Label.product_charge_header_recc}',
 			product_charge_header_recc_neg: '{!$Label.product_charge_header_recc_neg}',
+			usage_type_name_field: '{!$Label.usage_type_name_field}',
+			usage_type_undefined: '{!$Label.usage_type_undefined}',
 			rate_cards_header_name: '{!$Label.rate_cards_header_name}',
 			rate_cards_header_usage: '{!$Label.rate_cards_header_usage}',
 			rate_cards_header_value: '{!$Label.rate_cards_header_value}',

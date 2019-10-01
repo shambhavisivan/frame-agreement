@@ -470,6 +470,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('show_volume_fields', FACSettings.get('csfam__show_volume_fields__c'));
 		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
 		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
+		settingMap.put('usage_type_fields__c', FACSettings.get('csfam__usage_type_fields__c'));
 		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
 		settingMap.put('discount_as_price', FACSettings.get('csfam__discount_as_price__c'));
 		settingMap.put('new_frame_agreement', FACSettings.get('csfam__new_frame_agreement__c'));
@@ -1196,6 +1197,30 @@ global with sharing class FrameRateManagerController {
 
 	public static AllowancesWrapper getAllowances(List <Id> priceItemIdList) {
 
+		List <String> standardFields = new List <String>{
+			'Id',
+			'Name'
+		};
+
+		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+		String utFields = (String) FACSettings.get('csfam__usage_type_fields__c');
+		List <String> utFieldsArr = new List <String> ();
+
+		if (!String.isBlank(utFields)) {
+			utFieldsArr = utFields.split(',');
+		}
+
+		List <String> fieldsArr = new List <String> ();
+		fieldsArr.addAll(standardFields);
+		fieldsArr.addAll(utFieldsArr);
+
+		// Remove duplicates
+
+		Set <String> uniqueSet = new Set <String> ();
+		List <String> uniqueUtFieldList = new List <String> ();
+		uniqueSet.addAll(fieldsArr);
+		uniqueUtFieldList.addAll(uniqueSet);
+
 		List <cspmb__Commercial_Product_Allowance_Assoc__c> cpaaList = new List <cspmb__Commercial_Product_Allowance_Assoc__c> ();
 		cpaaList = [
 			select Id, cspmb__allowance__c, cspmb__commercial_product__c
@@ -1263,7 +1288,9 @@ global with sharing class FrameRateManagerController {
 		//         where Id in :childUtIdList
 		// ]);
 
-		for (cspmb__Usage_Type__c ut :[ select Id, Name, cspmb__unit_of_measure__c from cspmb__Usage_Type__c where Id in :childUtIdList]) {
+		String ut_query = 'select ' + String.join(uniqueUtFieldList, ',') + ' from cspmb__Usage_Type__c where Id in :childUtIdList';
+
+		for (cspmb__Usage_Type__c ut : database.query(ut_query)) {
 
 			String parentId = mapChildParentUt.get(ut.Id);
 
@@ -2106,7 +2133,7 @@ global with sharing class FrameRateManagerController {
 	public class AllowancesWrapper {
 
 		public Map<Id, List<cspmb__Usage_Type__c>> childUsageTypes {
-			get;
+			get { return childUsageTypes; }
 			set;
 		}
 		public Map <Id, List <cspmb__Allowance__c>> allowanceMap {

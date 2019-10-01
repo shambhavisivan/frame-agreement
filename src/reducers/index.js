@@ -979,6 +979,17 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.rcl_fields = [];
 			}
 
+			if (
+				action.payload.FACSettings.hasOwnProperty('usage_type_fields__c') &&
+				validateCSV(action.payload.FACSettings.usage_type_fields__c)
+			) {
+				action.payload.FACSettings.usage_type_fields__c = action.payload.FACSettings.usage_type_fields__c
+					.replace(/ /g, '')
+					.split(',');
+			} else {
+				action.payload.FACSettings.usage_type_fields__c = [];
+			}
+
 			if (validateCSV(action.payload.FACSettings.price_item_fields)) {
 				action.payload.FACSettings.price_item_fields = action.payload.FACSettings.price_item_fields
 					.replace(/ /g, '')

@@ -6,7 +6,7 @@ function createPromise(result, timeout = 500) {
 	return new Promise(resolve => {
 		setTimeout(() => {
 			resolve(result);
-		}, timeout);
+		}, 0);
 	});
 }
 
@@ -292,6 +292,7 @@ const FACSettings = {
 	new_frame_agreement: true,
 	product_chunk_size: 100,
 	rcl_fields: 'cspmb__Currency_Code__c, Category__c',
+	usage_type_fields__c: 'cspmb__unit_of_measure__c',
 	statuses: {
 		active_status: 'Active',
 		approved_status: 'Approved',
@@ -383,7 +384,117 @@ const childUsageTypes = {
 					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: 'a201t0000009yEHAAY',
-			Name: 'UT-child-1',
+			Name: 'National Calls to Fixed',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: 'a201t0000009yETAAY',
+			Name: 'National Calls to Mobile',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: 'a201t0000009yEAAAY',
+			Name: 'Appliance Usage Types; an unlikely big Name',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
+			cspmb__unit_of_measure__c: 'Minute'
+		},
+		{
+			attributes: {
+				type: 'cspmb__Usage_Type__c',
+				url:
+					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+			},
+			Id: makeId(15),
+			Name: 'Universal UT',
 			cspmb__unit_of_measure__c: 'Minute'
 		}
 	]
@@ -445,6 +556,18 @@ const productData = {
 					Name: 'UT1',
 					cspmb__type__c: 'Group'
 				}
+			},
+			{
+				attributes: {
+					type: 'cspmb__Allowance__c',
+					url:
+						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t00000049NCAAY'
+				},
+				Id: 'a1x1t00000049NCAAY',
+				Name: 'ALL3',
+				cspmb__amount__c: 14.0,
+				cspmb__priority__c: 3,
+				cspmb__usage_type__c: null
 			}
 		]
 	},
@@ -2707,6 +2830,8 @@ window.SF = SF = {
 		product_charge_header_oneOff_neg: 'Negotiated One Off',
 		product_charge_header_recc: 'Recurring Adjustment',
 		product_charge_header_recc_neg: 'Negotiated Recurring',
+		usage_type_name_field: 'Name',
+		usage_type_undefined: 'No usage type',
 		rate_cards_header_name: 'Name',
 		rate_cards_header_usage: 'Usage Type',
 		rate_cards_header_value: 'Rate Value',

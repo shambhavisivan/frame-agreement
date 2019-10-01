@@ -1,8 +1,8 @@
-Allowances;
-
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import Pagination from '../utillity/Pagination';
+import UsageType from '../utillity/UsageType';
 import Icon from '../utillity/Icon';
 
 export class Allowances extends React.Component {
@@ -13,7 +13,8 @@ export class Allowances extends React.Component {
 			pagination: {
 				page: 1,
 				pageSize: 10
-			}
+			},
+			openUt: null
 		};
 	}
 
@@ -24,7 +25,7 @@ export class Allowances extends React.Component {
 					<div className="list-cell">Name</div>
 					<div className="list-cell">Priority</div>
 					<div className="list-cell">Amount</div>
-					<div className="list-cell">Unit Of Measure</div>
+					<div className="list-cell">Usage Types</div>
 				</div>
 
 				<ul className="table-list">
@@ -54,9 +55,21 @@ export class Allowances extends React.Component {
 									</div>
 
 									<div className="list-cell negotiable">
-										{allowance.hasOwnProperty('cspmb__unit_of_measure__c')
-											? allowance.cspmb__unit_of_measure__c
-											: 'N/A'}
+										<UsageType
+											open={allowance.Id === this.state.openUt}
+											onOpen={() => {
+												this.setState({
+													openUt:
+														this.state.openUt === allowance.Id
+															? null
+															: allowance.Id
+												});
+											}}
+											allowance={allowance}
+											fields={
+												this.props.settings.FACSettings.usage_type_fields__c
+											}
+										/>
 									</div>
 								</li>
 							);
@@ -87,4 +100,13 @@ export class Allowances extends React.Component {
 	}
 }
 
-export default Allowances;
+const mapStateToProps = state => {
+	return {
+		settings: state.settings
+	};
+};
+
+export default connect(
+	mapStateToProps,
+	null
+)(Allowances);

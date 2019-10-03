@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 
 import {
 	addProductsToFa,
+	negotiate,
 	apiNegotiate,
 	clearToasts,
 	cloneFrameAgreement,
@@ -117,6 +118,10 @@ export class App extends Component {
 			]);
 			return this.props.frameAgreements[faId];
 		};
+		// ******************************************
+		window.FAM.api.setVolumeFields = async (faId, productId, volume) => {
+			return this.props.negotiate(faId, productId, "_volume", volume);
+		}
 		// ******************************************
 
 		window.FAM.api.removeProducts = (
@@ -442,6 +447,7 @@ export class App extends Component {
 
 const mapDispatchToProps = {
 	addProductsToFa,
+	negotiate,
 	apiNegotiate,
 	clearToasts,
 	cloneFrameAgreement,

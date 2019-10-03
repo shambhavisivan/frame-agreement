@@ -721,6 +721,21 @@ const rootReducer = (state = initialState, action) => {
 			} = state.frameAgreements;
 			return { ...state, frameAgreements: withoutRemoved };
 
+		case 'SET_CP_FILTER':
+			var _faId = action.payload.faId;
+			var _filterSet = action.payload.cpIdSet;
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[_faId]: {
+						...state.frameAgreements[_faId],
+						_ui: { ...state.frameAgreements[_faId]._ui, _filter: _filterSet }
+					}
+				}
+			};
+
 		case 'NEW_VERSION':
 			let newVersion = action.payload;
 			newVersion._ui = getNewAttachment(state.settings.HeaderData, newVersion);

@@ -93,6 +93,7 @@ class FaModals extends React.Component {
 		if (this.props.modals.productModal) {
 			productModal = (
 				<ProductModal
+					cpFilter={_fa._ui._filter}
 					open={this.props.modals.productModal}
 					addedProducts={
 						this.props.frameAgreements[this.props.faId]._ui.commercialProducts

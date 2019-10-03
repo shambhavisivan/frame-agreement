@@ -355,6 +355,13 @@ export function deleteFrameAgreement(faId) {
 
 // ***********************************************************************
 
+export const setFrameAgreementCpFilter = (faId, cpIdSet) => ({
+	type: 'SET_CP_FILTER',
+	payload: { faId, cpIdSet }
+});
+
+// ***********************************************************************
+
 export const _recievePriceItemData = result => ({
 	type: 'RECIEVE_PRICE_ITEM_DATA',
 	payload: result

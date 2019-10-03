@@ -10,6 +10,7 @@ window.subscriptions = subscriptions;
 const eventList = [
 	'onLoad',
 	'onFaSelect',
+	'onLoadCommercialProducts',
 	'onFaUpdate',
 	'onBeforeAddProducts',
 	'onBeforeDeleteProducts',
@@ -211,7 +212,7 @@ export function submitForApproval(faId) {
 //   }
 // ]
 
-// subscribe('onLoad', data => {
+// window.FAM.subscribe('onLoad', data => {
 // 	return new Promise(resolve => {
 // 		window.FAM.registerMethod('customTabEnter', id => {
 // 			return new Promise(resolve => {
@@ -230,8 +231,6 @@ export function submitForApproval(faId) {
 // });
 
 /*********************************************************/
-// subscribe("Test", (data) => Promise.resolve(data || "N/A"))
-
 // window.FAM.subscribe("Test", (data) => {
 //     return new Promise(resolve => {
 //         resolve(data);

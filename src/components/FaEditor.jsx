@@ -11,6 +11,7 @@ import {
 	saveFrameAgreement,
 	addProductsToFa,
 	removeProductsFromFa,
+	setFrameAgreementCpFilter,
 	negotiate,
 	getCommercialProductData
 } from '../actions';
@@ -142,12 +143,28 @@ export class FaEditor extends Component {
 		}
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
+		const cpFilterEvent = async () => {
+			let perFaCpFilterList = await publish(
+				'onLoadCommercialProducts',
+				this.props.commercialProducts
+			);
+			// If there was any filtering done
+			if (perFaCpFilterList.length !== this.props.commercialProducts.length) {
+				this.props.setFrameAgreementCpFilter(
+					this.faId,
+					new Set(perFaCpFilterList.map(cp => cp.Id))
+				);
+			}
+
+			return true;
+		};
+
 		// Check if FA info is loaded already
 		// if (this.faId && this.props.frameAgreements[this.faId]._ui.attachment === null) {
 		if (this.props.frameAgreements[this.faId]._ui.attachment === null) {
 			// IF not, load attachment for FA
-			this.props.getAttachment(this.faId).then(resp_attachment => {
+			this.props.getAttachment(this.faId).then(async resp_attachment => {
 				// ***********************************************
 				let IdsToLoad = Object.keys(resp_attachment.products || {});
 				// If attachment is present
@@ -161,15 +178,21 @@ export class FaEditor extends Component {
 					// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
 					this.props.getCommercialProductData(IdsToLoad).then(async r => {
 						await this.props.addProductsToFa(this.faId, IdsToLoad);
+
+						await cpFilterEvent();
+
 						this._setState(
 							{ loading: { ...this.state.loading, attachment: false } },
 							() => {
 								publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
 							}
 						);
+
 						this.props.validateFrameAgreement(this.faId);
 					});
 				} else {
+					await cpFilterEvent();
+
 					this._setState(
 						{ loading: { ...this.state.loading, attachment: false } },
 						() => {
@@ -179,6 +202,8 @@ export class FaEditor extends Component {
 				}
 			});
 		} else {
+			await cpFilterEvent();
+
 			this._setState(
 				{
 					loading: {
@@ -188,6 +213,7 @@ export class FaEditor extends Component {
 				},
 				() => {
 					publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
+
 					this.props.validateFrameAgreement(this.faId);
 				}
 			);
@@ -433,6 +459,7 @@ const mapDispatchToProps = {
 	saveFrameAgreement,
 	addProductsToFa,
 	removeProductsFromFa,
+	setFrameAgreementCpFilter,
 	negotiate,
 	getCommercialProductData
 };

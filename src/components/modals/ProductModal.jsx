@@ -68,8 +68,18 @@ class ProductModal extends Component {
         }
       }
     */
+
+		let _commercialProducts = this.props.commercialProducts;
+
+		if (this.props.cpFilter) {
+			_commercialProducts = this.props.commercialProducts.filter(cp =>
+				this.props.cpFilter.has(cp.Id)
+			);
+		}
+
 		this.addedProductsIds = this.props.addedProducts.map(cp => cp.Id);
-		this.notAddedCommercialProducts = this.props.commercialProducts.filter(
+
+		this.notAddedCommercialProducts = _commercialProducts.filter(
 			cp => !this.addedProductsIds.includes(cp.Id)
 		);
 

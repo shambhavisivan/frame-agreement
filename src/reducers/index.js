@@ -782,10 +782,10 @@ const rootReducer = (state = initialState, action) => {
 
 			var _attachment = state.frameAgreements[faId]._ui.attachment;
 
-			// attachment.products[priceItemId] = {
-			// 	...attachment.products[priceItemId],
-			// 	[type]: data
-			// };
+			if (!_attachment) {
+				log.bg.red('Negotiation failed; attachment not loaded for FA:' + faId);
+				return { ...state };
+			}
 
 			_attachment.products = {
 				..._attachment.products,
@@ -851,6 +851,11 @@ const rootReducer = (state = initialState, action) => {
 		case 'NEGOTIATE_API':
 			var faId = action.payload.faId;
 			var data = action.payload.data;
+
+			if (!state.frameAgreements[faId]._ui.attachment) {
+				log.bg.red('Negotiation failed; attachment not loaded for FA:' + faId);
+				return { ...state };
+			}
 
 			var _fa = state.frameAgreements[faId];
 			var _products = _fa._ui.attachment.products;

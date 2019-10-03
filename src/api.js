@@ -7,7 +7,7 @@ export const subscriptions = {};
 
 window.subscriptions = subscriptions;
 
-const eventList = [
+const eventList = new Set([
 	'onLoad',
 	'onFaSelect',
 	'onLoadCommercialProducts',
@@ -25,14 +25,21 @@ const eventList = [
 	'onBeforeSubmit',
 	'onAfterSubmit',
 	'onIframeClose'
-];
+]);
+
+const dgEventPrefix = 'DGE_';
+const dcEventPrefix = 'DCE_';
 
 export const hasSubscription = event => {
 	return subscriptions.hasOwnProperty(event);
 };
 
 const subscribe = (eventType, callback) => {
-	if (!eventList.includes(eventType)) {
+	if (
+		!eventList.has(eventType) &&
+		!eventType.startsWith(dgEventPrefix) &&
+		!eventType.startsWith(dcEventPrefix)
+	) {
 		console.warn('Cannot find event:', eventType);
 		return false;
 	}
@@ -76,8 +83,9 @@ export const publish = async (eventType, arg = null) => {
 export const initialiseApi = () => {
 	window.FAM = {};
 	window.FAM.api = {};
-	window.FAM.eventList = eventList;
+	window.FAM.eventList = Array.from(eventList);
 	window.FAM.subscribe = subscribe;
+	window.FAM.publish = publish;
 
 	log.blue('FAC API initialised!');
 };

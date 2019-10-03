@@ -9,6 +9,7 @@ import {
 	IsJsonString,
 	truncateCPField
 } from '../../../utils/shared-service';
+
 import Icon from '../../utillity/Icon';
 import DGTargets from '../utility/DGTargets';
 
@@ -609,6 +610,7 @@ class DiscountCodesTab extends React.Component {
 	onApplyCodes() {
 		negotiateDiscountCodesForProducts().then(r => {
 			window.FAM.api.toast('info', 'Discount codes applied!', '');
+			window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
 		});
 	}
 

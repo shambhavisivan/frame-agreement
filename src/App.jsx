@@ -120,8 +120,8 @@ export class App extends Component {
 		};
 		// ******************************************
 		window.FAM.api.setVolumeFields = async (faId, productId, volume) => {
-			return this.props.negotiate(faId, productId, "_volume", volume);
-		}
+			return this.props.negotiate(faId, productId, '_volume', volume);
+		};
 		// ******************************************
 
 		window.FAM.api.removeProducts = (

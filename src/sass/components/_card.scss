@@ -115,6 +115,11 @@
 							background: none;
 							border: none;
 							cursor: pointer;
+
+							&.disabled {
+								cursor: default;
+							}
+
 							@include css4 {
 								border-bottom: 1px solid cvar(--main-br);
 							}

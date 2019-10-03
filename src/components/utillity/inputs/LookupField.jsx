@@ -199,6 +199,10 @@ class LookupField extends React.Component {
 	}
 
 	onOpenLookupModal(e) {
+		if (!this.props.editable) {
+			return false;
+		}
+
 		this._setState(
 			{
 				searchValue: '',
@@ -314,7 +318,9 @@ class LookupField extends React.Component {
 						}
 					/>
 					<div
-						className="fa-lookup-icon"
+						className={
+							'fa-lookup-icon ' + (this.props.editable ? '' : 'disabled')
+						}
 						onClick={e => this.onOpenLookupModal(e)}
 					>
 						<Icon

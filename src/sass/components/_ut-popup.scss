@@ -55,8 +55,7 @@
 
 .ut-table {
     text-align: left;
-    padding: 24px;
-    padding-top: 7px;
+    padding: 7px 24px 0px 24px;
 
     .table-link {
         cursor: pointer;
@@ -73,6 +72,7 @@
         font-size: 12px;
         font-weight: 400;
         color: var(--table-list-header-c);
+        border-bottom: 1px solid var(--table-border);
     }
 
     td {
@@ -91,7 +91,7 @@
     }
 
     tbody {
-        td {
+        tr:not(:last-of-type) td {
             border-bottom: 1px solid var(--table-border);
         }
     }

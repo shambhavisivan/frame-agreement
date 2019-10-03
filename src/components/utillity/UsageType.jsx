@@ -90,8 +90,7 @@ class UsageTypeTable extends Component {
 		// this.props.allowances
 		this.state = {
 			pagination: {
-				page: 1,
-				pageSize: 10
+				page: 1
 			}
 		};
 
@@ -109,58 +108,38 @@ class UsageTypeTable extends Component {
 						<tr>
 							<th>{window.SF.labels.usage_type_name_field}</th>
 							{this.props.fields.map(field => (
-								<th>{truncateCPField(field, true)}</th>
+								<th key={'uth-' + field}>{truncateCPField(field, true)}</th>
 							))}
 						</tr>
 					</thead>
 					<tbody>
-						{this.childUt
-							.paginate(
-								this.state.pagination.page,
-								this.state.pagination.pageSize
-							)
-							.map(ut => {
-								return (
-									<tr key={ut.Id}>
-										<td>
-											<span
-												className="table-link"
-												onClick={() => openSFLink(ut.Id)}
-											>
-												{ut.Name}
-											</span>
-										</td>
+						{this.childUt.paginate(this.state.pagination.page, 10).map(ut => {
+							return (
+								<tr key={ut.Id}>
+									<td>
+										<span
+											className="table-link"
+											onClick={() => openSFLink(ut.Id)}
+										>
+											{ut.Name}
+										</span>
+									</td>
 
-										{this.props.fields.map(field => (
-											<td>
-												{ut.hasOwnProperty(field)
-													? ut[field].toString()
-													: 'N/A'}
-											</td>
-										))}
-									</tr>
-								);
-							})}
+									{this.props.fields.map(field => (
+										<td key={'ut-' + field}>
+											{ut.hasOwnProperty(field) ? ut[field].toString() : 'N/A'}
+										</td>
+									))}
+								</tr>
+							);
+						})}
 					</tbody>
 				</table>
 				<Pagination
 					totalSize={this.childUt.length}
-					pageSize={this.state.pagination.pageSize}
+					pageSize={10}
 					page={this.state.pagination.page}
-					onPageSizeChange={newPageSize => {
-						this.setState(
-							{
-								pagination: {
-									...this.state.pagination,
-									pageSize: newPageSize,
-									page: 1
-								}
-							},
-							() => {
-								this.props.onUpdatePosition();
-							}
-						);
-					}}
+					restricted={true}
 					onPageChange={newPage => {
 						this.setState(
 							{

@@ -3,6 +3,10 @@ import React, { Component } from 'react';
 import Icon from '../Icon';
 import Checkbox from './Checkbox';
 
+import {
+	truncateCPField
+} from '~/src/utils/shared-service.js';
+
 class DropdownCheckbox extends React.Component {
 	constructor(props) {
 		super(props);
@@ -74,7 +78,7 @@ class DropdownCheckbox extends React.Component {
 									}}
 								>
 									<Checkbox readOnly={option.visible} />
-									<span>{option.name}</span>
+									<span>{truncateCPField(option.name)}</span>
 								</button>
 							);
 						})}

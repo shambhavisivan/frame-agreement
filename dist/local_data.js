@@ -2756,7 +2756,7 @@ window.SF = SF = {
 		products_volume_minVolPeriod: 'Minimum vol. period',
 		products_volume_minUsageComm: 'Min. usage commitment',
 		products_volume_minUsageCommPeriod: 'Min. usage commitment period',
-		products_productNameHeaderCell: 'Product name',
+		products_productNameHeaderCell: 'Product Name',
 		faNameHeaderCell: 'FA name',
 		products_tab_title: 'Products',
 		products_addons: 'Add-Ons',

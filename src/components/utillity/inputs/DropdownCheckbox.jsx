@@ -3,9 +3,7 @@ import React, { Component } from 'react';
 import Icon from '../Icon';
 import Checkbox from './Checkbox';
 
-import {
-	truncateCPField
-} from '~/src/utils/shared-service.js';
+import { truncateCPField } from '~/src/utils/shared-service.js';
 
 class DropdownCheckbox extends React.Component {
 	constructor(props) {

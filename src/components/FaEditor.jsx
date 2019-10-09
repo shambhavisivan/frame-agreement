@@ -340,24 +340,6 @@ export class FaEditor extends Component {
 	}
 
 	/**************************************************/
-	async onNegotiate(priceItemId, type, data) {
-		console.log(data);
-
-		this.props.negotiate(this.faId, priceItemId, type, data);
-
-		this._setState(
-			{
-				actionTaken: true
-			},
-			async () => {
-				publish(
-					'onAfterNegotiate',
-					this.props.frameAgreements[this.faId]._ui.attachment
-				);
-			}
-		);
-	}
-	/**************************************************/
 
 	async upsertFrameAgreements() {
 		var data = { ...this.props.frameAgreements[this.faId] };

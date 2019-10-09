@@ -8,6 +8,7 @@ import InputSearch from '../utillity/inputs/InputSearch';
 import Toggle from '../utillity/inputs/Toggle';
 import Checkbox from '../utillity/inputs/Checkbox';
 import Pagination from '../utillity/Pagination';
+import Render from '../utillity/Render';
 
 import {
 	validateAddons,
@@ -28,7 +29,9 @@ class NegotiationModal extends Component {
 		this.discount = React.createRef();
 
 		this.productEllipsis = 3;
+		this.mounted = null;
 
+		this._setState = this._setState.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.applyDiscount = this.applyDiscount.bind(this);
 		this.onPropertyChange = this.onPropertyChange.bind(this);
@@ -212,7 +215,7 @@ class NegotiationModal extends Component {
 
 		console.log(charges);
 
-		this.setState({
+		this._setState({
 			validation: {
 				// addons,
 				charges
@@ -221,12 +224,28 @@ class NegotiationModal extends Component {
 		});
 	}
 
+	_setState(newState, callback) {
+		if (this.mounted) {
+			this.setState(newState, () => {
+				callback ? callback() : null;
+			});
+		}
+	}
+
+	componentDidMount() {
+		this.mounted = true;
+	}
+
+	componentWillUnmount() {
+		this.mounted = false;
+	}
+
 	onCloseModal() {
 		this.props.onCloseModal();
 	}
 
 	setTab(newTab) {
-		this.setState({ tab: newTab });
+		this._setState({ tab: newTab });
 	}
 
 	paginateRateCards(rcArr, pageSize, overrideState = false) {
@@ -278,7 +297,7 @@ class NegotiationModal extends Component {
 		console.log(paginated);
 
 		if (!overrideState) {
-			this.setState({ rateCardsPaginationFormat: paginated });
+			this._setState({ rateCardsPaginationFormat: paginated });
 		}
 
 		return paginated;
@@ -297,7 +316,7 @@ class NegotiationModal extends Component {
 						newSelected[addId] = true;
 					});
 				}
-				this.setState({
+				this._setState({
 					selected: { ...this.state.selected, addons: newSelected }
 				});
 
@@ -314,7 +333,7 @@ class NegotiationModal extends Component {
 						newSelected[ch.Id] = true;
 					});
 				}
-				this.setState({
+				this._setState({
 					selected: { ...this.state.selected, charges: newSelected }
 				});
 				break;
@@ -342,14 +361,14 @@ class NegotiationModal extends Component {
 					});
 				}
 
-				this.setState({
+				this._setState({
 					selected: { ...this.state.selected, rated: newSelected }
 				});
 
 				break;
 		}
 
-		this.setState(
+		this._setState(
 			{
 				count: {
 					...this.state.count,
@@ -357,7 +376,7 @@ class NegotiationModal extends Component {
 				}
 			},
 			() => {
-				this.setState({
+				this._setState({
 					countTotal: Object.values(this.state.count).reduce(
 						(a, b) => +(a + b),
 						0
@@ -372,7 +391,7 @@ class NegotiationModal extends Component {
 		var defaultProperty = this.state.propertyData[e.target.value]
 			? this.state.propertyData[e.target.value][0]
 			: '';
-		this.setState(
+		this._setState(
 			{
 				selectedProperty: e.target.value || null,
 				selectedPropertyValue: defaultProperty
@@ -384,7 +403,7 @@ class NegotiationModal extends Component {
 	}
 
 	onPropertyValueChange(e) {
-		this.setState({ selectedPropertyValue: e.target.value || null }, () => {
+		this._setState({ selectedPropertyValue: e.target.value || null }, () => {
 			this.paginateRateCards(this._rateCards, this.state.pagination.pageSize);
 		});
 	}
@@ -396,7 +415,7 @@ class NegotiationModal extends Component {
 		} else {
 			selected[type][row.Id] = row;
 		}
-		this.setState(
+		this._setState(
 			{
 				selected: selected,
 				count: {
@@ -405,7 +424,7 @@ class NegotiationModal extends Component {
 				}
 			},
 			() => {
-				this.setState({
+				this._setState({
 					countTotal: Object.values(this.state.count).reduce(
 						(a, b) => +(a + b),
 						0
@@ -423,7 +442,7 @@ class NegotiationModal extends Component {
 		} else {
 			selected.addons[addon] = true;
 		}
-		this.setState(
+		this._setState(
 			{
 				selected: selected,
 				count: {
@@ -432,7 +451,7 @@ class NegotiationModal extends Component {
 				}
 			},
 			() => {
-				this.setState({
+				this._setState({
 					countTotal: Object.values(this.state.count).reduce(
 						(a, b) => +(a + b),
 						0
@@ -565,7 +584,7 @@ class NegotiationModal extends Component {
 			});
 		}
 
-		this.setState({ attachment, actionTaken: true }, () => {
+		this._setState({ attachment, actionTaken: true }, () => {
 			this.props.createToast(
 				'info',
 				window.SF.labels.toast_discount_calculated_title,
@@ -583,189 +602,195 @@ class NegotiationModal extends Component {
 		};
 
 		tab.addons = (
-			<div className="table-container">
-				<div className="table-list-header">
-					<div className="list-cell">
-						<Checkbox
-							value={
-								Object.keys(this.grouped_addons).length ===
-								Object.keys(this.state.selected.addons).length
-							}
-							onChange={() => {
-								this.selectAll('addons');
-							}}
-						/>
-						{window.SF.labels.modal_charge_table_header_name}
+			<Render if={Object.keys(this.grouped_addons).length}>
+				<div className="table-container">
+					<div className="table-list-header">
+						<div className="list-cell">
+							<Checkbox
+								value={
+									Object.keys(this.grouped_addons).length ===
+										Object.keys(this.state.selected.addons).length &&
+									Object.keys(this.grouped_addons).length
+								}
+								onChange={() => {
+									this.selectAll('addons');
+								}}
+							/>
+							{window.SF.labels.modal_charge_table_header_name}
+						</div>
+						<div className="list-cell">
+							{window.SF.labels.modal_charge_table_header_presentIn}
+						</div>
+						<div className="list-cell">
+							{window.SF.labels.modal_charge_table_header_oneOff}
+						</div>
+						<div className="list-cell">
+							{window.SF.labels.modal_charge_table_header_recurring}
+						</div>
 					</div>
-					<div className="list-cell">
-						{window.SF.labels.modal_charge_table_header_presentIn}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.modal_charge_table_header_oneOff}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.modal_charge_table_header_recurring}
-					</div>
+
+					<ul>
+						{Object.keys(this.grouped_addons)
+							.paginate(
+								this.state.pagination.page_addons,
+								this.state.pagination.pageSize
+							)
+							.map(add => {
+								let addons_name = this.grouped_addons[add][0].Name;
+								let addons_size = this.grouped_addons[add].length;
+
+								return (
+									<li
+										onClick={() => {
+											this.onSelectAddons(add);
+										}}
+										key={add}
+										className={
+											'list-row' +
+											(this.state.selected.addons[add] ? ' selected-row' : '')
+										}
+									>
+										<div className="list-cell">
+											<Checkbox readOnly={this.state.selected.addons[add]} />{' '}
+											{addons_name}
+										</div>
+										<div className="list-cell">
+											{' '}
+											{addons_size + '/' + this.commercialProducts.length}
+										</div>
+										<div className="list-cell">
+											{' '}
+											{this.grouped_addons[add][0].cspmb__One_Off_Charge__c ||
+												'N/A'}
+										</div>
+										<div className="list-cell">
+											{' '}
+											{this.grouped_addons[add][0].cspmb__Recurring_Charge__c ||
+												'N/A'}
+										</div>
+									</li>
+								);
+							})}
+					</ul>
+
+					<Pagination
+						totalSize={Object.keys(this.grouped_addons).length}
+						pageSize={this.state.pagination.pageSize}
+						page={this.state.pagination.page_addons}
+						onPageSizeChange={newPageSize => {
+							this._setState({
+								pagination: {
+									...this.state.pagination,
+									pageSize: newPageSize,
+									page_addons: 1
+								}
+							});
+						}}
+						onPageChange={newPage => {
+							this._setState({
+								pagination: { ...this.state.pagination, page_addons: newPage }
+							});
+						}}
+					/>
 				</div>
-
-				<ul>
-					{Object.keys(this.grouped_addons)
-						.paginate(
-							this.state.pagination.page_addons,
-							this.state.pagination.pageSize
-						)
-						.map(add => {
-							let addons_name = this.grouped_addons[add][0].Name;
-							let addons_size = this.grouped_addons[add].length;
-
-							return (
-								<li
-									onClick={() => {
-										this.onSelectAddons(add);
-									}}
-									key={add}
-									className={
-										'list-row' +
-										(this.state.selected.addons[add] ? ' selected-row' : '')
-									}
-								>
-									<div className="list-cell">
-										<Checkbox readOnly={this.state.selected.addons[add]} />{' '}
-										{addons_name}
-									</div>
-									<div className="list-cell">
-										{' '}
-										{addons_size + '/' + this.commercialProducts.length}
-									</div>
-									<div className="list-cell">
-										{' '}
-										{this.grouped_addons[add][0].cspmb__One_Off_Charge__c ||
-											'N/A'}
-									</div>
-									<div className="list-cell">
-										{' '}
-										{this.grouped_addons[add][0].cspmb__Recurring_Charge__c ||
-											'N/A'}
-									</div>
-								</li>
-							);
-						})}
-				</ul>
-
-				<Pagination
-					totalSize={Object.keys(this.grouped_addons).length}
-					pageSize={this.state.pagination.pageSize}
-					page={this.state.pagination.page_addons}
-					onPageSizeChange={newPageSize => {
-						this.setState({
-							pagination: {
-								...this.state.pagination,
-								pageSize: newPageSize,
-								page_addons: 1
-							}
-						});
-					}}
-					onPageChange={newPage => {
-						this.setState({
-							pagination: { ...this.state.pagination, page_addons: newPage }
-						});
-					}}
-				/>
-			</div>
+			</Render>
 		);
 
 		tab.charges = (
-			<div className="table-container">
-				<div className="table-list-header">
-					<div className="list-cell">
-						<Checkbox
-							value={
-								Object.keys(this._charges.length) ===
-								Object.keys(this.state.selected.charges).length
-							}
-							onChange={() => {
-								this.selectAll('charges');
-							}}
-						/>
-						{window.SF.labels.modal_charge_table_header_name}
+			<Render if={this._charges.length}>
+				<div className="table-container">
+					<div className="table-list-header">
+						<div className="list-cell">
+							<Checkbox
+								value={
+									this._charges.length ===
+										Object.keys(this.state.selected.charges).length &&
+									Object.keys(this.state.selected.charges).length
+								}
+								onChange={() => {
+									this.selectAll('charges');
+								}}
+							/>
+							{window.SF.labels.modal_charge_table_header_name}
+						</div>
+						<div className="list-cell">
+							{window.SF.labels.modal_charge_table_header_presentIn}
+						</div>
+						<div className="list-cell">
+							{window.SF.labels.modal_charge_table_header_chargeType}
+						</div>
+						<div className="list-cell">
+							{window.SF.labels.modal_charge_table_header_value}
+						</div>
 					</div>
-					<div className="list-cell">
-						{window.SF.labels.modal_charge_table_header_presentIn}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.modal_charge_table_header_chargeType}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.modal_charge_table_header_value}
-					</div>
-				</div>
 
-				<ul className="table-list">
-					{this._charges
-						// .filter(ch => {
-						//   if (this.state.filter.intersection) {
-						//     return this._chCpMap[ch.Id].length === this.commercialProducts.length;
-						//   }
-						//   return true;
-						// })
-						.paginate(
-							this.state.pagination.page_charges,
-							this.state.pagination.pageSize
-						)
-						.map((charge, i) => {
-							return (
-								<li
-									onClick={() => {
-										this.onSelectRow(charge, 'charges');
-									}}
-									key={charge.product + '-' + charge.Id}
-									className={
-										'list-row' +
-										(this.state.selected.charges[charge.Id]
-											? ' selected-row'
-											: '')
-									}
-								>
-									<div className="list-cell">
-										<Checkbox
-											readOnly={this.state.selected.charges[charge.Id]}
-										/>{' '}
-										{charge.Name}
-									</div>
-									<div className="list-cell">
-										{' '}
-										{this._chCpMap[charge.Id].length +
-											'/' +
-											this.commercialProducts.length}
-									</div>
-									<div className="list-cell">{charge.chargeType}</div>
-									<div className="list-cell">
-										{charge[charge._type].toFixed(2)}
-									</div>
-								</li>
-							);
-						})}
-				</ul>
-				<Pagination
-					totalSize={this._charges.length}
-					pageSize={this.state.pagination.pageSize}
-					page={this.state.pagination.page_charges}
-					onPageSizeChange={newPageSize => {
-						this.setState({
-							pagination: {
-								...this.state.pagination,
-								pageSize: newPageSize,
-								page_charges: 1
-							}
-						});
-					}}
-					onPageChange={newPage => {
-						this.setState({
-							pagination: { ...this.state.pagination, page_charges: newPage }
-						});
-					}}
-				/>
-			</div>
+					<ul className="table-list">
+						{this._charges
+							// .filter(ch => {
+							//   if (this.state.filter.intersection) {
+							//     return this._chCpMap[ch.Id].length === this.commercialProducts.length;
+							//   }
+							//   return true;
+							// })
+							.paginate(
+								this.state.pagination.page_charges,
+								this.state.pagination.pageSize
+							)
+							.map((charge, i) => {
+								return (
+									<li
+										onClick={() => {
+											this.onSelectRow(charge, 'charges');
+										}}
+										key={charge.product + '-' + charge.Id}
+										className={
+											'list-row' +
+											(this.state.selected.charges[charge.Id]
+												? ' selected-row'
+												: '')
+										}
+									>
+										<div className="list-cell">
+											<Checkbox
+												readOnly={this.state.selected.charges[charge.Id]}
+											/>{' '}
+											{charge.Name}
+										</div>
+										<div className="list-cell">
+											{' '}
+											{this._chCpMap[charge.Id].length +
+												'/' +
+												this.commercialProducts.length}
+										</div>
+										<div className="list-cell">{charge.chargeType}</div>
+										<div className="list-cell">
+											{charge[charge._type].toFixed(2)}
+										</div>
+									</li>
+								);
+							})}
+					</ul>
+					<Pagination
+						totalSize={this._charges.length}
+						pageSize={this.state.pagination.pageSize}
+						page={this.state.pagination.page_charges}
+						onPageSizeChange={newPageSize => {
+							this._setState({
+								pagination: {
+									...this.state.pagination,
+									pageSize: newPageSize,
+									page_charges: 1
+								}
+							});
+						}}
+						onPageChange={newPage => {
+							this._setState({
+								pagination: { ...this.state.pagination, page_charges: newPage }
+							});
+						}}
+					/>
+				</div>
+			</Render>
 		);
 
 		let selectAllRatedChecked =
@@ -780,131 +805,134 @@ class NegotiationModal extends Component {
 			}, []).length === Object.keys(this.state.selected.rated).length;
 
 		tab.rated = (
-			<div className="table-container">
-				<div className="table-list-header">
-					<div className="list-cell">
-						<Checkbox
-							value={selectAllRatedChecked}
-							onChange={() => {
-								this.selectAll('rated');
-							}}
-						/>
-						{window.SF.labels.modal_charge_table_header_name}
+			<Render if={Object.keys(this._rateCards).length}>
+				<div className="table-container">
+					<div className="table-list-header">
+						<div className="list-cell">
+							<Checkbox
+								value={selectAllRatedChecked}
+								onChange={() => {
+									this.selectAll('rated');
+								}}
+							/>
+							{window.SF.labels.modal_charge_table_header_name}
+						</div>
+						<div className="list-cell">
+							{window.SF.labels.modal_charge_table_header_unit}
+						</div>
+						<div className="list-cell">
+							{window.SF.labels.modal_charge_table_header_rateValue}
+						</div>
 					</div>
-					<div className="list-cell">
-						{window.SF.labels.modal_charge_table_header_unit}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.modal_charge_table_header_rateValue}
-					</div>
-				</div>
-				<ul className="fa-modal-list">
-					{(
-						this.state.rateCardsPaginationFormat[
-							this.state.pagination.page_rated - 1
-						] || []
-					).map((rc, i) => {
-						return (
-							<li
-								key={rc.product + '-' + rc.Id}
-								className="list-item selectable"
-							>
-								<div className="rate-card-title">
-									<div className="title-upper" />
-									<div className="title-content">
-										<Icon name="announcement" width="14" color="#706e6b" />
-										{rc.Name}
-										<span className="fa-modal-product-count">
-											{this._rcCpMap[rc.Id].length}
-										</span>
+					<ul className="fa-modal-list">
+						{(
+							this.state.rateCardsPaginationFormat[
+								this.state.pagination.page_rated - 1
+							] || []
+						).map((rc, i) => {
+							return (
+								<li
+									key={rc.product + '-' + rc.Id}
+									className="list-item selectable"
+								>
+									<div className="rate-card-title">
+										<div className="title-upper" />
+										<div className="title-content">
+											<Icon name="announcement" width="14" color="#706e6b" />
+											{rc.Name}
+											<span className="fa-modal-product-count">
+												{this._rcCpMap[rc.Id].length}
+											</span>
+										</div>
+										<div className="title-lower"> </div>
 									</div>
-									<div className="title-lower"> </div>
-								</div>
 
-								<ul className="table-list">
-									{rc.rateCardLines.map((rcl, i) => {
-										return (
-											<li
-												onClick={() => {
-													this.onSelectRow(rcl, 'rated');
-												}}
-												key={rcl.Id}
-												className={
-													'list-row' +
-													(this.state.selected.rated[rcl.Id]
-														? ' selected-row'
-														: '')
-												}
-											>
-												<div className="list-cell">
-													<Checkbox
-														readOnly={this.state.selected.rated[rcl.Id]}
-													/>{' '}
-													{rcl.Name}
-												</div>
-												<div className="list-cell">
-													{rcl.cspmb__Cap_Unit__c}
-												</div>
-												<div className="list-cell">
-													{rcl.cspmb__rate_value__c}
-													{this.state.selected.rated[rcl.Id] &&
-													this.state.selected.rated[rcl.Id].negotiatedValue ? (
-														<span>
-															/
-															{
-																this.state.selected.rated[rcl.Id]
-																	.negotiatedValue
-															}
-														</span>
-													) : (
-														''
-													)}
-												</div>
-											</li>
-										);
-									})}
-								</ul>
-							</li>
-						);
-					})}
-				</ul>
+									<ul className="table-list">
+										{rc.rateCardLines.map((rcl, i) => {
+											return (
+												<li
+													onClick={() => {
+														this.onSelectRow(rcl, 'rated');
+													}}
+													key={rcl.Id}
+													className={
+														'list-row' +
+														(this.state.selected.rated[rcl.Id]
+															? ' selected-row'
+															: '')
+													}
+												>
+													<div className="list-cell">
+														<Checkbox
+															readOnly={this.state.selected.rated[rcl.Id]}
+														/>{' '}
+														{rcl.Name}
+													</div>
+													<div className="list-cell">
+														{rcl.cspmb__Cap_Unit__c}
+													</div>
+													<div className="list-cell">
+														{rcl.cspmb__rate_value__c}
+														{this.state.selected.rated[rcl.Id] &&
+														this.state.selected.rated[rcl.Id]
+															.negotiatedValue ? (
+															<span>
+																/
+																{
+																	this.state.selected.rated[rcl.Id]
+																		.negotiatedValue
+																}
+															</span>
+														) : (
+															''
+														)}
+													</div>
+												</li>
+											);
+										})}
+									</ul>
+								</li>
+							);
+						})}
+					</ul>
 
-				<Pagination
-					totalSize={
-						this.state.rateCardsPaginationFormat.length *
-						this.state.pagination.pageSize
-					}
-					pageSize={this.state.pagination.pageSize}
-					page={this.state.pagination.page_rated}
-					onPageSizeChange={newPageSize => {
-						// this.paginateRateCards(this._rateCards, this.state.pagination.pageSize);
+					<Pagination
+						totalSize={
+							this.state.rateCardsPaginationFormat.length *
+							this.state.pagination.pageSize
+						}
+						pageSize={this.state.pagination.pageSize}
+						page={this.state.pagination.page_rated}
+						onPageSizeChange={newPageSize => {
+							// this.paginateRateCards(this._rateCards, this.state.pagination.pageSize);
 
-						this.setState(
-							{
-								pagination: {
-									...this.state.pagination,
-									pageSize: newPageSize,
-									page_rated: 1
+							this._setState(
+								{
+									pagination: {
+										...this.state.pagination,
+										pageSize: newPageSize,
+										page_rated: 1
+									}
+								},
+								() => {
+									this.paginateRateCards(
+										this._rateCards,
+										this.state.pagination.pageSize
+									);
 								}
-							},
-							() => {
-								this.paginateRateCards(
-									this._rateCards,
-									this.state.pagination.pageSize
-								);
-							}
-						);
-					}}
-					onPageChange={newPage => {
-						this.setState({
-							pagination: { ...this.state.pagination, page_rated: newPage }
-						});
-					}}
-				/>
-			</div>
+							);
+						}}
+						onPageChange={newPage => {
+							this._setState({
+								pagination: { ...this.state.pagination, page_rated: newPage }
+							});
+						}}
+					/>
+				</div>
+			</Render>
 		);
 
-		let filterContainer; // onPageChange={(newPage) => {this.setState({pagination: {...this.state.pagination, page_rated: newPage}})}}
+		let filterContainer; // onPageChange={(newPage) => {this._setState({pagination: {...this.state.pagination, page_rated: newPage}})}}
 		filterContainer = (
 			<div className="filter-container">
 				{false && (
@@ -912,7 +940,7 @@ class NegotiationModal extends Component {
 						<div className="fa-padding-bottom-xsm">Intersection Rows</div>
 						<Toggle
 							onChange={val => {
-								this.setState({
+								this._setState({
 									filter: { ...this.state.filter, intersection: val }
 								});
 							}}
@@ -1122,7 +1150,7 @@ class NegotiationModal extends Component {
 												: 'default')
 										}
 										onClick={() => {
-											this.setState({ discountMode: 'percentage' });
+											this._setState({ discountMode: 'percentage' });
 										}}
 									>
 										{window.SF.labels.modal_bulk_btn_percentage}
@@ -1135,7 +1163,7 @@ class NegotiationModal extends Component {
 												: 'default')
 										}
 										onClick={() => {
-											this.setState({ discountMode: 'fixed' });
+											this._setState({ discountMode: 'fixed' });
 										}}
 									>
 										{window.SF.labels.modal_bulk_btn_fixed}

@@ -202,13 +202,13 @@ class FaMaster extends Component {
 			customUI: ({ onClose }) => {
 				return (
 					<ConfirmationModal
-						title={window.SF.labels.alert_deleteProducts_title}
-						message={window.SF.labels.alert_deleteProducts_message}
+						title={window.SF.labels.alert_deleteAgreements_title}
+						message={window.SF.labels.alert_deleteAgreements_message}
 						onCancel={onClose}
 						onConfirm={() => {
 							this._removeAgreements();
 						}}
-						confirmText={window.SF.labels.alert_deleteProducts_title}
+						confirmText={window.SF.labels.alert_deleteAgreements_title}
 					/>
 				);
 			}
@@ -280,24 +280,6 @@ class FaMaster extends Component {
 		this.props.history.push('/agreement/' + faId);
 	}
 
-	/**************************************************/
-	async onNegotiate(priceItemId, type, data) {
-		console.log(data);
-
-		this.props.negotiate(this.faId, priceItemId, type, data);
-
-		this._setState(
-			{
-				actionTaken: true
-			},
-			async () => {
-				publish(
-					'onAfterNegotiate',
-					this.props.frameAgreements[this.faId]._ui.attachment
-				);
-			}
-		);
-	}
 	/**************************************************/
 
 	async upsertFrameAgreements() {

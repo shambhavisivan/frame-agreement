@@ -25,14 +25,21 @@ import {
 	validateRateCardLines
 } from '../../utils/validation-service';
 
+import { log } from '~/src/utils/shared-service.js';
+
 import { publish } from '~/src/api';
 
-import { setValidation, negotiate } from '~/src/actions';
+import {
+	setValidation,
+	setFrameAgreementState,
+	negotiate
+} from '~/src/actions';
 
 export class CommercialProduct extends React.Component {
 	constructor(props) {
 		super(props);
 
+		this.validateStatusConsistency = this.validateStatusConsistency.bind(this);
 		this.onExpandProduct = this.onExpandProduct.bind(this);
 
 		this.productId = this.props.product.Id;
@@ -103,8 +110,76 @@ export class CommercialProduct extends React.Component {
 				})
 			);
 		}
+
 		data = await publish('onBeforeNegotiate', data);
+
+		this.validateStatusConsistency();
+
 		this.props.negotiate(this.props.faId, this.productId, type, data);
+	}
+
+	// Will change the status of fa depending on fa...approvalNeeded field
+	validateStatusConsistency() {
+		let _fa = this.props.frameAgreements[this.props.faId];
+
+		// If approval is needed we need to set FA status to requires_approval_status + vice versa
+		if (
+			_fa._ui.approvalNeeded &&
+			_fa.csconta__Status__c ===
+				this.props.settings.FACSettings.statuses.draft_status
+		) {
+			if (
+				!this.props.settings.FACSettings.statuses.hasOwnProperty(
+					'draft_status'
+				) ||
+				!this.props.settings.FACSettings.statuses.draft_status
+			) {
+				log.bg.orange(
+					'Cannot set state to ' +
+						newStatus +
+						' - not defined in Custom Settings'
+				);
+			} else {
+				this.props.setFrameAgreementState(
+					this.props.faId,
+					this.props.settings.FACSettings.statuses.requires_approval_status
+				);
+				console.log(
+					'Changing the state of FA to %c' +
+						this.props.settings.FACSettings.statuses.requires_approval_status,
+					'font-style: italic;color: #0070d2'
+				);
+			}
+		}
+
+		if (
+			!_fa._ui.approvalNeeded &&
+			_fa.csconta__Status__c ===
+				this.props.settings.FACSettings.statuses.requires_approval_status
+		) {
+			if (
+				!this.props.settings.FACSettings.statuses.hasOwnProperty(
+					'requires_approval_status'
+				) ||
+				!this.props.settings.FACSettings.statuses.requires_approval_status
+			) {
+				log.bg.orange(
+					'Cannot set state to ' +
+						newStatus +
+						' - not defined in Custom Settings'
+				);
+			} else {
+				this.props.setFrameAgreementState(
+					this.props.faId,
+					this.props.settings.FACSettings.statuses.draft_status
+				);
+				console.log(
+					'Changing the state of FA to %c' +
+						this.props.settings.FACSettings.statuses.draft_status,
+					'font-style: italic;color: #0070d2'
+				);
+			}
+		}
 	}
 
 	render() {
@@ -307,6 +382,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
 	setValidation,
+	setFrameAgreementState,
 	negotiate
 };
 

@@ -282,13 +282,13 @@ const approval2 = {
 };
 
 const FACSettings = {
-	fa_editable_statuses: 'Draft',
+	fa_editable_statuses: 'Draft, Requires Approval',
 	// price_item_fields: "Name, cspmb__Contract_Term__c, cspmb__Price_Item_Description__c, cspmb__Is_Authorization_Required__c, CurrencyIsoCode",
 	price_item_fields: 'Id, cspmb__Is_Recurring_Discount_Allowed__c',
 	show_volume_fields: false,
 	frame_agreement_fields: 'Id, csconta__Account__c',
 	decomposition_chunk_size: 2,
-	discount_as_price: true,
+	discount_as_price: false,
 	new_frame_agreement: true,
 	product_chunk_size: 100,
 	rcl_fields: 'cspmb__Currency_Code__c, Category__c',
@@ -2759,7 +2759,7 @@ window.SF = SF = {
 		products_productNameHeaderCell: 'Product Name',
 		faNameHeaderCell: 'FA name',
 		products_tab_title: 'Products',
-		products_addons: 'Add-Ons',
+		products_addons: 'Add Ons',
 		products_charges: 'Charges',
 		products_product_charges: 'Charges (product)',
 		products_rates: 'Rate Cards',
@@ -2784,7 +2784,7 @@ window.SF = SF = {
 		modal_bulk_input_placeholder: 'Enter discount value',
 		modal_bulk_input_placeholder: 'Enter discount value',
 		modal_charge_table_header_presentIn: 'Present In',
-		modal_charge_table_header_oneOff: 'One-Off',
+		modal_charge_table_header_oneOff: 'One Off',
 		modal_charge_table_header_recurring: 'Recurring',
 		modal_charge_table_header_chargeType: 'Charge Type',
 		modal_charge_table_header_value: 'Value',
@@ -2797,8 +2797,11 @@ window.SF = SF = {
 		modal_unsavedChanges_alert:
 			'You have unsaved changes, are you sure you want to leave?',
 		alert_deleteProducts_title: 'Delete products',
+		alert_deleteAgreements_title: 'Delete agreements',
 		alert_deleteProducts_message:
 			'Are you sure you want to delete selected products?',
+		alert_deleteAgreements_message:
+			'Are you sure you want to delete selected agreements?',
 		alert_deleteProducts_btn_action: 'Delete',
 		alert_cloneFa_title: 'Clone Frame Agreement',
 		alert_cloneFa_message:
@@ -2821,12 +2824,12 @@ window.SF = SF = {
 		addons_header_recc_neg: 'Negotiated Recurring',
 		charges_header_name: 'Charge Name',
 		charges_header_type: 'Charge Type',
-		charges_header_oneOff: 'One-Off Adjustment',
+		charges_header_oneOff: 'One Off Adjustment',
 		charges_header_neg: 'Negotiated One Off',
 		charges_header_recc: 'Recurring Adjustment',
 		charges_header_recc_neg: 'Negotiated Recurring',
 		product_charge_header_name: 'Charge Name',
-		product_charge_header_oneOff: 'One-Off Adjustment',
+		product_charge_header_oneOff: 'One Off Adjustment',
 		product_charge_header_oneOff_neg: 'Negotiated One Off',
 		product_charge_header_recc: 'Recurring Adjustment',
 		product_charge_header_recc_neg: 'Negotiated Recurring',

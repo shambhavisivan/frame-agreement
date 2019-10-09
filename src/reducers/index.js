@@ -988,6 +988,10 @@ const rootReducer = (state = initialState, action) => {
 			let _faFields = [];
 			// _productFields.push({name:"Name", visible: true})
 
+			if (!action.payload.FACSettings.hasOwnProperty('new_frame_agreement')) {
+				action.payload.FACSettings.new_frame_agreement = true;
+			}
+
 			if (
 				action.payload.FACSettings.hasOwnProperty('rcl_fields') &&
 				validateCSV(action.payload.FACSettings.rcl_fields)

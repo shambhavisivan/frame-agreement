@@ -102,7 +102,9 @@ export class ProductCharges extends React.Component {
 								) {
 									// Filter only ones that have adequate type
 									let oneOffDiscount = this.discounts.filter(
-										dc => dc.cspmb__Charge_Type__c === 'NRC'
+										dc =>
+											dc.cspmb__Charge_Type__c === 'NRC' ||
+											dc.cspmb__Charge_Type__c === 'One Off'
 									);
 									oneOffRow = (
 										<DropdownNegotiate
@@ -164,7 +166,9 @@ export class ProductCharges extends React.Component {
 									this.props.product.cspmb__Recurring_Charge__c != null
 								) {
 									let recurringDiscount = this.discounts.filter(
-										dc => dc.cspmb__Charge_Type__c === 'RC'
+										dc =>
+											dc.cspmb__Charge_Type__c === 'RC' ||
+											dc.cspmb__Charge_Type__c === 'Recurring Charge'
 									);
 									recurringRow = (
 										<DropdownNegotiate

@@ -993,6 +993,14 @@ const rootReducer = (state = initialState, action) => {
 			}
 
 			if (
+				!action.payload.FACSettings.hasOwnProperty(
+					'active_status_management__c'
+				)
+			) {
+				action.payload.FACSettings.active_status_management__c = true;
+			}
+
+			if (
 				action.payload.FACSettings.hasOwnProperty('rcl_fields') &&
 				validateCSV(action.payload.FACSettings.rcl_fields)
 			) {

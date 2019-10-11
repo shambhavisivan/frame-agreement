@@ -290,6 +290,7 @@ const FACSettings = {
 	decomposition_chunk_size: 2,
 	discount_as_price: false,
 	new_frame_agreement: true,
+	active_status_management__c: true,
 	product_chunk_size: 100,
 	rcl_fields: 'cspmb__Currency_Code__c, Category__c',
 	usage_type_fields__c: 'cspmb__unit_of_measure__c',

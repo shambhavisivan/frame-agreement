@@ -120,6 +120,10 @@ export class CommercialProduct extends React.Component {
 
 	// Will change the status of fa depending on fa...approvalNeeded field
 	validateStatusConsistency() {
+		if (!this.props.settings.FACSettings.active_status_management__c) {
+			return false;
+		}
+
 		let _fa = this.props.frameAgreements[this.props.faId];
 
 		// If approval is needed we need to set FA status to requires_approval_status + vice versa

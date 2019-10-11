@@ -473,6 +473,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('usage_type_fields__c', FACSettings.get('csfam__usage_type_fields__c'));
 		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
 		settingMap.put('discount_as_price', FACSettings.get('csfam__discount_as_price__c'));
+		settingMap.put('active_status_management__c', FACSettings.get('csfam__active_status_management__c'));
 		settingMap.put('new_frame_agreement', FACSettings.get('csfam__new_frame_agreement__c'));
 
 		settingMap.put('fa_editable_statuses', FACSettings.get('csfam__fa_editable_statuses__c'));

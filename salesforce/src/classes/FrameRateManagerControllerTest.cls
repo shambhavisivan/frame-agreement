@@ -42,6 +42,28 @@ private class FrameRateManagerControllerTest {
 		insert cp_addon_inv;
 		insert cp_addon_assoc_inv;
 
+		// allowances
+		cspmb__Usage_Type__c ut_main = new cspmb__Usage_Type__c(Name = 'ut_main', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Group');
+
+		cspmb__Usage_Type__c ut_1 = new cspmb__Usage_Type__c(Name = 'ut_1', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Single');
+		cspmb__Usage_Type__c ut_2 = new cspmb__Usage_Type__c(Name = 'ut_2', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Single');
+
+		insert ut_main;
+		insert ut_1;
+		insert ut_2;
+
+		cspmb__Usage_Type_Grouping__c ut_group_1 = new cspmb__Usage_Type_Grouping__c(cspmb__parent_usage_type__c = ut_main.Id, cspmb__child_usage_type__c = ut_1.Id);
+		cspmb__Usage_Type_Grouping__c ut_group_2 = new cspmb__Usage_Type_Grouping__c(cspmb__parent_usage_type__c = ut_main.Id, cspmb__child_usage_type__c = ut_2.Id);
+
+		insert ut_group_1;
+		insert ut_group_2;
+
+		cspmb__Allowance__c al_1 = new cspmb__Allowance__c(Name = 'al_1', cspmb__usage_type__c = ut_main.Id);
+		cspmb__Allowance__c al_2 = new cspmb__Allowance__c(Name = 'al_2', cspmb__usage_type__c = ut_main.Id);
+
+		insert al_1;
+		insert al_2;
+
 		// pricing element and types
 		cspmb__Pricing_Element_Type__c pricingElementType_1 = new cspmb__Pricing_Element_Type__c(cspmb__label__c = 'One-off charge', cspmb__type__c = 'One-off charge');
 		cspmb__Pricing_Element_Type__c pricingElementType_2 = new cspmb__Pricing_Element_Type__c(cspmb__type__c = 'Recurring Charge');
@@ -137,12 +159,16 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1', csconta__Account__c = test_account.Id);
 		csconta__Frame_Agreement__c fa_2 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA2');
 		csconta__Frame_Agreement__c fa_3 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA3');
+
+		csconta__Frame_Agreement__c fa_master = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA-Master', csconta__agreement_level__c = 'Master Agreement');
+
 		csconta__Frame_Agreement__c fA_account = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA_account', csconta__Account__c = test_account.Id);
 
 		insert fa_1;
 		insert fa_2;
 		insert fa_3;
 		insert fA_account;
+		insert fa_master;
 
 		/*********/
 		String decomposeData = '[{"cpId":"' + cp_1.Id + '","recurring":266,"oneOff":null},{"cpId":"' + cp_1.Id + '","recurring":263,"oneOff":null},{"peId":"' + pricingElement_1.Id + '","recurring":12,"oneOff":null},{"peId":"' + pricingElement_1.Id + '","recurring":null,"oneOff":12},{"cpaoaId":"' + add1assoc.Id + '","recurring":null,"oneOff":12},{"cpaoaId":"' + add1assoc.Id + '","recurring":12,"oneOff":null}]';
@@ -725,7 +751,7 @@ private class FrameRateManagerControllerTest {
 		String deleteResult = FrameRateManagerController.deleteFrameAgreement(fa_1.Id);
 
 		// Map <String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(new List <Id>{
-		// 		'01p1t00000M4Gqp'
+		//      '01p1t00000M4Gqp'
 		// });
 
 		Test.stopTest();
@@ -734,6 +760,40 @@ private class FrameRateManagerControllerTest {
 		system.assertNotEquals(null, clonedFa);
 		system.assertEquals('Success', deleteResult);
 
+	}
+
+
+	public static testMethod void testFrameAgreementMasterFunctions() {
+
+		setupPricingModel();
+
+		Id fa_master_Id = [Select Id, csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA-Master'].Id;
+
+		Set<Id> childFaSet = new Set<Id>(New Map<Id, csconta__Frame_Agreement__c>([Select Id, csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c != 'FA-Master']).keySet());
+		List <Id> childFaList = new List <Id> ();
+		childFaList.addAll(childFaSet);
+
+		Integer originalChildSize = childFaList.size();
+
+		Integer faListWithMasterSetAfterAdd = 0;
+		Integer faListWithMasterSetAfterDelete = 0;
+
+		Test.startTest();
+		FrameRateManagerController.addFaToMaster(fa_master_Id, childFaList);
+
+		faListWithMasterSetAfterAdd = database.countQuery('select count() from csconta__Frame_Agreement__c where csconta__master_frame_agreement__c = :fa_master_Id');
+
+		// Remove 1 id from the list
+		childFaList.remove(0);
+		// Delete the rest
+		FrameRateManagerController.removeFaFromMaster(fa_master_Id, childFaList);
+		// Should be 1
+		faListWithMasterSetAfterDelete = database.countQuery('select count() from csconta__Frame_Agreement__c where csconta__master_frame_agreement__c = :fa_master_Id');
+
+		Test.stopTest();
+
+		system.assertEquals(originalChildSize, faListWithMasterSetAfterAdd);
+		system.assertEquals(1, faListWithMasterSetAfterDelete);
 	}
 
 	public static testMethod void testAccountLookupErrors() {

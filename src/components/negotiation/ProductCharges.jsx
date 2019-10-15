@@ -6,6 +6,7 @@ import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 
 import { validateProduct } from '../../utils/validation-service';
+import { isOneOff, isRecurring } from '~/src/utils/shared-service';
 
 import { setValidation } from '~/src/actions';
 import { connect } from 'react-redux';
@@ -34,17 +35,15 @@ export class ProductCharges extends React.Component {
 	}
 
 	isChargeAllowed(chargeType) {
-		if (chargeType === 'One-off Charge') {
+		if (isOneOff(chargeType)) {
 			return this.props.oneOffAllowed;
 		}
 
-		if (chargeType === 'Recurring Charge') {
+		if (isRecurring(chargeType)) {
 			return this.props.recurringAllowed;
 		}
 
-		console.error(
-			chargeType + ' is neither "One-Off Charge" nor "Recurring Charge"'
-		);
+		console.error(chargeType + ' is neither "One Off" nor "Recurring"');
 	}
 
 	render() {
@@ -97,15 +96,14 @@ export class ProductCharges extends React.Component {
 								// If there are any discounts and there one off is defined
 								if (
 									this.discounts.length &&
-									this.props.disableLevels &&
+									!this.props.disableLevels &&
 									this.props.product.cspmb__One_Off_Charge__c != null
 								) {
 									// Filter only ones that have adequate type
-									let oneOffDiscount = this.discounts.filter(
-										dc =>
-											dc.cspmb__Charge_Type__c === 'NRC' ||
-											dc.cspmb__Charge_Type__c === 'One Off'
+									let oneOffDiscount = this.discounts.filter(dc =>
+										isOneOff(dc.cspmb__Charge_Type__c)
 									);
+
 									oneOffRow = (
 										<DropdownNegotiate
 											readOnly={
@@ -165,10 +163,8 @@ export class ProductCharges extends React.Component {
 									!this.props.disableLevels &&
 									this.props.product.cspmb__Recurring_Charge__c != null
 								) {
-									let recurringDiscount = this.discounts.filter(
-										dc =>
-											dc.cspmb__Charge_Type__c === 'RC' ||
-											dc.cspmb__Charge_Type__c === 'Recurring Charge'
+									let recurringDiscount = this.discounts.filter(dc =>
+										isRecurring(dc.cspmb__Charge_Type__c)
 									);
 									recurringRow = (
 										<DropdownNegotiate

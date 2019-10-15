@@ -55,6 +55,32 @@ export const isObject = a => !!a && a.constructor === Object;
 
 export const copy = obj => JSON.parse(JSON.stringify(obj));
 
+export const isOneOff = type => {
+	if (typeof type !== 'string' || !type) {
+		return false;
+	}
+
+	if (type === 'NRC') {
+		return true;
+	}
+
+	let _type = type.toLowerCase().replace(/\s/g, '');
+	return _type === 'oneoff' || _type === 'oneoffcharge';
+};
+
+export const isRecurring = type => {
+	if (typeof type !== 'string' || !type) {
+		return false;
+	}
+
+	if (type === 'RC') {
+		return true;
+	}
+
+	let _type = type.toLowerCase().replace(/\s/g, '');
+	return _type === 'recurring' || _type === 'recurringcharge';
+};
+
 export const decodeEntities = (() => {
 	// this prevents any overhead from creating the object each time
 	var element = document.createElement('div');

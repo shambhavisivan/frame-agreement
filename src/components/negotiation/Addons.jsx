@@ -7,6 +7,8 @@ import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 import Pagination from '../utillity/Pagination';
 
+import { isOneOff, isRecurring } from '~/src/utils/shared-service';
+
 export class Addons extends React.Component {
 	constructor(props) {
 		super(props);
@@ -83,10 +85,10 @@ export class Addons extends React.Component {
 							if (add._discountLvIds) {
 								add._discountLvIds.forEach(lv => {
 									let info = this.props.settings.DiscLevels[lv].discountLevel;
-									if (info.cspmb__Charge_Type__c == 'NRC') {
+									if (isOneOff(info.cspmb__Charge_Type__c)) {
 										oneOffDiscounts = oneOffDiscounts || [];
 										oneOffDiscounts.push(info);
-									} else {
+									} else if (isRecurring(info.cspmb__Charge_Type__c)) {
 										recurringDiscounts = recurringDiscounts || [];
 										recurringDiscounts.push(info);
 									}

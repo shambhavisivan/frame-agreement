@@ -1008,7 +1008,7 @@ const AuthLevels = [
 	}
 ];
 
-const DiscLevels = [
+const DiscLevels_general = [
 	{
 		discountLevel: {
 			Id: 'a141t00000137a8AAA',
@@ -1094,6 +1094,102 @@ const DiscLevels = [
 			cspmb__Discount_Values__c: '10,20,30'
 		},
 		priceItemId: 'a1F1t0000001JC8EAM'
+	}
+];
+
+const DiscLevels = [
+	{
+		discountLevel: {
+			Id: 'a141t000003DckQAAS',
+			Name: 'Enterprise DL P-RC',
+			cspmb__Charge_Type__c: 'Recurring',
+			cspmb__Discount_Increment__c: '5',
+			cspmb__Discount_Type__c: 'Percentage',
+			cspmb__Maximum_Discount_Value__c: 15,
+			cspmb__Minimum_Discount_Value__c: 5
+		},
+		priceItemId: 'a1F1t0000001JC8EAM'
+	},
+	{
+		discountLevel: {
+			Id: 'a141t000001381YAAQ',
+			Name: 'Enterprise DL A-RC',
+			cspmb__Charge_Type__c: 'Recurring',
+			cspmb__Discount_Increment__c: '1',
+			cspmb__Discount_Type__c: 'Amount',
+			cspmb__Maximum_Discount_Value__c: 5,
+			cspmb__Minimum_Discount_Value__c: 1
+		},
+		priceItemId: 'a1F1t0000001JC8EAM'
+	},
+	{
+		discountLevel: {
+			Id: 'a141t000001381YAAS',
+			Name: 'Enterprise DL A-NRC',
+			cspmb__Charge_Type__c: 'One Off',
+			cspmb__Discount_Increment__c: '1',
+			cspmb__Discount_Type__c: 'Amount',
+			cspmb__Maximum_Discount_Value__c: 5,
+			cspmb__Minimum_Discount_Value__c: 1
+		},
+		priceItemId: 'a1F1t0000001JC8EAM'
+	},
+	{
+		discountLevel: {
+			Id: 'a141t000001381YAAR',
+			Name: 'Enterprise DL P-NRC',
+			cspmb__Charge_Type__c: 'One Off',
+			cspmb__Discount_Increment__c: '5',
+			cspmb__Discount_Type__c: 'Percentage',
+			cspmb__Maximum_Discount_Value__c: 15,
+			cspmb__Minimum_Discount_Value__c: 0
+		},
+		priceItemId: 'a1F1t0000001JC8EAM'
+	},
+	{
+		addonId: 'a0w1t0000002hSaAAI',
+		discountLevel: {
+			Id: 'a141t000001380zAAA',
+			Name: 'One-off charge',
+			cspmb__Charge_Type__c: 'RC',
+			cspmb__Discount_Increment__c: '1',
+			cspmb__Discount_Type__c: 'Amount',
+			cspmb__Maximum_Discount_Value__c: 5,
+			cspmb__Minimum_Discount_Value__c: 1
+		},
+		priceItemId: 'a1F1t00000017Y0EAI'
+	},
+	{
+		discountLevel: {
+			Id: 'a141t000001381TAAQ',
+			Name: 'Recurring Charge',
+			cspmb__Charge_Type__c: 'RC',
+			cspmb__Discount_Type__c: 'Percentage',
+			cspmb__Discount_Values__c: '10,20,30'
+		},
+		priceItemId: 'a1F1t00000017Y0EAI'
+	},
+	{
+		addonId: 'a0w1t0000002hSaAAI',
+		discountLevel: {
+			Id: 'a141t000001381iAAA',
+			Name: 'Addon_ADD1',
+			cspmb__Charge_Type__c: 'One Off',
+			cspmb__Discount_Type__c: 'Amount',
+			cspmb__Discount_Values__c: '5,10,15'
+		}
+	},
+	{
+		discountLevel: {
+			Id: 'a141t000001381JAAQ',
+			Name: 'One-off charge',
+			cspmb__Charge_Type__c: 'RC',
+			cspmb__Discount_Increment__c: '1',
+			cspmb__Discount_Type__c: 'Percentage',
+			cspmb__Maximum_Discount_Value__c: 30,
+			cspmb__Minimum_Discount_Value__c: 20
+		},
+		priceItemId: 'a1F1t00000017Y0EAI'
 	}
 ];
 
@@ -1278,6 +1374,7 @@ const commercialProducts = [
 		Id: 'a1F1t0000001JBoEAM',
 		Name: 'Mobile L_7',
 		cspmb__Effective_Start_Date__c: 1545264000000,
+		cspmb__One_Off_Charge__c: 60,
 		cspmb__Recurring_Charge__c: 269,
 		cspmb__Authorization_Level__c: 'a0x1t000000yZF3AAM',
 		cspmb__Is_Authorization_Required__c: false,
@@ -1360,9 +1457,10 @@ const commercialProducts = [
 	},
 	{
 		Id: 'a1F1t0000001JC8EAM',
-		Name: 'Mobile L_11',
+		Name: 'Enterprise',
 		cspmb__Effective_Start_Date__c: 1545264000000,
 		cspmb__Recurring_Charge__c: 269,
+		cspmb__One_Off_Charge__c: 60,
 		cspmb__Authorization_Level__c: 'a0x1t000001RjC4AAK',
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Is_One_Off_Discount_Allowed__c: true,

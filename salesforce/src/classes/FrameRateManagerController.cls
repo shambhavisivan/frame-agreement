@@ -1271,11 +1271,11 @@ global with sharing class FrameRateManagerController {
 			mapChildParentUt.put(utg.cspmb__child_usage_type__c, utg.cspmb__parent_usage_type__c);
 
 			// if (mapParentChildSet.containsKey(utg.cspmb__parent_usage_type__c)) {
-			// 	Set <Id> tempSet = mapParentChildSet.get(mapParentChildSet);
-			// 	tempSet.add(utg.cspmb__child_usage_type__c);
-			// 	mapParentChildSet.put(utg.cspmb__parent_usage_type__c, tempSet);
+			//  Set <Id> tempSet = mapParentChildSet.get(mapParentChildSet);
+			//  tempSet.add(utg.cspmb__child_usage_type__c);
+			//  mapParentChildSet.put(utg.cspmb__parent_usage_type__c, tempSet);
 			// } else {
-			// 	mapParentChildSet.put(utg.cspmb__parent_usage_type__c, new Set<Id>{utg.cspmb__child_usage_type__c});
+			//  mapParentChildSet.put(utg.cspmb__parent_usage_type__c, new Set<Id>{utg.cspmb__child_usage_type__c});
 			// }
 
 		}
@@ -2051,6 +2051,11 @@ global with sharing class FrameRateManagerController {
 
 
 		return retString;
+	}
+
+	@RemoteAction
+	public static Map <String, Object> getDelta(Id faId1, Id faId2) {
+		return API_1.getDelta(faId1, faId2);
 	}
 
 

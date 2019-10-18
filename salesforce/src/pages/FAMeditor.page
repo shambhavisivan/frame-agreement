@@ -63,6 +63,7 @@
 				addAccountAssociation: "{!$RemoteAction.FrameRateManagerController.addAccountAssociation}",
 				getPicklistOptions: "{!$RemoteAction.FrameRateManagerController.getPicklistOptions}",
 				addFaToMaster: "{!$RemoteAction.FrameRateManagerController.addFaToMaster}",
+				getDelta: "{!$RemoteAction.FrameRateManagerController.getDelta}",
 				removeFaFromMaster: "{!$RemoteAction.FrameRateManagerController.removeFaFromMaster}",
 				getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
 			},

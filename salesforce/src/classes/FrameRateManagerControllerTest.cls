@@ -177,8 +177,8 @@ private class FrameRateManagerControllerTest {
 	}
 
 	public static csfam__fac_settings__c setupSettings() {
-		csutil__JSON_Data__c headerData = new csutil__JSON_Data__c(Name = 'FA-Header', csutil__value__c = '[{"field":"csconta__Agreement_Name__c","readOnly":false,"label":"Agreement Name","type":"text","grid":2},{"field":"Arb_Field_Bool__c","readOnly":false,"label":"Arb Field Bool","type":"boolean","grid":1},{"field":"Arb_Field_Integer__c","readOnly":false,"label":"Arb Field Integer","type":"number","grid":2}]');
-		csutil__JSON_Data__c categorizationData = new csutil__JSON_Data__c(Name = 'FA-Categorization', csutil__value__c = '[{"name":"Alpha","field":"Categorization_Alpha__c","values":["Fixed","Mobile","Static"]},{"name":"Beta","field":"Categorization_Beta__c","values":["10GB","20GB","50GB","100GB"]}]');
+		csutil__JSON_Data__c headerData = new csutil__JSON_Data__c(Name = 'FA-Header', csutil__value__c = '[{"field":"csconta__Agreement_Name__c","readOnly":false,"label":"Agreement Name","type":"text","grid":2}]');
+		csutil__JSON_Data__c categorizationData = new csutil__JSON_Data__c(Name = 'FA-Categorization', csutil__value__c = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]');
 		csutil__JSON_Data__c customButtonData = new csutil__JSON_Data__c(Name = 'FA-Custom-Buttons', csutil__value__c = '[{"type":"action","label":"Action button","id":"bta1","method":"ActionFunction","hidden":["Active"]},{"type":"iframe","label":"iFrame button","id":"bta2","method":"iFrameFunction","hidden":["Active"]},{"type":"redirect","label":"Redirect button","id":"bta3","method":"RedirectFunction","hidden":["Active"]}]');
 		csutil__JSON_Data__c standardButtonData = new csutil__JSON_Data__c(Name = 'FA-Standard-Buttons', csutil__value__c = '{"Save":["Draft","Requires Approval"],"SubmitForApproval":["Requires Approval"],"Submit":["Approved"],"DeleteProducts":["Draft","Requires Approval"],"BulkNegotiate":["Draft","Requires Approval"],"AddProducts":["Draft","Requires Approval"]}');
 		csutil__JSON_Data__c customTabsData = new csutil__JSON_Data__c(Name = 'FA-Custom-Tabs', csutil__value__c = '[{"label":"Custom tab","container_id":"customTab1","onEnter":"customTabEnter"}]');
@@ -504,9 +504,9 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		FrameRateManagerController.upsertFrameAgreements(fa_1.Id, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csfam__Arb_Field_Bool__c":true,"csfam__Arb_Field_Integer__c":48,"csfam__Arb_Field_Text__c":null,"csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}');
+		FrameRateManagerController.upsertFrameAgreements(fa_1.Id, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}');
 		// New
-		FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","Arb_Field_Bool__c":true,"csfam__Arb_Field_Integer__c":48,"csfam__Arb_Field_Text__c":null,"csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}');
+		FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}');
 
 		Test.stopTest(); /**********/
 
@@ -587,7 +587,7 @@ private class FrameRateManagerControllerTest {
 		setupPricingModel();
 
 		setupSettings();
-		String data = '[{"field":"Categorization_Alpha__c","values":["Fixed"]},{"field":"Categorization_Beta__c","values":["100GB"]}]';
+		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]';
 
 		Test.startTest();
 
@@ -719,7 +719,7 @@ private class FrameRateManagerControllerTest {
 
 	public static testMethod void testPicklistOptions() {
 		Test.startTest();
-			Map <String, List <Map<String, Object>>> pickList = FrameRateManagerController.getPicklistOptions(new List <String>{'csfam__Arb_Picklist__c'});
+			Map <String, List <Map<String, Object>>> pickList = FrameRateManagerController.getPicklistOptions(new List <String>{'csconta__Status__c'});
 		Test.stopTest();
 
 		system.assertEquals(1, pickList.keySet().size());

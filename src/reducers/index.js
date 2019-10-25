@@ -170,6 +170,10 @@ function formatDiscLevels(dlList = []) {
 			return returnValues;
 		}
 
+		if (dl.discountLevel.hasOwnProperty('cspmb__Minimum_Discount_Value__c') && (+dl.discountLevel.cspmb__Minimum_Discount_Value__c) === 0) {
+			dl.discountLevel.cspmb__Minimum_Discount_Value__c = +dl.discountLevel.cspmb__Discount_Increment__c;
+		}
+
 		if (
 			dl.discountLevel.cspmb__Discount_Values__c &&
 			discountValid(dl.discountLevel.cspmb__Discount_Values__c)
@@ -182,6 +186,12 @@ function formatDiscLevels(dlList = []) {
 			dl.discountLevel.cspmb__Maximum_Discount_Value__c &&
 			dl.discountLevel.cspmb__Minimum_Discount_Value__c
 		) {
+
+			if (dl.discountLevel.cspmb__Maximum_Discount_Value__c < dl.discountLevel.cspmb__Minimum_Discount_Value__c) {
+				log.red('Minimum greater then maximum on discount level:', dl.discountLevel.Id);
+			}
+
+
 			// validate increment
 			if (
 				!isNaN(+dl.discountLevel.cspmb__Discount_Increment__c) &&

@@ -78,6 +78,7 @@
 				accounts_modal_no_main: '{!$Label.accounts_modal_no_main}',
 				accounts_modal_no_assoc: '{!$Label.accounts_modal_no_assoc}',
 				btn_AddNewAgreement: '{!$Label.btn_AddNewAgreement}',
+				btn_Delta: '{!$Label.btn_Delta}',
 				header_frameAgreementEditorTitle: '{!$Label.header_frameAgreementEditorTitle}',
 				header_customDropdownPlaceholder: '{!$Label.header_customDropdownPlaceholder}',
 				btn_Save: '{!$Label.btn_Save}',

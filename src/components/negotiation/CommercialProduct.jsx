@@ -129,8 +129,10 @@ export class CommercialProduct extends React.Component {
 		// If approval is needed we need to set FA status to requires_approval_status + vice versa
 		if (
 			_fa._ui.approvalNeeded &&
-			_fa.csconta__Status__c ===
-				this.props.settings.FACSettings.statuses.draft_status
+			(_fa.csconta__Status__c ===
+				this.props.settings.FACSettings.statuses.draft_status ||
+				_fa.csconta__Status__c ===
+					this.props.settings.FACSettings.statuses.approved_status)
 		) {
 			if (
 				!this.props.settings.FACSettings.statuses.hasOwnProperty(

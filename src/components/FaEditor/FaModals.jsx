@@ -6,6 +6,7 @@ import { publish } from '../../api';
 
 import ActionIframe from '../modals/ActionIframe';
 import ProductModal from '../modals/ProductModal';
+import DeltaModal from '../modals/DeltaModal';
 import NegotiationModal from '../modals/NegotiationModal';
 import FrameModal from '../modals/FrameModal';
 
@@ -27,6 +28,10 @@ class FaModals extends React.Component {
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.onAddProducts = this.onAddProducts.bind(this);
 		this.onBulkNegotiate = this.onBulkNegotiate.bind(this);
+	}
+
+	componentWillUnmount() {
+		this.props.toggleModals();
 	}
 
 	async onBulkNegotiate(data) {
@@ -88,7 +93,6 @@ class FaModals extends React.Component {
 	render() {
 		let _fa = this.props.frameAgreements[this.props.faId];
 		// *******************************************************
-		// Modal needs to be conditionally rendered to activate its lifecycle
 		let productModal = null;
 		if (this.props.modals.productModal) {
 			productModal = (
@@ -104,7 +108,6 @@ class FaModals extends React.Component {
 			);
 		}
 		// *******************************************************
-		// Modal needs to be conditionally rendered to activate its lifecycle
 		let negotiateModal = null;
 		if (this.props.modals.negotiateModal) {
 			negotiateModal = (
@@ -120,7 +123,6 @@ class FaModals extends React.Component {
 			);
 		}
 		// *******************************************************
-		// Modal needs to be conditionally rendered to activate its lifecycle
 		let actionModal = null;
 		if (this.props.modals.actionIframe && this.props.modals.actionIframeUrl) {
 			actionModal = (
@@ -141,6 +143,17 @@ class FaModals extends React.Component {
 					onCloseModal={this.onCloseModal}
 					onAddFa={this.onAddFa}
 					open={this.props.modals.frameModal}
+				/>
+			);
+		}
+		// *******************************************************
+		let deltaModal = null;
+		if (this.props.modals.deltaModal) {
+			faModal = (
+				<DeltaModal
+					faIdOriginal={this.props.faId}
+					onCloseModal={this.onCloseModal}
+					open={this.props.modals.deltaModal}
 				/>
 			);
 		}

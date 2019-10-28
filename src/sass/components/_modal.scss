@@ -484,6 +484,19 @@
 	}
 }
 
+.delta-modal {
+	display: flex;
+	flex-direction: column;
+
+	.delta-juxt {
+		display: flex;
+
+		> div {
+			flex: 1;
+		}
+	}
+}
+
 .accounts-modal {
 	padding: 0;
 

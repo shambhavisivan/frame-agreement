@@ -9,7 +9,8 @@ import {
 	saveFrameAgreement,
 	refreshFrameAgreement,
 	getApprovalHistory,
-	createNewVersionOfFrameAgrement
+	createNewVersionOfFrameAgrement,
+	toggleModals
 } from '~/src/actions';
 
 import { publish, submitForApproval } from '~/src/api';
@@ -26,6 +27,7 @@ class FaHeader extends React.Component {
 		this.onDecompose = () =>
 			window.FAM.api.activateFrameAgreement(this.props.faId);
 		this.onSubmitForApproval = this.onSubmitForApproval.bind(this);
+		this.onDeltaComparison = this.onDeltaComparison.bind(this);
 		this.callHandler = this.callHandler.bind(this);
 		this.onCloseIframe = this.onCloseIframe.bind(this);
 		// this.props.faId
@@ -114,6 +116,11 @@ class FaHeader extends React.Component {
 					);
 				});
 		});
+	}
+
+	async onDeltaComparison() {
+		await this.upsertFrameAgreements(true);
+		this.props.toggleModals({ deltaModal: true });
 	}
 
 	async callHandler(btnObj) {
@@ -295,6 +302,17 @@ class FaHeader extends React.Component {
 									{window.SF.labels.btn_SubmitForApproval}
 								</button>
 							)}
+						{!master &&
+							this.props.settings.ButtonStandardData.Delta.has(
+								this.props.frameAgreements[this.props.faId].csconta__Status__c
+							) && (
+								<button
+									className="fa-button fa-button--transparent"
+									onClick={this.onDeltaComparison}
+								>
+									{window.SF.labels.btn_Delta}
+								</button>
+							)}
 						{this.props.settings.ButtonStandardData.Submit.has(
 							this.props.frameAgreements[this.props.faId].csconta__Status__c
 						) &&
@@ -345,6 +363,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
 	createToast,
+	toggleModals,
 	saveFrameAgreement,
 	refreshFrameAgreement,
 	getApprovalHistory,

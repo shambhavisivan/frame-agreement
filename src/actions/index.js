@@ -6,6 +6,7 @@ const _defaultModals = {
 	actionIframeUrl: '',
 	productModal: false,
 	frameModal: false,
+	deltaModal: false,
 	negotiateModal: false
 };
 

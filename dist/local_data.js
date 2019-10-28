@@ -330,6 +330,39 @@ const frameAgreements = [
 		}
 	},
 	{
+		Id: 'a1t1t000000EyqiAAC',
+		Name: 'AGR-010263',
+		LastModifiedDate: 1572279423000,
+		csconta__Account__c: '0011t00000Pq1WRAAZ',
+		csconta__Agreement_Name__c: 'Delta Test 1',
+		csconta__Status__c: 'Draft',
+		csconta__frame_agreement_number__c: '010263',
+		csconta__agreement_level__c: 'Frame Agreement',
+		csfam__Arb_Field_Text__c: 'Arb Text',
+		csfam__Arb_Formula__c: 'Arb Text TESTING TESTING',
+		csfam__Arb_Field_Bool__c: true,
+		csconta__Account__r: {
+			Name: 'Test Account',
+			Id: '0011t00000Pq1WRAAZ'
+		}
+	},
+	{
+		Id: 'a1t1t000000EyqnAAC',
+		Name: 'AGR-010264',
+		LastModifiedDate: 1571917299000,
+		csconta__Account__c: '0011t00000Pq1WRAAZ',
+		csconta__Agreement_Name__c: 'Delta Test 2',
+		csconta__Status__c: 'Requires Approval',
+		csconta__frame_agreement_number__c: '010264',
+		csconta__agreement_level__c: 'Frame Agreement',
+		csfam__Arb_Formula__c: 'TESTING TESTING',
+		csfam__Arb_Field_Bool__c: true,
+		csconta__Account__r: {
+			Name: 'Test Account',
+			Id: '0011t00000Pq1WRAAZ'
+		}
+	},
+	{
 		Id: 'a1t1t000000A0gJAAS',
 		Name: 'AGR-000001',
 		csconta__Account__c: '0011t00000DSEtnAAH',
@@ -504,91 +537,44 @@ const childUsageTypes = {
 const productData = {
 	a1F1t0000001JBoEAM: {
 		addons: [],
+		allowances: [],
 		charges: [],
 		rateCards: []
 	},
 	a1F1t0000001JBZEA2: {
 		addons: [],
-		charges: [],
-		rateCards: [],
 		allowances: [
 			{
-				attributes: {
-					type: 'cspmb__Allowance__c',
-					url:
-						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t0000001iWkAAI'
-				},
 				Id: 'a1x1t0000001iWkAAI',
 				Name: 'ALL1',
-				cspmb__amount__c: 14.0,
+				cspmb__amount__c: 14,
 				cspmb__priority__c: 3,
 				cspmb__usage_type__c: 'a201t0000009yECAAY',
-				cspmb__usage_type__r: {
-					attributes: {
-						type: 'cspmb__Usage_Type__c',
-						url:
-							'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yECAAY'
-					},
-					Id: 'a201t0000009yECAAY',
+				mainUsageType: {
 					cspmb__unit_of_measure__c: 'Minute',
 					Name: 'UT2',
-					cspmb__type__c: 'Single'
+					cspmb__type__c: 'Single',
+					Id: 'a201t0000009yECAAY',
+					childUsageTypes: [
+						{
+							Id: 'a201t0000009yEHAAY',
+							Name: 'National Calls to Fixed',
+							cspmb__unit_of_measure__c: 'Minute'
+						},
+						{
+							Id: 'a201t0000009yElAAI',
+							Name: 'National Calls to Mobile',
+							cspmb__unit_of_measure__c: 'Minute'
+						}
+					]
 				}
-			},
-			{
-				attributes: {
-					type: 'cspmb__Allowance__c',
-					url:
-						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t00000049NCAAY'
-				},
-				Id: 'a1x1t00000049NCAAY',
-				Name: 'ALL2',
-				cspmb__amount__c: 14.0,
-				cspmb__priority__c: 3,
-				cspmb__usage_type__c: 'a201t0000009ryNAAQ',
-				cspmb__usage_type__r: {
-					attributes: {
-						type: 'cspmb__Usage_Type__c',
-						url:
-							'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009ryNAAQ'
-					},
-					Id: 'a201t0000009ryNAAQ',
-					cspmb__unit_of_measure__c: 'Message',
-					Name: 'UT1',
-					cspmb__type__c: 'Group'
-				}
-			},
-			{
-				attributes: {
-					type: 'cspmb__Allowance__c',
-					url:
-						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t00000049NCAAY'
-				},
-				Id: 'a1x1t00000049NCAAY',
-				Name: 'ALL3',
-				cspmb__amount__c: 14.0,
-				cspmb__priority__c: 3,
-				cspmb__usage_type__c: null
 			}
-		]
+		],
+		charges: [],
+		rateCards: []
 	},
 	a1F1t0000001JBUEA2: {
 		addons: [
-			{
-				Id: 'a1A1t0000003SgeEAE',
-				cspmb__Price_Item__c: 'a1F1t0000001JBUEA2',
-				cspmb__Overrides_Add_On_Charges__c: true,
-				cspmb__Add_On_Price_Item__c: 'a0w1t000000zDnNAAU',
-				cspmb__One_Off_Charge__c: 10.99,
-				cspmb__Recurring_Charge__c: 31.99,
-				cspmb__Add_On_Price_Item__r: {
-					cspmb__Effective_Start_Date__c: 1545868800000,
-					Name: '1000 SMS',
-					cspmb__Authorization_Level__c: 'a0x1t000001RjCEAA0',
-					cspmb__Recurring_Charge__c: 82.44,
-					Id: 'a0w1t000000zDnNAAU'
-				}
-			},
 			{
 				Id: 'a1A1t0000003SXxEAM',
 				cspmb__Price_Item__c: 'a1F1t0000001JBUEA2',
@@ -603,21 +589,65 @@ const productData = {
 					cspmb__Recurring_Charge__c: 12,
 					Id: 'a0w1t0000002hSaAAI'
 				}
+			},
+			{
+				Id: 'a1A1t0000003SgeEAE',
+				cspmb__Price_Item__c: 'a1F1t0000001JBUEA2',
+				cspmb__Overrides_Add_On_Charges__c: true,
+				cspmb__Add_On_Price_Item__c: 'a0w1t000000zDnNAAU',
+				cspmb__One_Off_Charge__c: 10.99,
+				cspmb__Recurring_Charge__c: 31.99,
+				cspmb__Add_On_Price_Item__r: {
+					cspmb__Effective_Start_Date__c: 1545868800000,
+					Name: '1000 SMS',
+					cspmb__Authorization_Level__c: 'a0x1t000001RjCEAA0',
+					cspmb__Recurring_Charge__c: 82.44,
+					Id: 'a0w1t000000zDnNAAU'
+				}
 			}
 		],
-		charges: [],
 		allowances: [
 			{
 				Id: 'a1x1t0000001iWkAAI',
 				Name: 'ALL1',
-				cspmb__usage_type__c: 'a201t0000009ryNAAQ'
+				cspmb__amount__c: 14,
+				cspmb__priority__c: 3,
+				cspmb__usage_type__c: 'a201t0000009yECAAY',
+				mainUsageType: {
+					cspmb__unit_of_measure__c: 'Minute',
+					Name: 'UT2',
+					cspmb__type__c: 'Single',
+					Id: 'a201t0000009yECAAY',
+					childUsageTypes: [
+						{
+							Id: 'a201t0000009yEHAAY',
+							Name: 'National Calls to Fixed',
+							cspmb__unit_of_measure__c: 'Minute'
+						},
+						{
+							Id: 'a201t0000009yElAAI',
+							Name: 'National Calls to Mobile',
+							cspmb__unit_of_measure__c: 'Minute'
+						}
+					]
+				}
 			},
 			{
-				Id: 'a1x1t0000001iWkAAO',
+				Id: 'a1x1t00000049NCAAY',
 				Name: 'ALL2',
-				cspmb__usage_type__c: 'a201t0000009ryNAAE'
+				cspmb__amount__c: 14,
+				cspmb__priority__c: 3,
+				cspmb__usage_type__c: 'a201t0000009ryNAAQ',
+				mainUsageType: {
+					cspmb__unit_of_measure__c: 'Message',
+					Name: 'UT1',
+					cspmb__type__c: 'Group',
+					Id: 'a201t0000009ryNAAQ',
+					childUsageTypes: []
+				}
 			}
 		],
+		charges: [],
 		rateCards: [
 			{
 				authId: 'a0x1t000001RjC9AAK',
@@ -629,21 +659,28 @@ const productData = {
 						Name: 'Voice',
 						cspmb__Cap_Unit__c: 'Sample Cap Unit',
 						cspmb__rate_value__c: 124.99,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t0000001QxrEAE',
 						cspmb__Currency_Code__c: 'Sample Code',
 						cspmb__Weekend__c: 12,
-						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__usage_type__r: {
 							Name: 'UT1',
 							Id: 'a201t0000009ryNAAQ'
-						}
+						},
+						usageTypeName: 'UT1'
 					},
 					{
 						Id: 'a1M1t000000peaJEAQ',
 						Name: 'Data',
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t0000001QxrEAE',
 						cspmb__Currency_Code__c: 'Sample Code',
-						cspmb__Weekend__c: 12
+						cspmb__Weekend__c: 12,
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
 					}
 				]
 			},
@@ -656,30 +693,43 @@ const productData = {
 						Id: 'a1M1t000000peXUEAY',
 						Name: 'Voice',
 						cspmb__rate_value__c: 55.98,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t0000001X2dEAE',
 						cspmb__Currency_Code__c: 'Sample Code',
-						cspmb__Weekend__c: 14
+						cspmb__Weekend__c: 14,
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
 					},
 					{
 						Id: 'a1M1t000000peXZEAY',
 						Name: 'Data',
 						cspmb__rate_value__c: 65.43,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t0000001X2dEAE',
 						cspmb__Currency_Code__c: 'Sample Code',
 						cspmb__Weekend__c: 14,
-						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__usage_type__r: {
 							Name: 'UT1',
 							Id: 'a201t0000009ryNAAQ'
-						}
+						},
+						usageTypeName: 'UT1'
 					},
 					{
 						Id: 'a1M1t000000peXeEAI',
 						Name: 'SMS',
 						cspmb__rate_value__c: 12.99,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t0000001X2dEAE',
 						cspmb__Currency_Code__c: 'Sample Code',
-						cspmb__Weekend__c: 12
+						cspmb__Weekend__c: 12,
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
 					}
 				]
 			},
@@ -691,34 +741,53 @@ const productData = {
 						Id: 'a1M1t000000WwSIEA0',
 						Name: 'RCL4.3',
 						cspmb__rate_value__c: 10.88,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYgEAO',
-						cspmb__Currency_Code__c: 'Sample Code'
+						cspmb__Currency_Code__c: 'Sample Code',
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
 					},
 					{
 						Id: 'a1M1t000000WwS8EAK',
 						Name: 'RCL4.1',
 						cspmb__rate_value__c: 41.11,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYgEAO',
-						cspmb__Currency_Code__c: 'Sample Code'
+						cspmb__Currency_Code__c: 'Sample Code',
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
 					},
 					{
 						Id: 'a1M1t000000WwSDEA0',
 						Name: 'RCL4.2',
 						cspmb__rate_value__c: 14.55,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYgEAO',
 						cspmb__Currency_Code__c: 'Sample Code',
-						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__usage_type__r: {
 							Name: 'UT1',
 							Id: 'a201t0000009ryNAAQ'
-						}
+						},
+						usageTypeName: 'UT1'
 					},
 					{
 						Id: 'a1M1t000000WwSNEA0',
 						Name: 'RCL4.4',
 						cspmb__rate_value__c: 76.55,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYgEAO',
-						cspmb__Currency_Code__c: 'Sample Code'
+						cspmb__Currency_Code__c: 'Sample Code',
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
 					}
 				]
 			}
@@ -741,11 +810,13 @@ const productData = {
 				}
 			}
 		],
+		allowances: [],
 		charges: [],
 		rateCards: []
 	},
 	a1F1t0000001JCDEA2: {
 		addons: [],
+		allowances: [],
 		charges: [],
 		rateCards: []
 	},
@@ -837,6 +908,33 @@ const productData = {
 				}
 			}
 		],
+		allowances: [
+			{
+				Id: 'a1x1t0000001iWkAAI',
+				Name: 'ALL1',
+				cspmb__amount__c: 14,
+				cspmb__priority__c: 3,
+				cspmb__usage_type__c: 'a201t0000009yECAAY',
+				mainUsageType: {
+					cspmb__unit_of_measure__c: 'Minute',
+					Name: 'UT2',
+					cspmb__type__c: 'Single',
+					Id: 'a201t0000009yECAAY',
+					childUsageTypes: [
+						{
+							Id: 'a201t0000009yEHAAY',
+							Name: 'National Calls to Fixed',
+							cspmb__unit_of_measure__c: 'Minute'
+						},
+						{
+							Id: 'a201t0000009yElAAI',
+							Name: 'National Calls to Mobile',
+							cspmb__unit_of_measure__c: 'Minute'
+						}
+					]
+				}
+			}
+		],
 		charges: [
 			{
 				chargeType: 'Recurring Charge',
@@ -860,77 +958,42 @@ const productData = {
 						Id: 'a1M1t000000WwRtEAK',
 						Name: 'RCL3.1',
 						cspmb__rate_value__c: 55.43,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYbEAO',
-						cspmb__Currency_Code__c: 'Sample Code'
+						cspmb__Currency_Code__c: 'Sample Code',
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
 					},
 					{
 						Id: 'a1M1t000000WwS3EAK',
 						Name: 'RCL3.3',
 						cspmb__rate_value__c: 12.9,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYbEAO',
 						cspmb__Currency_Code__c: 'Sample Code',
-						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__usage_type__r: {
 							Name: 'UT1',
 							Id: 'a201t0000009ryNAAQ'
-						}
+						},
+						usageTypeName: 'UT1'
 					},
 					{
 						Id: 'a1M1t000000WwRyEAK',
 						Name: 'RCL3.2',
 						cspmb__rate_value__c: 44.21,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYbEAO',
-						cspmb__Currency_Code__c: 'Sample Code'
+						cspmb__Currency_Code__c: 'Sample Code',
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
 					}
 				]
-			}
-		],
-		allowances: [
-			{
-				attributes: {
-					type: 'cspmb__Allowance__c',
-					url:
-						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t0000001iWkAAI'
-				},
-				Id: 'a1x1t0000001iWkAAI',
-				Name: 'ALL1',
-				cspmb__amount__c: 14.0,
-				cspmb__priority__c: 3,
-				cspmb__usage_type__c: 'a201t0000009yECAAY',
-				cspmb__usage_type__r: {
-					attributes: {
-						type: 'cspmb__Usage_Type__c',
-						url:
-							'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yECAAY'
-					},
-					Id: 'a201t0000009yECAAY',
-					cspmb__unit_of_measure__c: 'Minute',
-					Name: 'UT2',
-					cspmb__type__c: 'Single'
-				}
-			},
-			{
-				attributes: {
-					type: 'cspmb__Allowance__c',
-					url:
-						'/services/data/v46.0/sobjects/cspmb__Allowance__c/a1x1t00000049NCAAY'
-				},
-				Id: 'a1x1t00000049NCAAY',
-				Name: 'ALL2',
-				cspmb__amount__c: 14.0,
-				cspmb__priority__c: 3,
-				cspmb__usage_type__c: 'a201t0000009ryNAAQ',
-				cspmb__usage_type__r: {
-					attributes: {
-						type: 'cspmb__Usage_Type__c',
-						url:
-							'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009ryNAAQ'
-					},
-					Id: 'a201t0000009ryNAAQ',
-					cspmb__unit_of_measure__c: 'Message',
-					Name: 'UT1',
-					cspmb__type__c: 'Group'
-				}
 			}
 		]
 	}
@@ -1193,6 +1256,362 @@ const DiscLevels = [
 	}
 ];
 
+const Delta = {
+	csconta__Account__c: {
+		new_value: '0011t00000Pq1WRAAZ',
+		old_value: '0011t00000Pq1WRAAZ',
+		status: 'unchanged'
+	},
+	csconta__Agreement_Name__c: {
+		new_value: 'Delta Test 1',
+		old_value: 'Delta Test 2',
+		status: 'changed'
+	},
+	csconta__Status__c: {
+		new_value: 'Draft',
+		old_value: 'Requires Approval',
+		status: 'changed'
+	},
+	csconta__agreement_level__c: {
+		new_value: 'Frame Agreement',
+		old_value: 'Frame Agreement',
+		status: 'unchanged'
+	},
+	csfam__Arb_Formula__c: {
+		new_value: 'Arb Text TESTING TESTING',
+		old_value: 'TESTING TESTING',
+		status: 'changed'
+	},
+	csfam__Arb_Field_Bool__c: {
+		new_value: true,
+		old_value: true,
+		status: 'unchanged'
+	},
+	_products: {
+		a1F1t0000001JCDEA2: 'removed',
+		a1F1t0000001JBjEAM: 'added',
+		a1F1t0000001JBoEAM: {
+			addons: {},
+			charges: {
+				a1I1t000001WkzjEAC: {
+					recurring: {
+						old_value: 12,
+						status: 'removed'
+					}
+				},
+				a1I1t000001WkzoEAC: {
+					oneOff: {
+						new_value: 7,
+						old_value: 7,
+						status: 'unchanged'
+					}
+				}
+			},
+			product: {
+				oneOff: {
+					status: 'unchanged'
+				},
+				recurring: {
+					new_value: 269,
+					old_value: 269,
+					status: 'unchanged'
+				}
+			},
+			rateCard: {},
+			volume: {
+				muc: {
+					new_value: 100,
+					old_value: 44,
+					status: 'changed'
+				},
+				mucp: {
+					new_value: 855,
+					status: 'changed'
+				},
+				mv: {
+					new_value: 200,
+					status: 'changed'
+				},
+				mvp: {
+					new_value: 422,
+					old_value: 52,
+					status: 'changed'
+				}
+			}
+		},
+		a1F1t0000001JBZEA2: {
+			addons: {},
+			charges: {},
+			product: {
+				oneOff: {
+					status: 'unchanged'
+				},
+				recurring: {
+					new_value: 269,
+					old_value: 169,
+					status: 'changed'
+				}
+			},
+			rateCard: {
+				a1N1t0000001QxrEAE: {
+					rcl: {
+						a1M1t000000BFrVEAW: {
+							old_value: 124.99,
+							status: 'removed'
+						}
+					},
+					status: 'removed'
+				}
+			},
+			volume: {
+				muc: {
+					new_value: 44,
+					status: 'changed'
+				},
+				mucp: {
+					new_value: 0,
+					status: 'changed'
+				},
+				mv: {
+					new_value: 45,
+					old_value: 52,
+					status: 'changed'
+				},
+				mvp: {
+					new_value: 25,
+					status: 'changed'
+				}
+			}
+		},
+		a1F1t0000001JBUEA2: {
+			addons: {
+				a1A1t0000003SXxEAM: {
+					oneOff: {
+						new_value: 10,
+						old_value: 5,
+						status: 'changed'
+					},
+					recurring: {
+						new_value: 21.79,
+						old_value: 19.79,
+						status: 'changed'
+					},
+					status: 'changed'
+				},
+				a1A1t0000003SgeEAE: {
+					oneOff: {
+						new_value: 10.99,
+						old_value: 10.99,
+						status: 'unchanged'
+					},
+					recurring: {
+						new_value: 31.99,
+						old_value: 31.99,
+						status: 'unchanged'
+					},
+					status: 'unchanged'
+				}
+			},
+			charges: {},
+			product: {
+				oneOff: {
+					new_value: 69,
+					old_value: 67,
+					status: 'changed'
+				},
+				recurring: {
+					new_value: 269,
+					old_value: 267,
+					status: 'changed'
+				}
+			},
+			rateCard: {
+				a1N1t0000001QxrEAE: {
+					rcl: {
+						a1M1t000000BFrVEAW: {
+							new_value: 124.99,
+							old_value: 120.99,
+							status: 'changed'
+						}
+					},
+					status: 'changed'
+				},
+				a1N1t0000001X2dEAE: {
+					rcl: {
+						a1M1t000000peXUEAY: {
+							new_value: 55.98,
+							old_value: 50.98,
+							status: 'changed'
+						},
+						a1M1t000000peXZEAY: {
+							new_value: 65.43,
+							old_value: 65.43,
+							status: 'unchanged'
+						},
+						a1M1t000000peXeEAI: {
+							new_value: 12.99,
+							old_value: 12.99,
+							status: 'unchanged'
+						}
+					},
+					status: 'changed'
+				},
+				a1N1t000000GUYbEAO: {
+					rcl: {
+						a1M1t000000WwRtEAK: {
+							new_value: 55.43,
+							old_value: 50.43,
+							status: 'changed'
+						},
+						a1M1t000000WwS3EAK: {
+							new_value: 12.9,
+							old_value: 12.9,
+							status: 'unchanged'
+						},
+						a1M1t000000WwRyEAK: {
+							new_value: 44.21,
+							old_value: 44.21,
+							status: 'unchanged'
+						}
+					},
+					status: 'changed'
+				},
+				a1N1t000000GUYgEAO: {
+					rcl: {
+						a1M1t000000WwSIEA0: {
+							new_value: 10.88,
+							old_value: 10.88,
+							status: 'unchanged'
+						},
+						a1M1t000000WwS8EAK: {
+							new_value: 41.11,
+							old_value: 41.11,
+							status: 'unchanged'
+						},
+						a1M1t000000WwSDEA0: {
+							new_value: 14.55,
+							old_value: 14.55,
+							status: 'unchanged'
+						},
+						a1M1t000000WwSNEA0: {
+							new_value: 76.55,
+							old_value: 76.55,
+							status: 'unchanged'
+						}
+					},
+					status: 'unchanged'
+				}
+			},
+			volume: {}
+		},
+		a1F1t00000017Y0EAI: {
+			addons: {
+				a1A1t0000002cIMEAY: {
+					oneOff: {
+						new_value: 8.49,
+						old_value: 8.49,
+						status: 'unchanged'
+					},
+					recurring: {
+						new_value: 12.75,
+						old_value: 12.75,
+						status: 'unchanged'
+					},
+					status: 'unchanged'
+				},
+				a1A1t0000003ScfEAE: {
+					oneOff: {
+						new_value: 8.49,
+						old_value: 8.49,
+						status: 'unchanged'
+					},
+					recurring: {
+						new_value: 82.44,
+						old_value: 82.44,
+						status: 'unchanged'
+					},
+					status: 'unchanged'
+				}
+			},
+			charges: {
+				a1I1t000001WkzjEAC: {
+					recurring: {
+						new_value: 12,
+						old_value: 12,
+						status: 'unchanged'
+					}
+				},
+				a1I1t000001WkzoEAC: {
+					oneOff: {
+						new_value: 7,
+						old_value: 7,
+						status: 'unchanged'
+					}
+				}
+			},
+			product: {},
+			rateCard: {
+				a1N1t0000001QxrEAE: {
+					rcl: {
+						a1M1t000000BFrVEAW: {
+							new_value: 124.99,
+							old_value: 124.99,
+							status: 'unchanged'
+						}
+					},
+					status: 'unchanged'
+				},
+				a1N1t000000GUYbEAO: {
+					rcl: {
+						a1M1t000000WwRtEAK: {
+							new_value: 55.43,
+							old_value: 55.43,
+							status: 'unchanged'
+						},
+						a1M1t000000WwS3EAK: {
+							new_value: 12.9,
+							old_value: 12.9,
+							status: 'unchanged'
+						},
+						a1M1t000000WwRyEAK: {
+							new_value: 44.21,
+							old_value: 44.21,
+							status: 'unchanged'
+						}
+					},
+					status: 'unchanged'
+				},
+				a1N1t000000GUYgEAO: {
+					rcl: {
+						a1M1t000000WwSIEA0: {
+							new_value: 10.88,
+							old_value: 10.88,
+							status: 'unchanged'
+						},
+						a1M1t000000WwS8EAK: {
+							new_value: 41.11,
+							old_value: 41.11,
+							status: 'unchanged'
+						},
+						a1M1t000000WwSDEA0: {
+							new_value: 14.55,
+							old_value: 14.55,
+							status: 'unchanged'
+						},
+						a1M1t000000WwSNEA0: {
+							new_value: 76.55,
+							old_value: 76.55,
+							status: 'unchanged'
+						}
+					},
+					status: 'unchanged'
+				}
+			},
+			volume: {}
+		}
+	}
+};
+
 const CustomTabsData = [
 	{
 		label: 'Custom tab',
@@ -1366,6 +1785,7 @@ const ButtonStandardData = {
 	BulkNegotiate: ['Draft', 'Requires Approval'],
 	AddProducts: ['Draft', 'Requires Approval'],
 	AddFrameAgreement: ['Draft', 'Requires Approval'],
+	Delta: ['*'],
 	NewVersion: ['Active']
 };
 
@@ -2802,6 +3222,7 @@ for (var i = 0; i < 2000; i++) {
 		Id: makeId(15)
 	});
 }
+
 lookupAccountData.sort((a, b) => (a.Id > b.Id ? 1 : b.Id > a.Id ? -1 : 0));
 
 // const priceItemData = {"a1F1t00000017Y0EAI":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t00000017Y0EAI","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001QxrEAE","Name":"RC1","rateCardLines":[{"Id":"a1M1t000000BFrVEAW","Name":"RCL1.1","cspmb__Cap_Unit__c":"Sample Cap Unit","cspmb__rate_value__c":124.99,"cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"},{"Id":"a1M1t000000peaJEAQ","Name":"RCL_1_1","cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"}]}]},"a1F1t0000001JBUEA2":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBUEA2","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":12.99,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]},"a1F1t0000001JBeEAM":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnhAAE","Name":"ADD3","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBeEAM","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":12.99,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]}};
@@ -2834,6 +3255,7 @@ window.SF = SF = {
 		btn_DeleteAgreements: 'Delete Agreements',
 		btn_AddProducts: 'Add Products',
 		btn_AddFa: 'Add Frame Agreements',
+		btn_Delta: 'Compare Agreements',
 		frame_agreements_title: 'Frame Agreements',
 		btn_NewVersion: 'Create New Version',
 		approval_title: 'Approval history',
@@ -3039,6 +3461,9 @@ window.SF = SF = {
 
 			case 'reassignApproval': // Obsolete
 				return createPromise(true);
+
+			case 'getDelta': // Obsolete
+				return createPromise(Delta);
 
 			case 'submitForApproval': // Obsolete
 				return createPromise(getRandomFromArr([true, true, true]));

@@ -634,7 +634,6 @@ class DynamicGroupTab extends React.Component {
 																			{i + ') '}
 																		</div>
 																		<div className="dg-circuit-configuration">
-																			{' '}
 																			{circ.field +
 																				' ' +
 																				circ.operator +

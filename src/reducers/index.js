@@ -170,8 +170,12 @@ function formatDiscLevels(dlList = []) {
 			return returnValues;
 		}
 
-		if (dl.discountLevel.hasOwnProperty('cspmb__Minimum_Discount_Value__c') && (+dl.discountLevel.cspmb__Minimum_Discount_Value__c) === 0) {
-			dl.discountLevel.cspmb__Minimum_Discount_Value__c = +dl.discountLevel.cspmb__Discount_Increment__c;
+		if (
+			dl.discountLevel.hasOwnProperty('cspmb__Minimum_Discount_Value__c') &&
+			+dl.discountLevel.cspmb__Minimum_Discount_Value__c === 0
+		) {
+			dl.discountLevel.cspmb__Minimum_Discount_Value__c = +dl.discountLevel
+				.cspmb__Discount_Increment__c;
 		}
 
 		if (
@@ -186,11 +190,15 @@ function formatDiscLevels(dlList = []) {
 			dl.discountLevel.cspmb__Maximum_Discount_Value__c &&
 			dl.discountLevel.cspmb__Minimum_Discount_Value__c
 		) {
-
-			if (dl.discountLevel.cspmb__Maximum_Discount_Value__c < dl.discountLevel.cspmb__Minimum_Discount_Value__c) {
-				log.red('Minimum greater then maximum on discount level:', dl.discountLevel.Id);
+			if (
+				dl.discountLevel.cspmb__Maximum_Discount_Value__c <
+				dl.discountLevel.cspmb__Minimum_Discount_Value__c
+			) {
+				log.red(
+					'Minimum greater then maximum on discount level:',
+					dl.discountLevel.Id
+				);
 			}
-
 
 			// validate increment
 			if (
@@ -1126,6 +1134,7 @@ const rootReducer = (state = initialState, action) => {
 				'Save',
 				'SubmitForApproval',
 				'Submit',
+				'Delta',
 				'DeleteProducts',
 				'BulkNegotiate',
 				'AddProducts',
@@ -1133,12 +1142,21 @@ const rootReducer = (state = initialState, action) => {
 				'NewVersion'
 			];
 
+			const fullStatusSet = new Set(
+				Object.values(action.payload.FACSettings.statuses)
+			);
+
 			var _standardButtons = {};
 			standardButtonsDefault.forEach(sb => {
 				if (!action.payload.ButtonStandardData.hasOwnProperty(sb)) {
 					console.warn(sb + ' not defined in "FA-Standard-Buttons"!');
 					_standardButtons[sb] = new Set([]);
 				} else {
+					if (action.payload.ButtonStandardData[sb][0] === '*') {
+						_standardButtons[sb] = fullStatusSet;
+						return;
+					}
+
 					if (!action.payload.ButtonStandardData[sb].length) {
 						console.warn('No visible status for ' + sb + ' button.');
 					}

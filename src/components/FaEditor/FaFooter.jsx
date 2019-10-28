@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Icon from '../utillity/Icon';
-import { isMaster } from '../../utils/shared-service';
+import { isMaster } from '~/src/utils/shared-service';
 
 import { publish } from '~/src/api';
 import ActionIframe from '~/src/components/modals/ActionIframe';

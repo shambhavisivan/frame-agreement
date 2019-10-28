@@ -190,16 +190,21 @@ global with sharing class FAMDelta {
 			Map <String, Object> volumes1 = (Map <String, Object>) original_cp.get('_volume');
 			Map <String, Object> volumes2 = (Map <String, Object>) secondary_cp.get('_volume');
 
+			system.debug(volumes1);
+			system.debug(volumes2);
+
 			Boolean isAllNull1 = new Set<Object>(volumes1.values()).equals(new Set<Object>{
 				null
 			});
 			Boolean isAllNull2 = new Set<Object>(volumes2.values()).equals(new Set<Object>{
 				null
 			});
+			system.debug(isAllNull1);
+			system.debug(isAllNull2);
 
 			Map <String, diffWrap> volume_compare = new Map <String, diffWrap>();
 
-			if (isAllNull1 || isAllNull2) {
+			if (!isAllNull1 || !isAllNull2) {
 				volume_compare = compareVolume(volumes1, volumes2);
 			}
 
@@ -462,15 +467,15 @@ global with sharing class FAMDelta {
 
 					} else {
 						// Removed rcl
-						this_diff.put(rclId, new diffWrap((Decimal) this_rc.get(rclId), null, 'added'));
+						this_diff.put(rclId, new diffWrap((Decimal) this_rc.get(rclId), 0, 'changed'));
 					}
 
 					secondary_rc.remove(rclId);
 				}
 
 				for (String rclId : secondary_rc.keySet()) {
-					// Added rcl
-					this_diff.put(rclId, new diffWrap(null, (Decimal) secondary_rc.get(rclId), 'removed'));
+					// added, but actually changed from unset
+					this_diff.put(rclId, new diffWrap(0, (Decimal) secondary_rc.get(rclId), 'changed'));
 				}
 
 				rc2rclSet.remove(rcId);

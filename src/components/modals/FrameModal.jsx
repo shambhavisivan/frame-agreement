@@ -127,7 +127,7 @@ class FrameModal extends Component {
 						<Icon name="expand_alt" width="24" height="24" color="white" />
 					</span>
 					<h2 className="fa-modal-header-title">
-						{window.SF.labels.modal_addProduct_title}
+						{window.SF.labels.modal_addFa_title}
 					</h2>
 				</div>
 
@@ -136,7 +136,7 @@ class FrameModal extends Component {
 						<div className="fa-modal-navigation">
 							<div className="search-container">
 								<InputSearch
-									placeholder={window.SF.labels.modal_addFa_title}
+									placeholder={window.SF.labels.input_quickSearchPlaceholder}
 									value={this.state.faFilter}
 									onChange={val => {
 										this.setState({ faFilter: val });

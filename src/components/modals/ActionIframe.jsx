@@ -25,20 +25,27 @@ class ActionIframe extends Component {
 			}
 		};
 
+		this.max = false;
+
 		// Override
 		if (this.options) {
-			let _modalStyles = {};
+			if (this.options !== 'max') {
+				let _modalStyles = {};
 
-			if (this.options.width) {
-				_modalStyles.maxWidth = '90%';
-				_modalStyles.width = this.options.width;
+				if (this.options.width) {
+					_modalStyles.maxWidth = '90%';
+					_modalStyles.width = this.options.width;
+				}
+
+				if (this.options.height) {
+					_modalStyles.height = this.options.height;
+				}
+
+				this.styles.modal = _modalStyles;
+			} else {
+				this.max = true;
+				this.styles.modal = {};
 			}
-
-			if (this.options.height) {
-				_modalStyles.height = this.options.height;
-			}
-
-			this.styles.modal = _modalStyles;
 		}
 	}
 
@@ -48,7 +55,8 @@ class ActionIframe extends Component {
 				classNames={{
 					overlay: 'overlay',
 					modal:
-						'fa-modal iframe-modal ' + (this.iFrameTitle ? '' : 'no-title'),
+						'fa-modal iframe-modal ' +
+						(this.iFrameTitle ? '' : 'no-title ' + (this.max ? 'full' : '')),
 					closeButton: 'close-button'
 				}}
 				styles={this.styles}

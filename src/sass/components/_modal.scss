@@ -17,6 +17,14 @@
 		width: 90%;
 	}
 
+	&.full {
+	    height: 100%;
+	    width: 98%;
+	    display: flex;
+	    flex-direction: column;
+	    max-width: unset;
+	}
+
 	@include sbg(--modal-lightest-bg);
 	@include css4 {
 		box-shadow: 0 0 4px cvar(--modal-br);
@@ -290,6 +298,10 @@
 	@include sc(--modal-lightest-c);
 }
 
+.fa-modal-product-list-categories-item {
+    cursor: pointer;
+}
+
 .fa-modal-product-list-categories {
 	font-size: 0.875rem;
 	padding-bottom: 0.5rem;
@@ -305,6 +317,7 @@
 	li {
 		align-items: center;
 		display: flex;
+		cursor: pointer;
 
 		.checkbox {
 			margin-right: 0.5rem;

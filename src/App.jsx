@@ -304,6 +304,72 @@ export class App extends Component {
 			return response;
 		};
 
+		window.SF.validateStatusConsistency = async faId => {
+			if (!this.props.settings.FACSettings.active_status_management__c) {
+				return false;
+			}
+
+			let _result;
+			let _fa = this.props.frameAgreements[faId];
+			let _statuses = this.props.settings.FACSettings.statuses;
+
+			// If approval is needed we need to set FA status to requires_approval_status + vice versa
+			if (
+				_fa._ui.approvalNeeded &&
+				(_fa.csconta__Status__c === _statuses.draft_status ||
+					_fa.csconta__Status__c === _statuses.approved_status)
+			) {
+				if (
+					!_statuses.hasOwnProperty('draft_status') ||
+					!_statuses.draft_status
+				) {
+					log.bg.orange(
+						'Cannot set state to ' +
+							newStatus +
+							' - not defined in Custom Settings'
+					);
+				} else {
+					console.log(
+						'Changing the state of FA to %c' +
+							_statuses.requires_approval_status,
+						'font-style: italic;color: #0070d2'
+					);
+
+					_result = await this.props.setFrameAgreementState(
+						faId,
+						_statuses.requires_approval_status
+					);
+					return _result;
+				}
+			}
+
+			if (
+				!_fa._ui.approvalNeeded &&
+				_fa.csconta__Status__c === _statuses.requires_approval_status
+			) {
+				if (
+					!_statuses.hasOwnProperty('requires_approval_status') ||
+					!_statuses.requires_approval_status
+				) {
+					log.bg.orange(
+						'Cannot set state to ' +
+							newStatus +
+							' - not defined in Custom Settings'
+					);
+				} else {
+					console.log(
+						'Changing the state of FA to %c' + _statuses.draft_status,
+						'font-style: italic;color: #0070d2'
+					);
+					_result = await this.props.setFrameAgreementState(
+						faId,
+						_statuses.draft_status
+					);
+					return _result;
+				}
+			}
+		};
+
 		window.FAM.api.getCommercialProducts = async faId => {
 			if (!faId) {
 				return this.props.getCommercialProducts();
@@ -379,6 +445,8 @@ export class App extends Component {
 				);
 
 				self.props.validateFrameAgreement(faId);
+
+				await window.SF.validateStatusConsistency(faId);
 
 				resolve(this.props.frameAgreements[faId]._ui.attachemnt);
 			});

@@ -30,6 +30,11 @@ class DynamicGroupTab extends React.Component {
 			selectGroups: [],
 			groups: [],
 			added: {},
+			editable: redux_store
+				.getState()
+				.settings.FACSettings.fa_editable_statuses.has(
+					ACTIVE_FA.csconta__Status__c
+				),
 			open: null,
 			targetingResults: {}
 		};
@@ -520,6 +525,7 @@ class DynamicGroupTab extends React.Component {
 						<div className="header__inputs">
 							<Select
 								className="dg-select"
+								isDisabled={!this.state.editable}
 								placeholder="Add group..."
 								value={this.blank}
 								options={this.state.selectGroups}
@@ -576,15 +582,22 @@ class DynamicGroupTab extends React.Component {
 										);
 									})}
 								</div>
-								<div
-									className="container__checkbox"
-									onClick={e => {
-										e.preventDefault();
-										return this.onRemoveGroup(group);
-									}}
-								>
-									<Icon name="delete" height="14" width="14" color="#0070d2" />
-								</div>
+								{this.state.editable ? (
+									<div
+										className="container__checkbox"
+										onClick={e => {
+											e.preventDefault();
+											return this.onRemoveGroup(group);
+										}}
+									>
+										<Icon
+											name="delete"
+											height="14"
+											width="14"
+											color="#0070d2"
+										/>
+									</div>
+								) : null}
 							</div>
 
 							{this.state.open === group.Id ? (
@@ -601,7 +614,7 @@ class DynamicGroupTab extends React.Component {
 											''
 										)}
 
-										{group.csfamext__fam_editable__c ? (
+										{group.csfamext__fam_editable__c && this.state.editable ? (
 											<React.Fragment>
 												<div className="input-box">
 													<label className="dg-label">Logic</label>
@@ -706,6 +719,7 @@ class DynamicGroupTab extends React.Component {
 												<label>Discount type</label>
 												<select
 													value={group.csfamext__discount_type__c}
+													disabled={!this.state.editable}
 													placeholder="Add Dynamic Group"
 													onChange={e => {
 														this.onChangeDiscount(
@@ -729,6 +743,7 @@ class DynamicGroupTab extends React.Component {
 														<DebounceInput
 															debounceTimeout={300}
 															minLength={1}
+															disabled={!this.state.editable}
 															spellCheck="false"
 															className=""
 															type="number"
@@ -748,6 +763,7 @@ class DynamicGroupTab extends React.Component {
 														<DebounceInput
 															debounceTimeout={300}
 															minLength={1}
+															disabled={!this.state.editable}
 															spellCheck="false"
 															className=""
 															type="number"

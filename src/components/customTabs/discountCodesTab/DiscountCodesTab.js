@@ -80,7 +80,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 
 	// **************************************** HELPERS
 	function calculateDiscount(type, discount, original) {
-		// Used to calculate discount based on a) type (absolute/percentage), b) discount (value) c) original (value of charge)
+		// Used to calculate discount based on a) 2type (absolute/percentage), b) discount (value) c) original (value of charge)
 		let result;
 		discount = Math.abs(+discount);
 
@@ -311,9 +311,12 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	});
 	// Return length of applied groups
 	console.log('Discount negotiating:', _negoArray);
-	return window.FAM.api
-		.negotiate(active_fa.Id, _negoArray)
-		.then(r => _negoArray.length);
+
+	let negoResult = await window.FAM.api.negotiate(active_fa.Id, _negoArray);
+
+	await window.FAM.api.saveFrameAgreement(active_fa.Id);
+
+	return _negoArray.length;
 };
 
 window.FAM.subscribe('onAfterAddProducts', data => {
@@ -332,6 +335,11 @@ class DiscountCodesTab extends React.Component {
 			loading: true,
 			selectGroups: [],
 			groups: [],
+			editable: redux_store
+				.getState()
+				.settings.FACSettings.fa_editable_statuses.has(
+					ACTIVE_FA.csconta__Status__c
+				),
 			added: {},
 			open: null,
 			targetingResults: {}
@@ -344,7 +352,8 @@ class DiscountCodesTab extends React.Component {
 		this.onAddGroup = this.onAddGroup.bind(this);
 		this.targetRecords = this.targetRecords.bind(this);
 		this.blank = '';
-		this.activeFa = null;
+
+		window.FAM.api.getActiveFrameAgreement;
 	}
 
 	componentDidMount() {
@@ -505,6 +514,16 @@ class DiscountCodesTab extends React.Component {
 			) {
 				this.targetRecords();
 			}
+		}
+
+		let _editable = redux_store
+			.getState()
+			.settings.FACSettings.fa_editable_statuses.has(
+				ACTIVE_FA.csconta__Status__c
+			);
+
+		if (_editable !== this.state.editable) {
+			this.setState({ editable: _editable });
 		}
 	}
 
@@ -706,7 +725,8 @@ class DiscountCodesTab extends React.Component {
 						<div className="header__inputs">
 							<Select
 								className="dg-select"
-								placeholder="Add group..."
+								isDisabled={!this.state.editable}
+								placeholder="Add code..."
 								value={this.blank}
 								options={this.state.selectGroups}
 								onChange={this.onAddGroup}
@@ -761,15 +781,23 @@ class DiscountCodesTab extends React.Component {
 										);
 									})}
 								</div>
-								<div
-									className="container__checkbox"
-									onClick={e => {
-										e.preventDefault();
-										return this.onRemoveGroup(group);
-									}}
-								>
-									<Icon name="delete" height="14" width="14" color="#0070d2" />
-								</div>
+
+								{this.state.editable ? (
+									<div
+										className="container__checkbox"
+										onClick={e => {
+											e.preventDefault();
+											return this.onRemoveGroup(group);
+										}}
+									>
+										<Icon
+											name="delete"
+											height="14"
+											width="14"
+											color="#0070d2"
+										/>
+									</div>
+								) : null}
 							</div>
 
 							{this.state.open === group.Id ? (
@@ -781,7 +809,7 @@ class DiscountCodesTab extends React.Component {
 												<select
 													value={group.csfamext__discount_type__c}
 													placeholder="Add Dynamic Group"
-													disabled
+													disabled={!this.state.editable}
 												>
 													<option value="">--none</option>
 													<option value={'Amount'}>Amount</option>
@@ -796,6 +824,7 @@ class DiscountCodesTab extends React.Component {
 														<label>One-Off charge</label>
 														<DebounceInput
 															debounceTimeout={300}
+															disabled={!this.state.editable}
 															spellCheck="false"
 															className=""
 															type="number"
@@ -814,6 +843,7 @@ class DiscountCodesTab extends React.Component {
 														<label>Recurring charge</label>
 														<DebounceInput
 															debounceTimeout={300}
+															disabled={!this.state.editable}
 															spellCheck="false"
 															className=""
 															type="number"
@@ -887,6 +917,7 @@ class DiscountCodesTab extends React.Component {
 				{Object.values(this.state.added).length ? (
 					<div className="discount-codes-footer">
 						<button
+							disabled={!this.state.editable}
 							className="fa-button fa-button--brand"
 							onClick={() => this.onApplyCodes()}
 						>

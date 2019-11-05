@@ -218,25 +218,27 @@ class FaHeader extends React.Component {
 		}
 		// *******************************************************
 
-		let _editable =
-			this.props.settings.FACSettings.fa_editable_statuses.has(
-				this.props.frameAgreements[this.props.faId].csconta__Status__c
-			) || !this.props.frameAgreements[this.props.faId].Id;
+		let _fa = this.props.frameAgreements[this.props.faId];
 
-		let master = isMaster(this.props.frameAgreements[this.props.faId]);
+		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
+			_fa.csconta__Status__c
+		);
 
-		let headerClass = _editable ? '' : ' error fa-disabled';
+		let master = isMaster(_fa);
 
-		// If not master and is not approved
-		if (
-			!master &&
-			this.props.frameAgreements[this.props.faId].csconta__Status__c !==
+		let headerClass = '';
+
+		if (master) {
+			// default
+		} else if (
+			_editable &&
+			_fa._ui.approvalNeeded &&
+			_fa.csconta__Status__c !==
 				this.props.settings.FACSettings.statuses.approved_status
 		) {
-			headerClass += this.props.frameAgreements[this.props.faId]._ui
-				.approvalNeeded
-				? 'error fa-invalid'
-				: '';
+			headerClass = ' error fa-invalid';
+		} else if (!_editable) {
+			headerClass = ' error fa-disabled';
 		}
 
 		return (

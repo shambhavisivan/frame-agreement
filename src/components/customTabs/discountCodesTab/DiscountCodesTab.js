@@ -21,6 +21,8 @@ import '../utility/customTabs.scss';
 
 let ACTIVE_FA = null;
 
+const DEFAULT_DESCRIPTION = "--new dynamic group description";
+
 const getTargetObjectCode = targetObject => {
 	let str;
 	if (targetObject === 'Commercial Product') {
@@ -764,11 +766,11 @@ class DiscountCodesTab extends React.Component {
 							{this.state.open === group.Id ? (
 								<div className="commercial-product-body">
 									<div className="tab-body-left">
-										{group.csfamext__expression__c ? (
+
+										{group.csfamext__description__c && false &&  group.csfamext__description__c !== DEFAULT_DESCRIPTION ? (
 											<div className="input-box big">
-												<label className="dg-label">Expression</label>
 												<div className="">
-													<pre>{group.csfamext__expression__c}</pre>
+													Description: {group.csfamext__description__c}
 												</div>
 											</div>
 										) : null}

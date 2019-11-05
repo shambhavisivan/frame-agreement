@@ -610,6 +610,13 @@ class DiscountCodesTab extends React.Component {
 	}
 
 	onApplyCodes() {
+
+		let res = await window.FAM.publish('DCE_onBeforeApplyCodes', Object.values(this.state.added));
+
+		if (res === null) {
+			return;
+		}
+
 		negotiateDiscountCodesForProducts().then(r => {
 			window.FAM.api.toast('info', 'Discount codes applied!', '');
 			window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
@@ -766,15 +773,6 @@ class DiscountCodesTab extends React.Component {
 							{this.state.open === group.Id ? (
 								<div className="commercial-product-body">
 									<div className="tab-body-left">
-
-										{group.csfamext__description__c && false &&  group.csfamext__description__c !== DEFAULT_DESCRIPTION ? (
-											<div className="input-box big">
-												<div className="">
-													Description: {group.csfamext__description__c}
-												</div>
-											</div>
-										) : null}
-
 										<div className="input-box big dynamic-group-discounts">
 											<div>
 												<label>Discount type</label>

@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { Collapse } from 'react-collapse';
+
 import { truncateCPField, copy } from '~/src/utils/shared-service';
+import Icon from './Icon';
 
 const NOT_SET = 'not set';
 
@@ -11,7 +14,8 @@ const Diff = props => {
 	if (props.new === props.old) {
 		return (
 			<div className="delta-charge-diff">
-				<span>{props.old + ' (' + props.status + ')'}</span>
+				<span>{props.old.toString()}</span>
+				<span className={'diff-status ' + props.status}>{props.status}</span>
 			</div>
 		);
 	}
@@ -23,10 +27,17 @@ const Diff = props => {
 
 	return (
 		<div className="delta-charge-diff">
-			<span className="old">{_old}</span>
-			<span>{' => '}</span>
-			<span className="new">{_new}</span>
-			<span className="diff-status">({props.status})</span>
+			<div>
+				<span className="old">{_old.toString()}</span>
+				<Icon
+					svg-className="icon-forward"
+					name="forward"
+					width="10"
+					height="10"
+				/>
+				<span className="new">{_new.toString()}</span>
+			</div>
+			<span className={'diff-status ' + props.status}>{props.status}</span>
 		</div>
 	);
 };
@@ -40,55 +51,54 @@ const DeltaAddons = props => {
 
 	return (
 		<div className="delta-entity">
-			<p>
-				<b>Addons</b>
-			</p>
+			<span className="entity-label">Addons</span>
+			<div className="entity-delta">
+				{Object.keys(props.data).map(addId => {
+					let _add = props.data[addId];
+					let _oneOffDOM = null;
+					let _recurringDOM = null;
 
-			{Object.keys(props.data).map(addId => {
-				let _add = props.data[addId];
-				let _oneOffDOM = null;
-				let _recurringDOM = null;
+					if (
+						_add.oneOff.hasOwnProperty('old_value') ||
+						_add.oneOff.hasOwnProperty('new_value')
+					) {
+						_oneOffDOM = (
+							<div className="charge-container">
+								<span className="charge-label">One-Off Charge:</span>
+								<Diff
+									old={_add.oneOff.old_value}
+									new={_add.oneOff.new_value}
+									status={_add.oneOff.status}
+								/>
+							</div>
+						);
+					}
 
-				if (
-					_add.oneOff.hasOwnProperty('old_value') ||
-					_add.oneOff.hasOwnProperty('new_value')
-				) {
-					_oneOffDOM = (
-						<div className="charge-container">
-							One-Off Charge:
-							<Diff
-								old={_add.oneOff.old_value}
-								new={_add.oneOff.new_value}
-								status={_add.oneOff.status}
-							/>
+					if (
+						_add.recurring.hasOwnProperty('old_value') ||
+						_add.recurring.hasOwnProperty('new_value')
+					) {
+						_recurringDOM = (
+							<div className="charge-container">
+								<span className="charge-label">Recurring:</span>
+								<Diff
+									old={_add.recurring.old_value}
+									new={_add.recurring.new_value}
+									status={_add.recurring.status}
+								/>
+							</div>
+						);
+					}
+
+					return (
+						<div className="entity-item" key={addId}>
+							<span className="entity-item-title">{props.getLabel(addId)}</span>
+							{_oneOffDOM}
+							{_recurringDOM}
 						</div>
 					);
-				}
-
-				if (
-					_add.recurring.hasOwnProperty('old_value') ||
-					_add.recurring.hasOwnProperty('new_value')
-				) {
-					_oneOffDOM = (
-						<div className="charge-container">
-							Recurring:
-							<Diff
-								old={_add.recurring.old_value}
-								new={_add.recurring.new_value}
-								status={_add.recurring.status}
-							/>
-						</div>
-					);
-				}
-
-				return (
-					<React.Fragment key={addId}>
-						<h4>{props.getLabel(addId)}</h4>
-						{_oneOffDOM}
-						{_recurringDOM}
-					</React.Fragment>
-				);
-			})}
+				})}
+			</div>
 		</div>
 	);
 };
@@ -124,9 +134,9 @@ const DeltaProducts = props => {
 
 	return (
 		<div className="delta-entity">
-			<b>Product Charges</b>
+			<span className="entity-label">Product Charges</span>
 			<div className="charge-container">
-				One-Off Charge:
+				<span className="charge-label">One-Off Charge:</span>
 				<Diff
 					old={_oneOff_new}
 					new={_oneOff_old}
@@ -134,7 +144,7 @@ const DeltaProducts = props => {
 				/>
 			</div>
 			<div className="charge-container">
-				Recurring Charge:
+				<span className="charge-label">Recurring Charge:</span>
 				<Diff
 					old={_recurring_new}
 					new={_recurring_old}
@@ -161,19 +171,21 @@ const DeltaVolume = props => {
 
 	return (
 		<div className="delta-entity">
-			<b>Volume:</b>
+			<span className="entity-label">Volume:</span>
 			{Object.keys(props.data).map(vol => {
 				if (
 					props.data[vol].hasOwnProperty('old_value') ||
 					props.data[vol].hasOwnProperty('new_value')
 				) {
 					return (
-						<Diff
-							key={vol}
-							old={props.data[vol].old_value}
-							new={props.data[vol].new_value}
-							status={props.data[vol].status}
-						/>
+						<div className="charge-container" key={vol}>
+							<span className="charge-label">{vol}:</span>
+							<Diff
+								old={props.data[vol].old_value}
+								new={props.data[vol].new_value}
+								status={props.data[vol].status}
+							/>
+						</div>
 					);
 				} else {
 					return null;
@@ -190,48 +202,50 @@ const DeltaCharges = props => {
 
 	return (
 		<div className="delta-entity">
-			<p>
-				<b>Charges</b>
-			</p>
-			{Object.keys(props.data).map(chargeId => {
-				let _charge = props.data[chargeId];
-				let _oneOffDOM = null;
-				let _recurringDOM = null;
+			<span className="entity-label">Charges:</span>
+			<div className="entity-delta">
+				{Object.keys(props.data).map(chargeId => {
+					let _charge = props.data[chargeId];
+					let _oneOffDOM = null;
+					let _recurringDOM = null;
 
-				if (_charge.hasOwnProperty('oneOff')) {
-					_oneOffDOM = (
-						<div className="charge-container">
-							One-Off Charge:
-							<Diff
-								old={_charge.oneOff.old_value}
-								new={_charge.oneOff.new_value}
-								status={_charge.oneOff.status}
-							/>
+					if (_charge.hasOwnProperty('oneOff')) {
+						_oneOffDOM = (
+							<div className="charge-container">
+								<span className="charge-label">One-Off Charge:</span>
+								<Diff
+									old={_charge.oneOff.old_value}
+									new={_charge.oneOff.new_value}
+									status={_charge.oneOff.status}
+								/>
+							</div>
+						);
+					}
+
+					if (_charge.hasOwnProperty('recurring')) {
+						_recurringDOM = (
+							<div className="charge-container">
+								<span className="charge-label">Recurring:</span>
+								<Diff
+									old={_charge.recurring.old_value}
+									new={_charge.recurring.new_value}
+									status={_charge.recurring.status}
+								/>
+							</div>
+						);
+					}
+
+					return (
+						<div className="entity-item" key={chargeId}>
+							<span className="entity-item-title">
+								{props.getLabel(chargeId)}
+							</span>
+							{_oneOffDOM}
+							{_recurringDOM}
 						</div>
 					);
-				}
-
-				if (_charge.hasOwnProperty('recurring')) {
-					_recurringDOM = (
-						<div className="charge-container">
-							Recurring:
-							<Diff
-								old={_charge.recurring.old_value}
-								new={_charge.recurring.new_value}
-								status={_charge.recurring.status}
-							/>
-						</div>
-					);
-				}
-
-				return (
-					<React.Fragment key={chargeId}>
-						<h4>{props.getLabel(chargeId) + ' (' + chargeId + ')'}</h4>
-						{_oneOffDOM}
-						{_recurringDOM}
-					</React.Fragment>
-				);
-			})}
+				})}
+			</div>
 		</div>
 	);
 };
@@ -243,43 +257,47 @@ const DeltaRateCards = props => {
 
 	return (
 		<div className="delta-entity">
-			<b>Rate Cards</b>
+			<span className="entity-label">Rate Cards:</span>
+			<div className="entity-delta">
+				{Object.keys(props.data).map(rcId => {
+					if (!Object.keys(props.data[rcId].rcl).length) {
+						return null;
+					}
 
-			{Object.keys(props.data).map(rcId => {
-				if (!Object.keys(props.data[rcId].rcl).length) {
-					return null;
-				}
+					let _labels = props.getLabel(rcId);
 
-				let _labels = props.getLabel(rcId);
+					if (typeof _labels === 'string' || !_labels) {
+						_labels = {
+							Name: rcId,
+							rcl: {}
+						};
+					}
 
-				if (typeof _labels === 'string' || !_labels) {
-					_labels = {
-						Name: _labels,
-						rcl: {}
-					};
-				}
+					return (
+						<div key={rcId} className="entity-item">
+							<span className="entity-item-title">{_labels.Name}</span>
+							{Object.keys(props.data[rcId].rcl).map(rclId => {
+								let _rcl = props.data[rcId].rcl[rclId];
 
-				return (
-					<div key={rcId} className="delta-rateCard">
-						<span>{_labels.Name}</span>
-						{Object.keys(props.data[rcId].rcl).map(rclId => {
-							let _rcl = props.data[rcId].rcl[rclId];
-
-							return (
-								<div key={rclId} className="charge-container">
-									{_labels.rcl[rclId] || rclId}
-									{': '}
-									<Diff
-										old={_rcl.old_value}
-										new={_rcl.new_value}
-										status={_rcl.status}
-									/>
-								</div>
-							);
-						})}
-					</div>
-				);
-			})}
+								return (
+									<div key={rclId} className="entity-item">
+										<div className="charge-container">
+											<span className="charge-label">
+												{_labels.rcl[rclId] || rclId}:
+											</span>
+											<Diff
+												old={_rcl.old_value}
+												new={_rcl.new_value}
+												status={_rcl.status}
+											/>
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 };
@@ -296,6 +314,10 @@ class DeltaStructure extends Component {
 		this.cm = this.props.chargesLabels;
 
 		this.getLabel = this.getLabel.bind(this);
+
+		this.state = {
+			open: {}
+		};
 	}
 
 	getLabel(entity, id) {
@@ -309,6 +331,12 @@ class DeltaStructure extends Component {
 		}
 
 		return _label;
+	}
+
+	onToggleProduct(cpId) {
+		this.setState({
+			open: { ...this.state.open, [cpId]: !this.state.open[cpId] }
+		});
 	}
 
 	render() {
@@ -325,12 +353,16 @@ class DeltaStructure extends Component {
 		return (
 			<div className="delta-container">
 				<div className="delta-fields">
-					<h2>Frame Agreement Fields</h2>
-					<div>
+					<h3 className="delta-section-title">Frame Agreement Fields</h3>
+
+					<div className="delta-diff-collection">
 						{Object.keys(_faFields).map(field => {
 							return (
 								<div key={field} className="charge-container">
-									{truncateCPField(field)} {': '}
+									<span className="charge-label">
+										{truncateCPField(field, true) + ': '}
+									</span>
+
 									<Diff
 										old={_faFields[field].old_value}
 										new={_faFields[field].new_value}
@@ -342,22 +374,40 @@ class DeltaStructure extends Component {
 					</div>
 				</div>
 				<div className="delta-products-container">
-					<h2>Products</h2>
-					<div>
+					<h3 className="delta-section-title">Products</h3>
+					<div className="delta-diff-collection">
 						{Object.keys(_products).map(Id => {
 							if (typeof _products[Id] === 'string') {
 								return (
-									<div className="delta-charge-diff" key={Id}>
+									<div className="delta-product-no-info" key={Id}>
 										{this.pm[Id] + ': '}
-										<span className={_products[Id]}>{_products[Id]}</span>
+										<span className={'diff-status ' + _products[Id]}>
+											{_products[Id]}
+										</span>
 									</div>
 								);
 							}
 
 							return (
 								<div className="delta-product" key={Id}>
-									<p>{this.pm[Id]}</p>
-									<div>
+									<span
+										className={
+											'delta-product-name ' +
+											(this.state.open[Id] ? 'expanded' : '')
+										}
+										onClick={() => this.onToggleProduct(Id)}
+									>
+										<Icon
+											svg-className="icon-forward"
+											name={this.state.open[Id] ? 'down' : 'right'}
+											width="10"
+											height="10"
+										/>
+
+										{this.pm[Id]}
+									</span>
+
+									<Collapse isOpened={this.state.open[Id]}>
 										<DeltaVolume data={_products[Id].volume} />
 										<DeltaProducts data={_products[Id].product} />
 										<DeltaAddons
@@ -374,7 +424,7 @@ class DeltaStructure extends Component {
 											}
 											data={_products[Id].rateCard}
 										/>
-									</div>
+									</Collapse>
 								</div>
 							);
 						})}

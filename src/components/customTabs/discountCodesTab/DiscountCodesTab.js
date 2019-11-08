@@ -21,7 +21,7 @@ import '../utility/customTabs.scss';
 
 let ACTIVE_FA = null;
 
-const DEFAULT_DESCRIPTION = "--new dynamic group description";
+const DEFAULT_DESCRIPTION = '--new dynamic group description';
 
 const getTargetObjectCode = targetObject => {
 	let str;
@@ -609,9 +609,11 @@ class DiscountCodesTab extends React.Component {
 		);
 	}
 
-	onApplyCodes() {
-
-		let res = await window.FAM.publish('DCE_onBeforeApplyCodes', Object.values(this.state.added));
+	async onApplyCodes() {
+		let res = await window.FAM.publish(
+			'DCE_onBeforeApplyCodes',
+			Object.values(this.state.added)
+		);
 
 		if (res === null) {
 			return;

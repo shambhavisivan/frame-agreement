@@ -1,6 +1,7 @@
     .delta-options {
         display: flex;
-
+        padding: 1rem;
+        
         &.hidden {
             display: none;
         }
@@ -11,75 +12,209 @@
 
         .delta-select-switch {
             padding: 5px 10px;
-            border: 1px solid black;
+            margin: 0px 10px;
+            border: 1px solid #DDDDDD;
+            border-radius: 0.25rem;
             cursor: pointer;
         }
     }
 
-.delta-container {
-    display: flex;
+    .delta-container {
+        display: flex;
+        color: #080707;
 
-    .delta-fields {
-        flex: 1;
-    }
+        .delta-fields {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .delta-products-container {
-        flex: 1;
-        padding-left: 20px;
-    }
+        .delta-diff-collection>div {
+            border-top: 1px dashed #DDDDDD;
 
-    .delta-product {
-        > div {
-            > div:last-of-type {
-                 /*div.delta-entity*/
-                border-bottom: 1px solid black;
+            &:last-of-type {
+                border-bottom: 1px dashed #DDDDDD;
+            }
+        }
+
+
+        .delta-products-container {
+            flex: 1;
+            padding-left: 10px;
+            border-left: 1px dotted #DDD;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+
+        .delta-section-title {
+            font-size: 13px;
+            font-weight: bold;
+            padding-bottom: 12px;
+        }
+
+        .delta-product {
+            border-top: 1px dashed #DDDDDD;
+            display: flex;
+            flex-direction: column;
+
+            .delta-product-name {
+                font-size: 12px;
+                padding: 8px 0px;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+
+                &.expanded {
+                    border-bottom: 1px dashed #DDDDDD;
+                }
+
+                > svg {
+                    margin-right: 5px;
+                }
+            }
+
+            >div {
+                >div:last-of-type {
+                    /*div.delta-entity*/
+                    /*border-bottom: 1px solid black;*/
+                }
+
+            }
+        }
+
+        .delta-entity {
+            padding-left: 10px;
+            border-bottom: none;
+            margin-bottom: 10px;
+
+            .entity-label {
+                font-weight: 700;
+            }
+
+            h4 {
+                font-weight: 400;
+                padding-bottom: 8px;
+            }
+
+            >span {
+                display: inline-block;
+                padding: 8px 0px;
+            }
+
+            >div {
+                border-top: 1px dashed #DDDDDD;
+
+                &:last-of-type {
+                    border-bottom: 1px dashed #DDDDDD;
+                }
+            }
+
+            .charge-container {
+                margin-left: 10px;
             }
 
         }
-    }
 
-    div.delta-entity {
-        padding-left: 20px;
-        border: 1px solid black;
-        border-bottom: none;
+        .charge-container {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            padding: 2px 0px;
+            border-top: 1px dashed #DDDDDD;
+        }
 
-    }
+        div.delta-product-no-info {
+            padding: 8px 0px;
+            border-top: 1px dashed #DDDDDD;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-    .charge-container {
-    	display: flex;
-    }
+            &:last-of-type {
+                border-bottom: 1px dashed #DDDDDD;
+            }
+        }
+        /***************************************/
 
-    .delta-rateCard {
-        > .charge-container {
-            padding-left: 15px;
+        .entity-item {
+            display: flex;
+            flex-direction: column;
+
+            > div:last-of-type {
+                border-bottom: 1px dashed #DDDDDD;
+            }
+        }
+
+        .entity-delta {
+            padding-left: 10px;
+        }
+
+        .entity-item-title {
+            padding: 6px 0px;
+        }
+
+        /***************************************/
+
+        .delta-charge-diff {
+            margin-left: 5px;
+            padding: 6px 0px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex: 1;
+
+            svg {
+                margin: 0px 5px;
+            }
+
+            font-weight: bold;
+
+            .removed {
+                color: var(--delta-removed);
+            }
+
+            .added {
+                color: var(--delta-added);
+            }
+
+            .old {
+                color: var(--delta-old);
+            }
+
+            .new {
+                color: var(--delta-new);
+            }
+        }
+
+        .diff-status {
+            margin-left: 5px;
+            float: right;
+            border-radius: 0.20rem;
+            padding: 0.25rem 0.5rem;
+            font-weight: bold;
+            font-size: 9px;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+
+            &.added {
+                background-color: var(--delta-added);
+                color: white;
+            }
+
+            &.changed {
+                background-color: var(--delta-old);
+                color: white;
+            }
+
+            &.unchanged {
+                background-color: white;
+                color: #080707;
+                border: 1px solid #ddd;
+            }
+
+            &.removed {
+                background-color: var(--delta-removed);
+                color: white;
+            }
         }
     }
-
-    .delta-charge-diff {
-    	/*margin-left: 5px;*/
-
-    	span {
-    		font-style: italic;
-    	}
-
-    	.removed {
-    		color: var(--delta-removed);
-    	}
-
-    	.added {
-    		color: var(--delta-added);
-    	}
-
-    	.old {
-    		color: var(--delta-old);
-    	}
-
-    	.new {
-    		color: var(--delta-new);
-    	}
-
-    	.diff-status {
-    		margin-left: 5px;
-    	}
-    }
-}

@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import Modal from 'react-responsive-modal';
 import { connect } from 'react-redux';
-import ObjectInspector from 'react-object-inspector';
 
-import { isMaster, decodeEntities, copy } from '~/src/utils/shared-service';
+import JSONTree from 'react-json-tree';
+
+import {
+	isMaster,
+	decodeEntities,
+	truncateCPField,
+	copy
+} from '~/src/utils/shared-service';
 import { getAttachment, getCommercialProductData } from '~/src/actions';
 
-import Icon from '../utillity/Icon';
 import Loading from '../utillity/Loading';
+import Icon from '../utillity/Icon';
 
 import DeltaStructure from '../utillity/DeltaStructure';
 
@@ -139,8 +145,6 @@ class DeltaModal extends Component {
 				let _delta = response[response.length - 1];
 				console.log(_delta);
 
-				this.setState({ loaded: true, delta: _delta });
-
 				// Generate labeling info
 
 				let mergedIdSet = new Set([...primProdSet, ..._products_diff]);
@@ -187,6 +191,8 @@ class DeltaModal extends Component {
 						return { ...acc, ..._rateCards };
 					} else return acc;
 				}, {});
+
+				this.setState({ loaded: true, delta: _delta, deltaView: true });
 			},
 			error => {}
 		);
@@ -227,6 +233,25 @@ class DeltaModal extends Component {
 	}
 
 	render() {
+		const theme = {
+			base00: '#000',
+			base01: '#fff',
+			base02: '#fff',
+			base03: '#fff',
+			base04: '#fff',
+			base05: '#fff',
+			base06: '#fff',
+			base07: '#fff',
+			base08: '#fff',
+			base09: '#fff',
+			base0A: '#fff',
+			base0B: '#fff',
+			base0C: '#fff',
+			base0D: '#fff',
+			base0E: '#fff',
+			base0F: '#fff'
+		};
+
 		return (
 			<Modal
 				classNames={{
@@ -291,7 +316,7 @@ class DeltaModal extends Component {
 							className="delta-select-switch"
 							onClick={this.switchAgreements}
 						>
-							{'<->'}
+							<Icon color="#080707" name="replace" width="16" height="16" />
 						</div>
 
 						<div className="delta-select">
@@ -319,26 +344,29 @@ class DeltaModal extends Component {
 						<div className="delta-juxt">
 							<div>
 								{this.state.primaryId ? (
-									<ObjectInspector
-										name="FA"
-										initialExpandedPaths={[
-											'FA',
-											'FA.products',
-											'FA.products.*'
-										]}
+									<JSONTree
+										getItemString={(type, data, itemType, itemString) => (
+											<span>({itemString.replace(/\D+/g, '')})</span>
+										)}
+										labelRenderer={raw => (
+											<span>{truncateCPField(raw[0], true)}:</span>
+										)}
+										valueRenderer={raw => <strong>{raw}</strong>}
+										hideRoot={true}
+										theme={theme}
 										data={this.state.primaryFa}
 									/>
 								) : null}
 							</div>
 							<div>
 								{this.state.secondaryId ? (
-									<ObjectInspector
-										name="FA"
-										initialExpandedPaths={[
-											'FA',
-											'FA.products',
-											'FA.products.*'
-										]}
+									<JSONTree
+										labelRenderer={raw => (
+											<span>{truncateCPField(raw[0], true)}:</span>
+										)}
+										valueRenderer={raw => <strong>{raw}</strong>}
+										hideRoot={true}
+										theme={theme}
 										data={this.state.secondaryFa}
 									/>
 								) : null}
@@ -355,21 +383,32 @@ class DeltaModal extends Component {
 					)}
 				</div>
 
-				<div className="fa-modal-footer">
-					<button
-						className="fa-button fa-button--default"
-						onClick={() => this.setState({ deltaView: !this.state.deltaView })}
-						disabled={!this.state.delta}
-					>
-						Toggle Delta
-					</button>
-					<button
-						className="fa-button fa-button--default"
-						onClick={this.calculateDelta}
-						disabled={!this.state.secondaryId}
-					>
-						Calculate Delta
-					</button>
+				<div className="fa-modal-footer delta-footer">
+					<div className="delta-bottom-container">
+						{this.state.delta ? (
+							<button
+								className="fa-button fa-button--default"
+								onClick={() =>
+									this.setState({ deltaView: !this.state.deltaView })
+								}
+							>
+								{this.state.deltaView
+									? '< Switch to FA View'
+									: ' Switch to Delta View >'}
+							</button>
+						) : null}
+
+						{!this.state.deltaView ? (
+							<button
+								className="fa-button fa-button--default"
+								onClick={this.calculateDelta}
+								disabled={!this.state.secondaryId}
+							>
+								Calculate Delta
+							</button>
+						) : null}
+					</div>
+
 					<button
 						className="fa-button fa-button--default"
 						onClick={this.onCloseModal}

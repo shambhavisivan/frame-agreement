@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Icon from './Icon';
 import SFDatePicker from './datepicker/SFDatePicker';
 import InputText from './inputs/InputText';
+import InputURL from './inputs/InputURL';
 import InputTextArea from './inputs/InputTextArea';
 import LookupField from './inputs/LookupField';
 import Toggle from './inputs/Toggle';
@@ -67,6 +68,13 @@ class SFField extends Component {
 					disabled={true}
 					formula={true}
 					onChange={this.onChange}
+					value={this.props.value}
+				/>
+			);
+		} else if (this.props.field.type.toLowerCase() === 'url') {
+			field = (
+				<InputURL
+					label={this.props.field.urlLabel || this.props.field.label}
 					value={this.props.value}
 				/>
 			);

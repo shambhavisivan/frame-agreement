@@ -134,6 +134,14 @@
 								}
 							}
 
+							&:hover {
+								svg {
+									@include css4 {
+										fill: cvar(--main-c);
+									}
+								}
+							};
+
 							&:focus {
 								outline: none;
 								border: none;

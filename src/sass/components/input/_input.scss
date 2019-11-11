@@ -9,6 +9,7 @@
 	outline: 0;
 	padding: 0.5rem 1rem;
 	width: 100%;
+
 	@include css4 {
 		border: 1px solid cvar(--input-br);
 	}
@@ -17,6 +18,7 @@
 	&:focus {
 		outline: 0;
 		@include sbg(--input-lightest-bg);
+
 		@include css4 {
 			border-color: cvar(--input-primary-c);
 			box-shadow: 0 0 3px cvar(--input-primary-c);
@@ -26,6 +28,16 @@
 
 .fa-input-lg {
 	padding: 0.5rem 0.5rem 0.5rem 2rem;
+}
+
+.fa-url {
+	display: flex;
+	align-items: flex-end;
+	font-size: 14px;
+
+	a:hover {
+		color: var(--main-c);
+	}
 }
 
 /* SEARCH */
@@ -38,14 +50,14 @@
 		border: none;
 	}
 
-	> .icon-search {
+	>.icon-search {
 		left: 0.5rem;
 		top: 25%;
 		pointer-events: none;
 		position: absolute;
 	}
 
-	> .icon-close {
+	>.icon-close {
 		bottom: 25%;
 		right: 0.5rem;
 		position: absolute;
@@ -60,6 +72,7 @@
 .fa-input-search-border-bottom {
 	border: 0;
 	border-radius: 0;
+
 	@include css4 {
 		border-bottom: 1px solid cvar(--input-br);
 	}
@@ -73,6 +86,7 @@
 	height: 1rem;
 	position: relative;
 	width: 1rem;
+
 	@include css4 {
 		border: 1px solid cvar(--input-br);
 	}
@@ -87,6 +101,7 @@
 	border-radius: 0.25rem;
 	font-size: 0.8125rem;
 	padding: 0.5rem 0.75rem;
+
 	@include css4 {
 		border: 1px solid cvar(--input-br);
 	}
@@ -95,6 +110,7 @@
 	&:focus {
 		outline: 0;
 		@include sbg(--input-lightest-bg);
+
 		@include css4 {
 			border-color: cvar(--input-primary-c);
 			box-shadow: 0 0 3px cvar(--input-primary-c);
@@ -140,6 +156,7 @@
 	border-radius: 0.25rem;
 	padding: 0.125rem;
 	@include sbg(--input-lightest-bg);
+
 	@include css4 {
 		border: solid 1px cvar(--checkbox-br);
 	}
@@ -164,7 +181,7 @@
 	@include sbg(--transparent);
 }
 
-.negotiate-input-wrapper.negotiated > .negotiate-input {
+.negotiate-input-wrapper.negotiated>.negotiate-input {
 	text-align: right;
 	@include sc(--input-dark-c);
 }
@@ -177,6 +194,7 @@
 
 .negotiate-icon {
 	visibility: visible;
+
 	@include css4 {
 		fill: cvar(--negotiate-icon-c);
 	}
@@ -194,6 +212,7 @@
 
 .negotiate-input:focus {
 	outline: 0;
+
 	@include css4 {
 		box-shadow: inset 0 0 3px cvar(--input-primary-c);
 	}
@@ -213,7 +232,7 @@ input.negotiate-input::-webkit-outer-spin-button {
 	font-size: 0.8125rem;
 	@include sc(--input-state-c);
 
-	> div {
+	>div {
 		margin-right: 5px;
 	}
 }
@@ -222,7 +241,7 @@ input.negotiate-input::-webkit-outer-spin-button {
 	@include sc(--input-invalid-c);
 }
 
-.discount > div {
+.discount>div {
 	display: inline-block;
 	font-size: 0.6875rem;
 	@include sc(--input-dark-c);
@@ -236,12 +255,13 @@ input.negotiate-input::-webkit-outer-spin-button {
 .transparent .search-wrapper .search-input {
 	border: none;
 	@include sbg(--transparent);
+
 	@include css4 {
 		border-bottom: 1px solid cvar(--input-br);
 	}
 }
 
-.search-wrapper > svg {
+.search-wrapper>svg {
 	position: absolute;
 	top: 0.5rem;
 	left: 3px;
@@ -256,13 +276,16 @@ input.negotiate-input::-webkit-outer-spin-button {
 	padding-bottom: 0.25rem;
 	@include sbg(--input-lightest-bg);
 	@include sc(--input-dark-c);
+
 	@include css4 {
 		border-bottom: 1px solid cvar(--input-br);
 	}
 }
 
-.slds-input:focus, .slds-input:active {
+.slds-input:focus,
+.slds-input:active {
 	outline: none;
+
 	@include css4 {
 		border-bottom: 1px solid cvar(--input-state-c);
 	}

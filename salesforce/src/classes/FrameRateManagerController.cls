@@ -1256,7 +1256,7 @@ global with sharing class FrameRateManagerController {
 
 		// Find child usage types
 
-		List <cspmb__Usage_Type_Grouping__c> usageGroupingList =  [
+		List <cspmb__Usage_Type_Grouping__c> usageGroupingList = [
 			Select Id, cspmb__child_usage_type__c, cspmb__parent_usage_type__c
 			from cspmb__Usage_Type_Grouping__c
 			where cspmb__parent_usage_type__c in :mainUtIdList
@@ -1300,7 +1300,9 @@ global with sharing class FrameRateManagerController {
 				tempSet.add(ut);
 				childUtMap.put(parentId, tempSet);
 			} else {
-				childUtMap.put(parentId, new List<cspmb__Usage_Type__c>{ut});
+				childUtMap.put(parentId, new List<cspmb__Usage_Type__c>{
+					ut
+				});
 			}
 
 		}
@@ -1328,7 +1330,9 @@ global with sharing class FrameRateManagerController {
 
 			} else {
 				// Put new list with item already in there
-				allowanceCpMap.put(cpallow.cspmb__commercial_product__c, new List <cspmb__Allowance__c>{allowanceMap.get(cpallow.cspmb__allowance__c)});
+				allowanceCpMap.put(cpallow.cspmb__commercial_product__c, new List <cspmb__Allowance__c>{
+					allowanceMap.get(cpallow.cspmb__allowance__c)
+				});
 			}
 
 		}
@@ -1625,6 +1629,23 @@ global with sharing class FrameRateManagerController {
 			// pCreateAttachment(Id parentId, String name, String description, Blob body, String content)
 			pCreateAttachment(cloned.Id, FAC_ATTACHMENT_NAME, FAC_ATTACHMENT_DESC, originalAttachment.Body, 'text/plain');
 		}
+
+		// Close associated accounts
+		// csconta__Account_Frame_Agreement_Association__c
+
+		List <csconta__Account_Frame_Agreement_Association__c> originalAccountAssoc = [
+			select id, csconta__Account__c, csconta__Frame_Agreement__c
+			from csconta__Account_Frame_Agreement_Association__c
+			where csconta__Frame_Agreement__c = :faId
+		];
+		List <csconta__Account_Frame_Agreement_Association__c> clonedList = new List <csconta__Account_Frame_Agreement_Association__c>();
+
+		for (csconta__Account_Frame_Agreement_Association__c oas : originalAccountAssoc) {
+			clonedList.add(new csconta__Account_Frame_Agreement_Association__c(csconta__Account__c = oas.csconta__Account__c, csconta__Frame_Agreement__c = cloned.Id));
+		}
+
+		insert clonedList;
+
 
 		List <csutil__JSON_Data__c> jsonData = [
 			select id, name, csutil__value__c
@@ -2139,7 +2160,9 @@ global with sharing class FrameRateManagerController {
 	public class AllowancesWrapper {
 
 		public Map<Id, List<cspmb__Usage_Type__c>> childUsageTypes {
-			get { return childUsageTypes; }
+			get {
+				return childUsageTypes;
+			}
 			set;
 		}
 		public Map <Id, List <cspmb__Allowance__c>> allowanceMap {

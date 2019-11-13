@@ -1064,8 +1064,19 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.price_item_fields = [];
 			}
 
+			if (action.payload.FACSettings.volume_fields_visibility && validateCSV(action.payload.FACSettings.volume_fields_visibility)) {
+				action.payload.FACSettings.volume_fields_visibility = action.payload.FACSettings.volume_fields_visibility
+					.replace(/ /g, '')
+					.split(',');
+			} else {
+				action.payload.FACSettings.volume_fields_visibility = VOLUME_FIELDS.map(vf => vf.name);
+			}
+
 			if (action.payload.FACSettings.show_volume_fields) {
-				VOLUME_FIELDS.forEach(f => {
+
+				let _visibillity = new Set(action.payload.FACSettings.volume_fields_visibility);
+
+				VOLUME_FIELDS.filter(vf => _visibillity.has(vf.name)).forEach(f => {
 					_productFields.push({
 						name: f.label,
 						visible: true,

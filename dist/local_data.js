@@ -285,7 +285,7 @@ const FACSettings = {
 	fa_editable_statuses: 'Draft, Requires Approval',
 	// price_item_fields: "Name, cspmb__Contract_Term__c, cspmb__Price_Item_Description__c, cspmb__Is_Authorization_Required__c, CurrencyIsoCode",
 	price_item_fields: 'Id, cspmb__Is_Recurring_Discount_Allowed__c',
-	show_volume_fields: false,
+	show_volume_fields: true,
 	frame_agreement_fields: 'Id, csconta__Account__c',
 	account_fields: 'Name, Id, Id',
 	decomposition_chunk_size: 2,
@@ -294,6 +294,7 @@ const FACSettings = {
 	active_status_management__c: true,
 	product_chunk_size: 100,
 	rcl_fields: 'cspmb__Currency_Code__c, Category__c',
+	volume_fields_visibility: 'mv',
 	usage_type_fields__c: 'cspmb__unit_of_measure__c',
 	statuses: {
 		active_status: 'Active',

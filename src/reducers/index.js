@@ -1030,6 +1030,17 @@ const rootReducer = (state = initialState, action) => {
 			}
 
 			if (
+				action.payload.FACSettings.hasOwnProperty('account_fields') &&
+				validateCSV(action.payload.FACSettings.account_fields)
+			) {
+				action.payload.FACSettings.account_fields = action.payload.FACSettings.account_fields
+					.replace(/ /g, '')
+					.split(',');
+			} else {
+				action.payload.FACSettings.account_fields = ['Name'];
+			}
+
+			if (
 				action.payload.FACSettings.hasOwnProperty('usage_type_fields__c') &&
 				validateCSV(action.payload.FACSettings.usage_type_fields__c)
 			) {

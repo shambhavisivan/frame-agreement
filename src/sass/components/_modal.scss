@@ -258,9 +258,9 @@
 			flex: 1;
 			/*line-height: 1.75rem;*/
 			align-items: center;
-			/*padding-right: 0.25rem;*/
 			/*@include overflow-ellipsis;*/
 			padding: 0.35rem 0rem;
+			padding-right: 0.25rem;
 
 			&:first-child {
 				@include sc(--modal-primary-c);

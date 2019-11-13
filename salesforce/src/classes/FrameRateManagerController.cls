@@ -470,6 +470,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('show_volume_fields', FACSettings.get('csfam__show_volume_fields__c'));
 		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
 		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
+		settingMap.put('account_fields', FACSettings.get('csfam__account_fields__c'));
 		settingMap.put('usage_type_fields__c', FACSettings.get('csfam__usage_type_fields__c'));
 		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
 		settingMap.put('discount_as_price', FACSettings.get('csfam__discount_as_price__c'));
@@ -772,20 +773,8 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static Map <String, Object> getAppSettings(Id accountId) {
-		Map <String, Object> count = new Map <String, Object> ();
 
-		String cp_query = 'select count() from cspmb__Price_Item__c ';
-		// ADD ACCOUNT NULL CLAUSE
-		cp_query += 'where cspmb__Account__c = null ';
-		// ADD ACTIVE
-		cp_query += 'and cspmb__Is_Active__c = true ';
-		// ADD START DATE CHECK CLAUSE
-		cp_query += 'and (cspmb__Effective_Start_Date__c = null OR (cspmb__Effective_Start_Date__c != null and cspmb__Effective_Start_Date__c < TODAY)) ';
-		// ADD END DATE CHECK CLAUSE
-		cp_query += 'and (cspmb__Effective_End_Date__c = null OR (cspmb__Effective_End_Date__c != null and cspmb__Effective_End_Date__c > TODAY))';
-
-		Integer cp_count = database.countQuery(cp_query);
-		Integer fa_count = database.countQuery('select count() from csconta__Frame_Agreement__c');
+		Map <String, Object> appSettings = new Map <String, Object> ();
 
 		Account acc;
 		try {
@@ -830,17 +819,15 @@ global with sharing class FrameRateManagerController {
 			customTabs = (List <Object>) JSON.deserializeUntyped(custom_tabs.csutil__value__c);
 		}
 
-		count.put('commercialProductCount', cp_count);
-		count.put('frameAgreementsCount', fa_count);
-		count.put('account', acc);
-		count.put('HeaderData', headerData);
-		count.put('CustomTabsData', customTabs);
-		count.put('ButtonCustomData', buttonCustom);
-		count.put('ButtonStandardData', buttonStandard);
-		count.put('CategorizationData', categorizationData);
-		count.put('FACSettings', getCustomSettings());
+		appSettings.put('account', acc);
+		appSettings.put('HeaderData', headerData);
+		appSettings.put('CustomTabsData', customTabs);
+		appSettings.put('ButtonCustomData', buttonCustom);
+		appSettings.put('ButtonStandardData', buttonStandard);
+		appSettings.put('CategorizationData', categorizationData);
+		appSettings.put('FACSettings', getCustomSettings());
 
-		return count;
+		return appSettings;
 	}
 
 	@RemoteAction
@@ -876,7 +863,6 @@ global with sharing class FrameRateManagerController {
 			csFieldsArr = csFields.split(',');
 		}
 
-		String categorizationFieldsString = '';
 		List <String> categorizationFields = getCategorizationDataFields();
 
 

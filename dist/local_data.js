@@ -287,6 +287,7 @@ const FACSettings = {
 	price_item_fields: 'Id, cspmb__Is_Recurring_Discount_Allowed__c',
 	show_volume_fields: false,
 	frame_agreement_fields: 'Id, csconta__Account__c',
+	account_fields: 'Name, Id, Id',
 	decomposition_chunk_size: 2,
 	discount_as_price: false,
 	new_frame_agreement: true,

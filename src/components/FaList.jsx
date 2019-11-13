@@ -271,6 +271,7 @@ class FaList extends Component {
 					<AccountsModal
 						open={!!this.state.accountsModal}
 						faId={this.state.accountsModal}
+						accountFields={this.props.settings.FACSettings.account_fields}
 						onAccountsSave={this.onAccountsSave}
 						onLoadRecords={params => {
 							return this.props.loadAccounts(params);

@@ -31,6 +31,8 @@ class AccountsModal extends Component {
 			searchedRecords: [],
 			page: 1
 		};
+
+		this.columns = this.props.accountFields || ['Name'];
 	}
 
 	componentDidMount() {
@@ -195,7 +197,7 @@ class AccountsModal extends Component {
 		let parameter = {};
 
 		parameter.pointedObject = 'Account';
-		parameter.columns = ['Name'];
+		parameter.columns = this.columns;
 		parameter.whereClause = null;
 		parameter.lastId = this.props.records[this.props.records.length - 1].Id;
 		parameter.offset = 20 * pagesToLoad;
@@ -259,7 +261,7 @@ class AccountsModal extends Component {
 				}
 
 				params.pointedObject = 'Account';
-				params.columns = ['Name'];
+				params.columns = this.columns;
 				params.whereClause = null;
 				params.lastId = null;
 				params.offset = 20 * 10;
@@ -337,7 +339,8 @@ class AccountsModal extends Component {
 			<Modal
 				classNames={{
 					overlay: 'overlay',
-					modal: 'modal fa-modal',
+					modal:
+						'modal fa-modal ' + (this.columns.length > 2 ? 'expanded' : ''),
 					closeButton: 'close-button'
 				}}
 				closeIconSvgPath={
@@ -418,7 +421,7 @@ class AccountsModal extends Component {
 									: this.props.records
 							}
 							count={this.state.count}
-							columns={['Name']}
+							columns={this.columns}
 							selected={this.state.mode === 'main' ? this.state.main_acc : {}}
 							disabled={this.state.loadingRecords}
 							loading={this.state.loadingOverlay}

@@ -112,69 +112,6 @@ export const decodeEntities = (() => {
 	return decodeHTMLEntities;
 })();
 
-export const organizeHeaderFields = (headerData, _activeFa) => {
-	// Organize the header grid
-	var field_rows = [];
-	var row = [];
-	var row_grid_count = 0;
-
-	headerData = headerData.filter(f => {
-		let retValue = true;
-
-		if (f.hasOwnProperty('visible')) {
-			if (f.visible === '') {
-				return false;
-			}
-
-			// logic component
-			f.visible
-				.replace(/\s/g, '')
-				.split(';')
-				.forEach(lc => {
-					let _b;
-					let _operator;
-
-					if (lc.includes('==')) {
-						_operator = '==';
-						_b = lc.split('==');
-					} else {
-						_operator = '!=';
-						_b = lc.split('!=');
-					}
-
-					if (['true', 'false'].includes(_b[1])) {
-						_b[1] = JSON.parse(_b[1]);
-					}
-
-					let _fieldValue = _activeFa[_b[0]];
-					if ((_operator = '==')) {
-						retValue = retValue && _fieldValue == _b[1];
-					} else {
-						retValue = retValue && _fieldValue != _b[1];
-					}
-				});
-		}
-
-		return retValue;
-	});
-
-	headerData.forEach(f => {
-		if (row_grid_count + f.grid > 12) {
-			field_rows.push([...row]);
-			row = [];
-			row_grid_count = 0;
-		}
-		row_grid_count += f.grid;
-		row.push(f);
-	});
-
-	if (row.length) {
-		field_rows.push(row);
-	}
-
-	return field_rows;
-};
-
 export const makeId = (n = 8) => {
 	var text = '';
 	var possible =
@@ -183,6 +120,118 @@ export const makeId = (n = 8) => {
 	for (var i = 0; i < n; i++)
 		text += possible.charAt(Math.floor(Math.random() * possible.length));
 	return text;
+};
+
+export const parseExpression = (expString = '') => {
+	let _parseExpression = {};
+
+	// Extract operators
+	let operatorsArray = [];
+
+	// Remove spaces, parentheses, quotes
+	expString = expString.replace(/( |'|"|\(|\))/g, '');
+
+	try {
+		let operatorsString = expString.replace(/\w+(!=|==)(\w|')+/g, ',');
+
+		if (operatorsString.startsWith(',')) {
+			operatorsString = operatorsString.substring(1);
+		}
+
+		if (operatorsString.endsWith(',')) {
+			operatorsString = operatorsString.slice(0, -1);
+		}
+
+		operatorsArray = operatorsString.split(',');
+
+		operatorsArray = operatorsArray[0] === '' ? [] : operatorsArray;
+	} catch (err) {
+		console.group('Cannot parse expression:');
+		console.log(expString);
+		console.log(err);
+		console.groupEnd();
+	}
+
+	let logic = [];
+	let logicComponens = expString.split(/&&|\|\|/);
+	logicComponens = logicComponens[0] === '' ? [] : logicComponens;
+
+	logicComponens.forEach(log => {
+		let _comparisonOperator;
+
+		if (log.includes('==')) {
+			_comparisonOperator = '==';
+		} else if (log.includes('!=')) {
+			_comparisonOperator = '!=';
+		} else {
+			return;
+		}
+
+		let _fnv = log.split(_comparisonOperator);
+		logic.push({
+			field: _fnv[0],
+			comparison: _comparisonOperator,
+			value: _fnv[1]
+		});
+	});
+
+	_parseExpression.operators = operatorsArray || [];
+	_parseExpression.components = logic || [];
+
+	return _parseExpression;
+};
+
+export const evaluateExpressionOnAgreement = (expressionObj, fa) => {
+	let { components, operators } = expressionObj;
+
+	// For complexity reduction we added && operator on the beginning
+	// to evaluate first component with default accumulator value of reduce method
+	operators.unshift('&&');
+
+	return components.reduce((final, component) => {
+		let _fieldValue;
+		let _fieldComparison;
+		// Detect relation
+		if (component.field.includes('__r.')) {
+			let _relation = component.field.split('.');
+
+			if (_relation.length > 2) {
+				_fieldComparison = false;
+				console.warn(
+					'Additional expression evaluation supports two levels of relation: ',
+					component.field
+				);
+			}
+
+			try {
+				_fieldValue = fa[_relation[0]][_relation[1]] || 'null';
+			} catch (err) {
+				console.warn(
+					'Cannot evaluate expression: ',
+					Object.values(component).join(' ')
+				);
+				console.warn(err);
+			}
+		} else {
+			_fieldValue = fa[component.field] || 'null';
+		}
+
+		if (component.comparison === '!=') {
+			_fieldComparison = _fieldValue.toString() != component.value;
+		} else {
+			_fieldComparison = _fieldValue.toString() == component.value;
+		}
+
+		let nextOperator = operators.shift();
+
+		if (!nextOperator) {
+			return final;
+		} else if (nextOperator === '&&') {
+			return final && _fieldComparison;
+		} else if (nextOperator === '||') {
+			return final || _fieldComparison;
+		}
+	}, true);
 };
 
 export const isMaster = fa => {

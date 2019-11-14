@@ -1780,7 +1780,7 @@ const ButtonCustomData = [
 ];
 
 const ButtonStandardData = {
-	Save: ['Draft', 'Requires Approval'],
+	Save: 'csfam__Disable_Levels__c == true',
 	SubmitForApproval: ['Requires Approval'],
 	Submit: ['Draft', 'Approved'],
 	DeleteProducts: ['Draft', 'Requires Approval'],

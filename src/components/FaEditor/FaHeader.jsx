@@ -14,7 +14,10 @@ import {
 } from '~/src/actions';
 
 import { publish, submitForApproval } from '~/src/api';
-import { isMaster } from '~/src/utils/shared-service';
+import {
+	isMaster,
+	evaluateExpressionOnAgreement
+} from '~/src/utils/shared-service';
 
 import Icon from '../utillity/Icon';
 import CustomButtonDropdown from '../utillity/CustomButtonDropdown';
@@ -177,15 +180,16 @@ class FaHeader extends React.Component {
 	}
 
 	render() {
+		let _fa = this.props.frameAgreements[this.props.faId];
+
 		// *******************************************************
 		// Custom buttons component
 		let customButtonsComponent = '';
 
 		let customButtons = this.props.settings.ButtonCustomData.filter(
 			btnObj =>
-				!btnObj.hidden.has(
-					this.props.frameAgreements[this.props.faId].csconta__Status__c
-				) && btnObj.location === 'Editor'
+				evaluateExpressionOnAgreement(btnObj.expressions, _fa) &&
+				btnObj.location === 'Editor'
 		);
 
 		if (customButtons.length >= 3) {
@@ -217,8 +221,6 @@ class FaHeader extends React.Component {
 			);
 		}
 		// *******************************************************
-
-		let _fa = this.props.frameAgreements[this.props.faId];
 
 		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
 			_fa.csconta__Status__c
@@ -277,8 +279,9 @@ class FaHeader extends React.Component {
 					<div className="fa-secondary-header__item fa-secondary-header__item--right">
 						{customButtonsComponent}
 
-						{this.props.settings.ButtonStandardData.Save.has(
-							this.props.frameAgreements[this.props.faId].csconta__Status__c
+						{evaluateExpressionOnAgreement(
+							this.props.settings.ButtonStandardData.Save,
+							_fa
 						) && (
 							<button
 								className="fa-button fa-button--transparent"
@@ -288,8 +291,9 @@ class FaHeader extends React.Component {
 							</button>
 						)}
 						{!master &&
-							this.props.settings.ButtonStandardData.SubmitForApproval.has(
-								this.props.frameAgreements[this.props.faId].csconta__Status__c
+							evaluateExpressionOnAgreement(
+								this.props.settings.ButtonStandardData.SubmitForApproval,
+								_fa
 							) && (
 								<button
 									className="fa-button fa-button--transparent"
@@ -305,8 +309,9 @@ class FaHeader extends React.Component {
 								</button>
 							)}
 						{!master &&
-							this.props.settings.ButtonStandardData.Delta.has(
-								this.props.frameAgreements[this.props.faId].csconta__Status__c
+							evaluateExpressionOnAgreement(
+								this.props.settings.ButtonStandardData.Delta,
+								_fa
 							) && (
 								<button
 									className="fa-button fa-button--transparent"
@@ -315,8 +320,9 @@ class FaHeader extends React.Component {
 									{window.SF.labels.btn_Delta}
 								</button>
 							)}
-						{this.props.settings.ButtonStandardData.Submit.has(
-							this.props.frameAgreements[this.props.faId].csconta__Status__c
+						{evaluateExpressionOnAgreement(
+							this.props.settings.ButtonStandardData.Submit,
+							_fa
 						) &&
 							this.props.faId &&
 							!master && (
@@ -327,8 +333,9 @@ class FaHeader extends React.Component {
 									{window.SF.labels.btn_Submit}
 								</button>
 							)}
-						{this.props.settings.ButtonStandardData.NewVersion.has(
-							this.props.frameAgreements[this.props.faId].csconta__Status__c
+						{evaluateExpressionOnAgreement(
+							this.props.settings.ButtonStandardData.NewVersion,
+							_fa
 						) &&
 							!master && (
 								<button

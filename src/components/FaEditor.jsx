@@ -18,7 +18,13 @@ import {
 
 import { publish } from '../api';
 
-import { truncateCPField, log, isMaster } from '../utils/shared-service';
+import {
+	truncateCPField,
+	log,
+	isMaster,
+	parseExpression,
+	evaluateExpressionOnAgreement
+} from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
 import ApprovalProcess from './ApprovalProcess';

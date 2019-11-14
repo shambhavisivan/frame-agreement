@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Icon from '../utillity/Icon';
-import { isMaster } from '~/src/utils/shared-service';
+import {
+	isMaster,
+	evaluateExpressionOnAgreement
+} from '~/src/utils/shared-service';
 
 import { publish } from '~/src/api';
 import ActionIframe from '~/src/components/modals/ActionIframe';
@@ -93,7 +96,7 @@ class FaFooter extends React.Component {
 
 		let customButtonsFooter = this.props.settings.ButtonCustomData.filter(
 			btnObj =>
-				!btnObj.hidden.has(_fa.csconta__Status__c) &&
+				evaluateExpressionOnAgreement(btnObj.expressions, _fa) &&
 				btnObj.location === 'Footer'
 		);
 
@@ -105,42 +108,47 @@ class FaFooter extends React.Component {
 
 		footer = (
 			<div className="fa-main-footer">
-				{standardData.AddFrameAgreement.has(_fa.csconta__Status__c) && master && (
-					<button
-						className="fa-button fa-button--default"
-						onClick={this.onOpenFrameModal}
-					>
-						<Icon name="add" width="16" height="16" color="#0070d2" />
-						<span className="fa-button-icon">{window.SF.labels.btn_AddFa}</span>
-					</button>
-				)}
+				{evaluateExpressionOnAgreement(standardData.AddFrameAgreement, _fa) &&
+					master && (
+						<button
+							className="fa-button fa-button--default"
+							onClick={this.onOpenFrameModal}
+						>
+							<Icon name="add" width="16" height="16" color="#0070d2" />
+							<span className="fa-button-icon">
+								{window.SF.labels.btn_AddFa}
+							</span>
+						</button>
+					)}
 
-				{standardData.AddProducts.has(_fa.csconta__Status__c) && !master && (
-					<button
-						className="fa-button fa-button--default"
-						onClick={this.onOpenCommercialProductModal}
-					>
-						<Icon name="add" width="16" height="16" color="#0070d2" />
-						<span className="fa-button-icon">
-							{window.SF.labels.btn_AddProducts}
-						</span>
-					</button>
-				)}
+				{evaluateExpressionOnAgreement(standardData.AddProducts, _fa) &&
+					!master && (
+						<button
+							className="fa-button fa-button--default"
+							onClick={this.onOpenCommercialProductModal}
+						>
+							<Icon name="add" width="16" height="16" color="#0070d2" />
+							<span className="fa-button-icon">
+								{window.SF.labels.btn_AddProducts}
+							</span>
+						</button>
+					)}
 
-				{standardData.BulkNegotiate.has(_fa.csconta__Status__c) && !master && (
-					<button
-						disabled={_disabled}
-						className="fa-button fa-button--default"
-						onClick={this.onOpenNegotiationModal}
-					>
-						<Icon name="user" width="16" height="16" color="#0070d2" />
-						<span className="fa-button-icon">
-							{window.SF.labels.btn_BulkNegotiate}
-						</span>
-					</button>
-				)}
+				{evaluateExpressionOnAgreement(standardData.BulkNegotiate, _fa) &&
+					!master && (
+						<button
+							disabled={_disabled}
+							className="fa-button fa-button--default"
+							onClick={this.onOpenNegotiationModal}
+						>
+							<Icon name="user" width="16" height="16" color="#0070d2" />
+							<span className="fa-button-icon">
+								{window.SF.labels.btn_BulkNegotiate}
+							</span>
+						</button>
+					)}
 
-				{standardData.DeleteProducts.has(_fa.csconta__Status__c) && (
+				{evaluateExpressionOnAgreement(standardData.DeleteProducts, _fa) && (
 					<button
 						disabled={_disabled}
 						className="fa-button fa-button--default"

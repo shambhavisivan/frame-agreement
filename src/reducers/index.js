@@ -1,4 +1,9 @@
-import { log } from '../utils/shared-service';
+import {
+	log,
+	parseExpression,
+	evaluateExpressionOnAgreement
+} from '../utils/shared-service';
+
 import {
 	validateAddons,
 	validateProduct,
@@ -63,43 +68,18 @@ function organizeHeaderFields(headerData, _activeFa) {
 	var row_grid_count = 0;
 
 	headerData = headerData.filter(f => {
-		let retValue = true;
-
 		if (f.hasOwnProperty('visible')) {
 			if (f.visible === '') {
 				return false;
 			}
 
-			// logic component
-			f.visible
-				.replace(/\s/g, '')
-				.split(';')
-				.forEach(lc => {
-					let _b;
-					let _operator;
-
-					if (lc.includes('==')) {
-						_operator = '==';
-						_b = lc.split('==');
-					} else {
-						_operator = '!=';
-						_b = lc.split('!=');
-					}
-
-					if (['true', 'false'].includes(_b[1])) {
-						_b[1] = JSON.parse(_b[1]);
-					}
-
-					let _fieldValue = _activeFa[_b[0]];
-					if ((_operator = '==')) {
-						retValue = retValue && _fieldValue == _b[1];
-					} else {
-						retValue = retValue && _fieldValue != _b[1];
-					}
-				});
+			return evaluateExpressionOnAgreement(
+				parseExpression(f.visible),
+				_activeFa
+			);
 		}
 
-		return retValue;
+		return true;
 	});
 
 	headerData.forEach(f => {
@@ -1064,17 +1044,23 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.price_item_fields = [];
 			}
 
-			if (action.payload.FACSettings.volume_fields_visibility && validateCSV(action.payload.FACSettings.volume_fields_visibility)) {
+			if (
+				action.payload.FACSettings.volume_fields_visibility &&
+				validateCSV(action.payload.FACSettings.volume_fields_visibility)
+			) {
 				action.payload.FACSettings.volume_fields_visibility = action.payload.FACSettings.volume_fields_visibility
 					.replace(/ /g, '')
 					.split(',');
 			} else {
-				action.payload.FACSettings.volume_fields_visibility = VOLUME_FIELDS.map(vf => vf.name);
+				action.payload.FACSettings.volume_fields_visibility = VOLUME_FIELDS.map(
+					vf => vf.name
+				);
 			}
 
 			if (action.payload.FACSettings.show_volume_fields) {
-
-				let _visibillity = new Set(action.payload.FACSettings.volume_fields_visibility);
+				let _visibillity = new Set(
+					action.payload.FACSettings.volume_fields_visibility
+				);
 
 				VOLUME_FIELDS.filter(vf => _visibillity.has(vf.name)).forEach(f => {
 					_productFields.push({
@@ -1168,24 +1154,60 @@ const rootReducer = (state = initialState, action) => {
 				Object.values(action.payload.FACSettings.statuses)
 			);
 
+			const alwaysVisibleExp = {
+				operators: [],
+				components: [
+					{
+						field: 'Id',
+						comparison: '!=',
+						value: 'null'
+					}
+				]
+			};
+
+			function convertStatusToParsedExp(status, comparison) {
+				return {
+					field: 'csconta__Status__c',
+					comparison: comparison,
+					value: status
+				};
+			}
+
 			var _standardButtons = {};
 			standardButtonsDefault.forEach(sb => {
 				if (!action.payload.ButtonStandardData.hasOwnProperty(sb)) {
 					console.warn(sb + ' not defined in "FA-Standard-Buttons"!');
-					_standardButtons[sb] = new Set([]);
+					// Empty array mean it will never show
+					_standardButtons[sb] = [];
 				} else {
-					if (action.payload.ButtonStandardData[sb][0] === '*') {
-						_standardButtons[sb] = fullStatusSet;
-						return;
-					}
+					if (typeof action.payload.ButtonStandardData[sb] === 'string') {
+						if (action.payload.ButtonStandardData[sb] === '*') {
+							_standardButtons[sb] = alwaysVisibleExp;
+							return;
+						}
 
-					if (!action.payload.ButtonStandardData[sb].length) {
-						console.warn('No visible status for ' + sb + ' button.');
-					}
+						_standardButtons[sb] = parseExpression(
+							action.payload.ButtonStandardData[sb]
+						);
+					} else {
+						// Legacy configuration
+						if (action.payload.ButtonStandardData[sb][0] === '*') {
+							_standardButtons[sb] = alwaysVisibleExp;
+							return;
+						}
 
-					_standardButtons[sb] = new Set(
-						action.payload.ButtonStandardData[sb] || []
-					);
+						let _config = action.payload.ButtonStandardData[sb] || [];
+
+						let operators = new Array(_config.length ? _config.length - 1 : 0);
+						operators.fill('||');
+
+						_standardButtons[sb] = {
+							operators,
+							components: _config.map(status =>
+								convertStatusToParsedExp(status, '==')
+							)
+						};
+					}
 				}
 			});
 
@@ -1209,7 +1231,25 @@ const rootReducer = (state = initialState, action) => {
 			};
 
 			action.payload.ButtonCustomData.forEach((cb, i) => {
-				cb.hidden = new Set(cb.hidden || []);
+				let _config = cb.hidden || [];
+
+				let operators = new Array(_config.length ? _config.length - 1 : 0);
+				operators.fill('&&');
+
+				let _legacyVisible = {
+					operators,
+					components: _config.map(status =>
+						convertStatusToParsedExp(status, '!=')
+					)
+				};
+
+				let _newVisible = parseExpression(cb.visible);
+
+				cb.expressions = {
+					operators: [..._legacyVisible.operators, ..._newVisible.operators],
+					components: [..._legacyVisible.components, ..._newVisible.components]
+				};
+
 				cb.id =
 					cb.id ||
 					(cb.label || 'unlabeled-' + i).replace(/ /g, '').toLowerCase();
@@ -1217,12 +1257,17 @@ const rootReducer = (state = initialState, action) => {
 				if (!cb.location || !LOCATIONS[cb.location]) {
 					cb.location = 'Editor';
 				}
+
+				console.log(cb);
 			});
 
+			// ***************************************************************************************************************
 			var settings_loaded = true;
+
 			var _atLeastOnePicklist = action.payload.HeaderData.find(
 				f => f.type === 'picklist'
 			);
+
 			if (_atLeastOnePicklist) {
 				settings_loaded = false;
 			}

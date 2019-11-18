@@ -47,6 +47,32 @@ class ActionIframe extends Component {
 				this.styles.modal = {};
 			}
 		}
+
+		this.onCloseEvent = event => {
+			let _data = null;
+
+			try {
+				_data = JSON.parse(atob(event.data));
+			} catch (err) {}
+
+			if (!_data || _data.sender !== 'FaChildScope') {
+				// something from an unknown domain, let's ignore it
+				return;
+			}
+
+			if (_data.action === 'closeIframe') {
+				this.props.onCloseIframe();
+				return;
+			} else {
+				console.log('Unknown event: ', data.action);
+			}
+		};
+
+		window.addEventListener('message', this.onCloseEvent);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('message', this.onCloseEvent);
 	}
 
 	render() {

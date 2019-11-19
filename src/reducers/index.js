@@ -1038,6 +1038,10 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.account_fields = ['Name'];
 			}
 
+			if (!action.payload.FACSettings.hasOwnProperty('approvers_revise')) {
+				action.payload.FACSettings.approvers_revise = false;
+			}
+
 			if (
 				action.payload.FACSettings.hasOwnProperty('usage_type_fields__c') &&
 				validateCSV(action.payload.FACSettings.usage_type_fields__c)

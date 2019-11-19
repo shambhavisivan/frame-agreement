@@ -304,6 +304,30 @@ export class App extends Component {
 			return response;
 		};
 
+		window.FAM.api.isAgreementEditable = faId => {
+			let _editable = false;
+			let _settings = this.props.settings.FACSettings;
+			let _fa = this.props.frameAgreements[faId];
+			let _is_approver = false;
+			let _is_pending = false;
+			try {
+				_is_approver = _fa._ui.approval.isApprover;
+				_is_pending = _fa._ui.approval.isPending;
+			} catch (err) {
+				// No approval
+			}
+
+			if (_settings.fa_editable_statuses.has(_fa.csconta__Status__c)) {
+				_editable = true;
+			}
+
+			if (_is_pending && _is_approver && _settings.approvers_revise) {
+				_editable = true;
+			}
+
+			return _editable;
+		};
+
 		window.SF.validateStatusConsistency = async faId => {
 			if (!this.props.settings.FACSettings.active_status_management__c) {
 				return false;

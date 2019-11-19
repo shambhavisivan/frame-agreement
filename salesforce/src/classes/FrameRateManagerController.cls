@@ -471,6 +471,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
 		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
 		settingMap.put('account_fields', FACSettings.get('csfam__account_fields__c'));
+		settingMap.put('approvers_revise', FACSettings.get('csfam__approvers_revise__c'));
 		settingMap.put('volume_fields_visibility', FACSettings.get('csfam__volume_fields_visibility__c'));
 		settingMap.put('usage_type_fields__c', FACSettings.get('csfam__usage_type_fields__c'));
 		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
@@ -632,6 +633,7 @@ global with sharing class FrameRateManagerController {
 
 		Id userId = UserInfo.getUserId();
 		Boolean isApprover = false;
+		Boolean isPending = false;
 		Boolean isInitiator = false;
 		Boolean userIsAdmin = isUserAdmin();
 		Set <Id> userIsDelegatedApprover = isUserDelegate(userId);
@@ -641,13 +643,12 @@ global with sharing class FrameRateManagerController {
 				if (piwi.StepStatus == 'Pending') {
 					if ((piwi.ActorId == userId || userIsDelegatedApprover.contains(piwi.ActorId) || userIsAdmin)) {
 						isApprover = true;
-					}
-					if ((piwi.ActorId == userId || userIsDelegatedApprover.contains(piwi.ActorId) || userIsAdmin)) {
-						isApprover = true;
+						isPending = true;
 					}
 				}
 			}
 		}
+		approvalProcess.put('isPending', isPending);
 		approvalProcess.put('isApprover', isApprover);
 		approvalProcess.put('isAdmin', userIsAdmin);
 		approvalProcess.put('currentUser', userId);

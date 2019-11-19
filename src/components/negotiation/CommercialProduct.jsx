@@ -120,9 +120,7 @@ export class CommercialProduct extends React.Component {
 	render() {
 		let _attachment = this.props.frameAgreements[this.props.faId]._ui.attachment
 			.products[this.productId];
-		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
-			this.props.frameAgreements[this.props.faId].csconta__Status__c
-		);
+		let _editable = window.FAM.api.isAgreementEditable(this.props.faId);
 
 		let _ignoreProducts = new Set(this.props.ignoreSettings.products || []);
 

@@ -70,9 +70,7 @@ export class FaFields extends React.Component {
 
 	render() {
 		let _faFields = null;
-		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
-			this.props.frameAgreements[this.props.faId].csconta__Status__c
-		);
+		let _editable = window.FAM.api.isAgreementEditable(this.props.faId);
 
 		if (this.props.frameAgreements[this.props.faId]._ui.headerRows.length) {
 			_faFields = (

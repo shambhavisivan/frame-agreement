@@ -30,11 +30,7 @@ class DynamicGroupTab extends React.Component {
 			selectGroups: [],
 			groups: [],
 			added: {},
-			editable: redux_store
-				.getState()
-				.settings.FACSettings.fa_editable_statuses.has(
-					ACTIVE_FA.csconta__Status__c
-				),
+			editable: window.FAM.api.isAgreementEditable(ACTIVE_FA.Id),
 			open: null,
 			targetingResults: {}
 		};

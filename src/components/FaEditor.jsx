@@ -187,6 +187,7 @@ export class FaEditor extends Component {
 			);
 		};
 
+		await this.props.getApprovalHistory(this.faId);
 		// Check if FA info is loaded already
 		// if (this.faId && this.props.frameAgreements[this.faId]._ui.attachment === null) {
 		if (this.props.frameAgreements[this.faId]._ui.attachment === null) {
@@ -205,73 +206,31 @@ export class FaEditor extends Component {
 					// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
 					this.props.getCommercialProductData(IdsToLoad).then(async r => {
 						await this.props.addProductsToFa(this.faId, IdsToLoad);
-
 						await cpFilterEvent();
-
-						// this._setState(
-						// 	{ loading: { ...this.state.loading, attachment: false } },
-						// 	() => {
-						// 		publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
-						// 	}
-						// );
-
 						await onLoadingFinished();
-
 						this.props.validateFrameAgreement(this.faId);
 					});
 				} else {
 					await cpFilterEvent();
-
-					// this._setState(
-					// 	{ loading: { ...this.state.loading, attachment: false } },
-					// 	() => {
-					// 		publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
-					// 	}
-					// );
-
 					await onLoadingFinished();
 				}
 			});
 		} else {
 			await cpFilterEvent();
-
-			// this._setState(
-			// 	{
-			// 		loading: {
-			// 			...this.state.loading,
-			// 			attachment: false
-			// 		}
-			// 	},
-			// 	() => {
-			// 		publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
-
-			// 	}
-			// );
 			await onLoadingFinished();
 			this.props.validateFrameAgreement(this.faId);
 		}
 
-		this.props.getApprovalHistory(this.faId);
-
 		// **************************************
-		this.editable = this.props.settings.FACSettings.fa_editable_statuses.has(
-			this.props.frameAgreements[this.faId].csconta__Status__c
-		);
+		this.editable = window.FAM.api.isAgreementEditable(this.faId);
 		// **************************************
 		window.editor = this;
 	}
 
 	componentDidUpdate() {
 		try {
-			if (
-				this.editable !==
-				this.props.settings.FACSettings.fa_editable_statuses.has(
-					this.props.frameAgreements[this.faId].csconta__Status__c
-				)
-			) {
-				this.editable = this.props.settings.FACSettings.fa_editable_statuses.has(
-					this.props.frameAgreements[this.faId].csconta__Status__c
-				);
+			if (this.editable !== window.FAM.api.isAgreementEditable(this.faId)) {
+				this.editable = window.FAM.api.isAgreementEditable(this.faId);
 			}
 		} catch (e) {}
 	}

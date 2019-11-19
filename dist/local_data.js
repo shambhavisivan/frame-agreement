@@ -290,6 +290,7 @@ const FACSettings = {
 	account_fields: 'Name, Id, Id',
 	decomposition_chunk_size: 2,
 	discount_as_price: false,
+	approvers_revise: true,
 	new_frame_agreement: true,
 	active_status_management__c: true,
 	product_chunk_size: 100,

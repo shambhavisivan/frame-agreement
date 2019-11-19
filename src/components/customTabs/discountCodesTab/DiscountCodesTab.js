@@ -516,11 +516,7 @@ class DiscountCodesTab extends React.Component {
 			}
 		}
 
-		let _editable = redux_store
-			.getState()
-			.settings.FACSettings.fa_editable_statuses.has(
-				ACTIVE_FA.csconta__Status__c
-			);
+		let _editable = window.FAM.api.isAgreementEditable(ACTIVE_FA.Id);
 
 		if (_editable !== this.state.editable) {
 			this.setState({ editable: _editable });

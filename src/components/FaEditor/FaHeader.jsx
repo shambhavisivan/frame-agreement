@@ -34,10 +34,7 @@ class FaHeader extends React.Component {
 		this.callHandler = this.callHandler.bind(this);
 		this.onCloseIframe = this.onCloseIframe.bind(this);
 		// this.props.faId
-		this.editable =
-			this.props.settings.FACSettings.fa_editable_statuses.has(
-				this.props.frameAgreements[this.props.faId].csconta__Status__c
-			) || !this.props.frameAgreements[this.props.faId].Id;
+		this.editable = window.FAM.api.isAgreementEditable(this.props.faId);
 
 		this.state = {
 			actionIframe: false,
@@ -49,16 +46,9 @@ class FaHeader extends React.Component {
 	componentDidUpdate() {
 		try {
 			if (
-				this.editable !==
-					this.props.settings.FACSettings.fa_editable_statuses.has(
-						this.props.frameAgreements[this.props.faId].csconta__Status__c
-					) ||
-				!this.props.frameAgreements[this.props.faId].Id
+				this.editable !== window.FAM.api.isAgreementEditable(this.props.faId)
 			) {
-				this.editable =
-					this.props.settings.FACSettings.fa_editable_statuses.has(
-						this.props.frameAgreements[this.props.faId].csconta__Status__c
-					) || !this.props.frameAgreements[this.props.faId].Id;
+				this.editable = window.FAM.api.isAgreementEditable(this.props.faId);
 			}
 		} catch (e) {}
 	}
@@ -160,9 +150,11 @@ class FaHeader extends React.Component {
 		var data = { ...this.props.frameAgreements[this.props.faId] };
 		data = await publish('onBeforeSaveFrameAgreement', data);
 
+		// If approvers revise is activated, FA wont change status
 		if (
 			this.props.frameAgreements[this.props.faId]._ui.approvalNeeded &&
-			this.editable
+			this.editable &&
+			!this.props.settings.FACSettings.approvers_revise
 		) {
 			data.csconta__Status__c = this.props.settings.FACSettings.statuses.requires_approval_status;
 		}
@@ -221,11 +213,6 @@ class FaHeader extends React.Component {
 			);
 		}
 		// *******************************************************
-
-		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
-			_fa.csconta__Status__c
-		);
-
 		let master = isMaster(_fa);
 
 		let headerClass = '';
@@ -233,13 +220,13 @@ class FaHeader extends React.Component {
 		if (master) {
 			// default
 		} else if (
-			_editable &&
+			this.editable &&
 			_fa._ui.approvalNeeded &&
 			_fa.csconta__Status__c !==
 				this.props.settings.FACSettings.statuses.approved_status
 		) {
 			headerClass = ' error fa-invalid';
-		} else if (!_editable) {
+		} else if (!this.editable) {
 			headerClass = ' error fa-disabled';
 		}
 
@@ -282,14 +269,15 @@ class FaHeader extends React.Component {
 						{evaluateExpressionOnAgreement(
 							this.props.settings.ButtonStandardData.Save,
 							_fa
-						) && (
+						) ? (
 							<button
 								className="fa-button fa-button--transparent"
 								onClick={() => this.upsertFrameAgreements()}
 							>
 								{window.SF.labels.btn_Save}
 							</button>
-						)}
+						) : null}
+
 						{!master &&
 							evaluateExpressionOnAgreement(
 								this.props.settings.ButtonStandardData.SubmitForApproval,

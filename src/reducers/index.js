@@ -578,6 +578,24 @@ const rootReducer = (state = initialState, action) => {
 				)
 			};
 
+		case 'SET_DISABLE_DISCOUNT':
+			var faId = action.payload.faId;
+			var config = action.payload.disableConfig;
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							...config
+						}
+					}
+				}
+			};
+
 		case 'RECIEVE_COMMERCIAL_PRODUCTS':
 			var commercialProducts = action.payload;
 

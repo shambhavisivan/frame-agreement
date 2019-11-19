@@ -126,6 +126,11 @@ export class CommercialProduct extends React.Component {
 
 		let _ignoreProducts = new Set(this.props.ignoreSettings.products || []);
 
+		let _disableLevels = !!this.props.frameAgreements[this.props.faId]._ui
+			.disableDiscountLevels;
+		let _disableInputs = !!this.props.frameAgreements[this.props.faId]._ui
+			.disableInlineDiscounts;
+
 		return (
 			<div
 				className={
@@ -220,8 +225,10 @@ export class CommercialProduct extends React.Component {
 								disabled={!this.props.product._addons.length}
 							>
 								<Addons
-									readOnly={!_editable}
-									disableLevels={_ignoreProducts.has(this.productId)}
+									readOnly={!_editable || (_disableLevels && _disableInputs)}
+									disableLevels={
+										_ignoreProducts.has(this.productId) || _disableLevels
+									}
 									validation={this.props.validation[this.productId].addons}
 									attachment={_attachment._addons || {}}
 									addons={this.props.product._addons}
@@ -239,8 +246,10 @@ export class CommercialProduct extends React.Component {
 							>
 								{this.props.product._charges.length ? (
 									<Charges
-										readOnly={!_editable}
-										disableLevels={_ignoreProducts.has(this.productId)}
+										readOnly={!_editable || (_disableLevels && _disableInputs)}
+										disableLevels={
+											_ignoreProducts.has(this.productId) || _disableLevels
+										}
 										oneOffAllowed={
 											this.props.product.cspmb__Is_One_Off_Discount_Allowed__c
 										}
@@ -258,8 +267,11 @@ export class CommercialProduct extends React.Component {
 									/>
 								) : (
 									<ProductCharges
+										readOnly={!_editable || (_disableLevels && _disableInputs)}
 										product={this.props.product}
-										disableLevels={_ignoreProducts.has(this.productId)}
+										disableLevels={
+											_ignoreProducts.has(this.productId) || _disableLevels
+										}
 										oneOffAllowed={
 											this.props.product.cspmb__Is_One_Off_Discount_Allowed__c
 										}
@@ -267,7 +279,6 @@ export class CommercialProduct extends React.Component {
 											this.props.product.cspmb__Is_Recurring_Discount_Allowed__c
 										}
 										levels={this.props.product._discountLvIds}
-										readOnly={!_editable}
 										validation={this.props.validation[this.productId].product}
 										attachment={_attachment._product || {}}
 										onNegotiate={data => {
@@ -281,7 +292,7 @@ export class CommercialProduct extends React.Component {
 								disabled={!this.props.product._rateCards.length}
 							>
 								<Rates
-									readOnly={!_editable}
+									readOnly={!_editable || (_disableLevels && _disableInputs)}
 									validation={this.props.validation[this.productId].rated}
 									attachment={_attachment._rateCards || {}}
 									rateCards={this.props.product._rateCards}

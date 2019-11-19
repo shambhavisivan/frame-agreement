@@ -13,6 +13,7 @@ import {
 	removeProductsFromFa,
 	setFrameAgreementCpFilter,
 	negotiate,
+	setDisableDiscount,
 	getCommercialProductData
 } from '../actions';
 
@@ -166,6 +167,26 @@ export class FaEditor extends Component {
 			return true;
 		};
 
+		const onLoadingFinished = async () => {
+			this._setState(
+				{ loading: { ...this.state.loading, attachment: false } },
+				async () => {
+					let _config = await publish('onFaSelect', [
+						this.props.frameAgreements[this.faId]
+					]);
+
+					if (
+						_config.hasOwnProperty('disableDiscountLevels') ||
+						_config.hasOwnProperty('disableInlineDiscounts')
+					) {
+						this.props.setDisableDiscount(this.faId, _config);
+					}
+
+					return;
+				}
+			);
+		};
+
 		// Check if FA info is loaded already
 		// if (this.faId && this.props.frameAgreements[this.faId]._ui.attachment === null) {
 		if (this.props.frameAgreements[this.faId]._ui.attachment === null) {
@@ -187,42 +208,47 @@ export class FaEditor extends Component {
 
 						await cpFilterEvent();
 
-						this._setState(
-							{ loading: { ...this.state.loading, attachment: false } },
-							() => {
-								publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
-							}
-						);
+						// this._setState(
+						// 	{ loading: { ...this.state.loading, attachment: false } },
+						// 	() => {
+						// 		publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
+						// 	}
+						// );
+
+						await onLoadingFinished();
 
 						this.props.validateFrameAgreement(this.faId);
 					});
 				} else {
 					await cpFilterEvent();
 
-					this._setState(
-						{ loading: { ...this.state.loading, attachment: false } },
-						() => {
-							publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
-						}
-					);
+					// this._setState(
+					// 	{ loading: { ...this.state.loading, attachment: false } },
+					// 	() => {
+					// 		publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
+					// 	}
+					// );
+
+					await onLoadingFinished();
 				}
 			});
 		} else {
 			await cpFilterEvent();
 
-			this._setState(
-				{
-					loading: {
-						...this.state.loading,
-						attachment: false
-					}
-				},
-				() => {
-					publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
+			// this._setState(
+			// 	{
+			// 		loading: {
+			// 			...this.state.loading,
+			// 			attachment: false
+			// 		}
+			// 	},
+			// 	() => {
+			// 		publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
 
-					this.props.validateFrameAgreement(this.faId);
-				}
-			);
+			// 	}
+			// );
+			await onLoadingFinished();
+			this.props.validateFrameAgreement(this.faId);
 		}
 
 		this.props.getApprovalHistory(this.faId);
@@ -449,6 +475,7 @@ const mapDispatchToProps = {
 	removeProductsFromFa,
 	setFrameAgreementCpFilter,
 	negotiate,
+	setDisableDiscount,
 	getCommercialProductData
 };
 

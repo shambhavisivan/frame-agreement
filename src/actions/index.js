@@ -363,6 +363,13 @@ export const setFrameAgreementCpFilter = (faId, cpIdSet) => ({
 
 // ***********************************************************************
 
+export const setDisableDiscount = (faId, disableConfig) => ({
+	type: 'SET_DISABLE_DISCOUNT',
+	payload: { faId, disableConfig }
+});
+
+// ***********************************************************************
+
 export const _recievePriceItemData = result => ({
 	type: 'RECIEVE_PRICE_ITEM_DATA',
 	payload: result

@@ -88,6 +88,7 @@ export const initialiseApi = () => {
 	window.FAM.publish = publish;
 
 	log.blue('FAC API initialised!');
+
 };
 
 Object.defineProperty(Array.prototype, 'paginate', {
@@ -239,9 +240,12 @@ export function submitForApproval(faId) {
 // });
 
 /*********************************************************/
-// window.FAM.subscribe("Test", (data) => {
+// window.FAM.subscribe("onFaSelect", (data) => {
 //     return new Promise(resolve => {
-//         resolve(data);
+//         resolve({
+//         	disableDiscountLevels: true,
+// 			disableInlineDiscounts: true
+//         });
 //     });
 // })
 

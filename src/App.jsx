@@ -168,8 +168,14 @@ export class App extends Component {
 
 		window.FAM.api.activateFrameAgreement = async faId => {
 			// 1) Create a structure that is matching one element -> one pipra
-			let _attachment = this.props.frameAgreements[faId]._ui.attachment
-				.products;
+			let _attachment = {};
+
+			try {
+				_attachment =
+					this.props.frameAgreements[faId]._ui.attachment.products || {};
+			} catch (err) {
+				// No attachment or no products
+			}
 
 			let structure = [];
 			for (var cpId in _attachment) {
@@ -207,6 +213,8 @@ export class App extends Component {
 			structure = structure.filter(
 				item => item.recurring !== null || item.oneOff !== null
 			);
+
+			structure = await publish('onBeforeActivation', structure);
 
 			// Create pricing rule group, pricing rule and association between them. Return pricing rule id to be used in next stage
 			const PR_ID = await createPricingRuleGroup(faId);

@@ -1187,6 +1187,11 @@ const rootReducer = (state = initialState, action) => {
 				]
 			};
 
+			const neverVisibleExp = {
+				operators: [],
+				components: []
+			};
+
 			function convertStatusToParsedExp(status, comparison) {
 				return {
 					field: 'csconta__Status__c',
@@ -1200,7 +1205,7 @@ const rootReducer = (state = initialState, action) => {
 				if (!action.payload.ButtonStandardData.hasOwnProperty(sb)) {
 					console.warn(sb + ' not defined in "FA-Standard-Buttons"!');
 					// Empty array mean it will never show
-					_standardButtons[sb] = [];
+					_standardButtons[sb] = neverVisibleExp;
 				} else {
 					if (typeof action.payload.ButtonStandardData[sb] === 'string') {
 						if (action.payload.ButtonStandardData[sb] === '*') {
@@ -1218,7 +1223,7 @@ const rootReducer = (state = initialState, action) => {
 							return;
 						}
 
-						let _config = action.payload.ButtonStandardData[sb] || [];
+						let _config = action.payload.ButtonStandardData[sb];
 
 						let operators = new Array(_config.length ? _config.length - 1 : 0);
 						operators.fill('||');

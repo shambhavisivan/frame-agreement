@@ -1781,15 +1781,12 @@ const ButtonCustomData = [
 ];
 
 const ButtonStandardData = {
-	Save: 'csfam__Disable_Levels__c == true',
+	Save: ['Draft', 'Requires Approval'],
 	SubmitForApproval: ['Requires Approval'],
-	Submit: ['Draft', 'Approved'],
+	Submit: ['Approved'],
 	DeleteProducts: ['Draft', 'Requires Approval'],
 	BulkNegotiate: ['Draft', 'Requires Approval'],
-	AddProducts: ['Draft', 'Requires Approval'],
-	AddFrameAgreement: ['Draft', 'Requires Approval'],
-	Delta: ['*'],
-	NewVersion: ['Active']
+	AddProducts: ['Draft', 'Requires Approval']
 };
 
 const commercialProducts = [

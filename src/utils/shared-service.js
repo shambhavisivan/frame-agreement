@@ -181,8 +181,16 @@ export const parseExpression = (expString = '') => {
 	return _parseExpression;
 };
 
-export const evaluateExpressionOnAgreement = (expressionObj, fa) => {
-	let { components, operators } = expressionObj;
+export const evaluateExpressionOnAgreement = (
+	expressionObj = {},
+	fa = window.mandatory('evaluateExpressionOnAgreement')
+) => {
+	if (!expressionObj.components || !expressionObj.components.length) {
+		return false;
+	}
+
+	let components = copy(expressionObj.components);
+	let operators = copy(expressionObj.operators);
 
 	// For complexity reduction we added && operator on the beginning
 	// to evaluate first component with default accumulator value of reduce method

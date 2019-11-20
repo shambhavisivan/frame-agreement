@@ -24,6 +24,7 @@ const eventList = new Set([
 	'onAfterBulkNegotiation',
 	'onBeforeSubmit',
 	'onAfterSubmit',
+	'onBeforeActivation',
 	'onIframeClose'
 ]);
 

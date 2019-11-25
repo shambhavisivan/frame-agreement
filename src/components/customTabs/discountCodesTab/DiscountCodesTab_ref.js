@@ -23,29 +23,21 @@ let ACTIVE_FA = null;
 
 const DEFAULT_DESCRIPTION = '--new dynamic group description';
 
-const isObjectEmpty = obj => {
-	return Object.entries(obj).length === 0 && obj.constructor === Object;
-};
-
 const getTargetObjectCode = targetObject => {
 	let str;
 	if (targetObject === 'Commercial Product') {
 		str = 'product';
 	} else if (targetObject === 'Rate Card Line') {
 		str = 'rcl';
+	} else if (targetObject === 'Both') {
+		// fallback
+		str = 'product';
 	}
 
 	return str;
 };
 
-const isGroupLegacy = group => {
-	return (
-		!isJson(group.csfamext__expression__c) &&
-		typeof group.csfamext__expression__c === 'string'
-	);
-};
-
-const formatGroup = group => {
+const checkGroupCompliance = group => {
 	if (isJson(group.csfamext__expression__c)) {
 		group.csfamext__expression__c = JSON.parse(group.csfamext__expression__c);
 	} else if (typeof group.csfamext__expression__c === 'string') {
@@ -164,10 +156,6 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	log.bg.red('---NEGOTIATION RESET');
 
 	// Group codes by target to avoid wasteful looping
-	let both_codes = discountCodes.filter(
-		dc => dc.csfamext__target_object__c === 'Both'
-	);
-
 	let rcl_codes = discountCodes.filter(
 		dc => dc.csfamext__target_object__c === 'Rate Card Line'
 	);
@@ -176,8 +164,9 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 		dc => dc.csfamext__target_object__c === 'Commercial Product'
 	);
 
-	rcl_codes = [...rcl_codes, ...both_codes];
-	cp_codes = [...cp_codes, ...both_codes];
+	let both_codes = discountCodes.filter(
+		dc => dc.csfamext__target_object__c === 'Both'
+	);
 
 	// Generate map of original charges for product
 	let _originalProductValues = active_fa._ui.commercialProducts.reduce(
@@ -212,7 +201,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 				let _value = rcl.cspmb__rate_value__c;
 
 				rcl_codes.forEach(rclc => {
-					if (rclc.records.rcl[rcl.Id]) {
+					if (rclc.records[rcl.Id]) {
 						_value = calculateDiscount(
 							rclc.csfamext__discount_type__c,
 							rclc.csfamext__rate_value__c,
@@ -236,7 +225,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 				let _oneOff = charge.oneOff;
 
 				cp_codes.forEach(cpc => {
-					if (cpc.records.product[cp.Id]) {
+					if (cpc.records[cp.Id]) {
 						if (
 							!!cpc.csfamext__recurring_charge__c &&
 							charge.hasOwnProperty('recurring')
@@ -290,7 +279,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			let _oneOff = _originalProductValues[cp.Id].oneOff;
 
 			cp_codes
-				.filter(cpc => cpc.records.product.hasOwnProperty(cp.Id))
+				.filter(cpc => cpc.records.hasOwnProperty(cp.Id))
 				.forEach(cpc => {
 					let _negoFormatCp = {};
 					_negoFormatCp.priceItemId = cp.Id;
@@ -365,26 +354,26 @@ class DiscountCodesTab extends React.Component {
 	constructor(props, context) {
 		super(props, context);
 		this.state = {
+			currentTarget: 'product',
 			loading: true,
-			currentTarget: 'product', // Which target is being tested
-			availableGroups: [], // For dropdown
-			groups: [], // groups from RM
+			selectGroups: [],
+			groups: [],
 			editable: redux_store
 				.getState()
 				.settings.FACSettings.fa_editable_statuses.has(
 					ACTIVE_FA.csconta__Status__c
 				),
-			added: {}, // added groups, loaded from CustomSettings
-			open: null, // open group
-			targetingResults: {} // results for a group
+			added: {},
+			open: null,
+			targetingResults: {}
 		};
 
 		this.customSettings = {};
 
 		this.updateSelectListGroups = this.updateSelectListGroups.bind(this);
 		this.updateCustomData = this.updateCustomData.bind(this);
-		this.loadRecordsForDg = this.loadRecordsForDg.bind(this);
 		this.onAddGroup = this.onAddGroup.bind(this);
+		this.targetRecords = this.targetRecords.bind(this);
 		this.blank = '';
 
 		window.dcscope = this;
@@ -416,22 +405,11 @@ class DiscountCodesTab extends React.Component {
 						g => g.csfamext__group_type__c === 'Discount Code'
 					);
 
-					let _legacyCheck = false;
-
 					response = response.map(dg => {
 						delete dg.csfamext__logic_components_JSON__c;
 						delete dg.attributes;
-						_legacyCheck = isGroupLegacy(dg);
-						return formatGroup(dg);
+						return checkGroupCompliance(dg);
 					});
-
-					if (_legacyCheck) {
-						window.FAM.api.toast(
-							'info',
-							'Legacy group detected!',
-							'Please launch DGManager to auto-convert dynamic groups.'
-						);
-					}
 
 					return response;
 				}
@@ -481,7 +459,7 @@ class DiscountCodesTab extends React.Component {
 				_codesMap[group.Id] = group;
 			});
 
-			let _availableGroups = _response_codes.map(group => {
+			let _selectGroups = _response_codes.map(group => {
 				return {
 					value: group.Id,
 					label: group.Name,
@@ -492,36 +470,15 @@ class DiscountCodesTab extends React.Component {
 			let _addedCodes = _response_data.codes || [];
 
 			_addedCodes = _addedCodes.map(dg => {
-				let _target = getTargetObjectCode(dg.csfamext__target_object__c);
-
 				if (isJson(dg.csfamext__expression__c)) {
 					dg.csfamext__expression__c = JSON.parse(dg.csfamext__expression__c);
 				} else if (typeof dg.csfamext__expression__c === 'string') {
-					_needsUpdateFlag = true;
-
 					dg.csfamext__expression__c = {
-						[_target]: dg.csfamext__expression__c
+						[getTargetObjectCode(
+							dg.csfamext__target_object__c
+						)]: dg.csfamext__expression__c
 					};
 				}
-
-				if (
-					!(
-						dg.records.hasOwnProperty('rcl') ||
-						dg.records.hasOwnProperty('product')
-					)
-				) {
-					if (_target) {
-						dg.records = {
-							[_target]: dg.records
-						};
-					} else {
-						dg.records = {
-							rcl: {},
-							product: {}
-						};
-					}
-				}
-
 				delete dg.csfamext__logic_components_JSON__c;
 				delete dg.attributes;
 				return dg;
@@ -553,7 +510,7 @@ class DiscountCodesTab extends React.Component {
 			);
 
 			// reject groups that are already added from select options
-			_availableGroups = _availableGroups.filter(group => {
+			_selectGroups = _selectGroups.filter(group => {
 				return !_addedMap.hasOwnProperty(group.value);
 			});
 
@@ -561,7 +518,7 @@ class DiscountCodesTab extends React.Component {
 				{
 					...this.state,
 					loading: false,
-					availableGroups: _availableGroups,
+					selectGroups: _selectGroups,
 					groups: _response_codes,
 					added: _addedMap
 				},
@@ -577,6 +534,20 @@ class DiscountCodesTab extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
+		if (
+			this.state.open &&
+			this.state.added[this.state.open] &&
+			prevState.open !== this.state.open
+		) {
+			if (
+				!this.state.targetingResults.hasOwnProperty([
+					this.state.added[this.state.open].Id
+				])
+			) {
+				this.targetRecords();
+			}
+		}
+
 		let _editable = window.FAM.api.isAgreementEditable(ACTIVE_FA.Id);
 
 		if (_editable !== this.state.editable) {
@@ -611,10 +582,10 @@ class DiscountCodesTab extends React.Component {
 
 						response.results = response.results || [];
 
-						let _results = response.results.map(record => {
-							let _record = JSON.parse(JSON.stringify(record));
-							delete _record.attributes;
-							return _record;
+						let _results = response.results.map(cp => {
+							let _cp = JSON.parse(JSON.stringify(cp));
+							delete _cp.attributes;
+							return _cp;
 						});
 
 						resolve(_results);
@@ -624,52 +595,30 @@ class DiscountCodesTab extends React.Component {
 		});
 	}
 
-	async loadRecordsForDg(dgId, overrideFromCode) {
-		function convertRecordsToMap(arr) {
-			return arr.reduce((acc, iter) => {
-				return { ...acc, [iter.Id]: iter };
-			}, {});
-		}
-
-		let _dg = this.state.added[dgId];
-		let _recordObj = {};
-
+	targetRecords(overrideFromCode) {
 		let fromCode =
-			overrideFromCode || getTargetObjectCode(_dg.csfamext__target_object__c);
-
-		if (!fromCode) {
-			let response = await Promise.all([
-				this.getTargetRecords(
-					'product',
-					_dg.csfamext__expression__c['product']
-				),
-				this.getTargetRecords('rcl', _dg.csfamext__expression__c['rcl'])
-			]);
-
-			_recordObj = {
-				product: convertRecordsToMap(response[0]),
-				rcl: convertRecordsToMap(response[1])
-			};
-		} else {
-			let response = await this.getTargetRecords(
-				fromCode,
-				_dg.csfamext__expression__c[fromCode]
+			overrideFromCode ||
+			getTargetObjectCode(
+				this.state.added[this.state.open].csfamext__target_object__c
 			);
-			_recordObj = { [fromCode]: convertRecordsToMap(response) };
+
+		if (overrideFromCode) {
+			this.setState({
+				currentTarget: overrideFromCode
+			});
 		}
 
-		this.setState({
-			currentTarget: fromCode,
-			added: {
-				...this.state.added,
-				[dgId]: {
-					...this.state.added[dgId],
-					records: { ...this.state.added[dgId].records, ..._recordObj }
+		this.getTargetRecords(
+			fromCode,
+			this.state.added[this.state.open].csfamext__expression__c[fromCode]
+		).then(response => {
+			this.setState({
+				targetingResults: {
+					...this.state.targetingResults,
+					[this.state.added[this.state.open].Id]: response
 				}
-			}
+			});
 		});
-
-		return _recordObj;
 	}
 
 	onAddGroup(selected_group) {
@@ -678,22 +627,50 @@ class DiscountCodesTab extends React.Component {
 			group => group.Id === selected_group.value
 		);
 
-		this.setState(
-			{
-				added: { ...this.state.added, [_group.Id]: _group }
-			},
-			() => {
-				this.blank = '';
-				this.updateSelectListGroups();
-				this.loadRecordsForDg(_group.Id).then(
-					response => {
-						this.updateCustomData();
+		_group.records = {};
+
+		let fromCode = getTargetObjectCode(_group.csfamext__target_object__c);
+
+		if (_group.csfamext__target_object__c === 'Both') {
+		}
+
+		function getRecords(fromCode, expression) {
+			// body...
+		}
+
+		this.getTargetRecords(fromCode, _group.csfamext__expression__c).then(
+			response => {
+				//apply records
+				response.forEach(target => {
+					_group.records[target.Id] = target.Id;
+				});
+
+				this.setState(
+					{
+						added: { ...this.state.added, [_group.Id]: _group },
+						targetingResults: {
+							...this.state.targetingResults,
+							[_group.Id]: response
+						}
 					},
-					error => {}
+					() => {
+						this.blank = '';
+						this.updateSelectListGroups();
+						this.updateCustomData().then(response => {
+							// negotiateDiscountCodesForProducts().then(r => {
+							// 	window.FAM.api.toast(
+							// 		'info',
+							// 		'Discount codes',
+							// 		'applied to ' + Object.keys(_group.records).length + ' items!'
+							// 	);
+							// });
+						});
+					}
 				);
 			}
 		);
 	}
+
 	async onApplyCodes() {
 		let res = await window.FAM.publish(
 			'DCE_onBeforeApplyCodes',
@@ -716,8 +693,7 @@ class DiscountCodesTab extends React.Component {
 
 		this.setState(
 			{
-				added: _added,
-				open: this.state.open === removed_group.Id ? null : this.state.open
+				added: _added
 			},
 			() => {
 				this.blank = '';
@@ -731,7 +707,7 @@ class DiscountCodesTab extends React.Component {
 
 	updateSelectListGroups() {
 		this.setState({
-			availableGroups: this.state.groups
+			selectGroups: this.state.groups
 				.filter(group => {
 					return !this.state.added[group.Id];
 				})
@@ -797,7 +773,7 @@ class DiscountCodesTab extends React.Component {
 								isDisabled={!this.state.editable}
 								placeholder="Add code..."
 								value={this.blank}
-								options={this.state.availableGroups}
+								options={this.state.selectGroups}
 								onChange={this.onAddGroup}
 								formatOptionLabel={CustomOption}
 								filterOption={filterOptions}
@@ -869,7 +845,7 @@ class DiscountCodesTab extends React.Component {
 								) : null}
 							</div>
 
-							{this.state.open === group.Id && _active.records ? (
+							{this.state.open === group.Id ? (
 								<div className="commercial-product-body">
 									<div className="tab-body-left">
 										<div className="input-box big dynamic-group-discounts">
@@ -964,25 +940,30 @@ class DiscountCodesTab extends React.Component {
 										</div>
 									</div>
 									<div className="tab-body-right">
-										<DGTargets
-											target={getTargetObjectCode(
-												_active.csfamext__target_object__c
-											)}
-											results={_active.records}
-											bothEntities={
-												_active.csfamext__target_object__c === 'Both'
-											}
-											fields={
-												this.customSetting[
-													this.state.currentTarget === 'product'
-														? 'price_item_fields'
-														: 'rcl_fields'
-												]
-											}
-											onTest={target =>
-												this.loadRecordsForDg(_active.Id, target)
-											}
-										/>
+										{this.state.targetingResults[
+											this.state.added[this.state.open].Id
+										] ? (
+											<DGTargets
+												results={
+													this.state.targetingResults[
+														this.state.added[this.state.open].Id
+													]
+												}
+												bothEntities={
+													_active.csfamext__target_object__c === 'Both'
+												}
+												fields={
+													this.customSetting[
+														this.state.currentTarget === 'product'
+															? 'price_item_fields'
+															: 'rcl_fields'
+													]
+												}
+												onTest={this.targetRecords}
+											/>
+										) : (
+											''
+										)}
 									</div>
 								</div>
 							) : null}

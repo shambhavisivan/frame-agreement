@@ -123,12 +123,18 @@
             }
 
             .fa-modal-footer {
-                justify-content: space-between;
+                display: flex;
                 padding: 0.5rem;
                 box-shadow: none;
 
+                .fa-footer-btn-container {
+                    display: flex;
+                    justify-content: flex-start;
+                }
+
                 .fa-button {
                     margin-left: 0;
+                    margin-right: 10px;
                 }
             }
         }

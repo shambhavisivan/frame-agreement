@@ -37,7 +37,7 @@ export const truncateCPField = (field, titleCase) => {
 	return titleCase ? toTitleCase(returnString) : returnString;
 };
 
-export const IsJsonString = str => {
+export const isJson = str => {
 	try {
 		JSON.parse(str);
 	} catch (e) {

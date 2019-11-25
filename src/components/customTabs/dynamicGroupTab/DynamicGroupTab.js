@@ -5,12 +5,12 @@ import Select from 'react-select';
 
 import {
 	decodeEntities,
-	IsJsonString,
+	isJson,
 	makeId,
 	truncateCPField
 } from '../../../utils/shared-service';
-import Icon from '../../utillity/Icon';
 import LogicForm from '../utility/LogicForm';
+import Icon from '../../utillity/Icon';
 import DGTargets from '../utility/DGTargets';
 
 import CommercialProductSkeleton from '../../skeletons/CommercialProductSkeleton';
@@ -83,7 +83,7 @@ class DynamicGroupTab extends React.Component {
 					response = response.filter(
 						g => g.csfamext__group_type__c === 'Dynamic Group'
 					);
-					response = response.map(g => this.processGroup(g));
+					response = response.map(g => this.processGroup_old(g));
 					return response;
 				}
 			});
@@ -96,7 +96,7 @@ class DynamicGroupTab extends React.Component {
 			.then(response => {
 				response = decodeEntities(response);
 
-				if (typeof response === 'string' && IsJsonString(response)) {
+				if (typeof response === 'string' && isJson(response)) {
 					response = JSON.parse(response);
 				}
 
@@ -230,9 +230,13 @@ class DynamicGroupTab extends React.Component {
 		// ****************************
 	}
 
-	processGroup(g) {
+	processGroup_old(g) {
+		let target =
+			g.csfamext__target_object__c === 'Rate Card Line' ? 'rcl' : 'product';
+
 		g = JSON.parse(JSON.stringify(g));
-		if (IsJsonString(g.csfamext__logic_components_JSON__c)) {
+
+		if (isJson(g.csfamext__logic_components_JSON__c)) {
 			g.csfamext__logic_components_JSON__c = JSON.parse(
 				g.csfamext__logic_components_JSON__c
 			);
@@ -240,11 +244,22 @@ class DynamicGroupTab extends React.Component {
 			g.csfamext__logic_components_JSON__c = JSON.parse(BLANK_CIRCUITS);
 		}
 
+		if (isJson(g.csfamext__expression__c)) {
+			g.csfamext__expression__c = JSON.parse(
+				decodeEntities(g.csfamext__expression__c)
+			)[target];
+		}
+
+		if (!g.csfamext__logic_components_JSON__c.hasOwnProperty('logic')) {
+			g.csfamext__logic_components_JSON__c =
+				g.csfamext__logic_components_JSON__c[target];
+		}
+
 		g.logic = g.csfamext__logic_components_JSON__c.logic;
 
 		g.circuits = g.csfamext__logic_components_JSON__c.circuits.map(circ => {
 			circ.Id = 'cc-' + makeId();
-			circ.parsable = IsJsonString(circ.value);
+			circ.parsable = isJson(circ.value);
 
 			if (circ.parsable) {
 				circ.parsed = circ.parsed;
@@ -254,6 +269,77 @@ class DynamicGroupTab extends React.Component {
 
 		delete g.csfamext__logic_components_JSON__c;
 		return g;
+	}
+
+	processGroup(group) {
+		let is_group_valid = isJson(
+			decodeEntities(group.csfamext__logic_components_JSON__c)
+		);
+
+		group.logicComponents = is_group_valid
+			? JSON.parse(decodeEntities(group.csfamext__logic_components_JSON__c))
+			: {};
+
+		group.csfamext__target_object__c =
+			group.csfamext__target_object__c === 'Rate Card Line'
+				? 'Rate Card Line'
+				: 'Commercial Products';
+
+		if (is_group_valid) {
+			// legacy config
+			if (group.logicComponents.hasOwnProperty('circuits')) {
+				// Find out whats the target record
+				let _new_data = {};
+				let _target =
+					group.csfamext__target_object__c === 'Commercial Product'
+						? 'product'
+						: 'rcl';
+				_new_data[_target] = group.logicComponents;
+
+				let _expression = null;
+
+				if (!isJson(group.csfamext__expression__c)) {
+					_expression = {
+						[_target]: decodeEntities(group.csfamext__expression__c)
+					};
+
+					group.csfamext__expression__c = _expression;
+				}
+
+				console.warn('Legacy group detected! Updating...');
+
+				window.SF.invokeAction('saveDynamicGroupLogic', [
+					group.Id,
+					JSON.stringify(_new_data),
+					JSON.stringify(_expression)
+				]);
+
+				group.logicComponents = _new_data;
+			}
+
+			['product', 'rcl'].forEach(target => {
+				if (group.logicComponents.hasOwnProperty(target)) {
+					group.logicComponents[target].circuits = group.logicComponents[
+						target
+					].circuits.map(circ => {
+						circ.Id = 'cc-' + makeId();
+						circ.parsable = isJson(circ.value);
+
+						if (circ.parsable) {
+							circ.parsed = circ.parsed;
+						}
+
+						return circ;
+					});
+				}
+			});
+		}
+
+		group.csfamext__expression__c = decodeEntities(
+			group.csfamext__expression__c
+		);
+
+		return group;
 	}
 
 	onAddGroup(selected_group) {
@@ -322,7 +408,7 @@ class DynamicGroupTab extends React.Component {
 	async updateCustomData(enforceSave) {
 		let customData = await window.FAM.api.getCustomData(ACTIVE_FA.Id);
 
-		if (typeof customData === 'string' && IsJsonString(customData)) {
+		if (typeof customData === 'string' && isJson(customData)) {
 			customData = JSON.parse(customData);
 		}
 
@@ -345,9 +431,13 @@ class DynamicGroupTab extends React.Component {
 		let _logic = this.state.added[dgId].logic;
 		let _circuits = this.state.added[dgId].circuits;
 
-		if (_logic && _logic.length >= 1) {
+		if (!_logic) {
+			return '';
+		}
+
+		if (_logic.logic && _logic.logic.length >= 1) {
 			const generateCircuitString = index => {
-				let circ = _circuits[index];
+				let circ = _logic.circuits[index];
 				let _circuitString = '[' + index + ']';
 				try {
 					_circuitString =
@@ -360,22 +450,23 @@ class DynamicGroupTab extends React.Component {
 				return _circuitString;
 			};
 
-			let _body = _logic.replace(new RegExp('[0-9]', 'g'), match => {
+			let _body = _logic.logic.replace(new RegExp('[0-9]', 'g'), match => {
 				return generateCircuitString(+match);
 			});
 
 			_expression += _body;
 		} else {
-			_circuits.forEach((circ, i) => {
+			_logic.circuits.forEach((circ, i) => {
 				_expression +=
 					circ.field +
 					' ' +
 					circ.operator +
 					' ' +
 					(circ.parsed ? circ.value : "'" + circ.value + "'");
-				_expression += _circuits.length - 1 !== i ? ' OR ' : '';
+				_expression += _logic.circuits.length - 1 !== i ? ' OR ' : '';
 			});
 		}
+
 		console.log(_circuits);
 
 		this.setState({
@@ -448,7 +539,7 @@ class DynamicGroupTab extends React.Component {
 	onAddLogicCircuit(dgId, circuit) {
 		circuit.Id = 'cc-' + makeId();
 
-		circuit.parsable = IsJsonString(circuit.value);
+		circuit.parsable = isJson(circuit.value);
 
 		if (circuit.parsable) {
 			circuit.parsed = false;
@@ -478,7 +569,7 @@ class DynamicGroupTab extends React.Component {
 			this.state.added[this.state.open].csfamext__target_object__c ===
 			'Commercial Product'
 		) {
-			str = 'pi';
+			str = 'product';
 		} else if (
 			this.state.added[this.state.open].csfamext__target_object__c ===
 			'Rate Card Line'

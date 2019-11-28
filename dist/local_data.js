@@ -287,7 +287,7 @@ const FACSettings = {
 	price_item_fields: 'Id, cspmb__Is_Recurring_Discount_Allowed__c',
 	show_volume_fields: true,
 	frame_agreement_fields: 'Id, csconta__Account__c',
-	account_fields: 'Name, Id, Id',
+	account_fields: 'Name, Type',
 	decomposition_chunk_size: 2,
 	discount_as_price: false,
 	approvers_revise: true,
@@ -1784,6 +1784,7 @@ const ButtonStandardData = {
 	Save: ['Draft', 'Requires Approval'],
 	SubmitForApproval: ['Requires Approval'],
 	Submit: ['Approved'],
+	Delta: '*',
 	DeleteProducts: ['Draft', 'Requires Approval'],
 	BulkNegotiate: ['Draft', 'Requires Approval'],
 	AddProducts: ['Draft', 'Requires Approval']

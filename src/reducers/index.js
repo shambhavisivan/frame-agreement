@@ -132,7 +132,7 @@ function formatDiscLevels(dlList = []) {
 			let returnValues;
 			try {
 				returnValues = values
-					.replace(/ /g, '')
+					.replace(/\s+/g, '')
 					.split(',')
 					.map(num => {
 						let ret = +num;
@@ -341,7 +341,7 @@ function validateCSV(str) {
 	let returnStr = str;
 	try {
 		returnStr = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(
-			str.replace(/ /g, '')
+			str.replace(/(?:\r\n|\r|\n|\s)/g, '')
 		);
 	} catch (e) {
 		console.warn(e);
@@ -1021,7 +1021,7 @@ const rootReducer = (state = initialState, action) => {
 				validateCSV(action.payload.FACSettings.rcl_fields)
 			) {
 				action.payload.FACSettings.rcl_fields = action.payload.FACSettings.rcl_fields
-					.replace(/ /g, '')
+					.replace(/(?:\r\n|\r|\n|\s)/g, '')
 					.split(',');
 			} else {
 				action.payload.FACSettings.rcl_fields = [];
@@ -1032,7 +1032,7 @@ const rootReducer = (state = initialState, action) => {
 				validateCSV(action.payload.FACSettings.account_fields)
 			) {
 				action.payload.FACSettings.account_fields = action.payload.FACSettings.account_fields
-					.replace(/ /g, '')
+					.replace(/(?:\r\n|\r|\n|\s)/g, '')
 					.split(',');
 			} else {
 				action.payload.FACSettings.account_fields = ['Name'];
@@ -1047,7 +1047,7 @@ const rootReducer = (state = initialState, action) => {
 				validateCSV(action.payload.FACSettings.usage_type_fields__c)
 			) {
 				action.payload.FACSettings.usage_type_fields__c = action.payload.FACSettings.usage_type_fields__c
-					.replace(/ /g, '')
+					.replace(/(?:\r\n|\r|\n|\s)/g, '')
 					.split(',');
 			} else {
 				action.payload.FACSettings.usage_type_fields__c = [];
@@ -1055,7 +1055,7 @@ const rootReducer = (state = initialState, action) => {
 
 			if (validateCSV(action.payload.FACSettings.price_item_fields)) {
 				action.payload.FACSettings.price_item_fields = action.payload.FACSettings.price_item_fields
-					.replace(/ /g, '')
+					.replace(/(?:\r\n|\r|\n|\s)/g, '')
 					.split(',');
 
 				action.payload.FACSettings.price_item_fields.forEach(f => {
@@ -1071,7 +1071,7 @@ const rootReducer = (state = initialState, action) => {
 				validateCSV(action.payload.FACSettings.volume_fields_visibility)
 			) {
 				action.payload.FACSettings.volume_fields_visibility = action.payload.FACSettings.volume_fields_visibility
-					.replace(/ /g, '')
+					.replace(/(?:\r\n|\r|\n|\s)/g, '')
 					.split(',');
 			} else {
 				action.payload.FACSettings.volume_fields_visibility = VOLUME_FIELDS.map(
@@ -1095,7 +1095,7 @@ const rootReducer = (state = initialState, action) => {
 
 			if (validateCSV(action.payload.FACSettings.frame_agreement_fields)) {
 				action.payload.FACSettings.frame_agreement_fields = action.payload.FACSettings.frame_agreement_fields
-					.replace(/ /g, '')
+					.replace(/(?:\r\n|\r|\n|\s)/g, '')
 					.split(',');
 
 				action.payload.FACSettings.frame_agreement_fields.forEach(f => {
@@ -1279,7 +1279,7 @@ const rootReducer = (state = initialState, action) => {
 
 				cb.id =
 					cb.id ||
-					(cb.label || 'unlabeled-' + i).replace(/ /g, '').toLowerCase();
+					(cb.label || 'unlabeled-' + i).replace(/\s+/g, '').toLowerCase();
 
 				if (!cb.location || !LOCATIONS[cb.location]) {
 					cb.location = 'Editor';
@@ -1345,9 +1345,11 @@ const rootReducer = (state = initialState, action) => {
 						'Cannot find price item ' +
 							key +
 							' in:' +
-							state.commercialProducts.map(cp => cp.Id)
+							state.commercialProducts.map(cp => cp.Id).slice(0, 20) +
+							'...'
 					);
-					return { ...state };
+					// return { ...state };
+					continue;
 				}
 
 				// **********************************************
@@ -1402,7 +1404,7 @@ const rootReducer = (state = initialState, action) => {
 					if (
 						charge.chargeType
 							.toLowerCase()
-							.replace(/ /g, '')
+							.replace(/\s+/g, '')
 							.replace(/\W/g, '') === 'oneoffcharge'
 					) {
 						delete retCharge.recurring;
@@ -1410,7 +1412,7 @@ const rootReducer = (state = initialState, action) => {
 					} else if (
 						charge.chargeType
 							.toLowerCase()
-							.replace(/ /g, '')
+							.replace(/\s+/g, '')
 							.replace(/\W/g, '') === 'recurringcharge'
 					) {
 						delete retCharge.oneOff;

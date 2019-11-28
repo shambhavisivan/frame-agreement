@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Collapse } from 'react-collapse';
+import moment from 'moment';
 
 import { truncateCPField, copy } from '~/src/utils/shared-service';
 import Icon from './Icon';
@@ -339,6 +340,10 @@ class DeltaStructure extends Component {
 		});
 	}
 
+	isTimestamp(num) {
+		return typeof num === 'number' && num.toString().length === 13;
+	}
+
 	render() {
 		if (!this.props.data) {
 			console.warn('No delta found!');
@@ -357,6 +362,16 @@ class DeltaStructure extends Component {
 
 					<div className="delta-diff-collection">
 						{Object.keys(_faFields).map(field => {
+							let _old = _faFields[field].old_value;
+							let _new = _faFields[field].new_value;
+
+							if (this.isTimestamp(_old)) {
+								_old = moment(_old).format('L');
+							}
+							if (this.isTimestamp(_new)) {
+								_new = moment(_new).format('L');
+							}
+
 							return (
 								<div key={field} className="charge-container">
 									<span className="charge-label">
@@ -364,8 +379,8 @@ class DeltaStructure extends Component {
 									</span>
 
 									<Diff
-										old={_faFields[field].old_value}
-										new={_faFields[field].new_value}
+										old={_old}
+										new={_new}
 										status={_faFields[field].status}
 									/>
 								</div>

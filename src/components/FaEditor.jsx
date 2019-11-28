@@ -202,14 +202,37 @@ export class FaEditor extends Component {
 				}
 
 				if (IdsToLoad.length) {
+					// Check if any CPs have been deleted
+					let _idsToLoadSet = new Set(IdsToLoad);
+					let _filteredCpIdList = [];
+
+					this.props.commercialProducts.forEach(cp => {
+						if (_idsToLoadSet.has(cp.Id)) {
+							_idsToLoadSet.delete(cp.Id);
+							_filteredCpIdList.push(cp.Id);
+						}
+					});
+					if (_idsToLoadSet.size) {
+						this.props.createToast(
+							'warning',
+							'Invalid product found!',
+							'Some products have been ignored while loading. Check the logs for more information'
+						);
+						log.orange(
+							'These products cannot be found in getCommercialProducts response:',
+							Array.from(_idsToLoadSet)
+						);
+					}
 					// Get data for commercial products
 					// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
-					this.props.getCommercialProductData(IdsToLoad).then(async r => {
-						await this.props.addProductsToFa(this.faId, IdsToLoad);
-						await cpFilterEvent();
-						await onLoadingFinished();
-						this.props.validateFrameAgreement(this.faId);
-					});
+					this.props
+						.getCommercialProductData(_filteredCpIdList)
+						.then(async r => {
+							await this.props.addProductsToFa(this.faId, _filteredCpIdList);
+							await cpFilterEvent();
+							await onLoadingFinished();
+							this.props.validateFrameAgreement(this.faId);
+						});
 				} else {
 					await cpFilterEvent();
 					await onLoadingFinished();

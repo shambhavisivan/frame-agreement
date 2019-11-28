@@ -86,7 +86,7 @@ class FaList extends Component {
 		// initial load accounts loadAccounts
 		let params = {};
 		params.pointedObject = 'Account';
-		params.columns = ['Name'];
+		params.columns = this.props.settings.FACSettings.account_fields || ['Name'];
 		params.whereClause = null;
 		params.lastId = null;
 		params.offset = 20 * 10;

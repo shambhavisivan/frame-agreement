@@ -89,7 +89,6 @@ export const initialiseApi = () => {
 	window.FAM.publish = publish;
 
 	log.blue('FAC API initialised!');
-
 };
 
 Object.defineProperty(Array.prototype, 'paginate', {

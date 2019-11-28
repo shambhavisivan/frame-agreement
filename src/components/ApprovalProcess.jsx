@@ -327,14 +327,10 @@ export class ApprovalProcess extends React.Component {
 													</div>
 													<div
 														className="list-cell"
-														title={moment(step.CreatedDate).format(
-															'MM/D/YYYY, HH:mm'
-														)}
+														title={moment(step.CreatedDate).format('L HH:mm')}
 													>
 														<span>
-															{moment(step.CreatedDate).format(
-																'MM/D/YYYY, HH:mm'
-															)}
+															{moment(step.CreatedDate).format('L HH:mm')}
 														</span>
 													</div>
 													<div

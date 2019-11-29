@@ -1102,7 +1102,7 @@ global with sharing class FrameRateManagerController {
 		}
 
 		// contains information about which rate card belongs to which price item (rateCardId: priceItemId)
-		Map < Id, Id> rateCard_priceItemMap = new Map < Id, Id> ();
+		Map < Id, List<Id>> rateCard_priceItemMap = new Map < Id, List<Id>> ();
 		// contains list of rate card ids to be loaded
 		List <Id> rateCardIdList = new List <Id> ();
 
@@ -1113,7 +1113,19 @@ global with sharing class FrameRateManagerController {
 		];
 
 		for (cspmb__Price_Item_Rate_Card_Association__c pirca : rateCardAssocList) {
-			rateCard_priceItemMap.put(pirca.cspmb__Rate_Card__r.Id, pirca.cspmb__Price_Item__c);
+
+			// rateCard_priceItemMap.put(pirca.cspmb__Rate_Card__r.Id, pirca.cspmb__Price_Item__c);
+
+			if (rateCard_priceItemMap.containsKey(pirca.cspmb__Rate_Card__r.Id)) {
+				List <Id> tempCpIdList = rateCard_priceItemMap.get(pirca.cspmb__Rate_Card__r.Id);
+				tempCpIdList.add(pirca.cspmb__Price_Item__c);
+				rateCard_priceItemMap.put(pirca.cspmb__Rate_Card__r.Id, tempCpIdList);
+			} else {
+				rateCard_priceItemMap.put(pirca.cspmb__Rate_Card__r.Id, new List<Id>{
+					pirca.cspmb__Price_Item__c
+				});
+			}
+
 			rateCardIdList.add(pirca.cspmb__Rate_Card__r.Id);
 		}
 		// ***************************************************
@@ -1166,18 +1178,22 @@ global with sharing class FrameRateManagerController {
 			}
 		}
 		// ***************************************************
-		// populate 'prId_RateCards' with rate cards against corresponding ids taken from 'rateCard_priceItemMap'
 		for (RateCard rc : rateCardModelList) {
-			Id corespondingPriceItemId = rateCard_priceItemMap.get(rc.Id);
 
-			// List <RateCard> corespondingRateCards = new List <RateCard> ();
-			if (!prId_RateCards.containsKey(corespondingPriceItemId)) {
-				prId_RateCards.put(corespondingPriceItemId, new List <RateCard> ());
+			List <Id> corespondingPriceItemIds = rateCard_priceItemMap.get(rc.Id);
+
+			for (Id cpId : corespondingPriceItemIds) {
+
+				if (!prId_RateCards.containsKey(cpId)) {
+					prId_RateCards.put(cpId, new List <RateCard> ());
+				}
+
+				List <RateCard> tempRcList = prId_RateCards.get(cpId);
+				tempRcList.add(rc);
+				prId_RateCards.put(cpId, tempRcList);
+
 			}
 
-			List <RateCard> tempRcList = prId_RateCards.get(corespondingPriceItemId);
-			tempRcList.add(rc);
-			prId_RateCards.put(corespondingPriceItemId, tempRcList);
 
 		}
 		// ***************************************************
@@ -1972,7 +1988,6 @@ global with sharing class FrameRateManagerController {
 			try {
 				insert pipraList;
 				csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-
 				// Set active status to FA, and if its replacing another fa, set its effective start date
 				csconta__Frame_Agreement__c fa = [
 					select Id, csconta__Status__c, csconta__replaced_frame_agreement__c

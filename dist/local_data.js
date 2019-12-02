@@ -10,7 +10,7 @@ function createPromise(result, timeout = 500) {
 	});
 }
 
-function makeId(n) {
+function makeId(n = 15) {
 	var text = '';
 	var possible =
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -306,6 +306,233 @@ const FACSettings = {
 	},
 	truncate_product_fields: true
 };
+
+const relatedLists = [
+	{
+		label: 'Account',
+		columns: 'Id, csconta__Agreement_Name__c',
+		records: [
+			{
+				Id: 'a1t1t000000EqXhAAK',
+				csconta__Agreement_Name__c: 'TEst'
+			},
+			{
+				Id: 'a1t1t000000GFYEAA4',
+				csconta__Agreement_Name__c: 'Delta Test #1 - Clone'
+			}
+		]
+	},
+	{
+		label: 'Pricing Rule Group',
+		columns: 'Id, cspmb__always_applied__c, cspmb__description__c',
+		records: [
+			{
+				Id: 'NQJhve5krZcVWaS',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Implementation private organization organization implementation scalable scalable buisness multi-purspose clause module'
+			},
+			{
+				Id: 'ZslNFo1RyqoBtgd',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Concensus multi-purspose implementation multi-purspose master concensus organization multi-purspose process clause module'
+			},
+			{
+				Id: '4fzmW3rohX4QAPs',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Concensus process organization process multi-purspose clause buisness buisness implementation process module'
+			},
+			{
+				Id: 'NC12C5YDwVXbqaB',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Multi-purspose private buisness organization process concensus invoice private buisness concensus module'
+			},
+			{
+				Id: '26Dxa9Lbuk4mRs2',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Concensus master scalable organization organization scalable private implementation concensus buisness module'
+			},
+			{
+				Id: 'uMJSRkWKCJ8V9tK',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Concensus implementation clause private buisness organization private clause scalable multi-purspose module'
+			},
+			{
+				Id: 'qIHKZWOZaz8noIe',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Organization process implementation organization private invoice buisness concensus organization invoice module'
+			},
+			{
+				Id: 'BmRhVjcIEs4Vu4r',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Clause invoice private private implementation clause buisness master master clause module'
+			},
+			{
+				Id: 'DEWj7sSACfXHwg7',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Implementation private process implementation private master multi-purspose clause invoice implementation module'
+			},
+			{
+				Id: 'bZoI2GlWNSILoLp',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Concensus organization scalable buisness private clause scalable invoice organization private module'
+			},
+			{
+				Id: 'ewuWbTtHjLMEhyR',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Buisness organization implementation master clause organization organization scalable clause private module'
+			},
+			{
+				Id: 'Ki9fOuTJQAbLGlI',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Organization buisness multi-purspose clause private multi-purspose concensus invoice organization organization module'
+			},
+			{
+				Id: 'Xa7rD7vNMg36pbw',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Buisness buisness process scalable organization master organization organization multi-purspose organization module'
+			},
+			{
+				Id: 's9IAmsIKLWOfGxG',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Master buisness buisness process clause clause organization private clause private module'
+			},
+			{
+				Id: 'IbiDbFn4VET6fKo',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Buisness master clause concensus concensus buisness private multi-purspose buisness organization module'
+			},
+			{
+				Id: 'LXxnABN98pTnbHX',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Process scalable concensus implementation private buisness clause scalable master invoice module'
+			},
+			{
+				Id: 'xehyzWQSNOleqsa',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Implementation multi-purspose concensus master buisness buisness implementation process scalable process module'
+			},
+			{
+				Id: '9WKj2lOI6WgGb5x',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Clause buisness master multi-purspose process invoice process implementation implementation private module'
+			},
+			{
+				Id: 'h75wku3iIBH5aul',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Private scalable private master master clause clause implementation implementation concensus module'
+			},
+			{
+				Id: 'GaXFxXiUc5sKr70',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Multi-purspose clause implementation implementation process concensus process buisness invoice organization module'
+			},
+			{
+				Id: 'L0Bz7gqhdpgeq7O',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Invoice buisness clause buisness multi-purspose buisness master multi-purspose invoice concensus module'
+			},
+			{
+				Id: 'M087ltfjA1jH9FM',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Implementation scalable scalable implementation implementation organization master buisness invoice process module'
+			},
+			{
+				Id: 'xq005d1lEsMQnrl',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Scalable private concensus invoice buisness process process organization invoice clause module'
+			},
+			{
+				Id: 'k6YdQ4fUI8Xc9ZW',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Invoice master implementation scalable private process multi-purspose buisness invoice process module'
+			},
+			{
+				Id: 'oVO9QnSN07Mtjwe',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Buisness multi-purspose multi-purspose process private process process multi-purspose organization invoice module'
+			},
+			{
+				Id: 'vkKGXgSzqLuxlo9',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Implementation clause buisness concensus invoice organization invoice organization invoice multi-purspose module'
+			},
+			{
+				Id: '7ELwnNKDFmwu6cl',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Concensus master buisness clause invoice multi-purspose buisness invoice private clause module'
+			},
+			{
+				Id: 'ral6roIsxT5FZbc',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Multi-purspose multi-purspose organization process implementation process multi-purspose concensus master multi-purspose module'
+			},
+			{
+				Id: 'zLbuW9Ku894vdwt',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Process scalable clause concensus organization master clause private invoice organization module'
+			},
+			{
+				Id: 'ayRfgOISGGO987s',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Process organization multi-purspose invoice clause master organization process process buisness module'
+			},
+			{
+				Id: 'A5VYCuvBjJs8VOr',
+				cspmb__always_applied__c: true,
+				cspmb__description__c:
+					'Multi-purspose invoice organization concensus clause organization multi-purspose implementation multi-purspose organization module'
+			},
+			{
+				Id: 'jKfRGzENOVoKGSY',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Master master invoice scalable master organization master organization process implementation module'
+			},
+			{
+				Id: 'azBdM9oVHMwoTJD',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Organization master private multi-purspose multi-purspose private master invoice clause clause module'
+			},
+			{
+				Id: 'IIQz2KoNlfKsKBc',
+				cspmb__always_applied__c: false,
+				cspmb__description__c:
+					'Clause multi-purspose process process private process process multi-purspose multi-purspose process module'
+			}
+		]
+	}
+];
 
 const frameAgreements = [
 	{
@@ -1729,6 +1956,20 @@ const CategorizationData = [
 		name: 'Beta',
 		field: 'Categorization_Beta__c',
 		values: ['10GB', '20GB', '50GB', '100GB']
+	}
+];
+const RelatedListsData = [
+	{
+		label: 'Account',
+		object: 'csconta__Frame_Agreement__c',
+		fa_lookup: 'csconta__master_frame_agreement__c',
+		columns: 'Id, csconta__Agreement_Name__c'
+	},
+	{
+		label: 'Pricing Rule Group',
+		object: 'cspmb__Pricing_Rule_Group__c',
+		fa_lookup: 'csconta__frame_agreement__c',
+		columns: 'Id, cspmb__always_applied__c, cspmb__description__c'
 	}
 ];
 
@@ -3410,11 +3651,12 @@ window.SF = SF = {
 					commercialProductCount: 10,
 					frameAgreementsCount: 3,
 					itemsPerPage: 20,
-					ButtonCustomData: ButtonCustomData,
-					ButtonStandardData: ButtonStandardData,
-					CategorizationData: CategorizationData,
-					HeaderData: HeaderData,
-					CustomTabsData: CustomTabsData,
+					ButtonCustomData,
+					ButtonStandardData,
+					CategorizationData,
+					RelatedListsData,
+					HeaderData,
+					CustomTabsData,
 					account: {
 						Id: 'aaaa',
 						Name: 'aaaa'
@@ -3747,6 +3989,9 @@ window.SF = SF = {
 					count: 2014
 				};
 				return createPromise(accountsInformation);
+
+			case 'getRelatedLists':
+				return createPromise(relatedLists);
 
 			case 'addAccountAssociation':
 				var newAssociation = {

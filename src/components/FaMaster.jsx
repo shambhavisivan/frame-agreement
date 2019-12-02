@@ -15,6 +15,7 @@ import {
 	addProductsToFa,
 	removeFaFromMaster,
 	negotiate,
+	getRelatedLists,
 	getCommercialProductData
 } from '../actions';
 
@@ -37,6 +38,9 @@ import Checkbox from './utillity/inputs/Checkbox';
 import DropdownCheckbox from './utillity/inputs/DropdownCheckbox';
 
 import ConfirmationModal from './modals/ConfirmationModal';
+import RelatedLists from './relatedLists/RelatedLists';
+import Tabs from './utillity/tabs/Tabs';
+import Tab from './utillity/tabs/Tab';
 
 // import CommercialProductsTab from './FaEditor/CommercialProductsTab';
 import FaFields from './FaEditor/FaFields';
@@ -164,8 +168,17 @@ class FaMaster extends Component {
 	}
 
 	componentDidMount() {
-		this.props.getAttachment(this.faId).then(response => {
-			// this.props.addFaToMaster(this.faId, Object.keys(response.products));
+		let _promiseArray = [];
+
+		if (
+			!this.props.frameAgreements[this.faId]._ui.hasOwnProperty('relatedList')
+		) {
+			_promiseArray.push(this.props.getRelatedLists(this.faId));
+		}
+
+		_promiseArray.push(this.props.getAttachment(this.faId));
+
+		Promise.all(_promiseArray).then(response => {
 			this._setState(
 				{
 					loading: {
@@ -178,6 +191,7 @@ class FaMaster extends Component {
 				}
 			);
 		});
+
 		// **************************************
 		window.editor = this;
 	}
@@ -468,7 +482,22 @@ class FaMaster extends Component {
 
 				<div className="fa-main-body">
 					<div className="fa-main-body__inner">
-						<FaFields onActionTaken={this.onActionTaken} faId={this.faId} />
+						{this.props.settings.RelatedListsData.length ? (
+							<Tabs initial={0}>
+								<Tab label="Frame Agreement">
+									<FaFields
+										onActionTaken={this.onActionTaken}
+										faId={this.faId}
+									/>
+								</Tab>
+								<Tab label="Related Lists">
+									<RelatedLists faId={this.faId} />
+								</Tab>
+							</Tabs>
+						) : (
+							<FaFields onActionTaken={this.onActionTaken} faId={this.faId} />
+						)}
+
 						{_faAgreementList}
 					</div>
 				</div>
@@ -512,6 +541,7 @@ const mapDispatchToProps = {
 	addProductsToFa,
 	removeFaFromMaster,
 	negotiate,
+	getRelatedLists,
 	getCommercialProductData
 };
 

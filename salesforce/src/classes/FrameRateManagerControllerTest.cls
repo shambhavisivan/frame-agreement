@@ -747,6 +747,17 @@ private class FrameRateManagerControllerTest {
 
 		system.assertEquals(1, pickList.keySet().size());
 	}
+
+	public static testMethod void TestGetPointedObjectFromFa() {
+		Test.startTest();
+
+		String pointedObject = FrameRateManagerController.getPointedObjectFromFa('csconta__Pricing_Rule_Group__c');
+
+		Test.stopTest();
+
+		system.assertEquals('cspmb__Pricing_Rule_Group__c', pointedObject);
+	}
+
 	public static testMethod void testPriceItemDataEdgeCases() {
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c();
 		insert cp_1;

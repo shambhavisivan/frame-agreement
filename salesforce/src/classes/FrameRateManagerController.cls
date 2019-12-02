@@ -130,6 +130,20 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
+	@TestVisible private static csutil__JSON_Data__c getRelatedListsData() {
+		List <csutil__JSON_Data__c> json_data = [
+			select csutil__value__c
+			from csutil__JSON_Data__c
+			where Name = 'FA-Related-Lists'
+		];
+
+		if (json_data.isEmpty()) {
+			return null;
+		} else {
+			return json_data[0];
+		}
+	}
+
 	@TestVisible private static csutil__JSON_Data__c getCustomTabsData() {
 
 		String profile = getUserProfile();
@@ -282,8 +296,7 @@ global with sharing class FrameRateManagerController {
 		return association;
 	}
 
-	@RemoteAction
-	@TestVisible public static Map <String, Object> getLookupInformation(String field, String column, String whereClause, String initValId) {
+	public static String getPointedObjectFromFa(String field) {
 		Map <String, Object> returnValues = new Map <String, Object> ();
 		String pointedObject = '';
 
@@ -297,13 +310,18 @@ global with sharing class FrameRateManagerController {
 		for (Schema.DescribeSobjectResult res : results) {
 			Map<String, Schema.SObjectField> fieldMap = res.fields.getMap();
 
+		    pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
 
-			try {
-				pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
-			} catch (ListException e) {
-				throw new InvalidFieldTypeException('Header field is not lookup');
-			}
 		}
+
+		return pointedObject;
+	}
+
+	@RemoteAction
+	@TestVisible public static Map <String, Object> getLookupInformation(String field, String column, String whereClause, String initValId) {
+		Map <String, Object> returnValues = new Map <String, Object> ();
+
+		String pointedObject = getPointedObjectFromFa(field);
 		//***********************************************************************************
 
 		String query_count = 'select count() from  ' + pointedObject;
@@ -336,21 +354,9 @@ global with sharing class FrameRateManagerController {
 		if (parameters.containsKey('pointedObject')) {
 			// Supporting getting of records for known pointed object
 			pointedObject = String.valueOf(parameters.get('pointedObject'));
-
 		} else {
+			pointedObject = getPointedObjectFromFa((String) parameters.get('field'));
 
-			String [] types = new String[]{
-				'csconta__Frame_Agreement__c'
-			};
-
-			Schema.DescribeSobjectResult[] results = Schema.describeSObjects(types);
-
-			for (Schema.DescribeSobjectResult res : results) {
-				Map<String, Schema.SObjectField> fieldMap = res.fields.getMap();
-
-				String field = (String) parameters.get('field');
-				pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
-			}
 		}
 		//***********************************
 		List <String> columnsParsed = new List <String> ();
@@ -793,6 +799,7 @@ global with sharing class FrameRateManagerController {
 		List <Object> buttonCustom = new List <Object> ();
 		Map <String, Object> buttonStandard = new Map <String, Object> ();
 		List <Object> categorizationData = new List <Object> ();
+		List <Object> relatedData = new List <Object> ();
 		List <Object> customTabs = new List <Object> ();
 
 		csutil__JSON_Data__c header_data = getHeaderData();
@@ -800,6 +807,7 @@ global with sharing class FrameRateManagerController {
 		csutil__JSON_Data__c button_standard = getStandardButtonData();
 		csutil__JSON_Data__c categorization_data = getCategorizationData();
 		csutil__JSON_Data__c custom_tabs = getCustomTabsData();
+		csutil__JSON_Data__c related_lists = getRelatedListsData();
 
 		if (header_data != null && header_data.csutil__value__c != null) {
 			headerData = (List <Object>) JSON.deserializeUntyped(header_data.csutil__value__c);
@@ -817,6 +825,10 @@ global with sharing class FrameRateManagerController {
 			categorizationData = (List <Object>) JSON.deserializeUntyped(categorization_data.csutil__value__c);
 		}
 
+		if (related_lists != null && related_lists.csutil__value__c != null) {
+			relatedData = (List <Object>) JSON.deserializeUntyped(related_lists.csutil__value__c);
+		}
+
 		if (custom_tabs != null && custom_tabs.csutil__value__c != null) {
 			customTabs = (List <Object>) JSON.deserializeUntyped(custom_tabs.csutil__value__c);
 		}
@@ -826,6 +838,7 @@ global with sharing class FrameRateManagerController {
 		appSettings.put('CustomTabsData', customTabs);
 		appSettings.put('ButtonCustomData', buttonCustom);
 		appSettings.put('ButtonStandardData', buttonStandard);
+		appSettings.put('RelatedListsData', relatedData);
 		appSettings.put('CategorizationData', categorizationData);
 		appSettings.put('FACSettings', getCustomSettings());
 
@@ -1037,6 +1050,45 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
+	public static List <Map <String, Object>> getRelatedLists(Id faId) {
+		List <Map <String, Object>> resultList = new List <Map <String, Object>> ();
+
+		List <Object> relatedData = new List <Object> ();
+
+		csutil__JSON_Data__c related_lists = getRelatedListsData();
+		String data;
+
+		if (related_lists == null || related_lists.csutil__value__c == null) {
+			//
+		} else {
+			relatedData = (List <Object>) JSON.deserializeUntyped(related_lists.csutil__value__c);
+		}
+
+		for (Object relatedListObject : relatedData) {
+
+			Map<String, Object> relatedList = (Map<String, Object>) relatedListObject;
+			Map <String, Object> relatedStructure = new Map <String, Object>();
+
+			String query = 'select ';
+			query += (String) relatedList.get('columns');
+			query += ' from ' + (String) relatedList.get('object');
+			query += ' where ' + (String) relatedList.get('fa_lookup') + ' = :faId';
+			query += ' limit 50000';
+
+			system.debug(query);
+
+			relatedStructure.put('label', (String) relatedList.get('label'));
+			relatedStructure.put('columns', (String) relatedList.get('columns'));
+			relatedStructure.put('records', database.query(query));
+
+			resultList.add(relatedStructure);
+		}
+
+		return resultList;
+
+	}
+
+	@RemoteAction
 	public static Map <String, Object> getCommercialProductData(List <String> priceItemIdList) {
 		Map <Id, cpData> cpDataMap = new Map <Id, cpData> ();
 
@@ -1091,7 +1143,6 @@ global with sharing class FrameRateManagerController {
 
 		return collectiveCpData;
 	}
-
 
 	public static Map <Id, List <RateCard>> getRateCards(List <Id> priceItemIdList) {
 		// contains end result, mapping price item ids to their rate cards

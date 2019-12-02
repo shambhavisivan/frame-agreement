@@ -1,0 +1,44 @@
+.related-lists-container {
+    background: var(--modal-light-bg);
+
+    .fa-pagination-container {
+        padding-top: 0;
+    }
+
+    .fa-related-list {
+        padding: 12px 0px;
+        background: white;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 2px 0 cvar(--shadow-opaque);
+            padding-bottom: 0;
+
+        h4 {
+            font-size: 1.125rem;
+            color: var(--table-c);
+            padding: 0px 24px;
+            margin-bottom: 12px;
+        }
+    }
+
+    .empty-rl-message {
+        font-size: 0.75rem;
+    }
+
+    .fa-modal-product-list {
+    	max-height: unset;
+        padding-top: 5px;
+
+	    .product-row {
+	    	cursor: default;
+            padding: 2px 0.75rem 6px 0.75rem;
+            border-bottom: 1px solid var(--modal-light-bg);
+            /*margin-bottom: 0px;*/
+
+            > span {
+                padding: 0;
+            }
+	    }
+
+    }
+
+}

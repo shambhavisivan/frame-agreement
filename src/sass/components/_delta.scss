@@ -1,7 +1,7 @@
     .delta-options {
         display: flex;
         padding: 1rem;
-        
+
         &.hidden {
             display: none;
         }
@@ -44,6 +44,7 @@
             border-left: 1px dotted #DDD;
             margin-left: 10px;
             font-size: 12px;
+            display: inline-block;
         }
 
         .delta-section-title {

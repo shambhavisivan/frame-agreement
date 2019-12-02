@@ -116,6 +116,23 @@ export const _getFrameAgreement = result => ({
 	payload: result
 });
 
+export const _loadRelatedLists = (faId, rlData) => ({
+	type: 'LOAD_RL',
+	payload: { faId, rlData }
+});
+
+export function getRelatedLists(faId) {
+	return function(dispatch) {
+		return new Promise((resolve, reject) => {
+			window.SF.invokeAction('getRelatedLists', [faId]).then(response => {
+				dispatch(_loadRelatedLists(faId, response));
+				resolve(response);
+				return response;
+			});
+		});
+	};
+}
+
 export function getFrameAgreement(faId) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {

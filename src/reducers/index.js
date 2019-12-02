@@ -338,15 +338,32 @@ function validateCSV(str) {
 		return false;
 	}
 
-	let returnStr = str;
+	let returnBoolean = str;
 	try {
-		returnStr = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(
+		returnBoolean = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(
 			str.replace(/(?:\r\n|\r|\n|\s)/g, '')
 		);
 	} catch (e) {
 		console.warn(e);
 	}
-	return returnStr;
+	return returnBoolean;
+}
+
+function convertCSVToArray(csv) {
+	if (typeof csv !== 'string') {
+		log.orange('Cannot convert "' + csv + '"" to array.');
+		return [];
+	}
+
+	let returnArr = [];
+
+	try {
+		returnArr = csv.replace(/(?:\r\n|\r|\n|\s)/g, '').split(',');
+	} catch (err) {
+		log.orange('Cannot convert "' + csv + '"" to array.');
+	}
+
+	return returnArr;
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -1525,6 +1542,30 @@ const rootReducer = (state = initialState, action) => {
 							...state.frameAgreements[faId]._ui,
 							attachment: _attachment,
 							commercialProducts: newCps
+						}
+					}
+				}
+			};
+
+		case 'LOAD_RL':
+			var faId = action.payload.faId;
+			var rlData = action.payload.rlData;
+
+			rlData.forEach(rl => {
+				rl.columns = validateCSV(rl.columns)
+					? convertCSVToArray(rl.columns)
+					: [];
+			});
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							relatedLists: rlData
 						}
 					}
 				}

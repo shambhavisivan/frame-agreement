@@ -14,6 +14,7 @@ import {
 	setFrameAgreementCpFilter,
 	negotiate,
 	setDisableDiscount,
+	getRelatedLists,
 	getCommercialProductData
 } from '../actions';
 
@@ -31,6 +32,11 @@ import { confirmAlert } from 'react-confirm-alert';
 import ApprovalProcess from './ApprovalProcess';
 
 import Toaster from './utillity/Toaster';
+
+import Tabs from './utillity/tabs/Tabs';
+import Tab from './utillity/tabs/Tab';
+
+import RelatedLists from './relatedLists/RelatedLists';
 
 import ConfirmationModal from './modals/ConfirmationModal';
 
@@ -187,67 +193,73 @@ export class FaEditor extends Component {
 			);
 		};
 
-		await this.props.getApprovalHistory(this.faId);
-		// Check if FA info is loaded already
-		// if (this.faId && this.props.frameAgreements[this.faId]._ui.attachment === null) {
+		let _promiseArray = [];
+
+		_promiseArray.push(this.props.getApprovalHistory(this.faId));
+
+		if (
+			!this.props.frameAgreements[this.faId]._ui.hasOwnProperty('relatedList')
+		) {
+			_promiseArray.push(this.props.getRelatedLists(this.faId));
+		}
+
 		if (this.props.frameAgreements[this.faId]._ui.attachment === null) {
-			// IF not, load attachment for FA
-			this.props.getAttachment(this.faId).then(async resp_attachment => {
-				// ***********************************************
-				let IdsToLoad = Object.keys(resp_attachment.products || {});
-				// If attachment is present
-				// Mend null values, its loaded now
-				for (var key in resp_attachment.products) {
-					resp_attachment.products[key] = resp_attachment.products[key] || {};
-				}
-
-				if (IdsToLoad.length) {
-					// Check if any CPs have been deleted
-					let _idsToLoadSet = new Set(IdsToLoad);
-					let _filteredCpIdList = [];
-
-					this.props.commercialProducts.forEach(cp => {
-						if (_idsToLoadSet.has(cp.Id)) {
-							_idsToLoadSet.delete(cp.Id);
-							_filteredCpIdList.push(cp.Id);
-						}
-					});
-					if (_idsToLoadSet.size) {
-						this.props.createToast(
-							'warning',
-							'Invalid product found!',
-							'Some products have been ignored while loading. Check the logs for more information'
-						);
-						log.orange(
-							'These products cannot be found in getCommercialProducts response:',
-							Array.from(_idsToLoadSet)
-						);
+			_promiseArray.push(
+				this.props.getAttachment(this.faId).then(async resp_attachment => {
+					// ***********************************************
+					let IdsToLoad = Object.keys(resp_attachment.products || {});
+					// If attachment is present
+					// Mend null values, its loaded now
+					for (var key in resp_attachment.products) {
+						resp_attachment.products[key] = resp_attachment.products[key] || {};
 					}
-					// Get data for commercial products
-					// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
-					this.props
-						.getCommercialProductData(_filteredCpIdList)
-						.then(async r => {
-							await this.props.addProductsToFa(this.faId, _filteredCpIdList);
-							await cpFilterEvent();
-							await onLoadingFinished();
-							this.props.validateFrameAgreement(this.faId);
+
+					if (IdsToLoad.length) {
+						// Check if any CPs have been deleted
+						let _idsToLoadSet = new Set(IdsToLoad);
+						let _filteredCpIdList = [];
+
+						this.props.commercialProducts.forEach(cp => {
+							if (_idsToLoadSet.has(cp.Id)) {
+								_idsToLoadSet.delete(cp.Id);
+								_filteredCpIdList.push(cp.Id);
+							}
 						});
-				} else {
-					await cpFilterEvent();
-					await onLoadingFinished();
-				}
-			});
-		} else {
+
+						if (
+							_idsToLoadSet.size &&
+							!isMaster(this.props.frameAgreements[this.faId])
+						) {
+							this.props.createToast(
+								'warning',
+								'Invalid product found!',
+								'Some products have been ignored while loading. Check the logs for more information'
+							);
+							log.orange(
+								'These products cannot be found in getCommercialProducts response:',
+								Array.from(_idsToLoadSet)
+							);
+						}
+						// Get data for commercial products
+						// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
+						await this.props.getCommercialProductData(_filteredCpIdList);
+						await this.props.addProductsToFa(this.faId, _filteredCpIdList);
+					}
+
+					return;
+				})
+			);
+		}
+
+		Promise.all(_promiseArray).then(async response => {
 			await cpFilterEvent();
 			await onLoadingFinished();
 			this.props.validateFrameAgreement(this.faId);
-		}
+		});
 
 		// **************************************
 		this.editable = window.FAM.api.isAgreementEditable(this.faId);
 		// **************************************
-		window.editor = this;
 	}
 
 	componentDidUpdate() {
@@ -397,7 +409,21 @@ export class FaEditor extends Component {
 
 				<div className="fa-main-body">
 					<div className="fa-main-body__inner">
-						<FaFields onActionTaken={this.onActionTaken} faId={this.faId} />
+						{this.props.settings.RelatedListsData.length ? (
+							<Tabs initial={0}>
+								<Tab label="Frame Agreement">
+									<FaFields
+										onActionTaken={this.onActionTaken}
+										faId={this.faId}
+									/>
+								</Tab>
+								<Tab label="Related Lists">
+									<RelatedLists faId={this.faId} />
+								</Tab>
+							</Tabs>
+						) : (
+							<FaFields onActionTaken={this.onActionTaken} faId={this.faId} />
+						)}
 
 						{this.props.frameAgreements[this.faId]._ui.approval &&
 						this.props.frameAgreements[this.faId]._ui.approval.listProcess
@@ -458,6 +484,7 @@ const mapDispatchToProps = {
 	setFrameAgreementCpFilter,
 	negotiate,
 	setDisableDiscount,
+	getRelatedLists,
 	getCommercialProductData
 };
 

@@ -56,7 +56,9 @@ class DGTargets extends React.Component {
 								<span>{record.Name}</span>
 								{fields.map(f => {
 									return (
-										<span key={record.Id + '-' + f}>{record[f] || '-'}</span>
+										<span key={record.Id + '-' + f}>
+											{record.hasOwnProperty(f) ? record[f] : '-'}
+										</span>
 									);
 								})}
 							</div>

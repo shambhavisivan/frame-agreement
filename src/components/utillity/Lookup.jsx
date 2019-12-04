@@ -72,7 +72,11 @@ class Lookup extends React.Component {
 								onClick={() => this.props.onChange(record)}
 							>
 								{this.props.columns.map(c => {
-									return <span key={c}>{record[c] || '-'}</span>;
+									return (
+										<span key={c}>
+											{record.hasOwnProperty(c) ? record[c] : '-'}
+										</span>
+									);
 								})}
 							</div>
 						);

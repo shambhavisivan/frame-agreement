@@ -118,8 +118,7 @@ class DeltaModal extends Component {
 
 		const primProdSet = new Set(
 			Object.keys(
-				this.props.frameAgreements[this.props.faIdOriginal]._ui.attachment
-					.products
+				this.props.frameAgreements[this.state.primaryId]._ui.attachment.products
 			)
 		);
 
@@ -132,10 +131,10 @@ class DeltaModal extends Component {
 		if (_products_diff.length) {
 			_promiseArray.push(this.props.getCommercialProductData(_products_diff));
 		}
-
+		console.log([this.state.primaryId, this.state.secondaryId]);
 		_promiseArray.push(
 			window.SF.invokeAction('getDelta', [
-				this.props.faIdOriginal,
+				this.state.primaryId,
 				this.state.secondaryId
 			])
 		);
@@ -224,12 +223,17 @@ class DeltaModal extends Component {
 			this.props.frameAgreements[this.state.secondaryId]
 		);
 
-		this.setState({
-			primaryId: _sec.Id,
-			primaryFa: _sec,
-			secondaryId: _prim.Id,
-			secondaryFa: _prim
-		});
+		this.setState(
+			{
+				primaryId: _sec.Id,
+				primaryFa: _sec,
+				secondaryId: _prim.Id,
+				secondaryFa: _prim
+			},
+			() => {
+				console.log(this.state);
+			}
+		);
 	}
 
 	render() {
@@ -301,7 +305,7 @@ class DeltaModal extends Component {
 									.map(fa => {
 										return (
 											<option key={'prim-' + fa.Id} value={fa.Id}>
-												{fa.csconta__Agreement_Name__c}
+												{fa.csconta__Agreement_Name__c || fa.Id}
 											</option>
 										);
 									})}

@@ -194,38 +194,6 @@ class DynamicGroupTab extends React.Component {
 				}
 			);
 		});
-		// ****************************
-
-		window.FAM.subscribe('onBeforeActivation', structure => {
-			return new Promise(async resolve => {
-				let _dg_products = await window.FAM.api.getProductsForFrameAgreement();
-
-				_dg_products = _dg_products.filter(cp => !!cp.dynamicGroupId);
-
-				let _dg_structure = _dg_products.map(cp => {
-					return {
-						cpId: cp.Id,
-						recurring: cp.recurring || null,
-						oneOff: cp.oneOff || null
-					};
-				});
-
-				let merged_map_structure = {};
-
-				[...structure, ..._dg_structure].forEach(cp => {
-					if (merged_map_structure.hasOwnProperty(cp.cpId)) {
-						merged_map_structure[cp.cpId].recurring =
-							cp.recurring || merged_map_structure[cp.cpId].recurring;
-						merged_map_structure[cp.cpId].oneOff =
-							cp.oneOff || merged_map_structure[cp.cpId].oneOff;
-					} else {
-						merged_map_structure[cp.cpId] = cp;
-					}
-				});
-
-				resolve(Object.values(merged_map_structure));
-			});
-		});
 
 		// ****************************
 	}
@@ -943,10 +911,7 @@ class DynamicGroupTab extends React.Component {
 										) : (
 											<div className="add-product-box">
 												<span className="box-header-1">
-													Lorem ipsum dolor sit amett
-												</span>
-												<span className="box-header-2">
-													sed do eiusmod tempor incididunt ut labore
+													Query has not been executed yet!
 												</span>
 
 												<div className="box-button-container">

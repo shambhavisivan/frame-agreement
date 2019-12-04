@@ -310,7 +310,7 @@ global with sharing class FrameRateManagerController {
 		for (Schema.DescribeSobjectResult res : results) {
 			Map<String, Schema.SObjectField> fieldMap = res.fields.getMap();
 
-		    pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
+			pointedObject = String.valueOf(fieldMap.get(field).getDescribe().getReferenceTo()[0]);
 
 		}
 
@@ -1688,15 +1688,31 @@ global with sharing class FrameRateManagerController {
 		// Close associated accounts
 		// csconta__Account_Frame_Agreement_Association__c
 
-		List <csconta__Account_Frame_Agreement_Association__c> originalAccountAssoc = [
-			select id, csconta__Account__c, csconta__Frame_Agreement__c
-			from csconta__Account_Frame_Agreement_Association__c
-			where csconta__Frame_Agreement__c = :faId
-		];
+		Map<String, Schema.SObjectField> objectFields = Schema.getGlobalDescribe().get('csconta__Account_Frame_Agreement_Association__c').getDescribe().fields.getMap();
+
+		List <String> assocFieldList = new List <String> ();
+
+		for(String s : objectFields.keySet()) {
+			assocFieldList.add(s);
+		}
+
+		String query_assoc = 'Select ' + String.join(assocFieldList, ',');
+		query_assoc += ' from csconta__Account_Frame_Agreement_Association__c';
+		query_assoc += ' where csconta__Frame_Agreement__c = :faId';
+
+		// List <csconta__Account_Frame_Agreement_Association__c> originalAccountAssoc = [
+		// 	select id, csconta__Account__c, csconta__Frame_Agreement__c
+		// 	from csconta__Account_Frame_Agreement_Association__c
+		// 	where csconta__Frame_Agreement__c = :faId
+		// ];
+
 		List <csconta__Account_Frame_Agreement_Association__c> clonedList = new List <csconta__Account_Frame_Agreement_Association__c>();
 
-		for (csconta__Account_Frame_Agreement_Association__c oas : originalAccountAssoc) {
-			clonedList.add(new csconta__Account_Frame_Agreement_Association__c(csconta__Account__c = oas.csconta__Account__c, csconta__Frame_Agreement__c = cloned.Id));
+		for (csconta__Account_Frame_Agreement_Association__c oas : database.query(query_assoc)) {
+			//clonedList.add(new csconta__Account_Frame_Agreement_Association__c(csconta__Account__c = oas.csconta__Account__c, csconta__Frame_Agreement__c = cloned.Id));
+			csconta__Account_Frame_Agreement_Association__c clonedAssoc = oas.clone(false, true, false, false);
+			clonedAssoc.csconta__Frame_Agreement__c = cloned.Id;
+			clonedList.add(clonedAssoc);
 		}
 
 		insert clonedList;

@@ -7,8 +7,6 @@ import CommercialProductSkeleton from '../skeletons/CommercialProductSkeleton';
 import Tabs from '../utillity/tabs/Tabs';
 import Tab from '../utillity/tabs/Tab';
 
-// import CommercialProductsTab from './CommercialProductsTab';
-
 export class FaTabs extends React.Component {
 	constructor(props) {
 		super(props);
@@ -52,6 +50,7 @@ export class FaTabs extends React.Component {
 							<Tab
 								key={'tab-' + tab.container_id}
 								label={tab.label}
+								disabled={this.props.loading}
 								onEnter={() => {
 									this.callTabHandler(tab.onEnter, tab.container_id);
 								}}

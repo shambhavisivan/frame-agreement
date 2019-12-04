@@ -53,6 +53,10 @@
 		font-family: $font-primary;
 	}
 
+	#MoreTabs_List {
+		z-index: 100;
+	}
+
 	/* Box-sizing */
 	*,
 	*::before,

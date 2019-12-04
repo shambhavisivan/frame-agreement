@@ -259,7 +259,10 @@ export class App extends Component {
 			console.log('Merged results:', result);
 
 			// If the decomposition was successful
-			if (!result.has('Success') || result.size > 1) {
+			if (
+				(!result.has('Success') || result.size > 1) &&
+				decompositionDataChunked.length
+			) {
 				console.error('Decomposition failed, undoing...!');
 
 				this.props.createToast(

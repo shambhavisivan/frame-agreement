@@ -22,10 +22,14 @@ export class Allowances extends React.Component {
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell">Name</div>
-					<div className="list-cell">Priority</div>
-					<div className="list-cell">Amount</div>
-					<div className="list-cell">Usage Types</div>
+					<div className="list-cell">{window.SF.labels.allowances_name}</div>
+					<div className="list-cell">
+						{window.SF.labels.allowances_priority}
+					</div>
+					<div className="list-cell">{window.SF.labels.allowances_amount}</div>
+					<div className="list-cell">
+						{window.SF.labels.allowances_usage_types}
+					</div>
 				</div>
 
 				<ul className="table-list">

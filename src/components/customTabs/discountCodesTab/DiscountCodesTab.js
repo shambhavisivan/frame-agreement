@@ -457,11 +457,16 @@ class DiscountCodesTab extends React.Component {
 			_getCustomSettingsPromise,
 			_getGroupsPromise,
 			window.FAM.api.getCustomData(ACTIVE_FA.Id)
-		]).then(response => {
+		]).then(async response => {
 			this.customSetting = response[0];
 
 			let _response_codes = response[1] || [];
 			let _response_data = response[2];
+
+			_response_codes = await window.FAM.publish(
+				'DCE_onLoadDiscountCodes',
+				_response_codes
+			);
 
 			if (typeof _response_data === 'string' && isJson(_response_data)) {
 				_response_data = JSON.parse(_response_data);
@@ -887,7 +892,7 @@ class DiscountCodesTab extends React.Component {
 														);
 													}}
 												>
-													<option value="">--none</option>
+													<option value="">{window.SF.labels.fa_none}</option>
 													<option value={'Amount'}>Amount</option>
 													<option value={'Percentage'}>Percentage</option>
 												</select>

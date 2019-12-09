@@ -79,7 +79,9 @@ class FrameAgreementRow extends React.Component {
 						</div>
 						<div>
 							{_master ? (
-								<span className="fa-chip fa-chip--master">Master</span>
+								<span className="fa-chip fa-chip--master">
+									{window.SF.labels.fa_master_chip}
+								</span>
 							) : null}
 
 							{!_master && this.props.agreement.csconta__Status__c ? (

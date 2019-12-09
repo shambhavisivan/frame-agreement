@@ -1,268 +1,311 @@
 <apex:page controller="FrameRateManagerController" showHeader="true" showChat="false" showQuickActionVfHeader="false" sidebar="false" standardStylesheets="false" title="Frame Agreement Manager">
-    <div id="fam" class="fam"></div>
-    <script type='text/javascript'>
-    Visualforce.remoting.timeout = 120000;
-    var SF;
-    window.react_logs = [];
-    window.SF = SF = {
-        VfManager: Visualforce.remoting.Manager,
-        invokeAction: function(remoteActionName, parametersArr = []) {
-            let invokeActionArgs = [];
+	<div id="fam" class="fam"></div>
+	<script type='text/javascript'>
+	Visualforce.remoting.timeout = 120000;
+	var SF;
+	window.react_logs = [];
+	window.SF = SF = {
+		VfManager: Visualforce.remoting.Manager,
+		invokeAction: function(remoteActionName, parametersArr = []) {
+			let invokeActionArgs = [];
 
-            invokeActionArgs.push(this.actions[remoteActionName]);
+			invokeActionArgs.push(this.actions[remoteActionName]);
 
-            invokeActionArgs = invokeActionArgs.concat(parametersArr);
+			invokeActionArgs = invokeActionArgs.concat(parametersArr);
 
-            parametersArr = parametersArr.map(function(param) {
-                if (typeof param === 'string' && param.length > 100) {
-                    param = param.substring(0, 97) + "...";
-                }
-                return param;
-            });
+			parametersArr = parametersArr.map(function(param) {
+				if (typeof param === 'string' && param.length > 100) {
+					param = param.substring(0, 97) + "...";
+				}
+				return param;
+			});
 
-            console.log('Invoking action:%c ' + remoteActionName + '%c with params: [' + parametersArr.join(' ,') + ']', 'color: #ffa429', 'color:initial');
+			console.log('Invoking action:%c ' + remoteActionName + '%c with params: [' + parametersArr.join(' ,') + ']', 'color: #ffa429', 'color:initial');
 
-            return new Promise(function(resolve, reject) {
-                Visualforce.remoting.Manager.invokeAction(...invokeActionArgs, function(result, event) {
-                    resolve(result);
-                    return result;
-                }), { escape: true, buffer: false }
-            })
-        },
-        param: {
-            account: '{!$CurrentPage.parameters.account}'
-        },
-        apiSession: "{!$Api.Session_ID}",
-        actions: {
-            getAppSettings: "{!$RemoteAction.FrameRateManagerController.getAppSettings}",
-            getFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getFrameAgreements}",
-            getFrameAgreement: "{!$RemoteAction.FrameRateManagerController.getFrameAgreement}",
-            setFrameAgreementState: "{!$RemoteAction.FrameRateManagerController.setFrameAgreementState}",
-            deleteFrameAgreement: "{!$RemoteAction.FrameRateManagerController.deleteFrameAgreement}",
-            upsertFrameAgreements: "{!$RemoteAction.FrameRateManagerController.upsertFrameAgreements}",
-            cloneFrameAgreement: "{!$RemoteAction.FrameRateManagerController.cloneFrameAgreement}",
-            createNewVersionOfFrameAgrement: "{!$RemoteAction.FrameRateManagerController.createNewVersionOfFrameAgrement}",
-            getCommercialProducts: "{!$RemoteAction.FrameRateManagerController.getCommercialProducts}",
-            filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
-            getPricingElements: "{!$RemoteAction.FrameRateManagerController.getPricingElements}",
-            getCommercialProductData: "{!$RemoteAction.FrameRateManagerController.getCommercialProductData}",
-            saveAttachment: "{!$RemoteAction.FrameRateManagerController.saveAttachment}",
-            getAttachmentBody: "{!$RemoteAction.FrameRateManagerController.getAttachmentBody}",
-            getApprovalHistory: "{!$RemoteAction.FrameRateManagerController.getApprovalHistory}",
-            approveRejectRecallRecord: "{!$RemoteAction.FrameRateManagerController.approveRejectRecallRecord}",
-            reassignApproval: "{!$RemoteAction.FrameRateManagerController.reassignApproval}",
-            submitForApproval: "{!$RemoteAction.FrameRateManagerController.submitForApproval}",
-            createPricingRuleGroup: "{!$RemoteAction.FrameRateManagerController.createPricingRuleGroup}",
-            decomposeAttachment: "{!$RemoteAction.FrameRateManagerController.decomposeAttachment}",
-            undoDecomposition: "{!$RemoteAction.FrameRateManagerController.undoDecomposition}",
-            performAction: "{!$RemoteAction.FrameRateManagerController.performAction}",
-            getLookupInformation: "{!$RemoteAction.FrameRateManagerController.getLookupInformation}",
-            getAccountsInformation: "{!$RemoteAction.FrameRateManagerController.getAccountsInformation}",
-            deleteAccountAssociation: "{!$RemoteAction.FrameRateManagerController.deleteAccountAssociation}",
-            addAccountAssociation: "{!$RemoteAction.FrameRateManagerController.addAccountAssociation}",
-            getPicklistOptions: "{!$RemoteAction.FrameRateManagerController.getPicklistOptions}",
-            addFaToMaster: "{!$RemoteAction.FrameRateManagerController.addFaToMaster}",
-            getDelta: "{!$RemoteAction.FrameRateManagerController.getDelta}",
-            getRelatedLists: "{!$RemoteAction.FrameRateManagerController.getRelatedLists}",
-            removeFaFromMaster: "{!$RemoteAction.FrameRateManagerController.removeFaFromMaster}",
-            getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
-        },
-        labels: {
-            frameAgreementTitle: '{!$Label.frameAgreementTitle}',
-            frameAgreementListTitle: '{!$Label.frameAgreementListTitle}',
-            input_quickSearchPlaceholder: '{!$Label.input_quickSearchPlaceholder}',
-            faMenuActionDelete: '{!$Label.faMenuActionDelete}',
-            faMenuActionClone: '{!$Label.faMenuActionClone}',
-            faMenuActionEdit: '{!$Label.faMenuActionEdit}',
-            faMenuActionAccounts: '{!$Label.faMenuActionAccounts}',
-            accounts_modal_no_main: '{!$Label.accounts_modal_no_main}',
-            accounts_modal_no_assoc: '{!$Label.accounts_modal_no_assoc}',
-            btn_AddNewAgreement: '{!$Label.btn_AddNewAgreement}',
-            btn_Delta: '{!$Label.btn_Delta}',
-            header_frameAgreementEditorTitle: '{!$Label.header_frameAgreementEditorTitle}',
-            header_customDropdownPlaceholder: '{!$Label.header_customDropdownPlaceholder}',
-            btn_Save: '{!$Label.btn_Save}',
-            btn_SubmitForApproval: '{!$Label.btn_SubmitForApproval}',
-            btn_Submit: '{!$Label.btn_Submit}',
-            btn_BulkNegotiate: '{!$Label.btn_BulkNegotiate}',
-            btn_DeleteProducts: '{!$Label.btn_DeleteProducts}',
-            btn_DeleteAgreements: '{!$Label.btn_DeleteAgreements}',
-            btn_AddProducts: '{!$Label.btn_AddProducts}',
-            btn_NewVersion: '{!$Label.btn_NewVersion}',
-            approval_title: '{!$Label.approval_title}',
-            approval_action_approve: '{!$Label.approval_action_approve}',
-            approval_action_reject: '{!$Label.approval_action_reject}',
-            approval_action_reassign: '{!$Label.approval_action_reassign}',
-            approval_action_recall: '{!$Label.approval_action_recall}',
-            approval_message_title: '{!$Label.approval_message_title}',
-            approval_message_placeholder: '{!$Label.approval_message_placeholder}',
-            approval_table_header_action: '{!$Label.approval_table_header_action}',
-            approval_table_header_date: '{!$Label.approval_table_header_date}',
-            approval_table_header_status: '{!$Label.approval_table_header_status}',
-            approval_table_header_assignedTo: '{!$Label.approval_table_header_assignedTo}',
-            approval_table_header_actualApprover: '{!$Label.approval_table_header_actualApprover}',
-            approval_table_header_comments: '{!$Label.approval_table_header_comments}',
-            products_title: '{!$Label.products_title}',
-            products_display_columns: '{!$Label.products_display_columns}',
-            products_volume_minVol: '{!$Label.products_volume_minVol}',
-            products_volume_minVolPeriod: '{!$Label.products_volume_minVolPeriod}',
-            products_volume_minUsageComm: '{!$Label.products_volume_minUsageComm}',
-            products_volume_minUsageCommPeriod: '{!$Label.products_volume_minUsageCommPeriod}',
-            products_productNameHeaderCell: '{!$Label.products_productNameHeaderCell}',
-            products_tab_title: '{!$Label.products_tab_title}',
-            products_addons: '{!$Label.products_addons}',
-            products_charges: '{!$Label.products_charges}',
-            products_product_charges: '{!$Label.products_product_charges}',
-            products_rates: '{!$Label.products_rates}',
-            products_allowances: '{!$Label.products_allowances}',
-            modal_addProduct_title: '{!$Label.modal_addProduct_title}',
-            modal_addProduct_input_search_placeholder: '{!$Label.modal_addProduct_input_search_placeholder}',
-            modal_lookup_input_search_placeholder: '{!$Label.modal_lookup_input_search_placeholder}',
-            modal_categorization_switch: '{!$Label.modal_categorization_switch}',
-            modal_categorization_title: '{!$Label.modal_categorization_title}',
-            modal_categorization_btn_clear: '{!$Label.modal_categorization_btn_clear}',
-            modal_categorization_btn_apply: '{!$Label.modal_categorization_btn_apply}',
-            modal_categorization_btn_add: '{!$Label.modal_categorization_btn_add}',
-            modal_bulk_title: '{!$Label.modal_bulk_title}',
-            modal_bulk_selected_title: '{!$Label.modal_bulk_selected_title}',
-            modal_bulk_discount_title: '{!$Label.modal_bulk_discount_title}',
-            modal_bulk_discount_input_title: '{!$Label.modal_bulk_discount_input_title}',
-            modal_bulk_btn_percentage: '{!$Label.modal_bulk_btn_percentage}',
-            modal_bulk_btn_fixed: '{!$Label.modal_bulk_btn_fixed}',
-            modal_bulk_btn_apply: '{!$Label.modal_bulk_btn_apply}',
-            modal_bulk_btn_save: '{!$Label.modal_bulk_btn_save}',
-            modal_bulk_input_placeholder: '{!$Label.modal_bulk_input_placeholder}',
-            modal_bulk_input_placeholder: '{!$Label.modal_bulk_input_placeholder}',
-            modal_charge_table_header_presentIn: '{!$Label.modal_charge_table_header_presentIn}',
-            modal_charge_table_header_oneOff: '{!$Label.modal_charge_table_header_oneOff}',
-            modal_charge_table_header_recurring: '{!$Label.modal_charge_table_header_recurring}',
-            modal_charge_table_header_chargeType: '{!$Label.modal_charge_table_header_chargeType}',
-            modal_charge_table_header_value: '{!$Label.modal_charge_table_header_value}',
-            modal_charge_table_header_unit: '{!$Label.modal_charge_table_header_unit}',
-            modal_charge_table_header_rateValue: '{!$Label.modal_charge_table_header_rateValue}',
-            modal_bluk_rateFilter_title: '{!$Label.modal_bluk_rateFilter_title}',
-            modal_bluk_rateFilter_propertyTitle: '{!$Label.modal_bluk_rateFilter_propertyTitle}',
-            modal_bluk_rateFilter_propertyValueTitle: '{!$Label.modal_bluk_rateFilter_propertyValueTitle}',
-            modal_bluk_rateFilter_dropdownPlaceholder: '{!$Label.modal_bluk_rateFilter_dropdownPlaceholder}',
-            modal_unsavedChanges_alert: '{!$Label.modal_unsavedChanges_alert}',
-            alert_deleteProducts_title: '{!$Label.alert_deleteProducts_title}',
-            alert_deleteProducts_message: '{!$Label.alert_deleteProducts_message}',
-            alert_deleteProducts_btn_action: '{!$Label.alert_deleteProducts_btn_action}',
-            alert_cloneFa_title: '{!$Label.alert_cloneFa_title}',
-            alert_cloneFa_message: '{!$Label.alert_cloneFa_message}',
-            alert_cloneFa_btn_action: '{!$Label.alert_cloneFa_btn_action}',
-            alert_btn_cancel: '{!$Label.alert_btn_cancel}',
-            frame_agreements_title: '{!$Label.frame_agreements_title}',
-            header_frameAgreementMasterTitle: '{!$Label.header_frameAgreementMasterTitle}',
-            modal_addFa_title: '{!$Label.modal_addFa_title}',
-            faNameHeaderCell: '{!$Label.faNameHeaderCell}',
-            btn_AddFa: '{!$Label.btn_AddFa}',
-            modal_charge_table_header_name: '{!$Label.modal_charge_table_header_name}',
-            products_title_empty: '{!$Label.products_title_empty}',
-            save_fa_message: '{!$Label.save_fa_message}',
-            addProductCTAMessage: '{!$Label.addProductCTAMessage}',
-            addAgreementsCTAMessage: '{!$Label.addAgreementsCTAMessage}',
-            save_fa_products_message: '{!$Label.save_fa_products_message}',
-            no_fa_message: '{!$Label.no_fa_message}',
-            no_fa_message_2: '{!$Label.no_fa_message_2}',
-            addons_header_name: '{!$Label.addons_header_name}',
-            addons_header_oneOff: '{!$Label.addons_header_oneOff}',
-            addons_header_oneOff_neg: '{!$Label.addons_header_oneOff_neg}',
-            addons_header_recc: '{!$Label.addons_header_recc}',
-            addons_header_recc_neg: '{!$Label.addons_header_recc_neg}',
-            charges_header_name: '{!$Label.charges_header_name}',
-            charges_header_type: '{!$Label.charges_header_type}',
-            charges_header_oneOff: '{!$Label.charges_header_oneOff}',
-            charges_header_neg: '{!$Label.charges_header_neg}',
-            charges_header_recc: '{!$Label.charges_header_recc}',
-            charges_header_recc_neg: '{!$Label.charges_header_recc_neg}',
-            product_charge_header_name: '{!$Label.product_charge_header_name}',
-            product_charge_header_oneOff: '{!$Label.product_charge_header_oneOff}',
-            product_charge_header_oneOff_neg: '{!$Label.product_charge_header_oneOff_neg}',
-            product_charge_header_recc: '{!$Label.product_charge_header_recc}',
-            product_charge_header_recc_neg: '{!$Label.product_charge_header_recc_neg}',
-            rate_cards_header_name: '{!$Label.rate_cards_header_name}',
-            rate_cards_header_usage: '{!$Label.rate_cards_header_usage}',
-            rate_cards_header_value: '{!$Label.rate_cards_header_value}',
-            rate_cards_header_value_neg: '{!$Label.rate_cards_header_value_neg}',
-            util_datepicker_today: '{!$Label.util_datepicker_today}',
-            util_negotiation_input_diff_label: '{!$Label.util_negotiation_input_diff_label}',
-            util_input_text_enter: '{!$Label.util_input_text_enter}',
-            util_input_formula_placehoder: '{!$Label.util_input_formula_placehoder}',
-            util_input_lookup_placehoder: '{!$Label.util_input_lookup_placehoder}',
-            toast_approvalAction_success: '{!$Label.toast_approvalAction_success}',
-            toast_approvalAction_failed: '{!$Label.toast_approvalAction_failed}',
-            toast_success_title: '{!$Label.toast_success_title}',
-            toast_failed_title: '{!$Label.toast_failed_title}',
-            toast_submitForApproval_success: '{!$Label.toast_submitForApproval_success}',
-            toast_submitForApproval_failed: '{!$Label.toast_submitForApproval_failed}',
-            toast_decomposition_title_failed: '{!$Label.toast_decomposition_title_failed}',
-            toast_decomposition_failed: '{!$Label.toast_decomposition_failed}',
-            toast_decomposition_title_revered: '{!$Label.toast_decomposition_title_revered}',
-            toast_decomposition_revered: '{!$Label.toast_decomposition_revered}',
-            toast_decomposition_title_success: '{!$Label.toast_decomposition_title_success}',
-            toast_decomposition_success: '{!$Label.toast_decomposition_success}',
-            toast_invalid_handler_title: '{!$Label.toast_invalid_handler_title}',
-            toast_invalid_handler: '{!$Label.toast_invalid_handler}',
-            toast_saved_fa: '{!$Label.toast_saved_fa}',
-            toast_created_fa: '{!$Label.toast_created_fa}',
-            toast_discount_calculated_title: '{!$Label.toast_discount_calculated_title}',
-            toast_discount_calculated: '{!$Label.toast_discount_calculated}'
-        }
-    };
-    </script>
-    <style type="text/css">
-    @font-face {
-        font-family: 'Salesforce Sans';
-        src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Light.woff2')}') format("woff2"),
-        url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Light.woff')}') format("woff");
-        font-weight: 300
-    }
+			return new Promise(function(resolve, reject) {
+				Visualforce.remoting.Manager.invokeAction(...invokeActionArgs, function(result, event) {
+					resolve(result);
+					return result;
+				}), { escape: true, buffer: false }
+			})
+		},
+		param: {
+			account: '{!$CurrentPage.parameters.account}'
+		},
+		apiSession: "{!$Api.Session_ID}",
+		actions: {
+			getAppSettings: "{!$RemoteAction.FrameRateManagerController.getAppSettings}",
+			getFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getFrameAgreements}",
+			getFrameAgreement: "{!$RemoteAction.FrameRateManagerController.getFrameAgreement}",
+			setFrameAgreementState: "{!$RemoteAction.FrameRateManagerController.setFrameAgreementState}",
+			deleteFrameAgreement: "{!$RemoteAction.FrameRateManagerController.deleteFrameAgreement}",
+			upsertFrameAgreements: "{!$RemoteAction.FrameRateManagerController.upsertFrameAgreements}",
+			cloneFrameAgreement: "{!$RemoteAction.FrameRateManagerController.cloneFrameAgreement}",
+			createNewVersionOfFrameAgrement: "{!$RemoteAction.FrameRateManagerController.createNewVersionOfFrameAgrement}",
+			getCommercialProducts: "{!$RemoteAction.FrameRateManagerController.getCommercialProducts}",
+			filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
+			getPricingElements: "{!$RemoteAction.FrameRateManagerController.getPricingElements}",
+			getCommercialProductData: "{!$RemoteAction.FrameRateManagerController.getCommercialProductData}",
+			saveAttachment: "{!$RemoteAction.FrameRateManagerController.saveAttachment}",
+			getAttachmentBody: "{!$RemoteAction.FrameRateManagerController.getAttachmentBody}",
+			getApprovalHistory: "{!$RemoteAction.FrameRateManagerController.getApprovalHistory}",
+			approveRejectRecallRecord: "{!$RemoteAction.FrameRateManagerController.approveRejectRecallRecord}",
+			reassignApproval: "{!$RemoteAction.FrameRateManagerController.reassignApproval}",
+			submitForApproval: "{!$RemoteAction.FrameRateManagerController.submitForApproval}",
+			createPricingRuleGroup: "{!$RemoteAction.FrameRateManagerController.createPricingRuleGroup}",
+			decomposeAttachment: "{!$RemoteAction.FrameRateManagerController.decomposeAttachment}",
+			undoDecomposition: "{!$RemoteAction.FrameRateManagerController.undoDecomposition}",
+			performAction: "{!$RemoteAction.FrameRateManagerController.performAction}",
+			getLookupInformation: "{!$RemoteAction.FrameRateManagerController.getLookupInformation}",
+			getAccountsInformation: "{!$RemoteAction.FrameRateManagerController.getAccountsInformation}",
+			deleteAccountAssociation: "{!$RemoteAction.FrameRateManagerController.deleteAccountAssociation}",
+			addAccountAssociation: "{!$RemoteAction.FrameRateManagerController.addAccountAssociation}",
+			getPicklistOptions: "{!$RemoteAction.FrameRateManagerController.getPicklistOptions}",
+			addFaToMaster: "{!$RemoteAction.FrameRateManagerController.addFaToMaster}",
+			getDelta: "{!$RemoteAction.FrameRateManagerController.getDelta}",
+			getRelatedLists: "{!$RemoteAction.FrameRateManagerController.getRelatedLists}",
+			removeFaFromMaster: "{!$RemoteAction.FrameRateManagerController.removeFaFromMaster}",
+			getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
+		},
+		labels: {
+			"allowances_name": "{!$Label.allowances_name}",
+			"allowances_priority": "{!$Label.allowances_priority}",
+			"allowances_amount": "{!$Label.allowances_amount}",
+			"allowances_usage_types": "{!$Label.allowances_usage_types}",
+			"frameAgreementTitle": "{!$Label.frameAgreementTitle}",
+			"frameAgreementListTitle": "{!$Label.frameAgreementListTitle}",
+			"input_quickSearchPlaceholder": "{!$Label.input_quickSearchPlaceholder}",
+			"faMenuActionDelete": "{!$Label.faMenuActionDelete}",
+			"faMenuActionClone": "{!$Label.faMenuActionClone}",
+			"faMenuActionEdit": "{!$Label.faMenuActionEdit}",
+			"faMenuActionAccounts": "{!$Label.faMenuActionAccounts}",
+			"fa_tab": "{!$Label.fa_tab}",
+			"rl_tab": "{!$Label.rl_tab}",
+			"fa_master_chip": "{!$Label.fa_master_chip}",
+			"fa_none": "{!$Label.fa_none}",
+			"fa_volume": "{!$Label.fa_volume}",
+			"accounts_modal_no_main": "{!$Label.accounts_modal_no_main}",
+			"accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",
+			"btn_AddNewAgreement": "{!$Label.btn_AddNewAgreement}",
+			"header_frameAgreementEditorTitle": "{!$Label.header_frameAgreementEditorTitle}",
+			"header_frameAgreementMasterTitle": "{!$Label.header_frameAgreementMasterTitle}",
+			"header_customDropdownPlaceholder": "{!$Label.header_customDropdownPlaceholder}",
+			"btn_Save": "{!$Label.btn_Save}",
+			"btn_Close": "{!$Label.btn_Close}",
+			"btn_Done": "{!$Label.btn_Done}",
+			"btn_SubmitForApproval": "{!$Label.btn_SubmitForApproval}",
+			"btn_Submit": "{!$Label.btn_Submit}",
+			"btn_BulkNegotiate": "{!$Label.btn_BulkNegotiate}",
+			"btn_DeleteProducts": "{!$Label.btn_DeleteProducts}",
+			"btn_DeleteAgreements": "{!$Label.btn_DeleteAgreements}",
+			"btn_AddProducts": "{!$Label.btn_AddProducts}",
+			"btn_AddFa": "{!$Label.btn_AddFa}",
+			"btn_Delta": "{!$Label.btn_Delta}",
+			"frame_agreements_title": "{!$Label.frame_agreements_title}",
+			"delta_title": "{!$Label.delta_title}",
+			"delta_fa_fields": "{!$Label.delta_fa_fields}",
+			"delta_status_unchanged": "{!$Label.delta_status_unchanged}",
+			"delta_status_changed": "{!$Label.delta_status_changed}",
+			"delta_status_removed": "{!$Label.delta_status_removed}",
+			"delta_status_added": "{!$Label.delta_status_added}",
+			"btn_delta_switch_fa": "{!$Label.btn_delta_switch_fa}",
+			"btn_delta_switch_delta": "{!$Label.btn_delta_switch_delta}",
+			"btn_CalcDelta": "{!$Label.btn_CalcDelta}",
+			"btn_NewVersion": "{!$Label.btn_NewVersion}",
+			"approval_title": "{!$Label.approval_title}",
+			"approval_action_approve": "{!$Label.approval_action_approve}",
+			"approval_action_reject": "{!$Label.approval_action_reject}",
+			"approval_action_reassign": "{!$Label.approval_action_reassign}",
+			"approval_action_recall": "{!$Label.approval_action_recall}",
+			"approval_message_title": "{!$Label.approval_message_title}",
+			"approval_message_placeholder": "{!$Label.approval_message_placeholder}",
+			"approval_table_header_action": "{!$Label.approval_table_header_action}",
+			"approval_table_header_date": "{!$Label.approval_table_header_date}",
+			"approval_table_header_status": "{!$Label.approval_table_header_status}",
+			"approval_table_header_assignedTo": "{!$Label.approval_table_header_assignedTo}",
+			"approval_table_header_actualApprover": "{!$Label.approval_table_header_actualApprover}",
+			"approval_table_header_comments": "{!$Label.approval_table_header_comments}",
+			"products_title": "{!$Label.products_title}",
+			"products_display_columns": "{!$Label.products_display_columns}",
+			"products_volume_minVol": "{!$Label.products_volume_minVol}",
+			"products_volume_minVolPeriod": "{!$Label.products_volume_minVolPeriod}",
+			"products_volume_minUsageComm": "{!$Label.products_volume_minUsageComm}",
+			"products_volume_minUsageCommPeriod": "{!$Label.products_volume_minUsageCommPeriod}",
+			"products_productNameHeaderCell": "{!$Label.products_productNameHeaderCell}",
+			"faNameHeaderCell": "{!$Label.faNameHeaderCell}",
+			"products_tab_title": "{!$Label.products_tab_title}",
+			"products_addons": "{!$Label.products_addons}",
+			"products_charges": "{!$Label.products_charges}",
+			"products_product_charges": "{!$Label.products_product_charges}",
+			"products_rates": "{!$Label.products_rates}",
+			"products_allowances": "{!$Label.products_allowances}",
+			"modal_addProduct_title": "{!$Label.modal_addProduct_title}",
+			"modal_addFa_title": "{!$Label.modal_addFa_title}",
+			"modal_addProduct_input_search_placeholder": "{!$Label.modal_addProduct_input_search_placeholder}",
+			"modal_lookup_input_search_placeholder": "{!$Label.modal_lookup_input_search_placeholder}",
+			"modal_categorization_switch": "{!$Label.modal_categorization_switch}",
+			"modal_categorization_title": "{!$Label.modal_categorization_title}",
+			"modal_categorization_btn_clear": "{!$Label.modal_categorization_btn_clear}",
+			"modal_categorization_btn_apply": "{!$Label.modal_categorization_btn_apply}",
+			"modal_categorization_btn_add": "{!$Label.modal_categorization_btn_add}",
+			"modal_bulk_title": "{!$Label.modal_bulk_title}",
+			"modal_bulk_selected_title": "{!$Label.modal_bulk_selected_title}",
+			"modal_bulk_discount_title": "{!$Label.modal_bulk_discount_title}",
+			"modal_bulk_discount_input_title": "{!$Label.modal_bulk_discount_input_title}",
+			"modal_bulk_btn_percentage": "{!$Label.modal_bulk_btn_percentage}",
+			"modal_bulk_btn_fixed": "{!$Label.modal_bulk_btn_fixed}",
+			"modal_bulk_btn_apply": "{!$Label.modal_bulk_btn_apply}",
+			"modal_bulk_btn_save": "{!$Label.modal_bulk_btn_save}",
+			"modal_bulk_input_placeholder": "{!$Label.modal_bulk_input_placeholder}",
+			"modal_charge_table_header_presentIn": "{!$Label.modal_charge_table_header_presentIn}",
+			"modal_charge_table_header_oneOff": "{!$Label.modal_charge_table_header_oneOff}",
+			"modal_charge_table_header_recurring": "{!$Label.modal_charge_table_header_recurring}",
+			"modal_charge_table_header_chargeType": "{!$Label.modal_charge_table_header_chargeType}",
+			"modal_charge_table_header_value": "{!$Label.modal_charge_table_header_value}",
+			"modal_charge_table_header_unit": "{!$Label.modal_charge_table_header_unit}",
+			"modal_charge_table_header_rateValue": "{!$Label.modal_charge_table_header_rateValue}",
+			"modal_bluk_rateFilter_title": "{!$Label.modal_bluk_rateFilter_title}",
+			"modal_bluk_rateFilter_propertyTitle": "{!$Label.modal_bluk_rateFilter_propertyTitle}",
+			"modal_bluk_rateFilter_propertyValueTitle": "{!$Label.modal_bluk_rateFilter_propertyValueTitle}",
+			"modal_bluk_rateFilter_dropdownPlaceholder": "{!$Label.modal_bluk_rateFilter_dropdownPlaceholder}",
+			"modal_unsavedChanges_alert": "{!$Label.modal_unsavedChanges_alert}",
+			"alert_deleteProducts_title": "{!$Label.alert_deleteProducts_title}",
+			"alert_deleteAgreements_title": "{!$Label.alert_deleteAgreements_title}",
+			"alert_deleteProducts_message": "{!$Label.alert_deleteProducts_message}",
+			"alert_deleteAgreements_message": "{!$Label.alert_deleteAgreements_message}",
+			"alert_deleteProducts_btn_action": "{!$Label.alert_deleteProducts_btn_action}",
+			"alert_cloneFa_title": "{!$Label.alert_cloneFa_title}",
+			"alert_cloneFa_message": "{!$Label.alert_cloneFa_message}",
+			"alert_cloneFa_btn_action": "{!$Label.alert_cloneFa_btn_action}",
+			"alert_btn_cancel": "{!$Label.alert_btn_cancel}",
+			"modal_charge_table_header_name": "{!$Label.modal_charge_table_header_name}",
+			"products_title_empty": "{!$Label.products_title_empty}",
+			"addProductCTAMessage": "{!$Label.addProductCTAMessage}",
+			"addAgreementsCTAMessage": "{!$Label.addAgreementsCTAMessage}",
+			"save_fa_message": "{!$Label.save_fa_message}",
+			"save_fa_products_message": "{!$Label.save_fa_products_message}",
+			"no_fa_message": "{!$Label.no_fa_message}",
+			"no_fa_message_2": "{!$Label.no_fa_message_2}",
+			"addons_header_name": "{!$Label.addons_header_name}",
+			"addons_header_oneOff": "{!$Label.addons_header_oneOff}",
+			"addons_header_oneOff_neg": "{!$Label.addons_header_oneOff_neg}",
+			"addons_header_recc": "{!$Label.addons_header_recc}",
+			"addons_header_recc_neg": "{!$Label.addons_header_recc_neg}",
+			"charges_header_name": "{!$Label.charges_header_name}",
+			"charges_header_type": "{!$Label.charges_header_type}",
+			"charges_header_oneOff": "{!$Label.charges_header_oneOff}",
+			"charges_header_neg": "{!$Label.charges_header_neg}",
+			"charges_header_recc": "{!$Label.charges_header_recc}",
+			"charges_header_recc_neg": "{!$Label.charges_header_recc_neg}",
+			"product_charge_header_name": "{!$Label.product_charge_header_name}",
+			"product_charge_header_oneOff": "{!$Label.product_charge_header_oneOff}",
+			"product_charge_header_oneOff_neg": "{!$Label.product_charge_header_oneOff_neg}",
+			"product_charge_header_recc": "{!$Label.product_charge_header_recc}",
+			"product_charge_header_recc_neg": "{!$Label.product_charge_header_recc_neg}",
+			"usage_type_name_field": "{!$Label.usage_type_name_field}",
+			"usage_type_undefined": "{!$Label.usage_type_undefined}",
+			"rate_cards_header_name": "{!$Label.rate_cards_header_name}",
+			"rate_cards_header_usage": "{!$Label.rate_cards_header_usage}",
+			"rate_cards_header_value": "{!$Label.rate_cards_header_value}",
+			"rate_cards_header_value_neg": "{!$Label.rate_cards_header_value_neg}",
+			"util_datepicker_today": "{!$Label.util_datepicker_today}",
+			"util_negotiation_input_diff_label": "{!$Label.util_negotiation_input_diff_label}",
+			"util_input_text_enter": "{!$Label.util_input_text_enter}",
+			"util_input_formula_placehoder": "{!$Label.util_input_formula_placehoder}",
+			"util_input_lookup_placehoder": "{!$Label.util_input_lookup_placehoder}",
+			"toast_approvalAction_success": "{!$Label.toast_approvalAction_success}",
+			"toast_approvalAction_failed": "{!$Label.toast_approvalAction_failed}",
+			"toast_success_title": "{!$Label.toast_success_title}",
+			"toast_failed_title": "{!$Label.toast_failed_title}",
+			"toast_submitForApproval_success": "{!$Label.toast_submitForApproval_success}",
+			"toast_submitForApproval_failed": "{!$Label.toast_submitForApproval_failed}",
+			"toast_decomposition_title_failed": "{!$Label.toast_decomposition_title_failed}",
+			"toast_decomposition_failed": "{!$Label.toast_decomposition_failed}",
+			"toast_decomposition_title_revered": "{!$Label.toast_decomposition_title_revered}",
+			"toast_decomposition_revered": "{!$Label.toast_decomposition_revered}",
+			"toast_decomposition_title_success": "{!$Label.toast_decomposition_title_success}",
+			"toast_decomposition_success": "{!$Label.toast_decomposition_success}",
+			"toast_invalid_handler_title": "{!$Label.toast_invalid_handler_title}",
+			"toast_invalid_handler": "{!$Label.toast_invalid_handler}",
+			"toast_saved_fa": "{!$Label.toast_saved_fa}",
+			"toast_created_fa": "{!$Label.toast_created_fa}",
+			"toast_discount_calculated_title": "{!$Label.toast_discount_calculated_title}",
+			"toast_discount_calculated": "{!$Label.toast_discount_calculated}",
+			"famext_expression": "{!$Label.famext_expression}",
+			"famext_discount_type": "{!$Label.famext_discount_type}",
+			"famext_oneOff": "{!$Label.famext_oneOff}",
+			"famext_recurring": "{!$Label.famext_recurring}",
+			"famext_field": "{!$Label.famext_field}",
+			"famext_value": "{!$Label.famext_value}",
+			"famext_btn_test_targeting": "{!$Label.famext_btn_test_targeting}",
+			"famext_group_name": "{!$Label.famext_group_name}",
+			"famext_placeholder_addGroup": "{!$Label.famext_placeholder_addGroup}",
+			"famext_dynamic_groups_title": "{!$Label.famext_dynamic_groups_title}",
+			"famext_discount_amount": "{!$Label.famext_discount_amount}",
+			"famext_discount_percentage": "{!$Label.famext_discount_percentage}",
+			"famext_targeting_not_initiated": "{!$Label.famext_targeting_not_initiated}",
+			"famext_logic": "{!$Label.famext_logic}",
+			"famext_expression_comp": "{!$Label.famext_expression_comp}",
+			"famext_manager_add_new_comp": "{!$Label.famext_manager_add_new_comp}",
+			"famext_manager_parse": "{!$Label.famext_manager_parse}",
+			"famext_manager_Sequence": "{!$Label.famext_manager_Sequence}",
+			"famext_manager_Editable": "{!$Label.famext_manager_Editable}",
+			"famext_manager_group_type": "{!$Label.famext_manager_group_type}"
+		}
+	};
+	</script>
+	<style type="text/css">
+	@font-face {
+		font-family: 'Salesforce Sans';
+		src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Light.woff2')}') format("woff2"),
+		url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Light.woff')}') format("woff");
+		font-weight: 300
+	}
 
-    @font-face {
-        font-family: 'Salesforce Sans';
-        src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-LightItalic.woff2')}') format("woff2"),
-        url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-LightItalic.woff')}') format("woff");
-        font-style: italic;
-        font-weight: 300
-    }
+	@font-face {
+		font-family: 'Salesforce Sans';
+		src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-LightItalic.woff2')}') format("woff2"),
+		url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-LightItalic.woff')}') format("woff");
+		font-style: italic;
+		font-weight: 300
+	}
 
-    @font-face {
-        font-family: 'Salesforce Sans';
-        src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Regular.woff2')}') format("woff2"),
-        url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Regular.woff')}') format("woff");
-        font-weight: 400
-    }
+	@font-face {
+		font-family: 'Salesforce Sans';
+		src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Regular.woff2')}') format("woff2"),
+		url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Regular.woff')}') format("woff");
+		font-weight: 400
+	}
 
-    @font-face {
-        font-family: 'Salesforce Sans';
-        src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Italic.woff2')}') format("woff2"),
-        url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Italic.woff')}') format("woff");
-        font-style: italic;
-        font-weight: 400
-    }
+	@font-face {
+		font-family: 'Salesforce Sans';
+		src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Italic.woff2')}') format("woff2"),
+		url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Italic.woff')}') format("woff");
+		font-style: italic;
+		font-weight: 400
+	}
 
-    @font-face {
-        font-family: 'Salesforce Sans';
-        src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Bold.woff2')}') format("woff2"),
-        url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Bold.woff')}') format("woff");
-        font-weight: 700
-    }
+	@font-face {
+		font-family: 'Salesforce Sans';
+		src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Bold.woff2')}') format("woff2"),
+		url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-Bold.woff')}') format("woff");
+		font-weight: 700
+	}
 
-    @font-face {
-        font-family: 'Salesforce Sans';
-        src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-BoldItalic.woff2')}') format("woff2"),
-        url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-BoldItalic.woff')}') format("woff");
-        font-style: italic;
-        font-weight: 700
-    }
+	@font-face {
+		font-family: 'Salesforce Sans';
+		src: url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-BoldItalic.woff2')}') format("woff2"),
+		url('{!URLFOR($Resource.fonts, 'fonts/SalesforceSans-BoldItalic.woff')}') format("woff");
+		font-style: italic;
+		font-weight: 700
+	}
 
-    .cloudsense-logo {
-        background-image: url('{!URLFOR($Resource.fonts, 'img/cloudsense.png')}') !important;
-    }
-    </style>
-    <script src="{!$Resource.FrameAgreementResource}" type="text/javascript" />
-    <script>
+	.cloudsense-logo {
+		background-image: url('{!URLFOR($Resource.fonts, 'img/cloudsense.png')}') !important;
+	}
+	</style>
+	<script src="{!$Resource.FrameAgreementResource}" type="text/javascript" />
+	<script>
 	__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
 	  supportsFiber: true,
 	  inject: function() {},
@@ -270,5 +313,5 @@
 	  onCommitFiberUnmount: function() {}
 	};
 	</script>
-    <csutil:CustomResources resources="{!commonContainerPageResources }" />
+	<csutil:CustomResources resources="{!commonContainerPageResources }" />
 </apex:page>

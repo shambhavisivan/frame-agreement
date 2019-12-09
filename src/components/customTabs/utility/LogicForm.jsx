@@ -60,7 +60,7 @@ class LogicForm extends React.Component {
 					type="text"
 					name=""
 					value={this.state.field}
-					placeholder="Field"
+					placeholder={window.SF.labels.famext_field}
 					onChange={event => {
 						this.setState({ field: event.target.value });
 					}}
@@ -87,7 +87,7 @@ class LogicForm extends React.Component {
 					type="text"
 					name=""
 					value={this.state.value}
-					placeholder="Value"
+					placeholder={window.SF.labels.famext_value}
 					onChange={event => {
 						this.setState({ value: event.target.value });
 					}}

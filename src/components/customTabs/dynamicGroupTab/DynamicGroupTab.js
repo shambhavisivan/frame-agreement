@@ -609,12 +609,14 @@ class DynamicGroupTab extends React.Component {
 			<div id="dynamic-group-tab" className="card products-card">
 				<div className="products-card__inner">
 					<div className="products-card__header">
-						<span className="products__title">Dynamic groups</span>
+						<span className="products__title">
+							{window.SF.labels.famext_dynamic_groups_title}
+						</span>
 						<div className="header__inputs">
 							<Select
 								className="dg-select"
 								isDisabled={!this.state.editable}
-								placeholder="Add group..."
+								placeholder={window.SF.labels.famext_placeholder_addGroup}
 								value={this.blank}
 								options={this.state.selectGroups}
 								onChange={this.onAddGroup}
@@ -693,7 +695,9 @@ class DynamicGroupTab extends React.Component {
 									<div className="tab-body-left">
 										{group.csfamext__expression__c ? (
 											<div className="input-box">
-												<label className="dg-label">Expression</label>
+												<label className="dg-label">
+													{window.SF.labels.famext_expression}
+												</label>
 												<div className="">
 													<pre>{group.csfamext__expression__c}</pre>
 												</div>
@@ -705,7 +709,9 @@ class DynamicGroupTab extends React.Component {
 										{group.csfamext__fam_editable__c && this.state.editable ? (
 											<React.Fragment>
 												<div className="input-box">
-													<label className="dg-label">Logic</label>
+													<label className="dg-label">
+														{window.SF.labels.famext_logic}
+													</label>
 													<div className="input-field">
 														<input
 															spellCheck="false"
@@ -724,7 +730,7 @@ class DynamicGroupTab extends React.Component {
 												{group.circuits.length ? (
 													<div className="input-box">
 														<label className="dg-label">
-															Expression components
+															{window.SF.labels.famext_expression_comp}
 														</label>
 
 														<div className="dg-group-circuits">
@@ -757,7 +763,11 @@ class DynamicGroupTab extends React.Component {
 																				}}
 																			>
 																				<span>
-																					Parse: {circ.parsed ? 'On' : 'Off'}
+																					{
+																						window.SF.labels
+																							.famext_manager_parse
+																					}
+																					: {circ.parsed ? 'On' : 'Off'}
 																				</span>
 																			</div>
 																		) : (
@@ -790,7 +800,9 @@ class DynamicGroupTab extends React.Component {
 												)}
 
 												<div className="input-box">
-													<label className="dg-label">Add new component</label>
+													<label className="dg-label">
+														{window.SF.labels.famext_manager_add_new_comp}
+													</label>
 													<LogicForm
 														onAdd={circuit =>
 															this.onAddLogicCircuit(group.Id, circuit)
@@ -804,11 +816,13 @@ class DynamicGroupTab extends React.Component {
 
 										<div className="input-box dynamic-group-discounts">
 											<div>
-												<label>Discount type</label>
+												<label>{window.SF.labels.famext_discount_type}</label>
 												<select
 													value={group.csfamext__discount_type__c}
 													disabled={!this.state.editable}
-													placeholder="Add Dynamic Group"
+													placeholder={
+														window.SF.labels.famext_placeholder_addGroup
+													}
 													onChange={e => {
 														this.onChangeDiscount(
 															group.Id,
@@ -817,9 +831,13 @@ class DynamicGroupTab extends React.Component {
 														);
 													}}
 												>
-													<option value="">--none</option>
-													<option value={'Amount'}>Amount</option>
-													<option value={'Percentage'}>Percentage</option>
+													<option value="">{window.SF.labels.fa_none}</option>
+													<option value={'Amount'}>
+														{window.SF.labels.famext_discount_amount}
+													</option>
+													<option value={'Percentage'}>
+														{window.SF.labels.famext_discount_amount}
+													</option>
 												</select>
 											</div>
 
@@ -827,7 +845,7 @@ class DynamicGroupTab extends React.Component {
 											'Commercial Product' ? (
 												<React.Fragment>
 													<div>
-														<label>One-Off charge</label>
+														<label>{window.SF.labels.famext_oneOff}</label>
 														<DebounceInput
 															debounceTimeout={300}
 															minLength={1}
@@ -847,7 +865,7 @@ class DynamicGroupTab extends React.Component {
 													</div>
 
 													<div>
-														<label>Recurring charge</label>
+														<label>{window.SF.labels.famext_recurring}</label>
 														<DebounceInput
 															debounceTimeout={300}
 															minLength={1}
@@ -868,7 +886,7 @@ class DynamicGroupTab extends React.Component {
 												</React.Fragment>
 											) : (
 												<div>
-													<label>Value</label>
+													<label>{window.SF.labels.famext_value}</label>
 													<DebounceInput
 														debounceTimeout={300}
 														minLength={1}
@@ -911,7 +929,7 @@ class DynamicGroupTab extends React.Component {
 										) : (
 											<div className="add-product-box">
 												<span className="box-header-1">
-													Query has not been executed yet!
+													{window.SF.labels.famext_targeting_not_initiated}
 												</span>
 
 												<div className="box-button-container">
@@ -919,7 +937,7 @@ class DynamicGroupTab extends React.Component {
 														className="fa-button fa-button--brand"
 														onClick={this.testTargeting}
 													>
-														Test targeting
+														{window.SF.labels.famext_btn_test_targeting}
 													</button>
 												</div>
 											</div>

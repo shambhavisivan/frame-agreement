@@ -316,7 +316,7 @@ class ProductModal extends Component {
 								onClick={this.togglePanel}
 							>
 								<Icon name="close" width="12" height="12" color="#0070d2" />
-								<span>Close</span>
+								<span>{window.SF.labels.btn_Close}</span>
 							</div>
 							<div>
 								<div className="fa-modal-product-list-header">

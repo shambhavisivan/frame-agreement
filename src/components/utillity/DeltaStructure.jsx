@@ -7,6 +7,9 @@ import Icon from './Icon';
 
 const NOT_SET = 'not set';
 
+const getStatusLabel = status =>
+	window.SF.labels['delta_status_' + status.toLowerCase()] || status;
+
 const Diff = props => {
 	// props.old
 	// props.new
@@ -16,7 +19,9 @@ const Diff = props => {
 		return (
 			<div className="delta-charge-diff">
 				<span>{props.old.toString()}</span>
-				<span className={'diff-status ' + props.status}>{props.status}</span>
+				<span className={'diff-status ' + props.status}>
+					{getStatusLabel(props.status)}
+				</span>
 			</div>
 		);
 	}
@@ -38,7 +43,9 @@ const Diff = props => {
 				/>
 				<span className="new">{_new.toString()}</span>
 			</div>
-			<span className={'diff-status ' + props.status}>{props.status}</span>
+			<span className={'diff-status ' + props.status}>
+				{getStatusLabel(props.status)}
+			</span>
 		</div>
 	);
 };
@@ -65,7 +72,9 @@ const DeltaAddons = props => {
 					) {
 						_oneOffDOM = (
 							<div className="charge-container">
-								<span className="charge-label">One-Off Charge:</span>
+								<span className="charge-label">
+									{window.SF.labels.addons_header_oneOff}:
+								</span>
 								<Diff
 									old={_add.oneOff.old_value}
 									new={_add.oneOff.new_value}
@@ -81,7 +90,9 @@ const DeltaAddons = props => {
 					) {
 						_recurringDOM = (
 							<div className="charge-container">
-								<span className="charge-label">Recurring:</span>
+								<span className="charge-label">
+									{window.SF.labels.addons_header_recc}:
+								</span>
 								<Diff
 									old={_add.recurring.old_value}
 									new={_add.recurring.new_value}
@@ -135,9 +146,13 @@ const DeltaProducts = props => {
 
 	return (
 		<div className="delta-entity">
-			<span className="entity-label">Product Charges</span>
+			<span className="entity-label">
+				{window.SF.labels.products_product_charges}
+			</span>
 			<div className="charge-container">
-				<span className="charge-label">One-Off Charge:</span>
+				<span className="charge-label">
+					{window.SF.labels.addons_header_oneOff}:
+				</span>
 				<Diff
 					old={_oneOff_new}
 					new={_oneOff_old}
@@ -145,7 +160,9 @@ const DeltaProducts = props => {
 				/>
 			</div>
 			<div className="charge-container">
-				<span className="charge-label">Recurring Charge:</span>
+				<span className="charge-label">
+					{window.SF.labels.addons_header_recc}:
+				</span>
 				<Diff
 					old={_recurring_new}
 					new={_recurring_old}
@@ -172,7 +189,7 @@ const DeltaVolume = props => {
 
 	return (
 		<div className="delta-entity">
-			<span className="entity-label">Volume:</span>
+			<span className="entity-label">{window.SF.labels.fa_volume}:</span>
 			{Object.keys(props.data).map(vol => {
 				if (
 					props.data[vol].hasOwnProperty('old_value') ||
@@ -203,7 +220,7 @@ const DeltaCharges = props => {
 
 	return (
 		<div className="delta-entity">
-			<span className="entity-label">Charges:</span>
+			<span className="entity-label">{window.SF.labels.products_charges}:</span>
 			<div className="entity-delta">
 				{Object.keys(props.data).map(chargeId => {
 					let _charge = props.data[chargeId];
@@ -213,7 +230,9 @@ const DeltaCharges = props => {
 					if (_charge.hasOwnProperty('oneOff')) {
 						_oneOffDOM = (
 							<div className="charge-container">
-								<span className="charge-label">One-Off Charge:</span>
+								<span className="charge-label">
+									{window.SF.labels.addons_header_oneOff}:
+								</span>
 								<Diff
 									old={_charge.oneOff.old_value}
 									new={_charge.oneOff.new_value}
@@ -226,7 +245,9 @@ const DeltaCharges = props => {
 					if (_charge.hasOwnProperty('recurring')) {
 						_recurringDOM = (
 							<div className="charge-container">
-								<span className="charge-label">Recurring:</span>
+								<span className="charge-label">
+									{window.SF.labels.addons_header_recc}:
+								</span>
 								<Diff
 									old={_charge.recurring.old_value}
 									new={_charge.recurring.new_value}
@@ -258,7 +279,7 @@ const DeltaRateCards = props => {
 
 	return (
 		<div className="delta-entity">
-			<span className="entity-label">Rate Cards:</span>
+			<span className="entity-label">{window.SF.labels.products_rates}:</span>
 			<div className="entity-delta">
 				{Object.keys(props.data).map(rcId => {
 					if (!Object.keys(props.data[rcId].rcl).length) {
@@ -358,7 +379,9 @@ class DeltaStructure extends Component {
 		return (
 			<div className="delta-container">
 				<div className="delta-fields">
-					<h3 className="delta-section-title">Frame Agreement Fields</h3>
+					<h3 className="delta-section-title">
+						{window.SF.labels.delta_fa_fields}
+					</h3>
 
 					<div className="delta-diff-collection">
 						{Object.keys(_faFields).map(field => {
@@ -389,7 +412,9 @@ class DeltaStructure extends Component {
 					</div>
 				</div>
 				<div className="delta-products-container">
-					<h3 className="delta-section-title">Products</h3>
+					<h3 className="delta-section-title">
+						{window.SF.labels.products_tab_title}
+					</h3>
 					<div className="delta-diff-collection">
 						{Object.keys(_products).map(Id => {
 							if (typeof _products[Id] === 'string') {
@@ -397,7 +422,7 @@ class DeltaStructure extends Component {
 									<div className="delta-product-no-info" key={Id}>
 										{this.pm[Id] + ': '}
 										<span className={'diff-status ' + _products[Id]}>
-											{_products[Id]}
+											{getStatusLabel(_products[Id])}
 										</span>
 									</div>
 								);

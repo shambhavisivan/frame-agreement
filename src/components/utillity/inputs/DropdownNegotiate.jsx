@@ -187,7 +187,7 @@ class DropdownNegotiate extends React.Component {
 						value={this.state.selected}
 						onChange={e => this.onChange(e)}
 					>
-						<option value="none">--none</option>
+						<option value="none">{window.SF.labels.fa_none}</option>
 						{this.discounts.map((disc, index) => {
 							let _discount =
 								'-' +

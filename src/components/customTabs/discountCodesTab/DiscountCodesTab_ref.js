@@ -863,7 +863,7 @@ class DiscountCodesTab extends React.Component {
 														);
 													}}
 												>
-													<option value="">--none</option>
+													<option value="">{window.SF.labels.fa_none}</option>
 													<option value={'Amount'}>Amount</option>
 													<option value={'Percentage'}>Percentage</option>
 												</select>

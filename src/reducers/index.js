@@ -1600,6 +1600,35 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
+		case 'REMOVE_FA':
+			var faId = action.payload.faId;
+			var agreements = action.payload.agreements;
+
+			var _attachment = {
+				...(state.frameAgreements[faId]._ui.attachment || {
+					custom: '',
+					products: {}
+				})
+			};
+
+			agreements.forEach(fa => {
+				delete _attachment.products[fa];
+			});
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: _attachment
+						}
+					}
+				}
+			};
+
 		case 'RESET_NEGOTIATION':
 			var faId = action.payload.faId;
 

@@ -3476,6 +3476,10 @@ window.SF = SF = {
 		account: '0011t00000DSEtn'
 	},
 	labels: {
+		allowances_name: 'Name',
+		allowances_priority: 'Priority',
+		allowances_amount: 'Amount',
+		allowances_usage_types: 'Usage Types',
 		frameAgreementTitle: 'Frame Agreement Negotiation Console',
 		frameAgreementListTitle: 'Agreement List',
 		input_quickSearchPlaceholder: 'Quick search',
@@ -3483,6 +3487,11 @@ window.SF = SF = {
 		faMenuActionClone: 'Clone',
 		faMenuActionEdit: 'Edit',
 		faMenuActionAccounts: 'Accounts',
+		fa_tab: 'Frame Agreement',
+		rl_tab: 'Related Lists',
+		fa_master_chip: 'Master',
+		fa_none: '--none',
+		fa_volume: 'Volume',
 		accounts_modal_no_main: '--no account',
 		accounts_modal_no_assoc: '--no associated accounts',
 		btn_AddNewAgreement: 'Add new Agreement',
@@ -3490,6 +3499,8 @@ window.SF = SF = {
 		header_frameAgreementMasterTitle: 'Master Frame Agreement',
 		header_customDropdownPlaceholder: 'Custom',
 		btn_Save: 'Save',
+		btn_Close: 'Close',
+		btn_Done: 'Done',
 		btn_SubmitForApproval: 'Submit For Approval',
 		btn_Submit: 'Activate',
 		btn_BulkNegotiate: 'Negotiate Products',
@@ -3499,6 +3510,15 @@ window.SF = SF = {
 		btn_AddFa: 'Add Frame Agreements',
 		btn_Delta: 'Compare Agreements',
 		frame_agreements_title: 'Frame Agreements',
+		delta_title: 'Delta Viewer',
+		delta_fa_fields: 'Frame Agreement Fields',
+		delta_status_unchanged: 'Unchanged',
+		delta_status_changed: 'Changed',
+		delta_status_removed: 'Removed',
+		delta_status_added: 'Added',
+		btn_delta_switch_fa: 'Switch to FA View',
+		btn_delta_switch_delta: 'Switch to Delta View',
+		btn_CalcDelta: 'Calculate Delta',
 		btn_NewVersion: 'Create New Version',
 		approval_title: 'Approval history',
 		approval_action_approve: 'Approve',
@@ -3624,7 +3644,28 @@ window.SF = SF = {
 		toast_saved_fa: 'Successfuly saved frame agreement.!',
 		toast_created_fa: 'Successfuly created new frame agreement.!',
 		toast_discount_calculated_title: 'Discount calculated!',
-		toast_discount_calculated: 'Changes have to be saved to Frame Agreement.!'
+		toast_discount_calculated: 'Changes have to be saved to Frame Agreement.!',
+		// FAMEXT labels
+		famext_expression: 'Expression',
+		famext_discount_type: 'Discount Type',
+		famext_oneOff: 'One-off charge',
+		famext_recurring: 'Recurring charge',
+		famext_field: 'Field',
+		famext_value: 'Value',
+		famext_btn_test_targeting: 'Test Targeting',
+		famext_group_name: 'Group Name',
+		famext_placeholder_addGroup: 'Add group...',
+		famext_dynamic_groups_title: 'Dynamic groups',
+		famext_discount_amount: 'Amount',
+		famext_discount_percentage: 'Percentage',
+		famext_targeting_not_initiated: 'Query has not been executed yet!',
+		famext_logic: 'Logic',
+		famext_expression_comp: 'Expression components',
+		famext_manager_add_new_comp: 'Add new component',
+		famext_manager_parse: 'Parse',
+		famext_manager_Sequence: 'Sequence',
+		famext_manager_Editable: 'Editable',
+		famext_manager_group_type: 'Group Type'
 	},
 	apiSession: '{!$Api.Session_ID}',
 	invokeAction: function(remoteActionName, parametersArr = []) {
@@ -4009,3 +4050,60 @@ window.SF = SF = {
 		}
 	}
 };
+
+// ****************************************************************
+
+// Object.defineProperty(Array.prototype, 'intercept', {
+//     value: function(callback) {
+//         if (!Array.isArray(this)) {
+//         	return this;
+//         }
+//         callback(this.length);
+//         return this;
+//     }
+// });
+// ******************** Custom tabs example **************************
+// [
+//   {
+//     "label": "Custom tab",
+//     "container_id": "customTab1",
+//     "onEnter": "customTabEnter"
+//   }
+// ]
+
+// window.FAM.subscribe('onLoad', data => {
+// 	return new Promise(resolve => {
+// 		window.FAM.registerMethod('customTabEnter', id => {
+// 			return new Promise(resolve => {
+// 				setTimeout(() => {
+// 					// ****************************
+// 					console.log('Entered tab with id:' + id);
+// 					document.getElementById(id).innerHTML =
+// 						'<h1>Some Title</h1><span>test</span>';
+// 					// ****************************
+// 					resolve();
+// 				});
+// 			});
+// 		});
+// 		resolve(data);
+// 	});
+// });
+
+/*********************************************************/
+// window.FAM.subscribe("onFaSelect", (data) => {
+//     return new Promise(resolve => {
+//         resolve({
+//         	disableDiscountLevels: true,
+// 			disableInlineDiscounts: true
+//         });
+//     });
+// })
+
+/*********************************************************/
+// window.FAM.subscribe("DCE_onLoadDiscountCodes", (data) => {
+//     return new Promise(resolve => {
+//     	console.log(data);
+//         resolve(data);
+//     });
+// })
+/*********************************************************/

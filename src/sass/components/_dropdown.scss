@@ -3,6 +3,7 @@
 	left: 0;
 	outline: 0;
 	min-width: 8rem;
+	width: max-content;
 	text-align: left;
 	top: calc(100% + 0.5rem);
 	z-index: $z-index-dropdown;

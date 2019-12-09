@@ -484,13 +484,13 @@ class FaMaster extends Component {
 					<div className="fa-main-body__inner">
 						{this.props.settings.RelatedListsData.length ? (
 							<Tabs initial={0}>
-								<Tab label="Frame Agreement">
+								<Tab label={window.SF.labels.fa_tab}>
 									<FaFields
 										onActionTaken={this.onActionTaken}
 										faId={this.faId}
 									/>
 								</Tab>
-								<Tab label="Related Lists">
+								<Tab label={window.SF.labels.rl_tab}>
 									<RelatedLists faId={this.faId} />
 								</Tab>
 							</Tabs>

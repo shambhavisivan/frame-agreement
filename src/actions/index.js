@@ -440,9 +440,9 @@ export function addFaToMaster(faId, agreements) {
 	};
 }
 
-export const _removeFaFromMaster = faId => ({
+export const _removeFaFromMaster = (faId, agreements) => ({
 	type: 'REMOVE_FA',
-	payload: faId
+	payload: { faId, agreements }
 });
 
 export function removeFaFromMaster(faId, agreements) {

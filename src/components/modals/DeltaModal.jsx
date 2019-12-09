@@ -280,7 +280,9 @@ class DeltaModal extends Component {
 							/>
 						</svg>
 					</button>
-					<h2 className="fa-modal-header-title">Delta Viewer</h2>
+					<h2 className="fa-modal-header-title">
+						{window.SF.labels.delta_title}
+					</h2>
 				</div>
 
 				<div className="delta-modal fa-modal-body">
@@ -393,8 +395,8 @@ class DeltaModal extends Component {
 								}
 							>
 								{this.state.deltaView
-									? '< Switch to FA View'
-									: ' Switch to Delta View >'}
+									? '< ' + window.SF.labels.btn_delta_switch_fa
+									: window.SF.labels.btn_delta_switch_delta + ' >'}
 							</button>
 						) : null}
 
@@ -404,7 +406,7 @@ class DeltaModal extends Component {
 								onClick={this.calculateDelta}
 								disabled={!this.state.secondaryId}
 							>
-								Calculate Delta
+								{window.SF.labels.btn_CalcDelta}
 							</button>
 						) : null}
 					</div>
@@ -413,7 +415,7 @@ class DeltaModal extends Component {
 						className="fa-button fa-button--default"
 						onClick={this.onCloseModal}
 					>
-						Done
+						{window.SF.labels.btn_Done}
 					</button>
 				</div>
 			</Modal>

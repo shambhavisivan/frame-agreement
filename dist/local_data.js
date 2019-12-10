@@ -3699,8 +3699,8 @@ window.SF = SF = {
 					HeaderData,
 					CustomTabsData,
 					account: {
-						Id: 'aaaa',
-						Name: 'aaaa'
+						Id: '0019E00000w3I9OQAU',
+						Name: 'Elisa & OY'
 					},
 					// DiscLevels: DiscLevels,
 					// AuthLevels: AuthLevels,

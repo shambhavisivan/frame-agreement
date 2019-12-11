@@ -250,6 +250,10 @@ export class App extends Component {
 				decompositionPromiseArray.push(decomposeAttachment(chunk, PR_ID, faId));
 			});
 
+			if (!decompositionDataChunked.length) {
+				decompositionPromiseArray.push(decomposeAttachment([], PR_ID, faId));
+			}
+
 			//********************************************
 			// Wait for all to resolve
 			let result = await Promise.all(decompositionPromiseArray);
@@ -294,6 +298,10 @@ export class App extends Component {
 					this.props.settings.FACSettings.statuses.active_status
 				);
 				await this.props.refreshFrameAgreement(faId);
+
+				if (this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c) {
+					await this.props.refreshFrameAgreement(this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c);
+				}
 
 				this.props.createToast(
 					'success',

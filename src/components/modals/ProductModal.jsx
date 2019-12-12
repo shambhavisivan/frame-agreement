@@ -9,7 +9,7 @@ import Icon from '../utillity/Icon';
 import Checkbox from '../utillity/inputs/Checkbox';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
-import { truncateCPField } from '../../utils/shared-service';
+import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
 
 class ProductModal extends Component {
 	constructor(props) {
@@ -435,12 +435,15 @@ class ProductModal extends Component {
 						<div>
 							<div className="fa-modal-product-list-header">
 								<div className="header-th">
-									{window.SF.labels.products_productNameHeaderCell}
+									{getFieldLabel('cspmb__Price_Item__c', 'name')}
 								</div>
 								{this.priceItemFields.map(f => {
 									return (
 										<div key={f.name} className="header-th">
-											<span>{truncateCPField(f.name)}</span>
+											<span>
+												{getFieldLabel('cspmb__Price_Item__c', f.name) ||
+													truncateCPField(f.name)}
+											</span>
 										</div>
 									);
 								})}

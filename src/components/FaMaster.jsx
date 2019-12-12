@@ -21,7 +21,12 @@ import {
 
 import { publish } from '../api';
 
-import { truncateCPField, log, isMaster } from '../utils/shared-service';
+import {
+	truncateCPField,
+	getFieldLabel,
+	log,
+	isMaster
+} from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
 // import ApprovalProcess from './ApprovalProcess';
@@ -365,6 +370,7 @@ class FaMaster extends Component {
 									placeholder={window.SF.labels.input_quickSearchPlaceholder}
 								/>
 								<DropdownCheckbox
+									object="csconta__Frame_Agreement__c"
 									options={this.props.faFields}
 									onChange={this.props.toggleFaFieldVisibility}
 								/>
@@ -390,7 +396,10 @@ class FaMaster extends Component {
 
 								<div className="container__fields">
 									<span className="list-cell">
-										{window.SF.labels.faNameHeaderCell}
+										{getFieldLabel(
+											'csconta__Frame_Agreement__c',
+											'csconta__Agreement_Name__c'
+										)}
 									</span>
 									{this.props.faFields
 										.filter(f => f.visible)
@@ -400,7 +409,10 @@ class FaMaster extends Component {
 													key={'header-' + f.name}
 													className={'list-cell' + (f.volume ? ' volume' : '')}
 												>
-													{truncateCPField(f.name)}
+													{getFieldLabel(
+														'csconta__Frame_Agreement__c',
+														f.name
+													) || truncateCPField(f.name)}
 												</span>
 											);
 										})}

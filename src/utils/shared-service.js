@@ -250,6 +250,16 @@ export const isMaster = fa => {
 	);
 };
 
+export const getFieldLabel = (obj, field) => {
+	let retVal;
+	try {
+		retVal = window.SF.fieldLabels[obj][field.toLowerCase()];
+	} catch (err) {
+		// console.error(err);
+	}
+	return retVal;
+};
+
 export const log = {
 	blue: log => {
 		console.log('%c' + log, 'color: #0070d2');

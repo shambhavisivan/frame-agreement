@@ -16,6 +16,7 @@ import {
 } from '../actions';
 
 import { publish } from '~/src/api';
+import { getFieldLabel } from '~/src/utils/shared-service.js';
 
 import FrameAgreementRow from './FrameAgreementRow';
 import InputSearch from './utillity/inputs/InputSearch';
@@ -251,13 +252,13 @@ class FaList extends Component {
 		let _createFaDropdownData = [
 			{
 				type: 'child',
-				label: 'Frame Agreement',
+				label: getFieldLabel('misc', 'Frame Agreement'),
 				id: 'createnewchild',
 				method: null
 			},
 			{
 				type: 'master',
-				label: 'Master Agreement',
+				label: getFieldLabel('misc', 'Master Agreement'),
 				id: 'createnewmaster',
 				method: null
 			}

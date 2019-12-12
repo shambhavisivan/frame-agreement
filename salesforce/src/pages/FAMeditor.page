@@ -67,6 +67,7 @@
 			apiSession: "{!$Api.Session_ID}",
 			actions: {
 				getAppSettings: "{!$RemoteAction.FrameRateManagerController.getAppSettings}",
+				getFieldLabels: "{!$RemoteAction.FrameRateManagerController.getFieldLabels}",
 				getFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getFrameAgreements}",
 				getFrameAgreement: "{!$RemoteAction.FrameRateManagerController.getFrameAgreement}",
 				setFrameAgreementState: "{!$RemoteAction.FrameRateManagerController.setFrameAgreementState}",
@@ -116,6 +117,7 @@
 				"fa_master_chip": "{!$Label.fa_master_chip}",
 				"fa_none": "{!$Label.fa_none}",
 				"fa_volume": "{!$Label.fa_volume}",
+				"rl_emptyList": "{!$Label.rl_emptyList}",
 				"accounts_modal_no_main": "{!$Label.accounts_modal_no_main}",
 				"accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",
 				"btn_AddNewAgreement": "{!$Label.btn_AddNewAgreement}",
@@ -283,7 +285,8 @@
 				"famext_manager_Sequence": "{!$Label.famext_manager_Sequence}",
 				"famext_manager_Editable": "{!$Label.famext_manager_Editable}",
 				"famext_manager_group_type": "{!$Label.famext_manager_group_type}"
-			}
+			},
+			fieldLabels: {}
 		};
 	</script>
 	<style type="text/css">

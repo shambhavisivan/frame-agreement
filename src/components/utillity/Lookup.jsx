@@ -4,7 +4,11 @@ import InputSearch from './inputs/InputSearch';
 import Loading from './Loading';
 
 import Pagination from './Pagination';
-import { truncateCPField, decodeEntities } from '../../utils/shared-service';
+import {
+	truncateCPField,
+	getFieldLabel,
+	decodeEntities
+} from '../../utils/shared-service';
 import { LookupSkeleton } from '../skeletons/LookupSkeleton';
 
 class Lookup extends React.Component {
@@ -14,6 +18,7 @@ class Lookup extends React.Component {
 	// this.props.data
 	// this.props.count
 	// this.props.loading
+	// this.props.field
 	// this.props.columns
 	// this.props.selected
 
@@ -106,7 +111,9 @@ class Lookup extends React.Component {
 						{this.props.columns.map(c => {
 							return (
 								<div key={c} className="header-th">
-									<span>{truncateCPField(c)}</span>
+									<span>
+										{getFieldLabel(this.props.object, c) || truncateCPField(c)}
+									</span>
 								</div>
 							);
 						})}

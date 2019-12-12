@@ -9,7 +9,11 @@ import Icon from '../utillity/Icon';
 import Checkbox from '../utillity/inputs/Checkbox';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
-import { truncateCPField, isMaster } from '../../utils/shared-service';
+import {
+	truncateCPField,
+	getFieldLabel,
+	isMaster
+} from '../../utils/shared-service';
 
 class FrameModal extends Component {
 	constructor(props) {
@@ -148,12 +152,18 @@ class FrameModal extends Component {
 						<div>
 							<div className="fa-modal-product-list-header">
 								<div className="header-th">
-									{window.SF.labels.faNameHeaderCell}
+									{getFieldLabel(
+										'csconta__Frame_Agreement__c',
+										'csconta__Agreement_Name__c'
+									)}
 								</div>
 								{this.props.faFields.map(f => {
 									return (
 										<div key={f.name} className="header-th">
-											<span>{truncateCPField(f.name)}</span>
+											<span>
+												{getFieldLabel('csconta__Frame_Agreement__c', f.name) ||
+													truncateCPField(f.name)}
+											</span>
 										</div>
 									);
 								})}

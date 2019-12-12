@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 
 import Pagination from './Pagination';
-import { openSFLink, truncateCPField } from '~/src/utils/shared-service.js';
+import {
+	openSFLink,
+	truncateCPField,
+	getFieldLabel
+} from '~/src/utils/shared-service.js';
 
 const CUBE_DIAGONAL_HALF = (Math.sqrt(2) * 20) / 2;
 
@@ -108,7 +112,10 @@ class UsageTypeTable extends Component {
 						<tr>
 							<th>{window.SF.labels.usage_type_name_field}</th>
 							{this.props.fields.map(field => (
-								<th key={'uth-' + field}>{truncateCPField(field, true)}</th>
+								<th key={'uth-' + field}>
+									{getFieldLabel('cspmb__Usage_Type__c', field) ||
+										truncateCPField(field, true)}
+								</th>
 							))}
 						</tr>
 					</thead>

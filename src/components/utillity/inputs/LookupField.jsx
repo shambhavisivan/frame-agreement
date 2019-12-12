@@ -4,11 +4,7 @@ import Modal from 'react-responsive-modal';
 import Icon from '../Icon';
 import Lookup from '../Lookup';
 
-import {
-	truncateCPField,
-	decodeEntities,
-	openSFLink
-} from '../../../utils/shared-service';
+import { decodeEntities, openSFLink } from '../../../utils/shared-service';
 
 class LookupField extends React.Component {
 	// disabled={!this.props.editable}
@@ -63,9 +59,18 @@ class LookupField extends React.Component {
 			this.props.columns[0],
 			this.filter,
 			this.props.value || null
-		]).then(response => {
+		]).then(async response => {
+			if (!window.SF.fieldLabels.hasOwnProperty(response.object)) {
+				await window.SF.invokeAction('getFieldLabels', [response.object]).then(
+					r => {
+						window.SF.fieldLabels[response.object] = r;
+					}
+				);
+			}
+
 			this._setState({
 				recordLabel: response.initialLabel || '',
+				object: response.object,
 				count: response.count,
 				selected: this.props.value
 					? {
@@ -382,6 +387,7 @@ class LookupField extends React.Component {
 							data={this.state.records}
 							count={this.state.count}
 							columns={this.props.columns}
+							object={this.state.object}
 							selected={this.state.selected}
 							disabled={this.state.fetchingRecords}
 							loading={this.state.loadingOverlay}

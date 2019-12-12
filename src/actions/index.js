@@ -1,4 +1,4 @@
-import { decodeEntities } from '../utils/shared-service';
+import { decodeEntities, getFieldLabel } from '../utils/shared-service';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
 const _defaultModals = {
@@ -123,8 +123,19 @@ export const _loadRelatedLists = (faId, rlData) => ({
 
 export function getRelatedLists(faId) {
 	return function(dispatch) {
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getRelatedLists', [faId]).then(response => {
+		return new Promise(async (resolve, reject) => {
+			window.SF.invokeAction('getRelatedLists', [faId]).then(async response => {
+				// Load field labels if not loaded already
+				for (const list of response) {
+					if (!window.SF.fieldLabels.hasOwnProperty(list.object)) {
+						await window.SF.invokeAction('getFieldLabels', [list.object]).then(
+							r => {
+								window.SF.fieldLabels[list.object] = r;
+							}
+						);
+					}
+				}
+
 				dispatch(_loadRelatedLists(faId, response));
 				resolve(response);
 				return response;

@@ -366,8 +366,8 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(1, info_1.size());
-		system.assertEquals(2, info_2.size());
+		system.assertEquals(2, info_1.size());
+		system.assertEquals(3, info_2.size());
 
 		system.assertEquals(1, lookup_records_1.size());
 		system.assertEquals(1, lookup_records_2.size());

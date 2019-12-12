@@ -258,6 +258,21 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
+	@TestVisible public static Map <String, String> getFieldLabels (String target) {
+		Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
+		Schema.SObjectType leadSchema = schemaMap.get(target);
+		Map<String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
+
+		Map <String, String> resultMap = new Map <String, String>();
+
+		for (String fieldName: fieldMap.keySet()) {
+		    resultMap.put(fieldName, fieldMap.get(fieldName).getDescribe().getLabel());
+		}
+
+		return resultMap;
+	}
+
+	@RemoteAction
 	@TestVisible public static String deleteAccountAssociation(String assocId) {
 		String result = 'Success';
 
@@ -336,6 +351,7 @@ global with sharing class FrameRateManagerController {
 
 		system.debug(query_count);
 		returnValues.put('count', database.countQuery(query_count));
+		returnValues.put('object', pointedObject);
 
 
 		return returnValues;
@@ -1078,6 +1094,7 @@ global with sharing class FrameRateManagerController {
 			system.debug(query);
 
 			relatedStructure.put('label', (String) relatedList.get('label'));
+			relatedStructure.put('object', (String) relatedList.get('object'));
 			relatedStructure.put('columns', (String) relatedList.get('columns'));
 			relatedStructure.put('records', database.query(query));
 

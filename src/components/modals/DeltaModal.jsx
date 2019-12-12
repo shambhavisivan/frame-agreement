@@ -7,6 +7,7 @@ import JSONTree from 'react-json-tree';
 import {
 	isMaster,
 	decodeEntities,
+	getFieldLabel,
 	truncateCPField,
 	copy
 } from '~/src/utils/shared-service';
@@ -351,7 +352,11 @@ class DeltaModal extends Component {
 											<span>({itemString.replace(/\D+/g, '')})</span>
 										)}
 										labelRenderer={raw => (
-											<span>{truncateCPField(raw[0], true)}:</span>
+											<span>
+												{getFieldLabel('csconta__Frame_Agreement__c', raw[0]) ||
+													truncateCPField(raw[0], true)}
+												:
+											</span>
 										)}
 										valueRenderer={raw => <strong>{raw}</strong>}
 										hideRoot={true}
@@ -364,7 +369,11 @@ class DeltaModal extends Component {
 								{this.state.secondaryId ? (
 									<JSONTree
 										labelRenderer={raw => (
-											<span>{truncateCPField(raw[0], true)}:</span>
+											<span>
+												{getFieldLabel('csconta__Frame_Agreement__c', raw[0]) ||
+													truncateCPField(raw[0], true)}
+												:
+											</span>
 										)}
 										valueRenderer={raw => <strong>{raw}</strong>}
 										hideRoot={true}

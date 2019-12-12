@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import { Collapse } from 'react-collapse';
 import moment from 'moment';
 
-import { truncateCPField, copy } from '~/src/utils/shared-service';
+import {
+	truncateCPField,
+	getFieldLabel,
+	copy
+} from '~/src/utils/shared-service';
 import Icon from './Icon';
 
 const NOT_SET = 'not set';
@@ -398,7 +402,8 @@ class DeltaStructure extends Component {
 							return (
 								<div key={field} className="charge-container">
 									<span className="charge-label">
-										{truncateCPField(field, true) + ': '}
+										{getFieldLabel('csconta__Frame_Agreement__c', field) ||
+											truncateCPField(field, true) + ': '}
 									</span>
 
 									<Diff

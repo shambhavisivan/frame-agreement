@@ -299,8 +299,13 @@ export class App extends Component {
 				);
 				await this.props.refreshFrameAgreement(faId);
 
-				if (this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c) {
-					await this.props.refreshFrameAgreement(this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c);
+				if (
+					this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c
+				) {
+					await this.props.refreshFrameAgreement(
+						this.props.frameAgreements[faId]
+							.csconta__replaced_frame_agreement__c
+					);
 				}
 
 				this.props.createToast(
@@ -497,18 +502,40 @@ export class App extends Component {
 
 		window.SF.getAuthLevels = () => this.props.settings.AuthLevels || {};
 
-		this.props.getAppSettings().then(response => {
+		Promise.all([
+			this.props.getAppSettings(),
+			window.SF.invokeAction('getFieldLabels', ['cspmb__Usage_Type__c']).then(
+				r => {
+					window.SF.fieldLabels['cspmb__Usage_Type__c'] = r;
+				}
+			),
+			window.SF.invokeAction('getFieldLabels', [
+				'csconta__Frame_Agreement__c'
+			]).then(r => {
+				window.SF.fieldLabels['csconta__Frame_Agreement__c'] = r;
+			}),
+			window.SF.invokeAction('getFieldLabels', ['cspmb__Price_Item__c']).then(
+				r => {
+					window.SF.fieldLabels['cspmb__Price_Item__c'] = r;
+				}
+			)
+		]).then(response => {
 			let _promiseArray = [
 				this.props.getFrameAgreements(),
 				this.props.getCommercialProducts()
 			];
 
-			let picklists = response.HeaderData.filter(
+			let picklists = response[0].HeaderData.filter(
 				f => f.type === 'picklist'
 			).map(f => f.field);
 
 			if (picklists.length) {
-				_promiseArray.push(this.props.getPicklistOptions(picklists));
+				_promiseArray.push(
+					this.props.getPicklistOptions([
+						...picklists,
+						...['csconta__agreement_level__c']
+					])
+				);
 			}
 
 			Promise.all(_promiseArray).then(responseArr => {

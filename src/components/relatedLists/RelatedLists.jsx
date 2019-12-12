@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import React, { Component } from 'react';
 
 import RelatedListTable from './RelatedListTable';
-import { truncateCPField } from '~/src/utils/shared-service.js';
 
 const tryParse = entity => {
 	try {

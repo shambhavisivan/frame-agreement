@@ -5,6 +5,7 @@ import Select from 'react-select';
 
 import {
 	decodeEntities,
+	getFieldLabel,
 	isJson,
 	makeId,
 	truncateCPField
@@ -629,11 +630,16 @@ class DynamicGroupTab extends React.Component {
 					<div className="product-card__container commercial-product-container-bare product-card__container--header">
 						<div className="container__header">
 							<div className="container__fields">
-								<span className="list-cell">Group Name</span>
+								<span className="list-cell">
+									{getFieldLabel('csfamext__Dynamic_Group__c', 'name')}
+								</span>
 								{this.customSetting.dynamic_group_fields.map(f => {
 									return (
 										<div key={f} className="list-cell">
-											<span>{truncateCPField(f)}</span>
+											<span>
+												{getFieldLabel('csfamext__Dynamic_Group__c', f) ||
+													truncateCPField(f)}
+											</span>
 										</div>
 									);
 								})}
@@ -1008,6 +1014,16 @@ window.FAM.subscribe('onLoad', data => {
 				setTimeout(() => {
 					// ****************************
 					console.log('Entered tab with id:' + id);
+					// Get DG labels
+					if (
+						!window.SF.fieldLabels.hasOwnProperty('csfamext__Dynamic_Group__c')
+					) {
+						window.SF.invokeAction('getFieldLabels', [
+							'csfamext__Dynamic_Group__c'
+						]).then(r => {
+							window.SF.fieldLabels['csfamext__Dynamic_Group__c'] = r;
+						});
+					}
 					initialiseDynamicGroupTab(id);
 					// ****************************
 					resolve();

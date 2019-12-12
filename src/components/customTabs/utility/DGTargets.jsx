@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { truncateCPField } from '../../../utils/shared-service';
+import { truncateCPField, getFieldLabel } from '../../../utils/shared-service';
 import Pagination from '../../utillity/Pagination';
 
 const DEFAULT_TARGET = 'product';
@@ -44,7 +44,10 @@ class DGTargets extends React.Component {
 					{fields.map(f => {
 						return (
 							<div key={f} className="header-th">
-								<span>{truncateCPField(f)}</span>
+								<span>
+									{getFieldLabel('csfamext__Dynamic_Group__c', f) ||
+										truncateCPField(f)}
+								</span>
 							</div>
 						);
 					})}

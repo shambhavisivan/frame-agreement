@@ -3492,6 +3492,7 @@ window.SF = SF = {
 		fa_master_chip: 'Master',
 		fa_none: '--none',
 		fa_volume: 'Volume',
+		rl_emptyList: 'No records for this related list',
 		accounts_modal_no_main: '--no account',
 		accounts_modal_no_assoc: '--no associated accounts',
 		btn_AddNewAgreement: 'Add new Agreement',
@@ -3667,6 +3668,7 @@ window.SF = SF = {
 		famext_manager_Editable: 'Editable',
 		famext_manager_group_type: 'Group Type'
 	},
+	fieldLabels: {},
 	apiSession: '{!$Api.Session_ID}',
 	invokeAction: function(remoteActionName, parametersArr = []) {
 		let data = null;
@@ -3990,6 +3992,15 @@ window.SF = SF = {
 				return createPromise(lookupInformation);
 
 			case 'getPicklistOptions':
+				if (parametersArr[0][0] === 'csconta__agreement_level__c') {
+					return createPromise({
+						csconta__agreement_level__c: [
+							{ label: 'Master Agreement trans.', value: 'Master Agreement' },
+							{ label: 'Frame Agreement trans.', value: 'Frame Agreement' }
+						]
+					});
+				}
+
 				const OPTIONS = [
 					{
 						label: 'OptionA',
@@ -4008,6 +4019,103 @@ window.SF = SF = {
 				parametersArr[0].forEach(f => {
 					result[f] = OPTIONS;
 				});
+
+				return createPromise(result);
+
+			case 'getFieldLabels':
+				var result = {};
+				if (parametersArr[0] === 'csconta__Frame_Agreement__c') {
+					result = {
+						id: 'Record ID',
+						ownerid: 'Owner ID',
+						isdeleted: 'Deleted',
+						name: 'Frame Agreement Sequence',
+						createddate: 'Created Date',
+						createdbyid: 'Created By ID',
+						lastmodifieddate: 'Last Modified Date',
+						lastmodifiedbyid: 'Last Modified By ID',
+						systemmodstamp: 'System Modstamp',
+						lastactivitydate: 'Last Activity Date',
+						lastvieweddate: 'Last Viewed Date',
+						lastreferenceddate: 'Last Referenced Date',
+						csconta__account__c: 'Account',
+						csconta__agreement_name__c: 'Agreement Name',
+						csconta__main_contact__c: 'Main Contact',
+						csconta__pricing_rule_group__c: 'Pricing Rule Group',
+						csconta__status__c: 'Status',
+						csconta__valid_from__c: 'Valid From',
+						csconta__valid_to__c: 'Valid To',
+						csfam__arb_field_text__c: 'Arb Field Text trans.',
+						csfam__arb_field_text_2__c: 'Arb Field Text 2',
+						csfam__arb_field_text_3__c: 'Arb Field Text 3',
+						csfam__arb_field_date__c: 'Arb Field Date',
+						csfam__arb_field_textarea__c: 'Arb Field Textarea',
+						csfam__arb_field_bool__c: 'Arb Field Bool trans.',
+						csfam__arb_field_integer__c: 'Arb Field Integer',
+						csfam__arb_picklist__c: 'Arb Picklist',
+						csconta__effective_end_date__c: 'Effective End Date',
+						csconta__effective_start_date__c: 'Effective Start Date',
+						csconta__replaced_frame_agreement__c: 'Replaced Frame Agreement',
+						csfam__arb_formula__c: 'Arb Formula',
+						csconta__frame_agreement_number__c: 'Frame Agreement Number',
+						csconta__agreement_level__c: 'Agreement Level',
+						csfam__arb_url_field__c: 'Arb Url Field',
+						csconta__master_frame_agreement__c: 'Master Frame Agreement',
+						csconta__replaced_by__c: 'Replaced By'
+					};
+				}
+
+				if (parametersArr[0] === 'cspmb__Price_Item__c') {
+					result = {
+						id: 'Record ID',
+						ownerid: 'Owner ID',
+						isdeleted: 'Deleted',
+						name: 'Commercial Product Name',
+						createddate: 'Created Date',
+						createdbyid: 'Created By ID',
+						lastmodifieddate: 'Last Modified Date',
+						lastmodifiedbyid: 'Last Modified By ID',
+						systemmodstamp: 'System Modstamp',
+						lastvieweddate: 'Last Viewed Date',
+						lastreferenceddate: 'Last Referenced Date',
+						cspmb__account__c: 'Account',
+						cspmb__apply_one_off_charge_account_discount__c:
+							'Apply One-Off Charge Account Discount',
+						cspmb__apply_recurring_charge_account_discount__c:
+							'Apply Recurring Charge Account Discount',
+						cspmb__authorization_level__c: 'Authorization Level',
+						cspmb__billing_frequency__c: 'Billing Frequency',
+						cspmb__contract_term__c: 'Contract Term',
+						cspmb__currency_code__c: 'Currency Code',
+						cspmb__current_version__c: 'Current Version',
+						cspmb__discount_type__c: 'Discount Type',
+						cspmb__effective_end_date__c: 'Effective End Date',
+						cspmb__effective_start_date__c: 'Effective Start Date',
+						cspmb__is_active__c: 'Is Active',
+						cspmb__is_authorization_required__c: 'Is Authorization Required',
+						cspmb__is_one_off_discount_allowed__c:
+							'Is One-Off Discount Allowed',
+						cspmb__is_recurring_discount_allowed__c:
+							'Is Recurring Discount Allowed',
+						cspmb__master_price_item__c: 'Master Commercial Product',
+						cspmb__one_off_charge_code__c: 'One-Off Charge Code',
+						cspmb__one_off_charge_external_id__c: 'One-Off Charge External Id',
+						cspmb__one_off_charge__c: 'One-Off Charge',
+						cspmb__one_off_cost__c: 'One-Off Cost',
+						cspmb__price_item_code__c: 'Commercial Product Code',
+						cspmb__price_item_description__c: 'Commercial Product Description',
+						cspmb__product_definition_name__c: 'Product Definition Name',
+						cspmb__recurring_charge_code__c: 'Recurring Charge Code',
+						cspmb__recurring_charge_external_id__c:
+							'Recurring Charge External Id',
+						cspmb__recurring_charge__c: 'Recurring Charge',
+						cspmb__recurring_cost__c: 'Recurring Cost',
+						cspmb__role__c: 'Role',
+						cspmb__version_number__c: 'Version Number',
+						csfam__categorization_alpha__c: 'Categorization Alpha',
+						csfam__categorization_beta__c: 'Categorization Beta'
+					};
+				}
 
 				return createPromise(result);
 

@@ -1,5 +1,6 @@
 import {
 	log,
+	getFieldLabel,
 	parseExpression,
 	evaluateExpressionOnAgreement
 } from '../utils/shared-service';
@@ -999,11 +1000,21 @@ const rootReducer = (state = initialState, action) => {
 			// {'fieldName': [{'label': optionlabel, 'value': optionValue}, ...]}
 
 			var headerData = state.settings.HeaderData;
+
 			headerData.forEach(f => {
 				if (f.type === 'picklist' && options.hasOwnProperty(f.field)) {
 					f.options = options[f.field];
 				}
 			});
+
+			try {
+				window.SF.fieldLabels[
+					'misc'
+				] = options.csconta__agreement_level__c.reduce(
+					(acc, iter) => ({ ...acc, [iter.value.toLowerCase()]: iter.label }),
+					{}
+				);
+			} catch (err) {}
 
 			return {
 				...state,
@@ -1013,6 +1024,13 @@ const rootReducer = (state = initialState, action) => {
 
 		case 'RECIEVE_SETTINGS':
 			action.payload.HeaderData = validateJSONData(action.payload.HeaderData);
+
+			action.payload.HeaderData.forEach(data => {
+				data.label =
+					getFieldLabel('csconta__Frame_Agreement__c', data.field) ||
+					data.label;
+			});
+
 			action.payload.CustomTabsData = validateJSONData(
 				action.payload.CustomTabsData
 			);

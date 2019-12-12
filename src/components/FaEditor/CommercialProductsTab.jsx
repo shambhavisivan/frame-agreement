@@ -9,7 +9,11 @@ import Checkbox from '../utillity/inputs/Checkbox';
 
 import CommercialProduct from '../negotiation/CommercialProduct';
 
-import { truncateCPField, log } from '../../utils/shared-service';
+import {
+	truncateCPField,
+	getFieldLabel,
+	log
+} from '../../utils/shared-service';
 import { toggleFieldVisibility } from '~/src/actions';
 
 import AddProductCTA from './AddProductCTA';
@@ -87,6 +91,7 @@ class CommercialProductsTab extends React.Component {
 							/>
 							{this.props.productFields.length ? (
 								<DropdownCheckbox
+									object="cspmb__Price_Item__c"
 									options={this.props.productFields}
 									onChange={this.props.toggleFieldVisibility}
 								/>
@@ -116,7 +121,7 @@ class CommercialProductsTab extends React.Component {
 							</div>
 							<div className="container__fields">
 								<span className="list-cell">
-									{window.SF.labels.products_productNameHeaderCell}
+									{getFieldLabel('cspmb__Price_Item__c', 'name')}
 								</span>
 								{this.props.productFields
 									.filter(f => f.visible)
@@ -126,7 +131,8 @@ class CommercialProductsTab extends React.Component {
 												key={'header-' + f.name}
 												className={'list-cell' + (f.volume ? ' volume' : '')}
 											>
-												{truncateCPField(f.name)}
+												{getFieldLabel('cspmb__Price_Item__c', f.name) ||
+													truncateCPField(f.name)}
 											</span>
 										);
 									})}

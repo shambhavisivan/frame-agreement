@@ -9,6 +9,8 @@
 	z-index: $z-index-dropdown;
 	border-radius: 0.25rem;
 	padding: 0.25rem 0;
+    max-height: 50vh;
+    overflow-y: auto;
 	@include sbg(--dropdown-bg);
 	@include sc(--dropdown-c);
 	@include css4 {

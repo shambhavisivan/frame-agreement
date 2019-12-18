@@ -529,13 +529,11 @@ export class App extends Component {
 				f => f.type === 'picklist'
 			).map(f => f.field);
 
+			// Load agreement levels for "Add new Agreement" picklist
+			picklists.push('csconta__agreement_level__c');
+
 			if (picklists.length) {
-				_promiseArray.push(
-					this.props.getPicklistOptions([
-						...picklists,
-						...['csconta__agreement_level__c']
-					])
-				);
+				_promiseArray.push(this.props.getPicklistOptions(picklists));
 			}
 
 			Promise.all(_promiseArray).then(responseArr => {

@@ -258,15 +258,15 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, String> getFieldLabels (String target) {
+	@TestVisible public static Map <String, String> getFieldLabels(String target) {
 		Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
 		Schema.SObjectType leadSchema = schemaMap.get(target);
 		Map<String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
 
 		Map <String, String> resultMap = new Map <String, String>();
 
-		for (String fieldName: fieldMap.keySet()) {
-		    resultMap.put(fieldName, fieldMap.get(fieldName).getDescribe().getLabel());
+		for (String fieldName : fieldMap.keySet()) {
+			resultMap.put(fieldName, fieldMap.get(fieldName).getDescribe().getLabel());
 		}
 
 		return resultMap;
@@ -577,9 +577,11 @@ global with sharing class FrameRateManagerController {
 		for (cspmb__Pricing_Element__c pricingElement : priceElements) {
 			String label = pricingElement.cspmb__pricing_element_type__r.cspmb__label__c;
 			String type = pricingElement.cspmb__pricing_element_type__r.cspmb__type__c;
+
 			if (label == null) {
 				label = pricingElement.cspmb__pricing_element_type__r.Name;
 			}
+
 			pricingElementLabels.put(pricingElement.Id, label);
 			pricingElementTypes.put(pricingElement.Id, type);
 			peId_cpId.put(pricingElement.Id, pricingElement.cspmb__commercial_product__c);
@@ -1691,7 +1693,10 @@ global with sharing class FrameRateManagerController {
 		cloned.csconta__replaced_by__c = null;
 		insert cloned;
 
-		cloned.csconta__frame_agreement_number__c = parseNumberFromName(original.Name);
+		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+		String prefix = (String) FACSettings.get('csfam__fa_number_prefix__c');
+
+		cloned.csconta__frame_agreement_number__c = prefix + parseNumberFromName(original.Name);
 		update cloned;
 
 		Attachment originalAttachment = getAttachment(faId);
@@ -1709,7 +1714,7 @@ global with sharing class FrameRateManagerController {
 
 		List <String> assocFieldList = new List <String> ();
 
-		for(String s : objectFields.keySet()) {
+		for (String s : objectFields.keySet()) {
 			assocFieldList.add(s);
 		}
 
@@ -1851,7 +1856,11 @@ global with sharing class FrameRateManagerController {
 
 		fa = getFrameAgreement(fa.Id);
 		if (fa.csconta__replaced_frame_agreement__c == null) {
-			fa.csconta__frame_agreement_number__c = parseNumberFromName(fa.Name);
+
+			csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+			String prefix = (String) FACSettings.get('csfam__fa_number_prefix__c');
+
+			fa.csconta__frame_agreement_number__c = prefix + parseNumberFromName(fa.Name);
 			update fa;
 		}
 
@@ -2038,7 +2047,7 @@ global with sharing class FrameRateManagerController {
 				Decimal recurring = (Decimal) categoryMap.get('recurring');
 				Decimal oneOff = (Decimal) categoryMap.get('oneOff');
 
-				cspmb__Price_Item_Pricing_Rule_Association__c pipra = new cspmb__Price_Item_Pricing_Rule_Association__c(cspmb__target_price__c = 'Sales', cspmb__pricing_rule__c = prId);
+				cspmb__Price_Item_Pricing_Rule_Association__c pipra = new cspmb__Price_Item_Pricing_Rule_Association__c(cspmb__target_price__c = 'Sales', cspmb__recurring_adjustment_type__c = 'Price Override', cspmb__one_off_adjustment_type__c = 'Price Override', cspmb__pricing_rule__c = prId);
 
 				if (cpId != null) {
 					pipra.cspmb__price_item__c = cpId;

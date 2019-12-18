@@ -59,6 +59,7 @@ class DropdownCheckbox extends React.Component {
 	onChange(e) {}
 
 	render() {
+
 		return (
 			<div className="dropdown-checkbox-container" ref={this.setWrapperRef}>
 				{this.state.menu && (
@@ -77,7 +78,7 @@ class DropdownCheckbox extends React.Component {
 								>
 									<Checkbox readOnly={option.visible} />
 									<span>
-										{getFieldLabel(this.props.object, options.name) ||
+										{getFieldLabel(this.props.object, option.name) ||
 											truncateCPField(option.name)}
 									</span>
 								</button>

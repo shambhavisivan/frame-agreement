@@ -2064,7 +2064,7 @@ const commercialProducts = [
 	},
 	{
 		Id: 'a1F1t0000001JBUEA2',
-		Name: 'Mobile L_3',
+		Name: 'Suojakotelo Insmat Exclusive Universal Tablet 10,1" mustang',
 		cspmb__Recurring_Charge__c: 269,
 		cspmb__Authorization_Level__c: 'a0x1t000000yZF3AAM',
 		cspmb__Is_Authorization_Required__c: false,

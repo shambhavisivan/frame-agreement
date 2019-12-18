@@ -1170,10 +1170,16 @@ const rootReducer = (state = initialState, action) => {
 				console.warn(
 					'FA editable statuses setting is not valid CSV! Defaulting to Draft and Requires Approval.'
 				);
+
 				action.payload.FACSettings.fa_editable_statuses = [
 					action.payload.FACSettings.statuses.draft_status,
 					action.payload.FACSettings.statuses.requires_approval_status
 				];
+
+				// If statuses are not defined
+				action.payload.FACSettings.fa_editable_statuses.filter(status => !!status);
+
+				action.payload.FACSettings.fa_editable_statuses = new Set(action.payload.FACSettings.fa_editable_statuses);
 			}
 			// ***************************************************************************************************************
 			action.payload.FACSettings.decomposition_chunk_size =

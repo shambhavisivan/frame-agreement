@@ -59,7 +59,6 @@ class DropdownCheckbox extends React.Component {
 	onChange(e) {}
 
 	render() {
-
 		return (
 			<div className="dropdown-checkbox-container" ref={this.setWrapperRef}>
 				{this.state.menu && (

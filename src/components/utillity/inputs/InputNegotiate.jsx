@@ -78,7 +78,6 @@ class InputNegotiate extends React.Component {
 						spellCheck="false"
 						className="negotiate-input"
 						type="number"
-						max={this.props.originalValue}
 						onChange={this.onNegotiate}
 						onBlur={this.onBlur}
 						onFocus={this.onFocus}
@@ -89,21 +88,27 @@ class InputNegotiate extends React.Component {
 		}
 
 		let _discount;
+		let _prefix =
+			this.props.negotiatedValue < this.props.originalValue ? '-' : '+';
+
 		if (this.state.fixed) {
 			_discount = (
 				<span className="discount-amount">
-					-{(this.props.originalValue - this.props.negotiatedValue).toFixed(2)}
+					{_prefix +
+						Math.abs(
+							this.props.originalValue - this.props.negotiatedValue
+						).toFixed(2)}
 				</span>
 			);
 		} else {
 			_discount = (
 				<span className="discount-amount">
-					-
-					{(
-						((this.props.originalValue - this.props.negotiatedValue) /
-							this.props.originalValue) *
-						100
-					).toFixed(2)}
+					{_prefix +
+						Math.abs(
+							((this.props.originalValue - this.props.negotiatedValue) /
+								this.props.originalValue) *
+								100
+						).toFixed(2)}
 					%
 				</span>
 			);
@@ -112,7 +117,9 @@ class InputNegotiate extends React.Component {
 		return (
 			<div
 				className={
-					'negotiate-container' + (this.props.invalid ? ' invalid' : '')
+					'negotiate-container' +
+					(this.props.invalid ? ' invalid' : '') +
+					(_prefix === '+' ? ' exceed' : '')
 				}
 			>
 				{_inputContainer}

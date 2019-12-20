@@ -239,6 +239,11 @@ input.negotiate-input::-webkit-outer-spin-button {
 
 .invalid .discount-amount {
 	@include sc(--input-invalid-c);
+
+}
+
+.exceed .discount-amount {
+	color: #ffa429;
 }
 
 .discount>div {

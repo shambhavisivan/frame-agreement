@@ -155,7 +155,6 @@ export class Rates extends React.Component {
 														<InputNegotiate
 															readOnly={this.props.readOnly}
 															invalid={this.props.validation[rcl.Id]}
-															max={rcl.cspmb__rate_value__c}
 															onChange={val => {
 																this.negotiateInline(rc, rcl, val);
 															}}

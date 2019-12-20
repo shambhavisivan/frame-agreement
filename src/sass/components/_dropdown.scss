@@ -127,6 +127,10 @@
 	@include sc(--dropdown-negotiate-bg);
 }
 
+.dropdown-negotiate .exceed {
+	color: #ffa429;
+}
+
 .negotiate-container.select-negotiate {
 	flex-direction: row;
 	align-items: center;

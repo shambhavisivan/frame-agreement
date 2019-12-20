@@ -1177,9 +1177,13 @@ const rootReducer = (state = initialState, action) => {
 				];
 
 				// If statuses are not defined
-				action.payload.FACSettings.fa_editable_statuses.filter(status => !!status);
+				action.payload.FACSettings.fa_editable_statuses.filter(
+					status => !!status
+				);
 
-				action.payload.FACSettings.fa_editable_statuses = new Set(action.payload.FACSettings.fa_editable_statuses);
+				action.payload.FACSettings.fa_editable_statuses = new Set(
+					action.payload.FACSettings.fa_editable_statuses
+				);
 			}
 			// ***************************************************************************************************************
 			action.payload.FACSettings.decomposition_chunk_size =

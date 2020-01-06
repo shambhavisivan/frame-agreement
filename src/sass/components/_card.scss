@@ -83,6 +83,10 @@
 								border-bottom: 1px solid cvar(--input-hover-br);
 							}
 						}
+
+						&.fa-textarea {
+							white-space: pre-wrap;
+						}
 					}
 
 					.input-group {

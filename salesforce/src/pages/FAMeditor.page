@@ -4,15 +4,18 @@
 	<script type='text/javascript'>
 		Visualforce.remoting.timeout = 120000;
 		var SF;
+
+		var remotingSettings = {escape: false, buffer: false};
+
 		window.react_logs = [];
 		window.SF = SF = {
 			VfManager: Visualforce.remoting.Manager,
-			decodeEntities: (() => {
+			decodeEntities: (function () {
 				// this prevents any overhead from creating the object each time
 				var element = document.createElement('div');
 
 				function decodeHTMLEntities(str) {
-					let flagString = true;
+					var flagString = true;
 
 					if (!str) {
 						return str;
@@ -37,6 +40,39 @@
 
 				return decodeHTMLEntities;
 			})(),
+			decodeObject: function (obj) {
+				var result = obj;
+				var self = this;
+
+				function decode(item) {
+					return JSON.parse(self.decodeEntities(JSON.stringify(item).replace(new RegExp('&' + 'quot;', 'g'), '\\"')));
+				}
+
+				// Since there really are no ways to know what symbols user is gonna use and SF escaping is not very usefull
+				// this decoder will try to decode twice. Second time will work only for double encoded strings which are, it seems, possible.
+
+				if (Object.prototype.toString.call(result) === '[object Array]') {
+					result = result.map(function (item) {
+						var res = decode(item);
+						try {
+							res = decode(res);
+						} catch (err) {
+						}
+						return res;
+					});
+				} else if (Object.prototype.toString.call(result) === '[object Object]') {
+					for (var key in result) {
+						result[key] = decode(result[key]);
+						try {
+							result[key] = decode(result[key]);
+						} catch (err) {
+						}
+					}
+				}
+
+				return result;
+
+			},
 			invokeAction: function (remoteActionName, parametersArr = []) {
 				let invokeActionArgs = [];
 				let self = this;
@@ -55,10 +91,10 @@
 
 				return new Promise(function (resolve, reject) {
 					Visualforce.remoting.Manager.invokeAction(...invokeActionArgs, function (result, event) {
-						result = typeof result === 'string' ? self.decodeEntities(result) : JSON.parse(self.decodeEntities(JSON.stringify(result).replace(new RegExp('&' + 'quot;', 'g'), '\\"')));
+						result = typeof result === 'string' ? self.decodeEntities(result) : self.decodeObject(result);
 						resolve(result);
 						return result;
-					}), {escape: true, buffer: false}
+					}), remotingSettings
 				})
 			},
 			param: {
@@ -350,6 +386,15 @@
 			onCommitFiberUnmount: function () {
 			}
 		};
+
+		window.addEventListener("load", function () {
+			try {
+				document.getElementById('MoreTabs_List').style.zIndex = 100;
+			} catch (err) {
+
+			}
+		});
+
 	</script>
 	<csutil:CustomResources resources="{!commonContainerPageResources }"/>
 </apex:page>

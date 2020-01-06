@@ -27,7 +27,7 @@ class InputTextArea extends React.Component {
 				}
 				spellCheck="false"
 				onKeyPress={this._handleKeyPress}
-				className="fa-input-border"
+				className="fa-input-border fa-textarea"
 				onChange={this.onTextChange}
 				value={this.state.value}
 			/>

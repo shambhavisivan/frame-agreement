@@ -842,7 +842,7 @@ class DynamicGroupTab extends React.Component {
 														{window.SF.labels.famext_discount_amount}
 													</option>
 													<option value={'Percentage'}>
-														{window.SF.labels.famext_discount_amount}
+														{window.SF.labels.famext_discount_percentage}
 													</option>
 												</select>
 											</div>

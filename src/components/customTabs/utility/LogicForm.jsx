@@ -3,39 +3,40 @@ import Icon from '../../utillity/Icon';
 
 const OPERATORS = [
 	{
-		label: 'Equals',
+		label: window.SF.labels.famext_operator_equals || 'Equals',
 		value: '='
 	},
 	{
-		label: 'Not equals',
+		label: window.SF.labels.famext_operator_not_equals || 'Not equals',
 		value: '!='
 	},
 	{
-		label: 'Less than',
+		label: window.SF.labels.famext_operator_less_than || 'Less than',
 		value: '<'
 	},
 	{
-		label: 'Less or equal',
+		label: window.SF.labels.famext_operator_less_or_equal || 'Less or equal',
 		value: '<='
 	},
 	{
-		label: 'Greater than',
+		label: window.SF.labels.famext_operator_greater_than || 'Greater than',
 		value: '>'
 	},
 	{
-		label: 'Greater or equal',
+		label:
+			window.SF.labels.famext_operator_greater_or_equal || 'Greater or equal',
 		value: '>='
 	},
 	{
-		label: 'Like',
+		label: window.SF.labels.famext_operator_like || 'Like',
 		value: 'like'
 	},
 	{
-		label: 'In',
+		label: window.SF.labels.famext_operator_in || 'In',
 		value: 'in'
 	},
 	{
-		label: 'Not In',
+		label: window.SF.labels.famext_operator_not_in || 'Not In',
 		value: 'not in'
 	}
 ];

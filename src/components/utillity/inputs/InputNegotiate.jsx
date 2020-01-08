@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
+import { roundToMax } from '~/src/utils/shared-service.js';
 import Icon from '../Icon';
 
 class InputNegotiate extends React.Component {
@@ -95,20 +96,22 @@ class InputNegotiate extends React.Component {
 			_discount = (
 				<span className="discount-amount">
 					{_prefix +
-						Math.abs(
-							this.props.originalValue - this.props.negotiatedValue
-						).toFixed(2)}
+						roundToMax(
+							Math.abs(this.props.originalValue - this.props.negotiatedValue)
+						)}
 				</span>
 			);
 		} else {
 			_discount = (
 				<span className="discount-amount">
 					{_prefix +
-						Math.abs(
-							((this.props.originalValue - this.props.negotiatedValue) /
-								this.props.originalValue) *
-								100
-						).toFixed(2)}
+						roundToMax(
+							Math.abs(
+								((this.props.originalValue - this.props.negotiatedValue) /
+									this.props.originalValue) *
+									100
+							)
+						)}
 					%
 				</span>
 			);

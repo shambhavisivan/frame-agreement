@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import Icon from '../utillity/Icon';
+import { roundToMax } from '~/src/utils/shared-service.js';
 
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
@@ -193,12 +194,14 @@ export class Charges extends React.Component {
 										{charge.chargeType}
 									</div>
 									<div className="list-cell">
-										{charge.hasOwnProperty('oneOff') ? charge.oneOff : 'N/A'}
+										{charge.hasOwnProperty('oneOff')
+											? roundToMax(charge.oneOff)
+											: 'N/A'}
 									</div>
 									<div className="list-cell negotiable">{oneOffRow}</div>
 									<div className="list-cell">
 										{charge.hasOwnProperty('recurring')
-											? charge.recurring
+											? roundToMax(charge.recurring)
 											: 'N/A'}
 									</div>
 									<div className="list-cell negotiable">{recurringRow}</div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from '../Icon';
-import { log } from '~/src/utils/shared-service';
+import { log, roundToMax } from '~/src/utils/shared-service';
 
 /*
 
@@ -21,13 +21,13 @@ class DropdownNegotiate extends React.Component {
 		let initialFixed = 0;
 		let initialPercentage = 0;
 
-		if (+(this.props.originalValue - this.props.negotiatedValue).toFixed(2)) {
+		if (this.props.originalValue - this.props.negotiatedValue) {
 			initialPercentage =
-				(1 - this.props.negotiatedValue / this.props.originalValue).toFixed(2) *
+				roundToMax(1 - this.props.negotiatedValue / this.props.originalValue) *
 				100;
-			initialFixed = +(
-				this.props.originalValue - this.props.negotiatedValue
-			).toFixed(2);
+			initialFixed = roundToMax(
+				+(this.props.originalValue - this.props.negotiatedValue)
+			);
 		}
 
 		this.discounts = [];
@@ -121,14 +121,14 @@ class DropdownNegotiate extends React.Component {
 			selected: newIndex
 		});
 
-		this.props.onChange(+newPrice.toFixed(2));
+		this.props.onChange(roundToMax(+newPrice));
 	}
 
 	render() {
 		var dirty = this.props.originalValue !== this.props.negotiatedValue;
 		var negotiateFixed;
 		try {
-			negotiateFixed = this.props.negotiatedValue.toFixed(2);
+			negotiateFixed = roundToMax(this.props.negotiatedValue);
 		} catch (e) {
 			negotiateFixed = this.props.negotiatedValue;
 		}
@@ -138,7 +138,7 @@ class DropdownNegotiate extends React.Component {
 			_discount = (
 				<span className="discount-amount">
 					{' '}
-					-{(this.props.originalValue - this.props.negotiatedValue).toFixed(2)}
+					-{roundToMax(this.props.originalValue - this.props.negotiatedValue)}
 				</span>
 			);
 		} else {
@@ -146,11 +146,9 @@ class DropdownNegotiate extends React.Component {
 				<span className="discount-amount">
 					{' '}
 					-
-					{(
-						((this.props.originalValue - this.props.negotiatedValue) /
-							this.props.originalValue) *
-						100
-					).toFixed(2)}
+					{(roundToMax(this.props.originalValue - this.props.negotiatedValue) /
+						this.props.originalValue) *
+						100}
 					%
 				</span>
 			);
@@ -191,7 +189,7 @@ class DropdownNegotiate extends React.Component {
 						{this.discounts.map((disc, index) => {
 							let _discount =
 								'-' +
-								disc.value.toFixed(2) +
+								roundToMax(disc.value) +
 								(disc.type === 'Percentage' ? '%' : '');
 							if (this.props.discAsPrice) {
 								_discount =
@@ -199,7 +197,7 @@ class DropdownNegotiate extends React.Component {
 										? this.props.originalValue -
 										  this.props.originalValue * (disc.value / 100)
 										: this.props.originalValue - disc.value;
-								_discount = _discount.toFixed(2);
+								_discount = roundToMax(_discount);
 							}
 
 							return (

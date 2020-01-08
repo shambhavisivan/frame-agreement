@@ -18,6 +18,20 @@ export const toTitleCase = str => {
 	return splitStr.join(' ');
 };
 
+export const roundToMax = num => {
+	let result = +(
+		Math.round(num + 'e+' + (window.SF.decimal_places || 2)) +
+		'e-' +
+		(window.SF.decimal_places || 2)
+	);
+
+	if (result.getDecimals() < 2) {
+		result = result.toFixed(2);
+	}
+
+	return result;
+};
+
 export const truncateCPField = (field, titleCase) => {
 	if (!redux_store.getState().settings.FACSettings.truncate_product_fields) {
 		return field;

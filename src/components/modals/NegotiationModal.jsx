@@ -15,6 +15,9 @@ import {
 	validateCharges,
 	validateRateCardLines
 } from '../../utils/validation-service';
+
+import { roundToMax } from '~/src/utils/shared-service.js';
+
 import { createToast } from '~/src/actions';
 
 // import { getFrameAgreements } from '~/src/actions';
@@ -470,20 +473,6 @@ class NegotiationModal extends Component {
 		const _DISCOUNT = +this.discount.current.value * -1;
 		console.log(_DISCOUNT);
 
-		function decimalPlaces(num) {
-			var match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
-			if (!match) {
-				return 0;
-			}
-			return Math.max(
-				0,
-				// Number of digits right of decimal point.
-				(match[1] ? match[1].length : 0) -
-					// Adjust for scientific notation.
-					(match[2] ? +match[2] : 0)
-			);
-		}
-
 		function applyDiscountRate(val, state) {
 			val = +val;
 			if (state.discountMode === 'fixed') {
@@ -497,12 +486,8 @@ class NegotiationModal extends Component {
 					val = val - discountSum;
 				}
 			}
-			// Max 4 decimal places
-			var dp = decimalPlaces(val);
-			if (dp > 2) {
-				dp = 2;
-			}
-			return +val.toFixed(dp);
+
+			return roundToMax(+val);
 		}
 
 		let selected = { ...this.state.selected };
@@ -764,7 +749,7 @@ class NegotiationModal extends Component {
 										</div>
 										<div className="list-cell">{charge.chargeType}</div>
 										<div className="list-cell">
-											{charge[charge._type].toFixed(2)}
+											{roundToMax(charge[charge._type])}
 										</div>
 									</li>
 								);

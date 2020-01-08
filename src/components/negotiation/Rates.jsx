@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Modal from 'react-responsive-modal';
 
+import { roundToMax } from '~/src/utils/shared-service.js';
 import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import Pagination from '../utillity/Pagination';
@@ -148,7 +149,7 @@ export class Rates extends React.Component {
 													</div>
 													<div className="list-cell">
 														{rcl.hasOwnProperty('cspmb__rate_value__c')
-															? rcl.cspmb__rate_value__c
+															? roundToMax(rcl.cspmb__rate_value__c)
 															: 'N/A'}
 													</div>
 													<div className="list-cell negotiable">

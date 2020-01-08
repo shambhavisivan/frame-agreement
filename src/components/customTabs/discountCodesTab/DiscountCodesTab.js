@@ -6,6 +6,7 @@ import Select from 'react-select';
 import {
 	decodeEntities,
 	log,
+	roundToMax,
 	isJson,
 	truncateCPField
 } from '../../../utils/shared-service';
@@ -115,27 +116,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			result = original - (original * discount) / 100;
 		}
 
-		var dp = decimalPlaces(result);
-		if (dp > 2) {
-			dp = 2;
-		}
-
-		return +result.toFixed(dp);
-	}
-
-	function decimalPlaces(num) {
-		// Used to determine adequate decimal points
-		var match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
-		if (!match) {
-			return 0;
-		}
-		return Math.max(
-			0,
-			// Number of digits right of decimal point.
-			(match[1] ? match[1].length : 0) -
-				// Adjust for scientific notation.
-				(match[2] ? +match[2] : 0)
-		);
+		return roundToMax(+result);
 	}
 
 	// ****************************************

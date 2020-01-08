@@ -1051,6 +1051,16 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.active_status_management__c = true;
 			}
 
+			if (!action.payload.FACSettings.hasOwnProperty('decimal_places')) {
+				action.payload.FACSettings.decimal_places = 2;
+			} else if (action.payload.FACSettings.decimal_places < 2) {
+				log.red('Minimal value for decimal places is 2!');
+				action.payload.FACSettings.decimal_places = 2;
+			}
+
+			// Save globally
+			window.SF.decimal_places = action.payload.FACSettings.decimal_places;
+
 			if (
 				action.payload.FACSettings.hasOwnProperty('rcl_fields') &&
 				validateCSV(action.payload.FACSettings.rcl_fields)
@@ -1329,8 +1339,6 @@ const rootReducer = (state = initialState, action) => {
 				if (!cb.location || !LOCATIONS[cb.location]) {
 					cb.location = 'Editor';
 				}
-
-				console.log(cb);
 			});
 
 			// ***************************************************************************************************************

@@ -46,6 +46,18 @@ global with sharing class FrameRateManagerController {
 	public class ApplicationException extends Exception {
 	}
 
+	public static String getAccountId() {
+		String accountId = null;
+
+		try {
+			accountId = ApexPages.currentPage().getParameters().get('account');
+		} catch (Exception e) {
+
+		}
+
+		return accountId;
+	}
+
 	public static String getUserProfile() {
 		Id profileId = userinfo.getProfileId();
 		String profileName = [
@@ -336,6 +348,8 @@ global with sharing class FrameRateManagerController {
 	@TestVisible public static Map <String, Object> getLookupInformation(String field, String column, String whereClause, String initValId) {
 		Map <String, Object> returnValues = new Map <String, Object> ();
 
+		String accountId = getAccountId();
+
 		String pointedObject = getPointedObjectFromFa(field);
 		//***********************************************************************************
 
@@ -360,8 +374,9 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	@TestVisible public static List <Object> getLookupRecords(String jsonParameters) {
-		Map <String, Object> parameters = (Map <String, Object>) JSON.deserializeUntyped(jsonParameters);
+		String accountId = getAccountId();
 
+		Map <String, Object> parameters = (Map <String, Object>) JSON.deserializeUntyped(jsonParameters);
 		List <Object> returnValues = new List <Object> ();
 
 		//***********************************

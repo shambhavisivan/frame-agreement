@@ -1,7 +1,11 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 
-import { truncateCPField, getFieldLabel } from '~/src/utils/shared-service.js';
+import {
+	truncateCPField,
+	getFieldLabel,
+	openSFLink
+} from '~/src/utils/shared-service.js';
 import Pagination from '~/src/components/utillity/Pagination';
 import Icon from '../utillity/Icon';
 
@@ -63,6 +67,18 @@ class RelatedLists extends Component {
 										}
 
 										_val = _val || '-';
+
+										if (f.toLowerCase() === 'id') {
+											return (
+												<span
+													className="fa-link"
+													key={f + '-' + i}
+													onClick={() => openSFLink(_val)}
+												>
+													{_val}
+												</span>
+											);
+										}
 
 										return <span key={f + '-' + i}>{_val}</span>;
 									})}

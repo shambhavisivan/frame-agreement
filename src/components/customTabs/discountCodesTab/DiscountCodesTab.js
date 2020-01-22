@@ -7,6 +7,7 @@ import {
 	decodeEntities,
 	log,
 	roundToMax,
+	validateCSV,
 	isJson,
 	truncateCPField
 } from '../../../utils/shared-service';
@@ -426,7 +427,7 @@ class DiscountCodesTab extends React.Component {
 			.then(response => JSON.parse(decodeEntities(response)))
 			.then(response => {
 				for (var key in response) {
-					response[key] = response[key]
+					response[key] = validateCSV(response[key])
 						? response[key].replace(/\s/g, '').split(',')
 						: [];
 				}

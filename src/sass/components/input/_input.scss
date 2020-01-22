@@ -69,6 +69,13 @@
 	}
 }
 
+.fa-link {
+	&:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	};
+}
+
 .fa-input-search-border-bottom {
 	border: 0;
 	border-radius: 0;

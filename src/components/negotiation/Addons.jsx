@@ -25,7 +25,7 @@ export class Addons extends React.Component {
 	negotiateInline(addon, chargeType, value) {
 		let negotiation = this.props.attachment;
 		negotiation[addon.Id] = negotiation[addon.Id] || {};
-		negotiation[addon.Id][chargeType] = value;
+		negotiation[addon.Id][chargeType] = +value;
 
 		this.props.onNegotiate(negotiation);
 	}

@@ -6,6 +6,11 @@ let sharedService = {
 	SF: SF
 };
 
+let getDecimals = function(value) {
+	if (value % 1 != 0) return value.toString().split('.')[1].length;
+	return 0;
+};
+
 export const toTitleCase = str => {
 	var splitStr = str.toLowerCase().split(' ');
 	for (var i = 0; i < splitStr.length; i++) {
@@ -19,13 +24,10 @@ export const toTitleCase = str => {
 };
 
 export const roundToMax = num => {
-	let result = +(
-		Math.round(num + 'e+' + (window.SF.decimal_places || 2)) +
-		'e-' +
-		(window.SF.decimal_places || 2)
-	);
+	let dp = window.SF.decimal_places || 2;
+	let result = +(Math.round(num + 'e+' + dp) + 'e-' + dp);
 
-	if (result.getDecimals() < 2) {
+	if (getDecimals(result) < 2) {
 		result = result.toFixed(2);
 	}
 
@@ -63,6 +65,22 @@ export const isJson = str => {
 export const openSFLink = Id => {
 	var win = window.open(window.location.origin + '/' + Id, '_blank');
 	win.focus();
+};
+
+export const validateCSV = str => {
+	if (typeof str !== 'string') {
+		return false;
+	}
+
+	let returnBoolean = str;
+	try {
+		returnBoolean = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(
+			str.replace(/(?:\r\n|\r|\n|\s)/g, '')
+		);
+	} catch (e) {
+		console.warn(e);
+	}
+	return returnBoolean;
 };
 
 export const isObject = a => !!a && a.constructor === Object;

@@ -29,7 +29,7 @@ export class ProductCharges extends React.Component {
 
 	negotiateInline(chargeType, value) {
 		let negotiation = this.props.attachment;
-		negotiation[chargeType] = value;
+		negotiation[chargeType] = +value;
 
 		this.props.onNegotiate(negotiation);
 	}

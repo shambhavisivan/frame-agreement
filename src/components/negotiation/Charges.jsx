@@ -36,7 +36,7 @@ export class Charges extends React.Component {
 	negotiateInline(charge, value) {
 		let negotiation = this.props.attachment;
 		negotiation[charge.Id] = negotiation[charge.Id] || {};
-		negotiation[charge.Id][charge._type] = value;
+		negotiation[charge.Id][charge._type] = +value;
 
 		this.props.onNegotiate(negotiation);
 	}

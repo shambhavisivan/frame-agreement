@@ -23,7 +23,7 @@ export class Rates extends React.Component {
 	negotiateInline(rc, rcl, value) {
 		let negotiation = this.props.attachment;
 		negotiation[rc.Id] = negotiation[rc.Id] || {};
-		negotiation[rc.Id][rcl.Id] = value;
+		negotiation[rc.Id][rcl.Id] = +value;
 
 		this.props.onNegotiate(negotiation);
 	}
@@ -154,7 +154,10 @@ export class Rates extends React.Component {
 													</div>
 													<div className="list-cell negotiable">
 														<InputNegotiate
-															readOnly={this.props.readOnly}
+															readOnly={
+																this.props.readOnly ||
+																!rcl.hasOwnProperty('cspmb__rate_value__c')
+															}
 															invalid={this.props.validation[rcl.Id]}
 															onChange={val => {
 																this.negotiateInline(rc, rcl, val);

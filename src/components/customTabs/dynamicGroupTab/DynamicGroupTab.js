@@ -7,6 +7,7 @@ import {
 	decodeEntities,
 	getFieldLabel,
 	isJson,
+	validateCSV,
 	makeId,
 	truncateCPField
 } from '../../../utils/shared-service';
@@ -105,7 +106,7 @@ class DynamicGroupTab extends React.Component {
 			})
 			.then(response => {
 				for (var key in response) {
-					response[key] = response[key]
+					response[key] = validateCSV(response[key])
 						? response[key].replace(/\s/g, '').split(',')
 						: [];
 				}

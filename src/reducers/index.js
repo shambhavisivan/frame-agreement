@@ -1,5 +1,6 @@
 import {
 	log,
+	validateCSV,
 	getFieldLabel,
 	parseExpression,
 	evaluateExpressionOnAgreement
@@ -332,22 +333,6 @@ function validateJSONData(data) {
 		obj.readOnly = obj.readOnly || false;
 	});
 	return data;
-}
-
-function validateCSV(str) {
-	if (typeof str !== 'string') {
-		return false;
-	}
-
-	let returnBoolean = str;
-	try {
-		returnBoolean = /^[a-zA-Z0-9-_]+(?:, ?[a-zA-Z0-9-_]+)*$/gm.test(
-			str.replace(/(?:\r\n|\r|\n|\s)/g, '')
-		);
-	} catch (e) {
-		console.warn(e);
-	}
-	return returnBoolean;
 }
 
 function convertCSVToArray(csv) {
@@ -953,7 +938,12 @@ const rootReducer = (state = initialState, action) => {
 						return;
 					}
 
-					if (typeof dataObject.value !== 'number') {
+					dataObject.value = +dataObject.value;
+
+					if (
+						typeof dataObject.value !== 'number' &&
+						!Number.isNaN(dataObject.value)
+					) {
 						console.error('Value for RCL not integer!');
 						return;
 					}

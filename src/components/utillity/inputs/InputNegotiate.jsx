@@ -89,16 +89,14 @@ class InputNegotiate extends React.Component {
 		}
 
 		let _discount;
-		let _prefix =
-			this.props.negotiatedValue < this.props.originalValue ? '-' : '+';
+		let _originalValue = this.props.originalValue || 0;
+		let _prefix = this.props.negotiatedValue < _originalValue ? '-' : '+';
 
 		if (this.state.fixed) {
 			_discount = (
 				<span className="discount-amount">
 					{_prefix +
-						roundToMax(
-							Math.abs(this.props.originalValue - this.props.negotiatedValue)
-						)}
+						roundToMax(Math.abs(_originalValue - this.props.negotiatedValue))}
 				</span>
 			);
 		} else {
@@ -107,8 +105,8 @@ class InputNegotiate extends React.Component {
 					{_prefix +
 						roundToMax(
 							Math.abs(
-								((this.props.originalValue - this.props.negotiatedValue) /
-									this.props.originalValue) *
+								((_originalValue - this.props.negotiatedValue) /
+									_originalValue) *
 									100
 							)
 						)}
@@ -127,8 +125,7 @@ class InputNegotiate extends React.Component {
 			>
 				{_inputContainer}
 				<div className="discount-info">
-					{this.props.negotiatedValue !== this.props.originalValue &&
-					this.props.originalValue ? (
+					{this.props.negotiatedValue !== _originalValue && _originalValue ? (
 						<span
 							className="discount"
 							onClick={() => {

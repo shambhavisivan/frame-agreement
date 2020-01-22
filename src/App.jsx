@@ -184,8 +184,12 @@ export class App extends Component {
 					for (var cpaoa in addons) {
 						structure.push({
 							cpaoaId: cpaoa,
-							recurring: addons[cpaoa].recurring || null,
-							oneOff: addons[cpaoa].oneOff || null
+							recurring: addons[cpaoa].hasOwnProperty('recurring')
+								? addons[cpaoa].recurring
+								: null,
+							oneOff: addons[cpaoa].hasOwnProperty('oneOff')
+								? addons[cpaoa].oneOff
+								: null
 						});
 					}
 				}
@@ -195,8 +199,12 @@ export class App extends Component {
 					for (var chId in charges) {
 						structure.push({
 							peId: chId,
-							recurring: charges[chId].recurring || null,
-							oneOff: charges[chId].oneOff || null
+							recurring: charges[chId].hasOwnProperty('recurring')
+								? charges[chId].recurring
+								: null,
+							oneOff: charges[chId].hasOwnProperty('oneOff')
+								? charges[chId].oneOff
+								: null
 						});
 					}
 				}
@@ -204,8 +212,12 @@ export class App extends Component {
 				if (_attachment[cpId].hasOwnProperty('_product')) {
 					structure.push({
 						cpId: cpId,
-						recurring: _attachment[cpId]._product.recurring || null,
-						oneOff: _attachment[cpId]._product.oneOff || null
+						recurring: _attachment[cpId]._product.hasOwnProperty('recurring')
+							? _attachment[cpId]._product.recurring
+							: null,
+						oneOff: _attachment[cpId]._product.hasOwnProperty('oneOff')
+							? _attachment[cpId]._product.oneOff
+							: null
 					});
 				}
 			}

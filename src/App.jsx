@@ -456,8 +456,12 @@ export class App extends Component {
 			return this.props.setFrameAgreementState(faId, newState);
 		};
 
-		window.FAM.api.saveFrameAgreement = faId => {
-			return this.props.saveFrameAgreement(this.props.frameAgreements[faId]);
+		window.FAM.api.saveFrameAgreement = async faId => {
+			let result = await this.props.saveFrameAgreement(
+				this.props.frameAgreements[faId]
+			);
+			await publish('onAfterSaveFrameAgreement', result);
+			return result;
 		};
 
 		window.FAM.api.getCustomData = (

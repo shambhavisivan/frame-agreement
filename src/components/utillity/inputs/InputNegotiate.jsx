@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
-import { roundToMax } from '~/src/utils/shared-service.js';
+import { percIncrease } from '~/src/utils/shared-service';
 import Icon from '../Icon';
 
 class InputNegotiate extends React.Component {
@@ -88,32 +88,26 @@ class InputNegotiate extends React.Component {
 			);
 		}
 
+		const _dp = window.SF.decimal_places || 2;
+
+		var _originalValue = (this.props.originalValue || 0).toFixedNumber();
+		var _negotiatedValue = this.props.negotiatedValue.toFixedNumber();
+
+		var dirty = _originalValue !== _negotiatedValue;
+
 		let _discount;
-		let _originalValue = this.props.originalValue || 0;
+		let _value;
 		let _prefix = this.props.negotiatedValue < _originalValue ? '-' : '+';
 
 		if (this.state.fixed) {
-			_discount = (
-				<span className="discount-amount">
-					{_prefix +
-						roundToMax(Math.abs(_originalValue - this.props.negotiatedValue))}
-				</span>
-			);
+			_value = Math.abs(_originalValue - _negotiatedValue);
+			_value = _prefix + _value.toFixedNumber(_dp);
 		} else {
-			_discount = (
-				<span className="discount-amount">
-					{_prefix +
-						roundToMax(
-							Math.abs(
-								((_originalValue - this.props.negotiatedValue) /
-									_originalValue) *
-									100
-							)
-						)}
-					%
-				</span>
-			);
+			_value = percIncrease(_originalValue, _negotiatedValue);
+			_value = _prefix + _value.toFixedNumber() + '%';
 		}
+
+		_discount = <span className="discount-amount">{_value}</span>;
 
 		return (
 			<div
@@ -125,7 +119,7 @@ class InputNegotiate extends React.Component {
 			>
 				{_inputContainer}
 				<div className="discount-info">
-					{this.props.negotiatedValue !== _originalValue && _originalValue ? (
+					{dirty ? (
 						<span
 							className="discount"
 							onClick={() => {

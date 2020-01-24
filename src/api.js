@@ -113,6 +113,22 @@ Object.defineProperty(Array.prototype, 'chunk', {
 	}
 });
 
+Number.prototype.toFixedNumber = function(
+	digits = window.SF.decimal_places || 2,
+	base
+) {
+	var pow = Math.pow(base || 10, digits);
+	return Math.round(this * pow) / pow;
+};
+
+String.prototype.toFixedNumber = function(
+	digits = window.SF.decimal_places || 2,
+	base
+) {
+	var pow = Math.pow(base || 10, digits);
+	return Math.round(+this * pow) / pow;
+};
+
 window.mandatory = function mandatory(funName) {
 	throw new Error(
 		funName

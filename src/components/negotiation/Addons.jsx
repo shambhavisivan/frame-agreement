@@ -7,7 +7,7 @@ import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 import Pagination from '../utillity/Pagination';
 
-import { isOneOff, isRecurring, roundToMax } from '~/src/utils/shared-service';
+import { isOneOff, isRecurring } from '~/src/utils/shared-service';
 
 export class Addons extends React.Component {
 	constructor(props) {
@@ -178,7 +178,7 @@ export class Addons extends React.Component {
 
 									<div className="list-cell">
 										{add.hasOwnProperty('cspmb__One_Off_Charge__c')
-											? roundToMax(add.cspmb__One_Off_Charge__c)
+											? add.cspmb__One_Off_Charge__c.toFixedNumber()
 											: 'N/A'}
 									</div>
 
@@ -186,7 +186,7 @@ export class Addons extends React.Component {
 
 									<div className="list-cell">
 										{add.hasOwnProperty('cspmb__Recurring_Charge__c')
-											? roundToMax(add.cspmb__Recurring_Charge__c)
+											? add.cspmb__Recurring_Charge__c.toFixedNumber()
 											: 'N/A'}
 									</div>
 

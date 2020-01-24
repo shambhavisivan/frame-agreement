@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from '../Icon';
-import { log, roundToMax } from '~/src/utils/shared-service';
+import { log, percIncrease } from '~/src/utils/shared-service';
 
 /*
 
@@ -23,9 +23,13 @@ class DropdownNegotiate extends React.Component {
 		let _originalValue = this.props.originalValue || 0;
 
 		if (_originalValue - this.props.negotiatedValue) {
-			initialPercentage =
-				roundToMax(1 - this.props.negotiatedValue / _originalValue) * 100;
-			initialFixed = roundToMax(+(_originalValue - this.props.negotiatedValue));
+			initialPercentage = percIncrease(
+				_originalValue,
+				this.props.negotiatedValue
+			);
+			initialFixed = (
+				_originalValue - this.props.negotiatedValue
+			).toFixedNumber();
 		}
 
 		this.discounts = [];
@@ -120,40 +124,32 @@ class DropdownNegotiate extends React.Component {
 			selected: newIndex
 		});
 
-		this.props.onChange(roundToMax(+newPrice));
+		this.props.onChange(newPrice.toFixedNumber());
 	}
 
 	render() {
-		var _originalValue = this.props.originalValue || 0;
+		const _dp = window.SF.decimal_places || 2;
 
-		var dirty = _originalValue !== this.props.negotiatedValue;
-		var negotiateFixed;
-		try {
-			negotiateFixed = roundToMax(this.props.negotiatedValue);
-		} catch (e) {
-			negotiateFixed = this.props.negotiatedValue;
-		}
+		var _originalValue = (this.props.originalValue || 0).toFixedNumber();
+		var _negotiatedValue = this.props.negotiatedValue.toFixedNumber();
+
+		var dirty = _originalValue !== _negotiatedValue;
 
 		let _discount;
+		let _value;
+		let _prefix = _negotiatedValue < _originalValue ? '-' : '+';
+
 		if (this.state.fixed) {
-			_discount = (
-				<span className="discount-amount">
-					{' '}
-					-{roundToMax(_originalValue - this.props.negotiatedValue)}
-				</span>
-			);
+			_value = Math.abs(_originalValue - _negotiatedValue);
+			_value = _prefix + _value.toFixedNumber(_dp);
 		} else {
-			_discount = (
-				<span className="discount-amount">
-					{' '}
-					-
-					{(roundToMax(_originalValue - this.props.negotiatedValue) /
-						_originalValue) *
-						100}
-					%
-				</span>
+			_value = Math.abs(
+				((_originalValue - _negotiatedValue) / _originalValue) * 100
 			);
+			_value = _prefix + _value.toFixedNumber() + '%';
 		}
+
+		_discount = <span className="discount-amount">{_value}</span>;
 
 		return (
 			<div
@@ -163,7 +159,7 @@ class DropdownNegotiate extends React.Component {
 				}
 			>
 				<div className={'negotiate-input-wrapper' + (dirty ? ' dirty' : '')}>
-					<span className="">{negotiateFixed}</span>
+					<span className="">{_negotiatedValue}</span>
 
 					{dirty && (
 						<div className="discount-info">
@@ -190,14 +186,14 @@ class DropdownNegotiate extends React.Component {
 						{this.discounts.map((disc, index) => {
 							let _discount =
 								'-' +
-								roundToMax(disc.value) +
+								disc.value.toFixedNumber() +
 								(disc.type === 'Percentage' ? '%' : '');
 							if (this.props.discAsPrice) {
 								_discount =
 									disc.type === 'Percentage'
 										? _originalValue - _originalValue * (disc.value / 100)
 										: _originalValue - disc.value;
-								_discount = roundToMax(_discount);
+								_discount = _discount.toFixedNumber();
 							}
 
 							return (

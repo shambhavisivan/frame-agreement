@@ -1,5 +1,5 @@
 'use strict';
-import { log, roundToMax } from './shared-service';
+import { log } from './shared-service';
 // FALSE means valid
 
 const getMinValue = (value, discount, type) => {
@@ -79,13 +79,13 @@ export const validateAddons = (data, attachment) => {
 
 						if (
 							negotiationFormat.negotiatedOneOff != null &&
-							negotiationFormat.negotiatedOneOff < roundToMax(minOneOff)
+							negotiationFormat.negotiatedOneOff < minOneOff.toFixedNumber()
 						) {
 							_logMessages.push(
 								'Minimal value for oneOff on ' +
 									addon.Name +
 									' is ' +
-									roundToMax(minOneOff) +
+									minOneOff.toFixedNumber() +
 									' (-' +
 									thresh.cspmb__Discount_Threshold__c +
 									'' +
@@ -100,13 +100,14 @@ export const validateAddons = (data, attachment) => {
 
 						if (
 							negotiationFormat.negotiatedRecurring != null &&
-							negotiationFormat.negotiatedRecurring < roundToMax(minRecurring)
+							negotiationFormat.negotiatedRecurring <
+								minRecurring.toFixedNumber()
 						) {
 							_logMessages.push(
 								'Minimal value for recurring on ' +
 									addon.Name +
 									' is ' +
-									roundToMax(minRecurring) +
+									minRecurring.toFixedNumber() +
 									' (-' +
 									thresh.cspmb__Discount_Threshold__c +
 									'' +
@@ -181,13 +182,13 @@ export const validateProduct = data => {
 
 				if (
 					data.negotiatedOneOff != null &&
-					data.negotiatedOneOff < roundToMax(minOneOff)
+					data.negotiatedOneOff < minOneOff.toFixedNumber()
 				) {
 					_logMessages.push(
 						'Minimal value for oneOff on ' +
 							data.Name +
 							' is ' +
-							roundToMax(minOneOff) +
+							minOneOff.toFixedNumber() +
 							' (-' +
 							thresh.cspmb__Discount_Threshold__c +
 							'' +
@@ -202,13 +203,13 @@ export const validateProduct = data => {
 
 				if (
 					data.negotiatedRecurring != null &&
-					data.negotiatedRecurring < roundToMax(minRecurring)
+					data.negotiatedRecurring < minRecurring.toFixedNumber()
 				) {
 					_logMessages.push(
 						'Minimal value for recurring on ' +
 							data.Name +
 							' is ' +
-							roundToMax(minRecurring) +
+							minRecurring.toFixedNumber() +
 							' (-' +
 							thresh.cspmb__Discount_Threshold__c +
 							'' +
@@ -305,13 +306,13 @@ export const validateCharges = (data, authLevel, attachment) => {
 
 					if (
 						typeof negotiationFormat.negotiatedValue !== 'undefined' &&
-						negotiationFormat.negotiatedValue < roundToMax(minValue)
+						negotiationFormat.negotiatedValue < minValue.toFixedNumber()
 					) {
 						_logMessages.push(
 							'Minimal value for oneOff on ' +
 								charge.Name +
 								' is ' +
-								roundToMax(minValue) +
+								minValue.toFixedNumber() +
 								' (-' +
 								thresh.cspmb__Discount_Threshold__c +
 								'' +
@@ -396,12 +397,12 @@ export const validateRateCardLines = (data, data2) => {
 							thresh.cspmb__Discount_Type__c
 						) || 0;
 
-					if (negotiationFormat.negotiatedValue < roundToMax(minValue)) {
+					if (negotiationFormat.negotiatedValue < minValue.toFixedNumber()) {
 						_logMessages.push(
 							'Minimal value for  ' +
 								rcl.Name +
 								' is ' +
-								roundToMax(minValue) +
+								minValue.toFixedNumber() +
 								' (-' +
 								thresh.cspmb__Discount_Threshold__c +
 								'' +

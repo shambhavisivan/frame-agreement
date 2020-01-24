@@ -57,7 +57,14 @@ class DynamicGroupTab extends React.Component {
 					'csfamext.DynamicGroupDataProvider',
 					JSON.stringify(param)
 				)
-				.then(r => JSON.parse(decodeEntities(r)));
+				.then(r => {
+					try {
+						return JSON.parse(decodeEntities(r));
+					} catch (err) {
+						console.warn('Cannot parse query!');
+						console.warn(r);
+					}
+				});
 		};
 	}
 
@@ -401,13 +408,9 @@ class DynamicGroupTab extends React.Component {
 		let _logic = this.state.added[dgId].logic;
 		let _circuits = this.state.added[dgId].circuits;
 
-		if (!_logic) {
-			return '';
-		}
-
-		if (_logic.logic && _logic.logic.length >= 1) {
+		if (_logic.length >= 1) {
 			const generateCircuitString = index => {
-				let circ = _logic.circuits[index];
+				let circ = _circuits[index];
 				let _circuitString = '[' + index + ']';
 				try {
 					_circuitString =
@@ -420,20 +423,20 @@ class DynamicGroupTab extends React.Component {
 				return _circuitString;
 			};
 
-			let _body = _logic.logic.replace(new RegExp('[0-9]', 'g'), match => {
+			let _body = _logic.replace(new RegExp('[0-9]', 'g'), match => {
 				return generateCircuitString(+match);
 			});
 
 			_expression += _body;
 		} else {
-			_logic.circuits.forEach((circ, i) => {
+			_circuits.forEach((circ, i) => {
 				_expression +=
 					circ.field +
 					' ' +
 					circ.operator +
 					' ' +
 					(circ.parsed ? circ.value : "'" + circ.value + "'");
-				_expression += _logic.circuits.length - 1 !== i ? ' OR ' : '';
+				_expression += _circuits.length - 1 !== i ? ' OR ' : '';
 			});
 		}
 
@@ -720,16 +723,17 @@ class DynamicGroupTab extends React.Component {
 														{window.SF.labels.famext_logic}
 													</label>
 													<div className="input-field">
-														<input
+														<DebounceInput
 															spellCheck="false"
 															placeholder="(0 OR 1) AND (2 OR 3)"
+															debounceTimeout={300}
+															disabled={!group.circuits.length}
 															className="dg-input dg-input-large"
 															type="text"
-															disabled={!group.circuits.length}
-															value={group.logic}
 															onChange={e => {
 																this.onChangeLogic(group.Id, e.target.value);
 															}}
+															value={group.logic}
 														/>
 													</div>
 												</div>

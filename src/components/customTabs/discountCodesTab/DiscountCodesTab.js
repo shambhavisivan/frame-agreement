@@ -6,7 +6,6 @@ import Select from 'react-select';
 import {
 	decodeEntities,
 	log,
-	roundToMax,
 	validateCSV,
 	isJson,
 	truncateCPField
@@ -117,7 +116,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			result = original - (original * discount) / 100;
 		}
 
-		return roundToMax(+result);
+		return result.toFixedNumber();
 	}
 
 	// ****************************************

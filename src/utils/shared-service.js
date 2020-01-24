@@ -11,6 +11,20 @@ let getDecimals = function(value) {
 	return 0;
 };
 
+export const percIncrease = (a, b) => {
+	let percent;
+	if (b !== 0) {
+		if (a !== 0) {
+			percent = ((b - a) / a) * 100;
+		} else {
+			percent = b * 100;
+		}
+	} else {
+		percent = -a * 100;
+	}
+	return percent.toFixedNumber();
+};
+
 export const toTitleCase = str => {
 	var splitStr = str.toLowerCase().split(' ');
 	for (var i = 0; i < splitStr.length; i++) {
@@ -21,17 +35,6 @@ export const toTitleCase = str => {
 	}
 	// Directly return the joined string
 	return splitStr.join(' ');
-};
-
-export const roundToMax = num => {
-	let dp = window.SF.decimal_places || 2;
-	let result = +(Math.round(num + 'e+' + dp) + 'e-' + dp);
-
-	if (getDecimals(result) < 2) {
-		result = result.toFixed(2);
-	}
-
-	return result;
 };
 
 export const truncateCPField = (field, titleCase) => {

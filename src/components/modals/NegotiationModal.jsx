@@ -16,8 +16,6 @@ import {
 	validateRateCardLines
 } from '../../utils/validation-service';
 
-import { roundToMax } from '~/src/utils/shared-service.js';
-
 import { createToast } from '~/src/actions';
 
 // import { getFrameAgreements } from '~/src/actions';
@@ -487,7 +485,7 @@ class NegotiationModal extends Component {
 				}
 			}
 
-			return roundToMax(+val);
+			return val.toFixedNumber();
 		}
 
 		let selected = { ...this.state.selected };
@@ -749,7 +747,7 @@ class NegotiationModal extends Component {
 										</div>
 										<div className="list-cell">{charge.chargeType}</div>
 										<div className="list-cell">
-											{roundToMax(charge[charge._type])}
+											{charge[charge._type].toFixedNumber()}
 										</div>
 									</li>
 								);

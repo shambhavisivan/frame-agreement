@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { roundToMax } from '~/src/utils/shared-service.js';
 
 import Pagination from '../utillity/Pagination';
 import UsageType from '../utillity/UsageType';
@@ -55,7 +54,7 @@ export class Allowances extends React.Component {
 
 									<div className="list-cell negotiable">
 										{allowance.hasOwnProperty('cspmb__amount__c')
-											? roundToMax(allowance.cspmb__amount__c)
+											? allowance.cspmb__amount__c.toFixedNumber()
 											: 'N/A'}
 									</div>
 

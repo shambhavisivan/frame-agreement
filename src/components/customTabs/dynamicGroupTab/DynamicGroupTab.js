@@ -44,28 +44,6 @@ class DynamicGroupTab extends React.Component {
 		this.onAddGroup = this.onAddGroup.bind(this);
 		this.testTargeting = this.testTargeting.bind(this);
 		this.blank = '';
-
-		window.FAM.api.getProductsForFrameAgreement = async () => {
-			let activFa = await window.FAM.api.getActiveFrameAgreement();
-
-			let param = {};
-			param.method = 'getProductsForFrameAgreement';
-			param.faId = activFa.Id;
-
-			return window.FAM.api
-				.performAction(
-					'csfamext.DynamicGroupDataProvider',
-					JSON.stringify(param)
-				)
-				.then(r => {
-					try {
-						return JSON.parse(decodeEntities(r));
-					} catch (err) {
-						console.warn('Cannot parse query!');
-						console.warn(r);
-					}
-				});
-		};
 	}
 
 	componentDidMount() {
@@ -971,6 +949,30 @@ function initialiseDynamicGroupTab(id) {
 }
 
 window.FAM.subscribe('onLoad', data => {
+
+
+	window.FAM.api.getProductsForFrameAgreement = async () => {
+		let activFa = await window.FAM.api.getActiveFrameAgreement();
+
+		let param = {};
+		param.method = 'getProductsForFrameAgreement';
+		param.faId = activFa.Id;
+
+		return window.FAM.api
+			.performAction(
+				'csfamext.DynamicGroupDataProvider',
+				JSON.stringify(param)
+			)
+			.then(r => {
+				try {
+					return JSON.parse(decodeEntities(r));
+				} catch (err) {
+					console.warn('Cannot parse query!');
+					console.warn(r);
+				}
+			});
+	};
+		
 	window.FAM.dynamicGroup = {};
 
 	window.FAM.dynamicGroup.getRecordsFromDynamicGroup = fromCode => {

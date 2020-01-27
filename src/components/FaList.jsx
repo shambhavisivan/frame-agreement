@@ -55,7 +55,7 @@ class FrameAgreement {
 			approvalNeeded: false,
 			commercialProducts: [],
 			attachment: {
-				custom: '',
+				custom: {},
 				products: {}
 			}
 		};

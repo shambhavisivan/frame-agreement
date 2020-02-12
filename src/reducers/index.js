@@ -1661,7 +1661,8 @@ const rootReducer = (state = initialState, action) => {
 			var _attachment = { ...state.frameAgreements[faId]._ui.attachment };
 
 			state.frameAgreements[faId]._ui.commercialProducts.forEach(cp => {
-				_attachment.products[cp.Id] = enrichAttachment(cp);
+				// Save volume fields on override
+				_attachment.products[cp.Id] = {...enrichAttachment(cp), _volume: _attachment.products[cp.Id]._volume}
 			});
 
 			return {

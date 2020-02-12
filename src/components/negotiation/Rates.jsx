@@ -36,10 +36,10 @@ export class Rates extends React.Component {
 	// 	}
 	// }
 
-	componentWillUpdate(prevProps, prevState) {
-		if (prevState.pagination.pageSize !== this.state.pagination.pageSize) {
+	componentWillUpdate(nextProps, nextState) {
+		if (nextState.pagination.pageSize !== this.state.pagination.pageSize) {
 			this.paginationFormat = this.paginateRateCards(
-				this.state.pagination.pageSize
+				nextState.pagination.pageSize
 			);
 		}
 	}
@@ -81,8 +81,6 @@ export class Rates extends React.Component {
 	}
 
 	render() {
-		let flagColor = '#4bca81';
-
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
@@ -115,6 +113,7 @@ export class Rates extends React.Component {
 
 									<ul className="table-list">
 										{rc.rateCardLines.map((rcl, i) => {
+											let flagColor = '#4bca81';
 											if (this.props.validation[rcl.Id]) {
 												flagColor = '#D9675D';
 											}

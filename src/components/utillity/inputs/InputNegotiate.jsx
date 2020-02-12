@@ -41,7 +41,16 @@ class InputNegotiate extends React.Component {
 
 	render() {
 		// this.props.readOnly
-		let _inputContainer;
+		let _inputContainer,
+			_originalValue,
+			_negotiatedValue,
+			dirty,
+			_discount,
+			_value,
+			_prefix;
+
+		const _dp = window.SF.decimal_places || 2;
+
 		if (this.props.readOnly) {
 			_inputContainer = (
 				<div
@@ -56,6 +65,23 @@ class InputNegotiate extends React.Component {
 				</div>
 			);
 		} else {
+			_originalValue = (this.props.originalValue || 0).toFixedNumber();
+			_negotiatedValue = this.props.negotiatedValue.toFixedNumber();
+
+			dirty = _originalValue !== _negotiatedValue;
+
+			_prefix = this.props.negotiatedValue < _originalValue ? '-' : '+';
+
+			if (this.state.fixed) {
+				_value = Math.abs(_originalValue - _negotiatedValue);
+				_value = _prefix + _value.toFixedNumber(_dp);
+			} else {
+				_value = percIncrease(_originalValue, _negotiatedValue);
+				_value = _prefix + _value.toFixedNumber() + '%';
+			}
+
+			_discount = <span className="discount-amount">{_value}</span>;
+
 			_inputContainer = (
 				<div
 					className={
@@ -87,27 +113,6 @@ class InputNegotiate extends React.Component {
 				</div>
 			);
 		}
-
-		const _dp = window.SF.decimal_places || 2;
-
-		var _originalValue = (this.props.originalValue || 0).toFixedNumber();
-		var _negotiatedValue = this.props.negotiatedValue.toFixedNumber();
-
-		var dirty = _originalValue !== _negotiatedValue;
-
-		let _discount;
-		let _value;
-		let _prefix = this.props.negotiatedValue < _originalValue ? '-' : '+';
-
-		if (this.state.fixed) {
-			_value = Math.abs(_originalValue - _negotiatedValue);
-			_value = _prefix + _value.toFixedNumber(_dp);
-		} else {
-			_value = percIncrease(_originalValue, _negotiatedValue);
-			_value = _prefix + _value.toFixedNumber() + '%';
-		}
-
-		_discount = <span className="discount-amount">{_value}</span>;
 
 		return (
 			<div

@@ -864,7 +864,7 @@ class DiscountCodesTab extends React.Component {
 												<select
 													value={group.csfamext__discount_type__c}
 													placeholder="Add Dynamic Group"
-													disabled={!this.state.editable}
+													disabled={!this.state.editable || !group.csfamext__fam_editable__c}
 													onChange={e => {
 														this.onChangeDiscount(
 															group.Id,
@@ -887,7 +887,7 @@ class DiscountCodesTab extends React.Component {
 														<label>One-Off charge</label>
 														<DebounceInput
 															debounceTimeout={300}
-															disabled={!this.state.editable}
+															disabled={!this.state.editable || !group.csfamext__fam_editable__c}
 															spellCheck="false"
 															className=""
 															type="number"
@@ -906,7 +906,7 @@ class DiscountCodesTab extends React.Component {
 														<label>Recurring charge</label>
 														<DebounceInput
 															debounceTimeout={300}
-															disabled={!this.state.editable}
+															disabled={!this.state.editable || !group.csfamext__fam_editable__c}
 															spellCheck="false"
 															className=""
 															type="number"

@@ -106,6 +106,7 @@ export class App extends Component {
 
 			await this.props.getCommercialProductData(IdsToLoad);
 			await this.props.addProductsToFa(faId, products);
+			this.props.validateFrameAgreement(faId);
 
 			publish(
 				'onAfterAddProducts',

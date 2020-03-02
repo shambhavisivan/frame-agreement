@@ -949,8 +949,6 @@ function initialiseDynamicGroupTab(id) {
 }
 
 window.FAM.subscribe('onLoad', data => {
-
-
 	window.FAM.api.getProductsForFrameAgreement = async () => {
 		let activFa = await window.FAM.api.getActiveFrameAgreement();
 
@@ -959,10 +957,7 @@ window.FAM.subscribe('onLoad', data => {
 		param.faId = activFa.Id;
 
 		return window.FAM.api
-			.performAction(
-				'csfamext.DynamicGroupDataProvider',
-				JSON.stringify(param)
-			)
+			.performAction('csfamext.DynamicGroupDataProvider', JSON.stringify(param))
 			.then(r => {
 				try {
 					return JSON.parse(decodeEntities(r));
@@ -972,7 +967,7 @@ window.FAM.subscribe('onLoad', data => {
 				}
 			});
 	};
-		
+
 	window.FAM.dynamicGroup = {};
 
 	window.FAM.dynamicGroup.getRecordsFromDynamicGroup = fromCode => {

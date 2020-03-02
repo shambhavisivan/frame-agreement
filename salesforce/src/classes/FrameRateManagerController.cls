@@ -531,16 +531,21 @@ global with sharing class FrameRateManagerController {
 		return (settingMap);
 	}
 
-	@TestVisible public static String parseNumberFromName(String faName) {
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		String prefix = (String) FACSettings.get('csfam__fa_number_prefix__c');
-		String result = faName.split('-')[1];
 
-		if (prefix != null) {
-			result = prefix = result;
+	@TestVisible public static String getFaPrefix() {
+		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+		Object prefix = FACSettings.get('csfam__fa_number_prefix__c');
+
+		if (prefix == null) {
+			return '';
+		} else {
+			return (String) prefix;
 		}
 
-		return result;
+	}
+
+	@TestVisible public static String parseNumberFromName(String faName) {
+		return  faName.split('-')[1];
 	}
 
 	@RemoteAction
@@ -1710,7 +1715,7 @@ global with sharing class FrameRateManagerController {
 		insert cloned;
 
 		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		String prefix = (String) FACSettings.get('csfam__fa_number_prefix__c');
+		String prefix = getFaPrefix();
 
 		cloned.csconta__frame_agreement_number__c = prefix + parseNumberFromName(original.Name);
 		update cloned;
@@ -1800,7 +1805,7 @@ global with sharing class FrameRateManagerController {
 		original.csconta__replaced_by__c = clonedFa.Id;
 		original.csconta__effective_end_date__c = datetime.now();
 
-		clonedFa.csconta__frame_agreement_number__c = parseNumberFromName(original.Name);
+		clonedFa.csconta__frame_agreement_number__c = getFaPrefix() + parseNumberFromName(original.Name);
 
 		update original;
 		update clonedFa;
@@ -1874,7 +1879,7 @@ global with sharing class FrameRateManagerController {
 		if (fa.csconta__replaced_frame_agreement__c == null) {
 
 			csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-			String prefix = (String) FACSettings.get('csfam__fa_number_prefix__c');
+			String prefix = getFaPrefix();
 
 			fa.csconta__frame_agreement_number__c = prefix + parseNumberFromName(fa.Name);
 			update fa;

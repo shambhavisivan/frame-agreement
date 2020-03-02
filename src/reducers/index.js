@@ -1017,8 +1017,8 @@ const rootReducer = (state = initialState, action) => {
 
 			action.payload.HeaderData.forEach(data => {
 				data.label =
-					getFieldLabel('csconta__Frame_Agreement__c', data.field) ||
-					data.label;
+					data.label ||
+					getFieldLabel('csconta__Frame_Agreement__c', data.field);
 			});
 
 			action.payload.CustomTabsData = validateJSONData(

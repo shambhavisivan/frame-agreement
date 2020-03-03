@@ -74,6 +74,7 @@ class CustomButtonDropdown extends React.Component {
 									id={btnObj.id}
 									onClick={() => {
 										this.props.onAction(btnObj);
+										this.hideMenu();
 									}}
 								>
 									{btnObj.label}

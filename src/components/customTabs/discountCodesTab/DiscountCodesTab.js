@@ -60,6 +60,11 @@ const formatGroup = group => {
 	return group;
 };
 
+const getLabel = field =>
+	window.SF.fieldLabels.csfamext__Dynamic_Group__c.hasOwnProperty(field)
+		? window.SF.fieldLabels.csfamext__Dynamic_Group__c[field]
+		: truncateCPField(field);
+
 const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	// get discount codes
 	// group all rcl codes
@@ -802,11 +807,11 @@ class DiscountCodesTab extends React.Component {
 					<div className="product-card__container commercial-product-container-bare product-card__container--header">
 						<div className="container__header">
 							<div className="container__fields">
-								<span className="list-cell">Group name</span>
+								<span className="list-cell">{getLabel('name')}</span>
 								{this.customSetting.dynamic_group_fields.map(f => {
 									return (
 										<div key={f} className="list-cell">
-											<span>{truncateCPField(f)}</span>
+											<span>{getLabel(f)}</span>
 										</div>
 									);
 								})}
@@ -1053,6 +1058,17 @@ window.FAM.subscribe('onLoad', data => {
 			return new Promise(async resolve => {
 				ACTIVE_FA = await window.FAM.api.getActiveFrameAgreement();
 				console.log('Entered tab with id:' + id);
+
+				if (
+					!window.SF.fieldLabels.hasOwnProperty('csfamext__Dynamic_Group__c')
+				) {
+					window.SF.invokeAction('getFieldLabels', [
+						'csfamext__Dynamic_Group__c'
+					]).then(r => {
+						window.SF.fieldLabels['csfamext__Dynamic_Group__c'] = r;
+					});
+				}
+
 				initialiseDiscountCodesTab(id);
 				resolve();
 			});

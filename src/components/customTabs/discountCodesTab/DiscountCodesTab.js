@@ -361,7 +361,7 @@ class DiscountCodesTab extends React.Component {
 			targetingResults: {} // results for a group
 		};
 
-		this.customSettings = {};
+		this.customSetting = {};
 
 		this.updateSelectListGroups = this.updateSelectListGroups.bind(this);
 		this.updateCustomData = this.updateCustomData.bind(this);
@@ -426,11 +426,18 @@ class DiscountCodesTab extends React.Component {
 			)
 			.then(response => JSON.parse(decodeEntities(response)))
 			.then(response => {
-				for (var key in response) {
-					response[key] = validateCSV(response[key])
-						? response[key].replace(/\s/g, '').split(',')
-						: [];
-				}
+				response.rcl_fields = validateCSV(response.rcl_fields)
+					? response.rcl_fields.replace(/\s/g, '').split(',')
+					: [];
+				response.price_item_fields = validateCSV(response.price_item_fields)
+					? response.price_item_fields.replace(/\s/g, '').split(',')
+					: [];
+				response.dynamic_group_fields = validateCSV(
+					response.dynamic_group_fields
+				)
+					? response.dynamic_group_fields.replace(/\s/g, '').split(',')
+					: [];
+				// response.universal_discount_fields
 				return response;
 			});
 		// ************************************
@@ -865,7 +872,10 @@ class DiscountCodesTab extends React.Component {
 												<select
 													value={group.csfamext__discount_type__c}
 													placeholder="Add Dynamic Group"
-													disabled={!this.state.editable || !group.csfamext__fam_editable__c}
+													disabled={
+														!this.state.editable ||
+														!group.csfamext__fam_editable__c
+													}
 													onChange={e => {
 														this.onChangeDiscount(
 															group.Id,
@@ -882,13 +892,17 @@ class DiscountCodesTab extends React.Component {
 
 											{group.csfamext__target_object__c ===
 												'Commercial Product' ||
-											group.csfamext__target_object__c === 'Both' ? (
+											(group.csfamext__target_object__c === 'Both' &&
+												!this.customSetting.universal_discount_fields) ? (
 												<React.Fragment>
 													<div>
 														<label>One-Off charge</label>
 														<DebounceInput
 															debounceTimeout={300}
-															disabled={!this.state.editable || !group.csfamext__fam_editable__c}
+															disabled={
+																!this.state.editable ||
+																!group.csfamext__fam_editable__c
+															}
 															spellCheck="false"
 															className=""
 															type="number"
@@ -907,7 +921,10 @@ class DiscountCodesTab extends React.Component {
 														<label>Recurring charge</label>
 														<DebounceInput
 															debounceTimeout={300}
-															disabled={!this.state.editable || !group.csfamext__fam_editable__c}
+															disabled={
+																!this.state.editable ||
+																!group.csfamext__fam_editable__c
+															}
 															spellCheck="false"
 															className=""
 															type="number"
@@ -927,7 +944,8 @@ class DiscountCodesTab extends React.Component {
 											)}
 
 											{group.csfamext__target_object__c === 'Rate Card Line' ||
-											group.csfamext__target_object__c === 'Both' ? (
+											(group.csfamext__target_object__c === 'Both' &&
+												!this.customSetting.universal_discount_fields) ? (
 												<div>
 													<label>Value</label>
 													<DebounceInput
@@ -939,6 +957,39 @@ class DiscountCodesTab extends React.Component {
 															this.onChangeDiscount(
 																group.Id,
 																'csfamext__rate_value__c',
+																+e.target.value
+															);
+														}}
+														value={group.csfamext__rate_value__c}
+													/>
+												</div>
+											) : (
+												''
+											)}
+
+											{this.customSetting.universal_discount_fields &&
+											group.csfamext__target_object__c === 'Both' ? (
+												<div>
+													<label>Discount</label>
+													<DebounceInput
+														debounceTimeout={300}
+														spellCheck="false"
+														className=""
+														type="number"
+														onChange={e => {
+															this.onChangeDiscount(
+																group.Id,
+																'csfamext__rate_value__c',
+																+e.target.value
+															);
+															this.onChangeDiscount(
+																group.Id,
+																'csfamext__one_off_charge__c',
+																+e.target.value
+															);
+															this.onChangeDiscount(
+																group.Id,
+																'csfamext__recurring_charge__c',
 																+e.target.value
 															);
 														}}

@@ -336,7 +336,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 window.FAM.subscribe('onAfterAddProducts', data => {
 	return new Promise(async resolve => {
 		negotiateDiscountCodesForProducts(data).then(r => {
-			window.FAM.api.toast('info', 'Discount codes applied!', '');
+			// resolves length of impacted entitites
+			r && window.FAM.api.toast('info', 'Discount codes applied!', '');
 			resolve(data);
 		});
 	});

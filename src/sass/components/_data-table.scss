@@ -26,10 +26,10 @@
 		}
 
 		.list-cell {
-			white-space: nowrap;
+/*			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-
+*/
 			.icon-priority {
 				margin-right: 0.25rem;
 				vertical-align: middle;
@@ -73,9 +73,9 @@
 
 		> .list-cell {
 			text-align: left;
-			white-space: nowrap;
+/*			white-space: nowrap;
 			overflow: hidden;
-			text-overflow: ellipsis;
+			text-overflow: ellipsis;*/
 		}
 	}
 
@@ -84,9 +84,9 @@
 
 		> .list-cell {
 			text-align: left;
-			white-space: nowrap;
+/*			white-space: nowrap;
 			overflow: hidden;
-			text-overflow: ellipsis;
+			text-overflow: ellipsis;*/
 		}
 	}
 }

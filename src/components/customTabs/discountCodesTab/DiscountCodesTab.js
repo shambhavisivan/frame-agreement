@@ -99,8 +99,6 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	let _commercialProducts;
 	let active_fa = await window.FAM.api.getActiveFrameAgreement();
 
-	// window.FAM.api.resetNegotiation(active_fa.Id);
-
 	if (!data) {
 		_commercialProducts = active_fa._ui.commercialProducts;
 	} else {
@@ -133,8 +131,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 
 	if (!discountCodes.length) {
 		if (removed_group) {
-			window.FAM.api.resetNegotiation(active_fa.Id);
-			log.bg.red('---NEGOTIATION RESET');
+			window.FAM.api.resetNegotiation(active_fa.Id, removed_group.records);
+			// log.bg.red('---NEGOTIATION RESET');
 		}
 
 		// WE'RE DONE HERE
@@ -146,8 +144,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 		(a, b) => a.csfamext__sequence__c - b.csfamext__sequence__c
 	);
 
-	window.FAM.api.resetNegotiation(active_fa.Id);
-	log.bg.red('---NEGOTIATION RESET');
+	// window.FAM.api.resetNegotiation(active_fa.Id);
+	// log.bg.red('---NEGOTIATION RESET');
 
 	// Group codes by target to avoid wasteful looping
 	let both_codes = discountCodes.filter(

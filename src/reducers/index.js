@@ -1657,16 +1657,66 @@ const rootReducer = (state = initialState, action) => {
 
 		case 'RESET_NEGOTIATION':
 			var faId = action.payload.faId;
+			var entitiyMap = action.payload.entitiyMap;
 
 			var _attachment = { ...state.frameAgreements[faId]._ui.attachment };
 
-			state.frameAgreements[faId]._ui.commercialProducts.forEach(cp => {
-				// Save volume fields on override
-				_attachment.products[cp.Id] = {
-					...enrichAttachment(cp),
-					_volume: _attachment.products[cp.Id]._volume
-				};
-			});
+			if (!entitiyMap) {
+				state.frameAgreements[faId]._ui.commercialProducts.forEach(cp => {
+					// Save volume fields on override
+					_attachment.products[cp.Id] = {
+						...enrichAttachment(cp),
+						_volume: _attachment.products[cp.Id]._volume
+					};
+				});
+			} else {
+				let _cpCache = {};
+
+				function getDefaultAttachmentForProductId(cpId) {
+					if (!_cpCache.hasOwnProperty(cpId)) {
+						let _cp = state.frameAgreements[faId]._ui.commercialProducts.find(
+							cp => cp.Id === cpId
+						);
+						_cpCache[cpId] = enrichAttachment(_cp);
+					}
+
+					return _cpCache[cpId];
+				}
+
+				if (
+					entitiyMap.hasOwnProperty('products') &&
+					_attachment.hasOwnProperty('products')
+				) {
+					for (var key in entitiyMap.products) {
+						let _defaultAttachment = getDefaultAttachmentForProductId(key);
+
+						if (_attachment.products.hasOwnProperty(key)) {
+							// This entity is preset in attachment
+							// reset its charges and productCharges
+							_attachment.products[key]._product = _defaultAttachment._product;
+							_attachment.products[key]._charges = _defaultAttachment._charges;
+						}
+					}
+				}
+
+				if (entitiyMap.hasOwnProperty('rcl')) {
+					for (var key in entitiyMap.products) {
+						if (_attachment.products[key].hasOwnProperty('_rateCards')) {
+							let _defaultAttachment = getDefaultAttachmentForProductId(key);
+
+							for (var rcId in _attachment.products[key]._rateCards) {
+								for (var rclId in _attachment.products[key]._rateCards[rcId]) {
+									if (entitiyMap.rcl.hasOwnProperty(rclId)) {
+										// match; reset
+										_attachment.products[key]._rateCards[rcId][rclId] =
+											_defaultAttachment.products[key]._rateCards[rcId][rclId];
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 
 			return {
 				...state,

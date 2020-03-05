@@ -52,10 +52,12 @@ export class App extends Component {
 
 		// ****************************************** API ******************************************
 		window.FAM.api.clearToasts = this.props.clearToasts;
-		window.FAM.api.resetNegotiation = faId => {
-			this.props.resetNegotiation(faId);
+
+		window.FAM.api.resetNegotiation = (faId, entitiyMap) => {
+			this.props.resetNegotiation(faId, entitiyMap);
 			this.props.validateFrameAgreement(faId);
 		};
+
 		// ******************************************
 		window.FAM.api.addProducts = async (
 			faId = window.mandatory('addProducts()'),

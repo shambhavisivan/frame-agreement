@@ -484,14 +484,14 @@ export function addProductsToFa(faId, products) {
 
 // ***********************************************************************
 
-export const _resetNegotiation = faId => ({
+export const _resetNegotiation = (faId, entitiyMap) => ({
 	type: 'RESET_NEGOTIATION',
-	payload: { faId }
+	payload: { faId, entitiyMap }
 });
 
-export function resetNegotiation(faId) {
+export function resetNegotiation(faId, entitiyMap) {
 	return function(dispatch) {
-		dispatch(_resetNegotiation(faId));
+		dispatch(_resetNegotiation(faId, entitiyMap));
 	};
 }
 

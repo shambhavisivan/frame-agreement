@@ -25,6 +25,14 @@ export const percIncrease = (a, b) => {
 	return percent.toFixedNumber();
 };
 
+export const isNumber = num => {
+	let result = false;
+	try {
+		result = Number.isInteger(Math.floor(num)) && num !== null;
+	} catch (err) {}
+	return result;
+};
+
 export const toTitleCase = str => {
 	var splitStr = str.toLowerCase().split(' ');
 	for (var i = 0; i < splitStr.length; i++) {

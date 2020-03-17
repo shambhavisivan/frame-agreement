@@ -163,23 +163,38 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	rcl_codes = [...rcl_codes, ...both_codes];
 	cp_codes = [...cp_codes, ...both_codes];
 
+	let targeted_cp = new Set(
+		discountCodes.reduce((acc, iter) => {
+			return [...acc, ...Object.keys(iter.records.product || {})];
+		}, [])
+	);
+
 	// Generate map of original charges for product
 	let _originalProductValues = active_fa._ui.commercialProducts.reduce(
 		(acc, iter) => {
 			let _data = {};
-			if (iter.hasOwnProperty('cspmb__Recurring_Charge__c')) {
-				_data.recurring = +iter.cspmb__Recurring_Charge__c;
+
+			if (iter._charges.length) {
+				iter._charges.forEach(c => {
+					_data[c._type] = c[c._type];
+				});
+			} else {
+				if (iter.hasOwnProperty('cspmb__Recurring_Charge__c')) {
+					_data.recurring = +iter.cspmb__Recurring_Charge__c;
+				}
+
+				if (iter.hasOwnProperty('cspmb__One_Off_Charge__c')) {
+					_data.oneOff = +iter.cspmb__One_Off_Charge__c;
+				}
 			}
-			if (iter.hasOwnProperty('cspmb__One_Off_Charge__c')) {
-				_data.oneOff = +iter.cspmb__One_Off_Charge__c;
-			}
+
 			return { ...acc, [iter.Id]: _data };
 		},
 		{}
 	);
 
 	_commercialProducts.forEach(cp => {
-		if (cp._rateCards && cp._rateCards.length && rcl_codes.length) {
+		if (rcl_codes.length && cp._rateCards.length && cp._rateCards) {
 			// rcl is nested inside rc, flatten this structure to avoid nested loop
 			let _rateCardLines = cp._rateCards.reduce(
 				(acc, iter) => [...acc, ...iter.rateCardLines],
@@ -210,6 +225,14 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 					_negoArray.push(_negoFormatRcl);
 				}
 			});
+		}
+
+		// Looping all CP is only done for RCL
+		// there is no need for the rest of this scope
+		// if cp is not targeted by dc
+
+		if (!targeted_cp.has(cp.Id)) {
+			return; // skip iteration
 		}
 
 		if (cp._charges.length) {
@@ -276,10 +299,6 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			cp_codes
 				.filter(cpc => cpc.records.product.hasOwnProperty(cp.Id))
 				.forEach(cpc => {
-					let _negoFormatCp = {};
-					_negoFormatCp.priceItemId = cp.Id;
-					_negoFormatCp.value = {};
-
 					if (
 						!!cpc.csfamext__recurring_charge__c &&
 						_originalProductValues[cp.Id].hasOwnProperty('recurring')

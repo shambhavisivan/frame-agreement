@@ -30,6 +30,12 @@ class UsageTypePopup extends Component {
 
 	updateTooltipPosition() {
 		// top (px) = popup_heigth + chip_heigth + (CUBE_DIAGONAL_HALF / 2)
+
+		//Unmounted
+		if (!this.main.current) {
+			return;
+		}
+
 		let translate_above =
 			this.main.current.getBoundingClientRect().height +
 			this.props.chip.height +
@@ -223,18 +229,20 @@ class UsageType extends Component {
 
 		return (
 			<React.Fragment>
-				<span
-					ref={this.chip}
-					className={
-						'fa-chip fa-chip--' +
-						(this.childUt.length ? 'usage hover' : 'active')
-					}
-					onClick={() => {
-						this.childUt.length && this.props.onOpen();
-					}}
-				>
-					{_title}
-				</span>
+				<div className="fa-chip-expander">
+					<span
+						ref={this.chip}
+						className={
+							'fa-chip fa-chip--' +
+							(this.childUt.length ? 'usage hover' : 'active')
+						}
+						onClick={() => {
+							this.childUt.length && this.props.onOpen();
+						}}
+					>
+						{_title}
+					</span>
+				</div>
 
 				{this.props.open && this.state.chip ? (
 					<UsageTypePopup

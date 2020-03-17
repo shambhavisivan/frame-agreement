@@ -7,6 +7,8 @@
 	text-transform: uppercase;
 	cursor: default;
 
+	
+
 	&.hover {
 		cursor: pointer;
 	}
@@ -30,4 +32,18 @@
 		@include sbg(--chip-ut-bg);
 		@include sc(--chip-active-c);
 	}
+}
+
+/*For usage types*/
+.fa-chip-expander {
+    border-radius: 0.75rem;
+    text-align: center;
+    background: var(--chip-ut-bg);
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+
+    .fa-chip {
+    	padding: 0;
+    }
 }

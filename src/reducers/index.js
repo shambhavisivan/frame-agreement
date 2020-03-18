@@ -1700,7 +1700,7 @@ const rootReducer = (state = initialState, action) => {
 				}
 
 				if (entitiyMap.hasOwnProperty('rcl')) {
-					for (var key in entitiyMap.products) {
+					for (var key in _attachment.products) {
 						if (_attachment.products[key].hasOwnProperty('_rateCards')) {
 							let _defaultAttachment = getDefaultAttachmentForProductId(key);
 
@@ -1709,7 +1709,7 @@ const rootReducer = (state = initialState, action) => {
 									if (entitiyMap.rcl.hasOwnProperty(rclId)) {
 										// match; reset
 										_attachment.products[key]._rateCards[rcId][rclId] =
-											_defaultAttachment.products[key]._rateCards[rcId][rclId];
+											_defaultAttachment._rateCards[rcId][rclId];
 									}
 								}
 							}

@@ -1357,21 +1357,22 @@ global with sharing class FrameRateManagerController {
 			where cspmb__parent_usage_type__c in :mainUtIdList
 		];
 
-		Map <Id, List<Id>> mapParentChildSet = new Map <Id, List<Id>>();
+		Map <Id, Set<Id>> mapChildParentSet = new Map <Id, Set<Id>>();
 		Map <Id, Id> mapChildParentUt = new Map <Id, Id>();
 
 		List <String> childUtIdList = new List <String>();
 		for (cspmb__Usage_Type_Grouping__c utg : usageGroupingList) {
 			childUtIdList.add(utg.cspmb__child_usage_type__c);
-			mapChildParentUt.put(utg.cspmb__child_usage_type__c, utg.cspmb__parent_usage_type__c);
 
-			// if (mapParentChildSet.containsKey(utg.cspmb__parent_usage_type__c)) {
-			//  Set <Id> tempSet = mapParentChildSet.get(mapParentChildSet);
-			//  tempSet.add(utg.cspmb__child_usage_type__c);
-			//  mapParentChildSet.put(utg.cspmb__parent_usage_type__c, tempSet);
-			// } else {
-			//  mapParentChildSet.put(utg.cspmb__parent_usage_type__c, new Set<Id>{utg.cspmb__child_usage_type__c});
-			// }
+			// mapChildParentUt.put(utg.cspmb__child_usage_type__c, utg.cspmb__parent_usage_type__c);
+
+			if (mapChildParentSet.containsKey(utg.cspmb__child_usage_type__c)) {
+			 Set <Id> tempSet = mapChildParentSet.get(utg.cspmb__child_usage_type__c);
+			 tempSet.add(utg.cspmb__parent_usage_type__c);
+			 mapChildParentSet.put(utg.cspmb__child_usage_type__c, tempSet);
+			} else {
+			 mapChildParentSet.put(utg.cspmb__child_usage_type__c, new Set<Id>{utg.cspmb__parent_usage_type__c});
+			}
 
 		}
 
@@ -1388,16 +1389,16 @@ global with sharing class FrameRateManagerController {
 
 		for (cspmb__Usage_Type__c ut : database.query(ut_query)) {
 
-			String parentId = mapChildParentUt.get(ut.Id);
+			Set <Id> parentIds = mapChildParentSet.get(ut.Id);
 
-			if (childUtMap.containsKey(parentId)) {
-				List <cspmb__Usage_Type__c> tempSet = childUtMap.get(parentId);
-				tempSet.add(ut);
-				childUtMap.put(parentId, tempSet);
-			} else {
-				childUtMap.put(parentId, new List<cspmb__Usage_Type__c>{
-					ut
-				});
+			for (Id parentId : parentIds) {
+				if (childUtMap.containsKey(parentId)) {
+					List <cspmb__Usage_Type__c> tempSet = childUtMap.get(parentId);
+					tempSet.add(ut);
+					childUtMap.put(parentId, tempSet);
+				} else {
+					childUtMap.put(parentId, new List<cspmb__Usage_Type__c>{ut});
+				}
 			}
 
 		}

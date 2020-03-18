@@ -229,7 +229,12 @@ class UsageType extends Component {
 
 		return (
 			<React.Fragment>
-				<div className="fa-chip-expander">
+				<div
+					className={
+						'fa-chip-expander fa-chip-expander--' +
+						(this.childUt.length ? 'usage' : 'active')
+					}
+				>
 					<span
 						ref={this.chip}
 						className={

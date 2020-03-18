@@ -46,4 +46,13 @@
     .fa-chip {
     	padding: 0;
     }
+
+	&.fa-chip-expander--active {
+		@include sbg(--chip-active-bg);
+		@include sc(--chip-active-c);
+	}
+	&.fa-chip-expander--usage {
+		@include sbg(--chip-ut-bg);
+		@include sc(--chip-active-c);
+	}
 }

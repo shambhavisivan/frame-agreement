@@ -9,6 +9,7 @@ class InputNegotiate extends React.Component {
 
 		this.onNegotiate = this.onNegotiate.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.getDiscount = this.getDiscount.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 
 		this.state = {
@@ -29,6 +30,26 @@ class InputNegotiate extends React.Component {
 		this.setState({ focus: false });
 	}
 
+	getDiscount(original, negotiated, _dp = 2) {
+		original = (original || 0).toFixedNumber();
+		negotiated = negotiated.toFixedNumber();
+
+		let _value;
+		let dirty = original !== negotiated;
+
+		let _prefix = negotiated < original ? '-' : '+';
+
+		if (this.state.fixed) {
+			_value = Math.abs(original - negotiated);
+			_value = _prefix + _value.toFixedNumber(_dp);
+		} else {
+			_value = percIncrease(original, negotiated);
+			_value = _prefix + _value.toFixedNumber() + '%';
+		}
+
+		return { _value, dirty, _prefix };
+	}
+
 	// onTextChange(event) {
 	//     this.setState({
 	//         value: event.target.value
@@ -41,15 +62,16 @@ class InputNegotiate extends React.Component {
 
 	render() {
 		// this.props.readOnly
-		let _inputContainer,
-			_originalValue,
-			_negotiatedValue,
-			dirty,
-			_discount,
-			_value,
-			_prefix;
+		let _inputContainer, _originalValue, _negotiatedValue, _discount;
 
 		const _dp = window.SF.decimal_places || 2;
+
+		const { _value, dirty, _prefix } = this.getDiscount(
+			this.props.originalValue,
+			this.props.negotiatedValue,
+			_dp
+		);
+		_discount = <span className="discount-amount">{_value}</span>;
 
 		if (this.props.readOnly) {
 			_inputContainer = (
@@ -65,23 +87,6 @@ class InputNegotiate extends React.Component {
 				</div>
 			);
 		} else {
-			_originalValue = (this.props.originalValue || 0).toFixedNumber();
-			_negotiatedValue = this.props.negotiatedValue.toFixedNumber();
-
-			dirty = _originalValue !== _negotiatedValue;
-
-			_prefix = this.props.negotiatedValue < _originalValue ? '-' : '+';
-
-			if (this.state.fixed) {
-				_value = Math.abs(_originalValue - _negotiatedValue);
-				_value = _prefix + _value.toFixedNumber(_dp);
-			} else {
-				_value = percIncrease(_originalValue, _negotiatedValue);
-				_value = _prefix + _value.toFixedNumber() + '%';
-			}
-
-			_discount = <span className="discount-amount">{_value}</span>;
-
 			_inputContainer = (
 				<div
 					className={

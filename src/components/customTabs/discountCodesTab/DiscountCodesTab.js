@@ -922,8 +922,7 @@ class DiscountCodesTab extends React.Component {
 														<DebounceInput
 															debounceTimeout={300}
 															disabled={
-																!this.state.editable ||
-																!group.csfamext__fam_editable__c
+																!this.state.editable
 															}
 															spellCheck="false"
 															className=""
@@ -944,8 +943,7 @@ class DiscountCodesTab extends React.Component {
 														<DebounceInput
 															debounceTimeout={300}
 															disabled={
-																!this.state.editable ||
-																!group.csfamext__fam_editable__c
+																!this.state.editable
 															}
 															spellCheck="false"
 															className=""

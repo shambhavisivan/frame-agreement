@@ -609,7 +609,7 @@ const rootReducer = (state = initialState, action) => {
 				}
 
 				if (!cp.hasOwnProperty('cspmb__Is_Recurring_Discount_Allowed__c ')) {
-					cp.cspmb__Is_One_Off_Discount_Allowed__c = true;
+					cp.cspmb__Is_Recurring_Discount_Allowed__c = true;
 				}
 			});
 

@@ -1684,10 +1684,10 @@ const rootReducer = (state = initialState, action) => {
 				}
 
 				if (
-					entitiyMap.hasOwnProperty('products') &&
+					entitiyMap.hasOwnProperty('product') &&
 					_attachment.hasOwnProperty('products')
 				) {
-					for (var key in entitiyMap.products) {
+					for (var key in _attachment.products) {
 						let _defaultAttachment = getDefaultAttachmentForProductId(key);
 
 						if (_attachment.products.hasOwnProperty(key)) {

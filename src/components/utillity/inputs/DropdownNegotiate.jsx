@@ -20,15 +20,17 @@ class DropdownNegotiate extends React.Component {
 		let initialDiscount = 'none';
 		let initialFixed = 0;
 		let initialPercentage = 0;
-		let _originalValue = this.props.originalValue || 0;
 
-		if (_originalValue - this.props.negotiatedValue) {
+		let _originalValue = this.props.originalValue || 0;
+		let _negotiatedValue = this.props.negotiatedValue || 0;
+
+		if (_originalValue - _negotiatedValue) {
 			initialPercentage = percIncrease(
 				_originalValue,
-				this.props.negotiatedValue
+				_negotiatedValue
 			);
 			initialFixed = (
-				_originalValue - this.props.negotiatedValue
+				_originalValue - _negotiatedValue
 			).toFixedNumber();
 		}
 
@@ -131,7 +133,7 @@ class DropdownNegotiate extends React.Component {
 		const _dp = window.SF.decimal_places || 2;
 
 		var _originalValue = (this.props.originalValue || 0).toFixedNumber();
-		var _negotiatedValue = this.props.negotiatedValue.toFixedNumber();
+		var _negotiatedValue = (this.props.negotiatedValue || 0).toFixedNumber();
 
 		var dirty = _originalValue !== _negotiatedValue;
 

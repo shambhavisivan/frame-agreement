@@ -997,6 +997,10 @@ const rootReducer = (state = initialState, action) => {
 				}
 			});
 
+			window.SF.fieldLabels.statuses = action.payload.csconta__Status__c.reduce((acc, iter) => {
+				return {...acc, [iter.value]: iter.label} 
+			}, {});
+
 			try {
 				window.SF.fieldLabels[
 					'misc'

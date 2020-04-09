@@ -230,6 +230,8 @@ class FaHeader extends React.Component {
 			headerClass = ' error fa-disabled';
 		}
 
+		let _faStatus = this.props.frameAgreements[this.props.faId].csconta__Status__c;
+
 		return (
 			<div className={'fa-secondary-header ' + headerClass}>
 				<div className="fa-secondary-header__inner">
@@ -255,8 +257,7 @@ class FaHeader extends React.Component {
 							<span className="fa-chip fa-chip--draft">
 								{master
 									? 'Master'
-									: this.props.frameAgreements[this.props.faId]
-											.csconta__Status__c}
+									: window.SF.fieldLabels.statuses[_faStatus] || _faStatus}
 							</span>
 						) : (
 							''

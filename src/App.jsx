@@ -550,6 +550,7 @@ export class App extends Component {
 
 			// Load agreement levels for "Add new Agreement" picklist
 			picklists.push('csconta__agreement_level__c');
+			picklists.push('csconta__Status__c');
 
 			if (picklists.length) {
 				_promiseArray.push(this.props.getPicklistOptions(picklists));

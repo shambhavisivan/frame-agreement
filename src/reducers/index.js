@@ -609,7 +609,7 @@ const rootReducer = (state = initialState, action) => {
 				}
 
 				if (!cp.hasOwnProperty('cspmb__Is_Recurring_Discount_Allowed__c ')) {
-					cp.cspmb__Is_One_Off_Discount_Allowed__c = true;
+					cp.cspmb__Is_Recurring_Discount_Allowed__c = true;
 				}
 			});
 
@@ -1416,12 +1416,12 @@ const rootReducer = (state = initialState, action) => {
 
 				function formatAddons(addon) {
 					let _addon = { ...addon };
+
 					_addon.cspmb__One_Off_Charge__c =
-						_addon.cspmb__One_Off_Charge__c ||
-						_addon.cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c;
+						_addon.cspmb__One_Off_Charge__c || null;
 					_addon.cspmb__Recurring_Charge__c =
-						_addon.cspmb__Recurring_Charge__c ||
-						_addon.cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c;
+						_addon.cspmb__Recurring_Charge__c || null;
+
 					_addon.cspmb__Authorization_Level__c =
 						_addon.cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c;
 					_addon.Name = _addon.cspmb__Add_On_Price_Item__r.Name;
@@ -1688,10 +1688,10 @@ const rootReducer = (state = initialState, action) => {
 				}
 
 				if (
-					entitiyMap.hasOwnProperty('products') &&
+					entitiyMap.hasOwnProperty('product') &&
 					_attachment.hasOwnProperty('products')
 				) {
-					for (var key in entitiyMap.products) {
+					for (var key in _attachment.products) {
 						let _defaultAttachment = getDefaultAttachmentForProductId(key);
 
 						if (_attachment.products.hasOwnProperty(key)) {
@@ -1704,7 +1704,7 @@ const rootReducer = (state = initialState, action) => {
 				}
 
 				if (entitiyMap.hasOwnProperty('rcl')) {
-					for (var key in entitiyMap.products) {
+					for (var key in _attachment.products) {
 						if (_attachment.products[key].hasOwnProperty('_rateCards')) {
 							let _defaultAttachment = getDefaultAttachmentForProductId(key);
 
@@ -1713,7 +1713,7 @@ const rootReducer = (state = initialState, action) => {
 									if (entitiyMap.rcl.hasOwnProperty(rclId)) {
 										// match; reset
 										_attachment.products[key]._rateCards[rcId][rclId] =
-											_defaultAttachment.products[key]._rateCards[rcId][rclId];
+											_defaultAttachment._rateCards[rcId][rclId];
 									}
 								}
 							}

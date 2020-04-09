@@ -921,10 +921,7 @@ class DiscountCodesTab extends React.Component {
 														<label>One-Off charge</label>
 														<DebounceInput
 															debounceTimeout={300}
-															disabled={
-																!this.state.editable ||
-																!group.csfamext__fam_editable__c
-															}
+															disabled={!this.state.editable}
 															spellCheck="false"
 															className=""
 															type="number"
@@ -943,10 +940,7 @@ class DiscountCodesTab extends React.Component {
 														<label>Recurring charge</label>
 														<DebounceInput
 															debounceTimeout={300}
-															disabled={
-																!this.state.editable ||
-																!group.csfamext__fam_editable__c
-															}
+															disabled={!this.state.editable}
 															spellCheck="false"
 															className=""
 															type="number"

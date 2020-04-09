@@ -290,7 +290,7 @@ export class CommercialProduct extends React.Component {
 								disabled={!this.props.product._rateCards.length}
 							>
 								<Rates
-									readOnly={!_editable || (_disableLevels && _disableInputs)}
+									readOnly={!_editable || _disableInputs}
 									validation={this.props.validation[this.productId].rated}
 									attachment={_attachment._rateCards || {}}
 									rateCards={this.props.product._rateCards}

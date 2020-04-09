@@ -41,6 +41,19 @@ class CommercialProductsTab extends React.Component {
 				return true;
 			}
 		};
+
+		this.prodDeleteSub = window.FAM.subscribe('onAfterDeleteProducts', data => {
+			return new Promise(resolve => {
+				this.setState({
+					page: 1
+				});
+				resolve(data);
+			});
+		});
+	}
+
+	componentWillUnmount() {
+		this.prodDeleteSub.unsubscribe();
 	}
 
 	getCommercialProductsCount() {

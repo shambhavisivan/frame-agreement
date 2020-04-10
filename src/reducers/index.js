@@ -121,6 +121,7 @@ function formatDiscLevels(dlList = []) {
 
 	dlList.forEach(dl => {
 		let discount = JSON.parse(JSON.stringify(dl));
+		
 		discount.discountLevel = {
 			Id: dl.discountLevel.Id,
 			Name: dl.discountLevel.Name,
@@ -153,6 +154,16 @@ function formatDiscLevels(dlList = []) {
 		}
 
 		if (
+			!dl.discountLevel.cspmb__Discount_Type__c
+		) {
+			log.bg.red(
+				'Discount level ' + dl.discountLevel.Id +' does not contain cspmb__Discount_Type__c'
+			);
+
+			return;
+		}
+
+		if (
 			dl.discountLevel.hasOwnProperty('cspmb__Minimum_Discount_Value__c') &&
 			+dl.discountLevel.cspmb__Minimum_Discount_Value__c === 0
 		) {
@@ -176,7 +187,7 @@ function formatDiscLevels(dlList = []) {
 				dl.discountLevel.cspmb__Maximum_Discount_Value__c <
 				dl.discountLevel.cspmb__Minimum_Discount_Value__c
 			) {
-				log.red(
+				log.bg.red(
 					'Minimum greater then maximum on discount level:',
 					dl.discountLevel.Id
 				);
@@ -605,11 +616,11 @@ const rootReducer = (state = initialState, action) => {
 			// validate
 			commercialProducts.forEach(cp => {
 				if (!cp.hasOwnProperty('cspmb__Is_One_Off_Discount_Allowed__c')) {
-					cp.cspmb__Is_One_Off_Discount_Allowed__c = true;
+					cp.cspmb__Is_One_Off_Discount_Allowed__c = false;
 				}
 
-				if (!cp.hasOwnProperty('cspmb__Is_Recurring_Discount_Allowed__c ')) {
-					cp.cspmb__Is_Recurring_Discount_Allowed__c = true;
+				if (!cp.hasOwnProperty('cspmb__Is_Recurring_Discount_Allowed__c')) {
+					cp.cspmb__Is_Recurring_Discount_Allowed__c = false;
 				}
 			});
 

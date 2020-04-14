@@ -21,7 +21,7 @@ const initialState = {
 	},
 	settings: {
 		AuthLevels: {},
-		DiscLevels: {}
+		DiscLevels: []
 	},
 	ignoreSettings: {},
 	accounts: [],
@@ -112,7 +112,7 @@ function formatDiscThresh(dtList = []) {
 }
 
 function formatDiscLevels(dlList = []) {
-	let _DiscLevels = {};
+	let _DiscLevels = [];
 
 	let error = {
 		message: '',
@@ -121,7 +121,7 @@ function formatDiscLevels(dlList = []) {
 
 	dlList.forEach(dl => {
 		let discount = JSON.parse(JSON.stringify(dl));
-		
+
 		discount.discountLevel = {
 			Id: dl.discountLevel.Id,
 			Name: dl.discountLevel.Name,
@@ -153,11 +153,11 @@ function formatDiscLevels(dlList = []) {
 			return returnValues;
 		}
 
-		if (
-			!dl.discountLevel.cspmb__Discount_Type__c
-		) {
+		if (!dl.discountLevel.cspmb__Discount_Type__c) {
 			log.bg.red(
-				'Discount level ' + dl.discountLevel.Id +' does not contain cspmb__Discount_Type__c'
+				'Discount level ' +
+					dl.discountLevel.Id +
+					' does not contain cspmb__Discount_Type__c'
 			);
 
 			return;
@@ -225,7 +225,7 @@ function formatDiscLevels(dlList = []) {
 		}
 
 		if (!failure) {
-			_DiscLevels[discount.discountLevel.Id] = discount;
+			_DiscLevels.push(discount);
 		} else {
 			log.red(error.message, error.targets);
 		}
@@ -1008,9 +1008,12 @@ const rootReducer = (state = initialState, action) => {
 				}
 			});
 
-			window.SF.fieldLabels.statuses = action.payload.csconta__Status__c.reduce((acc, iter) => {
-				return {...acc, [iter.value]: iter.label} 
-			}, {});
+			window.SF.fieldLabels.statuses = action.payload.csconta__Status__c.reduce(
+				(acc, iter) => {
+					return { ...acc, [iter.value]: iter.label };
+				},
+				{}
+			);
 
 			try {
 				window.SF.fieldLabels[
@@ -1370,11 +1373,10 @@ const rootReducer = (state = initialState, action) => {
 		case 'RECIEVE_PRICE_ITEM_DATA':
 			const productVsDiscount = {};
 
-			var _DiscLevels = state.settings.DiscLevels;
-			_DiscLevels = {
-				..._DiscLevels,
+			var _DiscLevels = [
+				...(state.settings.DiscLevels || []),
 				...formatDiscLevels(action.payload.discLevels)
-			};
+			];
 
 			var _AuthLevels = state.settings.AuthLevels;
 			_AuthLevels = {
@@ -1382,13 +1384,13 @@ const rootReducer = (state = initialState, action) => {
 				...formatDiscThresh(action.payload.discThresh)
 			};
 
-			for (let lv in _DiscLevels) {
-				if (_DiscLevels[lv].priceItemId) {
-					productVsDiscount[_DiscLevels[lv].priceItemId] =
-						productVsDiscount[_DiscLevels[lv].priceItemId] || [];
-					productVsDiscount[_DiscLevels[lv].priceItemId].push(lv);
+			_DiscLevels.forEach(lv => {
+				if (lv.priceItemId) {
+					productVsDiscount[lv.priceItemId] =
+						productVsDiscount[lv.priceItemId] || [];
+					productVsDiscount[lv.priceItemId].push(lv);
 				}
-			}
+			});
 
 			var priceItemData = action.payload.cpData;
 			// *********************************************************
@@ -1417,13 +1419,13 @@ const rootReducer = (state = initialState, action) => {
 				}
 				// **********************************************
 				const addonVsDiscount = {};
-				for (let lv in _DiscLevels) {
-					if (_DiscLevels[lv].addonId) {
-						addonVsDiscount[_DiscLevels[lv].addonId] =
-							addonVsDiscount[_DiscLevels[lv].addonId] || [];
-						addonVsDiscount[_DiscLevels[lv].addonId].push(lv);
+
+				_DiscLevels.forEach(lv => {
+					if (lv.addonId) {
+						addonVsDiscount[lv.addonId] = addonVsDiscount[lv.addonId] || [];
+						addonVsDiscount[lv.addonId].push(lv);
 					}
-				}
+				});
 
 				function formatAddons(addon) {
 					let _addon = { ...addon };
@@ -1540,7 +1542,7 @@ const rootReducer = (state = initialState, action) => {
 				...state,
 				settings: {
 					...state.settings,
-					DiscLevels: { ...state.settings.DiscLevels, ..._DiscLevels },
+					DiscLevels: _DiscLevels,
 					AuthLevels: { ...state.settings.AuthLevels, ..._AuthLevels }
 				},
 				...{ commercialProducts: state.commercialProducts }

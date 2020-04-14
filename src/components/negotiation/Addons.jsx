@@ -84,7 +84,8 @@ export class Addons extends React.Component {
 
 							if (add._discountLvIds) {
 								add._discountLvIds.forEach(lv => {
-									let info = this.props.settings.DiscLevels[lv].discountLevel;
+									let info = lv.discountLevel;
+
 									if (isOneOff(info.cspmb__Charge_Type__c)) {
 										oneOffDiscounts = oneOffDiscounts || [];
 										oneOffDiscounts.push(info);

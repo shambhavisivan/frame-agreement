@@ -21,9 +21,7 @@ export class ProductCharges extends React.Component {
 		// this.props.recurringAllowed
 
 		if (this.props.levels) {
-			this.props.levels.forEach(lv => {
-				this.discounts.push(this.props.settings.DiscLevels[lv].discountLevel);
-			});
+			this.discounts = this.props.levels.map(lv => lv.discountLevel);
 		}
 	}
 

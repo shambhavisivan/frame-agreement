@@ -1349,25 +1349,11 @@ const rootReducer = (state = initialState, action) => {
 				}
 			});
 
-			// ***************************************************************************************************************
-			var settings_loaded = true;
-
-			var _atLeastOnePicklist = action.payload.HeaderData.find(
-				f => f.type === 'picklist'
-			);
-
-			if (_atLeastOnePicklist) {
-				settings_loaded = false;
-			}
-
-			// ***************************************************************************************************************
-
 			return {
 				...state,
 				settings: action.payload,
 				productFields: _productFields,
-				faFields: _faFields,
-				initialised: { ...state.initialised, settings_loaded: settings_loaded }
+				faFields: _faFields
 			};
 
 		case 'RECIEVE_PRICE_ITEM_DATA':

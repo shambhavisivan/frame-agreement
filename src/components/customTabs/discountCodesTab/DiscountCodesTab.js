@@ -119,7 +119,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			result = original - (original * discount) / 100;
 		}
 
-		return result.toFixedNumber();
+		return result;
 	}
 
 	// ****************************************

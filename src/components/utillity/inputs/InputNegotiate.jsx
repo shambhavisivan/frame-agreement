@@ -31,8 +31,8 @@ class InputNegotiate extends React.Component {
 	}
 
 	getDiscount(original, negotiated, _dp = 2) {
-		original = (original || 0).toFixedNumber();
-		negotiated = negotiated.toFixedNumber();
+		original = original || 0;
+		negotiated = negotiated || 0;
 
 		let _value;
 		let dirty = original !== negotiated;
@@ -44,7 +44,7 @@ class InputNegotiate extends React.Component {
 			_value = _prefix + _value.toFixedNumber(_dp);
 		} else {
 			_value = percIncrease(original, negotiated);
-			_value = _prefix + _value.toFixedNumber() + '%';
+			_value = _prefix + Math.abs(_value).toFixedNumber() + '%';
 		}
 
 		return { _value, dirty, _prefix };
@@ -71,6 +71,9 @@ class InputNegotiate extends React.Component {
 			this.props.negotiatedValue,
 			_dp
 		);
+
+		_negotiatedValue = this.props.negotiatedValue.toFixedNumber();
+
 		_discount = <span className="discount-amount">{_value}</span>;
 
 		if (this.props.readOnly) {
@@ -113,7 +116,7 @@ class InputNegotiate extends React.Component {
 						onChange={this.onNegotiate}
 						onBlur={this.onBlur}
 						onFocus={this.onFocus}
-						value={this.props.negotiatedValue}
+						value={_negotiatedValue}
 					/>
 				</div>
 			);

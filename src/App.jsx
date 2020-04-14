@@ -539,6 +539,7 @@ export class App extends Component {
 				}
 			)
 		]).then(response => {
+			
 			let _promiseArray = [
 				this.props.getFrameAgreements(),
 				this.props.getCommercialProducts()
@@ -552,9 +553,7 @@ export class App extends Component {
 			picklists.push('csconta__agreement_level__c');
 			picklists.push('csconta__Status__c');
 
-			if (picklists.length) {
-				_promiseArray.push(this.props.getPicklistOptions(picklists));
-			}
+			_promiseArray.push(this.props.getPicklistOptions(picklists));
 
 			Promise.all(_promiseArray).then(responseArr => {
 				publish('onLoad', [responseArr]);

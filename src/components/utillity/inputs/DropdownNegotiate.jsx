@@ -25,13 +25,8 @@ class DropdownNegotiate extends React.Component {
 		let _negotiatedValue = this.props.negotiatedValue || 0;
 
 		if (_originalValue - _negotiatedValue) {
-			initialPercentage = percIncrease(
-				_originalValue,
-				_negotiatedValue
-			);
-			initialFixed = (
-				_originalValue - _negotiatedValue
-			).toFixedNumber();
+			initialPercentage = percIncrease(_originalValue, _negotiatedValue);
+			initialFixed = (_originalValue - _negotiatedValue).toFixedNumber();
 		}
 
 		this.discounts = [];
@@ -132,8 +127,8 @@ class DropdownNegotiate extends React.Component {
 	render() {
 		const _dp = window.SF.decimal_places || 2;
 
-		var _originalValue = (this.props.originalValue || 0).toFixedNumber();
-		var _negotiatedValue = (this.props.negotiatedValue || 0).toFixedNumber();
+		var _originalValue = this.props.originalValue || 0;
+		var _negotiatedValue = this.props.negotiatedValue || 0;
 
 		var dirty = _originalValue !== _negotiatedValue;
 
@@ -152,6 +147,8 @@ class DropdownNegotiate extends React.Component {
 		}
 
 		_discount = <span className="discount-amount">{_value}</span>;
+
+		_negotiatedValue = _negotiatedValue.toFixedNumber()
 
 		return (
 			<div
@@ -199,7 +196,7 @@ class DropdownNegotiate extends React.Component {
 							}
 
 							return (
-								<option key={disc.Id + disc.value} value={index}>
+								<option key={disc.Id + disc.value + index} value={index}>
 									{_discount}
 								</option>
 							);

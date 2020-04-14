@@ -156,7 +156,7 @@ class FaHeader extends React.Component {
 			this.editable &&
 			!this.props.settings.FACSettings.approvers_revise
 		) {
-			data.csconta__Status__c = this.props.settings.FACSettings.statuses.requires_approval_status;
+			data.csconta__Status__c = this.props.settings.FACSettings.statuses?.requires_approval_status;
 		}
 
 		this.props.saveFrameAgreement(data).then(async responseArr => {

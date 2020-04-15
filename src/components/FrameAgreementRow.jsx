@@ -86,7 +86,9 @@ class FrameAgreementRow extends React.Component {
 
 							{!_master && this.props.agreement.csconta__Status__c ? (
 								<span className={this.statusClass}>
-									{window.SF.fieldLabels.statuses[this.props.agreement.csconta__Status__c] || this.props.agreement.csconta__Status__c}
+									{window.SF.fieldLabels.statuses[
+										this.props.agreement.csconta__Status__c
+									] || this.props.agreement.csconta__Status__c}
 								</span>
 							) : (
 								''

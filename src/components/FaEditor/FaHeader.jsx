@@ -37,6 +37,7 @@ class FaHeader extends React.Component {
 		this.editable = window.FAM.api.isAgreementEditable(this.props.faId);
 
 		this.state = {
+			editable: window.FAM.api.isAgreementEditable(this.props.faId),
 			actionIframe: false,
 			actionIframeUrl: null,
 			actionIframeObject: null
@@ -46,9 +47,12 @@ class FaHeader extends React.Component {
 	componentDidUpdate() {
 		try {
 			if (
-				this.editable !== window.FAM.api.isAgreementEditable(this.props.faId)
+				this.state.editable !==
+				window.FAM.api.isAgreementEditable(this.props.faId)
 			) {
-				this.editable = window.FAM.api.isAgreementEditable(this.props.faId);
+				this.setState({
+					editable: window.FAM.api.isAgreementEditable(this.props.faId)
+				});
 			}
 		} catch (e) {}
 	}
@@ -153,7 +157,7 @@ class FaHeader extends React.Component {
 		// If approvers revise is activated, FA wont change status
 		if (
 			this.props.frameAgreements[this.props.faId]._ui.approvalNeeded &&
-			this.editable &&
+			this.state.editable &&
 			!this.props.settings.FACSettings.approvers_revise
 		) {
 			data.csconta__Status__c = this.props.settings.FACSettings.statuses?.requires_approval_status;
@@ -218,19 +222,19 @@ class FaHeader extends React.Component {
 		let headerClass = '';
 
 		if (master) {
-			// default
+			// none of these
+		} else if (!this.state.editable) {
+			headerClass = ' error fa-disabled';
 		} else if (
-			this.editable &&
 			_fa._ui.approvalNeeded &&
 			_fa.csconta__Status__c !==
 				this.props.settings.FACSettings.statuses.approved_status
 		) {
 			headerClass = ' error fa-invalid';
-		} else if (!this.editable) {
-			headerClass = ' error fa-disabled';
 		}
 
-		let _faStatus = this.props.frameAgreements[this.props.faId].csconta__Status__c;
+		let _faStatus = this.props.frameAgreements[this.props.faId]
+			.csconta__Status__c;
 
 		return (
 			<div className={'fa-secondary-header ' + headerClass}>

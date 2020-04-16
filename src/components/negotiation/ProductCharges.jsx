@@ -91,17 +91,17 @@ export class ProductCharges extends React.Component {
 									? this.props.attachment.oneOff
 									: this.props.product.cspmb__One_Off_Charge__c;
 
-								// If there are any discounts and there one off is defined
+								// Filter only ones that have adequate type
+								let oneOffDiscount = this.discounts.filter(dc =>
+									isOneOff(dc.cspmb__Charge_Type__c)
+								);
+
+								// If there are any discounts and one off is defined
 								if (
-									this.discounts.length &&
+									oneOffDiscount.length &&
 									!this.props.disableLevels &&
 									this.props.product.cspmb__One_Off_Charge__c != null
 								) {
-									// Filter only ones that have adequate type
-									let oneOffDiscount = this.discounts.filter(dc =>
-										isOneOff(dc.cspmb__Charge_Type__c)
-									);
-
 									oneOffRow = (
 										<DropdownNegotiate
 											readOnly={
@@ -128,7 +128,9 @@ export class ProductCharges extends React.Component {
 									oneOffRow = (
 										<InputNegotiate
 											readOnly={
-												this.props.readOnly || !this.props.oneOffAllowed
+												this.props.readOnly ||
+												!this.props.oneOffAllowed ||
+												this.props.disableInputs
 											}
 											invalid={this.props.validation.oneOff}
 											onChange={val => {
@@ -156,14 +158,15 @@ export class ProductCharges extends React.Component {
 									? this.props.attachment.recurring
 									: this.props.product.cspmb__Recurring_Charge__c;
 
+								let recurringDiscount = this.discounts.filter(dc =>
+									isRecurring(dc.cspmb__Charge_Type__c)
+								);
+
 								if (
-									this.discounts.length &&
+									recurringDiscount.length &&
 									!this.props.disableLevels &&
 									this.props.product.cspmb__Recurring_Charge__c != null
 								) {
-									let recurringDiscount = this.discounts.filter(dc =>
-										isRecurring(dc.cspmb__Charge_Type__c)
-									);
 									recurringRow = (
 										<DropdownNegotiate
 											readOnly={
@@ -189,7 +192,9 @@ export class ProductCharges extends React.Component {
 									recurringRow = (
 										<InputNegotiate
 											readOnly={
-												this.props.readOnly || !this.props.recurringAllowed
+												this.props.readOnly ||
+												!this.props.recurringAllowed ||
+												this.props.disableInputs
 											}
 											invalid={this.props.validation.recurring}
 											onChange={val => {

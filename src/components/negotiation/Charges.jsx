@@ -94,7 +94,7 @@ export class Charges extends React.Component {
 									this.props.attachment[charge.Id].hasOwnProperty('oneOff')
 										? this.props.attachment[charge.Id].oneOff
 										: charge.oneOff;
-								if (this.discounts[charge.Name] && this.props.disableLevels) {
+								if (this.discounts[charge.Name] && !this.props.disableLevels) {
 									oneOffRow = (
 										<DropdownNegotiate
 											readOnly={
@@ -118,7 +118,8 @@ export class Charges extends React.Component {
 										<InputNegotiate
 											readOnly={
 												this.props.readOnly ||
-												!this.isChargeAllowed(charge.chargeType)
+												!this.isChargeAllowed(charge.chargeType) ||
+												this.props.disableInputs
 											}
 											invalid={this.props.validation[charge.Id]}
 											onChange={val => {
@@ -162,7 +163,8 @@ export class Charges extends React.Component {
 										<InputNegotiate
 											readOnly={
 												this.props.readOnly ||
-												!this.isChargeAllowed(charge.chargeType)
+												!this.isChargeAllowed(charge.chargeType) ||
+												this.props.disableInputs
 											}
 											invalid={this.props.validation[charge.Id]}
 											onChange={val => {

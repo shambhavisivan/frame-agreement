@@ -121,7 +121,7 @@ export class Addons extends React.Component {
 								} else {
 									oneOffRow = (
 										<InputNegotiate
-											readOnly={this.props.readOnly}
+											readOnly={this.props.readOnly || this.props.disableInputs}
 											invalid={val_oneOff}
 											onChange={val => {
 												this.negotiateInline(add, 'oneOff', val);
@@ -158,7 +158,7 @@ export class Addons extends React.Component {
 								} else {
 									recurringRow = (
 										<InputNegotiate
-											readOnly={this.props.readOnly}
+											readOnly={this.props.readOnly || this.props.disableInputs}
 											invalid={val_recurring}
 											onChange={val => {
 												this.negotiateInline(add, 'recurring', val);

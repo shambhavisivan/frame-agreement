@@ -50,16 +50,6 @@ class InputNegotiate extends React.Component {
 		return { _value, dirty, _prefix };
 	}
 
-	// onTextChange(event) {
-	//     this.setState({
-	//         value: event.target.value
-	//     });
-	// }
-
-	// onBlur={() => {this.setState({readOnly: true})}}
-
-	//
-
 	render() {
 		// this.props.readOnly
 		let _inputContainer, _originalValue, _negotiatedValue, _discount;
@@ -72,7 +62,7 @@ class InputNegotiate extends React.Component {
 			_dp
 		);
 
-		_negotiatedValue = this.props.negotiatedValue.toFixedNumber();
+		_negotiatedValue = this.props.negotiatedValue?.toFixedNumber();
 
 		_discount = <span className="discount-amount">{_value}</span>;
 

@@ -148,7 +148,7 @@ class DropdownNegotiate extends React.Component {
 
 		_discount = <span className="discount-amount">{_value}</span>;
 
-		_negotiatedValue = _negotiatedValue.toFixedNumber()
+		_negotiatedValue = _negotiatedValue.toFixedNumber();
 
 		return (
 			<div

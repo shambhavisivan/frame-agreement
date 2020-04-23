@@ -129,12 +129,12 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	let discountCodes = await window.FAM.api.getCustomData(active_fa.Id);
 	discountCodes = discountCodes.codes || [];
 
-	if (!discountCodes.length) {
-		if (removed_group) {
-			window.FAM.api.resetNegotiation(active_fa.Id, removed_group.records);
-			// log.bg.red('---NEGOTIATION RESET');
-		}
+	if (removed_group) {
+		window.FAM.api.resetNegotiation(active_fa.Id, removed_group.records);
+		// log.bg.red('---NEGOTIATION RESET');
+	}
 
+	if (!discountCodes.length) {
 		// WE'RE DONE HERE
 		Promise.resolve(data);
 		return;

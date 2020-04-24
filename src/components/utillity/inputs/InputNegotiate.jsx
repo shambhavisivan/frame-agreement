@@ -76,7 +76,7 @@ class InputNegotiate extends React.Component {
 							: '')
 					}
 				>
-					<span>{this.props.negotiatedValue}</span>
+					<span>{_negotiatedValue}</span>
 				</div>
 			);
 		} else {

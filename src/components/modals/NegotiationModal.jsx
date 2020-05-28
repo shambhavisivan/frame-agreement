@@ -485,7 +485,7 @@ class NegotiationModal extends Component {
 				}
 			}
 
-			return val.toFixedNumber();
+			return +val.toFixed(8);
 		}
 
 		let selected = { ...this.state.selected };

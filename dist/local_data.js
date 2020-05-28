@@ -294,7 +294,7 @@ const FACSettings = {
 	new_frame_agreement: true,
 	active_status_management__c: true,
 	product_chunk_size: 100,
-	decimal_places: 4,
+	decimal_places: 2,
 	rcl_fields: 'cspmb__Currency_Code__c, Category__c',
 	volume_fields_visibility: 'mv',
 	usage_type_fields__c: 'cspmb__unit_of_measure__c',
@@ -951,7 +951,7 @@ const productData = {
 					{
 						Id: 'a1M1t000000peXeEAI',
 						Name: 'SMS',
-						cspmb__rate_value__c: 12.99,
+						cspmb__rate_value__c: 62.19,
 						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t0000001X2dEAE',
 						cspmb__Currency_Code__c: 'Sample Code',
@@ -1201,7 +1201,7 @@ const productData = {
 					{
 						Id: 'a1M1t000000WwS3EAK',
 						Name: 'RCL3.3',
-						cspmb__rate_value__c: 12.9,
+						cspmb__rate_value__c: 62.19,
 						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYbEAO',
 						cspmb__Currency_Code__c: 'Sample Code',
@@ -1214,7 +1214,7 @@ const productData = {
 					{
 						Id: 'a1M1t000000WwRyEAK',
 						Name: 'RCL3.2',
-						cspmb__rate_value__c: 44.21,
+						cspmb__rate_value__c: 41.32,
 						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
 						cspmb__Rate_Card__c: 'a1N1t000000GUYbEAO',
 						cspmb__Currency_Code__c: 'Sample Code',
@@ -1680,8 +1680,8 @@ const Delta = {
 							status: 'unchanged'
 						},
 						a1M1t000000peXeEAI: {
-							new_value: 12.99,
-							old_value: 12.99,
+							new_value: 62.19,
+							old_value: 62.19,
 							status: 'unchanged'
 						}
 					},
@@ -1695,13 +1695,13 @@ const Delta = {
 							status: 'changed'
 						},
 						a1M1t000000WwS3EAK: {
-							new_value: 12.9,
-							old_value: 12.9,
+							new_value: 62.19,
+							old_value: 62.19,
 							status: 'unchanged'
 						},
 						a1M1t000000WwRyEAK: {
-							new_value: 44.21,
-							old_value: 44.21,
+							new_value: 41.32,
+							old_value: 41.32,
 							status: 'unchanged'
 						}
 					},
@@ -1800,13 +1800,13 @@ const Delta = {
 							status: 'unchanged'
 						},
 						a1M1t000000WwS3EAK: {
-							new_value: 12.9,
-							old_value: 12.9,
+							new_value: 62.19,
+							old_value: 62.19,
 							status: 'unchanged'
 						},
 						a1M1t000000WwRyEAK: {
-							new_value: 44.21,
-							old_value: 44.21,
+							new_value: 41.32,
+							old_value: 41.32,
 							status: 'unchanged'
 						}
 					},
@@ -1907,7 +1907,7 @@ const HeaderData = [
 		readOnly: false,
 		label: 'Arb Field Text 3',
 		type: 'text',
-		visible: 'csfam__Arb_Field_Text__c==hide',
+		visible: 'csfam__Arb_Field_Text__c==hide all',
 		grid: 4
 	},
 	{
@@ -3468,7 +3468,7 @@ for (var i = 0; i < 2000; i++) {
 
 lookupAccountData.sort((a, b) => (a.Id > b.Id ? 1 : b.Id > a.Id ? -1 : 0));
 
-// const priceItemData = {"a1F1t00000017Y0EAI":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t00000017Y0EAI","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001QxrEAE","Name":"RC1","rateCardLines":[{"Id":"a1M1t000000BFrVEAW","Name":"RCL1.1","cspmb__Cap_Unit__c":"Sample Cap Unit","cspmb__rate_value__c":124.99,"cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"},{"Id":"a1M1t000000peaJEAQ","Name":"RCL_1_1","cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"}]}]},"a1F1t0000001JBUEA2":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBUEA2","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":12.99,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]},"a1F1t0000001JBeEAM":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnhAAE","Name":"ADD3","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBeEAM","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":12.99,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]}};
+// const priceItemData = {"a1F1t00000017Y0EAI":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t00000017Y0EAI","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001QxrEAE","Name":"RC1","rateCardLines":[{"Id":"a1M1t000000BFrVEAW","Name":"RCL1.1","cspmb__Cap_Unit__c":"Sample Cap Unit","cspmb__rate_value__c":124.99,"cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"},{"Id":"a1M1t000000peaJEAQ","Name":"RCL_1_1","cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"}]}]},"a1F1t0000001JBUEA2":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBUEA2","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":62.19,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]},"a1F1t0000001JBeEAM":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnhAAE","Name":"ADD3","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBeEAM","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":62.19,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]}};
 
 window.react_logs = [];
 

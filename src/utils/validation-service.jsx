@@ -13,7 +13,8 @@ const getMinValue = (value, discount, type) => {
 			returnValue = value - discount;
 		} catch (err) {}
 	}
-	return returnValue;
+	// to avoid JS rounding errors
+	return +returnValue.toFixed(8);
 };
 
 export const validateAddons = (data, attachment) => {
@@ -397,7 +398,7 @@ export const validateRateCardLines = (data, data2) => {
 							thresh.cspmb__Discount_Type__c
 						) || 0;
 
-					if (negotiationFormat.negotiatedValue < minValue.toFixedNumber()) {
+					if (negotiationFormat.negotiatedValue.toFixedNumber() < minValue.toFixedNumber()) {
 						_logMessages.push(
 							'Minimal value for  ' +
 								rcl.Name +

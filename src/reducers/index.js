@@ -415,7 +415,7 @@ const rootReducer = (state = initialState, action) => {
 						)
 					};
 
-					if (_products[cp.Id].hasOwnProperty('_product')) {
+					if (_products[cp.Id]._product) {
 						bulkValidation[cp.Id].product = validateProduct({
 							oneOff: cp.cspmb__One_Off_Charge__c,
 							negotiatedOneOff: _products[cp.Id]._product.oneOff,

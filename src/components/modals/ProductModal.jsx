@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Modal from 'react-responsive-modal';
 
 import { filterCommercialProducts } from '~/src/actions';
+import { publish } from '../../api';
 
 import Icon from '../utillity/Icon';
 import Checkbox from '../utillity/inputs/Checkbox';
@@ -182,8 +183,10 @@ class ProductModal extends Component {
 
 		let result = await this.props.filterCommercialProducts(filterData);
 
+		let perFaCpFilterList = await publish('onLoadCommercialProducts', result);
+
 		this.setState({
-			commercialProducts: result.filter(
+			commercialProducts: perFaCpFilterList.filter(
 				cp => !this.addedProductsIds.includes(cp.Id)
 			)
 		});

@@ -1088,16 +1088,16 @@ window.FAM.subscribe('onLoad', data => {
 	});
 });
 
-window.FAM.subscribe('onFaSelect', data => {
-	return new Promise(resolve => {
-		negotiateDiscountCodesForProducts().then(r => {
-			r &&
-				window.FAM.api.toast(
-					'info',
-					'Discount codes',
-					'applied to ' + r + ' items!'
-				);
-		});
-		resolve(data);
-	});
-});
+// window.FAM.subscribe('onFaSelect', data => {
+// 	return new Promise(resolve => {
+// 		negotiateDiscountCodesForProducts().then(r => {
+// 			r &&
+// 				window.FAM.api.toast(
+// 					'info',
+// 					'Discount codes',
+// 					'applied to ' + r + ' items!'
+// 				);
+// 		});
+// 		resolve(data);
+// 	});
+// });

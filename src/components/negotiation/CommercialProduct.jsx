@@ -115,6 +115,11 @@ export class CommercialProduct extends React.Component {
 		window.SF.validateStatusConsistency(this.props.faId);
 
 		this.props.negotiate(this.props.faId, this.productId, type, data);
+
+		publish(
+			'onAfterNegotiate',
+			this.props.frameAgreements[this.props.faId]._ui.attachment
+		);
 	}
 
 	render() {

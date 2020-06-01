@@ -476,7 +476,7 @@ export class App extends Component {
 				try {
 					_attachment = _fa._ui.attachment.custom;
 				} catch (err) {
-					console.warn('Attachemnt cannot be loaded for FA:', faId);
+					console.warn('Attachment cannot be loaded for FA:', faId);
 					console.warn(err);
 					reject(null);
 				}
@@ -508,14 +508,14 @@ export class App extends Component {
 
 				publish(
 					'onAfterNegotiate',
-					this.props.frameAgreements[faId]._ui.attachemnt
+					this.props.frameAgreements[faId]._ui.attachment
 				);
 
 				self.props.validateFrameAgreement(faId);
 
 				await window.SF.validateStatusConsistency(faId);
 
-				resolve(this.props.frameAgreements[faId]._ui.attachemnt);
+				resolve(this.props.frameAgreements[faId]._ui.attachment);
 			});
 		};
 
@@ -539,7 +539,6 @@ export class App extends Component {
 				}
 			)
 		]).then(response => {
-			
 			let _promiseArray = [
 				this.props.getFrameAgreements(),
 				this.props.getCommercialProducts()

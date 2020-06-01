@@ -171,8 +171,14 @@ export const parseExpression = (expString = '') => {
 	// Extract operators
 	let operatorsArray = [];
 
-	// Remove spaces, parentheses, quotes
-	expString = expString.replace(/( |'|"|\(|\))/g, '');
+	// Remove parentheses, quotes
+	expString = expString.replace(/('|")/g, '');
+
+	let valuesArray = expString.match(/(?<=(!=|==))(.*?)(?=(&& | \|\| | &|$))/g) || [];
+	valuesArray = valuesArray.map(str => str.trim());
+
+	// Remove spaces
+	expString = expString.replace(/( |\(|\))/g, '');
 
 	try {
 		let operatorsString = expString.replace(/\w+(!=|==)(\w|')+/g, ',');
@@ -199,7 +205,7 @@ export const parseExpression = (expString = '') => {
 	let logicComponens = expString.split(/&&|\|\|/);
 	logicComponens = logicComponens[0] === '' ? [] : logicComponens;
 
-	logicComponens.forEach(log => {
+	logicComponens.forEach((log, i) => {
 		let _comparisonOperator;
 
 		if (log.includes('==')) {
@@ -214,7 +220,7 @@ export const parseExpression = (expString = '') => {
 		logic.push({
 			field: _fnv[0],
 			comparison: _comparisonOperator,
-			value: _fnv[1]
+			value: valuesArray[i] || _fnv[1]
 		});
 	});
 

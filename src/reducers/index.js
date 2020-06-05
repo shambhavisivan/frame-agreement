@@ -1696,8 +1696,13 @@ const rootReducer = (state = initialState, action) => {
 						if (entitiyMap.product.hasOwnProperty(key)) {
 							// This entity is preset in attachment
 							// reset its charges and productCharges
-							_attachment.products[key]._product = _defaultAttachment._product;
-							_attachment.products[key]._charges = _defaultAttachment._charges;
+							if (_defaultAttachment._product) {
+								_attachment.products[key]._product = _defaultAttachment._product;
+							}
+
+							if (_defaultAttachment._charges) {
+								_attachment.products[key]._charges = _defaultAttachment._charges;
+							}
 						}
 					}
 				}

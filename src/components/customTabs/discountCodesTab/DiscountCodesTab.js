@@ -130,7 +130,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	discountCodes = discountCodes.codes || [];
 
 	if (removed_group) {
-		window.FAM.api.resetNegotiation(active_fa.Id, removed_group.records);
+		await window.FAM.api.resetNegotiation(active_fa.Id, removed_group.records);
+		window.FAM.api.saveFrameAgreement(active_fa.Id);
 		// log.bg.red('---NEGOTIATION RESET');
 	}
 
@@ -795,8 +796,6 @@ class DiscountCodesTab extends React.Component {
 
 	render() {
 		let _active = this.state.added[this.state.open];
-
-		console.log(_active);
 
 		if (this.state.loading) {
 			return <CommercialProductSkeleton count={1} />;

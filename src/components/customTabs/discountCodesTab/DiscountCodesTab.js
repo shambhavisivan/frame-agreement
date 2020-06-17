@@ -132,6 +132,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	if (removed_group) {
 		await window.FAM.api.resetNegotiation(active_fa.Id, removed_group.records);
 		window.FAM.api.saveFrameAgreement(active_fa.Id);
+		await window.FAM.publish('DCE_onAfterRemoveCodes', discountCodes);
 		// log.bg.red('---NEGOTIATION RESET');
 	}
 
@@ -727,7 +728,9 @@ class DiscountCodesTab extends React.Component {
 		});
 	}
 
-	onRemoveGroup(removed_group) {
+	async onRemoveGroup(removed_group) {
+		await window.FAM.publish('DCE_onBeforeRemoveCodes', removed_group);
+
 		let _added = this.state.added;
 		delete _added[removed_group.Id];
 

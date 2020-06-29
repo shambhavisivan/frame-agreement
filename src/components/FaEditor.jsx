@@ -15,10 +15,11 @@ import {
 	negotiate,
 	setDisableDiscount,
 	getRelatedLists,
+	replaceCpEntities,
 	getCommercialProductData
 } from '../actions';
 
-import { publish } from '../api';
+import { publish, findReplacementCommercialProduct } from '../api';
 
 import {
 	truncateCPField,
@@ -46,9 +47,6 @@ import FaFooter from './FaEditor/FaFooter';
 import FaTabs from './FaEditor/FaTabs';
 import FaHeader from './FaEditor/FaHeader';
 import FaModals from './FaEditor/FaModals';
-
-// Skeletons
-import CommercialProductSkeleton from './skeletons/CommercialProductSkeleton';
 
 window.editor = {};
 
@@ -226,24 +224,62 @@ export class FaEditor extends Component {
 							}
 						});
 
+						let cpReplacementData = {};
 						if (
 							_idsToLoadSet.size &&
-							!isMaster(this.props.frameAgreements[this.faId])
+							!isMaster(this.props.frameAgreements[this.faId]) &&
+							this.props.frameAgreements[this.faId].csconta__Status__c !==
+								this.props.settings.FACSettings.statuses.active_status
 						) {
 							this.props.createToast(
 								'warning',
 								'Invalid product found!',
-								'Some products have been ignored while loading. Check the logs for more information'
+								'Some products have expired or have been removed. (Check the logs for more information)',
+								3000
 							);
+
 							log.orange(
 								'These products cannot be found in getCommercialProducts response:',
 								Array.from(_idsToLoadSet)
 							);
+							this.props.createToast(
+								'info',
+								'Searching for replacement product!',
+								'FAM will try to find replacement products and match it with charges of expired one...',
+								5000
+							);
+
+							cpReplacementData = await findReplacementCommercialProduct([
+								..._idsToLoadSet
+							]);
 						}
+
+						if (Object.keys(cpReplacementData).length) {
+							// get replacement data as well
+							_filteredCpIdList = [
+								...new Set([
+									..._filteredCpIdList,
+									...Object.values(cpReplacementData).map(cpr => cpr.new_cp.Id)
+								])
+							];
+						}
+
 						// Get data for commercial products
 						// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
 						await this.props.getCommercialProductData(_filteredCpIdList);
 						await this.props.addProductsToFa(this.faId, _filteredCpIdList);
+
+						if (Object.keys(cpReplacementData).length) {
+							// cpReplacementData contains info about which addons and rc old cp was attached to
+							await this.props.replaceCpEntities(this.faId, cpReplacementData);
+
+							await window.SF.invokeAction('saveAttachment', [
+								this.faId,
+								JSON.stringify(
+									this.props.frameAgreements[this.faId]._ui.attachment
+								)
+							]);
+						}
 					}
 
 					return;
@@ -485,6 +521,7 @@ const mapDispatchToProps = {
 	negotiate,
 	setDisableDiscount,
 	getRelatedLists,
+	replaceCpEntities,
 	getCommercialProductData
 };
 

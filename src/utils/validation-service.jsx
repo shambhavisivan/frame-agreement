@@ -398,7 +398,10 @@ export const validateRateCardLines = (data, data2) => {
 							thresh.cspmb__Discount_Type__c
 						) || 0;
 
-					if (negotiationFormat.negotiatedValue.toFixedNumber() < minValue.toFixedNumber()) {
+					if (
+						negotiationFormat.negotiatedValue.toFixedNumber() <
+						minValue.toFixedNumber()
+					) {
 						_logMessages.push(
 							'Minimal value for  ' +
 								rcl.Name +

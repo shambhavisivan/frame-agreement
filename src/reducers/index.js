@@ -1,5 +1,6 @@
 import {
 	log,
+	copy,
 	validateCSV,
 	getFieldLabel,
 	parseExpression,
@@ -1356,6 +1357,74 @@ const rootReducer = (state = initialState, action) => {
 				faFields: _faFields
 			};
 
+		case 'REPLACE_CHARGES':
+			const replacementData = action.payload.replacementData;
+
+			var faId = action.payload.faId;
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+
+			for (var key in replacementData) {
+				// key -> old cp Id
+				let new_cp = state.commercialProducts.find(
+					cp => cp.Id === replacementData[key].new_cp.Id
+				);
+
+				let old_addons = copy(_attachment.products[key]._addons);
+				let new_addons = {};
+
+				// since attachment is indexed by addon assoc id, we need to traverse the cp data to find addon -> addon assoc correlation
+				new_cp._addons.forEach(add => {
+					if (
+						replacementData[key].addon_vs_addon_assoc.hasOwnProperty(
+							add.cspmb__Add_On_Price_Item__c
+						)
+					) {
+						// This addon is shared by both old and new products
+						new_addons[add.Id] = copy(
+							old_addons[
+								replacementData[key].addon_vs_addon_assoc[
+									add.cspmb__Add_On_Price_Item__c
+								]
+							]
+						);
+					}
+				});
+
+				_attachment.products[new_cp.Id]._addons = {
+					..._attachment.products[new_cp.Id]._addons,
+					...new_addons
+				};
+
+				//**************************************************************************
+				let rcIdSet = new Set(replacementData[key].rc || []);
+
+				let old_rc = copy(_attachment.products[key]._rateCards);
+
+				replacementData[key].rc.forEach(rc => {
+					if (
+						_attachment.products[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)
+					) {
+						_attachment.products[new_cp.Id]._rateCards[rc.Id] = {
+							..._attachment.products[new_cp.Id]._rateCards[rc.Id],
+							...old_rc[rc.Id]
+						};
+					}
+				});
+
+				_attachment.products[new_cp.Id]._rateCards = {
+					..._attachment.products[new_cp.Id]._rateCards,
+					...old_rc
+				};
+				//**************************************************************************
+				// remove old cp from attachment
+				delete _attachment.products[key];
+			}
+
+			return {
+				...state,
+				attachment: _attachment
+			};
+
 		case 'RECIEVE_PRICE_ITEM_DATA':
 			const productVsDiscount = {};
 
@@ -1697,11 +1766,13 @@ const rootReducer = (state = initialState, action) => {
 							// This entity is preset in attachment
 							// reset its charges and productCharges
 							if (_defaultAttachment._product) {
-								_attachment.products[key]._product = _defaultAttachment._product;
+								_attachment.products[key]._product =
+									_defaultAttachment._product;
 							}
 
 							if (_defaultAttachment._charges) {
-								_attachment.products[key]._charges = _defaultAttachment._charges;
+								_attachment.products[key]._charges =
+									_defaultAttachment._charges;
 							}
 						}
 					}

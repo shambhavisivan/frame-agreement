@@ -174,7 +174,8 @@ export const parseExpression = (expString = '') => {
 	// Remove parentheses, quotes
 	expString = expString.replace(/('|")/g, '');
 
-	let valuesArray = expString.match(/(?<=(!=|==))(.*?)(?=(&& | \|\| | &|$))/g) || [];
+	let valuesArray =
+		expString.match(/(?<=(!=|==))(.*?)(?=(&& | \|\| | &|$))/g) || [];
 	valuesArray = valuesArray.map(str => str.trim());
 
 	// Remove spaces

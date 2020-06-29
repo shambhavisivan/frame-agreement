@@ -11,7 +11,6 @@ import Checkbox from '../utillity/inputs/Checkbox';
 import InputVolume from '../utillity/inputs/InputVolume';
 
 import ProductCharges from './ProductCharges';
-import CommercialProductSkeleton from '../skeletons/CommercialProductSkeleton';
 
 import Addons from './Addons';
 import Charges from './Charges';

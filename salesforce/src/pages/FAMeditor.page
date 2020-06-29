@@ -112,6 +112,7 @@
 				cloneFrameAgreement: "{!$RemoteAction.FrameRateManagerController.cloneFrameAgreement}",
 				createNewVersionOfFrameAgrement: "{!$RemoteAction.FrameRateManagerController.createNewVersionOfFrameAgrement}",
 				getCommercialProducts: "{!$RemoteAction.FrameRateManagerController.getCommercialProducts}",
+				findReplacementCommercialProduct: "{!$RemoteAction.FrameRateManagerController.findReplacementCommercialProduct}",
 				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
 				getPricingElements: "{!$RemoteAction.FrameRateManagerController.getPricingElements}",
 				getCommercialProductData: "{!$RemoteAction.FrameRateManagerController.getCommercialProductData}",

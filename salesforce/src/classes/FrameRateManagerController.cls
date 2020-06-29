@@ -953,6 +953,128 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
+	public static Map <String, Map<String, Object>> findReplacementCommercialProduct(List <Id> priceItemIds) {
+		// Map old cp Id: replacement cp
+		Map <String, Map<String, Object>> returnMap = new Map <String, Map<String, Object>>();
+
+		List <String> standardFields = new List <String>{
+			'Id',
+			'Name',
+			'cspmb__Effective_Start_Date__c',
+			'cspmb__Effective_End_Date__c',
+			'cspmb__Price_Item_Code__c',
+			'cspmb__Current_Version__c'
+		};
+
+		// Get information on old commercial products (mainly for price item code)
+		String query_old = 'select  ' + 
+			String.join(standardFields, ',') +
+			' from cspmb__Price_Item__c' +
+			' where Id in :priceItemIds';
+
+		List <cspmb__Price_Item__c> oldProducts = database.query(query_old);
+
+		// if products are removed, no additional searching is required.
+		// FAM will remove them from the FA
+		if (oldProducts.isEmpty()) {
+			return returnMap;
+		}
+
+		Map <String, Id> codeMap = new Map <String, Id>();
+		List <String> codeList = new List <String>();
+
+		for (cspmb__Price_Item__c cp : oldProducts) {
+			if (cp.cspmb__Price_Item_Code__c != null) {
+				codeMap.put(cp.cspmb__Price_Item_Code__c, cp.Id);
+				codeList.add(cp.cspmb__Price_Item_Code__c);
+			}
+		}
+
+		// if codeList is empty then none of the old products have price item code
+		// which means they cannot be tracked further
+		if (codeList.isEmpty()) {
+			return returnMap;
+		}
+
+		String query_new = 'select  ' + String.join(standardFields, ',') + ' from cspmb__Price_Item__c ';
+		// ADD ACTIVE CLAUSE
+		query_new += 'where cspmb__Is_Active__c = true ';
+		// ADD START DATE CHECK CLAUSE
+		query_new += 'and (cspmb__Effective_Start_Date__c = null OR (cspmb__Effective_Start_Date__c != null and cspmb__Effective_Start_Date__c < TODAY)) ';
+		// ADD END DATE CHECK CLAUSE
+		query_new += 'and (cspmb__Effective_End_Date__c = null OR (cspmb__Effective_End_Date__c != null and cspmb__Effective_End_Date__c > TODAY)) ';
+		
+		query_new += 'and cspmb__Price_Item_Code__c in :codeList ';
+
+		query_new += 'limit 50000';
+
+		List <cspmb__Price_Item__c> cpListNew = database.query(query_new);
+
+		// If no products have been found using old price item code list
+		// then no (valid) replacement have been made
+		if (cpListNew.isEmpty()) {
+			return returnMap;
+		}
+		//*******************************************************************
+		String query_addons_assoc = 'select Id, cspmb__Price_Item__c, cspmb__Add_On_Price_Item__c ';
+		query_addons_assoc += 'from cspmb__Price_Item_Add_On_Price_Item_Association__c ';
+		query_addons_assoc += 'where cspmb__Price_Item__c in :priceItemIds ';
+		query_addons_assoc += 'limit 50000';
+		//*******************************************************************
+		String query_rate_card_assoc = 'select Id, cspmb__Price_Item__c, cspmb__Rate_Card__c ';
+		query_rate_card_assoc += 'from cspmb__Price_Item_Rate_Card_Association__c ';
+		query_rate_card_assoc += 'where cspmb__Price_Item__c in :priceItemIds ';
+		query_rate_card_assoc += 'limit 50000';
+		//*******************************************************************
+
+		List <cspmb__Price_Item_Add_On_Price_Item_Association__c> expiredCpAdd = database.query(query_addons_assoc);
+		Map <Id, Map<Id, String>> expiredCpAddMap = new Map <Id, Map<Id, String>>();
+
+		List <cspmb__Price_Item_Rate_Card_Association__c> expiredCpRc = database.query(query_rate_card_assoc);
+		Map <Id, List <String>> expiredCpRcMap = new Map <Id, List <String>>();
+
+		for (cspmb__Price_Item_Add_On_Price_Item_Association__c priap : expiredCpAdd) {
+
+			Map<Id, String> tempCpIdAddonMap = new Map<Id, String>();
+			if (expiredCpAddMap.containsKey(priap.cspmb__Price_Item__c)) {
+				tempCpIdAddonMap = expiredCpAddMap.get(priap.cspmb__Price_Item__c);
+			}
+
+			tempCpIdAddonMap.put(priap.cspmb__Add_On_Price_Item__c, priap.Id);
+			expiredCpAddMap.put(priap.cspmb__Price_Item__c, tempCpIdAddonMap);
+
+		}
+
+		for (cspmb__Price_Item_Rate_Card_Association__c pirca : expiredCpRc) {
+			if (expiredCpRcMap.containsKey(pirca.cspmb__Price_Item__c)) {
+				List <Id> tempCpIdList = expiredCpRcMap.get(pirca.cspmb__Price_Item__c);
+				tempCpIdList.add(pirca.cspmb__Rate_Card__c);
+				expiredCpRcMap.put(pirca.cspmb__Price_Item__c, tempCpIdList);
+			} else {
+				expiredCpRcMap.put(pirca.cspmb__Price_Item__c, new List<Id>{
+					pirca.cspmb__Rate_Card__c
+				});
+			}
+		}
+
+		for (cspmb__Price_Item__c cp : cpListNew) {
+			String oldCpId = codeMap.get(cp.cspmb__Price_Item_Code__c);
+			// returnMap.put(codeMap.get(cp.cspmb__Price_Item_Code__c), cp);
+			Map<Id, String> addonsUsedByOldCp = expiredCpAddMap.get(oldCpId);
+			List <String> rcUsedByOldCp = expiredCpRcMap.get(oldCpId);
+
+			Map<String, Object> replacementInfo = new Map<String, Object>();
+			replacementInfo.put('addon_vs_addon_assoc', addonsUsedByOldCp);
+			replacementInfo.put('rc', rcUsedByOldCp);
+			replacementInfo.put('new_cp', cp);
+
+			returnMap.put(oldCpId, replacementInfo);
+		}
+
+		return returnMap;
+	}
+
+	@RemoteAction
 	public static List <cspmb__Price_Item__c> filterCommercialProducts(String filterData) {
 		String selectClause = 'Id';
 		String whereClause = '';

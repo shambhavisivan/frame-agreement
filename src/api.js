@@ -173,6 +173,17 @@ export function decomposeAttachment(data, prId, faId) {
 	});
 }
 
+export function findReplacementCommercialProduct(expiredCpIds) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('findReplacementCommercialProduct', [
+			expiredCpIds
+		]).then(response => {
+			resolve(response);
+			return response;
+		});
+	});
+}
+
 export function undoDecomposition(prId) {
 	return new Promise((resolve, reject) => {
 		window.SF.invokeAction('undoDecomposition', [prId]).then(message => {

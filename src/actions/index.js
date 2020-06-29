@@ -428,6 +428,7 @@ export const getCommercialProductData = priceItemIdList => {
 		return _getCommercialProductData(priceItemIdList).then(
 			merged_result => {
 				dispatch(_recievePriceItemData(merged_result));
+				return merged_result;
 			},
 			error => {}
 		);
@@ -462,6 +463,22 @@ export function removeFaFromMaster(faId, agreements) {
 			await window.SF.invokeAction('removeFaFromMaster', [faId, agreements]);
 			dispatch(_removeFaFromMaster(faId, agreements));
 			resolve(agreements);
+		});
+	};
+}
+
+// ***********************************************************************
+
+export const _replaceCpEntities = (faId, replacementData) => ({
+	type: 'REPLACE_CHARGES',
+	payload: { faId, replacementData }
+});
+
+export function replaceCpEntities(faId, replacementData) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_replaceCpEntities(faId, replacementData));
+			resolve();
 		});
 	};
 }

@@ -1433,6 +1433,9 @@ const rootReducer = (state = initialState, action) => {
 				...formatDiscLevels(action.payload.discLevels)
 			];
 
+			// Remove duplicates
+			_DiscLevels = [...new Set(_DiscLevels.map(dc => JSON.stringify(dc)))].map(dc => JSON.parse(dc));
+
 			var _AuthLevels = state.settings.AuthLevels;
 			_AuthLevels = {
 				..._AuthLevels,

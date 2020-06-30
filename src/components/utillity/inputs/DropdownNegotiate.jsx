@@ -65,6 +65,10 @@ class DropdownNegotiate extends React.Component {
 			});
 		});
 
+		// Sort values high to low
+		this.discounts.sort((a,b) => (a.value > b.value) ? 1 : ((b.value > a.value) ? -1 : 0)); 
+
+
 		if (_logMessages.length > 1) {
 			console.group('Discount warnings:');
 			_logMessages.forEach(log.orange);

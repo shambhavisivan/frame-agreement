@@ -1,0 +1,3 @@
+# Pre-installation notes
+
+None.

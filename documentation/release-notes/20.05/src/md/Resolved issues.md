@@ -1,0 +1,3 @@
+# Resolved issues
+
+None.

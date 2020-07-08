@@ -8,7 +8,7 @@ import {
 	log,
 	validateCSV,
 	isJson,
-	truncateCPField
+	truncateCPField,
 } from '../../../utils/shared-service';
 
 import Icon from '../../utillity/Icon';
@@ -50,7 +50,7 @@ const formatGroup = group => {
 		group.csfamext__expression__c = JSON.parse(group.csfamext__expression__c);
 	} else if (typeof group.csfamext__expression__c === 'string') {
 		group.csfamext__expression__c = {
-			[getTargetObjectCode(group.csfamext__target_object__c)]: group.csfamext__expression__c
+			[getTargetObjectCode(group.csfamext__target_object__c)]: group.csfamext__expression__c,
 		};
 	}
 
@@ -61,6 +61,11 @@ const getLabel = field =>
 	window.SF.fieldLabels.csfamext__Dynamic_Group__c.hasOwnProperty(field)
 		? window.SF.fieldLabels.csfamext__Dynamic_Group__c[field]
 		: truncateCPField(field);
+
+const getPicklistLabel = field =>
+	window.SF.customPicklistLabels.hasOwnProperty(field)
+		? window.SF.customPicklistLabels[field]
+		: null;
 
 const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	// get discount codes
@@ -200,7 +205,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 							priceItemId: cp.Id,
 							rateCard: rcl.cspmb__Rate_Card__c,
 							rateCardLine: rcl.Id,
-							value: _value
+							value: _value,
 						});
 					}
 				});
@@ -349,7 +354,7 @@ class DiscountCodesTab extends React.Component {
 			minmax_res: _facSettings.input_minmax_restriction,
 			unapplied: [],
 			open: null, // open group
-			targetingResults: {} // results for a group
+			targetingResults: {}, // results for a group
 		};
 
 		this.customSetting = {};
@@ -437,8 +442,15 @@ class DiscountCodesTab extends React.Component {
 		Promise.all([
 			_getCustomSettingsPromise,
 			_getGroupsPromise,
-			window.FAM.api.getCustomData(ACTIVE_FA.Id)
+			window.FAM.api.getCustomData(ACTIVE_FA.Id),
 		]).then(async response => {
+			let _customPicklistLabels = response[0].picklist_values || {};
+			window.SF.customPicklistLabels = window.SF.customPicklistLabels || {};
+			window.SF.customPicklistLabels = {
+				...window.SF.customPicklistLabels,
+				..._customPicklistLabels,
+			};
+
 			this.customSetting = response[0];
 
 			let _response_codes = response[1] || [];
@@ -466,7 +478,7 @@ class DiscountCodesTab extends React.Component {
 				return {
 					value: group.Id,
 					label: group.Name,
-					description: group.csfamext__description__c || ''
+					description: group.csfamext__description__c || '',
 				};
 			});
 
@@ -481,19 +493,19 @@ class DiscountCodesTab extends React.Component {
 					_needsUpdateFlag = true;
 
 					dg.csfamext__expression__c = {
-						[_target]: dg.csfamext__expression__c
+						[_target]: dg.csfamext__expression__c,
 					};
 				}
 
 				if (!(dg.records.hasOwnProperty('rcl') || dg.records.hasOwnProperty('product'))) {
 					if (_target) {
 						dg.records = {
-							[_target]: dg.records
+							[_target]: dg.records,
 						};
 					} else {
 						dg.records = {
 							rcl: {},
-							product: {}
+							product: {},
 						};
 					}
 				}
@@ -533,7 +545,7 @@ class DiscountCodesTab extends React.Component {
 					loading: false,
 					availableGroups: _availableGroups,
 					groups: _response_codes,
-					added: _addedMap
+					added: _addedMap,
 				},
 				() => {
 					if (_needsUpdateFlag) {
@@ -606,12 +618,12 @@ class DiscountCodesTab extends React.Component {
 		if (!fromCode) {
 			let response = await Promise.all([
 				this.getTargetRecords('product', _dg.csfamext__expression__c['product']),
-				this.getTargetRecords('rcl', _dg.csfamext__expression__c['rcl'])
+				this.getTargetRecords('rcl', _dg.csfamext__expression__c['rcl']),
 			]);
 
 			_recordObj = {
 				product: convertRecordsToMap(response[0]),
-				rcl: convertRecordsToMap(response[1])
+				rcl: convertRecordsToMap(response[1]),
 			};
 		} else {
 			let response = await this.getTargetRecords(fromCode, _dg.csfamext__expression__c[fromCode]);
@@ -624,9 +636,9 @@ class DiscountCodesTab extends React.Component {
 				...this.state.added,
 				[dgId]: {
 					...this.state.added[dgId],
-					records: { ...this.state.added[dgId].records, ..._recordObj }
-				}
-			}
+					records: { ...this.state.added[dgId].records, ..._recordObj },
+				},
+			},
 		});
 
 		return _recordObj;
@@ -639,7 +651,7 @@ class DiscountCodesTab extends React.Component {
 		this.setState(
 			{
 				added: { ...this.state.added, [_group.Id]: _group },
-				unapplied: [...this.state.unapplied, _group.Id]
+				unapplied: [...this.state.unapplied, _group.Id],
 			},
 			() => {
 				this.blank = '';
@@ -673,7 +685,7 @@ class DiscountCodesTab extends React.Component {
 			{
 				added: _added,
 				unapplied: this.state.unapplied.filter(g => g !== removed_group.Id),
-				open: this.state.open === removed_group.Id ? null : this.state.open
+				open: this.state.open === removed_group.Id ? null : this.state.open,
 			},
 			() => {
 				this.blank = '';
@@ -694,8 +706,8 @@ class DiscountCodesTab extends React.Component {
 				.map(group => ({
 					value: group.Id,
 					label: group.Name,
-					description: group.csfamext__description__c
-				}))
+					description: group.csfamext__description__c,
+				})),
 		});
 	}
 
@@ -706,8 +718,8 @@ class DiscountCodesTab extends React.Component {
 			this.setState({
 				added: {
 					...this.state.added,
-					[groupId]: { ...this.state.added[groupId], [type]: this.state.added[groupId][type] }
-				}
+					[groupId]: { ...this.state.added[groupId], [type]: this.state.added[groupId][type] },
+				},
 			});
 		};
 
@@ -726,8 +738,8 @@ class DiscountCodesTab extends React.Component {
 		this.setState({
 			added: {
 				...this.state.added,
-				[groupId]: { ...this.state.added[groupId], [type]: value }
-			}
+				[groupId]: { ...this.state.added[groupId], [type]: value },
+			},
 		});
 	}
 
@@ -738,8 +750,8 @@ class DiscountCodesTab extends React.Component {
 			{
 				added: {
 					...this.state.added,
-					[groupId]: { ...this.state.added[groupId], csfamext__discount_type__c: value }
-				}
+					[groupId]: { ...this.state.added[groupId], csfamext__discount_type__c: value },
+				},
 			},
 			() => {
 				if (!isChanged || !this.state.minmax_res) {
@@ -755,7 +767,7 @@ class DiscountCodesTab extends React.Component {
 					_resetObj = {
 						csfamext__rate_value__c: 0,
 						csfamext__one_off_charge__c: 0,
-						csfamext__recurring_charge__c: 0
+						csfamext__recurring_charge__c: 0,
 					};
 				} else if (_group.csfamext__target_object__c === 'Commercial Product') {
 					_resetObj = { csfamext__one_off_charge__c: 0, csfamext__recurring_charge__c: 0 };
@@ -766,8 +778,8 @@ class DiscountCodesTab extends React.Component {
 				this.setState({
 					added: {
 						...this.state.added,
-						[groupId]: { ...this.state.added[groupId], ..._resetObj }
-					}
+						[groupId]: { ...this.state.added[groupId], ..._resetObj },
+					},
 				});
 			}
 		);
@@ -800,7 +812,7 @@ class DiscountCodesTab extends React.Component {
 		let setResponse = await window.FAM.api.setCustomData(ACTIVE_FA.Id, customData);
 
 		this.setState({
-			unapplied: []
+			unapplied: [],
 		});
 
 		console.log('Custom data saved:', this.state);
@@ -863,16 +875,25 @@ class DiscountCodesTab extends React.Component {
 								className="container__header"
 								onClick={() => {
 									this.setState({
-										open: this.state.open === group.Id ? null : group.Id
+										open: this.state.open === group.Id ? null : group.Id,
 									});
 								}}
 							>
 								<div className="container__fields">
 									<div className="fields__item fields__item--title">{group.Name}</div>
 									{this.customSetting.dynamic_group_fields.map(f => {
+										let _fieldLabel = '-';
+										if (group.hasOwnProperty(f)) {
+											if (getPicklistLabel(f)) {
+												_fieldLabel = getPicklistLabel(f)[group[f]];
+											} else {
+												_fieldLabel = group[f].toString();
+											}
+										}
+
 										return (
 											<div key={f} className="fields__item">
-												<span>{group.hasOwnProperty(f) ? group[f].toString() : '-'}</span>
+												<span>{_fieldLabel}</span>
 											</div>
 										);
 									})}
@@ -906,8 +927,12 @@ class DiscountCodesTab extends React.Component {
 													}}
 												>
 													<option value="">{window.SF.labels.fa_none}</option>
-													<option value={'Amount'}>Amount</option>
-													<option value={'Percentage'}>Percentage</option>
+													<option value={'Amount'}>
+														{window.SF.customPicklistLabels.csfamext__discount_type__c.Amount}
+													</option>
+													<option value={'Percentage'}>
+														{window.SF.customPicklistLabels.csfamext__discount_type__c.Percentage}
+													</option>
 												</select>
 											</div>
 

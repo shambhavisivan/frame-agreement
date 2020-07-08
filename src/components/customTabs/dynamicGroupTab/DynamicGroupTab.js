@@ -9,7 +9,7 @@ import {
 	isJson,
 	validateCSV,
 	makeId,
-	truncateCPField
+	truncateCPField,
 } from '../../../utils/shared-service';
 import LogicForm from '../utility/LogicForm';
 import Icon from '../../utillity/Icon';
@@ -24,6 +24,11 @@ import '../utility/customTabs.scss';
 const BLANK_CIRCUITS = '{"logic":"","circuits":[]}';
 let ACTIVE_FA = null;
 
+const getPicklistLabel = field =>
+	window.SF.customPicklistLabels.hasOwnProperty(field)
+		? window.SF.customPicklistLabels[field]
+		: null;
+
 class DynamicGroupTab extends React.Component {
 	constructor(props, context) {
 		super(props, context);
@@ -34,7 +39,7 @@ class DynamicGroupTab extends React.Component {
 			added: {},
 			editable: window.FAM.api.isAgreementEditable(ACTIVE_FA.Id),
 			open: null,
-			targetingResults: {}
+			targetingResults: {},
 		};
 
 		this.customSettings = {};
@@ -47,7 +52,6 @@ class DynamicGroupTab extends React.Component {
 	}
 
 	componentDidMount() {
-		// ************************************
 		let _getGroupsPromise = window.FAM.api
 			.performAction('csfamext.DynamicGroupDataProvider', '{"method": "getDynamicGroups"}')
 			.then(response => {
@@ -67,33 +71,35 @@ class DynamicGroupTab extends React.Component {
 					return response;
 				}
 			});
-		// ************************************
+
 		let _getCustomSettingsPromise = window.FAM.api
 			.performAction('csfamext.DynamicGroupDataProvider', '{"method": "getCustomSettings"}')
+			.then(response => JSON.parse(decodeEntities(response)))
 			.then(response => {
-				response = decodeEntities(response);
-
-				if (typeof response === 'string' && isJson(response)) {
-					response = JSON.parse(response);
-				}
-
-				return response;
-			})
-			.then(response => {
-				for (var key in response) {
-					response[key] = validateCSV(response[key])
-						? response[key].replace(/\s/g, '').split(',')
-						: [];
-				}
+				response.rcl_fields = validateCSV(response.rcl_fields)
+					? response.rcl_fields.replace(/\s/g, '').split(',')
+					: [];
+				response.price_item_fields = validateCSV(response.price_item_fields)
+					? response.price_item_fields.replace(/\s/g, '').split(',')
+					: [];
+				response.dynamic_group_fields = validateCSV(response.dynamic_group_fields)
+					? response.dynamic_group_fields.replace(/\s/g, '').split(',')
+					: [];
 				return response;
 			});
-		// ************************************
 
 		Promise.all([
 			_getCustomSettingsPromise,
 			_getGroupsPromise,
-			window.FAM.api.getCustomData(ACTIVE_FA.Id)
+			window.FAM.api.getCustomData(ACTIVE_FA.Id),
 		]).then(response => {
+			let _customPicklistLabels = response[0].picklist_values || {};
+			window.SF.customPicklistLabels = window.SF.customPicklistLabels || {};
+			window.SF.customPicklistLabels = {
+				...window.SF.customPicklistLabels,
+				..._customPicklistLabels,
+			};
+
 			this.customSetting = response[0];
 
 			let _response_groups = response[1] || [];
@@ -115,7 +121,7 @@ class DynamicGroupTab extends React.Component {
 				return {
 					value: group.Id,
 					label: group.Name,
-					description: group.csfamext__description__c || ''
+					description: group.csfamext__description__c || '',
 				};
 			});
 
@@ -152,7 +158,7 @@ class DynamicGroupTab extends React.Component {
 					loading: false,
 					selectGroups: _selectGroups,
 					groups: _response_groups,
-					added: _addedMap
+					added: _addedMap,
 				},
 				() => {
 					if (_needsUpdateFlag) {
@@ -162,8 +168,6 @@ class DynamicGroupTab extends React.Component {
 				}
 			);
 		});
-
-		// ****************************
 	}
 
 	processGroup_old(g) {
@@ -225,7 +229,7 @@ class DynamicGroupTab extends React.Component {
 
 				if (!isJson(group.csfamext__expression__c)) {
 					_expression = {
-						[_target]: decodeEntities(group.csfamext__expression__c)
+						[_target]: decodeEntities(group.csfamext__expression__c),
 					};
 
 					group.csfamext__expression__c = _expression;
@@ -236,7 +240,7 @@ class DynamicGroupTab extends React.Component {
 				window.SF.invokeAction('saveDynamicGroupLogic', [
 					group.Id,
 					JSON.stringify(_new_data),
-					JSON.stringify(_expression)
+					JSON.stringify(_expression),
 				]);
 
 				group.logicComponents = _new_data;
@@ -274,7 +278,7 @@ class DynamicGroupTab extends React.Component {
 		this.setState(
 			{
 				open: null,
-				added: { ...this.state.added, [_group.Id]: _group }
+				added: { ...this.state.added, [_group.Id]: _group },
 			},
 			() => {
 				this.blank = '';
@@ -290,7 +294,7 @@ class DynamicGroupTab extends React.Component {
 
 		this.setState(
 			{
-				added: _added
+				added: _added,
 			},
 			() => {
 				this.blank = '';
@@ -309,8 +313,8 @@ class DynamicGroupTab extends React.Component {
 				.map(group => ({
 					value: group.Id,
 					label: group.Name,
-					description: group.csfamext__description__c
-				}))
+					description: group.csfamext__description__c,
+				})),
 		});
 	}
 
@@ -319,8 +323,8 @@ class DynamicGroupTab extends React.Component {
 			{
 				added: {
 					...this.state.added,
-					[groupId]: { ...this.state.added[groupId], [type]: value }
-				}
+					[groupId]: { ...this.state.added[groupId], [type]: value },
+				},
 			},
 			this.updateCustomData
 		);
@@ -388,9 +392,9 @@ class DynamicGroupTab extends React.Component {
 				...this.state.added,
 				[dgId]: {
 					...this.state.added[dgId],
-					csfamext__expression__c: _expression
-				}
-			}
+					csfamext__expression__c: _expression,
+				},
+			},
 		});
 	}
 
@@ -407,8 +411,8 @@ class DynamicGroupTab extends React.Component {
 			{
 				added: {
 					...this.state.added,
-					[dgId]: { ...this.state.added[dgId], circuits: _circuits }
-				}
+					[dgId]: { ...this.state.added[dgId], circuits: _circuits },
+				},
 			},
 			() => {
 				this.updateCustomData();
@@ -422,8 +426,8 @@ class DynamicGroupTab extends React.Component {
 			{
 				added: {
 					...this.state.added,
-					[dgId]: { ...this.state.added[dgId], logic: value }
-				}
+					[dgId]: { ...this.state.added[dgId], logic: value },
+				},
 			},
 			() => {
 				this.updateCustomData();
@@ -438,8 +442,8 @@ class DynamicGroupTab extends React.Component {
 			{
 				added: {
 					...this.state.added,
-					[dgId]: { ...this.state.added[dgId], circuits: _circuits }
-				}
+					[dgId]: { ...this.state.added[dgId], circuits: _circuits },
+				},
 			},
 			() => {
 				this.updateCustomData();
@@ -463,9 +467,9 @@ class DynamicGroupTab extends React.Component {
 					...this.state.added,
 					[dgId]: {
 						...this.state.added[dgId],
-						circuits: [...this.state.added[dgId].circuits, ...[circuit]]
-					}
-				}
+						circuits: [...this.state.added[dgId].circuits, ...[circuit]],
+					},
+				},
 			},
 			() => {
 				this.updateCustomData();
@@ -525,8 +529,8 @@ class DynamicGroupTab extends React.Component {
 					this.setState({
 						targetingResults: {
 							...this.state.targetingResults,
-							[this.state.open]: _results
-						}
+							[this.state.open]: _results,
+						},
 					});
 				},
 				error => {}
@@ -588,16 +592,26 @@ class DynamicGroupTab extends React.Component {
 								onClick={() => {
 									console.log(this.state);
 									this.setState({
-										open: this.state.open === group.Id ? null : group.Id
+										open: this.state.open === group.Id ? null : group.Id,
 									});
 								}}
 							>
 								<div className="container__fields">
 									<div className="fields__item fields__item--title">{group.Name}</div>
 									{this.customSetting.dynamic_group_fields.map(f => {
+										let _fieldLabel = '-';
+
+										if (group.hasOwnProperty(f)) {
+											if (getPicklistLabel(f)) {
+												_fieldLabel = getPicklistLabel(f)[group[f]];
+											} else {
+												_fieldLabel = group[f].toString();
+											}
+										}
+
 										return (
 											<div key={f} className="fields__item">
-												<span>{group.hasOwnProperty(f) ? group[f].toString() : '-'}</span>
+												<span>{_fieldLabel}</span>
 											</div>
 										);
 									})}
@@ -725,10 +739,10 @@ class DynamicGroupTab extends React.Component {
 												>
 													<option value="">{window.SF.labels.fa_none}</option>
 													<option value={'Amount'}>
-														{window.SF.labels.famext_discount_amount}
+														{window.SF.customPicklistLabels.csfamext__discount_type__c.Amount}
 													</option>
 													<option value={'Percentage'}>
-														{window.SF.labels.famext_discount_percentage}
+														{window.SF.customPicklistLabels.csfamext__discount_type__c.Percentage}
 													</option>
 												</select>
 											</div>

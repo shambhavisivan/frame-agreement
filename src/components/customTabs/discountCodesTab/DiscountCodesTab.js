@@ -222,10 +222,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 					}
 				});
 
-				if (rcl.cspmb__rate_value__c != _value) {
-					_negoFormatRcl.value = _value;
-					_negoArray.push(_negoFormatRcl);
-				}
+				_negoFormatRcl.value = _value;
+				_negoArray.push(_negoFormatRcl);
 			});
 		}
 
@@ -247,7 +245,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 				cp_codes.forEach(cpc => {
 					if (cpc.records.product[cp.Id]) {
 						if (
-							!!cpc.csfamext__recurring_charge__c &&
+							cpc.hasOwnProperty('csfamext__recurring_charge__c') &&
 							charge.hasOwnProperty('recurring')
 						) {
 							_recurring = calculateDiscount(
@@ -258,7 +256,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 						}
 
 						if (
-							!!cpc.csfamext__one_off_charge__c &&
+							cpc.hasOwnProperty('csfamext__one_off_charge__c') &&
 							charge.hasOwnProperty('oneOff')
 						) {
 							_oneOff = calculateDiscount(
@@ -276,15 +274,13 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 				_negoFormatCharge.value = {};
 
 				if (
-					_recurring !== undefined &&
-					_recurring != _originalProductValues[cp.Id].recurring
+					_recurring !== undefined
 				) {
 					_negoFormatCharge.value.recurring = _recurring;
 				}
 
 				if (
-					_oneOff !== undefined &&
-					_oneOff != _originalProductValues[cp.Id].oneOff
+					_oneOff !== undefined
 				) {
 					_negoFormatCharge.value.oneOff = _oneOff;
 				}
@@ -302,7 +298,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 				.filter(cpc => cpc.records.product.hasOwnProperty(cp.Id))
 				.forEach(cpc => {
 					if (
-						!!cpc.csfamext__recurring_charge__c &&
+						!!cpc.hasOwnProperty('csfamext__recurring_charge__c') &&
 						_originalProductValues[cp.Id].hasOwnProperty('recurring')
 					) {
 						_recurring = calculateDiscount(
@@ -313,7 +309,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 					}
 
 					if (
-						!!cpc.csfamext__one_off_charge__c &&
+						!!cpc.hasOwnProperty('csfamext__one_off_charge__c') &&
 						_originalProductValues[cp.Id].hasOwnProperty('oneOff')
 					) {
 						_oneOff = calculateDiscount(
@@ -329,15 +325,13 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			_negoFormatCp.value = {};
 
 			if (
-				_recurring !== undefined &&
-				_recurring != _originalProductValues[cp.Id].recurring
+				_recurring !== undefined
 			) {
 				_negoFormatCp.value.recurring = _recurring;
 			}
 
 			if (
-				_oneOff !== undefined &&
-				_oneOff != _originalProductValues[cp.Id].oneOff
+				_oneOff !== undefined
 			) {
 				_negoFormatCp.value.oneOff = _oneOff;
 			}
@@ -920,7 +914,7 @@ class DiscountCodesTab extends React.Component {
 												!this.customSetting.universal_discount_fields) ? (
 												<React.Fragment>
 													<div>
-														<label>One-Off charge</label>
+														<label>{window.SF.labels.famext_oneOff}</label>
 														<DebounceInput
 															debounceTimeout={300}
 															disabled={!this.state.editable}

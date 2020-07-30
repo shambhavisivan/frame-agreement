@@ -364,17 +364,19 @@ window.FAM.subscribe('onAfterAddProducts', data => {
 class DiscountCodesTab extends React.Component {
 	constructor(props, context) {
 		super(props, context);
+
+		let _facSettings = redux_store.getState().settings.FACSettings
+
 		this.state = {
 			loading: true,
 			currentTarget: 'product', // Which target is being tested
 			availableGroups: [], // For dropdown
 			groups: [], // groups from RM
-			editable: redux_store
-				.getState()
-				.settings.FACSettings.fa_editable_statuses.has(
+			editable: _facSettings.fa_editable_statuses.has(
 					ACTIVE_FA.csconta__Status__c
 				),
 			added: {}, // added groups, loaded from CustomSettings
+			minmax_res: _facSettings.input_minmax_restriction,
 			open: null, // open group
 			targetingResults: {} // results for a group
 		};
@@ -384,6 +386,7 @@ class DiscountCodesTab extends React.Component {
 		this.updateSelectListGroups = this.updateSelectListGroups.bind(this);
 		this.updateCustomData = this.updateCustomData.bind(this);
 		this.loadRecordsForDg = this.loadRecordsForDg.bind(this);
+		this.getMinMax = this.getMinMax.bind(this);
 		this.onAddGroup = this.onAddGroup.bind(this);
 		this.blank = '';
 
@@ -769,6 +772,19 @@ class DiscountCodesTab extends React.Component {
 		);
 	}
 
+	getMinMax(discType) {
+		let min = null, max = null;
+
+		if (this.state.minmax_res) {
+			min = 0;
+			if (discType === 'Percentage') {
+				max = 100;
+			}
+		}
+
+		return {min, max}
+	}
+
 	async updateCustomData(enforceSave) {
 		let customData = await window.FAM.api.getCustomData(ACTIVE_FA.Id);
 
@@ -919,6 +935,8 @@ class DiscountCodesTab extends React.Component {
 															debounceTimeout={300}
 															disabled={!this.state.editable}
 															spellCheck="false"
+															min={this.getMinMax(group.csfamext__discount_type__c).min}
+															max={this.getMinMax(group.csfamext__discount_type__c).max}
 															className=""
 															type="number"
 															onChange={e => {
@@ -938,6 +956,8 @@ class DiscountCodesTab extends React.Component {
 															debounceTimeout={300}
 															disabled={!this.state.editable}
 															spellCheck="false"
+															min={this.getMinMax(group.csfamext__discount_type__c).min}
+															max={this.getMinMax(group.csfamext__discount_type__c).max}
 															className=""
 															type="number"
 															onChange={e => {
@@ -964,6 +984,8 @@ class DiscountCodesTab extends React.Component {
 														debounceTimeout={300}
 														spellCheck="false"
 														className=""
+														min={this.getMinMax(group.csfamext__discount_type__c).min}
+														max={this.getMinMax(group.csfamext__discount_type__c).max}
 														type="number"
 														onChange={e => {
 															this.onChangeDiscount(
@@ -987,6 +1009,8 @@ class DiscountCodesTab extends React.Component {
 														debounceTimeout={300}
 														spellCheck="false"
 														className=""
+														min={this.getMinMax(group.csfamext__discount_type__c).min}
+														max={this.getMinMax(group.csfamext__discount_type__c).max}
 														type="number"
 														onChange={e => {
 															this.onChangeDiscount(

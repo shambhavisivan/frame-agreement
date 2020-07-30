@@ -25,6 +25,7 @@ import {
 } from '../../utils/validation-service';
 
 import { log } from '~/src/utils/shared-service.js';
+import SettingsContext  from '~/src/utils/settings-context.js';
 
 import { publish } from '~/src/api';
 
@@ -136,6 +137,7 @@ export class CommercialProduct extends React.Component {
 		let _productIgnored = _productIgnored;
 
 		return (
+			<SettingsContext.Provider value={this.props.settings}>
 			<div
 				className={
 					'product-card__container' +
@@ -312,6 +314,7 @@ export class CommercialProduct extends React.Component {
 					</div>
 				)}
 			</div>
+			</SettingsContext.Provider>
 		);
 	}
 }

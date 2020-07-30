@@ -516,6 +516,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('active_status_management__c', FACSettings.get('csfam__active_status_management__c'));
 		settingMap.put('decimal_places', FACSettings.get('csfam__decimal_places__c'));
 		settingMap.put('new_frame_agreement', FACSettings.get('csfam__new_frame_agreement__c'));
+		settingMap.put('input_minmax_restriction', FACSettings.get('csfam__input_minmax_restriction__c'));
 
 		settingMap.put('fa_editable_statuses', FACSettings.get('csfam__fa_editable_statuses__c'));
 

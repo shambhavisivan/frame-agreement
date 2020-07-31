@@ -127,6 +127,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	let _negoArray = [];
 
 	let discountCodes = await window.FAM.api.getCustomData(active_fa.Id);
+
 	discountCodes = discountCodes.codes || [];
 
 	if (removed_group) {
@@ -273,15 +274,11 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 				_negoFormatCharge.charge = charge.Id;
 				_negoFormatCharge.value = {};
 
-				if (
-					_recurring !== undefined
-				) {
+				if (_recurring !== undefined) {
 					_negoFormatCharge.value.recurring = _recurring;
 				}
 
-				if (
-					_oneOff !== undefined
-				) {
+				if (_oneOff !== undefined) {
 					_negoFormatCharge.value.oneOff = _oneOff;
 				}
 
@@ -324,15 +321,11 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			_negoFormatCp.priceItemId = cp.Id;
 			_negoFormatCp.value = {};
 
-			if (
-				_recurring !== undefined
-			) {
+			if (_recurring !== undefined) {
 				_negoFormatCp.value.recurring = _recurring;
 			}
 
-			if (
-				_oneOff !== undefined
-			) {
+			if (_oneOff !== undefined) {
 				_negoFormatCp.value.oneOff = _oneOff;
 			}
 
@@ -355,7 +348,7 @@ window.FAM.subscribe('onAfterAddProducts', data => {
 	return new Promise(async resolve => {
 		negotiateDiscountCodesForProducts(data).then(r => {
 			// resolves length of impacted entitites
-			r && window.FAM.api.toast('info', 'Discount codes applied!', '');
+			r && window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
 			resolve(data);
 		});
 	});
@@ -365,7 +358,7 @@ class DiscountCodesTab extends React.Component {
 	constructor(props, context) {
 		super(props, context);
 
-		let _facSettings = redux_store.getState().settings.FACSettings
+		let _facSettings = redux_store.getState().settings.FACSettings;
 
 		this.state = {
 			loading: true,
@@ -373,10 +366,11 @@ class DiscountCodesTab extends React.Component {
 			availableGroups: [], // For dropdown
 			groups: [], // groups from RM
 			editable: _facSettings.fa_editable_statuses.has(
-					ACTIVE_FA.csconta__Status__c
-				),
+				ACTIVE_FA.csconta__Status__c
+			),
 			added: {}, // added groups, loaded from CustomSettings
 			minmax_res: _facSettings.input_minmax_restriction,
+			unapplied: [],
 			open: null, // open group
 			targetingResults: {} // results for a group
 		};
@@ -394,7 +388,19 @@ class DiscountCodesTab extends React.Component {
 	}
 
 	componentDidMount() {
-		// ***********************************
+		window.FAM.subscribe('onBeforeSaveFrameAgreement', data => {
+			return new Promise(async resolve => {
+				if (this.state.unapplied.length) {
+					window.FAM.api.toast(
+						'warning',
+						window.SF.labels.famext_toast_dc_appliance_warning_title,
+						window.SF.labels.famext_toast_dc_appliance_warning_message
+					);
+				}
+
+				resolve(data);
+			});
+		});
 
 		let _getGroupsPromise = window.FAM.api
 			.performAction(
@@ -695,17 +701,13 @@ class DiscountCodesTab extends React.Component {
 
 		this.setState(
 			{
-				added: { ...this.state.added, [_group.Id]: _group }
+				added: { ...this.state.added, [_group.Id]: _group },
+				unapplied: [...this.state.unapplied, _group.Id]
 			},
 			() => {
 				this.blank = '';
 				this.updateSelectListGroups();
-				this.loadRecordsForDg(_group.Id).then(
-					response => {
-						this.updateCustomData();
-					},
-					error => {}
-				);
+				this.loadRecordsForDg(_group.Id);
 			}
 		);
 	}
@@ -719,8 +721,10 @@ class DiscountCodesTab extends React.Component {
 			return;
 		}
 
+		await this.updateCustomData();
+
 		negotiateDiscountCodesForProducts().then(r => {
-			window.FAM.api.toast('info', 'Discount codes applied!', '');
+			window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
 			window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
 		});
 	}
@@ -734,6 +738,7 @@ class DiscountCodesTab extends React.Component {
 		this.setState(
 			{
 				added: _added,
+				unapplied: this.state.unapplied.filter(g => g !== removed_group.Id),
 				open: this.state.open === removed_group.Id ? null : this.state.open
 			},
 			() => {
@@ -761,19 +766,17 @@ class DiscountCodesTab extends React.Component {
 	}
 
 	onChangeDiscount(groupId, type, value) {
-		this.setState(
-			{
-				added: {
-					...this.state.added,
-					[groupId]: { ...this.state.added[groupId], [type]: value }
-				}
-			},
-			this.updateCustomData
-		);
+		this.setState({
+			added: {
+				...this.state.added,
+				[groupId]: { ...this.state.added[groupId], [type]: value }
+			}
+		});
 	}
 
 	getMinMax(discType) {
-		let min = null, max = null;
+		let min = null,
+			max = null;
 
 		if (this.state.minmax_res) {
 			min = 0;
@@ -782,7 +785,7 @@ class DiscountCodesTab extends React.Component {
 			}
 		}
 
-		return {min, max}
+		return { min, max };
 	}
 
 	async updateCustomData(enforceSave) {
@@ -799,12 +802,17 @@ class DiscountCodesTab extends React.Component {
 			ACTIVE_FA.Id,
 			customData
 		);
+
+		this.setState({
+			unapplied: []
+		});
+
 		console.log('Custom data saved:', this.state);
 		if (enforceSave) {
-			return window.FAM.api.saveFrameAgreement(ACTIVE_FA.Id);
-		} else {
-			return Promise.resolve();
+			window.FAM.api.saveFrameAgreement(ACTIVE_FA.Id);
 		}
+
+		return customData;
 	}
 
 	render() {
@@ -935,8 +943,14 @@ class DiscountCodesTab extends React.Component {
 															debounceTimeout={300}
 															disabled={!this.state.editable}
 															spellCheck="false"
-															min={this.getMinMax(group.csfamext__discount_type__c).min}
-															max={this.getMinMax(group.csfamext__discount_type__c).max}
+															min={
+																this.getMinMax(group.csfamext__discount_type__c)
+																	.min
+															}
+															max={
+																this.getMinMax(group.csfamext__discount_type__c)
+																	.max
+															}
 															className=""
 															type="number"
 															onChange={e => {
@@ -956,8 +970,14 @@ class DiscountCodesTab extends React.Component {
 															debounceTimeout={300}
 															disabled={!this.state.editable}
 															spellCheck="false"
-															min={this.getMinMax(group.csfamext__discount_type__c).min}
-															max={this.getMinMax(group.csfamext__discount_type__c).max}
+															min={
+																this.getMinMax(group.csfamext__discount_type__c)
+																	.min
+															}
+															max={
+																this.getMinMax(group.csfamext__discount_type__c)
+																	.max
+															}
 															className=""
 															type="number"
 															onChange={e => {
@@ -984,8 +1004,14 @@ class DiscountCodesTab extends React.Component {
 														debounceTimeout={300}
 														spellCheck="false"
 														className=""
-														min={this.getMinMax(group.csfamext__discount_type__c).min}
-														max={this.getMinMax(group.csfamext__discount_type__c).max}
+														min={
+															this.getMinMax(group.csfamext__discount_type__c)
+																.min
+														}
+														max={
+															this.getMinMax(group.csfamext__discount_type__c)
+																.max
+														}
 														type="number"
 														onChange={e => {
 															this.onChangeDiscount(
@@ -1009,8 +1035,14 @@ class DiscountCodesTab extends React.Component {
 														debounceTimeout={300}
 														spellCheck="false"
 														className=""
-														min={this.getMinMax(group.csfamext__discount_type__c).min}
-														max={this.getMinMax(group.csfamext__discount_type__c).max}
+														min={
+															this.getMinMax(group.csfamext__discount_type__c)
+																.min
+														}
+														max={
+															this.getMinMax(group.csfamext__discount_type__c)
+																.max
+														}
 														type="number"
 														onChange={e => {
 															this.onChangeDiscount(

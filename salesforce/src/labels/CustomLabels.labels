@@ -1,0 +1,1375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>accounts_modal_no_assoc</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>accounts_modal_no_assoc</shortDescription>
+        <value>--no associated accounts</value>
+    </labels>
+    <labels>
+        <fullName>accounts_modal_no_main</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>accounts_modal_no_main</shortDescription>
+        <value>--no account</value>
+    </labels>
+    <labels>
+        <fullName>addAgreementsCTAMessage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addAgreementsCTAMessage</shortDescription>
+        <value>There are no Agreements in here</value>
+    </labels>
+    <labels>
+        <fullName>addProductCTAMessage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addProductCTAMessage</shortDescription>
+        <value>There are no Products in here</value>
+    </labels>
+    <labels>
+        <fullName>addons_header_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addons_header_name</shortDescription>
+        <value>Name</value>
+    </labels>
+    <labels>
+        <fullName>addons_header_oneOff</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addons_header_oneOff</shortDescription>
+        <value>One Off Charge</value>
+    </labels>
+    <labels>
+        <fullName>addons_header_oneOff_neg</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addons_header_oneOff_neg</shortDescription>
+        <value>Negotiated One Off</value>
+    </labels>
+    <labels>
+        <fullName>addons_header_recc</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addons_header_recc</shortDescription>
+        <value>Recurring Charge</value>
+    </labels>
+    <labels>
+        <fullName>addons_header_recc_neg</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addons_header_recc_neg</shortDescription>
+        <value>Negotiated Recurring</value>
+    </labels>
+    <labels>
+        <fullName>alert_btn_cancel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_btn_cancel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
+        <fullName>alert_cloneFa_btn_action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_cloneFa_btn_action</shortDescription>
+        <value>Clone</value>
+    </labels>
+    <labels>
+        <fullName>alert_cloneFa_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_cloneFa_message</shortDescription>
+        <value>Are you sure you want to clone this frame agreement?</value>
+    </labels>
+    <labels>
+        <fullName>alert_cloneFa_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_cloneFa_title</shortDescription>
+        <value>Clone Frame Agreement</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteAgreements_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_deleteAgreements_message</shortDescription>
+        <value>Are you sure you want to delete selected agreements?</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteAgreements_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_deleteAgreements_title</shortDescription>
+        <value>Delete agreements</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteProducts_btn_action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_deleteProducts_btn_action</shortDescription>
+        <value>Delete</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteProducts_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_deleteProducts_message</shortDescription>
+        <value>Are you sure you want to delete selected products?</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteProducts_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_deleteProducts_title</shortDescription>
+        <value>Delete products</value>
+    </labels>
+    <labels>
+        <fullName>allowances_amount</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>allowances_amount</shortDescription>
+        <value>Amount</value>
+    </labels>
+    <labels>
+        <fullName>allowances_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>allowances_name</shortDescription>
+        <value>Name</value>
+    </labels>
+    <labels>
+        <fullName>allowances_priority</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>allowances_priority</shortDescription>
+        <value>Priority</value>
+    </labels>
+    <labels>
+        <fullName>allowances_usage_types</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>allowances_usage_types</shortDescription>
+        <value>Usage Types</value>
+    </labels>
+    <labels>
+        <fullName>approval_action_approve</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_action_approve</shortDescription>
+        <value>Approve</value>
+    </labels>
+    <labels>
+        <fullName>approval_action_reassign</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_action_reassign</shortDescription>
+        <value>Reassign</value>
+    </labels>
+    <labels>
+        <fullName>approval_action_recall</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_action_recall</shortDescription>
+        <value>Recall</value>
+    </labels>
+    <labels>
+        <fullName>approval_action_reject</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_action_reject</shortDescription>
+        <value>Reject</value>
+    </labels>
+    <labels>
+        <fullName>approval_message_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_message_placeholder</shortDescription>
+        <value>Enter comment...</value>
+    </labels>
+    <labels>
+        <fullName>approval_message_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_message_title</shortDescription>
+        <value>Comment</value>
+    </labels>
+    <labels>
+        <fullName>approval_table_header_action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_table_header_action</shortDescription>
+        <value>Action</value>
+    </labels>
+    <labels>
+        <fullName>approval_table_header_actualApprover</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_table_header_actualApprover</shortDescription>
+        <value>Actual Approver</value>
+    </labels>
+    <labels>
+        <fullName>approval_table_header_assignedTo</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_table_header_assignedTo</shortDescription>
+        <value>Assigned to</value>
+    </labels>
+    <labels>
+        <fullName>approval_table_header_comments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_table_header_comments</shortDescription>
+        <value>Comments</value>
+    </labels>
+    <labels>
+        <fullName>approval_table_header_date</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_table_header_date</shortDescription>
+        <value>Date</value>
+    </labels>
+    <labels>
+        <fullName>approval_table_header_status</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_table_header_status</shortDescription>
+        <value>Status</value>
+    </labels>
+    <labels>
+        <fullName>approval_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>approval_title</shortDescription>
+        <value>Approval history</value>
+    </labels>
+    <labels>
+        <fullName>btn_AddFa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_AddFa</shortDescription>
+        <value>Add Frame Agreements</value>
+    </labels>
+    <labels>
+        <fullName>btn_AddNewAgreement</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_AddNewAgreement</shortDescription>
+        <value>Add new Agreement</value>
+    </labels>
+    <labels>
+        <fullName>btn_AddProducts</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_AddProducts</shortDescription>
+        <value>Add Products</value>
+    </labels>
+    <labels>
+        <fullName>btn_BulkNegotiate</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_BulkNegotiate</shortDescription>
+        <value>Negotiate Products</value>
+    </labels>
+    <labels>
+        <fullName>btn_CalcDelta</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_CalcDelta</shortDescription>
+        <value>Calculate Delta</value>
+    </labels>
+    <labels>
+        <fullName>btn_Close</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_Close</shortDescription>
+        <value>Close</value>
+    </labels>
+    <labels>
+        <fullName>btn_DeleteAgreements</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_DeleteAgreements</shortDescription>
+        <value>Delete Agreements</value>
+    </labels>
+    <labels>
+        <fullName>btn_DeleteProducts</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_DeleteProducts</shortDescription>
+        <value>Delete Products</value>
+    </labels>
+    <labels>
+        <fullName>btn_Delta</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_Delta</shortDescription>
+        <value>Compare Agreements</value>
+    </labels>
+    <labels>
+        <fullName>btn_Done</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_Done</shortDescription>
+        <value>Done</value>
+    </labels>
+    <labels>
+        <fullName>btn_NewVersion</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_NewVersion</shortDescription>
+        <value>Create New Version</value>
+    </labels>
+    <labels>
+        <fullName>btn_Save</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_Save</shortDescription>
+        <value>Save</value>
+    </labels>
+    <labels>
+        <fullName>btn_Submit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_Submit</shortDescription>
+        <value>Activate</value>
+    </labels>
+    <labels>
+        <fullName>btn_SubmitForApproval</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_SubmitForApproval</shortDescription>
+        <value>Submit For Approval</value>
+    </labels>
+    <labels>
+        <fullName>btn_delta_switch_delta</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_delta_switch_delta</shortDescription>
+        <value>Switch to Delta View</value>
+    </labels>
+    <labels>
+        <fullName>btn_delta_switch_fa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_delta_switch_fa</shortDescription>
+        <value>Switch to FA View</value>
+    </labels>
+    <labels>
+        <fullName>charges_header_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>charges_header_name</shortDescription>
+        <value>Charge Name</value>
+    </labels>
+    <labels>
+        <fullName>charges_header_neg</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>charges_header_neg</shortDescription>
+        <value>Negotiated One Off</value>
+    </labels>
+    <labels>
+        <fullName>charges_header_oneOff</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>charges_header_oneOff</shortDescription>
+        <value>One Off Adjustment</value>
+    </labels>
+    <labels>
+        <fullName>charges_header_recc</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>charges_header_recc</shortDescription>
+        <value>Recurring Adjustment</value>
+    </labels>
+    <labels>
+        <fullName>charges_header_recc_neg</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>charges_header_recc_neg</shortDescription>
+        <value>Negotiated Recurring</value>
+    </labels>
+    <labels>
+        <fullName>charges_header_type</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>charges_header_type</shortDescription>
+        <value>Charge Type</value>
+    </labels>
+    <labels>
+        <fullName>delta_fa_fields</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>delta_fa_fields</shortDescription>
+        <value>Frame Agreement Fields</value>
+    </labels>
+    <labels>
+        <fullName>delta_status_added</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>delta_status_added</shortDescription>
+        <value>Added</value>
+    </labels>
+    <labels>
+        <fullName>delta_status_changed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>delta_status_changed</shortDescription>
+        <value>Changed</value>
+    </labels>
+    <labels>
+        <fullName>delta_status_removed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>delta_status_removed</shortDescription>
+        <value>Removed</value>
+    </labels>
+    <labels>
+        <fullName>delta_status_unchanged</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>delta_status_unchanged</shortDescription>
+        <value>Unchanged</value>
+    </labels>
+    <labels>
+        <fullName>delta_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>delta_title</shortDescription>
+        <value>Delta Viewer</value>
+    </labels>
+    <labels>
+        <fullName>faMenuActionAccounts</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>faMenuActionAccounts</shortDescription>
+        <value>Accounts</value>
+    </labels>
+    <labels>
+        <fullName>faMenuActionClone</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>faMenuActionClone</shortDescription>
+        <value>Clone</value>
+    </labels>
+    <labels>
+        <fullName>faMenuActionDelete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>faMenuActionDelete</shortDescription>
+        <value>Delete</value>
+    </labels>
+    <labels>
+        <fullName>faMenuActionEdit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>faMenuActionEdit</shortDescription>
+        <value>Edit</value>
+    </labels>
+    <labels>
+        <fullName>faNameHeaderCell</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>faNameHeaderCell</shortDescription>
+        <value>FA name</value>
+    </labels>
+    <labels>
+        <fullName>fa_master_chip</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>fa_master_chip</shortDescription>
+        <value>Master</value>
+    </labels>
+    <labels>
+        <fullName>fa_none</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>fa_none</shortDescription>
+        <value>--none</value>
+    </labels>
+    <labels>
+        <fullName>fa_tab</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>fa_tab</shortDescription>
+        <value>Frame Agreement</value>
+    </labels>
+    <labels>
+        <fullName>fa_volume</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>fa_volume</shortDescription>
+        <value>Volume</value>
+    </labels>
+    <labels>
+        <fullName>famext_btn_test_targeting</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_btn_test_targeting</shortDescription>
+        <value>Test Targeting</value>
+    </labels>
+    <labels>
+        <fullName>famext_discount_amount</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_discount_amount</shortDescription>
+        <value>Amount</value>
+    </labels>
+    <labels>
+        <fullName>famext_discount_percentage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_discount_percentage</shortDescription>
+        <value>Percentage</value>
+    </labels>
+    <labels>
+        <fullName>famext_discount_type</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_discount_type</shortDescription>
+        <value>Discount Type</value>
+    </labels>
+    <labels>
+        <fullName>famext_dynamic_groups_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_dynamic_groups_title</shortDescription>
+        <value>Dynamic groups</value>
+    </labels>
+    <labels>
+        <fullName>famext_expression</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_expression</shortDescription>
+        <value>Expression</value>
+    </labels>
+    <labels>
+        <fullName>famext_expression_comp</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_expression_comp</shortDescription>
+        <value>Expression components</value>
+    </labels>
+    <labels>
+        <fullName>famext_field</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_field</shortDescription>
+        <value>Field</value>
+    </labels>
+    <labels>
+        <fullName>famext_group_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_group_name</shortDescription>
+        <value>Group Name</value>
+    </labels>
+    <labels>
+        <fullName>famext_logic</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_logic</shortDescription>
+        <value>Logic</value>
+    </labels>
+    <labels>
+        <fullName>famext_manager_Editable</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_manager_Editable</shortDescription>
+        <value>Editable</value>
+    </labels>
+    <labels>
+        <fullName>famext_manager_Sequence</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_manager_Sequence</shortDescription>
+        <value>Sequence</value>
+    </labels>
+    <labels>
+        <fullName>famext_manager_add_new_comp</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_manager_add_new_comp</shortDescription>
+        <value>Add new component</value>
+    </labels>
+    <labels>
+        <fullName>famext_manager_group_type</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_manager_group_type</shortDescription>
+        <value>Group Type</value>
+    </labels>
+    <labels>
+        <fullName>famext_manager_parse</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_manager_parse</shortDescription>
+        <value>Parse</value>
+    </labels>
+    <labels>
+        <fullName>famext_oneOff</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_oneOff</shortDescription>
+        <value>One-off charge</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_equals</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_equals</shortDescription>
+        <value>Equals</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_greater_or_equal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_greater_or_equal</shortDescription>
+        <value>Greater or equal</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_greater_than</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_greater_than</shortDescription>
+        <value>Greater than</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_in</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_in</shortDescription>
+        <value>In</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_less_or_equal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_less_or_equal</shortDescription>
+        <value>Less or equal</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_less_than</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_less_than</shortDescription>
+        <value>Less than</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_like</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_like</shortDescription>
+        <value>Like</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_not_equals</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_not_equals</shortDescription>
+        <value>Not equals</value>
+    </labels>
+    <labels>
+        <fullName>famext_operator_not_in</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_operator_not_in</shortDescription>
+        <value>Not in</value>
+    </labels>
+    <labels>
+        <fullName>famext_placeholder_addGroup</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_placeholder_addGroup</shortDescription>
+        <value>Add group...</value>
+    </labels>
+    <labels>
+        <fullName>famext_recurring</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_recurring</shortDescription>
+        <value>Recurring charge</value>
+    </labels>
+    <labels>
+        <fullName>famext_targeting_not_initiated</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_targeting_not_initiated</shortDescription>
+        <value>Query has not been executed yet!</value>
+    </labels>
+    <labels>
+        <fullName>famext_toast_dc_appliance_warning_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_toast_dc_appliance_warning_message</shortDescription>
+        <value>Some discount codes are added but not applied.</value>
+    </labels>
+    <labels>
+        <fullName>famext_toast_dc_appliance_warning_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_toast_dc_appliance_warning_title</shortDescription>
+        <value>Discount codes not applied!</value>
+    </labels>
+    <labels>
+        <fullName>famext_toast_dc_applied</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_toast_dc_applied</shortDescription>
+        <value>Discount codes applied!</value>
+    </labels>
+    <labels>
+        <fullName>famext_value</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>famext_value</shortDescription>
+        <value>Value</value>
+    </labels>
+    <labels>
+        <fullName>frameAgreementListTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>frameAgreementListTitle</shortDescription>
+        <value>Agreement List</value>
+    </labels>
+    <labels>
+        <fullName>frameAgreementTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>frameAgreementTitle</shortDescription>
+        <value>Frame Agreement Negotiation Console</value>
+    </labels>
+    <labels>
+        <fullName>frame_agreements_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>frame_agreements_title</shortDescription>
+        <value>Frame Agreements</value>
+    </labels>
+    <labels>
+        <fullName>header_customDropdownPlaceholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>header_customDropdownPlaceholder</shortDescription>
+        <value>Custom</value>
+    </labels>
+    <labels>
+        <fullName>header_frameAgreementEditorTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>header_frameAgreementEditorTitle</shortDescription>
+        <value>Frame Agreement Details</value>
+    </labels>
+    <labels>
+        <fullName>header_frameAgreementMasterTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>header_frameAgreementMasterTitle</shortDescription>
+        <value>Master Frame Agreement</value>
+    </labels>
+    <labels>
+        <fullName>input_quickSearchPlaceholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>input_quickSearchPlaceholder</shortDescription>
+        <value>Quick search</value>
+    </labels>
+    <labels>
+        <fullName>modal_addFa_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_addFa_title</shortDescription>
+        <value>Add Frame Agreements</value>
+    </labels>
+    <labels>
+        <fullName>modal_addProduct_input_search_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_addProduct_input_search_placeholder</shortDescription>
+        <value>Filter products</value>
+    </labels>
+    <labels>
+        <fullName>modal_addProduct_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_addProduct_title</shortDescription>
+        <value>Add Product to Frame Agreement</value>
+    </labels>
+    <labels>
+        <fullName>modal_bluk_rateFilter_dropdownPlaceholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bluk_rateFilter_dropdownPlaceholder</shortDescription>
+        <value>-- select a property ---</value>
+    </labels>
+    <labels>
+        <fullName>modal_bluk_rateFilter_propertyTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bluk_rateFilter_propertyTitle</shortDescription>
+        <value>Select rate card line property:</value>
+    </labels>
+    <labels>
+        <fullName>modal_bluk_rateFilter_propertyValueTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bluk_rateFilter_propertyValueTitle</shortDescription>
+        <value>Select value:</value>
+    </labels>
+    <labels>
+        <fullName>modal_bluk_rateFilter_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bluk_rateFilter_title</shortDescription>
+        <value>Filter Rate Card Lines</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_btn_apply</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_btn_apply</shortDescription>
+        <value>Apply discount</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_btn_fixed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_btn_fixed</shortDescription>
+        <value>Fixed Amount</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_btn_percentage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_btn_percentage</shortDescription>
+        <value>Percentage</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_btn_save</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_btn_save</shortDescription>
+        <value>Save to Frame Agreement</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_discount_input_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_discount_input_title</shortDescription>
+        <value>Discount to selection</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_discount_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_discount_title</shortDescription>
+        <value>Discount options</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_input_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_input_placeholder</shortDescription>
+        <value>Enter discount value</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_selected_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_selected_title</shortDescription>
+        <value>Selected Products</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_title</shortDescription>
+        <value>Bulk Negotiation</value>
+    </labels>
+    <labels>
+        <fullName>modal_categorization_btn_add</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_categorization_btn_add</shortDescription>
+        <value>Add Selected</value>
+    </labels>
+    <labels>
+        <fullName>modal_categorization_btn_apply</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_categorization_btn_apply</shortDescription>
+        <value>Apply Filter</value>
+    </labels>
+    <labels>
+        <fullName>modal_categorization_btn_clear</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_categorization_btn_clear</shortDescription>
+        <value>Clear Filter</value>
+    </labels>
+    <labels>
+        <fullName>modal_categorization_switch</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_categorization_switch</shortDescription>
+        <value>Product categorisation panel</value>
+    </labels>
+    <labels>
+        <fullName>modal_categorization_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_categorization_title</shortDescription>
+        <value>Product Categorization</value>
+    </labels>
+    <labels>
+        <fullName>modal_charge_table_header_chargeType</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_charge_table_header_chargeType</shortDescription>
+        <value>Charge Type</value>
+    </labels>
+    <labels>
+        <fullName>modal_charge_table_header_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_charge_table_header_name</shortDescription>
+        <value>Name</value>
+    </labels>
+    <labels>
+        <fullName>modal_charge_table_header_oneOff</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_charge_table_header_oneOff</shortDescription>
+        <value>One Off</value>
+    </labels>
+    <labels>
+        <fullName>modal_charge_table_header_presentIn</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_charge_table_header_presentIn</shortDescription>
+        <value>Present In</value>
+    </labels>
+    <labels>
+        <fullName>modal_charge_table_header_rateValue</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_charge_table_header_rateValue</shortDescription>
+        <value>Rate Value</value>
+    </labels>
+    <labels>
+        <fullName>modal_charge_table_header_recurring</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_charge_table_header_recurring</shortDescription>
+        <value>Recurring</value>
+    </labels>
+    <labels>
+        <fullName>modal_charge_table_header_unit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_charge_table_header_unit</shortDescription>
+        <value>Unit</value>
+    </labels>
+    <labels>
+        <fullName>modal_charge_table_header_value</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_charge_table_header_value</shortDescription>
+        <value>Value</value>
+    </labels>
+    <labels>
+        <fullName>modal_lookup_input_search_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_lookup_input_search_placeholder</shortDescription>
+        <value>Filter records...</value>
+    </labels>
+    <labels>
+        <fullName>modal_unsavedChanges_alert</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_unsavedChanges_alert</shortDescription>
+        <value>You have unsaved changes, are you sure you want to leave?</value>
+    </labels>
+    <labels>
+        <fullName>no_fa_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>no_fa_message</shortDescription>
+        <value>There are no Frame Agreements in here.</value>
+    </labels>
+    <labels>
+        <fullName>no_fa_message_2</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>no_fa_message_2</shortDescription>
+        <value>Create at least one frame agreements.</value>
+    </labels>
+    <labels>
+        <fullName>product_charge_header_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>product_charge_header_name</shortDescription>
+        <value>Charge Name</value>
+    </labels>
+    <labels>
+        <fullName>product_charge_header_oneOff</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>product_charge_header_oneOff</shortDescription>
+        <value>One Off Adjustment</value>
+    </labels>
+    <labels>
+        <fullName>product_charge_header_oneOff_neg</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>product_charge_header_oneOff_neg</shortDescription>
+        <value>Negotiated One Off</value>
+    </labels>
+    <labels>
+        <fullName>product_charge_header_recc</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>product_charge_header_recc</shortDescription>
+        <value>Recurring Adjustment</value>
+    </labels>
+    <labels>
+        <fullName>product_charge_header_recc_neg</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>product_charge_header_recc_neg</shortDescription>
+        <value>Negotiated Recurring</value>
+    </labels>
+    <labels>
+        <fullName>products_addons</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_addons</shortDescription>
+        <value>Add Ons</value>
+    </labels>
+    <labels>
+        <fullName>products_allowances</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_allowances</shortDescription>
+        <value>Allowances</value>
+    </labels>
+    <labels>
+        <fullName>products_charges</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_charges</shortDescription>
+        <value>Charges</value>
+    </labels>
+    <labels>
+        <fullName>products_display_columns</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_display_columns</shortDescription>
+        <value>Display Columns</value>
+    </labels>
+    <labels>
+        <fullName>products_productNameHeaderCell</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_productNameHeaderCell</shortDescription>
+        <value>Product Name</value>
+    </labels>
+    <labels>
+        <fullName>products_product_charges</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_product_charges</shortDescription>
+        <value>Charges (product)</value>
+    </labels>
+    <labels>
+        <fullName>products_rates</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_rates</shortDescription>
+        <value>Rate Cards</value>
+    </labels>
+    <labels>
+        <fullName>products_tab_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_tab_title</shortDescription>
+        <value>Products</value>
+    </labels>
+    <labels>
+        <fullName>products_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_title</shortDescription>
+        <value>Products</value>
+    </labels>
+    <labels>
+        <fullName>products_title_empty</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_title_empty</shortDescription>
+        <value>Product Negotiation</value>
+    </labels>
+    <labels>
+        <fullName>products_volume_minUsageComm</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_volume_minUsageComm</shortDescription>
+        <value>Min. usage commitment</value>
+    </labels>
+    <labels>
+        <fullName>products_volume_minUsageCommPeriod</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_volume_minUsageCommPeriod</shortDescription>
+        <value>Min. usage commitment period</value>
+    </labels>
+    <labels>
+        <fullName>products_volume_minVol</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_volume_minVol</shortDescription>
+        <value>Minimum vol</value>
+    </labels>
+    <labels>
+        <fullName>products_volume_minVolPeriod</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>products_volume_minVolPeriod</shortDescription>
+        <value>Minimum vol. period</value>
+    </labels>
+    <labels>
+        <fullName>rate_cards_header_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>rate_cards_header_name</shortDescription>
+        <value>Name</value>
+    </labels>
+    <labels>
+        <fullName>rate_cards_header_usage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>rate_cards_header_usage</shortDescription>
+        <value>Usage Type</value>
+    </labels>
+    <labels>
+        <fullName>rate_cards_header_value</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>rate_cards_header_value</shortDescription>
+        <value>Rate Value</value>
+    </labels>
+    <labels>
+        <fullName>rate_cards_header_value_neg</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>rate_cards_header_value_neg</shortDescription>
+        <value>Negotiated Value</value>
+    </labels>
+    <labels>
+        <fullName>rl_emptyList</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>rl_emptyList</shortDescription>
+        <value>No records for this related list</value>
+    </labels>
+    <labels>
+        <fullName>rl_tab</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>rl_tab</shortDescription>
+        <value>Related Lists</value>
+    </labels>
+    <labels>
+        <fullName>save_fa_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>save_fa_message</shortDescription>
+        <value>Save frame agreement before adding products!</value>
+    </labels>
+    <labels>
+        <fullName>save_fa_products_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>save_fa_products_message</shortDescription>
+        <value>They will be visible as soon as you create them.</value>
+    </labels>
+    <labels>
+        <fullName>toast_approvalAction_failed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_approvalAction_failed</shortDescription>
+        <value>action failed!</value>
+    </labels>
+    <labels>
+        <fullName>toast_approvalAction_success</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_approvalAction_success</shortDescription>
+        <value>action successful!</value>
+    </labels>
+    <labels>
+        <fullName>toast_created_fa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_created_fa</shortDescription>
+        <value>Successfuly created new frame agreement.!</value>
+    </labels>
+    <labels>
+        <fullName>toast_decomposition_failed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_decomposition_failed</shortDescription>
+        <value>Deleting associations made from this attempt.</value>
+    </labels>
+    <labels>
+        <fullName>toast_decomposition_revered</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_decomposition_revered</shortDescription>
+        <value>Deleted all created associations.</value>
+    </labels>
+    <labels>
+        <fullName>toast_decomposition_success</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_decomposition_success</shortDescription>
+        <value>Created associations</value>
+    </labels>
+    <labels>
+        <fullName>toast_decomposition_title_failed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_decomposition_title_failed</shortDescription>
+        <value>Decomposition failed!</value>
+    </labels>
+    <labels>
+        <fullName>toast_decomposition_title_revered</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_decomposition_title_revered</shortDescription>
+        <value>Decomposition reverted!</value>
+    </labels>
+    <labels>
+        <fullName>toast_decomposition_title_success</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_decomposition_title_success</shortDescription>
+        <value>Decomposition succeded!</value>
+    </labels>
+    <labels>
+        <fullName>toast_discount_calculated</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_discount_calculated</shortDescription>
+        <value>Changes have to be saved to Frame Agreement.!</value>
+    </labels>
+    <labels>
+        <fullName>toast_discount_calculated_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_discount_calculated_title</shortDescription>
+        <value>Discount calculated!</value>
+    </labels>
+    <labels>
+        <fullName>toast_failed_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_failed_title</shortDescription>
+        <value>Failed!</value>
+    </labels>
+    <labels>
+        <fullName>toast_invalid_handler</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_invalid_handler</shortDescription>
+        <value>Handler not defined</value>
+    </labels>
+    <labels>
+        <fullName>toast_invalid_handler_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_invalid_handler_title</shortDescription>
+        <value>Invalid handler!</value>
+    </labels>
+    <labels>
+        <fullName>toast_saved_fa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_saved_fa</shortDescription>
+        <value>Successfuly saved frame agreement!</value>
+    </labels>
+    <labels>
+        <fullName>toast_submitForApproval_failed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_submitForApproval_failed</shortDescription>
+        <value>Unable to start approval process.</value>
+    </labels>
+    <labels>
+        <fullName>toast_submitForApproval_success</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_submitForApproval_success</shortDescription>
+        <value>Successfuly submitted for approval!</value>
+    </labels>
+    <labels>
+        <fullName>toast_success_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_success_title</shortDescription>
+        <value>Submitted!</value>
+    </labels>
+    <labels>
+        <fullName>usage_type_name_field</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>usage_type_name_field</shortDescription>
+        <value>Name</value>
+    </labels>
+    <labels>
+        <fullName>usage_type_undefined</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>usage_type_undefined</shortDescription>
+        <value>No usage type</value>
+    </labels>
+    <labels>
+        <fullName>util_datepicker_today</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>util_datepicker_today</shortDescription>
+        <value>Today</value>
+    </labels>
+    <labels>
+        <fullName>util_input_formula_placehoder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>util_input_formula_placehoder</shortDescription>
+        <value>--not calculated</value>
+    </labels>
+    <labels>
+        <fullName>util_input_lookup_placehoder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>util_input_lookup_placehoder</shortDescription>
+        <value>No record selected</value>
+    </labels>
+    <labels>
+        <fullName>util_input_text_enter</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>util_input_text_enter</shortDescription>
+        <value>Enter</value>
+    </labels>
+    <labels>
+        <fullName>util_negotiation_input_diff_label</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>util_negotiation_input_diff_label</shortDescription>
+        <value>negotiated</value>
+    </labels>
+</CustomLabels>

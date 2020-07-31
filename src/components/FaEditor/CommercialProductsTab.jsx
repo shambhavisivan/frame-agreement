@@ -9,11 +9,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 
 import CommercialProduct from '../negotiation/CommercialProduct';
 
-import {
-	truncateCPField,
-	getFieldLabel,
-	log
-} from '../../utils/shared-service';
+import { truncateCPField, getFieldLabel, log } from '../../utils/shared-service';
 import { toggleFieldVisibility } from '~/src/actions';
 
 import AddProductCTA from './AddProductCTA';
@@ -22,9 +18,7 @@ class CommercialProductsTab extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.getCommercialProductsCount = this.getCommercialProductsCount.bind(
-			this
-		);
+		this.getCommercialProductsCount = this.getCommercialProductsCount.bind(this);
 
 		this.state = {
 			productFilter: '',
@@ -34,9 +28,7 @@ class CommercialProductsTab extends React.Component {
 
 		this._productFilter = cp => {
 			if (this.state.productFilter && this.state.productFilter.length >= 2) {
-				return cp.Name.toLowerCase().includes(
-					this.state.productFilter.toLowerCase()
-				);
+				return cp.Name.toLowerCase().includes(this.state.productFilter.toLowerCase());
 			} else {
 				return true;
 			}
@@ -57,16 +49,11 @@ class CommercialProductsTab extends React.Component {
 	}
 
 	getCommercialProductsCount() {
-		let cpSize = this.props.frameAgreements[this.props.faId]._ui
-			.commercialProducts.length;
+		let cpSize = this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length;
 		if (this.productFilter) {
-			cpSize = this.props.frameAgreements[
-				this.props.faId
-			]._ui.commercialProducts.filter(cp => {
+			cpSize = this.props.frameAgreements[this.props.faId]._ui.commercialProducts.filter(cp => {
 				if (this.state.productFilter && this.state.productFilter.length >= 2) {
-					return cp.Name.toLowerCase().includes(
-						this.state.productFilter.toLowerCase()
-					);
+					return cp.Name.toLowerCase().includes(this.state.productFilter.toLowerCase());
 				} else {
 					return true;
 				}
@@ -78,8 +65,7 @@ class CommercialProductsTab extends React.Component {
 	render() {
 		let commercialProducts;
 
-		let _cp = this.props.frameAgreements[this.props.faId]._ui
-			.commercialProducts;
+		let _cp = this.props.frameAgreements[this.props.faId]._ui.commercialProducts;
 
 		if (_cp.length) {
 			commercialProducts = (
@@ -87,11 +73,7 @@ class CommercialProductsTab extends React.Component {
 					<div className="products-card__header">
 						<span className="products__title">
 							{window.SF.labels.products_title} (
-							{
-								this.props.frameAgreements[this.props.faId]._ui
-									.commercialProducts.length
-							}
-							)
+							{this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length})
 						</span>
 						<div className="header__inputs">
 							<InputSearch
@@ -117,25 +99,21 @@ class CommercialProductsTab extends React.Component {
 								<Checkbox
 									className="fa-margin-right-sm"
 									value={
-										this.props.frameAgreements[
-											this.props.faId
-										]._ui.commercialProducts.filter(this._productFilter)
-											.length ===
-										Object.keys(this.props.selectedProducts).length
+										this.props.frameAgreements[this.props.faId]._ui.commercialProducts.filter(
+											this._productFilter
+										).length === Object.keys(this.props.selectedProducts).length
 									}
 									onChange={() => {
 										this.props.onSelectAllProducts(
-											this.props.frameAgreements[
-												this.props.faId
-											]._ui.commercialProducts.filter(this._productFilter)
+											this.props.frameAgreements[this.props.faId]._ui.commercialProducts.filter(
+												this._productFilter
+											)
 										);
 									}}
 								/>
 							</div>
 							<div className="container__fields">
-								<span className="list-cell">
-									{getFieldLabel('cspmb__Price_Item__c', 'name')}
-								</span>
+								<span className="list-cell">{getFieldLabel('cspmb__Price_Item__c', 'name')}</span>
 								{this.props.productFields
 									.filter(f => f.visible)
 									.map(f => {
@@ -144,8 +122,7 @@ class CommercialProductsTab extends React.Component {
 												key={'header-' + f.name}
 												className={'list-cell' + (f.volume ? ' volume' : '')}
 											>
-												{getFieldLabel('cspmb__Price_Item__c', f.name) ||
-													truncateCPField(f.name)}
+												{getFieldLabel('cspmb__Price_Item__c', f.name) || truncateCPField(f.name)}
 											</span>
 										);
 									})}
@@ -173,10 +150,7 @@ class CommercialProductsTab extends React.Component {
 			commercialProducts = (
 				<div>
 					<AddProductCTA
-						render={
-							!this.props.frameAgreements[this.props.faId]._ui
-								.commercialProducts.length
-						}
+						render={!this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length}
 					/>
 				</div>
 			);
@@ -220,7 +194,4 @@ const mapDispatchToProps = {
 	toggleFieldVisibility
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(CommercialProductsTab);
+export default connect(mapStateToProps, mapDispatchToProps)(CommercialProductsTab);

@@ -75,32 +75,23 @@ export class FaFields extends React.Component {
 		if (this.props.frameAgreements[this.props.faId]._ui.headerRows.length) {
 			_faFields = (
 				<section className="card basket-details-card">
-					{this.props.frameAgreements[this.props.faId]._ui.headerRows.map(
-						(row, i) => {
-							return (
-								<div
-									className="basket-details-card__row"
-									key={'header-row-' + i}
-								>
-									{row.map(f => {
-										return (
-											<SFField
-												editable={!f.readOnly && _editable}
-												onChange={this.onFieldChange}
-												key={f.field}
-												field={f}
-												value={
-													this.props.frameAgreements[this.props.faId][
-														f.field
-													] || ''
-												}
-											/>
-										);
-									})}
-								</div>
-							);
-						}
-					)}
+					{this.props.frameAgreements[this.props.faId]._ui.headerRows.map((row, i) => {
+						return (
+							<div className="basket-details-card__row" key={'header-row-' + i}>
+								{row.map(f => {
+									return (
+										<SFField
+											editable={!f.readOnly && _editable}
+											onChange={this.onFieldChange}
+											key={f.field}
+											field={f}
+											value={this.props.frameAgreements[this.props.faId][f.field] || ''}
+										/>
+									);
+								})}
+							</div>
+						);
+					})}
 				</section>
 			);
 		}
@@ -122,7 +113,4 @@ const mapDispatchToProps = {
 	updateIgnoreSettings
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(FaFields);
+export default connect(mapStateToProps, mapDispatchToProps)(FaFields);

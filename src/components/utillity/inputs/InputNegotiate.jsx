@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { percIncrease } from '~/src/utils/shared-service';
-import SettingsContext  from '~/src/utils/settings-context.js';
+import SettingsContext from '~/src/utils/settings-context.js';
 import Icon from '../Icon';
 
 class InputNegotiate extends React.Component {
@@ -67,7 +67,7 @@ class InputNegotiate extends React.Component {
 
 		_discount = <span className="discount-amount">{_value}</span>;
 
-		const _getInputContainer = (restrict_minmax) => {
+		const _getInputContainer = restrict_minmax => {
 			let _inputContainer;
 
 			if (this.props.readOnly) {
@@ -75,9 +75,7 @@ class InputNegotiate extends React.Component {
 					<div
 						className={
 							'negotiate-input-wrapper readOnly' +
-							(this.props.negotiatedValue !== this.props.originalValue
-								? ' negotiated'
-								: '')
+							(this.props.negotiatedValue !== this.props.originalValue ? ' negotiated' : '')
 						}
 					>
 						<span>{_negotiatedValue}</span>
@@ -89,9 +87,7 @@ class InputNegotiate extends React.Component {
 						className={
 							'negotiate-input-wrapper' +
 							(this.state.focus ? ' focused' : '') +
-							(this.props.negotiatedValue !== this.props.originalValue
-								? ' negotiated'
-								: '')
+							(this.props.negotiatedValue !== this.props.originalValue ? ' negotiated' : '')
 						}
 					>
 						<Icon
@@ -119,36 +115,36 @@ class InputNegotiate extends React.Component {
 			}
 
 			return _inputContainer;
-		}
+		};
 
 		return (
 			<SettingsContext.Consumer>
-			{(settings) => (
-				<div
-					className={
-						'negotiate-container' +
-						(this.props.invalid ? ' invalid' : '') +
-						(_prefix === '+' ? ' exceed' : '')
-					}
-				>
-					{_getInputContainer(settings.FACSettings.input_minmax_restriction)}
-					<div className="discount-info">
-						{dirty ? (
-							<span
-								className="discount"
-								onClick={() => {
-									this.setState({ fixed: !this.state.fixed });
-								}}
-							>
-								<div>{window.SF.labels.util_negotiation_input_diff_label} </div>
-								{_discount}
-							</span>
-						) : (
-							''
-						)}
+				{settings => (
+					<div
+						className={
+							'negotiate-container' +
+							(this.props.invalid ? ' invalid' : '') +
+							(_prefix === '+' ? ' exceed' : '')
+						}
+					>
+						{_getInputContainer(settings.FACSettings.input_minmax_restriction)}
+						<div className="discount-info">
+							{dirty ? (
+								<span
+									className="discount"
+									onClick={() => {
+										this.setState({ fixed: !this.state.fixed });
+									}}
+								>
+									<div>{window.SF.labels.util_negotiation_input_diff_label} </div>
+									{_discount}
+								</span>
+							) : (
+								''
+							)}
+						</div>
 					</div>
-				</div>
-			)}
+				)}
 			</SettingsContext.Consumer>
 		);
 	}

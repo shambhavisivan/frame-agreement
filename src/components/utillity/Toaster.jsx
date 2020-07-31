@@ -34,9 +34,7 @@ class Toast extends Component {
 					(this.props.unload ? ' unloading' : '')
 				}
 			>
-				{this.props.title && (
-					<span className="toast__title">{this.props.title}</span>
-				)}
+				{this.props.title && <span className="toast__title">{this.props.title}</span>}
 				<span>{this.props.message}</span>
 			</div>
 		);
@@ -80,7 +78,4 @@ const mapDispatchToProps = {
 	removeToast
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Toaster);
+export default connect(mapStateToProps, mapDispatchToProps)(Toaster);

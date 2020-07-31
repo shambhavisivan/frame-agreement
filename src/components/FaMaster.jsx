@@ -21,12 +21,7 @@ import {
 
 import { publish } from '../api';
 
-import {
-	truncateCPField,
-	getFieldLabel,
-	log,
-	isMaster
-} from '../utils/shared-service';
+import { truncateCPField, getFieldLabel, log, isMaster } from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
 // import ApprovalProcess from './ApprovalProcess';
@@ -118,17 +113,14 @@ class FaMaster extends Component {
 
 		this.mounted = true;
 		// Disable onLeavePage prompt when saved
-		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(
-			'onAfterSaveFrameAgreement',
-			data => {
-				return new Promise(resolve => {
-					this._setState({
-						actionTaken: false
-					});
-					resolve(data);
+		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe('onAfterSaveFrameAgreement', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: false
 				});
-			}
-		);
+				resolve(data);
+			});
+		});
 		// Enable save on events
 		SUBSCRIPTIONS['sub2'] = window.FAM.subscribe('onAfterAddProducts', data => {
 			return new Promise(resolve => {
@@ -139,29 +131,23 @@ class FaMaster extends Component {
 			});
 		});
 		// Enable save on events
-		SUBSCRIPTIONS['sub3'] = window.FAM.subscribe(
-			'onAfterBulkNegotiation',
-			data => {
-				return new Promise(resolve => {
-					this._setState({
-						actionTaken: true
-					});
-					resolve(data);
+		SUBSCRIPTIONS['sub3'] = window.FAM.subscribe('onAfterBulkNegotiation', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
 				});
-			}
-		);
+				resolve(data);
+			});
+		});
 		// Enable save on events
-		SUBSCRIPTIONS['sub4'] = window.FAM.subscribe(
-			'onAfterDeleteProducts',
-			data => {
-				return new Promise(resolve => {
-					this._setState({
-						actionTaken: true
-					});
-					resolve(data);
+		SUBSCRIPTIONS['sub4'] = window.FAM.subscribe('onAfterDeleteProducts', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
 				});
-			}
-		);
+				resolve(data);
+			});
+		});
 	}
 
 	componentWillUnmount() {
@@ -175,9 +161,7 @@ class FaMaster extends Component {
 	componentDidMount() {
 		let _promiseArray = [];
 
-		if (
-			!this.props.frameAgreements[this.faId]._ui.hasOwnProperty('relatedList')
-		) {
+		if (!this.props.frameAgreements[this.faId]._ui.hasOwnProperty('relatedList')) {
 			_promiseArray.push(this.props.getRelatedLists(this.faId));
 		}
 
@@ -250,9 +234,7 @@ class FaMaster extends Component {
 				() => {
 					publish(
 						'onAfterDeleteProducts',
-						Object.values(this.props.frameAgreements).map(fa =>
-							productsToDelete.includes(fa.Id)
-						)
+						Object.values(this.props.frameAgreements).map(fa => productsToDelete.includes(fa.Id))
 					);
 					resolve(productsToDelete);
 				}
@@ -276,9 +258,7 @@ class FaMaster extends Component {
 	onSelectAllAgreements(allAgreements) {
 		let selectedAgreements = { ...this.state.selectedAgreements };
 
-		if (
-			allAgreements.length === Object.keys(this.state.selectedAgreements).length
-		) {
+		if (allAgreements.length === Object.keys(this.state.selectedAgreements).length) {
 			selectedAgreements = {};
 		} else {
 			allAgreements.forEach(fa => {
@@ -345,9 +325,7 @@ class FaMaster extends Component {
 
 		if (!this.state.loading.attachment) {
 			_addedFaIdSet = new Set(Object.keys(_fa._ui.attachment.products));
-			addedFa = Object.values(this.props.frameAgreements).filter(fa =>
-				_addedFaIdSet.has(fa.Id)
-			);
+			addedFa = Object.values(this.props.frameAgreements).filter(fa => _addedFaIdSet.has(fa.Id));
 		}
 
 		let _faAgreementList = <CommercialProductSkeleton count={5} />;
@@ -387,19 +365,14 @@ class FaMaster extends Component {
 											Object.keys(this.state.selectedAgreements).length
 										}
 										onChange={() => {
-											this.onSelectAllAgreements(
-												addedFa.filter(this._faFilterMethod)
-											);
+											this.onSelectAllAgreements(addedFa.filter(this._faFilterMethod));
 										}}
 									/>
 								</div>
 
 								<div className="container__fields">
 									<span className="list-cell">
-										{getFieldLabel(
-											'csconta__Frame_Agreement__c',
-											'csconta__Agreement_Name__c'
-										)}
+										{getFieldLabel('csconta__Frame_Agreement__c', 'csconta__Agreement_Name__c')}
 									</span>
 									{this.props.faFields
 										.filter(f => f.visible)
@@ -409,10 +382,8 @@ class FaMaster extends Component {
 													key={'header-' + f.name}
 													className={'list-cell' + (f.volume ? ' volume' : '')}
 												>
-													{getFieldLabel(
-														'csconta__Frame_Agreement__c',
-														f.name
-													) || truncateCPField(f.name)}
+													{getFieldLabel('csconta__Frame_Agreement__c', f.name) ||
+														truncateCPField(f.name)}
 												</span>
 											);
 										})}
@@ -425,10 +396,7 @@ class FaMaster extends Component {
 							.paginate(this.state.page, this.state.pageSize)
 							.map(fa => {
 								return (
-									<div
-										className="product-card__container"
-										key={'farow-' + fa.Id}
-									>
+									<div className="product-card__container" key={'farow-' + fa.Id}>
 										<div className="container__header">
 											<div className="container__checkbox">
 												<Checkbox
@@ -453,13 +421,8 @@ class FaMaster extends Component {
 													.filter(f => f.visible)
 													.map((f, i) => {
 														let _field = (
-															<div
-																className="fields__item"
-																key={'facp-' + fa.Id + '-' + f + i}
-															>
-																{fa.hasOwnProperty(f.name)
-																	? fa[f.name].toString()
-																	: '-'}
+															<div className="fields__item" key={'facp-' + fa.Id + '-' + f + i}>
+																{fa.hasOwnProperty(f.name) ? fa[f.name].toString() : '-'}
 															</div>
 														);
 
@@ -497,10 +460,7 @@ class FaMaster extends Component {
 						{this.props.settings.RelatedListsData.length ? (
 							<Tabs initial={0}>
 								<Tab label={window.SF.labels.fa_tab}>
-									<FaFields
-										onActionTaken={this.onActionTaken}
-										faId={this.faId}
-									/>
+									<FaFields onActionTaken={this.onActionTaken} faId={this.faId} />
 								</Tab>
 								<Tab label={window.SF.labels.rl_tab}>
 									<RelatedLists faId={this.faId} />
@@ -522,10 +482,7 @@ class FaMaster extends Component {
 					onRemoveProducts={() => this.onRemoveAgreements()}
 				/>
 
-				<FaModals
-					faId={this.faId}
-					selectedProducts={this.state.selectedAgreements}
-				/>
+				<FaModals faId={this.faId} selectedProducts={this.state.selectedAgreements} />
 			</div>
 		);
 	}
@@ -557,9 +514,4 @@ const mapDispatchToProps = {
 	getCommercialProductData
 };
 
-export default withRouter(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(FaMaster)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaMaster));

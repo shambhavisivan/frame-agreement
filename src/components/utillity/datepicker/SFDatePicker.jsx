@@ -11,10 +11,7 @@ class DatePickerInput extends React.Component {
 	render() {
 		return (
 			<div
-				className={
-					'datepicker-input-container ' +
-					(this.props.disabled ? 'disabled' : '')
-				}
+				className={'datepicker-input-container ' + (this.props.disabled ? 'disabled' : '')}
 				onClick={this.props.onClick}
 			>
 				<input

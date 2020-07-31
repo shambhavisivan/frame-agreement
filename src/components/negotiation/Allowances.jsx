@@ -23,21 +23,14 @@ export class Allowances extends React.Component {
 			<div className="table-container">
 				<div className="table-list-header">
 					<div className="list-cell">{window.SF.labels.allowances_name}</div>
-					<div className="list-cell">
-						{window.SF.labels.allowances_priority}
-					</div>
+					<div className="list-cell">{window.SF.labels.allowances_priority}</div>
 					<div className="list-cell">{window.SF.labels.allowances_amount}</div>
-					<div className="list-cell">
-						{window.SF.labels.allowances_usage_types}
-					</div>
+					<div className="list-cell">{window.SF.labels.allowances_usage_types}</div>
 				</div>
 
 				<ul className="table-list">
 					{this.props.data
-						.paginate(
-							this.state.pagination.page,
-							this.state.pagination.pageSize
-						)
+						.paginate(this.state.pagination.page, this.state.pagination.pageSize)
 						.map(allowance => {
 							return (
 								<li key={allowance.Id} className="list-row">
@@ -63,16 +56,11 @@ export class Allowances extends React.Component {
 											open={allowance.Id === this.state.openUt}
 											onOpen={() => {
 												this.setState({
-													openUt:
-														this.state.openUt === allowance.Id
-															? null
-															: allowance.Id
+													openUt: this.state.openUt === allowance.Id ? null : allowance.Id
 												});
 											}}
 											allowance={allowance}
-											fields={
-												this.props.settings.FACSettings.usage_type_fields__c
-											}
+											fields={this.props.settings.FACSettings.usage_type_fields__c}
 										/>
 									</div>
 								</li>
@@ -110,7 +98,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	null
-)(Allowances);
+export default connect(mapStateToProps, null)(Allowances);

@@ -34,9 +34,7 @@ class DeltaModal extends Component {
 			secondaryId: undefined,
 			secondaryFa: {},
 			primaryId: this.props.faIdOriginal,
-			primaryFa: this.formatFrameAgreement(
-				this.props.frameAgreements[this.props.faIdOriginal]
-			),
+			primaryFa: this.formatFrameAgreement(this.props.frameAgreements[this.props.faIdOriginal]),
 			delta: null
 		};
 
@@ -54,8 +52,7 @@ class DeltaModal extends Component {
 			)
 		) {
 			this.onSecondaryIdChange(
-				this.props.frameAgreements[this.props.faIdOriginal]
-					.csconta__replaced_frame_agreement__c
+				this.props.frameAgreements[this.props.faIdOriginal].csconta__replaced_frame_agreement__c
 			);
 		} else {
 			this.setState({
@@ -118,9 +115,7 @@ class DeltaModal extends Component {
 		this.setState({ loaded: false });
 
 		const primProdSet = new Set(
-			Object.keys(
-				this.props.frameAgreements[this.state.primaryId]._ui.attachment.products
-			)
+			Object.keys(this.props.frameAgreements[this.state.primaryId]._ui.attachment.products)
 		);
 
 		let _products_diff = Object.keys(
@@ -134,10 +129,7 @@ class DeltaModal extends Component {
 		}
 		console.log([this.state.primaryId, this.state.secondaryId]);
 		_promiseArray.push(
-			window.SF.invokeAction('getDelta', [
-				this.state.primaryId,
-				this.state.secondaryId
-			])
+			window.SF.invokeAction('getDelta', [this.state.primaryId, this.state.secondaryId])
 		);
 
 		Promise.all(_promiseArray).then(
@@ -149,9 +141,7 @@ class DeltaModal extends Component {
 
 				let mergedIdSet = new Set([...primProdSet, ..._products_diff]);
 
-				let _this_cp_list = this.props.commercialProducts.filter(cp =>
-					mergedIdSet.has(cp.Id)
-				);
+				let _this_cp_list = this.props.commercialProducts.filter(cp => mergedIdSet.has(cp.Id));
 
 				this.chargesInfoMap.addons = _this_cp_list.reduce((acc, iter) => {
 					if (iter.hasOwnProperty('_addons')) {
@@ -217,12 +207,8 @@ class DeltaModal extends Component {
 	}
 
 	switchAgreements() {
-		let _prim = this.formatFrameAgreement(
-			this.props.frameAgreements[this.state.primaryId]
-		);
-		let _sec = this.formatFrameAgreement(
-			this.props.frameAgreements[this.state.secondaryId]
-		);
+		let _prim = this.formatFrameAgreement(this.props.frameAgreements[this.state.primaryId]);
+		let _sec = this.formatFrameAgreement(this.props.frameAgreements[this.state.secondaryId]);
 
 		this.setState(
 			{
@@ -269,31 +255,20 @@ class DeltaModal extends Component {
 			>
 				<div className="fa-modal-header">
 					<button className="close-modal-button" onClick={this.onCloseModal}>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 52 52"
-						>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 52 52">
 							<path
 								fill="#fff"
 								d="m31 25.4l13-13.1c0.6-0.6 0.6-1.5 0-2.1l-2-2.1c-0.6-0.6-1.5-0.6-2.1 0l-13.1 13.1c-0.4 0.4-1 0.4-1.4 0l-13.1-13.2c-0.6-0.6-1.5-0.6-2.1 0l-2.1 2.1c-0.6 0.6-0.6 1.5 0 2.1l13.1 13.1c0.4 0.4 0.4 1 0 1.4l-13.2 13.2c-0.6 0.6-0.6 1.5 0 2.1l2.1 2.1c0.6 0.6 1.5 0.6 2.1 0l13.1-13.1c0.4-0.4 1-0.4 1.4 0l13.1 13.1c0.6 0.6 1.5 0.6 2.1 0l2.1-2.1c0.6-0.6 0.6-1.5 0-2.1l-13-13.1c-0.4-0.4-0.4-1 0-1.4z"
 							/>
 						</svg>
 					</button>
-					<h2 className="fa-modal-header-title">
-						{window.SF.labels.delta_title}
-					</h2>
+					<h2 className="fa-modal-header-title">{window.SF.labels.delta_title}</h2>
 				</div>
 
 				<div className="delta-modal fa-modal-body">
 					<Loading loading={!this.state.loaded} />
 
-					<div
-						className={
-							'delta-options' + (this.state.deltaView ? ' hidden' : '')
-						}
-					>
+					<div className={'delta-options' + (this.state.deltaView ? ' hidden' : '')}>
 						<div className="delta-select">
 							<select
 								className="fa-select"
@@ -302,9 +277,7 @@ class DeltaModal extends Component {
 							>
 								<option value="">Choose a primary agreement</option>
 								{Object.values(this.props.frameAgreements)
-									.filter(
-										fa => !isMaster(fa) && fa.Id !== this.state.secondaryId
-									)
+									.filter(fa => !isMaster(fa) && fa.Id !== this.state.secondaryId)
 									.map(fa => {
 										return (
 											<option key={'prim-' + fa.Id} value={fa.Id}>
@@ -315,10 +288,7 @@ class DeltaModal extends Component {
 							</select>
 						</div>
 
-						<div
-							className="delta-select-switch"
-							onClick={this.switchAgreements}
-						>
+						<div className="delta-select-switch" onClick={this.switchAgreements}>
 							<Icon color="#080707" name="replace" width="16" height="16" />
 						</div>
 
@@ -399,9 +369,7 @@ class DeltaModal extends Component {
 						{this.state.delta ? (
 							<button
 								className="fa-button fa-button--default"
-								onClick={() =>
-									this.setState({ deltaView: !this.state.deltaView })
-								}
+								onClick={() => this.setState({ deltaView: !this.state.deltaView })}
 							>
 								{this.state.deltaView
 									? '< ' + window.SF.labels.btn_delta_switch_fa
@@ -420,10 +388,7 @@ class DeltaModal extends Component {
 						) : null}
 					</div>
 
-					<button
-						className="fa-button fa-button--default"
-						onClick={this.onCloseModal}
-					>
+					<button className="fa-button fa-button--default" onClick={this.onCloseModal}>
 						{window.SF.labels.btn_Done}
 					</button>
 				</div>
@@ -444,7 +409,4 @@ const mapDispatchToProps = {
 	getAttachment
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(DeltaModal);
+export default connect(mapStateToProps, mapDispatchToProps)(DeltaModal);

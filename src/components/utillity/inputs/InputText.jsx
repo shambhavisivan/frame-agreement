@@ -21,8 +21,7 @@ class InputText extends React.Component {
 		if (this.props.formula) {
 			_placeholder = window.SF.labels.util_input_formula_placehoder;
 		} else {
-			_placeholder =
-				window.SF.labels.util_input_text_enter + ' ' + this.props.type;
+			_placeholder = window.SF.labels.util_input_text_enter + ' ' + this.props.type;
 		}
 
 		if (this.props.disabled) {

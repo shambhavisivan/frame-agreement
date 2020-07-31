@@ -40,10 +40,7 @@ class FaModals extends React.Component {
 		this.props.bulkNegotiate(this.props.faId, data);
 		this.props.validateFrameAgreement(this.props.faId);
 
-		publish(
-			'onAfterBulkNegotiation',
-			this.props.frameAgreements[this.props.faId]._ui.attachment
-		);
+		publish('onAfterBulkNegotiation', this.props.frameAgreements[this.props.faId]._ui.attachment);
 		this.onCloseModal();
 	}
 
@@ -73,9 +70,7 @@ class FaModals extends React.Component {
 
 		publish(
 			'onAfterAddProducts',
-			this.props.frameAgreements[this.props.faId]._ui.commercialProducts.map(
-				cp => cp.Id
-			)
+			this.props.frameAgreements[this.props.faId]._ui.commercialProducts.map(cp => cp.Id)
 		);
 		this.onCloseModal();
 		return this.props.frameAgreements[this.props.faId];
@@ -99,9 +94,7 @@ class FaModals extends React.Component {
 				<ProductModal
 					cpFilter={_fa._ui._filter}
 					open={this.props.modals.productModal}
-					addedProducts={
-						this.props.frameAgreements[this.props.faId]._ui.commercialProducts
-					}
+					addedProducts={this.props.frameAgreements[this.props.faId]._ui.commercialProducts}
 					onAddProducts={this.onAddProducts}
 					onCloseModal={this.onCloseModal}
 				/>
@@ -114,9 +107,7 @@ class FaModals extends React.Component {
 				<NegotiationModal
 					open={this.props.modals.negotiateModal}
 					products={Object.keys(this.props.selectedProducts)}
-					attachment={
-						this.props.frameAgreements[this.props.faId]._ui.attachment.products
-					}
+					attachment={this.props.frameAgreements[this.props.faId]._ui.attachment.products}
 					onNegotiate={this.onBulkNegotiate}
 					onCloseModal={this.onCloseModal}
 				/>
@@ -188,7 +179,4 @@ const mapDispatchToProps = {
 	getCommercialProductData
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(FaModals);
+export default connect(mapStateToProps, mapDispatchToProps)(FaModals);

@@ -35,10 +35,7 @@ class DropdownNegotiate extends React.Component {
 		this.props.discounts.forEach(discount => {
 			discount.cspmb__Discount_Values__c.forEach((val, index) => {
 				// Bit of a validation
-				if (
-					discount.cspmb__Discount_Type__c === 'Amount' &&
-					val > _originalValue
-				) {
+				if (discount.cspmb__Discount_Type__c === 'Amount' && val > _originalValue) {
 					_logMessages.push(
 						'Discount level "' +
 							discount.Name +
@@ -66,8 +63,7 @@ class DropdownNegotiate extends React.Component {
 		});
 
 		// Sort values high to low
-		this.discounts.sort((a,b) => (a.value > b.value) ? 1 : ((b.value > a.value) ? -1 : 0)); 
-
+		this.discounts.sort((a, b) => (a.value > b.value ? 1 : b.value > a.value ? -1 : 0));
 
 		if (_logMessages.length > 1) {
 			console.group('Discount warnings:');
@@ -79,19 +75,12 @@ class DropdownNegotiate extends React.Component {
 
 		// Check if values are 0
 		this.discountNulled =
-			this.props.discounts.length === 1 &&
-			!this.props.discounts.reduce((a, b) => a + b, 0);
+			this.props.discounts.length === 1 && !this.props.discounts.reduce((a, b) => a + b, 0);
 
 		this.discounts.forEach((discount, index) => {
-			if (
-				discount.type === 'Percentage' &&
-				+discount.value === initialPercentage
-			) {
+			if (discount.type === 'Percentage' && +discount.value === initialPercentage) {
 				initialDiscount = index;
-			} else if (
-				discount.type === 'Amount' &&
-				+discount.value === initialFixed
-			) {
+			} else if (discount.type === 'Amount' && +discount.value === initialFixed) {
 				initialDiscount = index;
 			}
 		});
@@ -144,9 +133,7 @@ class DropdownNegotiate extends React.Component {
 			_value = Math.abs(_originalValue - _negotiatedValue);
 			_value = _prefix + _value.toFixedNumber(_dp);
 		} else {
-			_value = Math.abs(
-				((_originalValue - _negotiatedValue) / _originalValue) * 100
-			);
+			_value = Math.abs(((_originalValue - _negotiatedValue) / _originalValue) * 100);
 			_value = _prefix + _value.toFixedNumber() + '%';
 		}
 
@@ -156,10 +143,7 @@ class DropdownNegotiate extends React.Component {
 
 		return (
 			<div
-				className={
-					'negotiate-container select-negotiate' +
-					(this.props.invalid ? ' invalid' : '')
-				}
+				className={'negotiate-container select-negotiate' + (this.props.invalid ? ' invalid' : '')}
 			>
 				<div className={'negotiate-input-wrapper' + (dirty ? ' dirty' : '')}>
 					<span className="">{_negotiatedValue}</span>
@@ -188,9 +172,7 @@ class DropdownNegotiate extends React.Component {
 						<option value="none">{window.SF.labels.fa_none}</option>
 						{this.discounts.map((disc, index) => {
 							let _discount =
-								'-' +
-								disc.value.toFixedNumber() +
-								(disc.type === 'Percentage' ? '%' : '');
+								'-' + disc.value.toFixedNumber() + (disc.type === 'Percentage' ? '%' : '');
 							if (this.props.discAsPrice) {
 								_discount =
 									disc.type === 'Percentage'

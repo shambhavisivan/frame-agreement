@@ -48,9 +48,7 @@ class Tabs extends React.Component {
 		return (
 			<div className="fa-tab-group-wrapper">
 				<div className="fa-tab-group">
-					<ul className="fa-tabs-primary">
-						{this.renderChildrenWithTabsApiAsProps()}
-					</ul>
+					<ul className="fa-tabs-primary">{this.renderChildrenWithTabsApiAsProps()}</ul>
 				</div>
 				<div className="fa-tab-content">{this.renderActiveTabContent()}</div>
 			</div>

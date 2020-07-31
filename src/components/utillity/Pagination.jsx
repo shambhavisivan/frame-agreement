@@ -36,27 +36,15 @@ class Pagination extends Component {
 		let pagination = '';
 		if (this.props.totalSize > this.pageSizes[0]) {
 			pagination = (
-				<div
-					className={
-						'fa-pagination-container ' + (this.props.disabled ? 'disabled' : '')
-					}
-				>
+				<div className={'fa-pagination-container ' + (this.props.disabled ? 'disabled' : '')}>
 					<div className="pagination-overlay" />
 
 					<ReactPaginate
 						previousLabel={
-							<Icon
-								name="left"
-								width="14"
-								color={this.props.disabled ? '#dddbda' : '#0070d2'}
-							/>
+							<Icon name="left" width="14" color={this.props.disabled ? '#dddbda' : '#0070d2'} />
 						}
 						nextLabel={
-							<Icon
-								name="right"
-								width="14"
-								color={this.props.disabled ? '#dddbda' : '#0070d2'}
-							/>
+							<Icon name="right" width="14" color={this.props.disabled ? '#dddbda' : '#0070d2'} />
 						}
 						breakLabel={'...'}
 						forcePage={this.props.page - 1}
@@ -72,10 +60,7 @@ class Pagination extends Component {
 					/>
 
 					{!this.props.restricted && this.props.onPageSizeChange ? (
-						<select
-							value={this.props.pageSize}
-							onChange={this.onPageSizeChange}
-						>
+						<select value={this.props.pageSize} onChange={this.onPageSizeChange}>
 							{this.pageSizes.map(val => {
 								return (
 									<option key={val} value={val}>

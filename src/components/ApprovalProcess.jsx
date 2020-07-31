@@ -15,16 +15,15 @@ export class ApprovalProcess extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.itemsMerged = this.props.frameAgreements[
-			this.props.faId
-		]._ui.approval.listProcess.reduce((acc, item) => {
-			return acc.concat(item.StepsAndWorkitems || []);
-		}, []);
+		this.itemsMerged = this.props.frameAgreements[this.props.faId]._ui.approval.listProcess.reduce(
+			(acc, item) => {
+				return acc.concat(item.StepsAndWorkitems || []);
+			},
+			[]
+		);
 
 		// Can user recall? (If admin or initiator)
-		this.isInitiator = this.props.frameAgreements[
-			this.props.faId
-		]._ui.approval.isAdmin;
+		this.isInitiator = this.props.frameAgreements[this.props.faId]._ui.approval.isAdmin;
 		this.actionRequired = false;
 
 		try {
@@ -41,9 +40,9 @@ export class ApprovalProcess extends React.Component {
 			});
 			this.isInitiator =
 				this.isInitiator ||
-				this.props.frameAgreements[this.props.faId]._ui.approval.listProcess[0]
-					.StepsAndWorkitems[startingIndex].OriginalActorId ===
-					this.props.frameAgreements[this.props.faId]._ui.approval.currentUser;
+				this.props.frameAgreements[this.props.faId]._ui.approval.listProcess[0].StepsAndWorkitems[
+					startingIndex
+				].OriginalActorId === this.props.frameAgreements[this.props.faId]._ui.approval.currentUser;
 		} catch (err) {}
 
 		this.state = {
@@ -55,18 +54,18 @@ export class ApprovalProcess extends React.Component {
 
 	componentDidUpdate() {
 		let newActionRequired = false;
-		let newIsInitiator = this.props.frameAgreements[this.props.faId]._ui
-			.approval.isAdmin;
+		let newIsInitiator = this.props.frameAgreements[this.props.faId]._ui.approval.isAdmin;
 
 		try {
-			let itemsMerged = this.props.frameAgreements[
-				this.props.faId
-			]._ui.approval.listProcess.reduce((acc, item) => {
-				return acc.concat(item.StepsAndWorkitems || []);
-			}, []);
+			let itemsMerged = this.props.frameAgreements[this.props.faId]._ui.approval.listProcess.reduce(
+				(acc, item) => {
+					return acc.concat(item.StepsAndWorkitems || []);
+				},
+				[]
+			);
 
-			newActionRequired = this.props.frameAgreements[this.props.faId]._ui
-				.approval.listProcess[0].StepsAndWorkitems[0].IsPending;
+			newActionRequired = this.props.frameAgreements[this.props.faId]._ui.approval.listProcess[0]
+				.StepsAndWorkitems[0].IsPending;
 
 			let startingIndex = this.props.frameAgreements[
 				this.props.faId
@@ -76,9 +75,9 @@ export class ApprovalProcess extends React.Component {
 
 			newIsInitiator =
 				newIsInitiator ||
-				this.props.frameAgreements[this.props.faId]._ui.approval.listProcess[0]
-					.StepsAndWorkitems[startingIndex].OriginalActorId ===
-					this.props.frameAgreements[this.props.faId]._ui.approval.currentUser;
+				this.props.frameAgreements[this.props.faId]._ui.approval.listProcess[0].StepsAndWorkitems[
+					startingIndex
+				].OriginalActorId === this.props.frameAgreements[this.props.faId]._ui.approval.currentUser;
 		} catch (err) {}
 
 		if (newActionRequired !== this.actionRequired) {
@@ -107,36 +106,27 @@ export class ApprovalProcess extends React.Component {
 		if (actionType === 'Reassign') {
 			reassignApproval(
 				this.props.faId,
-				reassignTo ||
-					this.props.frameAgreements[this.props.faId]._ui.approval.currentUser
+				reassignTo || this.props.frameAgreements[this.props.faId]._ui.approval.currentUser
 			);
 		} else {
 			let _nextFaState;
 
 			switch (actionType) {
 				case 'Reject':
-					_nextFaState = this.props.settings.FACSettings.statuses
-						.requires_approval_status;
+					_nextFaState = this.props.settings.FACSettings.statuses.requires_approval_status;
 					break;
 				case 'Approve':
-					_nextFaState = this.props.settings.FACSettings.statuses
-						.approved_status;
+					_nextFaState = this.props.settings.FACSettings.statuses.approved_status;
 					break;
 				case 'Removed':
-					_nextFaState = this.props.settings.FACSettings.statuses
-						.requires_approval_status;
+					_nextFaState = this.props.settings.FACSettings.statuses.requires_approval_status;
 					break;
 				default:
-					_nextFaState = this.props.frameAgreements[this.props.faId]
-						.csconta__Status__c;
+					_nextFaState = this.props.frameAgreements[this.props.faId].csconta__Status__c;
 			}
 
 			Promise.all([
-				approveRejectRecallRecord(
-					this.props.faId,
-					this.state.comment || null,
-					actionType
-				),
+				approveRejectRecallRecord(this.props.faId, this.state.comment || null, actionType),
 				this.props.setFrameAgreementState(this.props.faId, _nextFaState)
 			])
 				.then(response => {
@@ -186,9 +176,7 @@ export class ApprovalProcess extends React.Component {
 							}}
 						>
 							<Icon
-								svg-class={
-									'approval-refresh' + (this.state.loading ? ' rotating' : '')
-								}
+								svg-class={'approval-refresh' + (this.state.loading ? ' rotating' : '')}
 								name="refresh"
 								width="14"
 								height="14"
@@ -198,9 +186,7 @@ export class ApprovalProcess extends React.Component {
 					</div>
 					{this.actionRequired && this.state.open && (
 						<div className="approval-card__body">
-							<span className="body__title">
-								{window.SF.labels.approval_message_title}
-							</span>
+							<span className="body__title">{window.SF.labels.approval_message_title}</span>
 							<textarea
 								className="fa-textarea"
 								value={this.state.comment}
@@ -210,19 +196,17 @@ export class ApprovalProcess extends React.Component {
 								placeholder={window.SF.labels.approval_message_placeholder}
 							/>
 							<div className="fa-button-group">
-								{this.props.frameAgreements[this.props.faId]._ui.approval
-									.isApprover &&
-									false && (
-										<button
-											className="fa-button fa-button--default"
-											onClick={() => this.approvalAction('Reassign')}
-										>
-											<Icon name="change_owner" height="14" width="14" />
-											<span className="fa-padding-left-xsm">
-												{window.SF.labels.approval_action_reassign}
-											</span>
-										</button>
-									)}
+								{this.props.frameAgreements[this.props.faId]._ui.approval.isApprover && false && (
+									<button
+										className="fa-button fa-button--default"
+										onClick={() => this.approvalAction('Reassign')}
+									>
+										<Icon name="change_owner" height="14" width="14" />
+										<span className="fa-padding-left-xsm">
+											{window.SF.labels.approval_action_reassign}
+										</span>
+									</button>
+								)}
 								{this.isInitiator && (
 									<button
 										className="fa-button fa-button--default"
@@ -234,8 +218,7 @@ export class ApprovalProcess extends React.Component {
 										</span>
 									</button>
 								)}
-								{this.props.frameAgreements[this.props.faId]._ui.approval
-									.isApprover && (
+								{this.props.frameAgreements[this.props.faId]._ui.approval.isApprover && (
 									<button
 										className="fa-button fa-button--default"
 										onClick={() => this.approvalAction('Approve')}
@@ -246,8 +229,7 @@ export class ApprovalProcess extends React.Component {
 										</span>
 									</button>
 								)}
-								{this.props.frameAgreements[this.props.faId]._ui.approval
-									.isApprover && (
+								{this.props.frameAgreements[this.props.faId]._ui.approval.isApprover && (
 									<button
 										className="fa-button fa-button--default"
 										onClick={() => this.approvalAction('Reject')}
@@ -264,108 +246,78 @@ export class ApprovalProcess extends React.Component {
 					{this.state.open && (
 						<div className="approval-table-list-container">
 							<div className="table-list-header">
-								<div
-									className="list-cell"
-									title={window.SF.labels.approval_table_header_action}
-								>
+								<div className="list-cell" title={window.SF.labels.approval_table_header_action}>
 									<span>{window.SF.labels.approval_table_header_action}</span>
 								</div>
-								<div
-									className="list-cell"
-									title={window.SF.labels.approval_table_header_date}
-								>
+								<div className="list-cell" title={window.SF.labels.approval_table_header_date}>
 									<span>{window.SF.labels.approval_table_header_date}</span>
 								</div>
-								<div
-									className="list-cell"
-									title={window.SF.labels.approval_table_header_status}
-								>
+								<div className="list-cell" title={window.SF.labels.approval_table_header_status}>
 									<span>{window.SF.labels.approval_table_header_status}</span>
 								</div>
 								<div
 									className="list-cell"
 									title={window.SF.labels.approval_table_header_assignedTo}
 								>
-									<span>
-										{window.SF.labels.approval_table_header_assignedTo}
-									</span>
+									<span>{window.SF.labels.approval_table_header_assignedTo}</span>
 								</div>
 								<div
 									className="list-cell"
 									title={window.SF.labels.approval_table_header_actualApprover}
 								>
-									<span>
-										{window.SF.labels.approval_table_header_actualApprover}
-									</span>
+									<span>{window.SF.labels.approval_table_header_actualApprover}</span>
 								</div>
-								<div
-									className="list-cell"
-									title={window.SF.labels.approval_table_header_comments}
-								>
+								<div className="list-cell" title={window.SF.labels.approval_table_header_comments}>
 									<span>{window.SF.labels.approval_table_header_comments}</span>
 								</div>
 							</div>
-							{this.props.frameAgreements[
-								this.props.faId
-							]._ui.approval.listProcess.map((process, i) => {
-								return (
-									<ul key={process.Id} className="table-list">
-										{process.StepsAndWorkitems.map((step, i) => {
-											return (
-												<li key={'approvalStep' + i} className="list-row">
-													<div
-														className="list-cell"
-														title={
-															(step.ProcessNode && step.ProcessNode.Name) ||
-															'Approval Request Submitted '
-														}
-													>
-														<span>
-															{(step.ProcessNode && step.ProcessNode.Name) ||
-																'Approval Request Submitted '}
-														</span>
-													</div>
-													<div
-														className="list-cell"
-														title={moment(step.CreatedDate).format('L HH:mm')}
-													>
-														<span>
-															{moment(step.CreatedDate).format('L HH:mm')}
-														</span>
-													</div>
-													<div
-														className="list-cell"
-														title={'status ' + step.StepStatus}
-													>
-														<span className={'status ' + step.StepStatus}>
-															{step.StepStatus}
-														</span>
-													</div>
-													<div
-														className="list-cell"
-														title={step.Actor && step.Actor.Name}
-													>
-														<span>{step.Actor && step.Actor.Name}</span>
-													</div>
-													<div
-														className="list-cell"
-														title={
-															step.OriginalActor && step.OriginalActor.Name
-														}
-													>
-														<span>
-															{step.OriginalActor && step.OriginalActor.Name}
-														</span>
-													</div>
-													<div className="list-cell" title={step.Comments}>
-														<span>{step.Comments || '-/-'}</span>
-													</div>
-												</li>
-											);
-										})}
-									</ul>
-								);
-							})}
+							{this.props.frameAgreements[this.props.faId]._ui.approval.listProcess.map(
+								(process, i) => {
+									return (
+										<ul key={process.Id} className="table-list">
+											{process.StepsAndWorkitems.map((step, i) => {
+												return (
+													<li key={'approvalStep' + i} className="list-row">
+														<div
+															className="list-cell"
+															title={
+																(step.ProcessNode && step.ProcessNode.Name) ||
+																'Approval Request Submitted '
+															}
+														>
+															<span>
+																{(step.ProcessNode && step.ProcessNode.Name) ||
+																	'Approval Request Submitted '}
+															</span>
+														</div>
+														<div
+															className="list-cell"
+															title={moment(step.CreatedDate).format('L HH:mm')}
+														>
+															<span>{moment(step.CreatedDate).format('L HH:mm')}</span>
+														</div>
+														<div className="list-cell" title={'status ' + step.StepStatus}>
+															<span className={'status ' + step.StepStatus}>{step.StepStatus}</span>
+														</div>
+														<div className="list-cell" title={step.Actor && step.Actor.Name}>
+															<span>{step.Actor && step.Actor.Name}</span>
+														</div>
+														<div
+															className="list-cell"
+															title={step.OriginalActor && step.OriginalActor.Name}
+														>
+															<span>{step.OriginalActor && step.OriginalActor.Name}</span>
+														</div>
+														<div className="list-cell" title={step.Comments}>
+															<span>{step.Comments || '-/-'}</span>
+														</div>
+													</li>
+												);
+											})}
+										</ul>
+									);
+								}
+							)}
 							<div className="card__bottom" />
 						</div>
 					)}
@@ -389,7 +341,4 @@ const mapDispatchToProps = {
 	createToast
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ApprovalProcess);
+export default connect(mapStateToProps, mapDispatchToProps)(ApprovalProcess);

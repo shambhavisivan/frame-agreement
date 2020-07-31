@@ -18,12 +18,8 @@ export class AddProductCTA extends React.Component {
 		if (this.props.render) {
 			addProductCTA = (
 				<div className="add-product-box">
-					<span className="box-header-1">
-						{window.SF.labels.addProductCTAMessage}
-					</span>
-					<span className="box-header-2">
-						{window.SF.labels.save_fa_products_message}
-					</span>
+					<span className="box-header-1">{window.SF.labels.addProductCTAMessage}</span>
+					<span className="box-header-2">{window.SF.labels.save_fa_products_message}</span>
 					<div className="box-button-container">
 						<button
 							className="fa-button fa-button--brand"
@@ -45,7 +41,4 @@ const mapDispatchToProps = {
 	toggleModals
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)(AddProductCTA);
+export default connect(null, mapDispatchToProps)(AddProductCTA);

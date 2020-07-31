@@ -9,9 +9,7 @@ class FrameAgreementRow extends React.Component {
 		super(props);
 		this.statusClass =
 			'fa-chip ' +
-			(this.props.agreement.csconta__Status__c === 'Draft'
-				? 'fa-chip--draft'
-				: 'fa-chip--active');
+			(this.props.agreement.csconta__Status__c === 'Draft' ? 'fa-chip--draft' : 'fa-chip--active');
 
 		this.showMenu = this.showMenu.bind(this);
 		this.hideMenu = this.hideMenu.bind(this);
@@ -66,29 +64,20 @@ class FrameAgreementRow extends React.Component {
 
 		return (
 			<div className="fa-panel">
-				<Link
-					className="fa-panel-item"
-					to={`/agreement/${this.props.agreement.Id}`}
-				>
+				<Link className="fa-panel-item" to={`/agreement/${this.props.agreement.Id}`}>
 					<div className="fa-panel-body">
 						<div className="fa-panel-body-col">
-							<span>
-								{this.props.agreement.csconta__Agreement_Name__c ||
-									'-- anonymous --'}
-							</span>
+							<span>{this.props.agreement.csconta__Agreement_Name__c || '-- anonymous --'}</span>
 						</div>
 						<div>
 							{_master ? (
-								<span className="fa-chip fa-chip--master">
-									{window.SF.labels.fa_master_chip}
-								</span>
+								<span className="fa-chip fa-chip--master">{window.SF.labels.fa_master_chip}</span>
 							) : null}
 
 							{!_master && this.props.agreement.csconta__Status__c ? (
 								<span className={this.statusClass}>
-									{window.SF.fieldLabels.statuses[
-										this.props.agreement.csconta__Status__c
-									] || this.props.agreement.csconta__Status__c}
+									{window.SF.fieldLabels.statuses[this.props.agreement.csconta__Status__c] ||
+										this.props.agreement.csconta__Status__c}
 								</span>
 							) : (
 								''
@@ -102,12 +91,7 @@ class FrameAgreementRow extends React.Component {
 						aria-label="Dropdown button"
 						aria-expanded={this.state.menu}
 					>
-						<Icon
-							name="threedots_vertical"
-							width="16"
-							height="16"
-							color="#0070d2"
-						/>
+						<Icon name="threedots_vertical" width="16" height="16" color="#0070d2" />
 					</button>
 				</div>
 				{this.state.menu && (
@@ -116,31 +100,19 @@ class FrameAgreementRow extends React.Component {
 						aria-hidden={!this.state.menu}
 						ref={this.setWrapperRef}
 					>
-						<button
-							className="fa-dropdown__button"
-							onClick={() => this.menuAction('edit')}
-						>
+						<button className="fa-dropdown__button" onClick={() => this.menuAction('edit')}>
 							<Icon name="edit" height="14" width="14" color="#0070d2" />
 							<span>{window.SF.labels.faMenuActionEdit}</span>
 						</button>
-						<button
-							className="fa-dropdown__button"
-							onClick={() => this.menuAction('clone')}
-						>
+						<button className="fa-dropdown__button" onClick={() => this.menuAction('clone')}>
 							<Icon name="copy" height="14" width="14" color="#0070d2" />
 							<span>{window.SF.labels.faMenuActionClone}</span>
 						</button>
-						<button
-							className="fa-dropdown__button"
-							onClick={() => this.menuAction('delete')}
-						>
+						<button className="fa-dropdown__button" onClick={() => this.menuAction('delete')}>
 							<Icon name="delete" height="14" width="14" color="#0070d2" />
 							<span>{window.SF.labels.faMenuActionDelete}</span>
 						</button>
-						<button
-							className="fa-dropdown__button"
-							onClick={() => this.menuAction('accounts')}
-						>
+						<button className="fa-dropdown__button" onClick={() => this.menuAction('accounts')}>
 							<Icon name="people" height="14" width="14" color="#0070d2" />
 							<span>{window.SF.labels.faMenuActionAccounts}</span>
 						</button>

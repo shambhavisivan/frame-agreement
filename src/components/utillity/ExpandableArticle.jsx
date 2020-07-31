@@ -11,11 +11,7 @@ class ExpandableArticle extends Component {
 
 	render() {
 		return (
-			<div
-				className={
-					'expandable-article' + (this.state.expanded ? ' expanded' : '')
-				}
-			>
+			<div className={'expandable-article' + (this.state.expanded ? ' expanded' : '')}>
 				<span className="expandable-text">{this.props.children}</span>
 				{this.props.children.length >= 100 && (
 					<span

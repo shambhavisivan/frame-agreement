@@ -28,17 +28,11 @@ export const validateAddons = (data, attachment) => {
 				addon
 			};
 
-			if (
-				attachment[addon.Id] &&
-				typeof attachment[addon.Id].oneOff !== 'undefined'
-			) {
+			if (attachment[addon.Id] && typeof attachment[addon.Id].oneOff !== 'undefined') {
 				negotiationFormat.negotiatedOneOff = attachment[addon.Id].oneOff;
 			}
 
-			if (
-				attachment[addon.Id] &&
-				typeof attachment[addon.Id].recurring !== 'undefined'
-			) {
+			if (attachment[addon.Id] && typeof attachment[addon.Id].recurring !== 'undefined') {
 				negotiationFormat.negotiatedRecurring = attachment[addon.Id].recurring;
 			}
 
@@ -59,70 +53,63 @@ export const validateAddons = (data, attachment) => {
 		let _logMessages = [];
 
 		validation[negotiationFormat.addon.cspmb__Authorization_Level__c] &&
-			validation[negotiationFormat.addon.cspmb__Authorization_Level__c].forEach(
-				thresh => {
-					// Validate threshold
-					if (!thresh.hasOwnProperty('cspmb__Discount_Threshold__c')) {
-						console.log('No discount on threshold ', thresh.Name);
-					} else {
-						let minOneOff =
-							getMinValue(
-								addon.cspmb__One_Off_Charge__c,
-								thresh.cspmb__Discount_Threshold__c,
-								thresh.cspmb__Discount_Type__c
-							) || 0;
-						let minRecurring =
-							getMinValue(
-								addon.cspmb__Recurring_Charge__c,
-								thresh.cspmb__Discount_Threshold__c,
-								thresh.cspmb__Discount_Type__c
-							) || 0;
+			validation[negotiationFormat.addon.cspmb__Authorization_Level__c].forEach(thresh => {
+				// Validate threshold
+				if (!thresh.hasOwnProperty('cspmb__Discount_Threshold__c')) {
+					console.log('No discount on threshold ', thresh.Name);
+				} else {
+					let minOneOff =
+						getMinValue(
+							addon.cspmb__One_Off_Charge__c,
+							thresh.cspmb__Discount_Threshold__c,
+							thresh.cspmb__Discount_Type__c
+						) || 0;
+					let minRecurring =
+						getMinValue(
+							addon.cspmb__Recurring_Charge__c,
+							thresh.cspmb__Discount_Threshold__c,
+							thresh.cspmb__Discount_Type__c
+						) || 0;
 
-						if (
-							negotiationFormat.negotiatedOneOff != null &&
-							negotiationFormat.negotiatedOneOff < minOneOff.toFixedNumber()
-						) {
-							_logMessages.push(
-								'Minimal value for oneOff on ' +
-									addon.Name +
-									' is ' +
-									minOneOff.toFixedNumber() +
-									' (-' +
-									thresh.cspmb__Discount_Threshold__c +
-									'' +
-									(thresh.cspmb__Discount_Type__c === 'Percentage'
-										? '%'
-										: ' units') +
-									') -> inputed value: ' +
-									negotiationFormat.negotiatedOneOff
-							);
-							errataMap[addon.Id].oneOff = true;
-						}
+					if (
+						negotiationFormat.negotiatedOneOff != null &&
+						negotiationFormat.negotiatedOneOff < minOneOff.toFixedNumber()
+					) {
+						_logMessages.push(
+							'Minimal value for oneOff on ' +
+								addon.Name +
+								' is ' +
+								minOneOff.toFixedNumber() +
+								' (-' +
+								thresh.cspmb__Discount_Threshold__c +
+								'' +
+								(thresh.cspmb__Discount_Type__c === 'Percentage' ? '%' : ' units') +
+								') -> inputed value: ' +
+								negotiationFormat.negotiatedOneOff
+						);
+						errataMap[addon.Id].oneOff = true;
+					}
 
-						if (
-							negotiationFormat.negotiatedRecurring != null &&
-							negotiationFormat.negotiatedRecurring <
-								minRecurring.toFixedNumber()
-						) {
-							_logMessages.push(
-								'Minimal value for recurring on ' +
-									addon.Name +
-									' is ' +
-									minRecurring.toFixedNumber() +
-									' (-' +
-									thresh.cspmb__Discount_Threshold__c +
-									'' +
-									(thresh.cspmb__Discount_Type__c === 'Percentage'
-										? '%'
-										: ' units') +
-									') -> inputed value: ' +
-									negotiationFormat.negotiatedRecurring
-							);
-							errataMap[addon.Id].recurring = true;
-						}
+					if (
+						negotiationFormat.negotiatedRecurring != null &&
+						negotiationFormat.negotiatedRecurring < minRecurring.toFixedNumber()
+					) {
+						_logMessages.push(
+							'Minimal value for recurring on ' +
+								addon.Name +
+								' is ' +
+								minRecurring.toFixedNumber() +
+								' (-' +
+								thresh.cspmb__Discount_Threshold__c +
+								'' +
+								(thresh.cspmb__Discount_Type__c === 'Percentage' ? '%' : ' units') +
+								') -> inputed value: ' +
+								negotiationFormat.negotiatedRecurring
+						);
+						errataMap[addon.Id].recurring = true;
 					}
 				}
-			);
+			});
 
 		if (_logMessages.length > 1) {
 			console.group('Validation warnings:');
@@ -181,10 +168,7 @@ export const validateProduct = data => {
 						thresh.cspmb__Discount_Type__c
 					) || 0;
 
-				if (
-					data.negotiatedOneOff != null &&
-					data.negotiatedOneOff < minOneOff.toFixedNumber()
-				) {
+				if (data.negotiatedOneOff != null && data.negotiatedOneOff < minOneOff.toFixedNumber()) {
 					_logMessages.push(
 						'Minimal value for oneOff on ' +
 							data.Name +
@@ -193,9 +177,7 @@ export const validateProduct = data => {
 							' (-' +
 							thresh.cspmb__Discount_Threshold__c +
 							'' +
-							(thresh.cspmb__Discount_Type__c === 'Percentage'
-								? '%'
-								: ' units') +
+							(thresh.cspmb__Discount_Type__c === 'Percentage' ? '%' : ' units') +
 							') -> inputed value: ' +
 							data.negotiatedOneOff
 					);
@@ -214,9 +196,7 @@ export const validateProduct = data => {
 							' (-' +
 							thresh.cspmb__Discount_Threshold__c +
 							'' +
-							(thresh.cspmb__Discount_Type__c === 'Percentage'
-								? '%'
-								: ' units') +
+							(thresh.cspmb__Discount_Type__c === 'Percentage' ? '%' : ' units') +
 							') -> inputed value: ' +
 							data.negotiatedRecurring
 					);
@@ -317,9 +297,7 @@ export const validateCharges = (data, authLevel, attachment) => {
 								' (-' +
 								thresh.cspmb__Discount_Threshold__c +
 								'' +
-								(thresh.cspmb__Discount_Type__c === 'Percentage'
-									? '%'
-									: ' units') +
+								(thresh.cspmb__Discount_Type__c === 'Percentage' ? '%' : ' units') +
 								') -> inputed value: ' +
 								negotiationFormat.negotiatedValue
 						);
@@ -398,10 +376,7 @@ export const validateRateCardLines = (data, data2) => {
 							thresh.cspmb__Discount_Type__c
 						) || 0;
 
-					if (
-						negotiationFormat.negotiatedValue.toFixedNumber() <
-						minValue.toFixedNumber()
-					) {
+					if (negotiationFormat.negotiatedValue.toFixedNumber() < minValue.toFixedNumber()) {
 						_logMessages.push(
 							'Minimal value for  ' +
 								rcl.Name +
@@ -410,9 +385,7 @@ export const validateRateCardLines = (data, data2) => {
 								' (-' +
 								thresh.cspmb__Discount_Threshold__c +
 								'' +
-								(thresh.cspmb__Discount_Type__c === 'Percentage'
-									? '%'
-									: ' units') +
+								(thresh.cspmb__Discount_Type__c === 'Percentage' ? '%' : ' units') +
 								') -> inputed value: ' +
 								negotiationFormat.negotiatedValue
 						);

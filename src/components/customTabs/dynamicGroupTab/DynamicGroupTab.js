@@ -49,37 +49,27 @@ class DynamicGroupTab extends React.Component {
 	componentDidMount() {
 		// ************************************
 		let _getGroupsPromise = window.FAM.api
-			.performAction(
-				'csfamext.DynamicGroupDataProvider',
-				'{"method": "getDynamicGroups"}'
-			)
+			.performAction('csfamext.DynamicGroupDataProvider', '{"method": "getDynamicGroups"}')
 			.then(response => {
 				let errorFlag = false;
 
 				try {
 					response = JSON.parse(decodeEntities(response));
 				} catch (err) {
-					console.error(
-						'Cannot parse response by getDynamicGroups. (response below)'
-					);
+					console.error('Cannot parse response by getDynamicGroups. (response below)');
 					console.log(decodeEntities(response));
 					errorFlag = true;
 				}
 
 				if (!errorFlag) {
-					response = response.filter(
-						g => g.csfamext__group_type__c === 'Dynamic Group'
-					);
+					response = response.filter(g => g.csfamext__group_type__c === 'Dynamic Group');
 					response = response.map(g => this.processGroup_old(g));
 					return response;
 				}
 			});
 		// ************************************
 		let _getCustomSettingsPromise = window.FAM.api
-			.performAction(
-				'csfamext.DynamicGroupDataProvider',
-				'{"method": "getCustomSettings"}'
-			)
+			.performAction('csfamext.DynamicGroupDataProvider', '{"method": "getCustomSettings"}')
 			.then(response => {
 				response = decodeEntities(response);
 
@@ -114,10 +104,8 @@ class DynamicGroupTab extends React.Component {
 			let _groupsMap = {};
 			// Enrich the groups
 			_response_groups.forEach(group => {
-				group.csfamext__one_off_charge__c =
-					group.csfamext__one_off_charge__c || 0;
-				group.csfamext__recurring_charge__c =
-					group.csfamext__recurring_charge__c || 0;
+				group.csfamext__one_off_charge__c = group.csfamext__one_off_charge__c || 0;
+				group.csfamext__recurring_charge__c = group.csfamext__recurring_charge__c || 0;
 				group.csfamext__rate_value__c = group.csfamext__rate_value__c || 0;
 
 				_groupsMap[group.Id] = group;
@@ -137,16 +125,12 @@ class DynamicGroupTab extends React.Component {
 				let _preFilterLength = _addedGroups.length;
 				// Check if added discount codes are deleted or critically changed
 				_addedGroups = _addedGroups.filter(
-					dc =>
-						_groupsMap[dc.Id] &&
-						_groupsMap[dc.Id].csfamext__group_type__c === 'Dynamic Group'
+					dc => _groupsMap[dc.Id] && _groupsMap[dc.Id].csfamext__group_type__c === 'Dynamic Group'
 				);
 				// Check if target object has changed for any added types
 				_addedGroups.forEach(dc => {
-					dc.csfamext__target_object__c =
-						_groupsMap[dc.Id].csfamext__target_object__c;
-					dc.csfamext__fam_editable__c =
-						_groupsMap[dc.Id].csfamext__fam_editable__c;
+					dc.csfamext__target_object__c = _groupsMap[dc.Id].csfamext__target_object__c;
+					dc.csfamext__fam_editable__c = _groupsMap[dc.Id].csfamext__fam_editable__c;
 				});
 
 				if (_addedGroups.length !== _preFilterLength) {
@@ -155,10 +139,7 @@ class DynamicGroupTab extends React.Component {
 				}
 			})();
 
-			let _addedMap = _addedGroups.reduce(
-				(acc, iter) => ({ ...acc, [iter.Id]: iter }),
-				{}
-			);
+			let _addedMap = _addedGroups.reduce((acc, iter) => ({ ...acc, [iter.Id]: iter }), {});
 
 			// reject groups that are already added from select options
 			_selectGroups = _selectGroups.filter(group => {
@@ -186,28 +167,22 @@ class DynamicGroupTab extends React.Component {
 	}
 
 	processGroup_old(g) {
-		let target =
-			g.csfamext__target_object__c === 'Rate Card Line' ? 'rcl' : 'product';
+		let target = g.csfamext__target_object__c === 'Rate Card Line' ? 'rcl' : 'product';
 
 		g = JSON.parse(JSON.stringify(g));
 
 		if (isJson(g.csfamext__logic_components_JSON__c)) {
-			g.csfamext__logic_components_JSON__c = JSON.parse(
-				g.csfamext__logic_components_JSON__c
-			);
+			g.csfamext__logic_components_JSON__c = JSON.parse(g.csfamext__logic_components_JSON__c);
 		} else {
 			g.csfamext__logic_components_JSON__c = JSON.parse(BLANK_CIRCUITS);
 		}
 
 		if (isJson(g.csfamext__expression__c)) {
-			g.csfamext__expression__c = JSON.parse(
-				decodeEntities(g.csfamext__expression__c)
-			)[target];
+			g.csfamext__expression__c = JSON.parse(decodeEntities(g.csfamext__expression__c))[target];
 		}
 
 		if (!g.csfamext__logic_components_JSON__c.hasOwnProperty('logic')) {
-			g.csfamext__logic_components_JSON__c =
-				g.csfamext__logic_components_JSON__c[target];
+			g.csfamext__logic_components_JSON__c = g.csfamext__logic_components_JSON__c[target];
 		}
 
 		g.logic = g.csfamext__logic_components_JSON__c.logic;
@@ -227,9 +202,7 @@ class DynamicGroupTab extends React.Component {
 	}
 
 	processGroup(group) {
-		let is_group_valid = isJson(
-			decodeEntities(group.csfamext__logic_components_JSON__c)
-		);
+		let is_group_valid = isJson(decodeEntities(group.csfamext__logic_components_JSON__c));
 
 		group.logicComponents = is_group_valid
 			? JSON.parse(decodeEntities(group.csfamext__logic_components_JSON__c))
@@ -245,10 +218,7 @@ class DynamicGroupTab extends React.Component {
 			if (group.logicComponents.hasOwnProperty('circuits')) {
 				// Find out whats the target record
 				let _new_data = {};
-				let _target =
-					group.csfamext__target_object__c === 'Commercial Product'
-						? 'product'
-						: 'rcl';
+				let _target = group.csfamext__target_object__c === 'Commercial Product' ? 'product' : 'rcl';
 				_new_data[_target] = group.logicComponents;
 
 				let _expression = null;
@@ -274,34 +244,30 @@ class DynamicGroupTab extends React.Component {
 
 			['product', 'rcl'].forEach(target => {
 				if (group.logicComponents.hasOwnProperty(target)) {
-					group.logicComponents[target].circuits = group.logicComponents[
-						target
-					].circuits.map(circ => {
-						circ.Id = 'cc-' + makeId();
-						circ.parsable = isJson(circ.value);
+					group.logicComponents[target].circuits = group.logicComponents[target].circuits.map(
+						circ => {
+							circ.Id = 'cc-' + makeId();
+							circ.parsable = isJson(circ.value);
 
-						if (circ.parsable) {
-							circ.parsed = circ.parsed;
+							if (circ.parsable) {
+								circ.parsed = circ.parsed;
+							}
+
+							return circ;
 						}
-
-						return circ;
-					});
+					);
 				}
 			});
 		}
 
-		group.csfamext__expression__c = decodeEntities(
-			group.csfamext__expression__c
-		);
+		group.csfamext__expression__c = decodeEntities(group.csfamext__expression__c);
 
 		return group;
 	}
 
 	onAddGroup(selected_group) {
 		// Find group
-		let _group = this.state.groups.find(
-			group => group.Id === selected_group.value
-		);
+		let _group = this.state.groups.find(group => group.Id === selected_group.value);
 
 		console.log(_group);
 
@@ -370,10 +336,7 @@ class DynamicGroupTab extends React.Component {
 		customData = customData === '' ? {} : customData;
 		customData.group = Object.values(this.state.added);
 
-		let setResponse = await window.FAM.api.setCustomData(
-			ACTIVE_FA.Id,
-			customData
-		);
+		let setResponse = await window.FAM.api.setCustomData(ACTIVE_FA.Id, customData);
 		console.log('Custom data saved:', this.state);
 		if (enforceSave) {
 			window.FAM.api.saveFrameAgreement(ACTIVE_FA.Id);
@@ -470,9 +433,7 @@ class DynamicGroupTab extends React.Component {
 	}
 
 	onRemoveLogicCircuit(dgId, circuit) {
-		let _circuits = this.state.added[dgId].circuits.filter(
-			circ => circ.Id !== circuit.Id
-		);
+		let _circuits = this.state.added[dgId].circuits.filter(circ => circ.Id !== circuit.Id);
 		this.setState(
 			{
 				added: {
@@ -516,15 +477,9 @@ class DynamicGroupTab extends React.Component {
 
 	getTargetObjectCode() {
 		let str;
-		if (
-			this.state.added[this.state.open].csfamext__target_object__c ===
-			'Commercial Product'
-		) {
+		if (this.state.added[this.state.open].csfamext__target_object__c === 'Commercial Product') {
 			str = 'product';
-		} else if (
-			this.state.added[this.state.open].csfamext__target_object__c ===
-			'Rate Card Line'
-		) {
+		} else if (this.state.added[this.state.open].csfamext__target_object__c === 'Rate Card Line') {
 			str = 'rcl';
 		}
 
@@ -539,16 +494,11 @@ class DynamicGroupTab extends React.Component {
 		/******************************/
 		let _params = {};
 		_params.method = 'executeQuery';
-		_params.whereClause = this.state.added[
-			this.state.open
-		].csfamext__expression__c;
+		_params.whereClause = this.state.added[this.state.open].csfamext__expression__c;
 		_params.fromCode = fromCode;
 
 		window.FAM.api
-			.performAction(
-				'csfamext.DynamicGroupDataProvider',
-				JSON.stringify(_params)
-			)
+			.performAction('csfamext.DynamicGroupDataProvider', JSON.stringify(_params))
 			.then(response => {
 				return JSON.parse(decodeEntities(response));
 			})
@@ -592,9 +542,7 @@ class DynamicGroupTab extends React.Component {
 			<div id="dynamic-group-tab" className="card products-card">
 				<div className="products-card__inner">
 					<div className="products-card__header">
-						<span className="products__title">
-							{window.SF.labels.famext_dynamic_groups_title}
-						</span>
+						<span className="products__title">{window.SF.labels.famext_dynamic_groups_title}</span>
 						<div className="header__inputs">
 							<Select
 								className="dg-select"
@@ -619,8 +567,7 @@ class DynamicGroupTab extends React.Component {
 									return (
 										<div key={f} className="list-cell">
 											<span>
-												{getFieldLabel('csfamext__Dynamic_Group__c', f) ||
-													truncateCPField(f)}
+												{getFieldLabel('csfamext__Dynamic_Group__c', f) || truncateCPField(f)}
 											</span>
 										</div>
 									);
@@ -632,8 +579,7 @@ class DynamicGroupTab extends React.Component {
 					{Object.values(this.state.added).map(group => (
 						<div
 							className={
-								'product-card__container' +
-								(this.state.open === group.Id ? ' product-open' : '')
+								'product-card__container' + (this.state.open === group.Id ? ' product-open' : '')
 							}
 							key={group.Id}
 						>
@@ -647,15 +593,11 @@ class DynamicGroupTab extends React.Component {
 								}}
 							>
 								<div className="container__fields">
-									<div className="fields__item fields__item--title">
-										{group.Name}
-									</div>
+									<div className="fields__item fields__item--title">{group.Name}</div>
 									{this.customSetting.dynamic_group_fields.map(f => {
 										return (
 											<div key={f} className="fields__item">
-												<span>
-													{group.hasOwnProperty(f) ? group[f].toString() : '-'}
-												</span>
+												<span>{group.hasOwnProperty(f) ? group[f].toString() : '-'}</span>
 											</div>
 										);
 									})}
@@ -668,12 +610,7 @@ class DynamicGroupTab extends React.Component {
 											return this.onRemoveGroup(group);
 										}}
 									>
-										<Icon
-											name="delete"
-											height="14"
-											width="14"
-											color="#0070d2"
-										/>
+										<Icon name="delete" height="14" width="14" color="#0070d2" />
 									</div>
 								) : null}
 							</div>
@@ -683,9 +620,7 @@ class DynamicGroupTab extends React.Component {
 									<div className="tab-body-left">
 										{group.csfamext__expression__c ? (
 											<div className="input-box">
-												<label className="dg-label">
-													{window.SF.labels.famext_expression}
-												</label>
+												<label className="dg-label">{window.SF.labels.famext_expression}</label>
 												<div className="">
 													<pre>{group.csfamext__expression__c}</pre>
 												</div>
@@ -697,9 +632,7 @@ class DynamicGroupTab extends React.Component {
 										{group.csfamext__fam_editable__c && this.state.editable ? (
 											<React.Fragment>
 												<div className="input-box">
-													<label className="dg-label">
-														{window.SF.labels.famext_logic}
-													</label>
+													<label className="dg-label">{window.SF.labels.famext_logic}</label>
 													<div className="input-field">
 														<DebounceInput
 															spellCheck="false"
@@ -726,37 +659,23 @@ class DynamicGroupTab extends React.Component {
 															{group.circuits.map((circ, i) => {
 																return (
 																	<div className="dg-circuit" key={circ.Id}>
-																		<div className="dg-circuit-index">
-																			{i + ') '}
-																		</div>
+																		<div className="dg-circuit-index">{i + ') '}</div>
 																		<div className="dg-circuit-configuration">
-																			{circ.field +
-																				' ' +
-																				circ.operator +
-																				' ' +
-																				circ.value}
+																			{circ.field + ' ' + circ.operator + ' ' + circ.value}
 																		</div>
 
 																		{circ.parsable ? (
 																			<div
 																				className={
-																					'dg-circuit-parsed ' +
-																					(circ.parsed ? 'checked' : '')
+																					'dg-circuit-parsed ' + (circ.parsed ? 'checked' : '')
 																				}
 																				onClick={() => {
-																					this.setParse(
-																						group.Id,
-																						circ.Id,
-																						!circ.parsed
-																					);
+																					this.setParse(group.Id, circ.Id, !circ.parsed);
 																				}}
 																			>
 																				<span>
-																					{
-																						window.SF.labels
-																							.famext_manager_parse
-																					}
-																					: {circ.parsed ? 'On' : 'Off'}
+																					{window.SF.labels.famext_manager_parse}:{' '}
+																					{circ.parsed ? 'On' : 'Off'}
 																				</span>
 																			</div>
 																		) : (
@@ -765,19 +684,9 @@ class DynamicGroupTab extends React.Component {
 
 																		<div
 																			className="dg-circuit-remove"
-																			onClick={() =>
-																				this.onRemoveLogicCircuit(
-																					group.Id,
-																					circ
-																				)
-																			}
+																			onClick={() => this.onRemoveLogicCircuit(group.Id, circ)}
 																		>
-																			<Icon
-																				name="delete"
-																				height="14"
-																				width="14"
-																				color="white"
-																			/>
+																			<Icon name="delete" height="14" width="14" color="white" />
 																		</div>
 																	</div>
 																);
@@ -792,11 +701,7 @@ class DynamicGroupTab extends React.Component {
 													<label className="dg-label">
 														{window.SF.labels.famext_manager_add_new_comp}
 													</label>
-													<LogicForm
-														onAdd={circuit =>
-															this.onAddLogicCircuit(group.Id, circuit)
-														}
-													/>
+													<LogicForm onAdd={circuit => this.onAddLogicCircuit(group.Id, circuit)} />
 												</div>
 											</React.Fragment>
 										) : (
@@ -809,9 +714,7 @@ class DynamicGroupTab extends React.Component {
 												<select
 													value={group.csfamext__discount_type__c}
 													disabled={!this.state.editable}
-													placeholder={
-														window.SF.labels.famext_placeholder_addGroup
-													}
+													placeholder={window.SF.labels.famext_placeholder_addGroup}
 													onChange={e => {
 														this.onChangeDiscount(
 															group.Id,
@@ -830,8 +733,7 @@ class DynamicGroupTab extends React.Component {
 												</select>
 											</div>
 
-											{group.csfamext__target_object__c ===
-											'Commercial Product' ? (
+											{group.csfamext__target_object__c === 'Commercial Product' ? (
 												<React.Fragment>
 													<div>
 														<label>{window.SF.labels.famext_oneOff}</label>
@@ -896,19 +798,12 @@ class DynamicGroupTab extends React.Component {
 										</div>
 									</div>
 									<div className="tab-body-right">
-										{this.state.targetingResults[
-											this.state.added[this.state.open].Id
-										] ? (
+										{this.state.targetingResults[this.state.added[this.state.open].Id] ? (
 											<DGTargets
-												results={
-													this.state.targetingResults[
-														this.state.added[this.state.open].Id
-													]
-												}
+												results={this.state.targetingResults[this.state.added[this.state.open].Id]}
 												fields={
 													this.customSetting[
-														_active.csfamext__target_object__c ===
-														'Commercial Product'
+														_active.csfamext__target_object__c === 'Commercial Product'
 															? 'price_item_fields'
 															: 'rcl_fields'
 													]
@@ -997,10 +892,7 @@ window.FAM.subscribe('onLoad', data => {
 			_params.fromCode = fromCode;
 
 			window.FAM.api
-				.performAction(
-					'csfamext.DynamicGroupDataProvider',
-					JSON.stringify(_params)
-				)
+				.performAction('csfamext.DynamicGroupDataProvider', JSON.stringify(_params))
 				.then(response => {
 					// FILTER DYNAMIC GROUPS ONLY FOR DYNAMIC GROUPS
 					resolve(JSON.parse(decodeEntities(response)));
@@ -1017,12 +909,8 @@ window.FAM.subscribe('onLoad', data => {
 					// ****************************
 					console.log('Entered tab with id:' + id);
 					// Get DG labels
-					if (
-						!window.SF.fieldLabels.hasOwnProperty('csfamext__Dynamic_Group__c')
-					) {
-						window.SF.invokeAction('getFieldLabels', [
-							'csfamext__Dynamic_Group__c'
-						]).then(r => {
+					if (!window.SF.fieldLabels.hasOwnProperty('csfamext__Dynamic_Group__c')) {
+						window.SF.invokeAction('getFieldLabels', ['csfamext__Dynamic_Group__c']).then(r => {
 							window.SF.fieldLabels['csfamext__Dynamic_Group__c'] = r;
 						});
 					}

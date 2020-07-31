@@ -127,15 +127,9 @@ export class App extends Component {
 		};
 		// ******************************************
 
-		window.FAM.api.removeProducts = (
-			faId = window.mandatory('addProducts()'),
-			products = []
-		) => {
+		window.FAM.api.removeProducts = (faId = window.mandatory('addProducts()'), products = []) => {
 			return new Promise(async resolve => {
-				let productsToDelete = await publish(
-					'onBeforeDeleteProducts',
-					products
-				);
+				let productsToDelete = await publish('onBeforeDeleteProducts', products);
 
 				// IF not, load attachment for FA
 				if (this.props.frameAgreements[faId]._ui.attachment === null) {
@@ -145,9 +139,7 @@ export class App extends Component {
 				await this.props.removeProductsFromFa(faId, productsToDelete);
 				publish(
 					'onAfterDeleteProducts',
-					this.props.frameAgreements[faId]._ui.commercialProducts.map(
-						cp => cp.Id
-					)
+					this.props.frameAgreements[faId]._ui.commercialProducts.map(cp => cp.Id)
 				);
 
 				await window.SF.invokeAction('saveAttachment', [
@@ -174,8 +166,7 @@ export class App extends Component {
 			let _attachment = {};
 
 			try {
-				_attachment =
-					this.props.frameAgreements[faId]._ui.attachment.products || {};
+				_attachment = this.props.frameAgreements[faId]._ui.attachment.products || {};
 			} catch (err) {
 				// No attachment or no products
 			}
@@ -187,12 +178,8 @@ export class App extends Component {
 					for (var cpaoa in addons) {
 						structure.push({
 							cpaoaId: cpaoa,
-							recurring: addons[cpaoa].hasOwnProperty('recurring')
-								? addons[cpaoa].recurring
-								: null,
-							oneOff: addons[cpaoa].hasOwnProperty('oneOff')
-								? addons[cpaoa].oneOff
-								: null
+							recurring: addons[cpaoa].hasOwnProperty('recurring') ? addons[cpaoa].recurring : null,
+							oneOff: addons[cpaoa].hasOwnProperty('oneOff') ? addons[cpaoa].oneOff : null
 						});
 					}
 				}
@@ -202,12 +189,8 @@ export class App extends Component {
 					for (var chId in charges) {
 						structure.push({
 							peId: chId,
-							recurring: charges[chId].hasOwnProperty('recurring')
-								? charges[chId].recurring
-								: null,
-							oneOff: charges[chId].hasOwnProperty('oneOff')
-								? charges[chId].oneOff
-								: null
+							recurring: charges[chId].hasOwnProperty('recurring') ? charges[chId].recurring : null,
+							oneOff: charges[chId].hasOwnProperty('oneOff') ? charges[chId].oneOff : null
 						});
 					}
 				}
@@ -225,9 +208,7 @@ export class App extends Component {
 				}
 			}
 			// 2) Remove items that have no charge value
-			structure = structure.filter(
-				item => item.recurring !== null || item.oneOff !== null
-			);
+			structure = structure.filter(item => item.recurring !== null || item.oneOff !== null);
 
 			structure = await publish('onBeforeActivation', structure);
 
@@ -251,10 +232,7 @@ export class App extends Component {
 				i += this.props.settings.FACSettings.decomposition_chunk_size
 			) {
 				decompositionDataChunked.push(
-					structure.slice(
-						i,
-						i + this.props.settings.FACSettings.decomposition_chunk_size
-					)
+					structure.slice(i, i + this.props.settings.FACSettings.decomposition_chunk_size)
 				);
 			}
 
@@ -278,10 +256,7 @@ export class App extends Component {
 			console.log('Merged results:', result);
 
 			// If the decomposition was successful
-			if (
-				(!result.has('Success') || result.size > 1) &&
-				decompositionDataChunked.length
-			) {
+			if ((!result.has('Success') || result.size > 1) && decompositionDataChunked.length) {
 				console.error('Decomposition failed, undoing...!');
 
 				this.props.createToast(
@@ -314,22 +289,16 @@ export class App extends Component {
 				);
 				await this.props.refreshFrameAgreement(faId);
 
-				if (
-					this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c
-				) {
+				if (this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c) {
 					await this.props.refreshFrameAgreement(
-						this.props.frameAgreements[faId]
-							.csconta__replaced_frame_agreement__c
+						this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c
 					);
 				}
 
 				this.props.createToast(
 					'success',
 					window.SF.labels.toast_decomposition_title_success,
-					window.SF.labels.toast_decomposition_success +
-						' (' +
-						structure.length +
-						')'
+					window.SF.labels.toast_decomposition_success + ' (' + structure.length + ')'
 				);
 			}
 		};
@@ -382,19 +351,11 @@ export class App extends Component {
 				(_fa.csconta__Status__c === _statuses.draft_status ||
 					_fa.csconta__Status__c === _statuses.approved_status)
 			) {
-				if (
-					!_statuses.hasOwnProperty('draft_status') ||
-					!_statuses.draft_status
-				) {
-					log.bg.orange(
-						'Cannot set state to ' +
-							newStatus +
-							' - not defined in Custom Settings'
-					);
+				if (!_statuses.hasOwnProperty('draft_status') || !_statuses.draft_status) {
+					log.bg.orange('Cannot set state to ' + newStatus + ' - not defined in Custom Settings');
 				} else {
 					console.log(
-						'Changing the state of FA to %c' +
-							_statuses.requires_approval_status,
+						'Changing the state of FA to %c' + _statuses.requires_approval_status,
 						'font-style: italic;color: #0070d2'
 					);
 
@@ -414,20 +375,13 @@ export class App extends Component {
 					!_statuses.hasOwnProperty('requires_approval_status') ||
 					!_statuses.requires_approval_status
 				) {
-					log.bg.orange(
-						'Cannot set state to ' +
-							newStatus +
-							' - not defined in Custom Settings'
-					);
+					log.bg.orange('Cannot set state to ' + newStatus + ' - not defined in Custom Settings');
 				} else {
 					console.log(
 						'Changing the state of FA to %c' + _statuses.draft_status,
 						'font-style: italic;color: #0070d2'
 					);
-					_result = await this.props.setFrameAgreementState(
-						faId,
-						_statuses.draft_status
-					);
+					_result = await this.props.setFrameAgreementState(faId, _statuses.draft_status);
 					return _result;
 				}
 			}
@@ -440,9 +394,7 @@ export class App extends Component {
 				if (this.props.frameAgreements[faId]._ui.attachment === null) {
 					let resp_attachment = await this.props.getAttachment(faId);
 					// No need to wait for this one, we only need products
-					this.props.getCommercialProductData(
-						Object.keys(resp_attachment.products)
-					);
+					this.props.getCommercialProductData(Object.keys(resp_attachment.products));
 
 					return this.props.frameAgreements[faId]._ui.commercialProducts;
 				} else {
@@ -460,16 +412,12 @@ export class App extends Component {
 		};
 
 		window.FAM.api.saveFrameAgreement = async faId => {
-			let result = await this.props.saveFrameAgreement(
-				this.props.frameAgreements[faId]
-			);
+			let result = await this.props.saveFrameAgreement(this.props.frameAgreements[faId]);
 			await publish('onAfterSaveFrameAgreement', result);
 			return result;
 		};
 
-		window.FAM.api.getCustomData = (
-			faId = window.mandatory('getCustomData()')
-		) => {
+		window.FAM.api.getCustomData = (faId = window.mandatory('getCustomData()')) => {
 			return new Promise((resolve, reject) => {
 				let _fa = this.props.frameAgreements[faId];
 				let _attachment = null;
@@ -496,20 +444,14 @@ export class App extends Component {
 			});
 		};
 
-		window.FAM.api.negotiate = (
-			faId,
-			data = window.mandatory('negotiate()')
-		) => {
+		window.FAM.api.negotiate = (faId, data = window.mandatory('negotiate()')) => {
 			let self = this;
 			return new Promise(async (resolve, reject) => {
 				data = await publish('onBeforeNegotiate', data);
 
 				this.props.apiNegotiate(faId, data);
 
-				publish(
-					'onAfterNegotiate',
-					this.props.frameAgreements[faId]._ui.attachment
-				);
+				publish('onAfterNegotiate', this.props.frameAgreements[faId]._ui.attachment);
 
 				self.props.validateFrameAgreement(faId);
 
@@ -523,30 +465,19 @@ export class App extends Component {
 
 		Promise.all([
 			this.props.getAppSettings(),
-			window.SF.invokeAction('getFieldLabels', ['cspmb__Usage_Type__c']).then(
-				r => {
-					window.SF.fieldLabels['cspmb__Usage_Type__c'] = r;
-				}
-			),
-			window.SF.invokeAction('getFieldLabels', [
-				'csconta__Frame_Agreement__c'
-			]).then(r => {
+			window.SF.invokeAction('getFieldLabels', ['cspmb__Usage_Type__c']).then(r => {
+				window.SF.fieldLabels['cspmb__Usage_Type__c'] = r;
+			}),
+			window.SF.invokeAction('getFieldLabels', ['csconta__Frame_Agreement__c']).then(r => {
 				window.SF.fieldLabels['csconta__Frame_Agreement__c'] = r;
 			}),
-			window.SF.invokeAction('getFieldLabels', ['cspmb__Price_Item__c']).then(
-				r => {
-					window.SF.fieldLabels['cspmb__Price_Item__c'] = r;
-				}
-			)
+			window.SF.invokeAction('getFieldLabels', ['cspmb__Price_Item__c']).then(r => {
+				window.SF.fieldLabels['cspmb__Price_Item__c'] = r;
+			})
 		]).then(response => {
-			let _promiseArray = [
-				this.props.getFrameAgreements(),
-				this.props.getCommercialProducts()
-			];
+			let _promiseArray = [this.props.getFrameAgreements(), this.props.getCommercialProducts()];
 
-			let picklists = response[0].HeaderData.filter(
-				f => f.type === 'picklist'
-			).map(f => f.field);
+			let picklists = response[0].HeaderData.filter(f => f.type === 'picklist').map(f => f.field);
 
 			// Load agreement levels for "Add new Agreement" picklist
 			picklists.push('csconta__agreement_level__c');
@@ -634,9 +565,4 @@ const mapStateToProps = state => {
 };
 
 // export default App;
-export default withRouter(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(App)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

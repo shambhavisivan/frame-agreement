@@ -1,19 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Icon from '../utillity/Icon';
-import {
-	isMaster,
-	evaluateExpressionOnAgreement
-} from '~/src/utils/shared-service';
+import { isMaster, evaluateExpressionOnAgreement } from '~/src/utils/shared-service';
 
 import { publish } from '~/src/api';
 import ActionIframe from '~/src/components/modals/ActionIframe';
 
-import {
-	createToast,
-	toggleModals,
-	validateFrameAgreement
-} from '~/src/actions';
+import { createToast, toggleModals, validateFrameAgreement } from '~/src/actions';
 
 class FaFooter extends React.Component {
 	constructor(props) {
@@ -23,9 +16,7 @@ class FaFooter extends React.Component {
 		this.onCloseIframe = this.onCloseIframe.bind(this);
 		this.onOpenFrameModal = this.onOpenFrameModal.bind(this);
 		this.onOpenNegotiationModal = this.onOpenNegotiationModal.bind(this);
-		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(
-			this
-		);
+		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(this);
 
 		this.state = {
 			actionIframe: false,
@@ -96,8 +87,7 @@ class FaFooter extends React.Component {
 
 		let customButtonsFooter = this.props.settings.ButtonCustomData.filter(
 			btnObj =>
-				evaluateExpressionOnAgreement(btnObj.expressions, _fa) &&
-				btnObj.location === 'Footer'
+				evaluateExpressionOnAgreement(btnObj.expressions, _fa) && btnObj.location === 'Footer'
 		);
 
 		let standardData = this.props.settings.ButtonStandardData;
@@ -108,45 +98,33 @@ class FaFooter extends React.Component {
 
 		footer = (
 			<div className="fa-main-footer">
-				{evaluateExpressionOnAgreement(standardData.AddFrameAgreement, _fa) &&
-					master && (
-						<button
-							className="fa-button fa-button--default"
-							onClick={this.onOpenFrameModal}
-						>
-							<Icon name="add" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">
-								{window.SF.labels.btn_AddFa}
-							</span>
-						</button>
-					)}
+				{evaluateExpressionOnAgreement(standardData.AddFrameAgreement, _fa) && master && (
+					<button className="fa-button fa-button--default" onClick={this.onOpenFrameModal}>
+						<Icon name="add" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_AddFa}</span>
+					</button>
+				)}
 
-				{evaluateExpressionOnAgreement(standardData.AddProducts, _fa) &&
-					!master && (
-						<button
-							className="fa-button fa-button--default"
-							onClick={this.onOpenCommercialProductModal}
-						>
-							<Icon name="add" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">
-								{window.SF.labels.btn_AddProducts}
-							</span>
-						</button>
-					)}
+				{evaluateExpressionOnAgreement(standardData.AddProducts, _fa) && !master && (
+					<button
+						className="fa-button fa-button--default"
+						onClick={this.onOpenCommercialProductModal}
+					>
+						<Icon name="add" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_AddProducts}</span>
+					</button>
+				)}
 
-				{evaluateExpressionOnAgreement(standardData.BulkNegotiate, _fa) &&
-					!master && (
-						<button
-							disabled={_disabled}
-							className="fa-button fa-button--default"
-							onClick={this.onOpenNegotiationModal}
-						>
-							<Icon name="user" width="16" height="16" color="#0070d2" />
-							<span className="fa-button-icon">
-								{window.SF.labels.btn_BulkNegotiate}
-							</span>
-						</button>
-					)}
+				{evaluateExpressionOnAgreement(standardData.BulkNegotiate, _fa) && !master && (
+					<button
+						disabled={_disabled}
+						className="fa-button fa-button--default"
+						onClick={this.onOpenNegotiationModal}
+					>
+						<Icon name="user" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_BulkNegotiate}</span>
+					</button>
+				)}
 
 				{evaluateExpressionOnAgreement(standardData.DeleteProducts, _fa) && (
 					<button
@@ -156,9 +134,7 @@ class FaFooter extends React.Component {
 					>
 						<Icon name="delete" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">
-							{master
-								? window.SF.labels.btn_DeleteAgreements
-								: window.SF.labels.btn_DeleteProducts}
+							{master ? window.SF.labels.btn_DeleteAgreements : window.SF.labels.btn_DeleteProducts}
 						</span>
 					</button>
 				)}
@@ -207,7 +183,4 @@ const mapDispatchToProps = {
 	validateFrameAgreement
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(FaFooter);
+export default connect(mapStateToProps, mapDispatchToProps)(FaFooter);

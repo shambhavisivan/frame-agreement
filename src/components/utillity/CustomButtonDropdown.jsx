@@ -51,16 +51,10 @@ class CustomButtonDropdown extends React.Component {
 		return (
 			<div className="fa-dropdown-group" ref={this.setWrapperRef}>
 				<button
-					className={
-						'fa-button fa-button--' +
-						(this.props.brand ? 'brand' : 'transparent')
-					}
+					className={'fa-button fa-button--' + (this.props.brand ? 'brand' : 'transparent')}
 					onClick={this.showMenu}
 				>
-					<span>
-						{this.props.label ||
-							window.SF.labels.header_customDropdownPlaceholder}
-					</span>
+					<span>{this.props.label || window.SF.labels.header_customDropdownPlaceholder}</span>
 					<Icon name={this.state.menu ? 'up' : 'down'} height="14" width="14" />
 				</button>
 				{this.state.menu && (

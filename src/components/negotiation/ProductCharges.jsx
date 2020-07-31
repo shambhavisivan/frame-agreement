@@ -56,21 +56,11 @@ export class ProductCharges extends React.Component {
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell">
-						{window.SF.labels.product_charge_header_name}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.product_charge_header_oneOff}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.product_charge_header_oneOff_neg}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.product_charge_header_recc}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.product_charge_header_recc_neg}
-					</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_name}</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_oneOff}</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_oneOff_neg}</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_recc}</div>
+					<div className="list-cell">{window.SF.labels.product_charge_header_recc_neg}</div>
 				</div>
 
 				<ul className="table-list">
@@ -104,42 +94,30 @@ export class ProductCharges extends React.Component {
 								) {
 									oneOffRow = (
 										<DropdownNegotiate
-											readOnly={
-												this.props.readOnly || !this.props.oneOffAllowed
-											}
+											readOnly={this.props.readOnly || !this.props.oneOffAllowed}
 											invalid={this.props.validation.oneOff}
 											discounts={oneOffDiscount}
 											onChange={val => {
 												this.negotiateInline('oneOff', val);
 											}}
-											discAsPrice={
-												this.props.settings.FACSettings.discount_as_price
-											}
+											discAsPrice={this.props.settings.FACSettings.discount_as_price}
 											negotiatedValue={negValue}
-											originalValue={
-												this.props.product.cspmb__One_Off_Charge__c
-											}
+											originalValue={this.props.product.cspmb__One_Off_Charge__c}
 										/>
 									);
-								} else if (
-									this.props.product.cspmb__One_Off_Charge__c != null
-								) {
+								} else if (this.props.product.cspmb__One_Off_Charge__c != null) {
 									// No discounts? Put negotiated value input
 									oneOffRow = (
 										<InputNegotiate
 											readOnly={
-												this.props.readOnly ||
-												!this.props.oneOffAllowed ||
-												this.props.disableInputs
+												this.props.readOnly || !this.props.oneOffAllowed || this.props.disableInputs
 											}
 											invalid={this.props.validation.oneOff}
 											onChange={val => {
 												this.negotiateInline('oneOff', val);
 											}}
 											negotiatedValue={negValue}
-											originalValue={
-												this.props.product.cspmb__One_Off_Charge__c
-											}
+											originalValue={this.props.product.cspmb__One_Off_Charge__c}
 										/>
 									);
 								}
@@ -169,26 +147,18 @@ export class ProductCharges extends React.Component {
 								) {
 									recurringRow = (
 										<DropdownNegotiate
-											readOnly={
-												this.props.readOnly || !this.props.recurringAllowed
-											}
+											readOnly={this.props.readOnly || !this.props.recurringAllowed}
 											invalid={this.props.validation.recurring}
 											discounts={recurringDiscount}
 											onChange={val => {
 												this.negotiateInline('recurring', val);
 											}}
-											discAsPrice={
-												this.props.settings.FACSettings.discount_as_price
-											}
+											discAsPrice={this.props.settings.FACSettings.discount_as_price}
 											negotiatedValue={negValue}
-											originalValue={
-												this.props.product.cspmb__Recurring_Charge__c
-											}
+											originalValue={this.props.product.cspmb__Recurring_Charge__c}
 										/>
 									);
-								} else if (
-									this.props.product.cspmb__Recurring_Charge__c != null
-								) {
+								} else if (this.props.product.cspmb__Recurring_Charge__c != null) {
 									recurringRow = (
 										<InputNegotiate
 											readOnly={
@@ -201,9 +171,7 @@ export class ProductCharges extends React.Component {
 												this.negotiateInline('recurring', val);
 											}}
 											negotiatedValue={negValue}
-											originalValue={
-												this.props.product.cspmb__Recurring_Charge__c
-											}
+											originalValue={this.props.product.cspmb__Recurring_Charge__c}
 										/>
 									);
 								}
@@ -229,7 +197,4 @@ const mapStateToProps = state => {
 //     setValidation
 // };
 
-export default connect(
-	mapStateToProps,
-	null
-)(ProductCharges);
+export default connect(mapStateToProps, null)(ProductCharges);

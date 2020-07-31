@@ -23,8 +23,7 @@ const OPERATORS = [
 		value: '>'
 	},
 	{
-		label:
-			window.SF.labels.famext_operator_greater_or_equal || 'Greater or equal',
+		label: window.SF.labels.famext_operator_greater_or_equal || 'Greater or equal',
 		value: '>='
 	},
 	{

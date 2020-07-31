@@ -55,11 +55,7 @@ export class FaTabs extends React.Component {
 									this.callTabHandler(tab.onEnter, tab.container_id);
 								}}
 							>
-								<div
-									key={tab.container_id}
-									className="card products-card"
-									id={tab.container_id}
-								/>
+								<div key={tab.container_id} className="card products-card" id={tab.container_id} />
 							</Tab>
 						);
 					})}
@@ -87,7 +83,4 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = null;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(FaTabs);
+export default connect(mapStateToProps, mapDispatchToProps)(FaTabs);

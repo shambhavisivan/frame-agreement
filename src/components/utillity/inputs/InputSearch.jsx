@@ -32,19 +32,11 @@ class InputSearch extends React.Component {
 
 	render() {
 		return (
-			<div
-				className={
-					'fa-input-search' +
-					(this.bordered ? ' fa-input-search-border-bottom' : '')
-				}
-			>
+			<div className={'fa-input-search' + (this.bordered ? ' fa-input-search-border-bottom' : '')}>
 				<Icon name="search" width="16" height="16" color="#cccccc" />
 				<DebounceInput
 					minLength={2}
-					placeholder={
-						this.props.placeholder ||
-						window.SF.labels.input_quickSearchPlaceholder
-					}
+					placeholder={this.props.placeholder || window.SF.labels.input_quickSearchPlaceholder}
 					debounceTimeout={300}
 					spellCheck="false"
 					className="fa-input fa-input-lg"

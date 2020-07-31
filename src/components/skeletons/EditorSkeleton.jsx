@@ -33,48 +33,27 @@ class EditorSkeleton extends Component {
 				<div className="skeleton-body">
 					<div className="skeleton-ed-fields">
 						<div className="skeleton-header-fields-row">
-							<div
-								className="skeleton-header-field"
-								style={{ width: (100 / 12) * 4 + '%' }}
-							>
+							<div className="skeleton-header-field" style={{ width: (100 / 12) * 4 + '%' }}>
 								<Shape unit={'%'} width={100} height={100} />
 							</div>
-							<div
-								className="skeleton-header-field"
-								style={{ width: (100 / 12) * 3 + '%' }}
-							>
+							<div className="skeleton-header-field" style={{ width: (100 / 12) * 3 + '%' }}>
 								<Shape unit={'%'} width={100} height={100} />
 							</div>
-							<div
-								className="skeleton-header-field"
-								style={{ width: (100 / 12) * 2 + '%' }}
-							>
+							<div className="skeleton-header-field" style={{ width: (100 / 12) * 2 + '%' }}>
 								<Shape unit={'%'} width={100} height={100} />
 							</div>
-							<div
-								className="skeleton-header-field"
-								style={{ width: (100 / 12) * 3 + '%' }}
-							>
+							<div className="skeleton-header-field" style={{ width: (100 / 12) * 3 + '%' }}>
 								<Shape unit={'%'} width={100} height={100} />
 							</div>
 						</div>
 						<div className="skeleton-header-fields-row">
-							<div
-								className="skeleton-header-field"
-								style={{ width: (100 / 12) * 3 + '%' }}
-							>
+							<div className="skeleton-header-field" style={{ width: (100 / 12) * 3 + '%' }}>
 								<Shape unit={'%'} width={100} height={100} />
 							</div>
-							<div
-								className="skeleton-header-field"
-								style={{ width: (100 / 12) * 2 + '%' }}
-							>
+							<div className="skeleton-header-field" style={{ width: (100 / 12) * 2 + '%' }}>
 								<Shape unit={'%'} width={100} height={100} />
 							</div>
-							<div
-								className="skeleton-header-field"
-								style={{ width: (100 / 12) * 4 + '%' }}
-							>
+							<div className="skeleton-header-field" style={{ width: (100 / 12) * 4 + '%' }}>
 								<Shape unit={'%'} width={100} height={100} />
 							</div>
 						</div>

@@ -36,10 +36,7 @@ class AccountsModal extends Component {
 	}
 
 	componentDidMount() {
-		window.SF.invokeAction('getAccountsInformation', [
-			this.props.faId,
-			null
-		]).then(
+		window.SF.invokeAction('getAccountsInformation', [this.props.faId, null]).then(
 			r => {
 				let associated_accounts = {};
 				if (r.associated_accounts && r.associated_accounts.length) {
@@ -108,10 +105,7 @@ class AccountsModal extends Component {
 			if (this.state.associated_accounts[record.Id]) {
 				this.onRemoveAssociation(record.Id);
 			} else {
-				window.SF.invokeAction('addAccountAssociation', [
-					this.props.faId,
-					record.Id
-				]).then(
+				window.SF.invokeAction('addAccountAssociation', [this.props.faId, record.Id]).then(
 					response => {
 						let _newAccountAssoc = {
 							Id: response.Id,
@@ -143,11 +137,9 @@ class AccountsModal extends Component {
 		delete associated_accounts[assocId];
 		this.setState({ associated_accounts });
 
-		window.SF.invokeAction('deleteAccountAssociation', [assocId]).then(
-			response => {
-				this._delayUnload();
-			}
-		);
+		window.SF.invokeAction('deleteAccountAssociation', [assocId]).then(response => {
+			this._delayUnload();
+		});
 	}
 
 	changeMode(mode) {
@@ -169,19 +161,14 @@ class AccountsModal extends Component {
 
 		let min_pages = page >= 7 ? page + 4 : 10;
 
-		let _data = this.state.searchValue
-			? this.state.searchedRecords
-			: this.props.records;
+		let _data = this.state.searchValue ? this.state.searchedRecords : this.props.records;
 
 		var _needPages = Math.min(min_pages, max_pages);
 		var _availablePages = Math.ceil(_data.length / 20);
 
 		console.log('*****************************************');
 		console.log('You need this much pages:', _needPages);
-		console.log(
-			'You need this much results:',
-			Math.min(max_items, min_pages * 20)
-		);
+		console.log('You need this much results:', Math.min(max_items, min_pages * 20));
 		console.log('This many pages are loaded:', _availablePages);
 
 		let result = _needPages - _availablePages;
@@ -204,9 +191,7 @@ class AccountsModal extends Component {
 
 		if (this.state.searchValue) {
 			parameter.search = "Name  like '%" + this.state.searchValue + "%'";
-			return window.SF.invokeAction('getLookupRecords', [
-				JSON.stringify(parameter)
-			]);
+			return window.SF.invokeAction('getLookupRecords', [JSON.stringify(parameter)]);
 		} else {
 			return this.props.onLoadRecords(parameter);
 		}
@@ -228,9 +213,7 @@ class AccountsModal extends Component {
 		if (needToLoad) {
 			this.getRecordPage(newPage).then(newSet => {
 				this.setState({
-					searchedRecords: this.state.searchValue
-						? [...this.state.searchedRecords, ...newSet]
-						: [],
+					searchedRecords: this.state.searchValue ? [...this.state.searchedRecords, ...newSet] : [],
 					loadingRecords: false
 				});
 			});
@@ -268,16 +251,11 @@ class AccountsModal extends Component {
 
 				let _promiseArr = [];
 
-				_promiseArr.push(
-					window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)])
-				);
+				_promiseArr.push(window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]));
 
 				if (params.search) {
 					_promiseArr.push(
-						window.SF.invokeAction('getAccountsInformation', [
-							this.props.faId,
-							params.search
-						])
+						window.SF.invokeAction('getAccountsInformation', [this.props.faId, params.search])
 					);
 				}
 
@@ -318,20 +296,12 @@ class AccountsModal extends Component {
 		} else if (this.state.loadingOverlay) {
 			_main = <p className="vertical-tab-subtitle" />;
 		} else {
-			_main = (
-				<p className="vertical-tab-subtitle">
-					{window.SF.labels.accounts_modal_no_main}
-				</p>
-			);
+			_main = <p className="vertical-tab-subtitle">{window.SF.labels.accounts_modal_no_main}</p>;
 		}
 
 		_empty_assoc = (
 			<p className="vertical-tab-subtitle">
-				<span>
-					{this.state.loadingOverlay
-						? ''
-						: window.SF.labels.accounts_modal_no_assoc}
-				</span>
+				<span>{this.state.loadingOverlay ? '' : window.SF.labels.accounts_modal_no_assoc}</span>
 			</p>
 		);
 
@@ -339,8 +309,7 @@ class AccountsModal extends Component {
 			<Modal
 				classNames={{
 					overlay: 'overlay',
-					modal:
-						'modal fa-modal ' + (this.columns.length > 2 ? 'expanded' : ''),
+					modal: 'modal fa-modal ' + (this.columns.length > 2 ? 'expanded' : ''),
 					closeButton: 'close-button'
 				}}
 				closeIconSvgPath={
@@ -352,12 +321,7 @@ class AccountsModal extends Component {
 			>
 				<div className="fa-modal-header">
 					<button className="close-modal-button" onClick={this.onCloseModal}>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 52 52"
-						>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 52 52">
 							<path
 								fill="#fff"
 								d="m31 25.4l13-13.1c0.6-0.6 0.6-1.5 0-2.1l-2-2.1c-0.6-0.6-1.5-0.6-2.1 0l-13.1 13.1c-0.4 0.4-1 0.4-1.4 0l-13.1-13.2c-0.6-0.6-1.5-0.6-2.1 0l-2.1 2.1c-0.6 0.6-0.6 1.5 0 2.1l13.1 13.1c0.4 0.4 0.4 1 0 1.4l-13.2 13.2c-0.6 0.6-0.6 1.5 0 2.1l2.1 2.1c0.6 0.6 1.5 0.6 2.1 0l13.1-13.1c0.4-0.4 1-0.4 1.4 0l13.1 13.1c0.6 0.6 1.5 0.6 2.1 0l2.1-2.1c0.6-0.6 0.6-1.5 0-2.1l-13-13.1c-0.4-0.4-0.4-1 0-1.4z"
@@ -371,8 +335,7 @@ class AccountsModal extends Component {
 					<div className="accounts-modal--left">
 						<div
 							className={
-								'vertical-tab ' +
-								(this.state.mode === 'main' ? 'vertical-tab-selected' : '')
+								'vertical-tab ' + (this.state.mode === 'main' ? 'vertical-tab-selected' : '')
 							}
 							onClick={() => this.changeMode('main')}
 						>
@@ -382,8 +345,7 @@ class AccountsModal extends Component {
 
 						<div
 							className={
-								'vertical-tab ' +
-								(this.state.mode === 'assoc' ? 'vertical-tab-selected' : '')
+								'vertical-tab ' + (this.state.mode === 'assoc' ? 'vertical-tab-selected' : '')
 							}
 							onClick={() => this.changeMode('assoc')}
 						>
@@ -403,9 +365,7 @@ class AccountsModal extends Component {
 										</p>
 									);
 								})}
-								{Object.values(this.state.associated_accounts).length
-									? ''
-									: _empty_assoc}
+								{Object.values(this.state.associated_accounts).length ? '' : _empty_assoc}
 							</div>
 						</div>
 					</div>
@@ -415,11 +375,7 @@ class AccountsModal extends Component {
 							onChange={record => this.selectRecord(record)}
 							onSearch={this.onSearchChange}
 							onPageChange={newPage => this.onPageChange(newPage)}
-							data={
-								this.state.searchValue
-									? this.state.searchedRecords
-									: this.props.records
-							}
+							data={this.state.searchValue ? this.state.searchedRecords : this.props.records}
 							count={this.state.count}
 							columns={this.columns}
 							selected={this.state.mode === 'main' ? this.state.main_acc : {}}
@@ -430,10 +386,7 @@ class AccountsModal extends Component {
 				</div>
 
 				<div className="fa-modal-footer">
-					<button
-						className="fa-button fa-button--default"
-						onClick={this.onCloseModal}
-					>
+					<button className="fa-button fa-button--default" onClick={this.onCloseModal}>
 						Done
 					</button>
 				</div>

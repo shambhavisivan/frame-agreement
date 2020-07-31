@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 
 import Pagination from './Pagination';
-import {
-	openSFLink,
-	truncateCPField,
-	getFieldLabel
-} from '~/src/utils/shared-service.js';
+import { openSFLink, truncateCPField, getFieldLabel } from '~/src/utils/shared-service.js';
 
 const CUBE_DIAGONAL_HALF = (Math.sqrt(2) * 20) / 2;
 
@@ -52,8 +48,7 @@ class UsageTypePopup extends Component {
 			return null;
 		}
 
-		let _calculating =
-			this.state.translate_above + this.state.translate_below === 0;
+		let _calculating = this.state.translate_above + this.state.translate_below === 0;
 
 		let _cubeStyle = {
 			right: this.cubeOffset_x + 'px'
@@ -62,9 +57,7 @@ class UsageTypePopup extends Component {
 		let _style = {
 			transform:
 				'translateY(' +
-				(this.props.below
-					? this.state.translate_above
-					: this.state.translate_below) +
+				(this.props.below ? this.state.translate_above : this.state.translate_below) +
 				'px)'
 		};
 
@@ -105,9 +98,7 @@ class UsageTypeTable extends Component {
 		};
 
 		this.mainUt = this.props.allowance.mainUsageType || {};
-		this.childUt = this.mainUt.hasOwnProperty('childUsageTypes')
-			? this.mainUt.childUsageTypes
-			: [];
+		this.childUt = this.mainUt.hasOwnProperty('childUsageTypes') ? this.mainUt.childUsageTypes : [];
 	}
 
 	render() {
@@ -119,8 +110,7 @@ class UsageTypeTable extends Component {
 							<th>{window.SF.labels.usage_type_name_field}</th>
 							{this.props.fields.map(field => (
 								<th key={'uth-' + field}>
-									{getFieldLabel('cspmb__Usage_Type__c', field) ||
-										truncateCPField(field, true)}
+									{getFieldLabel('cspmb__Usage_Type__c', field) || truncateCPField(field, true)}
 								</th>
 							))}
 						</tr>
@@ -130,10 +120,7 @@ class UsageTypeTable extends Component {
 							return (
 								<tr key={ut.Id}>
 									<td>
-										<span
-											className="table-link"
-											onClick={() => openSFLink(ut.Id)}
-										>
+										<span className="table-link" onClick={() => openSFLink(ut.Id)}>
 											{ut.Name}
 										</span>
 									</td>
@@ -180,9 +167,7 @@ class UsageType extends Component {
 		window.updateTooltipPosition = this.updateTooltipPosition;
 
 		this.mainUt = this.props.allowance.mainUsageType || {};
-		this.childUt = this.mainUt.hasOwnProperty('childUsageTypes')
-			? this.mainUt.childUsageTypes
-			: [];
+		this.childUt = this.mainUt.hasOwnProperty('childUsageTypes') ? this.mainUt.childUsageTypes : [];
 
 		this.state = {
 			below: true,
@@ -207,9 +192,7 @@ class UsageType extends Component {
 		// getBoundingClientRect will return everything there is about elements dimensions
 		const chip_dimensions = this.chip.current.getBoundingClientRect();
 		// header is not a part of the first relative container we need to tkae it into consideration
-		const header_height = document.getElementsByClassName(
-			'fa-secondary-header'
-		)[0].clientHeight;
+		const header_height = document.getElementsByClassName('fa-secondary-header')[0].clientHeight;
 
 		// Is the chip below or above the pages equator
 		let _below = window.innerHeight / 2 < chip_dimensions.top - header_height;
@@ -231,16 +214,12 @@ class UsageType extends Component {
 			<React.Fragment>
 				<div
 					className={
-						'fa-chip-expander fa-chip-expander--' +
-						(this.childUt.length ? 'usage' : 'active')
+						'fa-chip-expander fa-chip-expander--' + (this.childUt.length ? 'usage' : 'active')
 					}
 				>
 					<span
 						ref={this.chip}
-						className={
-							'fa-chip fa-chip--' +
-							(this.childUt.length ? 'usage hover' : 'active')
-						}
+						className={'fa-chip fa-chip--' + (this.childUt.length ? 'usage hover' : 'active')}
 						onClick={() => {
 							this.childUt.length && this.props.onOpen();
 						}}

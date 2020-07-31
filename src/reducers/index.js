@@ -55,11 +55,9 @@ const VOLUME_FIELDS = [
 
 function makeId(n) {
 	var text = '';
-	var possible =
-		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-	for (var i = 0; i < n; i++)
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	for (var i = 0; i < n; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return text;
 }
@@ -76,10 +74,7 @@ function organizeHeaderFields(headerData, _activeFa) {
 				return false;
 			}
 
-			return evaluateExpressionOnAgreement(
-				parseExpression(f.visible),
-				_activeFa
-			);
+			return evaluateExpressionOnAgreement(parseExpression(f.visible), _activeFa);
 		}
 
 		return true;
@@ -156,9 +151,7 @@ function formatDiscLevels(dlList = []) {
 
 		if (!dl.discountLevel.cspmb__Discount_Type__c) {
 			log.bg.red(
-				'Discount level ' +
-					dl.discountLevel.Id +
-					' does not contain cspmb__Discount_Type__c'
+				'Discount level ' + dl.discountLevel.Id + ' does not contain cspmb__Discount_Type__c'
 			);
 
 			return;
@@ -188,10 +181,7 @@ function formatDiscLevels(dlList = []) {
 				dl.discountLevel.cspmb__Maximum_Discount_Value__c <
 				dl.discountLevel.cspmb__Minimum_Discount_Value__c
 			) {
-				log.bg.red(
-					'Minimum greater then maximum on discount level:',
-					dl.discountLevel.Id
-				);
+				log.bg.red('Minimum greater then maximum on discount level:', dl.discountLevel.Id);
 			}
 
 			// validate increment
@@ -216,8 +206,7 @@ function formatDiscLevels(dlList = []) {
 			}
 		} else {
 			failure = true;
-			error.message =
-				'Missing crucial fields on discount level ' + dl.discountLevel.Id;
+			error.message = 'Missing crucial fields on discount level ' + dl.discountLevel.Id;
 			error.targets = [
 				'cspmb__Discount_Increment__c',
 				'cspmb__Maximum_Discount_Value__c',
@@ -405,10 +394,7 @@ const rootReducer = (state = initialState, action) => {
 				_fa._ui.commercialProducts.forEach(cp => {
 					bulkValidation[cp.Id] = {
 						addons: validateAddons(cp._addons, _products[cp.Id]._addons || {}),
-						rated: validateRateCardLines(
-							cp._rateCards,
-							_products[cp.Id]._rateCards || {}
-						),
+						rated: validateRateCardLines(cp._rateCards, _products[cp.Id]._rateCards || {}),
 						charges: validateCharges(
 							cp._charges,
 							cp.cspmb__Authorization_Level__c,
@@ -496,9 +482,7 @@ const rootReducer = (state = initialState, action) => {
 					[action.payload.priceItemId]: {
 						...state.validation[action.payload.priceItemId],
 						[action.payload.type]: {
-							...state.validation[action.payload.priceItemId][
-								action.payload.type
-							],
+							...state.validation[action.payload.priceItemId][action.payload.type],
 							...action.payload.data
 						}
 					}
@@ -588,9 +572,7 @@ const rootReducer = (state = initialState, action) => {
 			var index = action.payload;
 			return {
 				...state,
-				faFields: state.faFields.map((f, i) =>
-					i === index ? { ...f, visible: !f.visible } : f
-				)
+				faFields: state.faFields.map((f, i) => (i === index ? { ...f, visible: !f.visible } : f))
 			};
 
 		case 'SET_DISABLE_DISCOUNT':
@@ -649,10 +631,7 @@ const rootReducer = (state = initialState, action) => {
 								...upsertedFa,
 								_ui: {
 									...upsertedFa._ui,
-									headerRows: organizeHeaderFields(
-										state.settings.HeaderData,
-										upsertedFa
-									)
+									headerRows: organizeHeaderFields(state.settings.HeaderData, upsertedFa)
 								}
 							}
 						}
@@ -746,10 +725,7 @@ const rootReducer = (state = initialState, action) => {
 			};
 
 		case 'DELETE_FA':
-			var {
-				[action.payload]: value,
-				...withoutRemoved
-			} = state.frameAgreements;
+			var { [action.payload]: value, ...withoutRemoved } = state.frameAgreements;
 			return { ...state, frameAgreements: withoutRemoved };
 
 		case 'SET_CP_FILTER':
@@ -789,10 +765,7 @@ const rootReducer = (state = initialState, action) => {
 				...upsertData,
 				_ui: {
 					...upsertData._ui,
-					headerRows: organizeHeaderFields(
-						state.settings.HeaderData,
-						upsertData
-					)
+					headerRows: organizeHeaderFields(state.settings.HeaderData, upsertData)
 				}
 			};
 
@@ -892,9 +865,7 @@ const rootReducer = (state = initialState, action) => {
 			var _products = _fa._ui.attachment.products;
 
 			function negotiateData(dataObject) {
-				let cp = _fa._ui.commercialProducts.find(
-					_cp => _cp.Id === dataObject.priceItemId
-				);
+				let cp = _fa._ui.commercialProducts.find(_cp => _cp.Id === dataObject.priceItemId);
 
 				if (!cp) {
 					console.error(
@@ -911,14 +882,12 @@ const rootReducer = (state = initialState, action) => {
 				// ********************************** Addons
 				if (dataObject.hasOwnProperty('cpAddon')) {
 					if (dataObject.value.hasOwnProperty('oneOff')) {
-						_products[dataObject.priceItemId]._addons[
-							dataObject.cpAddon
-						].oneOff = dataObject.value.oneOff;
+						_products[dataObject.priceItemId]._addons[dataObject.cpAddon].oneOff =
+							dataObject.value.oneOff;
 					}
 					if (dataObject.value.hasOwnProperty('recurring')) {
-						_products[dataObject.priceItemId]._addons[
-							dataObject.cpAddon
-						].recurring = dataObject.value.recurring;
+						_products[dataObject.priceItemId]._addons[dataObject.cpAddon].recurring =
+							dataObject.value.recurring;
 					}
 				}
 				// ********************************* Charge
@@ -933,9 +902,7 @@ const rootReducer = (state = initialState, action) => {
 						type = 'recurring';
 					}
 					if (!dataObject.value.hasOwnProperty(type)) {
-						console.error(
-							'Pricing element ' + charge.Id + ' has invalid charge type!'
-						);
+						console.error('Pricing element ' + charge.Id + ' has invalid charge type!');
 						return;
 					}
 
@@ -952,10 +919,7 @@ const rootReducer = (state = initialState, action) => {
 
 					dataObject.value = +dataObject.value;
 
-					if (
-						typeof dataObject.value !== 'number' &&
-						!Number.isNaN(dataObject.value)
-					) {
+					if (typeof dataObject.value !== 'number' && !Number.isNaN(dataObject.value)) {
 						console.error('Value for RCL not integer!');
 						return;
 					}
@@ -1009,17 +973,12 @@ const rootReducer = (state = initialState, action) => {
 				}
 			});
 
-			window.SF.fieldLabels.statuses = action.payload.csconta__Status__c.reduce(
-				(acc, iter) => {
-					return { ...acc, [iter.value]: iter.label };
-				},
-				{}
-			);
+			window.SF.fieldLabels.statuses = action.payload.csconta__Status__c.reduce((acc, iter) => {
+				return { ...acc, [iter.value]: iter.label };
+			}, {});
 
 			try {
-				window.SF.fieldLabels[
-					'misc'
-				] = options.csconta__agreement_level__c.reduce(
+				window.SF.fieldLabels['misc'] = options.csconta__agreement_level__c.reduce(
 					(acc, iter) => ({ ...acc, [iter.value.toLowerCase()]: iter.label }),
 					{}
 				);
@@ -1035,30 +994,23 @@ const rootReducer = (state = initialState, action) => {
 			action.payload.HeaderData = validateJSONData(action.payload.HeaderData);
 
 			action.payload.HeaderData.forEach(data => {
-				data.label =
-					data.label ||
-					getFieldLabel('csconta__Frame_Agreement__c', data.field);
+				data.label = data.label || getFieldLabel('csconta__Frame_Agreement__c', data.field);
 			});
 
-			action.payload.CustomTabsData = validateJSONData(
-				action.payload.CustomTabsData
-			);
+			action.payload.CustomTabsData = validateJSONData(action.payload.CustomTabsData);
 
 			let _productFields = [];
 			let _faFields = [];
 			// _productFields.push({name:"Name", visible: true})
 
-			action.payload.FACSettings.input_minmax_restriction = !!action.payload.FACSettings.input_minmax_restriction;
+			action.payload.FACSettings.input_minmax_restriction = !!action.payload.FACSettings
+				.input_minmax_restriction;
 
 			if (!action.payload.FACSettings.hasOwnProperty('new_frame_agreement')) {
 				action.payload.FACSettings.new_frame_agreement = true;
 			}
 
-			if (
-				!action.payload.FACSettings.hasOwnProperty(
-					'active_status_management__c'
-				)
-			) {
+			if (!action.payload.FACSettings.hasOwnProperty('active_status_management__c')) {
 				action.payload.FACSettings.active_status_management__c = true;
 			}
 
@@ -1130,15 +1082,11 @@ const rootReducer = (state = initialState, action) => {
 					.replace(/(?:\r\n|\r|\n|\s)/g, '')
 					.split(',');
 			} else {
-				action.payload.FACSettings.volume_fields_visibility = VOLUME_FIELDS.map(
-					vf => vf.name
-				);
+				action.payload.FACSettings.volume_fields_visibility = VOLUME_FIELDS.map(vf => vf.name);
 			}
 
 			if (action.payload.FACSettings.show_volume_fields) {
-				let _visibillity = new Set(
-					action.payload.FACSettings.volume_fields_visibility
-				);
+				let _visibillity = new Set(action.payload.FACSettings.volume_fields_visibility);
 
 				VOLUME_FIELDS.filter(vf => _visibillity.has(vf.name)).forEach(f => {
 					_productFields.push({
@@ -1174,18 +1122,14 @@ const rootReducer = (state = initialState, action) => {
 						action.payload.FACSettings.statuses.active_status
 					)
 				) {
-					console.warn(
-						'Active status excluded from list of editable statuses!'
-					);
+					console.warn('Active status excluded from list of editable statuses!');
 				}
 				if (
 					action.payload.FACSettings.fa_editable_statuses.delete(
 						action.payload.FACSettings.statuses.closed_status
 					)
 				) {
-					console.warn(
-						'Closed status excluded from list of editable statuses!'
-					);
+					console.warn('Closed status excluded from list of editable statuses!');
 				}
 			} else {
 				console.warn(
@@ -1198,9 +1142,7 @@ const rootReducer = (state = initialState, action) => {
 				];
 
 				// If statuses are not defined
-				action.payload.FACSettings.fa_editable_statuses.filter(
-					status => !!status
-				);
+				action.payload.FACSettings.fa_editable_statuses.filter(status => !!status);
 
 				action.payload.FACSettings.fa_editable_statuses = new Set(
 					action.payload.FACSettings.fa_editable_statuses
@@ -1214,8 +1156,7 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.product_chunk_size || 100;
 
 			// Temporary until actions get access to store values
-			window.SF.product_chunk_size =
-				action.payload.FACSettings.product_chunk_size;
+			window.SF.product_chunk_size = action.payload.FACSettings.product_chunk_size;
 
 			// Validate custom tabs
 			action.payload.CustomTabsData.forEach((tab, i) => {
@@ -1238,9 +1179,7 @@ const rootReducer = (state = initialState, action) => {
 				'NewVersion'
 			];
 
-			const fullStatusSet = new Set(
-				Object.values(action.payload.FACSettings.statuses)
-			);
+			const fullStatusSet = new Set(Object.values(action.payload.FACSettings.statuses));
 
 			const alwaysVisibleExp = {
 				operators: [],
@@ -1279,9 +1218,7 @@ const rootReducer = (state = initialState, action) => {
 							return;
 						}
 
-						_standardButtons[sb] = parseExpression(
-							action.payload.ButtonStandardData[sb]
-						);
+						_standardButtons[sb] = parseExpression(action.payload.ButtonStandardData[sb]);
 					} else {
 						// Legacy configuration
 						if (action.payload.ButtonStandardData[sb][0] === '*') {
@@ -1296,9 +1233,7 @@ const rootReducer = (state = initialState, action) => {
 
 						_standardButtons[sb] = {
 							operators,
-							components: _config.map(status =>
-								convertStatusToParsedExp(status, '==')
-							)
+							components: _config.map(status => convertStatusToParsedExp(status, '=='))
 						};
 					}
 				}
@@ -1307,15 +1242,13 @@ const rootReducer = (state = initialState, action) => {
 			action.payload.ButtonStandardData = _standardButtons;
 			// ***************************************************************************************************************
 			// Validate custom buttons
-			action.payload.ButtonCustomData = action.payload.ButtonCustomData.filter(
-				btn => {
-					if (!btn.hasOwnProperty('type') || !btn.hasOwnProperty('label')) {
-						console.warn('Invalid button configuration:', btn);
-						return false;
-					}
-					return true;
+			action.payload.ButtonCustomData = action.payload.ButtonCustomData.filter(btn => {
+				if (!btn.hasOwnProperty('type') || !btn.hasOwnProperty('label')) {
+					console.warn('Invalid button configuration:', btn);
+					return false;
 				}
-			);
+				return true;
+			});
 
 			const LOCATIONS = {
 				Editor: true,
@@ -1331,9 +1264,7 @@ const rootReducer = (state = initialState, action) => {
 
 				let _legacyVisible = {
 					operators,
-					components: _config.map(status =>
-						convertStatusToParsedExp(status, '!=')
-					)
+					components: _config.map(status => convertStatusToParsedExp(status, '!='))
 				};
 
 				let _newVisible = parseExpression(cb.visible);
@@ -1343,9 +1274,7 @@ const rootReducer = (state = initialState, action) => {
 					components: [..._legacyVisible.components, ..._newVisible.components]
 				};
 
-				cb.id =
-					cb.id ||
-					(cb.label || 'unlabeled-' + i).replace(/\s+/g, '').toLowerCase();
+				cb.id = cb.id || (cb.label || 'unlabeled-' + i).replace(/\s+/g, '').toLowerCase();
 
 				if (!cb.location || !LOCATIONS[cb.location]) {
 					cb.location = 'Editor';
@@ -1367,9 +1296,7 @@ const rootReducer = (state = initialState, action) => {
 
 			for (var key in replacementData) {
 				// key -> old cp Id
-				let new_cp = state.commercialProducts.find(
-					cp => cp.Id === replacementData[key].new_cp.Id
-				);
+				let new_cp = state.commercialProducts.find(cp => cp.Id === replacementData[key].new_cp.Id);
 
 				let old_addons = copy(_attachment.products[key]._addons);
 				let new_addons = {};
@@ -1383,11 +1310,7 @@ const rootReducer = (state = initialState, action) => {
 					) {
 						// This addon is shared by both old and new products
 						new_addons[add.Id] = copy(
-							old_addons[
-								replacementData[key].addon_vs_addon_assoc[
-									add.cspmb__Add_On_Price_Item__c
-								]
-							]
+							old_addons[replacementData[key].addon_vs_addon_assoc[add.cspmb__Add_On_Price_Item__c]]
 						);
 					}
 				});
@@ -1403,9 +1326,7 @@ const rootReducer = (state = initialState, action) => {
 				let old_rc = copy(_attachment.products[key]._rateCards);
 
 				replacementData[key].rc.forEach(rc => {
-					if (
-						_attachment.products[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)
-					) {
+					if (_attachment.products[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)) {
 						_attachment.products[new_cp.Id]._rateCards[rc.Id] = {
 							..._attachment.products[new_cp.Id]._rateCards[rc.Id],
 							...old_rc[rc.Id]
@@ -1436,7 +1357,9 @@ const rootReducer = (state = initialState, action) => {
 			];
 
 			// Remove duplicates
-			_DiscLevels = [...new Set(_DiscLevels.map(dc => JSON.stringify(dc)))].map(dc => JSON.parse(dc));
+			_DiscLevels = [...new Set(_DiscLevels.map(dc => JSON.stringify(dc)))].map(dc =>
+				JSON.parse(dc)
+			);
 
 			var _AuthLevels = state.settings.AuthLevels;
 			_AuthLevels = {
@@ -1446,8 +1369,7 @@ const rootReducer = (state = initialState, action) => {
 
 			_DiscLevels.forEach(lv => {
 				if (lv.priceItemId) {
-					productVsDiscount[lv.priceItemId] =
-						productVsDiscount[lv.priceItemId] || [];
+					productVsDiscount[lv.priceItemId] = productVsDiscount[lv.priceItemId] || [];
 					productVsDiscount[lv.priceItemId].push(lv);
 				}
 			});
@@ -1474,8 +1396,7 @@ const rootReducer = (state = initialState, action) => {
 
 				// **********************************************
 				if (productVsDiscount[key]) {
-					state.commercialProducts[priceItemIndex]._discountLvIds =
-						productVsDiscount[key];
+					state.commercialProducts[priceItemIndex]._discountLvIds = productVsDiscount[key];
 				}
 				// **********************************************
 				const addonVsDiscount = {};
@@ -1490,18 +1411,15 @@ const rootReducer = (state = initialState, action) => {
 				function formatAddons(addon) {
 					let _addon = { ...addon };
 
-					_addon.cspmb__One_Off_Charge__c =
-						_addon.cspmb__One_Off_Charge__c || null;
-					_addon.cspmb__Recurring_Charge__c =
-						_addon.cspmb__Recurring_Charge__c || null;
+					_addon.cspmb__One_Off_Charge__c = _addon.cspmb__One_Off_Charge__c || null;
+					_addon.cspmb__Recurring_Charge__c = _addon.cspmb__Recurring_Charge__c || null;
 
 					_addon.cspmb__Authorization_Level__c =
 						_addon.cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c;
 					_addon.Name = _addon.cspmb__Add_On_Price_Item__r.Name;
 
 					if (addonVsDiscount[addon.cspmb__Add_On_Price_Item__c]) {
-						_addon._discountLvIds =
-							addonVsDiscount[addon.cspmb__Add_On_Price_Item__c];
+						_addon._discountLvIds = addonVsDiscount[addon.cspmb__Add_On_Price_Item__c];
 					}
 
 					delete _addon.cspmb__Add_On_Price_Item__r;
@@ -1512,56 +1430,54 @@ const rootReducer = (state = initialState, action) => {
 
 				// **********************************************
 
-				state.commercialProducts[priceItemIndex]._addons = priceItemData[
-					key
-				].addons.map(addon => formatAddons(addon));
-
-				// **********************************************
-				state.commercialProducts[priceItemIndex]._charges = priceItemData[
-					key
-				].charges.map(charge => {
-					let retCharge = { ...charge };
-					if (
-						charge.chargeType
-							.toLowerCase()
-							.replace(/\s+/g, '')
-							.replace(/\W/g, '') === 'oneoffcharge'
-					) {
-						delete retCharge.recurring;
-						retCharge._type = 'oneOff';
-					} else if (
-						charge.chargeType
-							.toLowerCase()
-							.replace(/\s+/g, '')
-							.replace(/\W/g, '') === 'recurringcharge'
-					) {
-						delete retCharge.oneOff;
-						retCharge._type = 'recurring';
-					} else {
-						retCharge = null;
-					}
-					return retCharge;
-				});
-
-				state.commercialProducts[
-					priceItemIndex
-				]._charges = state.commercialProducts[priceItemIndex]._charges.filter(
-					charge => {
-						return charge != null;
-					}
+				state.commercialProducts[priceItemIndex]._addons = priceItemData[key].addons.map(addon =>
+					formatAddons(addon)
 				);
 
 				// **********************************************
-				state.commercialProducts[priceItemIndex]._rateCards = priceItemData[
-					key
-				].rateCards.map(rc => {
-					rc.rateCardLines.forEach(rcl => {
-						rcl.usageTypeName = rcl.hasOwnProperty('cspmb__usage_type__r')
-							? rcl.cspmb__usage_type__r.Name
-							: null;
-					});
-					return rc;
+				state.commercialProducts[priceItemIndex]._charges = priceItemData[key].charges.map(
+					charge => {
+						let retCharge = { ...charge };
+						if (
+							charge.chargeType
+								.toLowerCase()
+								.replace(/\s+/g, '')
+								.replace(/\W/g, '') === 'oneoffcharge'
+						) {
+							delete retCharge.recurring;
+							retCharge._type = 'oneOff';
+						} else if (
+							charge.chargeType
+								.toLowerCase()
+								.replace(/\s+/g, '')
+								.replace(/\W/g, '') === 'recurringcharge'
+						) {
+							delete retCharge.oneOff;
+							retCharge._type = 'recurring';
+						} else {
+							retCharge = null;
+						}
+						return retCharge;
+					}
+				);
+
+				state.commercialProducts[priceItemIndex]._charges = state.commercialProducts[
+					priceItemIndex
+				]._charges.filter(charge => {
+					return charge != null;
 				});
+
+				// **********************************************
+				state.commercialProducts[priceItemIndex]._rateCards = priceItemData[key].rateCards.map(
+					rc => {
+						rc.rateCardLines.forEach(rcl => {
+							rcl.usageTypeName = rcl.hasOwnProperty('cspmb__usage_type__r')
+								? rcl.cspmb__usage_type__r.Name
+								: null;
+						});
+						return rc;
+					}
+				);
 
 				// **********************************************
 
@@ -1569,18 +1485,14 @@ const rootReducer = (state = initialState, action) => {
 
 				priceItemData[key].allowances.forEach(all => {
 					if (all.hasOwnProperty('cspmb__usage_type__r')) {
-						all.mainUsageType = JSON.parse(
-							JSON.stringify(all.cspmb__usage_type__r)
-						);
+						all.mainUsageType = JSON.parse(JSON.stringify(all.cspmb__usage_type__r));
 						delete all.cspmb__usage_type__r;
 						delete all.mainUsageType.attributes;
 
 						// Associate child UT
 						if (
 							action.payload.childUsageTypes &&
-							action.payload.childUsageTypes.hasOwnProperty(
-								all.mainUsageType.Id
-							)
+							action.payload.childUsageTypes.hasOwnProperty(all.mainUsageType.Id)
 						) {
 							all.mainUsageType.childUsageTypes =
 								action.payload.childUsageTypes[all.mainUsageType.Id];
@@ -1590,8 +1502,7 @@ const rootReducer = (state = initialState, action) => {
 					}
 				});
 
-				state.commercialProducts[priceItemIndex]._allowances =
-					priceItemData[key].allowances || [];
+				state.commercialProducts[priceItemIndex]._allowances = priceItemData[key].allowances || [];
 
 				// **********************************************
 				state.commercialProducts[priceItemIndex]._dataLoaded = true;
@@ -1629,10 +1540,7 @@ const rootReducer = (state = initialState, action) => {
 				}
 			});
 
-			newCps = new Set([
-				...state.frameAgreements[faId]._ui.commercialProducts,
-				...newCps
-			]);
+			newCps = new Set([...state.frameAgreements[faId]._ui.commercialProducts, ...newCps]);
 			newCps = Array.from(newCps);
 
 			return {
@@ -1655,9 +1563,7 @@ const rootReducer = (state = initialState, action) => {
 			var rlData = action.payload.rlData;
 
 			rlData.forEach(rl => {
-				rl.columns = validateCSV(rl.columns)
-					? convertCSVToArray(rl.columns)
-					: [];
+				rl.columns = validateCSV(rl.columns) ? convertCSVToArray(rl.columns) : [];
 			});
 
 			return {
@@ -1751,19 +1657,14 @@ const rootReducer = (state = initialState, action) => {
 
 				function getDefaultAttachmentForProductId(cpId) {
 					if (!_cpCache.hasOwnProperty(cpId)) {
-						let _cp = state.frameAgreements[faId]._ui.commercialProducts.find(
-							cp => cp.Id === cpId
-						);
+						let _cp = state.frameAgreements[faId]._ui.commercialProducts.find(cp => cp.Id === cpId);
 						_cpCache[cpId] = enrichAttachment(_cp);
 					}
 
 					return _cpCache[cpId];
 				}
 
-				if (
-					entitiyMap.hasOwnProperty('product') &&
-					_attachment.hasOwnProperty('products')
-				) {
+				if (entitiyMap.hasOwnProperty('product') && _attachment.hasOwnProperty('products')) {
 					for (var key in _attachment.products) {
 						let _defaultAttachment = getDefaultAttachmentForProductId(key);
 
@@ -1771,13 +1672,11 @@ const rootReducer = (state = initialState, action) => {
 							// This entity is preset in attachment
 							// reset its charges and productCharges
 							if (_defaultAttachment._product) {
-								_attachment.products[key]._product =
-									_defaultAttachment._product;
+								_attachment.products[key]._product = _defaultAttachment._product;
 							}
 
 							if (_defaultAttachment._charges) {
-								_attachment.products[key]._charges =
-									_defaultAttachment._charges;
+								_attachment.products[key]._charges = _defaultAttachment._charges;
 							}
 						}
 					}
@@ -1822,11 +1721,8 @@ const rootReducer = (state = initialState, action) => {
 
 			var _products = state.frameAgreements[faId]._ui.attachment.products;
 
-			var _commercialProducts =
-				state.frameAgreements[faId]._ui.commercialProducts;
-			_commercialProducts = _commercialProducts.filter(
-				cp => !productIds.includes(cp.Id)
-			);
+			var _commercialProducts = state.frameAgreements[faId]._ui.commercialProducts;
+			_commercialProducts = _commercialProducts.filter(cp => !productIds.includes(cp.Id));
 
 			productIds.forEach(cpId => {
 				delete _products[cpId];
@@ -1855,9 +1751,7 @@ const rootReducer = (state = initialState, action) => {
 			var faId = action.payload.faId;
 			var attachment = action.payload.data || {};
 
-			var _commercialProducts = state.commercialProducts.filter(
-				cp => attachment.products[cp.Id]
-			);
+			var _commercialProducts = state.commercialProducts.filter(cp => attachment.products[cp.Id]);
 
 			return {
 				...state,

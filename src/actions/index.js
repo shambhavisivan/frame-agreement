@@ -31,14 +31,12 @@ export const _loadAccounts = data => ({
 export function loadAccounts(params) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]).then(
-				data => {
-					data = decodeEntities(data);
-					dispatch(_loadAccounts(data));
-					resolve(data);
-					return data;
-				}
-			);
+			window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]).then(data => {
+				data = decodeEntities(data);
+				dispatch(_loadAccounts(data));
+				resolve(data);
+				return data;
+			});
 		});
 	};
 }
@@ -52,16 +50,14 @@ export const _recieveApprovalHistory = (faId, data) => ({
 export function getApprovalHistory(faId) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getApprovalHistory', [faId.slice(0, 15)]).then(
-				response => {
-					try {
-						response.listProcess = response.listProcess || [];
-					} catch (err) {}
-					dispatch(_recieveApprovalHistory(faId, response));
-					resolve(response);
-					return response;
-				}
-			);
+			window.SF.invokeAction('getApprovalHistory', [faId.slice(0, 15)]).then(response => {
+				try {
+					response.listProcess = response.listProcess || [];
+				} catch (err) {}
+				dispatch(_recieveApprovalHistory(faId, response));
+				resolve(response);
+				return response;
+			});
 		});
 	};
 }
@@ -128,11 +124,9 @@ export function getRelatedLists(faId) {
 				// Load field labels if not loaded already
 				for (const list of response) {
 					if (!window.SF.fieldLabels.hasOwnProperty(list.object)) {
-						await window.SF.invokeAction('getFieldLabels', [list.object]).then(
-							r => {
-								window.SF.fieldLabels[list.object] = r;
-							}
-						);
+						await window.SF.invokeAction('getFieldLabels', [list.object]).then(r => {
+							window.SF.fieldLabels[list.object] = r;
+						});
 					}
 				}
 
@@ -171,15 +165,11 @@ export function refreshFrameAgreement(faId) {
 export function setFrameAgreementState(faId, newStatus) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('setFrameAgreementState', [faId, newStatus]).then(
-				response => {
-					dispatch(
-						_getFrameAgreement({ Id: faId, csconta__Status__c: newStatus })
-					);
-					resolve(response);
-					return response;
-				}
-			);
+			window.SF.invokeAction('setFrameAgreementState', [faId, newStatus]).then(response => {
+				dispatch(_getFrameAgreement({ Id: faId, csconta__Status__c: newStatus }));
+				resolve(response);
+				return response;
+			});
 		});
 	};
 }
@@ -192,25 +182,21 @@ export const _createNewVersionOfFrameAgrement = newFa => ({
 export function createNewVersionOfFrameAgrement(faId) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('createNewVersionOfFrameAgrement', [faId]).then(
-				response => {
-					dispatch(_createNewVersionOfFrameAgrement(response));
-					resolve(response);
-					return response;
-				}
-			);
+			window.SF.invokeAction('createNewVersionOfFrameAgrement', [faId]).then(response => {
+				dispatch(_createNewVersionOfFrameAgrement(response));
+				resolve(response);
+				return response;
+			});
 		});
 	};
 }
 
 export function submitForApproval(faId) {
 	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('submitForApproval', [faId.slice(0, 15)]).then(
-			response => {
-				resolve(response);
-				return response;
-			}
-		);
+		window.SF.invokeAction('submitForApproval', [faId.slice(0, 15)]).then(response => {
+			resolve(response);
+			return response;
+		});
 	});
 }
 // ***********************************************************************
@@ -225,12 +211,7 @@ export const toggleFaFieldVisibility = index => ({
 });
 
 // ***********************************************************************
-export const setValidation = (
-	faId,
-	priceItemId = null,
-	type = null,
-	data = null
-) => ({
+export const setValidation = (faId, priceItemId = null, type = null, data = null) => ({
 	type: 'SET_VALIDATION',
 	payload: { faId, priceItemId, type, data }
 });
@@ -300,19 +281,17 @@ export function getAppSettings() {
 		// dispatch(requestAppSettings());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getAppSettings', [window.SF.param.account]).then(
-				response => {
-					if (!response) {
-						reject('Cannot get app settings!');
-						return response;
-					}
-					setTimeout(() => {
-						dispatch(recieveAppSettings(response));
-						resolve(response);
-						return response;
-					});
+			window.SF.invokeAction('getAppSettings', [window.SF.param.account]).then(response => {
+				if (!response) {
+					reject('Cannot get app settings!');
+					return response;
 				}
-			);
+				setTimeout(() => {
+					dispatch(recieveAppSettings(response));
+					resolve(response);
+					return response;
+				});
+			});
 		});
 	};
 }
@@ -325,15 +304,13 @@ export const recievePicklistOptions = result => ({
 export function getPicklistOptions(picklistFields) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getPicklistOptions', [picklistFields]).then(
-				response => {
-					setTimeout(() => {
-						dispatch(recievePicklistOptions(response));
-						resolve(response);
-						return response;
-					});
-				}
-			);
+			window.SF.invokeAction('getPicklistOptions', [picklistFields]).then(response => {
+				setTimeout(() => {
+					dispatch(recievePicklistOptions(response));
+					resolve(response);
+					return response;
+				});
+			});
 		});
 	};
 }
@@ -405,9 +382,7 @@ export const _recievePriceItemData = result => ({
 
 const _getCommercialProductData = priceItemIdList => {
 	return new Promise(async (resolve, reject) => {
-		let priceItemChunks = priceItemIdList.chunk(
-			window.SF.product_chunk_size || 100
-		);
+		let priceItemChunks = priceItemIdList.chunk(window.SF.product_chunk_size || 100);
 
 		let promiseArray = priceItemChunks.map(cpChunk => {
 			return window.SF.invokeAction('getCommercialProductData', [cpChunk]);
@@ -540,13 +515,13 @@ export function filterCommercialProducts(filterData) {
 		// dispatch(requestPriceItemData());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('filterCommercialProducts', [
-				JSON.stringify(filterData)
-			]).then(response => {
-				dispatch(_filterCommercialProducts(response));
-				resolve(response);
-				return response;
-			});
+			window.SF.invokeAction('filterCommercialProducts', [JSON.stringify(filterData)]).then(
+				response => {
+					dispatch(_filterCommercialProducts(response));
+					resolve(response);
+					return response;
+				}
+			);
 		});
 	};
 }
@@ -563,9 +538,7 @@ export function getFrameAgreements() {
 		// dispatch(requestGetFrameAgreements());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getFrameAgreements', [
-				window.SF.param.account
-			]).then(response => {
+			window.SF.invokeAction('getFrameAgreements', [window.SF.param.account]).then(response => {
 				dispatch(recieveGetFrameAgreements(response));
 				resolve(response);
 				return response;
@@ -644,12 +617,7 @@ export function saveFrameAgreement(frameAgreement) {
 			console.error('No Frame agreement!');
 		}
 
-		var ommited = new Set([
-			'csconta__Account__r',
-			'Name',
-			'_ui',
-			'LastModifiedDate'
-		]);
+		var ommited = new Set(['csconta__Account__r', 'Name', '_ui', 'LastModifiedDate']);
 
 		var SF_data = {};
 
@@ -682,10 +650,7 @@ export function saveFrameAgreement(frameAgreement) {
 			});
 
 			promiseArray.push(
-				window.SF.invokeAction('saveAttachment', [
-					frameAgreement.Id,
-					JSON.stringify(_attachment)
-				])
+				window.SF.invokeAction('saveAttachment', [frameAgreement.Id, JSON.stringify(_attachment)])
 			);
 		}
 

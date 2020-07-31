@@ -44,10 +44,7 @@ class DGTargets extends React.Component {
 					{fields.map(f => {
 						return (
 							<div key={f} className="header-th">
-								<span>
-									{getFieldLabel('csfamext__Dynamic_Group__c', f) ||
-										truncateCPField(f)}
-								</span>
+								<span>{getFieldLabel('csfamext__Dynamic_Group__c', f) || truncateCPField(f)}</span>
 							</div>
 						);
 					})}

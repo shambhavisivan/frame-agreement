@@ -38,9 +38,7 @@ export class Rates extends React.Component {
 
 	componentWillUpdate(nextProps, nextState) {
 		if (nextState.pagination.pageSize !== this.state.pagination.pageSize) {
-			this.paginationFormat = this.paginateRateCards(
-				nextState.pagination.pageSize
-			);
+			this.paginationFormat = this.paginateRateCards(nextState.pagination.pageSize);
 		}
 	}
 
@@ -84,100 +82,83 @@ export class Rates extends React.Component {
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell">
-						{window.SF.labels.rate_cards_header_name}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.rate_cards_header_usage}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.rate_cards_header_value}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.rate_cards_header_value_neg}
-					</div>
+					<div className="list-cell">{window.SF.labels.rate_cards_header_name}</div>
+					<div className="list-cell">{window.SF.labels.rate_cards_header_usage}</div>
+					<div className="list-cell">{window.SF.labels.rate_cards_header_value}</div>
+					<div className="list-cell">{window.SF.labels.rate_cards_header_value_neg}</div>
 				</div>
 				<ul className="fa-modal-list">
-					{(this.paginationFormat[this.state.pagination.page - 1] || []).map(
-						(rc, i) => {
-							return (
-								<li key={rc.Id} className="list-item">
-									<div className="rate-card-title">
-										<div className="title-upper" />
-										<div className="title-content">
-											<Icon name="announcement" width="14" color="#706e6b" />
-											{rc.Name}
-										</div>
-										<div className="title-lower"> </div>
+					{(this.paginationFormat[this.state.pagination.page - 1] || []).map((rc, i) => {
+						return (
+							<li key={rc.Id} className="list-item">
+								<div className="rate-card-title">
+									<div className="title-upper" />
+									<div className="title-content">
+										<Icon name="announcement" width="14" color="#706e6b" />
+										{rc.Name}
 									</div>
+									<div className="title-lower"> </div>
+								</div>
 
-									<ul className="table-list">
-										{rc.rateCardLines.map((rcl, i) => {
-											let flagColor = '#4bca81';
-											if (this.props.validation[rcl.Id]) {
-												flagColor = '#D9675D';
-											}
+								<ul className="table-list">
+									{rc.rateCardLines.map((rcl, i) => {
+										let flagColor = '#4bca81';
+										if (this.props.validation[rcl.Id]) {
+											flagColor = '#D9675D';
+										}
 
-											if (this.props.readOnly) {
-												flagColor = '#ccc';
-											}
+										if (this.props.readOnly) {
+											flagColor = '#ccc';
+										}
 
-											let _negValue;
-											if (
-												this.props.attachment.hasOwnProperty(rc.Id) &&
-												this.props.attachment[rc.Id].hasOwnProperty(rcl.Id)
-											) {
-												_negValue = this.props.attachment[rc.Id][rcl.Id];
-											} else {
-												_negValue = rcl.cspmb__rate_value__c || 0;
-											}
+										let _negValue;
+										if (
+											this.props.attachment.hasOwnProperty(rc.Id) &&
+											this.props.attachment[rc.Id].hasOwnProperty(rcl.Id)
+										) {
+											_negValue = this.props.attachment[rc.Id][rcl.Id];
+										} else {
+											_negValue = rcl.cspmb__rate_value__c || 0;
+										}
 
-											return (
-												<li key={rcl.Id} className="list-row">
-													<div className="list-cell">
-														<Icon
-															name="priority"
-															width="14"
-															color={flagColor}
-														/>
-														{rcl.Name}
-													</div>
-													<div className="list-cell">
-														{rcl.usageTypeName ? rcl.usageTypeName : 'N/A'}
-													</div>
-													<div className="list-cell">
-														{rcl.hasOwnProperty('cspmb__rate_value__c')
-															? rcl.cspmb__rate_value__c.toFixedNumber()
-															: 'N/A'}
-													</div>
-													<div className="list-cell negotiable">
-														<InputNegotiate
-															readOnly={
-																this.props.readOnly ||
-																!rcl.hasOwnProperty('cspmb__rate_value__c')
-															}
-															invalid={this.props.validation[rcl.Id]}
-															onChange={val => {
-																this.negotiateInline(rc, rcl, val);
-															}}
-															negotiatedValue={_negValue}
-															originalValue={rcl.cspmb__rate_value__c}
-														/>
-													</div>
-												</li>
-											);
-										})}
-									</ul>
-								</li>
-							);
-						}
-					)}
+										return (
+											<li key={rcl.Id} className="list-row">
+												<div className="list-cell">
+													<Icon name="priority" width="14" color={flagColor} />
+													{rcl.Name}
+												</div>
+												<div className="list-cell">
+													{rcl.usageTypeName ? rcl.usageTypeName : 'N/A'}
+												</div>
+												<div className="list-cell">
+													{rcl.hasOwnProperty('cspmb__rate_value__c')
+														? rcl.cspmb__rate_value__c.toFixedNumber()
+														: 'N/A'}
+												</div>
+												<div className="list-cell negotiable">
+													<InputNegotiate
+														readOnly={
+															this.props.readOnly || !rcl.hasOwnProperty('cspmb__rate_value__c')
+														}
+														invalid={this.props.validation[rcl.Id]}
+														onChange={val => {
+															this.negotiateInline(rc, rcl, val);
+														}}
+														negotiatedValue={_negValue}
+														originalValue={rcl.cspmb__rate_value__c}
+													/>
+												</div>
+											</li>
+										);
+									})}
+								</ul>
+							</li>
+						);
+					})}
 				</ul>
 
 				<Pagination
-					totalSize={
-						this.paginationFormat.length * this.state.pagination.pageSize
-					}
+					totalSize={this.paginationFormat.length * this.state.pagination.pageSize}
 					pageSize={this.state.pagination.pageSize}
 					page={this.state.pagination.page}
 					onPageSizeChange={newPageSize => {

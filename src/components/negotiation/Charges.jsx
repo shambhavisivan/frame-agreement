@@ -49,39 +49,24 @@ export class Charges extends React.Component {
 			return this.props.recurringAllowed;
 		}
 
-		console.error(
-			chargeType + ' is neither "One-Off Charge" nor "Recurring Charge"'
-		);
+		console.error(chargeType + ' is neither "One-Off Charge" nor "Recurring Charge"');
 	}
 
 	render() {
 		return (
 			<div className="table-container">
 				<div className="table-list-header">
-					<div className="list-cell align-left">
-						{window.SF.labels.charges_header_name}
-					</div>
-					<div className="list-cell align-left">
-						{window.SF.labels.charges_header_type}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.charges_header_oneOff}
-					</div>
+					<div className="list-cell align-left">{window.SF.labels.charges_header_name}</div>
+					<div className="list-cell align-left">{window.SF.labels.charges_header_type}</div>
+					<div className="list-cell">{window.SF.labels.charges_header_oneOff}</div>
 					<div className="list-cell">{window.SF.labels.charges_header_neg}</div>
-					<div className="list-cell">
-						{window.SF.labels.charges_header_recc}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.charges_header_recc_neg}
-					</div>
+					<div className="list-cell">{window.SF.labels.charges_header_recc}</div>
+					<div className="list-cell">{window.SF.labels.charges_header_recc_neg}</div>
 				</div>
 
 				<ul className="table-list">
 					{this.props.charges
-						.paginate(
-							this.state.pagination.page,
-							this.state.pagination.pageSize
-						)
+						.paginate(this.state.pagination.page, this.state.pagination.pageSize)
 						.map((charge, i) => {
 							let recurringRow = 'N/A';
 							let oneOffRow = 'N/A';
@@ -97,18 +82,13 @@ export class Charges extends React.Component {
 								if (this.discounts[charge.Name] && !this.props.disableLevels) {
 									oneOffRow = (
 										<DropdownNegotiate
-											readOnly={
-												this.props.readOnly ||
-												!this.isChargeAllowed(charge.chargeType)
-											}
+											readOnly={this.props.readOnly || !this.isChargeAllowed(charge.chargeType)}
 											invalid={this.props.validation[charge.Id]}
 											discounts={this.discounts[charge.Name]}
 											onChange={val => {
 												this.negotiateInline(charge, val);
 											}}
-											discAsPrice={
-												this.props.settings.FACSettings.discount_as_price
-											}
+											discAsPrice={this.props.settings.FACSettings.discount_as_price}
 											negotiatedValue={value}
 											originalValue={charge.oneOff}
 										/>
@@ -142,19 +122,14 @@ export class Charges extends React.Component {
 									// BINGO
 									recurringRow = (
 										<DropdownNegotiate
-											readOnly={
-												this.props.readOnly ||
-												!this.isChargeAllowed(charge.chargeType)
-											}
+											readOnly={this.props.readOnly || !this.isChargeAllowed(charge.chargeType)}
 											invalid={this.props.validation[charge.Id]}
 											discounts={this.discounts[charge.Name]}
 											onChange={val => {
 												this.negotiateInline(charge, val);
 											}}
 											negotiatedValue={value}
-											discAsPrice={
-												this.props.settings.FACSettings.discount_as_price
-											}
+											discAsPrice={this.props.settings.FACSettings.discount_as_price}
 											originalValue={charge.recurring}
 										/>
 									);
@@ -191,19 +166,13 @@ export class Charges extends React.Component {
 										<Icon name="priority" width="14" color={flagColor} />
 										{charge.Name}
 									</div>
-									<div className="list-cell align-left">
-										{charge.chargeType}
-									</div>
+									<div className="list-cell align-left">{charge.chargeType}</div>
 									<div className="list-cell">
-										{charge.hasOwnProperty('oneOff')
-											? charge.oneOff.toFixedNumber()
-											: 'N/A'}
+										{charge.hasOwnProperty('oneOff') ? charge.oneOff.toFixedNumber() : 'N/A'}
 									</div>
 									<div className="list-cell negotiable">{oneOffRow}</div>
 									<div className="list-cell">
-										{charge.hasOwnProperty('recurring')
-											? charge.recurring.toFixedNumber()
-											: 'N/A'}
+										{charge.hasOwnProperty('recurring') ? charge.recurring.toFixedNumber() : 'N/A'}
 									</div>
 									<div className="list-cell negotiable">{recurringRow}</div>
 								</li>
@@ -247,7 +216,4 @@ const mapStateToProps = state => {
 //     setValidation
 // };
 
-export default connect(
-	mapStateToProps,
-	null
-)(Charges);
+export default connect(mapStateToProps, null)(Charges);

@@ -34,10 +34,7 @@ class SFField extends Component {
 					placeholderText={this.props.editable ? 'Enter date from' : '-'}
 				/>
 			);
-		} else if (
-			this.props.field.type === 'text' ||
-			this.props.field.type === 'number'
-		) {
+		} else if (this.props.field.type === 'text' || this.props.field.type === 'number') {
 			field = (
 				<InputText
 					disabled={!this.props.editable}
@@ -48,11 +45,7 @@ class SFField extends Component {
 			);
 		} else if (this.props.field.type === 'boolean') {
 			field = (
-				<Toggle
-					onChange={this.onChange}
-					disabled={!this.props.editable}
-					value={this.props.value}
-				/>
+				<Toggle onChange={this.onChange} disabled={!this.props.editable} value={this.props.value} />
 			);
 		} else if (this.props.field.type === 'textarea') {
 			field = (
@@ -127,13 +120,7 @@ class SFField extends Component {
 			>
 				<label className="element__label">
 					<span className="label__title">{this.props.field.label}</span>
-					<Icon
-						svg-class="form-edit-icon"
-						name="edit"
-						width="11"
-						height="11"
-						color="#4bca81"
-					/>
+					<Icon svg-class="form-edit-icon" name="edit" width="11" height="11" color="#4bca81" />
 				</label>
 				<div className="element__field">{this.state.render ? field : ''}</div>
 			</div>

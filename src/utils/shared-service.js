@@ -38,8 +38,7 @@ export const toTitleCase = str => {
 	for (var i = 0; i < splitStr.length; i++) {
 		// You do not need to check if i is larger than splitStr length, as your for does that for you
 		// Assign it back to the array
-		splitStr[i] =
-			splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+		splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
 	}
 	// Directly return the joined string
 	return splitStr.join(' ');
@@ -157,11 +156,9 @@ export const decodeEntities = (() => {
 
 export const makeId = (n = 8) => {
 	var text = '';
-	var possible =
-		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-	for (var i = 0; i < n; i++)
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	for (var i = 0; i < n; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
 	return text;
 };
 
@@ -174,8 +171,7 @@ export const parseExpression = (expString = '') => {
 	// Remove parentheses, quotes
 	expString = expString.replace(/('|")/g, '');
 
-	let valuesArray =
-		expString.match(/(?<=(!=|==))(.*?)(?=(&& | \|\| | &|$))/g) || [];
+	let valuesArray = expString.match(/(?<=(!=|==))(.*?)(?=(&& | \|\| | &|$))/g) || [];
 	valuesArray = valuesArray.map(str => str.trim());
 
 	// Remove spaces
@@ -264,10 +260,7 @@ export const evaluateExpressionOnAgreement = (
 			try {
 				_fieldValue = fa[_relation[0]][_relation[1]] || 'null';
 			} catch (err) {
-				console.warn(
-					'Cannot evaluate expression: ',
-					Object.values(component).join(' ')
-				);
+				console.warn('Cannot evaluate expression: ', Object.values(component).join(' '));
 				console.warn(err);
 			}
 		} else {
@@ -325,28 +318,16 @@ export const log = {
 	},
 	bg: {
 		blue: log => {
-			console.log(
-				'%c' + log,
-				'background: #0070d2; color: white; padding: 1px 4px 1px 2px'
-			);
+			console.log('%c' + log, 'background: #0070d2; color: white; padding: 1px 4px 1px 2px');
 		},
 		green: log => {
-			console.log(
-				'%c' + log,
-				'background: #4bca81; color: white; padding: 1px 4px 1px 2px'
-			);
+			console.log('%c' + log, 'background: #4bca81; color: white; padding: 1px 4px 1px 2px');
 		},
 		red: log => {
-			console.log(
-				'%c' + log,
-				'background: #d9675d; color: white; padding: 1px 4px 1px 2px'
-			);
+			console.log('%c' + log, 'background: #d9675d; color: white; padding: 1px 4px 1px 2px');
 		},
 		orange: log => {
-			console.log(
-				'%c' + log,
-				'background: #ffa429; color: white; padding: 1px 4px 1px 2px'
-			);
+			console.log('%c' + log, 'background: #ffa429; color: white; padding: 1px 4px 1px 2px');
 		}
 	}
 };

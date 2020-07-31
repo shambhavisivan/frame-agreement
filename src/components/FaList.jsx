@@ -145,10 +145,7 @@ class FaList extends Component {
 
 	createFrameAgreement(type) {
 		type = type === 'master' ? 'Master Agreement' : 'Frame Agreement';
-		let newFa = new FrameAgreement(
-			this.props.settings.FACSettings.statuses.draft_status,
-			type
-		);
+		let newFa = new FrameAgreement(this.props.settings.FACSettings.statuses.draft_status, type);
 
 		this.props.createFrameAgreement(newFa).then(upsertedFa => {
 			this.props.history.push('/agreement/' + upsertedFa.Id);
@@ -161,10 +158,7 @@ class FaList extends Component {
 			csconta__Account__c: newAccId
 		};
 
-		return this.props.saveFrameAgreement(
-			this.props.frameAgreements[faId],
-			data
-		);
+		return this.props.saveFrameAgreement(this.props.frameAgreements[faId], data);
 	}
 
 	faMenuAction(action, faId) {
@@ -290,12 +284,8 @@ class FaList extends Component {
 								src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAYAAAA5ZDbSAAADYklEQVR4Ae3dA4xsCRYG4POMtW3bwdoM1/bu2FY8tq14bNsIRtHY9rO/sae7C3de36r+v+TESdW1DioiIiIiIiIiIiIiIiIiIiIiIiIiIiIi2gtvxj9xLG7AvGfjBhyLf+LNNVgC07EBHjG2R7ABple0H96JC3XvQryjor3wVtygdzfgrRXtg8k4U//OxOSKdsFfNOfPFe2BKbhNc27DlIp2wLc171sV7YBtNW/binbAUZp3ZEU74GLNu7iiHXCW5p1Z0Q44XPMOr2gHrKl5a1S0Az6geR+oaA8cpznHVbQLPoNl+rcMn65oH6yhf6tXtBMmYdu8vRpy+Afm6dw8/KNicOBd2BtzjGwO9sa7KgYTpuOnWA87Phvr4afJw4qIiIiIiHGCN+Gr+DoSfBVvqmGA72OBeLkF+H4NOtwmRnLrMCSkLxYjWYwpNciwsxjJzjUM8D88JgAew/9qmOC9OE4ci/fUsMJvcZ+J5178piYCvAUHmzgOxltqosGPcLPhdRN+WBMZZmMnLDM8lmFHzK54Br6Oawy+q/H1ilfCNGyBRQbPImyOqRWjw6dwkcFxIT5V0TlMwmqYo70ex2qYVL0JvB8naZ8T8f6KZuB/2uP/Fc3DnsbfwRWvDfzR+PtPxVAfwXtUDHV2yK0VzcMXtMfnK5qFzbXHZhXNwmXa49KK5uCdWK4/j2KHZ+NR/VmOd1Q0A//Sn9vwkXoWPoLb9eefFc3AsXp3Lz5eL4OP4169O6aif5iBeXrzED5fI8Dn8bDezMWMiv7gF3ozB1+vMeAbmKM3P6/oD/bRvQX4bnUI38UC3du7oj+4Q3cW42fVJfwci3Xn9ore4cu6swy/6TNne5nufKmiN9hK51bg7w01UVuhc1tW9AZX6twa49R/+orqXuA9WKEzm1bDsJnOrMC7qzuB/+rMNi0Y1/Of6k7gBGPboyVJBsdXdA4zMd/oDsWklZS+e5jRzcfMis7gV0Z3FKbUSoIpOMroflnRGexnZKdi2jh1rT3VyPat6Azu8urOx6waJ5iFC7y6uyr6GpFzBd5Q4wxvwJVe3btqdIGZuNdLXYu3tmyU/HVe6mZMqbEFPo+bsQKn413VMngXzgJch49UdwJT8x/HEBEREREREREREREREREREREREREREU8Ak/ywHmyNofsAAAAASUVORK5CYII="
 							/>
 							<div className="fa-main-header__title-wrapper">
-								<h5 className="fa-main-header__subtitle">
-									{window.SF.labels.frameAgreementTitle}
-								</h5>
-								<h1 className="fa-main-header__title">
-									{this.props.settings.account.Name}
-								</h1>
+								<h5 className="fa-main-header__subtitle">{window.SF.labels.frameAgreementTitle}</h5>
+								<h1 className="fa-main-header__title">{this.props.settings.account.Name}</h1>
 							</div>
 						</div>
 						<div className="fa-main-header__item">
@@ -352,12 +342,8 @@ class FaList extends Component {
 
 						{!Object.keys(this.props.frameAgreements).length && (
 							<div className="add-product-box">
-								<span className="box-header-1">
-									{window.SF.labels.no_fa_message}
-								</span>
-								<span className="box-header-2">
-									{window.SF.labels.no_fa_message_2}
-								</span>
+								<span className="box-header-1">{window.SF.labels.no_fa_message}</span>
+								<span className="box-header-2">{window.SF.labels.no_fa_message_2}</span>
 								<div className="box-button-container" />
 							</div>
 						)}
@@ -396,9 +382,4 @@ const mapDispatchToProps = {
 	deleteFrameAgreement
 };
 
-export default withRouter(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(FaList)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaList));

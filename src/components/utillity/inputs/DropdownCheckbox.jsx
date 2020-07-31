@@ -62,10 +62,7 @@ class DropdownCheckbox extends React.Component {
 		return (
 			<div className="dropdown-checkbox-container" ref={this.setWrapperRef}>
 				{this.state.menu && (
-					<div
-						className="fa-dropdown fa-dropdown--reverse"
-						onBlur={this.onBlur}
-					>
+					<div className="fa-dropdown fa-dropdown--reverse" onBlur={this.onBlur}>
 						{this.props.options.map((option, i) => {
 							return (
 								<button
@@ -77,8 +74,7 @@ class DropdownCheckbox extends React.Component {
 								>
 									<Checkbox readOnly={option.visible} />
 									<span>
-										{getFieldLabel(this.props.object, option.name) ||
-											truncateCPField(option.name)}
+										{getFieldLabel(this.props.object, option.name) || truncateCPField(option.name)}
 									</span>
 								</button>
 							);

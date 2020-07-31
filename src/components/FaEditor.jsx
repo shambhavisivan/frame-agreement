@@ -99,17 +99,14 @@ export class FaEditor extends Component {
 
 		this.mounted = true;
 		// Disable onLeavePage prompt when saved
-		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe(
-			'onAfterSaveFrameAgreement',
-			data => {
-				return new Promise(resolve => {
-					this._setState({
-						actionTaken: false
-					});
-					resolve(data);
+		SUBSCRIPTIONS['sub1'] = window.FAM.subscribe('onAfterSaveFrameAgreement', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: false
 				});
-			}
-		);
+				resolve(data);
+			});
+		});
 		// Enable save on events
 		SUBSCRIPTIONS['sub2'] = window.FAM.subscribe('onAfterAddProducts', data => {
 			return new Promise(resolve => {
@@ -120,29 +117,23 @@ export class FaEditor extends Component {
 			});
 		});
 		// Enable save on events
-		SUBSCRIPTIONS['sub3'] = window.FAM.subscribe(
-			'onAfterBulkNegotiation',
-			data => {
-				return new Promise(resolve => {
-					this._setState({
-						actionTaken: true
-					});
-					resolve(data);
+		SUBSCRIPTIONS['sub3'] = window.FAM.subscribe('onAfterBulkNegotiation', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
 				});
-			}
-		);
+				resolve(data);
+			});
+		});
 		// Enable save on events
-		SUBSCRIPTIONS['sub4'] = window.FAM.subscribe(
-			'onAfterDeleteProducts',
-			data => {
-				return new Promise(resolve => {
-					this._setState({
-						actionTaken: true
-					});
-					resolve(data);
+		SUBSCRIPTIONS['sub4'] = window.FAM.subscribe('onAfterDeleteProducts', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
 				});
-			}
-		);
+				resolve(data);
+			});
+		});
 	}
 
 	componentWillUnmount() {
@@ -172,32 +163,25 @@ export class FaEditor extends Component {
 		};
 
 		const onLoadingFinished = async () => {
-			this._setState(
-				{ loading: { ...this.state.loading, attachment: false } },
-				async () => {
-					let _config = await publish('onFaSelect', [
-						this.props.frameAgreements[this.faId]
-					]);
+			this._setState({ loading: { ...this.state.loading, attachment: false } }, async () => {
+				let _config = await publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
 
-					if (
-						_config.hasOwnProperty('disableDiscountLevels') ||
-						_config.hasOwnProperty('disableInlineDiscounts')
-					) {
-						this.props.setDisableDiscount(this.faId, _config);
-					}
-
-					return;
+				if (
+					_config.hasOwnProperty('disableDiscountLevels') ||
+					_config.hasOwnProperty('disableInlineDiscounts')
+				) {
+					this.props.setDisableDiscount(this.faId, _config);
 				}
-			);
+
+				return;
+			});
 		};
 
 		let _promiseArray = [];
 
 		_promiseArray.push(this.props.getApprovalHistory(this.faId));
 
-		if (
-			!this.props.frameAgreements[this.faId]._ui.hasOwnProperty('relatedList')
-		) {
+		if (!this.props.frameAgreements[this.faId]._ui.hasOwnProperty('relatedList')) {
 			_promiseArray.push(this.props.getRelatedLists(this.faId));
 		}
 
@@ -249,9 +233,7 @@ export class FaEditor extends Component {
 								5000
 							);
 
-							cpReplacementData = await findReplacementCommercialProduct([
-								..._idsToLoadSet
-							]);
+							cpReplacementData = await findReplacementCommercialProduct([..._idsToLoadSet]);
 						}
 
 						if (Object.keys(cpReplacementData).length) {
@@ -275,9 +257,7 @@ export class FaEditor extends Component {
 
 							await window.SF.invokeAction('saveAttachment', [
 								this.faId,
-								JSON.stringify(
-									this.props.frameAgreements[this.faId]._ui.attachment
-								)
+								JSON.stringify(this.props.frameAgreements[this.faId]._ui.attachment)
 							]);
 						}
 					}
@@ -356,9 +336,7 @@ export class FaEditor extends Component {
 				() => {
 					publish(
 						'onAfterDeleteProducts',
-						this.props.frameAgreements[this.faId]._ui.commercialProducts.map(
-							cp => cp.Id
-						)
+						this.props.frameAgreements[this.faId]._ui.commercialProducts.map(cp => cp.Id)
 					);
 					resolve(this.props.frameAgreements[this.faId]._ui.attachment);
 				}
@@ -382,9 +360,7 @@ export class FaEditor extends Component {
 	onSelectAllProducts(allProducts) {
 		let selectedProducts = { ...this.state.selectedProducts };
 
-		if (
-			allProducts.length === Object.keys(this.state.selectedProducts).length
-		) {
+		if (allProducts.length === Object.keys(this.state.selectedProducts).length) {
 			selectedProducts = {};
 		} else {
 			allProducts.forEach(cp => {
@@ -407,10 +383,7 @@ export class FaEditor extends Component {
 		var data = { ...this.props.frameAgreements[this.faId] };
 		data = await publish('onBeforeSaveFrameAgreement', data);
 
-		if (
-			this.props.frameAgreements[this.faId]._ui.approvalNeeded &&
-			this.editable
-		) {
+		if (this.props.frameAgreements[this.faId]._ui.approvalNeeded && this.editable) {
 			data.csconta__Status__c = this.props.settings.FACSettings.statuses.requires_approval_status;
 		}
 
@@ -448,10 +421,7 @@ export class FaEditor extends Component {
 						{this.props.settings.RelatedListsData.length ? (
 							<Tabs initial={0}>
 								<Tab label={window.SF.labels.fa_tab}>
-									<FaFields
-										onActionTaken={this.onActionTaken}
-										faId={this.faId}
-									/>
+									<FaFields onActionTaken={this.onActionTaken} faId={this.faId} />
 								</Tab>
 								<Tab label={window.SF.labels.rl_tab}>
 									<RelatedLists faId={this.faId} />
@@ -462,8 +432,7 @@ export class FaEditor extends Component {
 						)}
 
 						{this.props.frameAgreements[this.faId]._ui.approval &&
-						this.props.frameAgreements[this.faId]._ui.approval.listProcess
-							.length ? (
+						this.props.frameAgreements[this.faId]._ui.approval.listProcess.length ? (
 							<ApprovalProcess faId={this.faId} />
 						) : null}
 
@@ -492,10 +461,7 @@ export class FaEditor extends Component {
 					/>
 				)}
 
-				<FaModals
-					faId={this.faId}
-					selectedProducts={this.state.selectedProducts}
-				/>
+				<FaModals faId={this.faId} selectedProducts={this.state.selectedProducts} />
 			</div>
 		);
 	}
@@ -525,9 +491,4 @@ const mapDispatchToProps = {
 	getCommercialProductData
 };
 
-export default withRouter(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(FaEditor)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaEditor));

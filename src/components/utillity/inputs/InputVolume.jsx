@@ -40,11 +40,7 @@ class InputVolume extends Component {
 			);
 		} else {
 			return (
-				<div
-					className={
-						'negotiate-input-wrapper' + (this.state.focus ? ' focused' : '')
-					}
-				>
+				<div className={'negotiate-input-wrapper' + (this.state.focus ? ' focused' : '')}>
 					<Icon
 						svg-class="negotiate-icon"
 						name="edit"

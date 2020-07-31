@@ -9,7 +9,7 @@ const sassbeautify = require('gulp-sassbeautify');
 
 gulp.task('prettier', () => {
   return gulp.src(['src/**/*.jsx', 'src/**/*.js'])
-    .pipe(prettier({ singleQuote: true , useTabs: true}))
+    .pipe(prettier({ singleQuote: true , useTabs: true,  printWidth: 100}))
     .pipe(gulp.dest('src'));
 });
 

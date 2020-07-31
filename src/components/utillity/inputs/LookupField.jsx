@@ -61,11 +61,9 @@ class LookupField extends React.Component {
 			this.props.value || null
 		]).then(async response => {
 			if (!window.SF.fieldLabels.hasOwnProperty(response.object)) {
-				await window.SF.invokeAction('getFieldLabels', [response.object]).then(
-					r => {
-						window.SF.fieldLabels[response.object] = r;
-					}
-				);
+				await window.SF.invokeAction('getFieldLabels', [response.object]).then(r => {
+					window.SF.fieldLabels[response.object] = r;
+				});
 			}
 
 			this._setState({
@@ -227,9 +225,7 @@ class LookupField extends React.Component {
 					params.offset = 20 * 10;
 
 					// Call remote action
-					window.SF.invokeAction('getLookupRecords', [
-						JSON.stringify(params)
-					]).then(
+					window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]).then(
 						response => {
 							response = decodeEntities(response);
 
@@ -269,10 +265,7 @@ class LookupField extends React.Component {
 
 		console.log('*****************************************');
 		console.log('You need this much pages:', _needPages);
-		console.log(
-			'You need this much results:',
-			Math.min(max_items, min_pages * 20)
-		);
+		console.log('You need this much results:', Math.min(max_items, min_pages * 20));
 		console.log('This many pages are loaded:', _availablePages);
 
 		let result = _needPages - _availablePages;
@@ -292,16 +285,13 @@ class LookupField extends React.Component {
 		parameter.whereClause = this.filter;
 
 		if (this.state.searchValue) {
-			parameter.search =
-				this.labelField + "  like '%" + this.state.searchValue + "%'";
+			parameter.search = this.labelField + "  like '%" + this.state.searchValue + "%'";
 		}
 
 		parameter.lastId = this.state.records[this.state.records.length - 1].Id;
 		parameter.offset = 20 * pagesToLoad;
 
-		return window.SF.invokeAction('getLookupRecords', [
-			JSON.stringify(parameter)
-		]);
+		return window.SF.invokeAction('getLookupRecords', [JSON.stringify(parameter)]);
 	}
 
 	render() {
@@ -316,24 +306,13 @@ class LookupField extends React.Component {
 						aria-describedby=""
 						readOnly={true}
 						onClick={e => this.onOpenLookupModal(e)}
-						value={
-							this.state.loadedInput
-								? decodeEntities(this.state.recordLabel)
-								: '-'
-						}
+						value={this.state.loadedInput ? decodeEntities(this.state.recordLabel) : '-'}
 					/>
 					<div
-						className={
-							'fa-lookup-icon ' + (this.props.disabled ? 'disabled' : '')
-						}
+						className={'fa-lookup-icon ' + (this.props.disabled ? 'disabled' : '')}
 						onClick={e => this.onOpenLookupModal(e)}
 					>
-						<Icon
-							svg-class="icon-search"
-							name="search"
-							width="14"
-							height="14"
-						/>
+						<Icon svg-class="icon-search" name="search" width="14" height="14" />
 					</div>
 
 					{this.state.selected.Id ? (
@@ -341,12 +320,7 @@ class LookupField extends React.Component {
 							className="fa-lookup-icon forward"
 							onClick={e => openSFLink(this.state.selected.Id)}
 						>
-							<Icon
-								svg-class="icon-forward"
-								name="forward"
-								width="14"
-								height="14"
-							/>
+							<Icon svg-class="icon-forward" name="forward" width="14" height="14" />
 						</div>
 					) : null}
 				</div>
@@ -362,21 +336,14 @@ class LookupField extends React.Component {
 				>
 					<div className="fa-modal-header">
 						<button className="close-modal-button" onClick={this.onCloseModal}>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="24"
-								viewBox="0 0 52 52"
-							>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 52 52">
 								<path
 									fill="#fff"
 									d="m31 25.4l13-13.1c0.6-0.6 0.6-1.5 0-2.1l-2-2.1c-0.6-0.6-1.5-0.6-2.1 0l-13.1 13.1c-0.4 0.4-1 0.4-1.4 0l-13.1-13.2c-0.6-0.6-1.5-0.6-2.1 0l-2.1 2.1c-0.6 0.6-0.6 1.5 0 2.1l13.1 13.1c0.4 0.4 0.4 1 0 1.4l-13.2 13.2c-0.6 0.6-0.6 1.5 0 2.1l2.1 2.1c0.6 0.6 1.5 0.6 2.1 0l13.1-13.1c0.4-0.4 1-0.4 1.4 0l13.1 13.1c0.6 0.6 1.5 0.6 2.1 0l2.1-2.1c0.6-0.6 0.6-1.5 0-2.1l-13-13.1c-0.4-0.4-0.4-1 0-1.4z"
 								/>
 							</svg>
 						</button>
-						<h2 className="fa-modal-header-title">
-							{this.props.label + ' lookup'}
-						</h2>
+						<h2 className="fa-modal-header-title">{this.props.label + ' lookup'}</h2>
 					</div>
 
 					<div className="product-modal fa-modal-body">

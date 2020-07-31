@@ -113,27 +113,19 @@ Object.defineProperty(Array.prototype, 'chunk', {
 	}
 });
 
-Number.prototype.toFixedNumber = function(
-	digits = window.SF.decimal_places || 2,
-	base
-) {
+Number.prototype.toFixedNumber = function(digits = window.SF.decimal_places || 2, base) {
 	var pow = Math.pow(base || 10, digits);
 	return Math.round(this * pow) / pow;
 };
 
-String.prototype.toFixedNumber = function(
-	digits = window.SF.decimal_places || 2,
-	base
-) {
+String.prototype.toFixedNumber = function(digits = window.SF.decimal_places || 2, base) {
 	var pow = Math.pow(base || 10, digits);
 	return Math.round(+this * pow) / pow;
 };
 
 window.mandatory = function mandatory(funName) {
 	throw new Error(
-		funName
-			? 'Missing parameter in function ' + funName + '!'
-			: 'Missing parameter!'
+		funName ? 'Missing parameter in function ' + funName + '!' : 'Missing parameter!'
 	);
 };
 
@@ -142,12 +134,10 @@ window.mandatory = function mandatory(funName) {
 // ****************************************************************
 export function performAction(className, params) {
 	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('performAction', [className, params]).then(
-			response => {
-				resolve(response);
-				return response;
-			}
-		);
+		window.SF.invokeAction('performAction', [className, params]).then(response => {
+			resolve(response);
+			return response;
+		});
 	});
 }
 
@@ -162,22 +152,18 @@ export function createPricingRuleGroup(faId) {
 
 export function decomposeAttachment(data, prId, faId) {
 	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('decomposeAttachment', [
-			JSON.stringify(data),
-			prId,
-			faId
-		]).then(message => {
-			resolve(message);
-			return message;
-		});
+		window.SF.invokeAction('decomposeAttachment', [JSON.stringify(data), prId, faId]).then(
+			message => {
+				resolve(message);
+				return message;
+			}
+		);
 	});
 }
 
 export function findReplacementCommercialProduct(expiredCpIds) {
 	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('findReplacementCommercialProduct', [
-			expiredCpIds
-		]).then(response => {
+		window.SF.invokeAction('findReplacementCommercialProduct', [expiredCpIds]).then(response => {
 			resolve(response);
 			return response;
 		});
@@ -207,23 +193,20 @@ export function approveRejectRecallRecord(recordId, comments, action) {
 
 export function reassignApproval(recordId, newActorId) {
 	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('reassignApproval', [
-			recordId.slice(0, 15),
-			newActorId
-		]).then(response => {
-			resolve(response);
-			return response;
-		});
-	});
-}
-
-export function submitForApproval(faId) {
-	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('submitForApproval', [faId.slice(0, 15)]).then(
+		window.SF.invokeAction('reassignApproval', [recordId.slice(0, 15), newActorId]).then(
 			response => {
 				resolve(response);
 				return response;
 			}
 		);
+	});
+}
+
+export function submitForApproval(faId) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('submitForApproval', [faId.slice(0, 15)]).then(response => {
+			resolve(response);
+			return response;
+		});
 	});
 }

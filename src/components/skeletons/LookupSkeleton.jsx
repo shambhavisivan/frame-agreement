@@ -35,11 +35,7 @@ export const LookupSkeleton = props => {
 	return (
 		<div className="skeleton-table-item" style={skeletonContainerStyle}>
 			{_arr.map((c, i) => (
-				<div
-					key={c + '' + i}
-					className="skeleton-table-item"
-					style={skeletonRowStyle}
-				>
+				<div key={c + '' + i} className="skeleton-table-item" style={skeletonRowStyle}>
 					{props.cells.map(cc => (
 						<div key={cc} style={cellContainer}>
 							<div className="skeleton-shape" style={skeletonStyle} />

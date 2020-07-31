@@ -37,24 +37,15 @@ export class Addons extends React.Component {
 			<div className="table-container">
 				<div className="table-list-header">
 					<div className="list-cell">{window.SF.labels.addons_header_name}</div>
-					<div className="list-cell">
-						{window.SF.labels.addons_header_oneOff}
-					</div>
-					<div className="list-cell">
-						{window.SF.labels.addons_header_oneOff_neg}
-					</div>
+					<div className="list-cell">{window.SF.labels.addons_header_oneOff}</div>
+					<div className="list-cell">{window.SF.labels.addons_header_oneOff_neg}</div>
 					<div className="list-cell">{window.SF.labels.addons_header_recc}</div>
-					<div className="list-cell">
-						{window.SF.labels.addons_header_recc_neg}
-					</div>
+					<div className="list-cell">{window.SF.labels.addons_header_recc_neg}</div>
 				</div>
 
 				<ul className="table-list">
 					{this.props.addons
-						.paginate(
-							this.state.pagination.page,
-							this.state.pagination.pageSize
-						)
+						.paginate(this.state.pagination.page, this.state.pagination.pageSize)
 						.map((add, i) => {
 							let recurringRow = 'N/A';
 							let oneOffRow = 'N/A';
@@ -111,9 +102,7 @@ export class Addons extends React.Component {
 											onChange={val => {
 												this.negotiateInline(add, 'oneOff', val);
 											}}
-											discAsPrice={
-												this.props.settings.FACSettings.discount_as_price
-											}
+											discAsPrice={this.props.settings.FACSettings.discount_as_price}
 											negotiatedValue={negValue}
 											originalValue={add.cspmb__One_Off_Charge__c}
 										/>
@@ -148,9 +137,7 @@ export class Addons extends React.Component {
 											onChange={val => {
 												this.negotiateInline(add, 'recurring', val);
 											}}
-											discAsPrice={
-												this.props.settings.FACSettings.discount_as_price
-											}
+											discAsPrice={this.props.settings.FACSettings.discount_as_price}
 											negotiatedValue={negValue}
 											originalValue={add.cspmb__Recurring_Charge__c}
 										/>
@@ -233,7 +220,4 @@ const mapStateToProps = state => {
 //     setValidation
 // };
 
-export default connect(
-	mapStateToProps,
-	null
-)(Addons);
+export default connect(mapStateToProps, null)(Addons);

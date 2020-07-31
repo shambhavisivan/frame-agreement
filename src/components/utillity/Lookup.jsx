@@ -4,11 +4,7 @@ import InputSearch from './inputs/InputSearch';
 import Loading from './Loading';
 
 import Pagination from './Pagination';
-import {
-	truncateCPField,
-	getFieldLabel,
-	decodeEntities
-} from '../../utils/shared-service';
+import { truncateCPField, getFieldLabel, decodeEntities } from '../../utils/shared-service';
 import { LookupSkeleton } from '../skeletons/LookupSkeleton';
 
 class Lookup extends React.Component {
@@ -71,17 +67,12 @@ class Lookup extends React.Component {
 							<div
 								key={record.Id}
 								className={
-									'product-row' +
-									(this.props.selected.Id === record.Id ? ' selected' : '')
+									'product-row' + (this.props.selected.Id === record.Id ? ' selected' : '')
 								}
 								onClick={() => this.props.onChange(record)}
 							>
 								{this.props.columns.map(c => {
-									return (
-										<span key={c}>
-											{record.hasOwnProperty(c) ? record[c] : '-'}
-										</span>
-									);
+									return <span key={c}>{record.hasOwnProperty(c) ? record[c] : '-'}</span>;
 								})}
 							</div>
 						);
@@ -97,9 +88,7 @@ class Lookup extends React.Component {
 				<div className="modal-navigation">
 					<div className="search-container">
 						<InputSearch
-							placeholder={
-								window.SF.labels.modal_lookup_input_search_placeholder
-							}
+							placeholder={window.SF.labels.modal_lookup_input_search_placeholder}
 							value={this.state.searchValue}
 							onChange={this.onSearch}
 						/>
@@ -111,9 +100,7 @@ class Lookup extends React.Component {
 						{this.props.columns.map(c => {
 							return (
 								<div key={c} className="header-th">
-									<span>
-										{getFieldLabel(this.props.object, c) || truncateCPField(c)}
-									</span>
+									<span>{getFieldLabel(this.props.object, c) || truncateCPField(c)}</span>
 								</div>
 							);
 						})}

@@ -43,10 +43,7 @@ class Checkbox extends React.Component {
 			);
 		} else {
 			return (
-				<div
-					className={'checkbox' + (this.props.value ? ' checked' : '')}
-					onClick={this.onChange}
-				>
+				<div className={'checkbox' + (this.props.value ? ' checked' : '')} onClick={this.onChange}>
 					{this.props.value && (
 						<Icon
 							svg-class="fa-checkbox-icon"

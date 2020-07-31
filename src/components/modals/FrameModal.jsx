@@ -9,11 +9,7 @@ import Icon from '../utillity/Icon';
 import Checkbox from '../utillity/inputs/Checkbox';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
-import {
-	truncateCPField,
-	getFieldLabel,
-	isMaster
-} from '../../utils/shared-service';
+import { truncateCPField, getFieldLabel, isMaster } from '../../utils/shared-service';
 
 class FrameModal extends Component {
 	constructor(props) {
@@ -110,12 +106,7 @@ class FrameModal extends Component {
 			>
 				<div className="fa-modal-header">
 					<button className="close-modal-button" onClick={this.onCloseModal}>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 52 52"
-						>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 52 52">
 							<path
 								fill="#fff"
 								d="m31 25.4l13-13.1c0.6-0.6 0.6-1.5 0-2.1l-2-2.1c-0.6-0.6-1.5-0.6-2.1 0l-13.1 13.1c-0.4 0.4-1 0.4-1.4 0l-13.1-13.2c-0.6-0.6-1.5-0.6-2.1 0l-2.1 2.1c-0.6 0.6-0.6 1.5 0 2.1l13.1 13.1c0.4 0.4 0.4 1 0 1.4l-13.2 13.2c-0.6 0.6-0.6 1.5 0 2.1l2.1 2.1c0.6 0.6 1.5 0.6 2.1 0l13.1-13.1c0.4-0.4 1-0.4 1.4 0l13.1 13.1c0.6 0.6 1.5 0.6 2.1 0l2.1-2.1c0.6-0.6 0.6-1.5 0-2.1l-13-13.1c-0.4-0.4-0.4-1 0-1.4z"
@@ -130,9 +121,7 @@ class FrameModal extends Component {
 					>
 						<Icon name="expand_alt" width="24" height="24" color="white" />
 					</span>
-					<h2 className="fa-modal-header-title">
-						{window.SF.labels.modal_addFa_title}
-					</h2>
+					<h2 className="fa-modal-header-title">{window.SF.labels.modal_addFa_title}</h2>
 				</div>
 
 				<div className="fa-product-modal fa-modal-body panel-closed">
@@ -152,10 +141,7 @@ class FrameModal extends Component {
 						<div>
 							<div className="fa-modal-product-list-header">
 								<div className="header-th">
-									{getFieldLabel(
-										'csconta__Frame_Agreement__c',
-										'csconta__Agreement_Name__c'
-									)}
+									{getFieldLabel('csconta__Frame_Agreement__c', 'csconta__Agreement_Name__c')}
 								</div>
 								{this.props.faFields.map(f => {
 									return (
@@ -180,10 +166,7 @@ class FrameModal extends Component {
 										);
 									})
 									.filter(fa => {
-										if (
-											this.state.faFilter &&
-											this.state.faFilter.length >= 2
-										) {
+										if (this.state.faFilter && this.state.faFilter.length >= 2) {
 											return fa.csconta__Agreement_Name__c
 												.toLowerCase()
 												.includes(this.state.faFilter.toLowerCase());
@@ -191,29 +174,17 @@ class FrameModal extends Component {
 											return true;
 										}
 									})
-									.paginate(
-										this.state.pagination.page,
-										this.state.pagination.pageSize
-									)
+									.paginate(this.state.pagination.page, this.state.pagination.pageSize)
 									.map(fa => {
 										return (
 											<div
 												key={fa.Id}
-												className={
-													'product-row' +
-													(this.state.selected[fa.Id] ? ' selected' : '')
-												}
+												className={'product-row' + (this.state.selected[fa.Id] ? ' selected' : '')}
 												onClick={() => this.selectFa(fa)}
 											>
-												<span>
-													{fa.csconta__Agreement_Name__c || '-- anonymous --'}
-												</span>
+												<span>{fa.csconta__Agreement_Name__c || '-- anonymous --'}</span>
 												{this.props.faFields.map(f => {
-													return (
-														<span key={fa.Id + '-' + f.name}>
-															{fa[f.name] || '-'}
-														</span>
-													);
+													return <span key={fa.Id + '-' + f.name}>{fa[f.name] || '-'}</span>;
 												})}
 											</div>
 										);
@@ -271,7 +242,4 @@ const mapStateToProps = state => {
 // 	filterCommercialProducts
 // };
 
-export default connect(
-	mapStateToProps,
-	null
-)(FrameModal);
+export default connect(mapStateToProps, null)(FrameModal);

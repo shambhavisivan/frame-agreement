@@ -14,10 +14,7 @@ import {
 } from '~/src/actions';
 
 import { publish, submitForApproval } from '~/src/api';
-import {
-	isMaster,
-	evaluateExpressionOnAgreement
-} from '~/src/utils/shared-service';
+import { isMaster, evaluateExpressionOnAgreement } from '~/src/utils/shared-service';
 
 import Icon from '../utillity/Icon';
 import CustomButtonDropdown from '../utillity/CustomButtonDropdown';
@@ -27,8 +24,7 @@ class FaHeader extends React.Component {
 	constructor(props) {
 		super(props);
 		this.createNewVersion = this.createNewVersion.bind(this);
-		this.onDecompose = () =>
-			window.FAM.api.activateFrameAgreement(this.props.faId);
+		this.onDecompose = () => window.FAM.api.activateFrameAgreement(this.props.faId);
 		this.onSubmitForApproval = this.onSubmitForApproval.bind(this);
 		this.onDeltaComparison = this.onDeltaComparison.bind(this);
 		this.callHandler = this.callHandler.bind(this);
@@ -46,10 +42,7 @@ class FaHeader extends React.Component {
 
 	componentDidUpdate() {
 		try {
-			if (
-				this.state.editable !==
-				window.FAM.api.isAgreementEditable(this.props.faId)
-			) {
+			if (this.state.editable !== window.FAM.api.isAgreementEditable(this.props.faId)) {
 				this.setState({
 					editable: window.FAM.api.isAgreementEditable(this.props.faId)
 				});
@@ -68,9 +61,7 @@ class FaHeader extends React.Component {
 	}
 
 	async createNewVersion() {
-		let newFa = await this.props.createNewVersionOfFrameAgrement(
-			this.props.faId
-		);
+		let newFa = await this.props.createNewVersionOfFrameAgrement(this.props.faId);
 		this.props.history.push('/');
 		this.props.history.push('/agreement/' + newFa.Id);
 		// window.location.reload();
@@ -184,8 +175,7 @@ class FaHeader extends React.Component {
 
 		let customButtons = this.props.settings.ButtonCustomData.filter(
 			btnObj =>
-				evaluateExpressionOnAgreement(btnObj.expressions, _fa) &&
-				btnObj.location === 'Editor'
+				evaluateExpressionOnAgreement(btnObj.expressions, _fa) && btnObj.location === 'Editor'
 		);
 
 		if (customButtons.length >= 3) {
@@ -227,22 +217,17 @@ class FaHeader extends React.Component {
 			headerClass = ' error fa-disabled';
 		} else if (
 			_fa._ui.approvalNeeded &&
-			_fa.csconta__Status__c !==
-				this.props.settings.FACSettings.statuses.approved_status
+			_fa.csconta__Status__c !== this.props.settings.FACSettings.statuses.approved_status
 		) {
 			headerClass = ' error fa-invalid';
 		}
 
-		let _faStatus = this.props.frameAgreements[this.props.faId]
-			.csconta__Status__c;
+		let _faStatus = this.props.frameAgreements[this.props.faId].csconta__Status__c;
 
 		return (
 			<div className={'fa-secondary-header ' + headerClass}>
 				<div className="fa-secondary-header__inner">
-					<div
-						className="fa-secondary-header__prev"
-						onClick={() => this.props.history.push('/')}
-					>
+					<div className="fa-secondary-header__prev" onClick={() => this.props.history.push('/')}>
 						<Icon name="back" width="19" height="18" color="#FFFFFF" />
 					</div>
 					<div className="fa-secondary-header__item">
@@ -253,15 +238,13 @@ class FaHeader extends React.Component {
 									: window.SF.labels.header_frameAgreementEditorTitle}
 							</div>
 							<div className="fa-secondary-header__title">
-								{this.props.frameAgreements[this.props.faId]
-									.csconta__Agreement_Name__c || '-- anonymous --'}
+								{this.props.frameAgreements[this.props.faId].csconta__Agreement_Name__c ||
+									'-- anonymous --'}
 							</div>
 						</div>
 						{this.props.frameAgreements[this.props.faId].csconta__Status__c ? (
 							<span className="fa-chip fa-chip--draft">
-								{master
-									? 'Master'
-									: window.SF.fieldLabels.statuses[_faStatus] || _faStatus}
+								{master ? 'Master' : window.SF.fieldLabels.statuses[_faStatus] || _faStatus}
 							</span>
 						) : (
 							''
@@ -271,10 +254,7 @@ class FaHeader extends React.Component {
 					<div className="fa-secondary-header__item fa-secondary-header__item--right">
 						{customButtonsComponent}
 
-						{evaluateExpressionOnAgreement(
-							this.props.settings.ButtonStandardData.Save,
-							_fa
-						) ? (
+						{evaluateExpressionOnAgreement(this.props.settings.ButtonStandardData.Save, _fa) ? (
 							<button
 								className="fa-button fa-button--transparent"
 								onClick={() => this.upsertFrameAgreements()}
@@ -291,10 +271,8 @@ class FaHeader extends React.Component {
 								<button
 									className="fa-button fa-button--transparent"
 									disabled={
-										!this.props.frameAgreements[this.props.faId]._ui
-											.approvalNeeded ||
-										!this.props.frameAgreements[this.props.faId]._ui
-											.commercialProducts.length
+										!this.props.frameAgreements[this.props.faId]._ui.approvalNeeded ||
+										!this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length
 									}
 									onClick={this.onSubmitForApproval}
 								>
@@ -302,10 +280,7 @@ class FaHeader extends React.Component {
 								</button>
 							)}
 						{!master &&
-							evaluateExpressionOnAgreement(
-								this.props.settings.ButtonStandardData.Delta,
-								_fa
-							) && (
+							evaluateExpressionOnAgreement(this.props.settings.ButtonStandardData.Delta, _fa) && (
 								<button
 									className="fa-button fa-button--transparent"
 									onClick={this.onDeltaComparison}
@@ -313,16 +288,10 @@ class FaHeader extends React.Component {
 									{window.SF.labels.btn_Delta}
 								</button>
 							)}
-						{evaluateExpressionOnAgreement(
-							this.props.settings.ButtonStandardData.Submit,
-							_fa
-						) &&
+						{evaluateExpressionOnAgreement(this.props.settings.ButtonStandardData.Submit, _fa) &&
 							this.props.faId &&
 							!master && (
-								<button
-									className="fa-button fa-button--transparent"
-									onClick={this.onDecompose}
-								>
+								<button className="fa-button fa-button--transparent" onClick={this.onDecompose}>
 									{window.SF.labels.btn_Submit}
 								</button>
 							)}
@@ -372,9 +341,4 @@ const mapDispatchToProps = {
 	createNewVersionOfFrameAgrement
 };
 
-export default withRouter(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)(FaHeader)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaHeader));

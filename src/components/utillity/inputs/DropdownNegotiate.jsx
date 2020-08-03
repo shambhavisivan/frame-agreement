@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Icon from '../Icon';
 import { log, percIncrease } from '~/src/utils/shared-service';
+import NumberFormat from '~/src/components/negotiation/NumberFormat';
 
 /*
 
@@ -131,22 +132,24 @@ class DropdownNegotiate extends React.Component {
 
 		if (this.state.fixed) {
 			_value = Math.abs(_originalValue - _negotiatedValue);
-			_value = _prefix + _value.toFixedNumber(_dp);
+			_value = _prefix + _value.toFixedNumber(_dp).toLocaleString(navigator.language);
 		} else {
 			_value = Math.abs(((_originalValue - _negotiatedValue) / _originalValue) * 100);
-			_value = _prefix + _value.toFixedNumber() + '%';
+			_value = _prefix + _value.toFixedNumber().toLocaleString(navigator.language) + '%';
 		}
 
 		_discount = <span className="discount-amount">{_value}</span>;
 
-		_negotiatedValue = _negotiatedValue.toFixedNumber();
+		// _negotiatedValue = _negotiatedValue.toFixedNumber();
 
 		return (
 			<div
 				className={'negotiate-container select-negotiate' + (this.props.invalid ? ' invalid' : '')}
 			>
 				<div className={'negotiate-input-wrapper' + (dirty ? ' dirty' : '')}>
-					<span className="">{_negotiatedValue}</span>
+					<span className="">
+						<NumberFormat value={_negotiatedValue} />
+					</span>
 
 					{dirty && (
 						<div className="discount-info">

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
+import NumberFormat from '~/src/components/negotiation/NumberFormat';
 import Icon from '../Icon';
 
 class InputVolume extends Component {
@@ -35,7 +36,9 @@ class InputVolume extends Component {
 		if (this.props.readOnly) {
 			return (
 				<div className="negotiate-input-wrapper readOnly">
-					<span>{this.props.value || 0}</span>
+					<span>
+						<NumberFormat value={this.props.value} />
+					</span>
 				</div>
 			);
 		} else {

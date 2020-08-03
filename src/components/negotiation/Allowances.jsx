@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import NumberFormat from './/NumberFormat';
 import Pagination from '../utillity/Pagination';
 import UsageType from '../utillity/UsageType';
 import Icon from '../utillity/Icon';
@@ -46,9 +47,7 @@ export class Allowances extends React.Component {
 									</div>
 
 									<div className="list-cell negotiable">
-										{allowance.hasOwnProperty('cspmb__amount__c')
-											? allowance.cspmb__amount__c.toFixedNumber()
-											: 'N/A'}
+										<NumberFormat value={allowance.cspmb__amount__c} />
 									</div>
 
 									<div className="list-cell negotiable">

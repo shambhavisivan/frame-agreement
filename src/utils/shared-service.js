@@ -27,6 +27,11 @@ export const percIncrease = (a, b) => {
 
 export const isNumber = num => {
 	let result = false;
+
+	if (typeof num === 'boolean') {
+		return false;
+	}
+
 	try {
 		result = Number.isInteger(Math.floor(num)) && num !== null;
 	} catch (err) {}

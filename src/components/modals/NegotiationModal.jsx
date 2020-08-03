@@ -8,6 +8,7 @@ import InputSearch from '../utillity/inputs/InputSearch';
 import Toggle from '../utillity/inputs/Toggle';
 import Checkbox from '../utillity/inputs/Checkbox';
 import Pagination from '../utillity/Pagination';
+import NumberFormat from '~/src/components/negotiation/NumberFormat';
 import Render from '../utillity/Render';
 
 import {
@@ -594,16 +595,15 @@ class NegotiationModal extends Component {
 											<Checkbox readOnly={this.state.selected.addons[add]} /> {addons_name}
 										</div>
 										<div className="list-cell">
-											{' '}
 											{addons_size + '/' + this.commercialProducts.length}
 										</div>
 										<div className="list-cell">
-											{' '}
-											{this.grouped_addons[add][0].cspmb__One_Off_Charge__c || 'N/A'}
+											<NumberFormat value={this.grouped_addons[add][0].cspmb__One_Off_Charge__c} />
 										</div>
 										<div className="list-cell">
-											{' '}
-											{this.grouped_addons[add][0].cspmb__Recurring_Charge__c || 'N/A'}
+											<NumberFormat
+												value={this.grouped_addons[add][0].cspmb__Recurring_Charge__c}
+											/>
 										</div>
 									</li>
 								);
@@ -682,7 +682,9 @@ class NegotiationModal extends Component {
 											{this._chCpMap[charge.Id].length + '/' + this.commercialProducts.length}
 										</div>
 										<div className="list-cell">{charge.chargeType}</div>
-										<div className="list-cell">{charge[charge._type].toFixedNumber()}</div>
+										<div className="list-cell">
+											<NumberFormat value={charge[charge._type]} />
+										</div>
 									</li>
 								);
 							})}
@@ -769,7 +771,7 @@ class NegotiationModal extends Component {
 														</div>
 														<div className="list-cell">{rcl.cspmb__Cap_Unit__c}</div>
 														<div className="list-cell">
-															{rcl.cspmb__rate_value__c}
+															<NumberFormat value={rcl.cspmb__rate_value__c} />
 															{this.state.selected.rated[rcl.Id] &&
 															this.state.selected.rated[rcl.Id].negotiatedValue ? (
 																<span>/{this.state.selected.rated[rcl.Id].negotiatedValue}</span>

@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
+import NumberFormat from './/NumberFormat';
 
 import { validateProduct } from '../../utils/validation-service';
 import { isOneOff, isRecurring } from '~/src/utils/shared-service';
@@ -69,9 +70,7 @@ export class ProductCharges extends React.Component {
 							<Icon name="priority" width="14" color={flagColor} /> On product
 						</div>
 						<div className="list-cell">
-							{this.props.product.hasOwnProperty('cspmb__One_Off_Charge__c')
-								? this.props.product.cspmb__One_Off_Charge__c.toFixedNumber()
-								: 'N/A'}
+							<NumberFormat value={this.props.product.cspmb__One_Off_Charge__c} />
 						</div>
 						<div className="list-cell negotiable">
 							{(() => {
@@ -125,9 +124,7 @@ export class ProductCharges extends React.Component {
 							})()}
 						</div>
 						<div className="list-cell">
-							{this.props.product.hasOwnProperty('cspmb__Recurring_Charge__c')
-								? this.props.product.cspmb__Recurring_Charge__c.toFixedNumber()
-								: 'N/A'}
+							<NumberFormat value={this.props.product.cspmb__Recurring_Charge__c} />
 						</div>
 						<div className="list-cell negotiable">
 							{(() => {

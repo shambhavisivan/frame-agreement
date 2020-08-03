@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Collapse } from 'react-collapse';
 import moment from 'moment';
 
-import { truncateCPField, getFieldLabel, copy } from '~/src/utils/shared-service';
+import { truncateCPField, isNumber, getFieldLabel, copy } from '~/src/utils/shared-service';
+import NumberFormat from '~/src/components/negotiation/NumberFormat';
 import Icon from './Icon';
 
 const NOT_SET = 'not set';
@@ -17,7 +18,9 @@ const Diff = props => {
 	if (props.new === props.old) {
 		return (
 			<div className="delta-charge-diff">
-				<span>{props.old.toString()}</span>
+				<span>
+					{isNumber(props.old) ? <NumberFormat value={props.old} /> : props.old.toString()}
+				</span>
 				<span className={'diff-status ' + props.status}>{getStatusLabel(props.status)}</span>
 			</div>
 		);
@@ -31,9 +34,13 @@ const Diff = props => {
 	return (
 		<div className="delta-charge-diff">
 			<div>
-				<span className="old">{_old.toString()}</span>
+				<span className="old">
+					<NumberFormat value={_old} />
+				</span>
 				<Icon svg-className="icon-forward" name="forward" width="10" height="10" />
-				<span className="new">{_new.toString()}</span>
+				<span className="new">
+					<NumberFormat value={_new} />
+				</span>
 			</div>
 			<span className={'diff-status ' + props.status}>{getStatusLabel(props.status)}</span>
 		</div>

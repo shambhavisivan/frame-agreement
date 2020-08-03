@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Modal from 'react-responsive-modal';
 
 import Icon from '../utillity/Icon';
+import NumberFormat from './/NumberFormat';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import Pagination from '../utillity/Pagination';
 
@@ -131,9 +132,7 @@ export class Rates extends React.Component {
 													{rcl.usageTypeName ? rcl.usageTypeName : 'N/A'}
 												</div>
 												<div className="list-cell">
-													{rcl.hasOwnProperty('cspmb__rate_value__c')
-														? rcl.cspmb__rate_value__c.toFixedNumber()
-														: 'N/A'}
+													<NumberFormat value={rcl.cspmb__rate_value__c} />
 												</div>
 												<div className="list-cell negotiable">
 													<InputNegotiate

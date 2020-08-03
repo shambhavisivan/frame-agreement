@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import Icon from '../utillity/Icon';
-
+import NumberFormat from './/NumberFormat';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 import Pagination from '../utillity/Pagination';
@@ -168,11 +168,11 @@ export class Charges extends React.Component {
 									</div>
 									<div className="list-cell align-left">{charge.chargeType}</div>
 									<div className="list-cell">
-										{charge.hasOwnProperty('oneOff') ? charge.oneOff.toFixedNumber() : 'N/A'}
+										<NumberFormat value={charge.oneOff} />
 									</div>
 									<div className="list-cell negotiable">{oneOffRow}</div>
 									<div className="list-cell">
-										{charge.hasOwnProperty('recurring') ? charge.recurring.toFixedNumber() : 'N/A'}
+										<NumberFormat value={charge.recurring} />
 									</div>
 									<div className="list-cell negotiable">{recurringRow}</div>
 								</li>

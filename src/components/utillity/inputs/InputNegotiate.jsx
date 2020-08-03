@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { percIncrease } from '~/src/utils/shared-service';
 import SettingsContext from '~/src/utils/settings-context.js';
+import NumberFormat from '~/src/components/negotiation/NumberFormat';
 import Icon from '../Icon';
 
 class InputNegotiate extends React.Component {
@@ -65,7 +66,11 @@ class InputNegotiate extends React.Component {
 
 		_negotiatedValue = this.props.negotiatedValue?.toFixedNumber();
 
-		_discount = <span className="discount-amount">{_value}</span>;
+		_discount = (
+			<span className="discount-amount">
+				<NumberFormat value={_value} />
+			</span>
+		);
 
 		const _getInputContainer = restrict_minmax => {
 			let _inputContainer;

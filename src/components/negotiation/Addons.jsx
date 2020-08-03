@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 
 // import Checkbox from '../utillity/inputs/Checkbox';
 import Icon from '../utillity/Icon';
+import NumberFormat from './/NumberFormat';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
 import Pagination from '../utillity/Pagination';
 
-import { isOneOff, isRecurring, isNumber } from '~/src/utils/shared-service';
+import { isOneOff, isRecurring } from '~/src/utils/shared-service';
 
 export class Addons extends React.Component {
 	constructor(props) {
@@ -165,17 +166,13 @@ export class Addons extends React.Component {
 									</div>
 
 									<div className="list-cell">
-										{isNumber(add.cspmb__One_Off_Charge__c)
-											? add.cspmb__One_Off_Charge__c.toFixedNumber()
-											: 'N/A'}
+										<NumberFormat value={add.cspmb__One_Off_Charge__c} />
 									</div>
 
 									<div className="list-cell negotiable">{oneOffRow}</div>
 
 									<div className="list-cell">
-										{isNumber(add.cspmb__Recurring_Charge__c)
-											? add.cspmb__Recurring_Charge__c.toFixedNumber()
-											: 'N/A'}
+										<NumberFormat value={add.cspmb__Recurring_Charge__c} />
 									</div>
 
 									<div className="list-cell negotiable">{recurringRow}</div>

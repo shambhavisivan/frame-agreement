@@ -20,8 +20,25 @@ class InputNegotiate extends React.Component {
 		};
 	}
 
-	onNegotiate(e) {
-		this.props.onChange(+e.target.value);
+	onNegotiate(e, restrict) {
+		let _val = +e.target.value;
+
+		if (restrict) {
+			if (_val < 0) {
+				return
+			}
+			
+			if (this.state.fixed && _val > this.props.originalValue) {
+				return
+			}
+
+			if (!this.state.fixed && _val > 100) {
+				return
+			}
+
+		}
+
+		this.props.onChange(_val);
 	}
 
 	onFocus() {
@@ -110,7 +127,7 @@ class InputNegotiate extends React.Component {
 							type="number"
 							min={restrict_minmax ? 0 : null}
 							max={restrict_minmax ? (this.state.fixed ? this.props.originalValue : 100) : null}
-							onChange={this.onNegotiate}
+							onChange={(e) => this.onNegotiate(e, restrict_minmax)}
 							onBlur={this.onBlur}
 							onFocus={this.onFocus}
 							value={_negotiatedValue}

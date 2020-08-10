@@ -56,6 +56,7 @@ export class App extends Component {
 		window.FAM.api.resetNegotiation = (faId, entitiyMap) => {
 			this.props.resetNegotiation(faId, entitiyMap);
 			this.props.validateFrameAgreement(faId);
+			window.SF.validateStatusConsistency(faId);
 		};
 
 		// ******************************************

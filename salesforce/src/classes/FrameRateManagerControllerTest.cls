@@ -118,8 +118,8 @@ private class FrameRateManagerControllerTest {
 		insert pirc;
 
 		// ADDONS
-		cspmb__Add_On_Price_Item__c add_1 = new cspmb__Add_On_Price_Item__c (Name = 'ADD1', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true);
-		cspmb__Add_On_Price_Item__c add_2 = new cspmb__Add_On_Price_Item__c (Name = 'ADD2', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true);
+		cspmb__Add_On_Price_Item__c add_1 = new cspmb__Add_On_Price_Item__c (Name = 'ADD1', cspmb__One_Off_Charge__c = 10.00, cspmb__Billing_Frequency__c = 'Monthly', cspmb__Is_Active__c = true);
+		cspmb__Add_On_Price_Item__c add_2 = new cspmb__Add_On_Price_Item__c (Name = 'ADD2', cspmb__One_Off_Charge__c = 10.00, cspmb__Billing_Frequency__c = 'Monthly', cspmb__Is_Active__c = true);
 
 
 		cspmb__Add_On_Price_Item__c add_invalid_start = new cspmb__Add_On_Price_Item__c (Name = 'ADD_INV_START', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Effective_Start_Date__c = Date.today().addDays(1));
@@ -310,6 +310,40 @@ private class FrameRateManagerControllerTest {
 
 	}
 
+	public static testMethod void testGetFieldLabels() {
+		setupPricingModel();
+
+		Test.startTest();
+
+		Map <String, String> fields = FrameRateManagerController.getFieldLabels('cspmb__Price_Item__c');
+
+		Test.stopTest();
+
+		Boolean isEffectiveDateInFields = fields.containsKey('cspmb__billing_frequency__c');
+		system.assertEquals(isEffectiveDateInFields, true);
+
+	}
+
+	public static testMethod void getFindReplacementCommercialProduct() {
+		setupPricingModel();
+
+		cspmb__Price_Item__c cp_replace_1 = new cspmb__Price_Item__c(Name = 'cp_replace_1', cspmb__Price_Item_Code__c = 'PC333C', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
+		cspmb__Price_Item__c cp_replace_2 = new cspmb__Price_Item__c(Name = 'cp_replace_2', cspmb__Price_Item_Code__c = 'PC333C', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
+
+		insert cp_replace_1;
+		insert cp_replace_2;
+
+		Test.startTest();
+
+		Map <String, Map<String, Object>> result = FrameRateManagerController.findReplacementCommercialProduct(new List <String>{cp_replace_1.Id});
+
+		Test.stopTest();
+
+		Boolean isCp2InResponse = JSON.serialize(result).contains(cp_replace_2.Id);
+		system.assertEquals(isCp2InResponse, true);
+
+	}
+
 	public static testMethod void testGetLookupInformation() {
 		setupPricingModel();
 		setupSettings();
@@ -415,6 +449,8 @@ private class FrameRateManagerControllerTest {
 		Boolean isUserAdmin = FrameRateManagerController.isUserAdmin();
 		Set <Id> isUserDelegate = FrameRateManagerController.isUserDelegate(userId);
 
+		List <String> uniqueList = FrameRateManagerController.getUniqueListElements(new List<String>{'a1', 'a1', 'a2'});
+
 		Map <String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList);
 
 		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> addonsInvalid = FrameRateManagerController.getAddons(new List <Id>{
@@ -435,6 +471,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
+		system.assertEquals(uniqueList.size(), 2);
 		system.assertEquals(addonAssoc_cp_addon_inv.size(), 2);
 		system.assertEquals(addonsInvalid.keySet().size(), 0);
 		system.assertEquals(addonsValid.keySet().size(), 1);
@@ -586,6 +623,24 @@ private class FrameRateManagerControllerTest {
 
 		system.assertEquals(5, cpIdList.size());
 		system.assertEquals(4, getCommercialProducts.size());
+
+	}
+
+	public static testMethod void testGetStandaloneAddons() {
+		setupPricingModel();
+
+		csfam__fac_settings__c FACSettings = new csfam__fac_settings__c();
+		FACSettings.csfam__standalone_addon_fields__c = '';
+		insert FACSettings;
+
+
+		Test.startTest();
+
+		List <cspmb__Add_On_Price_Item__c> saAddons = FrameRateManagerController.getStandaloneAddons();
+
+		Test.stopTest();
+
+		system.assertEquals(2, saAddons.size());
 
 	}
 

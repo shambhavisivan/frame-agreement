@@ -53,13 +53,23 @@ export class App extends Component {
 		// ****************************************** API ******************************************
 		window.FAM.api.clearToasts = this.props.clearToasts;
 
-		window.FAM.api.resetNegotiation = (faId, entitiyMap) => {
+		/**
+		 * resets negotiation in FA attachment.
+		 * @param  String faId       Frame agreement id
+		 * @param  Object entitiyMap nego format data for targeted reset
+		 * @return void            
+		 */
+		window.FAM.api.resetNegotiation = async (faId, entitiyMap) => {
 			this.props.resetNegotiation(faId, entitiyMap);
 			this.props.validateFrameAgreement(faId);
-			window.SF.validateStatusConsistency(faId);
+			await window.SF.validateStatusConsistency(faId);
 		};
 
-		// ******************************************
+		/**
+		 * adds products to frame agreement
+		 * @param  String faId 		Frame agreement id
+		 * @param List<Object> 	List of products to add
+		 */
 		window.FAM.api.addProducts = async (
 			faId = window.mandatory('addProducts()'),
 			products = []
@@ -122,12 +132,23 @@ export class App extends Component {
 			]);
 			return this.props.frameAgreements[faId];
 		};
-		// ******************************************
+
+		/**
+		 * negotiates volume fields
+		 * @param  String faId      frame agreement id
+		 * @param  String productId commercial product id
+		 * @param  Object volume    new volume values structure
+		 * @return void
+		 */
 		window.FAM.api.setVolumeFields = async (faId, productId, volume) => {
 			return this.props.negotiate(faId, productId, '_volume', volume);
 		};
-		// ******************************************
 
+		/**
+		 * remove product from fa
+		 * @param  String faId 		Frame agreement id
+		 * @param List<Object> 	List of products to delete
+		 */
 		window.FAM.api.removeProducts = (faId = window.mandatory('addProducts()'), products = []) => {
 			return new Promise(async resolve => {
 				let productsToDelete = await publish('onBeforeDeleteProducts', products);
@@ -161,6 +182,12 @@ export class App extends Component {
 		window.FAM.api.toast = this.props.createToast;
 		window.FAM.registerMethod = this.props.registerMethod;
 		window.FAM.api.getAttachment = this.props.getAttachment;
+
+		/**
+		 * activates frame agreemend
+		 * @param  String faId 		Frame agreement id
+		 * @returns void
+		 */
 
 		window.FAM.api.activateFrameAgreement = async faId => {
 			// 1) Create a structure that is matching one element -> one pipra
@@ -304,6 +331,11 @@ export class App extends Component {
 			}
 		};
 
+		/**
+		 * [description]
+		 * @param  String faId frame agreement id to submit
+		 * @return String      event message
+		 */
 		window.FAM.api.submitForApproval = async faId => {
 			let response = await submitForApproval(faId);
 			await Promise.all([
@@ -313,6 +345,11 @@ export class App extends Component {
 			return response;
 		};
 
+		/**
+		 * checks if fa is editable
+		 * @param  String faId frame agreement id
+		 * @return Boolean     is editable?
+		 */
 		window.FAM.api.isAgreementEditable = faId => {
 			let _editable = false;
 			let _settings = this.props.settings.FACSettings;
@@ -337,6 +374,11 @@ export class App extends Component {
 			return _editable;
 		};
 
+		/**
+		 * sets fa status to be in-line with the negotiation
+		 * @param  String faId frame agreement id
+		 * @return String     new status
+		 */
 		window.SF.validateStatusConsistency = async faId => {
 			if (!this.props.settings.FACSettings.active_status_management__c) {
 				return false;
@@ -388,6 +430,11 @@ export class App extends Component {
 			}
 		};
 
+		/**
+		 * fetches a list of commercial products, can be filtered by fa id
+		 * @param  String faId 		get cp for this specific fa
+		 * @return List<Object> 	commercial products
+		 */
 		window.FAM.api.getCommercialProducts = async faId => {
 			if (!faId) {
 				return this.props.getCommercialProducts();
@@ -404,20 +451,41 @@ export class App extends Component {
 			}
 		};
 
+		/**
+		 * reload all the fa information
+		 * @param  String faId 		frame agreement id
+		 * @return Promise 			remote action response
+		 */
 		window.FAM.api.refreshFa = faId => {
 			return this.props.refreshFrameAgreement(faId);
 		};
 
+		/**
+		 * set status of given fa
+		 * @param  String faId 		frame agreement id
+		 * @param  String newState 	new status for fa
+		 * @return Promise 			remote action response
+		 */
 		window.FAM.api.setStatusOfFrameAgreement = (faId, newState) => {
 			return this.props.setFrameAgreementState(faId, newState);
 		};
 
+		/**
+		 * save given fa
+		 * @param  String faId 		frame agreement id
+		 * @return Promise 			remote action response
+		 */
 		window.FAM.api.saveFrameAgreement = async faId => {
 			let result = await this.props.saveFrameAgreement(this.props.frameAgreements[faId]);
 			await publish('onAfterSaveFrameAgreement', result);
 			return result;
 		};
 
+		/**
+		 * fetch custom part of fa attachment
+		 * @param  String faId 			frame agreement id
+		 * @return Promise(attachment) 	promise that resolves custom data
+		 */
 		window.FAM.api.getCustomData = (faId = window.mandatory('getCustomData()')) => {
 			return new Promise((resolve, reject) => {
 				let _fa = this.props.frameAgreements[faId];
@@ -433,6 +501,12 @@ export class App extends Component {
 			});
 		};
 
+		/**
+		 * fetch custom part of fa attachment
+		 * @param  String faId 			frame agreement id
+		 * @param  Object data 			data to be stored in custom data
+		 * @return void
+		 */
 		window.FAM.api.setCustomData = (
 			faId = window.mandatory('setCustomData()'),
 			data = window.mandatory('setCustomData()')
@@ -445,6 +519,12 @@ export class App extends Component {
 			});
 		};
 
+		/**
+		 * perform negotiation action
+		 * @param  String faId 		frame agreement id
+		 * @param  Object data 		negotiation structure
+		 * @return Promise(attachment) updated attachment      	
+		 */
 		window.FAM.api.negotiate = (faId, data = window.mandatory('negotiate()')) => {
 			let self = this;
 			return new Promise(async (resolve, reject) => {

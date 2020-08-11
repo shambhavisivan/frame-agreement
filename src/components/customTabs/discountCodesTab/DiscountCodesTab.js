@@ -702,12 +702,75 @@ class DiscountCodesTab extends React.Component {
 	}
 
 	onChangeDiscount(groupId, type, value) {
+		let _active = this.state.added[groupId];
+
+		let revertChange = () => {
+			this.setState({
+				added: {
+					...this.state.added,
+					[groupId]: { ...this.state.added[groupId], [type]: this.state.added[groupId][type] }
+				}
+			});
+		}
+
+		if (this.state.minmax_res) {
+			if (value < 0) {
+				revertChange();
+				return;
+			}
+			
+			if (_active.csfamext__discount_type__c === 'Percentage' && value > 100) {
+				revertChange();
+				return;
+			}
+
+		}
+
+
 		this.setState({
 			added: {
 				...this.state.added,
 				[groupId]: { ...this.state.added[groupId], [type]: value }
 			}
 		});
+	}
+
+	onChangeDiscountType(groupId, value) {
+		let isChanged = value !== this.state.added[groupId].csfamext__discount_type__c;
+
+		this.setState(
+			{
+				added: {
+					...this.state.added,
+					[groupId]: { ...this.state.added[groupId], csfamext__discount_type__c: value },
+				},
+			},
+			() => {
+				if (!isChanged || !this.state.minmax_res) {
+					return;
+				}
+				// Negotiation type has changed and we need to ensure that restrict min/max is still persisted
+				let _group = this.state.added[groupId];
+				// Reset previous value changes
+				let _groupTarget = _group.csfamext__target_object__c;
+				let _resetObj = {};
+
+				if (_group.csfamext__target_object__c === "Both") {
+					_resetObj = { csfamext__rate_value__c: 0, csfamext__one_off_charge__c: 0, csfamext__recurring_charge__c: 0 };
+				} else if (_group.csfamext__target_object__c === "Commercial Product") {
+					_resetObj = { csfamext__one_off_charge__c: 0, csfamext__recurring_charge__c: 0 };
+				} else {
+					_resetObj = { csfamext__rate_value__c: 0 };
+				}
+
+				this.setState({
+					added: {
+						...this.state.added,
+						[groupId]: { ...this.state.added[groupId], ..._resetObj },
+					},
+				});
+			}
+		);
 	}
 
 	getMinMax(discType) {
@@ -839,9 +902,8 @@ class DiscountCodesTab extends React.Component {
 													placeholder="Add Dynamic Group"
 													disabled={!this.state.editable || !group.csfamext__fam_editable__c}
 													onChange={e => {
-														this.onChangeDiscount(
+														this.onChangeDiscountType(
 															group.Id,
-															'csfamext__discount_type__c',
 															e.target.value
 														);
 													}}

@@ -186,26 +186,26 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			let _rateCardLines = cp._rateCards.reduce((acc, iter) => [...acc, ...iter.rateCardLines], []);
 
 			_rateCardLines.forEach(rcl => {
-				let _negoFormatRcl = {};
-				_negoFormatRcl.priceItemId = cp.Id;
-				_negoFormatRcl.rateCard = rcl.cspmb__Rate_Card__c;
-				_negoFormatRcl.rateCardLine = rcl.Id;
-				_negoFormatRcl.value = null;
 
-				let _value = rcl.cspmb__rate_value__c;
+				let _originalValue = rcl.cspmb__rate_value__c;
 
 				rcl_codes.forEach(rclc => {
 					if (rclc.records.rcl[rcl.Id]) {
-						_value = calculateDiscount(
+						let _value = calculateDiscount(
 							rclc.csfamext__discount_type__c,
 							rclc.csfamext__rate_value__c,
-							_value
+							_originalValue
 						);
+
+						_negoArray.push({
+							priceItemId: cp.Id,
+							rateCard: rcl.cspmb__Rate_Card__c,
+							rateCardLine: rcl.Id,
+							value: _value
+						});
 					}
 				});
 
-				_negoFormatRcl.value = _value;
-				_negoArray.push(_negoFormatRcl);
 			});
 		}
 

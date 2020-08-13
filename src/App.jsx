@@ -7,6 +7,8 @@ import {
 	negotiate,
 	apiNegotiate,
 	clearToasts,
+	createNewVersionOfFrameAgrement,
+	updateFrameAgreement,
 	cloneFrameAgreement,
 	createToast,
 	getAppSettings,
@@ -23,9 +25,9 @@ import {
 	saveFrameAgreement,
 	setCustomData,
 	setFrameAgreementState,
-	validateFrameAgreement
+	validateFrameAgreement,
 } from './actions';
-// import { editModalWidth } from "./actions";
+
 import FaList from './components/FaList';
 import FaEditor from './components/FaEditor';
 import FaMaster from './components/FaMaster';
@@ -43,7 +45,7 @@ import {
 	createPricingRuleGroup,
 	decomposeAttachment,
 	undoDecomposition,
-	submitForApproval
+	submitForApproval,
 } from './api';
 
 export class App extends Component {
@@ -53,16 +55,20 @@ export class App extends Component {
 		// ****************************************** API ******************************************
 		window.FAM.api.clearToasts = this.props.clearToasts;
 
+		window.FAM.api.createNewVersionOfFrameAgrement = this.props.createNewVersionOfFrameAgrement;
+		window.FAM.api.updateFrameAgreement = this.props.updateFrameAgreement;
+
 		/**
 		 * resets negotiation in FA attachment.
 		 * @param  String faId       Frame agreement id
 		 * @param  Object entitiyMap nego format data for targeted reset
-		 * @return void            
+		 * @return void
 		 */
+		window;
 		window.FAM.api.resetNegotiation = async (faId, entitiyMap) => {
 			this.props.resetNegotiation(faId, entitiyMap);
 			this.props.validateFrameAgreement(faId);
-			await window.SF.validateStatusConsistency(faId);
+			await window.FAM.api.validateStatusConsistency(faId);
 		};
 
 		/**
@@ -76,15 +82,15 @@ export class App extends Component {
 		) => {
 			products = await publish('onBeforeAddProducts', products);
 
-			if (products.some(cp_id => cp_id.length === 15)) {
+			if (products.some((cp_id) => cp_id.length === 15)) {
 				console.warn('Converting to 18 char Id...');
 				// Generate 15: 18 map
 				let charMap = {};
-				this.props.commercialProducts.forEach(cp => {
+				this.props.commercialProducts.forEach((cp) => {
 					charMap[cp.Id.substring(0, 15)] = cp.Id;
 				});
 
-				products = products.map(cp_id => {
+				products = products.map((cp_id) => {
 					if (cp_id.length === 15) {
 						return charMap[cp_id];
 					}
@@ -123,12 +129,12 @@ export class App extends Component {
 
 			publish(
 				'onAfterAddProducts',
-				this.props.frameAgreements[faId]._ui.commercialProducts.map(cp => cp.Id)
+				this.props.frameAgreements[faId]._ui.commercialProducts.map((cp) => cp.Id)
 			);
 
 			await window.SF.invokeAction('saveAttachment', [
 				faId,
-				JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+				JSON.stringify(this.props.frameAgreements[faId]._ui.attachment),
 			]);
 			return this.props.frameAgreements[faId];
 		};
@@ -150,7 +156,7 @@ export class App extends Component {
 		 * @param List<Object> 	List of products to delete
 		 */
 		window.FAM.api.removeProducts = (faId = window.mandatory('addProducts()'), products = []) => {
-			return new Promise(async resolve => {
+			return new Promise(async (resolve) => {
 				let productsToDelete = await publish('onBeforeDeleteProducts', products);
 
 				// IF not, load attachment for FA
@@ -161,12 +167,12 @@ export class App extends Component {
 				await this.props.removeProductsFromFa(faId, productsToDelete);
 				publish(
 					'onAfterDeleteProducts',
-					this.props.frameAgreements[faId]._ui.commercialProducts.map(cp => cp.Id)
+					this.props.frameAgreements[faId]._ui.commercialProducts.map((cp) => cp.Id)
 				);
 
 				await window.SF.invokeAction('saveAttachment', [
 					faId,
-					JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+					JSON.stringify(this.props.frameAgreements[faId]._ui.attachment),
 				]);
 				resolve(this.props.frameAgreements[faId]._ui.attachment);
 			});
@@ -188,8 +194,7 @@ export class App extends Component {
 		 * @param  String faId 		Frame agreement id
 		 * @returns void
 		 */
-
-		window.FAM.api.activateFrameAgreement = async faId => {
+		window.FAM.api.activateFrameAgreement = async (faId) => {
 			// 1) Create a structure that is matching one element -> one pipra
 			let _attachment = {};
 
@@ -207,7 +212,7 @@ export class App extends Component {
 						structure.push({
 							cpaoaId: cpaoa,
 							recurring: addons[cpaoa].hasOwnProperty('recurring') ? addons[cpaoa].recurring : null,
-							oneOff: addons[cpaoa].hasOwnProperty('oneOff') ? addons[cpaoa].oneOff : null
+							oneOff: addons[cpaoa].hasOwnProperty('oneOff') ? addons[cpaoa].oneOff : null,
 						});
 					}
 				}
@@ -218,7 +223,7 @@ export class App extends Component {
 						structure.push({
 							peId: chId,
 							recurring: charges[chId].hasOwnProperty('recurring') ? charges[chId].recurring : null,
-							oneOff: charges[chId].hasOwnProperty('oneOff') ? charges[chId].oneOff : null
+							oneOff: charges[chId].hasOwnProperty('oneOff') ? charges[chId].oneOff : null,
 						});
 					}
 				}
@@ -231,12 +236,12 @@ export class App extends Component {
 							: null,
 						oneOff: _attachment[cpId]._product.hasOwnProperty('oneOff')
 							? _attachment[cpId]._product.oneOff
-							: null
+							: null,
 					});
 				}
 			}
 			// 2) Remove items that have no charge value
-			structure = structure.filter(item => item.recurring !== null || item.oneOff !== null);
+			structure = structure.filter((item) => item.recurring !== null || item.oneOff !== null);
 
 			structure = await publish('onBeforeActivation', structure);
 
@@ -267,7 +272,7 @@ export class App extends Component {
 			console.log(decompositionDataChunked);
 
 			// Fill the promise array
-			decompositionDataChunked.forEach(chunk => {
+			decompositionDataChunked.forEach((chunk) => {
 				decompositionPromiseArray.push(decomposeAttachment(chunk, PR_ID, faId));
 			});
 
@@ -300,7 +305,7 @@ export class App extends Component {
 					undoArray.push(structure.slice(i, i + 10000));
 				}
 
-				undoArray.forEach(chunk => {
+				undoArray.forEach((chunk) => {
 					undoPromiseArray.push(undoDecomposition(PR_ID));
 				});
 
@@ -336,11 +341,11 @@ export class App extends Component {
 		 * @param  String faId frame agreement id to submit
 		 * @return String      event message
 		 */
-		window.FAM.api.submitForApproval = async faId => {
+		window.FAM.api.submitForApproval = async (faId) => {
 			let response = await submitForApproval(faId);
 			await Promise.all([
 				this.props.getApprovalHistory(faId),
-				this.props.refreshFrameAgreement(faId)
+				this.props.refreshFrameAgreement(faId),
 			]);
 			return response;
 		};
@@ -350,7 +355,7 @@ export class App extends Component {
 		 * @param  String faId frame agreement id
 		 * @return Boolean     is editable?
 		 */
-		window.FAM.api.isAgreementEditable = faId => {
+		window.FAM.api.isAgreementEditable = (faId) => {
 			let _editable = false;
 			let _settings = this.props.settings.FACSettings;
 			let _fa = this.props.frameAgreements[faId];
@@ -379,7 +384,7 @@ export class App extends Component {
 		 * @param  String faId frame agreement id
 		 * @return String     new status
 		 */
-		window.SF.validateStatusConsistency = async faId => {
+		window.FAM.api.validateStatusConsistency = async (faId) => {
 			if (!this.props.settings.FACSettings.active_status_management__c) {
 				return false;
 			}
@@ -435,7 +440,7 @@ export class App extends Component {
 		 * @param  String faId 		get cp for this specific fa
 		 * @return List<Object> 	commercial products
 		 */
-		window.FAM.api.getCommercialProducts = async faId => {
+		window.FAM.api.getCommercialProducts = async (faId) => {
 			if (!faId) {
 				return this.props.getCommercialProducts();
 			} else {
@@ -456,7 +461,7 @@ export class App extends Component {
 		 * @param  String faId 		frame agreement id
 		 * @return Promise 			remote action response
 		 */
-		window.FAM.api.refreshFa = faId => {
+		window.FAM.api.refreshFa = (faId) => {
 			return this.props.refreshFrameAgreement(faId);
 		};
 
@@ -475,7 +480,7 @@ export class App extends Component {
 		 * @param  String faId 		frame agreement id
 		 * @return Promise 			remote action response
 		 */
-		window.FAM.api.saveFrameAgreement = async faId => {
+		window.FAM.api.saveFrameAgreement = async (faId) => {
 			let result = await this.props.saveFrameAgreement(this.props.frameAgreements[faId]);
 			await publish('onAfterSaveFrameAgreement', result);
 			return result;
@@ -523,7 +528,7 @@ export class App extends Component {
 		 * perform negotiation action
 		 * @param  String faId 		frame agreement id
 		 * @param  Object data 		negotiation structure
-		 * @return Promise(attachment) updated attachment      	
+		 * @return Promise(attachment) updated attachment
 		 */
 		window.FAM.api.negotiate = (faId, data = window.mandatory('negotiate()')) => {
 			let self = this;
@@ -536,7 +541,7 @@ export class App extends Component {
 
 				self.props.validateFrameAgreement(faId);
 
-				await window.SF.validateStatusConsistency(faId);
+				await window.FAM.api.validateStatusConsistency(faId);
 
 				resolve(this.props.frameAgreements[faId]._ui.attachment);
 			});
@@ -546,19 +551,21 @@ export class App extends Component {
 
 		Promise.all([
 			this.props.getAppSettings(),
-			window.SF.invokeAction('getFieldLabels', ['cspmb__Usage_Type__c']).then(r => {
+			window.SF.invokeAction('getFieldLabels', ['cspmb__Usage_Type__c']).then((r) => {
 				window.SF.fieldLabels['cspmb__Usage_Type__c'] = r;
 			}),
-			window.SF.invokeAction('getFieldLabels', ['csconta__Frame_Agreement__c']).then(r => {
+			window.SF.invokeAction('getFieldLabels', ['csconta__Frame_Agreement__c']).then((r) => {
 				window.SF.fieldLabels['csconta__Frame_Agreement__c'] = r;
 			}),
-			window.SF.invokeAction('getFieldLabels', ['cspmb__Price_Item__c']).then(r => {
+			window.SF.invokeAction('getFieldLabels', ['cspmb__Price_Item__c']).then((r) => {
 				window.SF.fieldLabels['cspmb__Price_Item__c'] = r;
-			})
-		]).then(response => {
+			}),
+		]).then((response) => {
 			let _promiseArray = [this.props.getFrameAgreements(), this.props.getCommercialProducts()];
 
-			let picklists = response[0].HeaderData.filter(f => f.type === 'picklist').map(f => f.field);
+			let picklists = response[0].HeaderData.filter((f) => f.type === 'picklist').map(
+				(f) => f.field
+			);
 
 			// Load agreement levels for "Add new Agreement" picklist
 			picklists.push('csconta__agreement_level__c');
@@ -566,7 +573,7 @@ export class App extends Component {
 
 			_promiseArray.push(this.props.getPicklistOptions(picklists));
 
-			Promise.all(_promiseArray).then(responseArr => {
+			Promise.all(_promiseArray).then((responseArr) => {
 				publish('onLoad', [responseArr]);
 			});
 		});
@@ -616,6 +623,8 @@ const mapDispatchToProps = {
 	negotiate,
 	apiNegotiate,
 	clearToasts,
+	createNewVersionOfFrameAgrement,
+	updateFrameAgreement,
 	cloneFrameAgreement,
 	createToast,
 	getAppSettings,
@@ -632,16 +641,16 @@ const mapDispatchToProps = {
 	saveFrameAgreement,
 	setCustomData,
 	setFrameAgreementState,
-	validateFrameAgreement
+	validateFrameAgreement,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	return {
 		frameAgreements: state.frameAgreements,
 		commercialProducts: state.commercialProducts,
 		settings: state.settings,
 		validation: state.validation,
-		initialised: state.initialised
+		initialised: state.initialised,
 	};
 };
 

@@ -143,9 +143,10 @@ class FaList extends Component {
 		});
 	}
 
-	createFrameAgreement(type) {
+	async createFrameAgreement(type) {
 		type = type === 'master' ? 'Master Agreement' : 'Frame Agreement';
 		let newFa = new FrameAgreement(this.props.settings.FACSettings.statuses.draft_status, type);
+		newFa = await publish('onBeforeCreateFrameAgreement', newFa);
 
 		this.props.createFrameAgreement(newFa).then(upsertedFa => {
 			this.props.history.push('/agreement/' + upsertedFa.Id);

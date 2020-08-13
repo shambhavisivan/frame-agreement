@@ -109,7 +109,7 @@ export class CommercialProduct extends React.Component {
 
 		data = await publish('onBeforeNegotiate', data);
 
-		window.SF.validateStatusConsistency(this.props.faId);
+		window.FAM.api.validateStatusConsistency(this.props.faId);
 
 		this.props.negotiate(this.props.faId, this.productId, type, data);
 

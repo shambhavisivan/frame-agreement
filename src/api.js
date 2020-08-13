@@ -13,6 +13,7 @@ const eventList = new Set([
 	'onLoadCommercialProducts',
 	'onFaUpdate',
 	'onBeforeAddProducts',
+	'onBeforeCreateFrameAgreement',
 	'onBeforeDeleteProducts',
 	'onAfterAddProducts',
 	'onAfterDeleteProducts',

@@ -1411,8 +1411,8 @@ const rootReducer = (state = initialState, action) => {
 				function formatAddons(addon) {
 					let _addon = { ...addon };
 
-					_addon.cspmb__One_Off_Charge__c = _addon.cspmb__One_Off_Charge__c || null;
-					_addon.cspmb__Recurring_Charge__c = _addon.cspmb__Recurring_Charge__c || null;
+					_addon.cspmb__One_Off_Charge__c = _addon.hasOwnProperty('cspmb__One_Off_Charge__c') ? addon.cspmb__One_Off_Charge__c : null;
+					_addon.cspmb__Recurring_Charge__c = _addon.hasOwnProperty('cspmb__Recurring_Charge__c') ? addon.cspmb__Recurring_Charge__c : null;
 
 					_addon.cspmb__Authorization_Level__c =
 						_addon.cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c;

@@ -2145,21 +2145,40 @@ global with sharing class FrameRateManagerController {
 	*/
 	@RemoteAction
 	public static Id createPricingRuleGroup(Id faId) {
-
 		Integer prg_count = database.countQuery('select count() from cspmb__Pricing_Rule_Group__c');
 		String rgc = 'FAM ' + String.valueOfGmt(datetime.now()) + '___' + prg_count;
+		csconta__Frame_Agreement__c fa = [
+			select id, name, csconta__effective_start_date__c,
+				csconta__effective_end_date__c, csconta__frame_agreement_number__c
+			from csconta__Frame_Agreement__c
+			where id = :faId
+			limit 1
+		];
 
-		cspmb__Pricing_Rule_Group__c prg = new cspmb__Pricing_Rule_Group__c(cspmb__description__c = 'Auto generated from FA decomposition.', cspmb__pricing_rule_group_code__c = rgc, csconta__frame_agreement__c = faId);
+		cspmb__Pricing_Rule_Group__c prg = new cspmb__Pricing_Rule_Group__c(
+			cspmb__description__c = 'Auto generated from FA decomposition.',
+			cspmb__pricing_rule_group_code__c = rgc,
+			csconta__frame_agreement__c = faId,
+			cspmb__effective_start_date__c = fa.csconta__effective_start_date__c,
+			cspmb__effective_end_date__c = fa.csconta__effective_end_date__c
+		);
 		insert prg;
 
-		cspmb__pricing_rule__c pr = new cspmb__pricing_rule__c(cspmb__description__c = 'Auto generated from FA decomposition.');
+		cspmb__pricing_rule__c pr = new cspmb__pricing_rule__c(
+			cspmb__description__c = 'Auto generated from FA decomposition.',
+			cspmb__pricing_rule_code__c = rgc,
+			cspmb__effective_end_date__c = fa.csconta__effective_end_date__c,
+			cspmb__effective_start_date__c = fa.csconta__effective_start_date__c
+		);
 		insert pr;
 
-		cspmb__Pricing_Rule_Group_Rule_Association__c prgra = new cspmb__Pricing_Rule_Group_Rule_Association__c(cspmb__pricing_rule__c = pr.Id, cspmb__pricing_rule_group__c = prg.Id);
+		cspmb__Pricing_Rule_Group_Rule_Association__c prgra = new cspmb__Pricing_Rule_Group_Rule_Association__c(
+			cspmb__pricing_rule__c = pr.Id,
+			cspmb__pricing_rule_group__c = prg.Id
+		);
 		insert prgra;
 
 		return pr.Id;
-
 	}
 
 	/**

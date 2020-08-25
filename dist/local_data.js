@@ -2,6 +2,17 @@ var SF;
 
 window.localMode = true;
 
+window.getLabels = () => {
+	let res = {};
+
+	Object.keys(window.SF.labels).forEach(lb => {
+		res[lb] = `{!$Label.${lb}}`.replace(/"/g, "'");
+		// res[lb] = `{!$Label.${lb}}`;
+	});
+
+	return res;
+};
+
 function createPromise(result, timeout = 500) {
 	return new Promise(resolve => {
 		setTimeout(() => {
@@ -297,6 +308,7 @@ const FACSettings = {
 	product_chunk_size: 100,
 	decimal_places: 2,
 	rcl_fields: 'cspmb__Currency_Code__c, Category__c',
+	standalone_addon_fields: 'Id, Name',
 	volume_fields_visibility: 'mv',
 	usage_type_fields__c: 'cspmb__unit_of_measure__c',
 	statuses: {
@@ -640,6 +652,93 @@ const frameAgreements = [
 		}
 	}
 ];
+
+const STANDALONE_ADDONS = [
+	{
+		Id: 'a0w1t0000002hSaAAI',
+		Name: 'Extra 200MB',
+		cspmb__One_Off_Charge__c: 10,
+		cspmb__Recurring_Charge__c: 12
+	},
+	{
+		Id: 'a0w1t000000zDnNAAU',
+		Name: '1000 SMS',
+		cspmb__One_Off_Charge__c: 22,
+		cspmb__Recurring_Charge__c: 82.44
+	},
+	{
+		Id: 'a0w1t000000zDnhAAE',
+		Name: '1000 Min',
+		cspmb__One_Off_Charge__c: 14
+	}
+];
+
+const STANDALONE_ADDONS_AL_INFO = {
+	discLevels: [
+		{
+			addonId: 'a0w1t0000002hSaAAI',
+			discountLevel: {
+				Id: 'a141t000003ENSyAAO',
+				Name: 'One-off charge',
+				cspmb__Charge_Type__c: 'NRC',
+				cspmb__Discount_Type__c: 'Amount',
+				cspmb__Discount_Values__c: '7,8'
+			}
+		},
+		{
+			addonId: 'a0w1t0000002hSaAAI',
+			discountLevel: {
+				Id: 'a141t000001380zAAA',
+				Name: 'One-off charge',
+				cspmb__Charge_Type__c: 'NRC',
+				cspmb__Discount_Increment__c: '1',
+				cspmb__Discount_Type__c: 'Amount',
+				cspmb__Maximum_Discount_Value__c: 6,
+				cspmb__Minimum_Discount_Value__c: 0
+			},
+			priceItemId: 'a1F1t00000017Y0EAI'
+		},
+		{
+			addonId: 'a0w1t0000002hSaAAI',
+			discountLevel: {
+				Id: 'a141t000001381iAAA',
+				Name: 'Addon_ADD1',
+				cspmb__Charge_Type__c: 'One Off',
+				cspmb__Discount_Values__c: '5,9,15'
+			}
+		}
+	],
+	dcList: [
+		{
+			Id: 'a151t000000rmV7AAI',
+			Name: 'DT1',
+			cspmb__Discount_Threshold__c: 10,
+			cspmb__Authorization_Level__c: 'a0x1t000000yZF3AAM',
+			cspmb__Discount_Type__c: 'Percentage'
+		},
+		{
+			Id: 'a151t000000y2MNAAY',
+			Name: 'ADD1',
+			cspmb__Discount_Threshold__c: 12,
+			cspmb__Authorization_Level__c: 'a0x1t000001RjCJAA0',
+			cspmb__Discount_Type__c: 'Percentage'
+		},
+		{
+			Id: 'a151t000000y2MIAAY',
+			Name: 'Amount',
+			cspmb__Discount_Threshold__c: 3,
+			cspmb__Authorization_Level__c: 'a0x1t000001RjCEAA0',
+			cspmb__Discount_Type__c: 'Amount'
+		},
+		{
+			Id: 'a151t000000y2MXAAY',
+			Name: 'ADD1',
+			cspmb__Discount_Threshold__c: 5,
+			cspmb__Authorization_Level__c: 'a0x1t000001RjCJAA0',
+			cspmb__Discount_Type__c: 'Amount'
+		}
+	]
+};
 
 const childUsageTypes = {
 	a201t0000009yECAAY: [
@@ -1875,6 +1974,13 @@ const HeaderData = [
 		grid: 2
 	},
 	{
+		field: 'csfam__arb_field_bool__c',
+		readOnly: false,
+		label: 'Bool Arb',
+		type: 'boolean',
+		grid: 2
+	},
+	{
 		field: 'csfam__Disable_Custom_Tabs__c',
 		readOnly: false,
 		label: 'Disable Tabs',
@@ -1960,6 +2066,18 @@ const CategorizationData = [
 		values: ['10GB', '20GB', '50GB', '100GB']
 	}
 ];
+const AddonCategorizationData = [
+	{
+		name: 'Alpha',
+		field: 'cspmb__Billing_Frequency__c',
+		values: ['Monthly', 'Quarterly', 'Annually']
+	},
+	{
+		name: 'Beta',
+		field: 'cspmb__Discount_Type__c',
+		values: ['Percentage', 'Amount']
+	}
+];
 const RelatedListsData = [
 	{
 		label: 'Account',
@@ -2029,8 +2147,10 @@ const ButtonStandardData = {
 	Submit: ['Approved'],
 	Delta: '*',
 	DeleteProducts: ['Draft', 'Requires Approval'],
-	BulkNegotiate: ['Draft', 'Requires Approval'],
-	AddProducts: ['Draft', 'Requires Approval']
+	DeleteAddons: ['Draft', 'Requires Approval'],
+	BulkNegotiate: 'csfam__arb_field_bool__c == true',
+	AddProducts: ['Draft', 'Requires Approval'],
+	AddAddons: ['Draft', 'Requires Approval']
 };
 
 const commercialProducts = [
@@ -3482,6 +3602,7 @@ window.SF = SF = {
 		accounts_modal_no_main: '--no account',
 		addAgreementsCTAMessage: 'There are no Agreements in here',
 		addProductCTAMessage: 'There are no Products in here',
+		addAddonsCTAMessage: 'There are no Add Ons in here',
 		addons_header_name: 'Name',
 		addons_header_oneOff: 'One Off Charge',
 		addons_header_oneOff_neg: 'Negotiated One Off',
@@ -3498,7 +3619,10 @@ window.SF = SF = {
 		alert_deleteProducts_btn_action: 'Delete',
 		alert_deleteProducts_message:
 			'Are you sure you want to delete selected products?',
+		alert_deleteAddons_message:
+			'Are you sure you want to delete selected Add Ons?',
 		alert_deleteProducts_title: 'Delete products',
+		alert_deleteAddons_title: 'Delete Add Ons',
 		allowances_amount: 'Amount',
 		allowances_name: 'Name',
 		allowances_priority: 'Priority',
@@ -3519,11 +3643,13 @@ window.SF = SF = {
 		btn_AddFa: 'Add Frame Agreements',
 		btn_AddNewAgreement: 'Add new Agreement',
 		btn_AddProducts: 'Add Products',
+		btn_AddAddons: 'Add Add Ons',
 		btn_BulkNegotiate: 'Negotiate Products',
 		btn_CalcDelta: 'Calculate Delta',
 		btn_Close: 'Close',
 		btn_DeleteAgreements: 'Delete Agreements',
 		btn_DeleteProducts: 'Delete Products',
+		btn_DeleteAddons: 'Delete Add Ons',
 		btn_Delta: 'Compare Agreements',
 		btn_Done: 'Done',
 		btn_NewVersion: 'Create New Version',
@@ -3570,7 +3696,8 @@ window.SF = SF = {
 		famext_manager_parse: 'Parse',
 		famext_toast_dc_applied: 'Discount codes applied!',
 		famext_toast_dc_appliance_warning_title: 'Discount codes not applied!',
-		famext_toast_dc_appliance_warning_message: 'Some discount codes are added but not applied.',
+		famext_toast_dc_appliance_warning_message:
+			'Some discount codes are added but not applied.',
 		famext_oneOff: 'One-off charge',
 		famext_oneOff: 'One-off charge',
 		famext_operator_equals: 'Equals',
@@ -3595,7 +3722,9 @@ window.SF = SF = {
 		input_quickSearchPlaceholder: 'Quick search',
 		modal_addFa_title: 'Add Frame Agreements',
 		modal_addProduct_input_search_placeholder: 'Filter products',
+		modal_addAddons_input_search_placeholder: 'Filter addons',
 		modal_addProduct_title: 'Add Product to Frame Agreement',
+		modal_addAddons_title: 'Add stand-alone Addons',
 		modal_bluk_rateFilter_dropdownPlaceholder: '-- select a property ---',
 		modal_bluk_rateFilter_propertyTitle: 'Select rate card line property:',
 		modal_bluk_rateFilter_propertyValueTitle: 'Select value:',
@@ -3613,7 +3742,9 @@ window.SF = SF = {
 		modal_categorization_btn_apply: 'Apply Filter',
 		modal_categorization_btn_clear: 'Clear Filter',
 		modal_categorization_switch: 'Product categorisation panel',
+		modal_addon_categorization_switch: 'Addon categorisation panel',
 		modal_categorization_title: 'Product Categorization',
+		modal_addon_categorization_title: 'Addon Categorization',
 		modal_charge_table_header_chargeType: 'Charge Type',
 		modal_charge_table_header_name: 'Name',
 		modal_charge_table_header_oneOff: 'One Off',
@@ -3640,6 +3771,7 @@ window.SF = SF = {
 		products_product_charges: 'Charges (product)',
 		products_rates: 'Rate Cards',
 		products_tab_title: 'Products',
+		addons_tab_title: 'Standalon Addons',
 		products_title: 'Products',
 		products_title_empty: 'Product Negotiation',
 		products_volume_minUsageComm: 'Min. usage commitment',
@@ -3712,6 +3844,7 @@ window.SF = SF = {
 					ButtonCustomData,
 					ButtonStandardData,
 					CategorizationData,
+					AddonCategorizationData,
 					RelatedListsData,
 					HeaderData,
 					CustomTabsData,
@@ -3725,8 +3858,11 @@ window.SF = SF = {
 				};
 				return createPromise(data, 500);
 
-			case 'getAddons': // Obsolete
+			case 'getAddons':
 				return createPromise(Addons);
+
+			case 'filterStandaloneAddons':
+				return createPromise([getRandomFromArr(STANDALONE_ADDONS)]);
 
 			case 'upsertFrameAgreements':
 				if (parametersArr[0] !== null) {
@@ -3747,6 +3883,12 @@ window.SF = SF = {
 				} else {
 					return createPromise(attachment, 500);
 				}
+
+			case 'getStandaloneAddons':
+				return createPromise(STANDALONE_ADDONS);
+
+			case 'getAddonDiscountInformation':
+				return createPromise(STANDALONE_ADDONS_AL_INFO);
 
 			case 'getAttachmentBody':
 				return createPromise(attachment, 1000);
@@ -4129,6 +4271,56 @@ window.SF = SF = {
 						cspmb__version_number__c: 'Version Number',
 						csfam__categorization_alpha__c: 'Categorization Alpha',
 						csfam__categorization_beta__c: 'Categorization Beta'
+					};
+				}
+
+				if (parametersArr[0] === 'cspmb__Add_On_Price_Item__c') {
+					result = {
+						id: 'Record ID',
+						ownerid: 'Owner ID',
+						isdeleted: 'Deleted',
+						name: 'Add On Name',
+						createddate: 'Created Date',
+						createdbyid: 'Created By ID',
+						lastmodifieddate: 'Last Modified Date',
+						lastmodifiedbyid: 'Last Modified By ID',
+						systemmodstamp: 'System Modstamp',
+						lastactivitydate: 'Last Activity Date',
+						lastvieweddate: 'Last Viewed Date',
+						lastreferenceddate: 'Last Referenced Date',
+						cspmb__account__c: 'Account',
+						cspmb__add_on_price_item_code__c: 'Add On Code',
+						cspmb__add_on_price_item_description__c: 'Add On Description',
+						cspmb__apply_one_off_charge_account_discount__c:
+							'Apply One-Off Charge Account Discount',
+						cspmb__apply_recurring_charge_account_discount__c:
+							'Apply Recurring Charge Account Discount',
+						cspmb__authorization_level__c: 'Authorization Level',
+						cspmb__billing_frequency__c: 'Billing Frequency',
+						cspmb__contract_term__c: 'Contract Term',
+						cspmb__currency_code__c: 'Currency Code',
+						cspmb__current_version__c: 'Current Version',
+						cspmb__discount_type__c: 'Discount Type',
+						cspmb__effective_end_date__c: 'Effective End Date',
+						cspmb__effective_start_date__c: 'Effective Start Date',
+						cspmb__is_active__c: 'Is Active',
+						cspmb__is_authorization_required__c: 'Is Authorization Required',
+						cspmb__is_one_off_discount_allowed__c:
+							'Is One-Off Discount Allowed',
+						cspmb__is_recurring_discount_allowed__c:
+							'Is Recurring Discount Allowed',
+						cspmb__one_off_charge_code__c: 'One-Off Charge Code',
+						cspmb__one_off_charge_external_id__c: 'One-Off Charge External Id',
+						cspmb__one_off_charge__c: 'One-Off Charge',
+						cspmb__one_off_cost__c: 'One-Off Cost',
+						cspmb__product_definition_name__c: 'Product Definition Name',
+						cspmb__recurring_charge_code__c: 'Recurring Charge Code',
+						cspmb__recurring_charge_external_id__c:
+							'Recurring Charge External Id',
+						cspmb__recurring_charge__c: 'Recurring Charge',
+						cspmb__recurring_cost__c: 'Recurring Cost',
+						cspmb__sequence__c: 'Sequence',
+						cspmb__version_number__c: 'Version Number'
 					};
 				}
 

@@ -15,8 +15,10 @@ const eventList = new Set([
 	'onBeforeAddProducts',
 	'onBeforeCreateFrameAgreement',
 	'onBeforeDeleteProducts',
+	'onBeforeDeleteAddons',
 	'onAfterAddProducts',
 	'onAfterDeleteProducts',
+	'onAfterDeleteAddons',
 	'onBeforeSaveFrameAgreement',
 	'onAfterSaveFrameAgreement',
 	'onBeforeNegotiate',
@@ -139,6 +141,16 @@ export function performAction(className, params) {
 			resolve(response);
 			return response;
 		});
+	});
+}
+export function filterStandaloneAddons(filterData) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('filterStandaloneAddons', [JSON.stringify(filterData)]).then(
+			response => {
+				resolve(response);
+				return response;
+			}
+		);
 	});
 }
 

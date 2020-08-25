@@ -14,6 +14,10 @@ class Tabs extends React.Component {
 		this.setState({
 			activeTabIndex: i
 		});
+
+		if (this.props.onTabChange) {
+			this.props.onTabChange(i);
+		}
 	}
 	// Encapsulate <Tabs/> component API as props for <Tab/> children
 	renderChildrenWithTabsApiAsProps() {

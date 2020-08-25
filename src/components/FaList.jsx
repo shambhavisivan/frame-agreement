@@ -54,9 +54,11 @@ class FrameAgreement {
 			},
 			approvalNeeded: false,
 			commercialProducts: [],
+			standaloneAddons: [],
 			attachment: {
 				custom: {},
-				products: {}
+				products: {},
+				addons: {}
 			}
 		};
 	}

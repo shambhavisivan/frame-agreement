@@ -50,7 +50,7 @@ class CommercialProductsTab extends React.Component {
 
 	getCommercialProductsCount() {
 		let cpSize = this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length;
-		if (this.productFilter) {
+		if (this.state.productFilter) {
 			cpSize = this.props.frameAgreements[this.props.faId]._ui.commercialProducts.filter(cp => {
 				if (this.state.productFilter && this.state.productFilter.length >= 2) {
 					return cp.Name.toLowerCase().includes(this.state.productFilter.toLowerCase());
@@ -101,7 +101,8 @@ class CommercialProductsTab extends React.Component {
 									value={
 										this.props.frameAgreements[this.props.faId]._ui.commercialProducts.filter(
 											this._productFilter
-										).length === Object.keys(this.props.selectedProducts).length
+										).length === Object.keys(this.props.selectedProducts).length &&
+										!!Object.keys(this.props.selectedProducts).length
 									}
 									onChange={() => {
 										this.props.onSelectAllProducts(

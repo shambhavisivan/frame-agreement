@@ -644,6 +644,42 @@ private class FrameRateManagerControllerTest {
 
 	}
 
+	public static testMethod void testFilterStandaloneAddons() {
+		setupPricingModel();
+
+		csfam__fac_settings__c FACSettings = new csfam__fac_settings__c();
+		FACSettings.csfam__standalone_addon_fields__c = '';
+		insert FACSettings;
+
+		Test.startTest();
+
+		List <cspmb__Add_On_Price_Item__c> saAddons = FrameRateManagerController.filterStandaloneAddons('[{"field":"cspmb__Billing_Frequency__c","values":["Monthly"]}]');
+
+		Test.stopTest();
+
+		system.assertEquals(2, saAddons.size());
+
+	}
+
+	public static testMethod void testGetAddonDiscountInformation() {
+		setupPricingModel();
+
+		csfam__fac_settings__c FACSettings = new csfam__fac_settings__c();
+		FACSettings.csfam__standalone_addon_fields__c = '';
+		insert FACSettings;
+
+		Test.startTest();
+
+		Map <String, Object> addon_di = FrameRateManagerController.getAddonDiscountInformation();
+
+		Test.stopTest();
+
+		system.assertEquals(true, addon_di.containsKey('discLevels'));
+		system.assertEquals(true, addon_di.containsKey('dcList'));
+
+	}
+
+
 	public static testMethod void testGetCommercialProductsNull() {
 		setupPricingModel();
 

@@ -5,6 +5,7 @@ const _defaultModals = {
 	actionIframe: false,
 	actionIframeUrl: '',
 	productModal: false,
+	addonModal: false,
 	frameModal: false,
 	deltaModal: false,
 	negotiateModal: false
@@ -77,6 +78,11 @@ export function setCustomData(faId, data) {
 export const negotiate = (faId, priceItemId, type, data) => ({
 	type: 'NEGOTIATE',
 	payload: { faId, priceItemId, type, data }
+});
+
+export const negotiateAddons = (faId, standaloneAddonId, data) => ({
+	type: 'NEGOTIATE_ADDONS',
+	payload: { faId, standaloneAddonId, data }
 });
 
 export const apiNegotiate = (faId, data) => ({
@@ -214,6 +220,11 @@ export const toggleFaFieldVisibility = index => ({
 export const setValidation = (faId, priceItemId = null, type = null, data = null) => ({
 	type: 'SET_VALIDATION',
 	payload: { faId, priceItemId, type, data }
+});
+
+export const setAddonValidation = (faId, data) => ({
+	type: 'SET_ADDON_VALIDATION',
+	payload: { faId, data }
 });
 
 export const validateFrameAgreement = (
@@ -473,6 +484,21 @@ export function addProductsToFa(faId, products) {
 		});
 	};
 }
+// ***********************************************************************
+
+export const _addAddonsToFa = (faId, addons) => ({
+	type: 'ADD_ADDONS',
+	payload: { faId, addons }
+});
+
+export function addAddonsToFa(faId, addons) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_addAddonsToFa(faId, addons));
+			resolve(addons);
+		});
+	};
+}
 
 // ***********************************************************************
 
@@ -499,6 +525,21 @@ export function removeProductsFromFa(faId, products) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_removeProductsFromFa(faId, products));
 			resolve(products);
+		});
+	};
+}
+// ***********************************************************************
+
+export const _removeAddonsFromFa = (faId, addons) => ({
+	type: 'REMOVE_ADDONS',
+	payload: { faId, addons }
+});
+
+export function removeAddonsFromFa(faId, addons) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_removeAddonsFromFa(faId, addons));
+			resolve(addons);
 		});
 	};
 }
@@ -714,6 +755,30 @@ export function createFrameAgreement(faData) {
 			dispatch(_createFrameAgreement(newFa));
 			resolve(newFa);
 			return newFa;
+		});
+	};
+}
+
+// ***********************************************************************
+
+export const recieveStandaloneAddons = (addons, alInfo) => ({
+	type: 'LOAD_STANDALONE_ADDONS',
+	payload: { addons, alInfo }
+});
+
+export function getStandaloneAddons() {
+	return function(dispatch) {
+		// dispatch(requestCommercialProducts());
+
+		return new Promise((resolve, reject) => {
+			Promise.all([
+				window.SF.invokeAction('getStandaloneAddons', []),
+				window.SF.invokeAction('getAddonDiscountInformation', [])
+			]).then(response => {
+				dispatch(recieveStandaloneAddons(response[0], response[1]));
+				resolve(response);
+				return response;
+			});
 		});
 	};
 }

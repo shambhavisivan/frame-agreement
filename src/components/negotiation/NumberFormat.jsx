@@ -13,4 +13,14 @@ const NumberFormat = ({ value }) => {
 	return isNumber(value) ? value.toFixedNumber().toLocaleString(navigator.language) : 'N/A';
 };
 
+export const getLocaleNumber = value => {
+	let result = value;
+
+	try {
+		result = value.toFixedNumber().toLocaleString(navigator.language);
+	} catch (err) {}
+
+	return result;
+};
+
 export default NumberFormat;

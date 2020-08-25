@@ -36,12 +36,19 @@ export class FaTabs extends React.Component {
 
 		if (_tabs.length) {
 			customTabsComponent = (
-				<Tabs initial={0}>
+				<Tabs initial={0} onTabChange={this.props.onMainTabChange}>
 					<Tab label={window.SF.labels.products_tab_title}>
 						{this.props.loading ? (
 							<CommercialProductSkeleton count={5} />
 						) : (
-							<React.Fragment>{this.props.children}</React.Fragment>
+							<React.Fragment>{this.props.defaultTabs.cp}</React.Fragment>
+						)}
+					</Tab>
+					<Tab label={window.SF.labels.addons_tab_title}>
+						{this.props.loading ? (
+							<CommercialProductSkeleton count={5} />
+						) : (
+							<React.Fragment>{this.props.defaultTabs.addon}</React.Fragment>
 						)}
 					</Tab>
 

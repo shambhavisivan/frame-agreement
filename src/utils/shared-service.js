@@ -78,7 +78,7 @@ export const isJson = str => {
 };
 
 export const openSFLink = Id => {
-	var url = window.location.origin + '/' + Id
+	var url = window.location.origin + '/' + Id;
 
 	if (window.sforce && window.sforce.one) {
 		window.sforce.one.navigateToSObject(Id);
@@ -86,7 +86,6 @@ export const openSFLink = Id => {
 		var win = window.open(window.location.origin + '/' + Id, '_blank');
 		win.focus();
 	}
-
 };
 
 export const validateCSV = str => {

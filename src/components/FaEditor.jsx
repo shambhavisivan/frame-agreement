@@ -11,6 +11,7 @@ import {
 	saveFrameAgreement,
 	addProductsToFa,
 	removeProductsFromFa,
+	removeAddonsFromFa,
 	setFrameAgreementCpFilter,
 	negotiate,
 	setDisableDiscount,
@@ -42,6 +43,8 @@ import RelatedLists from './relatedLists/RelatedLists';
 import ConfirmationModal from './modals/ConfirmationModal';
 
 import CommercialProductsTab from './FaEditor/CommercialProductsTab';
+import AddonsTab from './FaEditor/AddonsTab';
+
 import FaFields from './FaEditor/FaFields';
 import FaFooter from './FaEditor/FaFooter';
 import FaTabs from './FaEditor/FaTabs';
@@ -57,9 +60,12 @@ export class FaEditor extends Component {
 		super(props);
 
 		this.onSelectProduct = this.onSelectProduct.bind(this);
+		this.onSelectAddon = this.onSelectAddon.bind(this);
 		this.onSelectAllProducts = this.onSelectAllProducts.bind(this);
+		this.onSelectAllAddons = this.onSelectAllAddons.bind(this);
 		this.upsertFrameAgreements = this.upsertFrameAgreements.bind(this);
 		this.onRemoveProducts = this.onRemoveProducts.bind(this);
+		this.onRemoveAddons = this.onRemoveAddons.bind(this);
 		this.toggleVisibility = this.toggleVisibility.bind(this);
 		this.onActionTaken = this.onActionTaken.bind(this);
 		this._setState = this._setState.bind(this);
@@ -87,7 +93,9 @@ export class FaEditor extends Component {
 		// Ref active FA from store
 		this.state = {
 			actionTaken: false,
+			activeTabIndex: 0,
 			selectedProducts: {},
+			selectedAddons: {},
 			loading: {
 				attachment: true
 			},
@@ -163,6 +171,8 @@ export class FaEditor extends Component {
 		};
 
 		const onLoadingFinished = async () => {
+			window.FAM.api.validateStatusConsistency(this.faId);
+
 			this._setState({ loading: { ...this.state.loading, attachment: false } }, async () => {
 				let _config = await publish('onFaSelect', [this.props.frameAgreements[this.faId]]);
 
@@ -319,6 +329,24 @@ export class FaEditor extends Component {
 		});
 	}
 
+	onRemoveAddons() {
+		confirmAlert({
+			customUI: ({ onClose }) => {
+				return (
+					<ConfirmationModal
+						title={window.SF.labels.alert_deleteAddons_title}
+						message={window.SF.labels.alert_deleteAddons_message}
+						onCancel={onClose}
+						onConfirm={() => {
+							this._removeAddons();
+						}}
+						confirmText={window.SF.labels.btn_DeleteAddons}
+					/>
+				);
+			}
+		});
+	}
+
 	async _removeProducts() {
 		return new Promise(async resolve => {
 			let productsToDelete = await publish(
@@ -344,6 +372,30 @@ export class FaEditor extends Component {
 		});
 	}
 
+	async _removeAddons() {
+		return new Promise(async resolve => {
+			let addonsToDelete = await publish(
+				'onBeforeDeleteAddons',
+				Object.keys(this.state.selectedAddons)
+			);
+
+			await this.props.removeAddonsFromFa(this.faId, addonsToDelete);
+
+			this._setState(
+				{
+					selectedAddons: {}
+				},
+				() => {
+					publish(
+						'onAfterDeleteAddons',
+						this.props.frameAgreements[this.faId]._ui.standaloneAddons.map(cp => cp.Id)
+					);
+					resolve(this.props.frameAgreements[this.faId]._ui.attachment);
+				}
+			);
+		});
+	}
+
 	onSelectProduct(product) {
 		let selectedProducts = { ...this.state.selectedProducts };
 
@@ -354,6 +406,19 @@ export class FaEditor extends Component {
 		}
 		this._setState({
 			selectedProducts
+		});
+	}
+
+	onSelectAddon(addon) {
+		let selectedAddons = { ...this.state.selectedAddons };
+
+		if (selectedAddons[addon.Id]) {
+			delete selectedAddons[addon.Id];
+		} else {
+			selectedAddons[addon.Id] = addon;
+		}
+		this._setState({
+			selectedAddons
 		});
 	}
 
@@ -370,6 +435,22 @@ export class FaEditor extends Component {
 
 		this._setState({
 			selectedProducts
+		});
+	}
+
+	onSelectAllAddons(allAddons) {
+		let selectedAddons = { ...this.state.selectedAddons };
+
+		if (allAddons.length === Object.keys(this.state.selectedAddons).length) {
+			selectedAddons = {};
+		} else {
+			allAddons.forEach(add => {
+				selectedAddons[add.Id] = add;
+			});
+		}
+
+		this._setState({
+			selectedAddons
 		});
 	}
 
@@ -407,6 +488,24 @@ export class FaEditor extends Component {
 	}
 
 	render() {
+		let _cpDefaultTab = (
+			<CommercialProductsTab
+				faId={this.faId}
+				selectedProducts={this.state.selectedProducts}
+				onSelectProduct={this.onSelectProduct}
+				onSelectAllProducts={this.onSelectAllProducts}
+			/>
+		);
+
+		let _addDefaultTab = (
+			<AddonsTab
+				faId={this.faId}
+				selectedAddons={this.state.selectedAddons}
+				onSelectAddon={this.onSelectAddon}
+				onSelectAllAddons={this.onSelectAllAddons}
+			/>
+		);
+
 		return (
 			<div className="fa-app">
 				<Prompt
@@ -438,8 +537,11 @@ export class FaEditor extends Component {
 
 						<FaTabs
 							faId={this.faId}
+							defaultTabs={{ cp: _cpDefaultTab, addon: _addDefaultTab }}
 							loading={this.state.loading.attachment}
-							onActionTaken={this.onActionTaken}
+							onMainTabChange={i => {
+								this.setState({ activeTabIndex: i });
+							}}
 						>
 							<CommercialProductsTab
 								faId={this.faId}
@@ -456,8 +558,11 @@ export class FaEditor extends Component {
 				{this.editable && (
 					<FaFooter
 						faId={this.faId}
+						activeTab={this.state.activeTabIndex}
 						selectedProducts={this.state.selectedProducts}
+						selectedAddons={this.state.selectedAddons}
 						onRemoveProducts={() => this.onRemoveProducts()}
+						onRemoveAddons={() => this.onRemoveAddons()}
 					/>
 				)}
 
@@ -483,6 +588,7 @@ const mapDispatchToProps = {
 	saveFrameAgreement,
 	addProductsToFa,
 	removeProductsFromFa,
+	removeAddonsFromFa,
 	setFrameAgreementCpFilter,
 	negotiate,
 	setDisableDiscount,

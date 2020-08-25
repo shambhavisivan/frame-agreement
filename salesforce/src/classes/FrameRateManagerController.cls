@@ -58,6 +58,11 @@ global with sharing class FrameRateManagerController {
 		return accountId;
 	}
 
+	public static List<String> getUniqueListElements(List<String> originalList) {
+		Set<String> inputSet = new Set<String>(originalList);
+		return new List<String>(inputSet);
+	}
+
 	public static String getUserProfile() {
 		Id profileId = userinfo.getProfileId();
 		String profileName = [
@@ -133,6 +138,20 @@ global with sharing class FrameRateManagerController {
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Categorization'
+		];
+
+		if (json_data.isEmpty()) {
+			return null;
+		} else {
+			return json_data[0];
+		}
+	}
+
+	@TestVisible private static csutil__JSON_Data__c getAddonCategorizationData() {
+		List <csutil__JSON_Data__c> json_data = [
+			select csutil__value__c
+			from csutil__JSON_Data__c
+			where Name = 'FA-Addon-Categorization'
 		];
 
 		if (json_data.isEmpty()) {
@@ -398,12 +417,7 @@ global with sharing class FrameRateManagerController {
 		}
 
 		columnsParsed.add('Id');
-
-		Set <String> uniqueSet = new Set <String> ();
-		List <String> uniqueList = new List <String> ();
-
-		uniqueSet.addAll(columnsParsed);
-		uniqueList.addAll(uniqueSet);
+		List <String> uniqueList = getUniqueListElements(columnsParsed);
 
 		//***********************************
 
@@ -507,6 +521,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('show_volume_fields', FACSettings.get('csfam__show_volume_fields__c'));
 		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
 		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
+		settingMap.put('standalone_addon_fields', FACSettings.get('csfam__standalone_addon_fields__c'));
 		settingMap.put('account_fields', FACSettings.get('csfam__account_fields__c'));
 		settingMap.put('approvers_revise', FACSettings.get('csfam__approvers_revise__c'));
 		settingMap.put('volume_fields_visibility', FACSettings.get('csfam__volume_fields_visibility__c'));
@@ -838,6 +853,7 @@ global with sharing class FrameRateManagerController {
 		List <Object> headerData = new List <Object> ();
 		List <Object> buttonCustom = new List <Object> ();
 		Map <String, Object> buttonStandard = new Map <String, Object> ();
+		List <Object> addonCategorizationData = new List <Object> ();
 		List <Object> categorizationData = new List <Object> ();
 		List <Object> relatedData = new List <Object> ();
 		List <Object> customTabs = new List <Object> ();
@@ -846,6 +862,7 @@ global with sharing class FrameRateManagerController {
 		csutil__JSON_Data__c button_custom = getCustomButtonData();
 		csutil__JSON_Data__c button_standard = getStandardButtonData();
 		csutil__JSON_Data__c categorization_data = getCategorizationData();
+		csutil__JSON_Data__c addon_categorization_data = getAddonCategorizationData();
 		csutil__JSON_Data__c custom_tabs = getCustomTabsData();
 		csutil__JSON_Data__c related_lists = getRelatedListsData();
 
@@ -865,6 +882,10 @@ global with sharing class FrameRateManagerController {
 			categorizationData = (List <Object>) JSON.deserializeUntyped(categorization_data.csutil__value__c);
 		}
 
+		if (addon_categorization_data != null && addon_categorization_data.csutil__value__c != null) {
+			addonCategorizationData = (List <Object>) JSON.deserializeUntyped(addon_categorization_data.csutil__value__c);
+		}
+
 		if (related_lists != null && related_lists.csutil__value__c != null) {
 			relatedData = (List <Object>) JSON.deserializeUntyped(related_lists.csutil__value__c);
 		}
@@ -879,10 +900,51 @@ global with sharing class FrameRateManagerController {
 		appSettings.put('ButtonCustomData', buttonCustom);
 		appSettings.put('ButtonStandardData', buttonStandard);
 		appSettings.put('RelatedListsData', relatedData);
+		appSettings.put('AddonCategorizationData', addonCategorizationData);
 		appSettings.put('CategorizationData', categorizationData);
 		appSettings.put('FACSettings', getCustomSettings());
 
 		return appSettings;
+	}
+
+	@RemoteAction
+	public static List <cspmb__Add_On_Price_Item__c> getStandaloneAddons() {
+		return getStandaloneAddons_p(new List<Id>());
+	}
+
+	public static List <cspmb__Add_On_Price_Item__c> getStandaloneAddons_p(List<Id> addonIds) {
+		List<String> addonMandatoryFields = new List<String> {'Id', 'Name', 'cspmb__One_Off_Charge__c', 'cspmb__Recurring_Charge__c', 'cspmb__Authorization_Level__c'};
+
+		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+		String addFields = (String) FACSettings.get('csfam__standalone_addon_fields__c');
+
+		List <String> addFieldsArr = new List <String>();
+
+		if (!String.isBlank(addFields)) {
+			addFieldsArr = addFields.replaceAll('\\s+','').split(',');
+		}
+
+		addFieldsArr.addAll(addonMandatoryFields);
+
+		addFieldsArr = getUniqueListElements(addFieldsArr);
+
+		String query = 'select  ' + String.join(addFieldsArr, ',') + ' from cspmb__Add_On_Price_Item__c ';
+		// ADD ACTIVE CLAUSE
+		query += 'where cspmb__Is_Active__c = true ';
+		// ADD START DATE CHECK CLAUSE
+		query += 'and (cspmb__Effective_Start_Date__c = null OR (cspmb__Effective_Start_Date__c != null and cspmb__Effective_Start_Date__c < TODAY)) ';
+		// ADD END DATE CHECK CLAUSE
+		query += 'and (cspmb__Effective_End_Date__c = null OR (cspmb__Effective_End_Date__c != null and cspmb__Effective_End_Date__c > TODAY)) ';
+
+		if (!addonIds.isEmpty()) {
+			query += 'and Id in :addonIds ';
+		}
+
+		// LIMIT QUERY RESULTS
+		query += 'limit 50000';
+
+		List <cspmb__Add_On_Price_Item__c> addonList = database.query(query);
+		return addonList;
 	}
 
 	@RemoteAction
@@ -915,7 +977,7 @@ global with sharing class FrameRateManagerController {
 		List <String> csFieldsArr = new List <String> ();
 
 		if (!String.isBlank(csFields)) {
-			csFieldsArr = csFields.split(',');
+			csFieldsArr = csFields.replaceAll('\\s+','').split(',');
 		}
 
 		List <String> categorizationFields = getCategorizationDataFields();
@@ -927,11 +989,7 @@ global with sharing class FrameRateManagerController {
 		fieldsArr.addAll(categorizationFields);
 
 		// Remove duplicates
-
-		Set <String> uniqueSet = new Set <String> ();
-		List <String> uniqueList = new List <String> ();
-		uniqueSet.addAll(fieldsArr);
-		uniqueList.addAll(uniqueSet);
+		List <String> uniqueList = getUniqueListElements(fieldsArr);
 
 		String query = 'select  ' + String.join(uniqueList, ',') + ' from cspmb__Price_Item__c ';
 		// DD ACCOUNT NULL CLAUSE
@@ -1129,6 +1187,59 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
+	public static List <cspmb__Add_On_Price_Item__c> filterStandaloneAddons(String filterData) {
+		String selectClause = 'Id';
+		String whereClause = '';
+
+		List <Object> categorizationData;
+		categorizationData = (List <Object>) JSON.deserializeUntyped(filterData);
+
+		//*******************************************************************
+		// Create list to hold fields: [values]
+		Map < String, List <String>> categoryQueryMap = new Map < String, List <String>> ();
+
+		//*******************************************************************
+		// Iterate JSON Data, check if the field exists in schema. If so append it to query
+
+		for (Object category : categorizationData) {
+			// category.get('field');
+			Map <String, Object> categoryMap = (Map <String, Object>) category;
+			String fieldName = (String) categoryMap.get('field');
+
+			List <String> valuesList = new List <String> ();
+
+			List <Object> valuesObjArr = (List <Object>) categoryMap.get('values');
+
+			for (Object valueObj : valuesObjArr) {
+				valuesList.add((String) valueObj);
+			}
+
+			categoryQueryMap.put(fieldName, valuesList);
+
+			if (!valuesList.isEmpty()) {
+				selectClause += ',' + fieldName;
+
+				String operator = '';
+
+				if (String.isEmpty(whereClause)) {
+					operator = ' where ';
+				} else {
+					operator = ' or ';
+				}
+
+				whereClause += operator + fieldName + ' in :valuesList';
+			}
+		}
+
+		String query = 'select ' + selectClause + ' from cspmb__Add_On_Price_Item__c ' + whereClause + ' limit 50000';
+
+		List <SObject> results = Database.query(query);
+		Set <Id> resultIds = (new Map <Id, SObject> (results)).keySet();
+
+		return getStandaloneAddons_p(new List <Id> (resultIds));
+	}
+
+	@RemoteAction
 	public static List <cspmb__Discount_Threshold__c> getDiscountThresholds(List <Id> addonIdList, List <Id> cpIdList, List <Id> rcIdList) {
 		// Get all auth levels from these addons and cp
 		List <Id> authlevelList = new List <Id>();
@@ -1210,6 +1321,61 @@ global with sharing class FrameRateManagerController {
 		return discountList;
 
 	}
+
+	public static List <DiscountLevelWrapper> getAddonDiscountevels() {
+
+		List <DiscountLevelWrapper> discountList = new List <DiscountLevelWrapper> ();
+
+		List <cspmb__Discount_Association__c> discountAssocArr = new List <cspmb__Discount_Association__c> ();
+
+		String assocQuery = 'select Id, cspmb__Add_On_Price_Item__c, cspmb__Discount_Level__c, cspmb__Price_Item__c,' +
+			'cspmb__Discount_Level__r.Id, cspmb__Discount_Level__r.Name, cspmb__Discount_Level__r.cspmb__Charge_Type__c,' +
+			'cspmb__Discount_Level__r.cspmb__Discount_Increment__c, cspmb__Discount_Level__r.cspmb__Discount_Level_Code__c,' +
+			'cspmb__Discount_Level__r.cspmb__Discount_Type__c, cspmb__Discount_Level__r.cspmb__Discount_Values__c,' +
+			'cspmb__Discount_Level__r.cspmb__Maximum_Discount_Value__c, cspmb__Discount_Level__r.cspmb__Minimum_Discount_Value__c ' +
+			'from cspmb__Discount_Association__c where cspmb__Discount_Level__c != null and cspmb__Add_On_Price_Item__c != null';
+
+		discountAssocArr = database.query(assocQuery);
+
+		for (cspmb__Discount_Association__c assoc : discountAssocArr) {
+			discountList.add(new DiscountLevelWrapper(assoc.cspmb__Price_Item__c, assoc.cspmb__Add_On_Price_Item__c, assoc.cspmb__Discount_Level__r));
+		}
+
+		return discountList;
+
+	}
+
+	@RemoteAction
+	public static Map <String, Object> getAddonDiscountInformation() {
+
+		Map <String, Object> addonDiscInfo = new Map <String, Object>();
+
+		List <Id> authlevelList = new List<Id>();
+
+		List <cspmb__Add_On_Price_Item__c> addonList = [
+			Select Id, cspmb__Authorization_Level__c
+			from cspmb__Add_On_Price_Item__c
+			where cspmb__Authorization_Level__c != null
+		];
+
+		for (cspmb__Add_On_Price_Item__c add : addonList) {
+			authlevelList.add(add.cspmb__Authorization_Level__c);
+		}
+
+		List <cspmb__Discount_Threshold__c> dcList = [
+			select Id, Name, cspmb__Discount_Threshold__c, cspmb__Authorization_Level__c, cspmb__Discount_Type__c
+			from cspmb__Discount_Threshold__c
+			where cspmb__Authorization_Level__c in :authlevelList
+		];        
+
+		addonDiscInfo.put('discLevels', getAddonDiscountevels());
+		addonDiscInfo.put('dcList', dcList);
+
+		return addonDiscInfo;
+
+	}
+
+
 
 	@RemoteAction
 	public static List <Map <String, Object>> getRelatedLists(Id faId) {
@@ -1434,11 +1600,7 @@ global with sharing class FrameRateManagerController {
 		fieldsArr.addAll(utFieldsArr);
 
 		// Remove duplicates
-
-		Set <String> uniqueSet = new Set <String> ();
-		List <String> uniqueUtFieldList = new List <String> ();
-		uniqueSet.addAll(fieldsArr);
-		uniqueUtFieldList.addAll(uniqueSet);
+		List <String> uniqueUtFieldList = getUniqueListElements(fieldsArr);
 
 		List <cspmb__Commercial_Product_Allowance_Assoc__c> cpaaList = new List <cspmb__Commercial_Product_Allowance_Assoc__c> ();
 		cpaaList = [
@@ -1584,11 +1746,7 @@ global with sharing class FrameRateManagerController {
 		fieldsArr.addAll(csFieldsArr);
 
 		// Remove duplicates
-
-		Set <String> uniqueSet = new Set <String> ();
-		List <String> uniqueList = new List <String> ();
-		uniqueSet.addAll(fieldsArr);
-		uniqueList.addAll(uniqueSet);
+		List <String> uniqueList = getUniqueListElements(fieldsArr);
 
 
 		String query = 'select ' + String.join(uniqueList, ',') + ' from cspmb__Rate_Card_Line__c where cspmb__Rate_Card__c in :rateCardLinesIdList and cspmb__Is_Active__c = true';
@@ -1868,9 +2026,9 @@ global with sharing class FrameRateManagerController {
 		query_assoc += ' where csconta__Frame_Agreement__c = :faId';
 
 		// List <csconta__Account_Frame_Agreement_Association__c> originalAccountAssoc = [
-		// 	select id, csconta__Account__c, csconta__Frame_Agreement__c
-		// 	from csconta__Account_Frame_Agreement_Association__c
-		// 	where csconta__Frame_Agreement__c = :faId
+		//  select id, csconta__Account__c, csconta__Frame_Agreement__c
+		//  from csconta__Account_Frame_Agreement_Association__c
+		//  where csconta__Frame_Agreement__c = :faId
 		// ];
 
 		List <csconta__Account_Frame_Agreement_Association__c> clonedList = new List <csconta__Account_Frame_Agreement_Association__c>();
@@ -2180,7 +2338,7 @@ global with sharing class FrameRateManagerController {
 
 		return pr.Id;
 	}
-
+	
 	/**
 	* Decomposition 2/2 create pipra for every charge in attachment and associate it with appropriate record
 	* @param data formatted fa attachment
@@ -2207,6 +2365,7 @@ global with sharing class FrameRateManagerController {
 				String cpId = (String) categoryMap.get('cpId');
 				String cpaoaId = (String) categoryMap.get('cpaoaId');
 				String peId = (String) categoryMap.get('peId');
+				String addonId = (String) categoryMap.get('addonId');
 
 				Decimal recurring = (Decimal) categoryMap.get('recurring');
 				Decimal oneOff = (Decimal) categoryMap.get('oneOff');
@@ -2223,6 +2382,10 @@ global with sharing class FrameRateManagerController {
 
 				if (peId != null) {
 					pipra.cspmb__pricing_element__c = peId;
+				}
+
+				if (addonId != null) {
+					pipra.cspmb__add_on__c = addonId;
 				}
 
 				if (recurring != null) {

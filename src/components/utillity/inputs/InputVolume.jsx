@@ -21,6 +21,9 @@ class InputVolume extends Component {
 	}
 
 	onChange(e) {
+		if (+e.target.value < 0) {
+			return;
+		}
 		this.props.onChange(+e.target.value);
 	}
 

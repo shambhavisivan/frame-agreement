@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Icon from '../Icon';
 import { log, percIncrease } from '~/src/utils/shared-service';
-import NumberFormat from '~/src/components/negotiation/NumberFormat';
+import NumberFormat, { getLocaleNumber } from '~/src/components/negotiation/NumberFormat';
 
 /*
 
@@ -132,10 +132,10 @@ class DropdownNegotiate extends React.Component {
 
 		if (this.state.fixed) {
 			_value = Math.abs(_originalValue - _negotiatedValue);
-			_value = _prefix + _value.toFixedNumber(_dp).toLocaleString(navigator.language);
+			_value = _prefix + getLocaleNumber(_value);
 		} else {
 			_value = Math.abs(((_originalValue - _negotiatedValue) / _originalValue) * 100);
-			_value = _prefix + _value.toFixedNumber().toLocaleString(navigator.language) + '%';
+			_value = _prefix + getLocaleNumber(_value) + '%';
 		}
 
 		_discount = <span className="discount-amount">{_value}</span>;

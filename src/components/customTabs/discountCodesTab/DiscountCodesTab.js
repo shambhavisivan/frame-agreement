@@ -186,7 +186,6 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			let _rateCardLines = cp._rateCards.reduce((acc, iter) => [...acc, ...iter.rateCardLines], []);
 
 			_rateCardLines.forEach(rcl => {
-
 				let _originalValue = rcl.cspmb__rate_value__c;
 
 				rcl_codes.forEach(rclc => {
@@ -205,7 +204,6 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 						});
 					}
 				});
-
 			});
 		}
 
@@ -711,21 +709,19 @@ class DiscountCodesTab extends React.Component {
 					[groupId]: { ...this.state.added[groupId], [type]: this.state.added[groupId][type] }
 				}
 			});
-		}
+		};
 
 		if (this.state.minmax_res) {
 			if (value < 0) {
 				revertChange();
 				return;
 			}
-			
+
 			if (_active.csfamext__discount_type__c === 'Percentage' && value > 100) {
 				revertChange();
 				return;
 			}
-
 		}
-
 
 		this.setState({
 			added: {
@@ -742,8 +738,8 @@ class DiscountCodesTab extends React.Component {
 			{
 				added: {
 					...this.state.added,
-					[groupId]: { ...this.state.added[groupId], csfamext__discount_type__c: value },
-				},
+					[groupId]: { ...this.state.added[groupId], csfamext__discount_type__c: value }
+				}
 			},
 			() => {
 				if (!isChanged || !this.state.minmax_res) {
@@ -755,9 +751,13 @@ class DiscountCodesTab extends React.Component {
 				let _groupTarget = _group.csfamext__target_object__c;
 				let _resetObj = {};
 
-				if (_group.csfamext__target_object__c === "Both") {
-					_resetObj = { csfamext__rate_value__c: 0, csfamext__one_off_charge__c: 0, csfamext__recurring_charge__c: 0 };
-				} else if (_group.csfamext__target_object__c === "Commercial Product") {
+				if (_group.csfamext__target_object__c === 'Both') {
+					_resetObj = {
+						csfamext__rate_value__c: 0,
+						csfamext__one_off_charge__c: 0,
+						csfamext__recurring_charge__c: 0
+					};
+				} else if (_group.csfamext__target_object__c === 'Commercial Product') {
 					_resetObj = { csfamext__one_off_charge__c: 0, csfamext__recurring_charge__c: 0 };
 				} else {
 					_resetObj = { csfamext__rate_value__c: 0 };
@@ -766,8 +766,8 @@ class DiscountCodesTab extends React.Component {
 				this.setState({
 					added: {
 						...this.state.added,
-						[groupId]: { ...this.state.added[groupId], ..._resetObj },
-					},
+						[groupId]: { ...this.state.added[groupId], ..._resetObj }
+					}
 				});
 			}
 		);
@@ -902,10 +902,7 @@ class DiscountCodesTab extends React.Component {
 													placeholder="Add Dynamic Group"
 													disabled={!this.state.editable || !group.csfamext__fam_editable__c}
 													onChange={e => {
-														this.onChangeDiscountType(
-															group.Id,
-															e.target.value
-														);
+														this.onChangeDiscountType(group.Id, e.target.value);
 													}}
 												>
 													<option value="">{window.SF.labels.fa_none}</option>

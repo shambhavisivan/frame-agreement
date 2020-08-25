@@ -28,10 +28,12 @@ const initialState = {
 	accounts: [],
 	frameAgreements: {},
 	commercialProducts: null,
+	standaloneAddons: null,
 	productFields: [],
 	faFields: [],
 	activeFa: null,
 	validation: {},
+	validationAddons: {},
 	validationProduct: {},
 	// approvalNeeded: false, // true -> needs validation
 	handlers: {},
@@ -39,6 +41,7 @@ const initialState = {
 		actionIframe: false,
 		actionIframeUrl: '',
 		productModal: false,
+		addonModal: false,
 		frameModal: false,
 		negotiateModal: false
 	},
@@ -224,34 +227,38 @@ function formatDiscLevels(dlList = []) {
 	return _DiscLevels;
 }
 
-function getapprovalNeeded(validation) {
-	return Object.keys(validation)
-		.reduce((acc, key) => {
-			let collection = [];
-			if (validation[key].addons) {
-				Object.values(validation[key].addons).forEach(item => {
-					item.hasOwnProperty('oneOff') && collection.push(item.oneOff);
-					item.hasOwnProperty('recurring') && collection.push(item.recurring);
-				});
-			}
-			if (validation[key].charges) {
-				collection = [...collection, ...Object.values(validation[key].charges)];
-			}
-			if (validation[key].product) {
-				collection = [...collection, ...Object.values(validation[key].product)];
-			}
-			if (validation[key].rated) {
-				collection = [...collection, ...Object.values(validation[key].rated)];
-			}
-			return [...acc, ...collection];
-		}, [])
-		.some(r => r === true);
+function getApprovalNeeded(validation, addonValidation = []) {
+	let _validation = Object.keys(validation).reduce((acc, key) => {
+		let collection = [];
+		if (validation[key].addons) {
+			Object.values(validation[key].addons).forEach(item => {
+				item.hasOwnProperty('oneOff') && collection.push(item.oneOff);
+				item.hasOwnProperty('recurring') && collection.push(item.recurring);
+			});
+		}
+		if (validation[key].charges) {
+			collection = [...collection, ...Object.values(validation[key].charges)];
+		}
+		if (validation[key].product) {
+			collection = [...collection, ...Object.values(validation[key].product)];
+		}
+		if (validation[key].rated) {
+			collection = [...collection, ...Object.values(validation[key].rated)];
+		}
+		return [...acc, ...collection];
+	}, []);
+
+	let _addonValidation = Object.values(addonValidation).reduce((acc, iter) => {
+		return [...acc, ...Object.values(iter)];
+	}, []);
+
+	return [..._validation, ..._addonValidation].some(r => r === true);
 }
 
 function getProductValidation(validation) {
 	let _productValidation = {};
 	for (var key in validation) {
-		_productValidation[key] = getapprovalNeeded({
+		_productValidation[key] = getApprovalNeeded({
 			[key]: validation[key]
 		});
 	}
@@ -261,9 +268,17 @@ function getProductValidation(validation) {
 function getNewAttachment(headerData, fa) {
 	return {
 		commercialProducts: [],
+		standaloneAddons: [],
 		approvalNeeded: false,
 		headerRows: organizeHeaderFields(headerData, fa),
 		attachment: null
+	};
+}
+
+function initiateAddonsAttachment(add) {
+	return {
+		oneOff: add.cspmb__One_Off_Charge__c,
+		recurring: add.cspmb__Recurring_Charge__c
 	};
 }
 
@@ -389,7 +404,9 @@ const rootReducer = (state = initialState, action) => {
 			if (priceItemId === null) {
 				var _fa = state.frameAgreements[faId];
 				var _products = _fa._ui.attachment.products;
+				var _addons = _fa._ui.attachment.addons;
 				var bulkValidation = {};
+				var validationAddons = validateAddons(_fa._ui.standaloneAddons, _addons);
 
 				_fa._ui.commercialProducts.forEach(cp => {
 					bulkValidation[cp.Id] = {
@@ -428,13 +445,14 @@ const rootReducer = (state = initialState, action) => {
 				};
 			}
 
-			var approvalNeeded = getapprovalNeeded(validation);
+			var approvalNeeded = getApprovalNeeded(validation, validationAddons);
 			var validationProduct = getProductValidation(validation);
 
 			return {
 				...state,
 				validation,
 				validationProduct,
+				validationAddons: { ...state.validationAddons, [faId]: validationAddons },
 				frameAgreements: {
 					...state.frameAgreements,
 					[faId]: {
@@ -444,8 +462,36 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
+		case 'SET_ADDON_VALIDATION':
+			var { faId, data } = action.payload;
+			var validation = {
+				...state.validationAddons,
+				[faId]: { ...state.validationAddons[faId], ...data }
+			};
+
+			return {
+				...state,
+				validationAddons: validation,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							approvalNeeded: getApprovalNeeded(validation, validationAddons)
+						}
+					}
+				}
+			};
+
 		case 'SET_VALIDATION':
 			var faId = action.payload.faId;
+
+			var _addons = state.frameAgreements[faId]._ui.attachment.addons;
+			var validationAddons = validateAddons(
+				state.frameAgreements[faId]._ui.standaloneAddons,
+				_addons
+			);
 
 			if (action.payload.priceItemId === null) {
 				return {
@@ -461,7 +507,7 @@ const rootReducer = (state = initialState, action) => {
 				};
 			} else if (action.payload.type === null) {
 				var validation = { ...state.validation, ...action.payload.priceItemId };
-				var approvalNeeded = getapprovalNeeded(validation);
+				var approvalNeeded = validationAddons && getApprovalNeeded(validation);
 				var validationProduct = getProductValidation(validation);
 
 				return {
@@ -487,7 +533,7 @@ const rootReducer = (state = initialState, action) => {
 						}
 					}
 				};
-				var approvalNeeded = getapprovalNeeded(validation);
+				var approvalNeeded = validationAddons && getApprovalNeeded(validation);
 				var validationProduct = getProductValidation(validation);
 				return {
 					...state,
@@ -520,6 +566,65 @@ const rootReducer = (state = initialState, action) => {
 			return {
 				...state,
 				accounts: [...state.accounts, ...action.payload.data]
+			};
+
+		case 'LOAD_STANDALONE_ADDONS':
+			var _addons = action.payload.addons;
+
+			var _DiscLevels = formatDiscLevels(action.payload.alInfo.discLevels);
+
+			// merge with existing DC
+			_DiscLevels = [...state.settings.DiscLevels, ..._DiscLevels];
+
+			// Remove duplicates
+			_DiscLevels = [...new Set(_DiscLevels.map(dc => JSON.stringify(dc)))].map(dc =>
+				JSON.parse(dc)
+			);
+
+			var _AuthLevels = state.settings.AuthLevels;
+
+			_AuthLevels = {
+				..._AuthLevels,
+				...formatDiscThresh(action.payload.alInfo.dcList)
+			};
+
+			var addonVsDiscount = {};
+
+			_DiscLevels.forEach(lv => {
+				addonVsDiscount[lv.addonId] = addonVsDiscount[lv.addonId] || [];
+				addonVsDiscount[lv.addonId].push(lv);
+			});
+
+			function formatAddons(addon) {
+				let _addon = { ...addon };
+
+				_addon.cspmb__One_Off_Charge__c = _addon.hasOwnProperty('cspmb__One_Off_Charge__c')
+					? addon.cspmb__One_Off_Charge__c
+					: null;
+				_addon.cspmb__Recurring_Charge__c = _addon.hasOwnProperty('cspmb__Recurring_Charge__c')
+					? addon.cspmb__Recurring_Charge__c
+					: null;
+
+				if (addonVsDiscount[addon.Id]) {
+					_addon._discountLvIds = addonVsDiscount[addon.Id];
+				}
+
+				delete _addon.cspmb__Add_On_Price_Item__r;
+				delete _addon.cspmb__Price_Item__r;
+
+				return _addon;
+			}
+
+			_addons = _addons.map(formatAddons);
+
+			return {
+				...state,
+				settings: {
+					...state.settings,
+					DiscLevels: _DiscLevels,
+					AuthLevels: _AuthLevels
+				},
+				standaloneAddons: _addons
 			};
 
 		case 'TOGGLE_MODALS':
@@ -808,6 +913,46 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
+		case 'NEGOTIATE_ADDONS':
+			var faId = action.payload.faId;
+			var standaloneAddonId = action.payload.standaloneAddonId;
+			var data = action.payload.data;
+
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+
+			if (!_attachment) {
+				log.bg.red('Negotiation failed; attachment not loaded for FA:' + faId);
+				return { ...state };
+			}
+
+			_attachment.addons = {
+				..._attachment.addons,
+				[standaloneAddonId]: {
+					..._attachment.addons[standaloneAddonId],
+					...data[standaloneAddonId]
+				}
+			};
+
+			var validationAddons = validateAddons(
+				state.frameAgreements[faId]._ui.standaloneAddons,
+				_attachment.addons
+			);
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							approvalNeeded: getApprovalNeeded(state.validation, validationAddons)
+						},
+						attachment: _attachment
+					}
+				}
+			};
+
 		case 'NEGOTIATE_BULK':
 			var faId = action.payload.faId;
 			var data = action.payload.data;
@@ -1028,20 +1173,31 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.hasOwnProperty('rcl_fields') &&
 				validateCSV(action.payload.FACSettings.rcl_fields)
 			) {
-				action.payload.FACSettings.rcl_fields = action.payload.FACSettings.rcl_fields
-					.replace(/(?:\r\n|\r|\n|\s)/g, '')
-					.split(',');
+				action.payload.FACSettings.rcl_fields = convertCSVToArray(
+					action.payload.FACSettings.rcl_fields
+				);
 			} else {
 				action.payload.FACSettings.rcl_fields = [];
+			}
+
+			if (
+				action.payload.FACSettings.hasOwnProperty('standalone_addon_fields') &&
+				validateCSV(action.payload.FACSettings.standalone_addon_fields)
+			) {
+				action.payload.FACSettings.standalone_addon_fields = convertCSVToArray(
+					action.payload.FACSettings.standalone_addon_fields
+				);
+			} else {
+				action.payload.FACSettings.standalone_addon_fields = ['Name'];
 			}
 
 			if (
 				action.payload.FACSettings.hasOwnProperty('account_fields') &&
 				validateCSV(action.payload.FACSettings.account_fields)
 			) {
-				action.payload.FACSettings.account_fields = action.payload.FACSettings.account_fields
-					.replace(/(?:\r\n|\r|\n|\s)/g, '')
-					.split(',');
+				action.payload.FACSettings.account_fields = convertCSVToArray(
+					action.payload.FACSettings.account_fields
+				);
 			} else {
 				action.payload.FACSettings.account_fields = ['Name'];
 			}
@@ -1054,17 +1210,17 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.hasOwnProperty('usage_type_fields__c') &&
 				validateCSV(action.payload.FACSettings.usage_type_fields__c)
 			) {
-				action.payload.FACSettings.usage_type_fields__c = action.payload.FACSettings.usage_type_fields__c
-					.replace(/(?:\r\n|\r|\n|\s)/g, '')
-					.split(',');
+				action.payload.FACSettings.usage_type_fields__c = convertCSVToArray(
+					action.payload.FACSettings.usage_type_fields__c
+				);
 			} else {
 				action.payload.FACSettings.usage_type_fields__c = [];
 			}
 
 			if (validateCSV(action.payload.FACSettings.price_item_fields)) {
-				action.payload.FACSettings.price_item_fields = action.payload.FACSettings.price_item_fields
-					.replace(/(?:\r\n|\r|\n|\s)/g, '')
-					.split(',');
+				action.payload.FACSettings.price_item_fields = convertCSVToArray(
+					action.payload.FACSettings.price_item_fields
+				);
 
 				action.payload.FACSettings.price_item_fields.forEach(f => {
 					_productFields.push({ name: f, visible: true });
@@ -1078,9 +1234,9 @@ const rootReducer = (state = initialState, action) => {
 				action.payload.FACSettings.volume_fields_visibility &&
 				validateCSV(action.payload.FACSettings.volume_fields_visibility)
 			) {
-				action.payload.FACSettings.volume_fields_visibility = action.payload.FACSettings.volume_fields_visibility
-					.replace(/(?:\r\n|\r|\n|\s)/g, '')
-					.split(',');
+				action.payload.FACSettings.volume_fields_visibility = convertCSVToArray(
+					action.payload.FACSettings.volume_fields_visibility
+				);
 			} else {
 				action.payload.FACSettings.volume_fields_visibility = VOLUME_FIELDS.map(vf => vf.name);
 			}
@@ -1098,9 +1254,9 @@ const rootReducer = (state = initialState, action) => {
 			}
 
 			if (validateCSV(action.payload.FACSettings.frame_agreement_fields)) {
-				action.payload.FACSettings.frame_agreement_fields = action.payload.FACSettings.frame_agreement_fields
-					.replace(/(?:\r\n|\r|\n|\s)/g, '')
-					.split(',');
+				action.payload.FACSettings.frame_agreement_fields = convertCSVToArray(
+					action.payload.FACSettings.frame_agreement_fields
+				);
 
 				action.payload.FACSettings.frame_agreement_fields.forEach(f => {
 					_faFields.push({ name: f, visible: true });
@@ -1175,6 +1331,8 @@ const rootReducer = (state = initialState, action) => {
 				'DeleteProducts',
 				'BulkNegotiate',
 				'AddProducts',
+				'AddAddons',
+				'DeleteAddons',
 				'AddFrameAgreement',
 				'NewVersion'
 			];
@@ -1283,7 +1441,7 @@ const rootReducer = (state = initialState, action) => {
 
 			return {
 				...state,
-				settings: action.payload,
+				settings: { ...state.settings, ...action.payload },
 				productFields: _productFields,
 				faFields: _faFields
 			};
@@ -1361,9 +1519,8 @@ const rootReducer = (state = initialState, action) => {
 				JSON.parse(dc)
 			);
 
-			var _AuthLevels = state.settings.AuthLevels;
-			_AuthLevels = {
-				..._AuthLevels,
+			var _AuthLevels = {
+				...state.settings.AuthLevels,
 				...formatDiscThresh(action.payload.discThresh)
 			};
 
@@ -1411,8 +1568,12 @@ const rootReducer = (state = initialState, action) => {
 				function formatAddons(addon) {
 					let _addon = { ...addon };
 
-					_addon.cspmb__One_Off_Charge__c = _addon.hasOwnProperty('cspmb__One_Off_Charge__c') ? addon.cspmb__One_Off_Charge__c : null;
-					_addon.cspmb__Recurring_Charge__c = _addon.hasOwnProperty('cspmb__Recurring_Charge__c') ? addon.cspmb__Recurring_Charge__c : null;
+					_addon.cspmb__One_Off_Charge__c = _addon.hasOwnProperty('cspmb__One_Off_Charge__c')
+						? addon.cspmb__One_Off_Charge__c
+						: null;
+					_addon.cspmb__Recurring_Charge__c = _addon.hasOwnProperty('cspmb__Recurring_Charge__c')
+						? addon.cspmb__Recurring_Charge__c
+						: null;
 
 					_addon.cspmb__Authorization_Level__c =
 						_addon.cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c;
@@ -1514,7 +1675,7 @@ const rootReducer = (state = initialState, action) => {
 				settings: {
 					...state.settings,
 					DiscLevels: _DiscLevels,
-					AuthLevels: { ...state.settings.AuthLevels, ..._AuthLevels }
+					AuthLevels: _AuthLevels
 				},
 				...{ commercialProducts: state.commercialProducts }
 			};
@@ -1553,6 +1714,46 @@ const rootReducer = (state = initialState, action) => {
 							...state.frameAgreements[faId]._ui,
 							attachment: _attachment,
 							commercialProducts: newCps
+						}
+					}
+				}
+			};
+
+		// **********************************************
+		case 'ADD_ADDONS':
+			var faId = action.payload.faId;
+			var addonIds = new Set(action.payload.addons);
+
+			var _attachment = { ...state.frameAgreements[faId]._ui.attachment } || {
+				custom: '',
+				addons: {}
+			};
+
+			if (!_attachment.hasOwnProperty('addons')) {
+				_attachment.addons = {};
+			}
+
+			var newAddons = [];
+
+			state.standaloneAddons.forEach(add => {
+				if (addonIds.has(add.Id)) {
+					if (!_attachment.addons.hasOwnProperty(add.Id)) {
+						_attachment.addons[add.Id] = initiateAddonsAttachment(add);
+					}
+					newAddons.push(add);
+				}
+			});
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: _attachment,
+							standaloneAddons: [...state.frameAgreements[faId]._ui.standaloneAddons, ...newAddons]
 						}
 					}
 				}
@@ -1746,12 +1947,48 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 		// **********************************************
+		case 'REMOVE_ADDONS':
+			var faId = action.payload.faId;
+			var addonIds = action.payload.addons;
+
+			var addons = state.frameAgreements[faId]._ui.attachment.addons;
+
+			var _standaloneAddons = state.frameAgreements[faId]._ui.standaloneAddons;
+			_standaloneAddons = _standaloneAddons.filter(add => !addonIds.includes(add.Id));
+
+			addonIds.forEach(addId => {
+				delete addons[addId];
+			});
+
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+			var _attachment = { ..._attachment, addons: addons };
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							standaloneAddons: _standaloneAddons,
+							attachment: _attachment
+						}
+					}
+				}
+			};
+		// **********************************************
 
 		case 'RECIEVE_GET_ATTACHMENT':
 			var faId = action.payload.faId;
 			var attachment = action.payload.data || {};
 
+			if (!attachment.hasOwnProperty('addons')) {
+				attachment.addons = {};
+			}
+
 			var _commercialProducts = state.commercialProducts.filter(cp => attachment.products[cp.Id]);
+			var _standaloneAddons = state.standaloneAddons.filter(add => attachment.addons[add.Id]);
 
 			return {
 				...state,
@@ -1762,7 +1999,8 @@ const rootReducer = (state = initialState, action) => {
 						_ui: {
 							...state.frameAgreements[faId]._ui,
 							attachment,
-							commercialProducts: _commercialProducts
+							commercialProducts: _commercialProducts,
+							standaloneAddons: _standaloneAddons
 						}
 					}
 				}

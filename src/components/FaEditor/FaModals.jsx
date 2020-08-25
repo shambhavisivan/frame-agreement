@@ -4,6 +4,7 @@ import Icon from '../utillity/Icon';
 
 import { publish } from '../../api';
 
+import AddonModal from '../modals/AddonModal';
 import ActionIframe from '../modals/ActionIframe';
 import ProductModal from '../modals/ProductModal';
 import DeltaModal from '../modals/DeltaModal';
@@ -17,6 +18,7 @@ import {
 	bulkNegotiate,
 	validateFrameAgreement,
 	addProductsToFa,
+	addAddonsToFa,
 	getCommercialProductData
 } from '~/src/actions';
 
@@ -27,6 +29,7 @@ class FaModals extends React.Component {
 		this.onAddFa = this.onAddFa.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.onAddProducts = this.onAddProducts.bind(this);
+		this.onAddAddons = this.onAddAddons.bind(this);
 		this.onBulkNegotiate = this.onBulkNegotiate.bind(this);
 	}
 
@@ -76,6 +79,22 @@ class FaModals extends React.Component {
 		return this.props.frameAgreements[this.props.faId];
 	}
 
+	async onAddAddons(addons = []) {
+		addons = await publish('onBeforeAddStandaloneAddons', addons);
+
+		let _addonSet = new Set(addons);
+
+		await this.props.addAddonsToFa(this.props.faId, Array.from(_addonSet));
+
+		publish(
+			'onAfterAddStandaloneAddons',
+			this.props.frameAgreements[this.props.faId]._ui.standaloneAddons.map(add => add.Id)
+		);
+
+		this.onCloseModal();
+		return this.props.frameAgreements[this.props.faId];
+	}
+
 	async onAddFa(agreements) {
 		await this.props.addFaToMaster(this.props.faId, agreements);
 		publish('onAfterAddProducts', agreements);
@@ -96,6 +115,18 @@ class FaModals extends React.Component {
 					open={this.props.modals.productModal}
 					addedProducts={this.props.frameAgreements[this.props.faId]._ui.commercialProducts}
 					onAddProducts={this.onAddProducts}
+					onCloseModal={this.onCloseModal}
+				/>
+			);
+		}
+		// *******************************************************
+		let addonModal = null;
+		if (this.props.modals.addonModal) {
+			addonModal = (
+				<AddonModal
+					open={this.props.modals.addonModal}
+					addedAddons={this.props.frameAgreements[this.props.faId]._ui.standaloneAddons}
+					onAddAddon={this.onAddAddons}
 					onCloseModal={this.onCloseModal}
 				/>
 			);
@@ -155,6 +186,7 @@ class FaModals extends React.Component {
 				{actionModal}
 				{faModal}
 				{productModal}
+				{addonModal}
 				{negotiateModal}
 			</React.Fragment>
 		);
@@ -175,6 +207,7 @@ const mapDispatchToProps = {
 	toggleModals,
 	bulkNegotiate,
 	addProductsToFa,
+	addAddonsToFa,
 	validateFrameAgreement,
 	getCommercialProductData
 };

@@ -17,6 +17,7 @@ class FaFooter extends React.Component {
 		this.onOpenFrameModal = this.onOpenFrameModal.bind(this);
 		this.onOpenNegotiationModal = this.onOpenNegotiationModal.bind(this);
 		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(this);
+		this.onOpenAddonModal = this.onOpenAddonModal.bind(this);
 
 		this.state = {
 			actionIframe: false,
@@ -73,6 +74,10 @@ class FaFooter extends React.Component {
 		this.props.toggleModals({ productModal: true });
 	}
 
+	onOpenAddonModal() {
+		this.props.toggleModals({ addonModal: true });
+	}
+
 	onOpenFrameModal() {
 		this.props.toggleModals({ frameModal: true });
 	}
@@ -81,7 +86,7 @@ class FaFooter extends React.Component {
 		let _fa = this.props.frameAgreements[this.props.faId];
 		let master = isMaster(_fa);
 
-		if (!_fa._ui.commercialProducts.length && !master) {
+		if (!_fa._ui.commercialProducts.length && !_fa._ui.standaloneAddons.length) {
 			return null;
 		}
 
@@ -94,18 +99,40 @@ class FaFooter extends React.Component {
 
 		let footer = '';
 
-		let _disabled = !Object.keys(this.props.selectedProducts).length;
+		let _disabled_prod = !Object.keys(this.props.selectedProducts).length;
+		let _disabled_add = !Object.keys(this.props.selectedAddons).length;
+
+		let buttonVisibillityMap = {
+			addFa: evaluateExpressionOnAgreement(standardData.AddFrameAgreement, _fa) && master,
+			addProd:
+				evaluateExpressionOnAgreement(standardData.AddProducts, _fa) &&
+				this.props.activeTab === 0 &&
+				!master,
+			addAdd:
+				evaluateExpressionOnAgreement(standardData.AddAddons, _fa) &&
+				this.props.activeTab === 1 &&
+				!master,
+			bulk:
+				evaluateExpressionOnAgreement(standardData.BulkNegotiate, _fa) &&
+				this.props.activeTab === 0 &&
+				!master,
+			deleteProd:
+				evaluateExpressionOnAgreement(standardData.DeleteProducts, _fa) &&
+				this.props.activeTab === 0,
+			deleteAdd:
+				evaluateExpressionOnAgreement(standardData.DeleteAddons, _fa) && this.props.activeTab === 1
+		};
 
 		footer = (
 			<div className="fa-main-footer">
-				{evaluateExpressionOnAgreement(standardData.AddFrameAgreement, _fa) && master && (
+				{buttonVisibillityMap.addFa && (
 					<button className="fa-button fa-button--default" onClick={this.onOpenFrameModal}>
 						<Icon name="add" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">{window.SF.labels.btn_AddFa}</span>
 					</button>
 				)}
 
-				{evaluateExpressionOnAgreement(standardData.AddProducts, _fa) && !master && (
+				{buttonVisibillityMap.addProd && (
 					<button
 						className="fa-button fa-button--default"
 						onClick={this.onOpenCommercialProductModal}
@@ -115,9 +142,16 @@ class FaFooter extends React.Component {
 					</button>
 				)}
 
-				{evaluateExpressionOnAgreement(standardData.BulkNegotiate, _fa) && !master && (
+				{buttonVisibillityMap.addAdd && (
+					<button className="fa-button fa-button--default" onClick={this.onOpenAddonModal}>
+						<Icon name="add" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_AddAddons}</span>
+					</button>
+				)}
+
+				{buttonVisibillityMap.bulk && (
 					<button
-						disabled={_disabled}
+						disabled={_disabled_prod}
 						className="fa-button fa-button--default"
 						onClick={this.onOpenNegotiationModal}
 					>
@@ -126,9 +160,9 @@ class FaFooter extends React.Component {
 					</button>
 				)}
 
-				{evaluateExpressionOnAgreement(standardData.DeleteProducts, _fa) && (
+				{buttonVisibillityMap.deleteProd && (
 					<button
-						disabled={_disabled}
+						disabled={_disabled_prod}
 						className="fa-button fa-button--default"
 						onClick={this.props.onRemoveProducts}
 					>
@@ -136,6 +170,17 @@ class FaFooter extends React.Component {
 						<span className="fa-button-icon">
 							{master ? window.SF.labels.btn_DeleteAgreements : window.SF.labels.btn_DeleteProducts}
 						</span>
+					</button>
+				)}
+
+				{buttonVisibillityMap.deleteAdd && (
+					<button
+						disabled={_disabled_add}
+						className="fa-button fa-button--default"
+						onClick={this.props.onRemoveAddons}
+					>
+						<Icon name="delete" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_DeleteAddons}</span>
 					</button>
 				)}
 

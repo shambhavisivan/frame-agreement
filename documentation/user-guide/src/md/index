@@ -1,0 +1,24 @@
+# list files to be included in the project following the order
+# Standard '*' wildcard can be used for including multiple files (alphabetically sorted)
+
+introduction.md
+Installation and Setup.md
+Overview.md
+Showing custom Frame Agreement fields.md
+Defining standard pricebook.md
+Product Categorization.md
+Controlling allowed values.md
+Cloning.md
+Approvals.md
+State management.md
+Activation and decomposition.md
+Creating new versions.md
+Registering plugins.md
+Controlling standard button visibility.md
+Custom Buttons.md
+Remote action and observer interface.md
+API documentation.md
+Custom Tabs.md
+Delta.md
+Related Lists.md
+Localization.md

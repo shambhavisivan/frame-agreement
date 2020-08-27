@@ -302,6 +302,8 @@ export class App extends Component {
 			//********************************************
 			// Wait for all to resolve
 			let result = await Promise.all(decompositionPromiseArray);
+			publish('onAfterActivation', PR_ID);
+			
 			result = new Set(result);
 			//********************************************
 

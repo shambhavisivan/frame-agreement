@@ -25,6 +25,7 @@ const eventList = new Set([
 	'onAfterNegotiate',
 	'onBeforeBulkNegotiation',
 	'onAfterBulkNegotiation',
+	'onAfterActivation',
 	'onBeforeSubmit',
 	'onAfterSubmit',
 	'onBeforeActivation',

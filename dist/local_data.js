@@ -2149,6 +2149,7 @@ const ButtonStandardData = {
 	DeleteProducts: ['Draft', 'Requires Approval'],
 	DeleteAddons: ['Draft', 'Requires Approval'],
 	BulkNegotiate: 'csfam__arb_field_bool__c == true',
+	BulkNegotiateAddons: ['Draft', 'Requires Approval'],
 	AddProducts: ['Draft', 'Requires Approval'],
 	AddAddons: ['Draft', 'Requires Approval']
 };
@@ -3645,6 +3646,7 @@ window.SF = SF = {
 		btn_AddProducts: 'Add Products',
 		btn_AddAddons: 'Add Add Ons',
 		btn_BulkNegotiate: 'Negotiate Products',
+		btn_BulkNegotiateAddons: 'Negotiate Add ons',
 		btn_CalcDelta: 'Calculate Delta',
 		btn_Close: 'Close',
 		btn_DeleteAgreements: 'Delete Agreements',
@@ -3737,6 +3739,7 @@ window.SF = SF = {
 		modal_bulk_discount_title: 'Discount options',
 		modal_bulk_input_placeholder: 'Enter discount value',
 		modal_bulk_selected_title: 'Selected Products',
+		modal_bulk_addons_selected_title: 'Selected Add Ons',
 		modal_bulk_title: 'Bulk Negotiation',
 		modal_categorization_btn_add: 'Add Selected',
 		modal_categorization_btn_apply: 'Apply Filter',

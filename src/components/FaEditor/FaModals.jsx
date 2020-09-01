@@ -9,6 +9,7 @@ import ActionIframe from '../modals/ActionIframe';
 import ProductModal from '../modals/ProductModal';
 import DeltaModal from '../modals/DeltaModal';
 import NegotiationModal from '../modals/NegotiationModal';
+import NegotiationStandaloneModal from '../modals/NegotiationStandaloneModal';
 import FrameModal from '../modals/FrameModal';
 
 import {
@@ -16,6 +17,7 @@ import {
 	createToast,
 	toggleModals,
 	bulkNegotiate,
+	bulkNegotiateAddons,
 	validateFrameAgreement,
 	addProductsToFa,
 	addAddonsToFa,
@@ -31,6 +33,7 @@ class FaModals extends React.Component {
 		this.onAddProducts = this.onAddProducts.bind(this);
 		this.onAddAddons = this.onAddAddons.bind(this);
 		this.onBulkNegotiate = this.onBulkNegotiate.bind(this);
+		this.onBulkNegotiateAddons = this.onBulkNegotiateAddons.bind(this);
 	}
 
 	componentWillUnmount() {
@@ -42,6 +45,18 @@ class FaModals extends React.Component {
 
 		this.props.bulkNegotiate(this.props.faId, data);
 		this.props.validateFrameAgreement(this.props.faId);
+		window.FAM.api.validateStatusConsistency(this.props.faId);
+
+		publish('onAfterBulkNegotiation', this.props.frameAgreements[this.props.faId]._ui.attachment);
+		this.onCloseModal();
+	}
+
+	async onBulkNegotiateAddons(data) {
+		data = await publish('onBeforeBulkNegotiation', data);
+
+		this.props.bulkNegotiateAddons(this.props.faId, data);
+		this.props.validateFrameAgreement(this.props.faId);
+		window.FAM.api.validateStatusConsistency(this.props.faId);
 
 		publish('onAfterBulkNegotiation', this.props.frameAgreements[this.props.faId]._ui.attachment);
 		this.onCloseModal();
@@ -145,6 +160,19 @@ class FaModals extends React.Component {
 			);
 		}
 		// *******************************************************
+		let negotiateStandaloneModal = null;
+		if (this.props.modals.negotiateStandaloneModal) {
+			negotiateStandaloneModal = (
+				<NegotiationStandaloneModal
+					open={this.props.modals.negotiateStandaloneModal}
+					addons={Object.values(this.props.selectedAddons)}
+					attachment={this.props.frameAgreements[this.props.faId]._ui.attachment.addons}
+					onNegotiate={this.onBulkNegotiateAddons}
+					onCloseModal={this.onCloseModal}
+				/>
+			);
+		}
+		// *******************************************************
 		let actionModal = null;
 		if (this.props.modals.actionIframe && this.props.modals.actionIframeUrl) {
 			actionModal = (
@@ -188,6 +216,7 @@ class FaModals extends React.Component {
 				{productModal}
 				{addonModal}
 				{negotiateModal}
+				{negotiateStandaloneModal}
 			</React.Fragment>
 		);
 	}
@@ -206,6 +235,7 @@ const mapDispatchToProps = {
 	createToast,
 	toggleModals,
 	bulkNegotiate,
+	bulkNegotiateAddons,
 	addProductsToFa,
 	addAddonsToFa,
 	validateFrameAgreement,

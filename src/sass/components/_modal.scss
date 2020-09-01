@@ -448,6 +448,24 @@
 	padding: 1rem 1.5rem;
 }
 
+.fa-modal-action-container.fa-modal-addons-bulk {
+	flex-direction: column;
+
+	& > .discount-wrap {
+		flex: 1;
+		display: flex;
+		flex-direction: row;
+
+		&:first-of-type {
+			margin-bottom: 15px;
+			.fa-modal-discount-item {
+				margin-right: 15px;
+			}
+		}
+	}
+}
+
+
 /* DISCOUNT */
 .fa-modal-discount {
 	border-radius: 0.25rem;
@@ -468,17 +486,19 @@
 	padding-bottom: 0.5rem;
 }
 
-.fa-modal-discount-item {
-	&:not(:last-child) {
-		padding-right: 1rem;
-	}
+.fa-modal-action-container:not(.fa-modal-addons-bulk) {
+	.fa-modal-discount-item {
+		&:not(:last-child) {
+			padding-right: 1rem;
+		}
 
-	&:nth-child(2) {
-		flex: 2;
-	}
+		&:nth-child(2) {
+			flex: 2;
+		}
 
-	&:last-child {
-		text-align: right;
+		&:last-child {
+			text-align: right;
+		}
 	}
 }
 

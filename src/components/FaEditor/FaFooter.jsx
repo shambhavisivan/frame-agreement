@@ -17,6 +17,7 @@ class FaFooter extends React.Component {
 		this.onOpenFrameModal = this.onOpenFrameModal.bind(this);
 		this.onOpenNegotiationModal = this.onOpenNegotiationModal.bind(this);
 		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(this);
+		this.onOpenAddonNegotiationModal = this.onOpenAddonNegotiationModal.bind(this);
 		this.onOpenAddonModal = this.onOpenAddonModal.bind(this);
 
 		this.state = {
@@ -70,6 +71,10 @@ class FaFooter extends React.Component {
 		this.props.toggleModals({ negotiateModal: true });
 	}
 
+	onOpenAddonNegotiationModal() {
+		this.props.toggleModals({ negotiateStandaloneModal: true });
+	}
+
 	onOpenCommercialProductModal() {
 		this.props.toggleModals({ productModal: true });
 	}
@@ -110,6 +115,10 @@ class FaFooter extends React.Component {
 				!master,
 			addAdd:
 				evaluateExpressionOnAgreement(standardData.AddAddons, _fa) &&
+				this.props.activeTab === 1 &&
+				!master,
+			addBulk:
+				evaluateExpressionOnAgreement(standardData.BulkNegotiateAddons, _fa) &&
 				this.props.activeTab === 1 &&
 				!master,
 			bulk:
@@ -157,6 +166,17 @@ class FaFooter extends React.Component {
 					>
 						<Icon name="user" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">{window.SF.labels.btn_BulkNegotiate}</span>
+					</button>
+				)}
+
+				{buttonVisibillityMap.addBulk && (
+					<button
+						disabled={_disabled_add}
+						className="fa-button fa-button--default"
+						onClick={this.onOpenAddonNegotiationModal}
+					>
+						<Icon name="user" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_BulkNegotiateAddons}</span>
 					</button>
 				)}
 

@@ -1049,6 +1049,7 @@ class NegotiationModal extends Component {
 						className="fa-button fa-button--default"
 						onClick={() => {
 							this.props.onNegotiate(this.state.attachment);
+							this.onCloseModal();
 						}}
 					>
 						{window.SF.labels.modal_bulk_btn_save}

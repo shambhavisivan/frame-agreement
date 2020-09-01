@@ -66,9 +66,11 @@
 }
 
 .fa-button--brand {
-	border: none;
 	@include sbg(--button-bg-brand);
 	@include sc(--button-c-brand);
+	@include css4 {
+		border: 1px solid cvar(--button-bg-brand);
+	}
 
 	&:hover,
 	&:active,

@@ -43,7 +43,8 @@ const initialState = {
 		productModal: false,
 		addonModal: false,
 		frameModal: false,
-		negotiateModal: false
+		negotiateModal: false,
+		negotiateStandaloneModal: false
 	},
 	toasts: []
 	// activeId: null
@@ -953,6 +954,31 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
+		case 'NEGOTIATE_BULK_ADDONS':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			var _addons = state.frameAgreements[faId]._ui.attachment.addons;
+
+			for (var key in data) {
+				_addons[key] = data[key];
+			}
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: {
+							...state.frameAgreements[faId]._ui.attachment,
+							addons: _addons
+						}
+					}
+				}
+			};
+
 		case 'NEGOTIATE_BULK':
 			var faId = action.payload.faId;
 			var data = action.payload.data;
@@ -1331,6 +1357,7 @@ const rootReducer = (state = initialState, action) => {
 				'DeleteProducts',
 				'BulkNegotiate',
 				'AddProducts',
+				'BulkNegotiateAddons',
 				'AddAddons',
 				'DeleteAddons',
 				'AddFrameAgreement',

@@ -274,6 +274,13 @@
         <value>Negotiate Products</value>
     </labels>
     <labels>
+        <fullName>btn_BulkNegotiateAddons</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>btn_BulkNegotiateAddons</shortDescription>
+        <value>Negotiate Add ons</value>
+    </labels>
+    <labels>
         <fullName>btn_CalcDelta</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -881,6 +888,13 @@
         <protected>true</protected>
         <shortDescription>modal_bulk_selected_title</shortDescription>
         <value>Selected Products</value>
+    </labels>
+    <labels>
+        <fullName>modal_bulk_addons_selected_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_bulk_addons_selected_title</shortDescription>
+        <value>Selected Add Ons</value>
     </labels>
     <labels>
         <fullName>modal_bulk_title</fullName>

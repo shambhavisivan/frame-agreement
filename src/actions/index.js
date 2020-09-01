@@ -8,6 +8,7 @@ const _defaultModals = {
 	addonModal: false,
 	frameModal: false,
 	deltaModal: false,
+	negotiateStandaloneModal: false,
 	negotiateModal: false
 };
 
@@ -92,6 +93,11 @@ export const apiNegotiate = (faId, data) => ({
 
 export const bulkNegotiate = (faId, data) => ({
 	type: 'NEGOTIATE_BULK',
+	payload: { faId, data }
+});
+
+export const bulkNegotiateAddons = (faId, data) => ({
+	type: 'NEGOTIATE_BULK_ADDONS',
 	payload: { faId, data }
 });
 

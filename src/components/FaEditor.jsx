@@ -566,7 +566,11 @@ export class FaEditor extends Component {
 					/>
 				)}
 
-				<FaModals faId={this.faId} selectedProducts={this.state.selectedProducts} />
+				<FaModals
+					faId={this.faId}
+					selectedProducts={this.state.selectedProducts}
+					selectedAddons={this.state.selectedAddons}
+				/>
 			</div>
 		);
 	}

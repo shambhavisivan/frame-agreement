@@ -171,6 +171,7 @@ export class FaEditor extends Component {
 		};
 
 		const onLoadingFinished = async () => {
+			this.props.validateFrameAgreement(this.faId);
 			window.FAM.api.validateStatusConsistency(this.faId);
 
 			this._setState({ loading: { ...this.state.loading, attachment: false } }, async () => {
@@ -280,7 +281,6 @@ export class FaEditor extends Component {
 		Promise.all(_promiseArray).then(async response => {
 			await cpFilterEvent();
 			await onLoadingFinished();
-			this.props.validateFrameAgreement(this.faId);
 		});
 
 		// **************************************

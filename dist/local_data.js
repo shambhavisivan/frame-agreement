@@ -2142,16 +2142,16 @@ const ButtonCustomData = [
 ];
 
 const ButtonStandardData = {
-	Save: ['Draft', 'Requires Approval'],
-	SubmitForApproval: ['Requires Approval'],
-	Submit: ['Approved'],
-	Delta: '*',
-	DeleteProducts: ['Draft', 'Requires Approval'],
-	DeleteAddons: ['Draft', 'Requires Approval'],
-	BulkNegotiate: 'csfam__arb_field_bool__c == true',
-	BulkNegotiateAddons: ['Draft', 'Requires Approval'],
-	AddProducts: ['Draft', 'Requires Approval'],
-	AddAddons: ['Draft', 'Requires Approval']
+	"Save": ["Draft", "Requires Approval"],
+	"SubmitForApproval": ["Requires Approval"],
+	"Submit": ["Approved"],
+	"Delta": "*",
+	"DeleteProducts": ["Draft", "Requires Approval"],
+	"DeleteAddons": ["Draft", "Requires Approval"],
+	"BulkNegotiate": "csfam__arb_field_bool__c == true",
+	"BulkNegotiateAddons": ["Draft", "Requires Approval"],
+	"AddProducts": ["Draft", "Requires Approval"],
+	"AddAddons": ["Draft", "Requires Approval"]
 };
 
 const commercialProducts = [

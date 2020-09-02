@@ -272,7 +272,8 @@ class FaHeader extends React.Component {
 									className="fa-button fa-button--transparent"
 									disabled={
 										!this.props.frameAgreements[this.props.faId]._ui.approvalNeeded ||
-										!this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length
+										(!this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length &&
+											!this.props.frameAgreements[this.props.faId]._ui.standaloneAddons.length)
 									}
 									onClick={this.onSubmitForApproval}
 								>

@@ -947,9 +947,9 @@ const rootReducer = (state = initialState, action) => {
 						...state.frameAgreements[faId],
 						_ui: {
 							...state.frameAgreements[faId]._ui,
-							approvalNeeded: getApprovalNeeded(state.validation, validationAddons)
+							approvalNeeded: getApprovalNeeded(state.validation, validationAddons),
+							attachment: _attachment
 						},
-						attachment: _attachment
 					}
 				}
 			};

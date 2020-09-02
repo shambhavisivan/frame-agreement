@@ -10,6 +10,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 import Pagination from '../utillity/Pagination';
 import NumberFormat from '~/src/components/negotiation/NumberFormat';
 import Render from '../utillity/Render';
+import { isOneOff, isRecurring } from '../../utils/shared-service';
 
 import {
 	validateAddons,
@@ -96,18 +97,34 @@ class NegotiationStandaloneModal extends Component {
 		let attachment = this.state.attachment;
 
 		this.props.addons.forEach(add => {
+			// Ignore DL
+			let _dl = [];
+			if (add.hasOwnProperty('_discountLvIds')) {
+				try {
+					_dl = add._discountLvIds.map(dlv => dlv.discountLevel);
+				} catch(e){
+					console.warn(e);
+				}
+			}
+
 			if (this.state.applyRecurring && add.hasOwnProperty('cspmb__Recurring_Charge__c')) {
-				attachment[add.Id].recurring = applyDiscountRate(
-					attachment[add.Id].recurring,
-					this.state.discountMode
-				);
+				// If there aren't any RC DLs
+				if (!_dl.some(dl => isRecurring(dl.cspmb__Charge_Type__c))) {
+					attachment[add.Id].recurring = applyDiscountRate(
+						attachment[add.Id].recurring,
+						this.state.discountMode
+					);
+				}
 			}
 
 			if (this.state.applyOneOff && add.hasOwnProperty('cspmb__One_Off_Charge__c')) {
-				attachment[add.Id].oneOff = applyDiscountRate(
-					attachment[add.Id].oneOff,
-					this.state.discountMode
-				);
+				// If there aren't any NRC DLs
+				if (!_dl.some(dl => isOneOff(dl.cspmb__Charge_Type__c))) {
+					attachment[add.Id].oneOff = applyDiscountRate(
+						attachment[add.Id].oneOff,
+						this.state.discountMode
+					);
+				}
 			}
 		});
 

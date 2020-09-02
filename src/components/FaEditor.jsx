@@ -355,7 +355,9 @@ export class FaEditor extends Component {
 			);
 
 			await this.props.removeProductsFromFa(this.faId, productsToDelete);
+			
 			this.props.validateFrameAgreement(this.faId);
+			window.FAM.api.validateStatusConsistency(this.faId);
 
 			this._setState(
 				{
@@ -380,6 +382,9 @@ export class FaEditor extends Component {
 			);
 
 			await this.props.removeAddonsFromFa(this.faId, addonsToDelete);
+
+			this.props.validateFrameAgreement(this.faId);
+			window.FAM.api.validateStatusConsistency(this.faId);
 
 			this._setState(
 				{

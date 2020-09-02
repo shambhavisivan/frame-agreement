@@ -228,7 +228,7 @@ class NegotiationStandaloneModal extends Component {
 							<div className="fa-modal-discount-item">
 								<h4 className="fa-modal-discount-title">&#8203;</h4>
 								<button
-									disabled={!(this.state.applyRecurring && this.state.applyOneOff)}
+									disabled={!(this.state.applyRecurring || this.state.applyOneOff)}
 									className="fa-button fa-button--brand"
 									onClick={this.applyDiscount}
 								>

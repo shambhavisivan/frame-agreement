@@ -191,14 +191,14 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			let _rateCardLines = cp._rateCards.reduce((acc, iter) => [...acc, ...iter.rateCardLines], []);
 
 			_rateCardLines.forEach(rcl => {
-				let _originalValue = rcl.cspmb__rate_value__c;
+				let _value = rcl.cspmb__rate_value__c;
 
 				rcl_codes.forEach(rclc => {
 					if (rclc.records.rcl[rcl.Id]) {
-						let _value = calculateDiscount(
+						_value = calculateDiscount(
 							rclc.csfamext__discount_type__c,
 							rclc.csfamext__rate_value__c,
-							_originalValue
+							_value
 						);
 
 						_negoArray.push({

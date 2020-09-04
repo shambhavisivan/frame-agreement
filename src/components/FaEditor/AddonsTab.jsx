@@ -87,6 +87,11 @@ class AddonsTab extends React.Component {
 		let _addons = this.props.frameAgreements[this.props.faId]._ui.standaloneAddons || [];
 		let _addonFields = this.props.settings.FACSettings.standalone_addon_fields;
 
+		let _disableLevels = !!this.props.frameAgreements[this.props.faId]._ui.disableDiscountLevels;
+		let _disableInputs = !!this.props.frameAgreements[this.props.faId]._ui.disableInlineDiscounts;
+
+		let _editable = window.FAM.api.isAgreementEditable(this.props.faId);
+
 		if (_addons.length) {
 			standaloneAddons = (
 				<div className="products-card__inner">
@@ -144,6 +149,9 @@ class AddonsTab extends React.Component {
 									key={'add-' + add.Id}
 									addon={add}
 									faId={this.props.faId}
+									readOnly={!_editable}
+									disableInputs={_disableInputs}
+									disableLevels={_disableLevels}
 									onSelect={addon => this.props.onSelectAddon(addon)}
 									onNegotiate={data => {
 										this.onNegotiate(data, add.Id);
@@ -159,7 +167,7 @@ class AddonsTab extends React.Component {
 		} else {
 			standaloneAddons = (
 				<div>
-					<AddAddonsCTA render={!_addons.length} />
+					<AddAddonsCTA render={!_addons.length} disabled={!_editable}/>
 				</div>
 			);
 		}

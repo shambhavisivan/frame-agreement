@@ -43,7 +43,6 @@ export class StandaloneAddon extends React.Component {
 		let _attachment = this.props.frameAgreements[this.props.faId]._ui.attachment.addons[
 			this.props.addon.Id
 		];
-		let _editable = window.FAM.api.isAgreementEditable(this.props.faId);
 
 		let recurringRow = 'N/A';
 		let oneOffRow = 'N/A';
@@ -164,7 +163,7 @@ export class StandaloneAddon extends React.Component {
 				<div className="container__header">
 					<div className="container__checkbox">
 						<Checkbox
-							disabled={!_editable}
+							disabled={this.props.readOnly}
 							value={this.props.selected}
 							onChange={() => {
 								this.props.onSelect(this.props.addon);

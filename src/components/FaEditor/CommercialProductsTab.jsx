@@ -66,6 +66,7 @@ class CommercialProductsTab extends React.Component {
 		let commercialProducts;
 
 		let _cp = this.props.frameAgreements[this.props.faId]._ui.commercialProducts;
+		let _editable = window.FAM.api.isAgreementEditable(this.props.faId);
 
 		if (_cp.length) {
 			commercialProducts = (
@@ -152,6 +153,7 @@ class CommercialProductsTab extends React.Component {
 				<div>
 					<AddProductCTA
 						render={!this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length}
+						disabled={!_editable}
 					/>
 				</div>
 			);

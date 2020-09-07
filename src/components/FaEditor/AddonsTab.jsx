@@ -9,7 +9,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 import StandaloneAddon from '../negotiation/StandaloneAddon';
 import { publish } from '~/src/api';
 
-import { truncateCPField, getFieldLabel, log } from '../../utils/shared-service';
+import { truncateCPField, getFieldLabel, log, isMaster, evaluateExpressionOnAgreement } from '../../utils/shared-service';
 import { toggleFieldVisibility, setAddonValidation, negotiateAddons } from '~/src/actions';
 
 import AddAddonsCTA from './AddAddonsCTA';
@@ -92,6 +92,11 @@ class AddonsTab extends React.Component {
 
 		let _editable = window.FAM.api.isAgreementEditable(this.props.faId);
 
+		let _isMaster = isMaster(this.props.frameAgreements[this.props.faId]);
+		let standardData = this.props.settings.ButtonStandardData;
+
+		let _isAddAddonsEnabled = !_isMaster && evaluateExpressionOnAgreement(standardData.AddProducts, this.props.frameAgreements[this.props.faId]);
+
 		if (_addons.length) {
 			standaloneAddons = (
 				<div className="products-card__inner">
@@ -167,7 +172,7 @@ class AddonsTab extends React.Component {
 		} else {
 			standaloneAddons = (
 				<div>
-					<AddAddonsCTA render={!_addons.length} disabled={!_editable}/>
+					<AddAddonsCTA render={!_addons.length} disabled={!_editable || !_isAddAddonsEnabled}/>
 				</div>
 			);
 		}

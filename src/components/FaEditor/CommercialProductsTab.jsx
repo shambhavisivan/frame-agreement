@@ -9,7 +9,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 
 import CommercialProduct from '../negotiation/CommercialProduct';
 
-import { truncateCPField, getFieldLabel, log } from '../../utils/shared-service';
+import { truncateCPField, getFieldLabel, log, isMaster, evaluateExpressionOnAgreement } from '../../utils/shared-service';
 import { toggleFieldVisibility } from '~/src/actions';
 
 import AddProductCTA from './AddProductCTA';
@@ -67,6 +67,12 @@ class CommercialProductsTab extends React.Component {
 
 		let _cp = this.props.frameAgreements[this.props.faId]._ui.commercialProducts;
 		let _editable = window.FAM.api.isAgreementEditable(this.props.faId);
+
+		let _isMaster = isMaster(this.props.frameAgreements[this.props.faId]);
+		let standardData = this.props.settings.ButtonStandardData;
+
+		let _isAddProductsEnabled = !_isMaster && evaluateExpressionOnAgreement(standardData.AddProducts, this.props.frameAgreements[this.props.faId]);
+
 
 		if (_cp.length) {
 			commercialProducts = (
@@ -153,7 +159,7 @@ class CommercialProductsTab extends React.Component {
 				<div>
 					<AddProductCTA
 						render={!this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length}
-						disabled={!_editable}
+						disabled={!_editable || !_isAddProductsEnabled}
 					/>
 				</div>
 			);

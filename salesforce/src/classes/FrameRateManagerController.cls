@@ -2087,7 +2087,7 @@ global with sharing class FrameRateManagerController {
 		original.csconta__replaced_by__c = clonedFa.Id;
 		original.csconta__effective_end_date__c = datetime.now();
 
-		clonedFa.csconta__frame_agreement_number__c = getFaPrefix() + parseNumberFromName(original.Name);
+		clonedFa.csconta__frame_agreement_number__c = original.csconta__frame_agreement_number__c;
 		clonedFa.csconta__effective_end_date__c = null;
 
 		update original;

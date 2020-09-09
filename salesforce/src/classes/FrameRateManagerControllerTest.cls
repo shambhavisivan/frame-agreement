@@ -534,6 +534,21 @@ private class FrameRateManagerControllerTest {
 		system.assertEquals(expectedExceptionThrown, true);
 	}
 
+	public static testMethod void testCreateNewFrameAgreement() {
+		setupPricingModel();
+		setupSettings();
+		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__frame_agreement_number__c, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
+
+		Test.startTest();
+
+		csconta__Frame_Agreement__c fa_1_clone_1 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1.Id);
+		csconta__Frame_Agreement__c fa_1_clone_2 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1_clone_1.Id);
+
+		Test.stopTest();
+
+		system.assertEquals(fa_1_clone_2.csconta__frame_agreement_number__c, fa_1.csconta__frame_agreement_number__c);
+	}
+
 	public static testMethod void testCloneFrameAgreementWithAssociations() {
 		setupPricingModel();
 

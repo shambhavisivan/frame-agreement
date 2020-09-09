@@ -507,13 +507,13 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c cloned_2_fa_1 = FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
 		csconta__Frame_Agreement__c cloned_invalid = FrameRateManagerController.cloneFrameAgreement('a0x1t000000yZF3'); // Invalid
 
-		csconta__Frame_Agreement__c new_version_fa_1 = FrameRateManagerController.createNewVersionOfFrameAgrement(fa_1.Id);
+		csconta__Frame_Agreement__c new_version_fa_1 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1.Id);
 
 		// Invalids
 		Boolean expectedExceptionThrown = false;
 		try {
 			FrameRateManagerController.getFrameAgreement('a0x1t000000yZF3');
-			csconta__Frame_Agreement__c new_version_fa_2 = FrameRateManagerController.createNewVersionOfFrameAgrement('a0x1t000000yZF3');
+			csconta__Frame_Agreement__c new_version_fa_2 = FrameRateManagerController.createNewVersionOfFrameAgreement('a0x1t000000yZF3');
 		} catch (Exception e) {
 			expectedExceptionThrown = true;
 		}

@@ -113,7 +113,7 @@
 				getAddonDiscountInformation: "{!$RemoteAction.FrameRateManagerController.getAddonDiscountInformation}",
 				upsertFrameAgreements: "{!$RemoteAction.FrameRateManagerController.upsertFrameAgreements}",
 				cloneFrameAgreement: "{!$RemoteAction.FrameRateManagerController.cloneFrameAgreement}",
-				createNewVersionOfFrameAgrement: "{!$RemoteAction.FrameRateManagerController.createNewVersionOfFrameAgrement}",
+				createNewVersionOfFrameAgreement: "{!$RemoteAction.FrameRateManagerController.createNewVersionOfFrameAgreement}",
 				getCommercialProducts: "{!$RemoteAction.FrameRateManagerController.getCommercialProducts}",
 				findReplacementCommercialProduct: "{!$RemoteAction.FrameRateManagerController.findReplacementCommercialProduct}",
 				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",

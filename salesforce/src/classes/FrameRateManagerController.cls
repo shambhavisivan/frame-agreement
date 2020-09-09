@@ -2067,8 +2067,8 @@ global with sharing class FrameRateManagerController {
 	* @return cloned FA
 	*/
 	@RemoteAction
-	public static csconta__Frame_Agreement__c createNewVersionOfFrameAgrement(Id faId) {
-		system.debug('createNewVersionOfFrameAgrement ' + faId);
+	public static csconta__Frame_Agreement__c createNewVersionOfFrameAgreement(Id faId) {
+		system.debug('createNewVersionOfFrameAgreement ' + faId);
 		csconta__Frame_Agreement__c original = getFrameAgreement(faId);
 
 		if (original == null) {

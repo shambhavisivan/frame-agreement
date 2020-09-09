@@ -8,7 +8,7 @@ import {
 	getStandaloneAddons,
 	apiNegotiate,
 	clearToasts,
-	createNewVersionOfFrameAgrement,
+	createNewVersionOfFrameAgreement,
 	updateFrameAgreement,
 	cloneFrameAgreement,
 	createToast,
@@ -58,7 +58,7 @@ export class App extends Component {
 		// ****************************************** API ******************************************
 		window.FAM.api.clearToasts = this.props.clearToasts;
 
-		window.FAM.api.createNewVersionOfFrameAgrement = this.props.createNewVersionOfFrameAgrement;
+		window.FAM.api.createNewVersionOfFrameAgreement = this.props.createNewVersionOfFrameAgreement;
 		window.FAM.api.updateFrameAgreement = this.props.updateFrameAgreement;
 
 		/**
@@ -647,7 +647,7 @@ const mapDispatchToProps = {
 	getStandaloneAddons,
 	apiNegotiate,
 	clearToasts,
-	createNewVersionOfFrameAgrement,
+	createNewVersionOfFrameAgreement,
 	updateFrameAgreement,
 	cloneFrameAgreement,
 	createToast,

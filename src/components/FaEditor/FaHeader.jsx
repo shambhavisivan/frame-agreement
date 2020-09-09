@@ -9,7 +9,7 @@ import {
 	saveFrameAgreement,
 	refreshFrameAgreement,
 	getApprovalHistory,
-	createNewVersionOfFrameAgrement,
+	createNewVersionOfFrameAgreement,
 	toggleModals
 } from '~/src/actions';
 
@@ -61,7 +61,7 @@ class FaHeader extends React.Component {
 	}
 
 	async createNewVersion() {
-		let newFa = await this.props.createNewVersionOfFrameAgrement(this.props.faId);
+		let newFa = await this.props.createNewVersionOfFrameAgreement(this.props.faId);
 		this.props.history.push('/');
 		this.props.history.push('/agreement/' + newFa.Id);
 		// window.location.reload();
@@ -339,7 +339,7 @@ const mapDispatchToProps = {
 	saveFrameAgreement,
 	refreshFrameAgreement,
 	getApprovalHistory,
-	createNewVersionOfFrameAgrement
+	createNewVersionOfFrameAgreement
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaHeader));

@@ -186,16 +186,16 @@ export function setFrameAgreementState(faId, newStatus) {
 	};
 }
 // ***********************************************************************
-export const _createNewVersionOfFrameAgrement = newFa => ({
+export const _createNewVersionOfFrameAgreement = newFa => ({
 	type: 'NEW_VERSION',
 	payload: newFa
 });
 
-export function createNewVersionOfFrameAgrement(faId) {
+export function createNewVersionOfFrameAgreement(faId) {
 	return function(dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('createNewVersionOfFrameAgrement', [faId]).then(response => {
-				dispatch(_createNewVersionOfFrameAgrement(response));
+			window.SF.invokeAction('createNewVersionOfFrameAgreement', [faId]).then(response => {
+				dispatch(_createNewVersionOfFrameAgreement(response));
 				resolve(response);
 				return response;
 			});

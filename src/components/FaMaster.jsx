@@ -21,7 +21,7 @@ import {
 
 import { publish } from '../api';
 
-import { truncateCPField, getFieldLabel, log, isMaster } from '../utils/shared-service';
+import { truncateCPField, getFieldLabel, log, isMaster, evaluateExpressionOnAgreement } from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
 // import ApprovalProcess from './ApprovalProcess';
@@ -314,11 +314,10 @@ class FaMaster extends Component {
 	}
 
 	render() {
-		let _editable = this.props.settings.FACSettings.fa_editable_statuses.has(
-			this.props.frameAgreements[this.faId].csconta__Status__c
-		);
-
 		let _fa = this.props.frameAgreements[this.faId];
+		let _editable = window.FAM.api.isAgreementEditable(this.faId);
+
+		let _isAddAgreementsEnabled = evaluateExpressionOnAgreement(this.props.settings.ButtonStandardData.AddProducts, _fa);
 
 		let _addedFaIdSet;
 		let addedFa;
@@ -441,7 +440,7 @@ class FaMaster extends Component {
 			if (!addedFa.length) {
 				_faAgreementList = (
 					<div>
-						<AddAgreementsCTA render={true} />
+						<AddAgreementsCTA render={true} disabled={!_editable || !_isAddAgreementsEnabled}/>
 					</div>
 				);
 			}
@@ -476,11 +475,14 @@ class FaMaster extends Component {
 
 				<Toaster />
 
-				<FaFooter
-					faId={this.faId}
-					selectedProducts={this.state.selectedAgreements}
-					onRemoveProducts={() => this.onRemoveAgreements()}
-				/>
+				{_editable && (
+					<FaFooter
+						faId={this.faId}
+						activeTab={0}
+						selectedProducts={this.state.selectedAgreements}
+						onRemoveProducts={() => this.onRemoveAgreements()}
+					/>
+				)}
 
 				<FaModals faId={this.faId} selectedProducts={this.state.selectedAgreements} />
 			</div>

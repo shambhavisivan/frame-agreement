@@ -14,9 +14,9 @@ export class AddAgreementsCTA extends React.Component {
 	}
 
 	render() {
-		let addProductCTA = '';
+		let addAgreementsCTA = '';
 		if (this.props.render) {
-			addProductCTA = (
+			addAgreementsCTA = (
 				<div className="add-product-box">
 					<span className="box-header-1">{window.SF.labels.addAgreementsCTAMessage}</span>
 					<span className="box-header-2">{window.SF.labels.save_fa_products_message}</span>
@@ -33,7 +33,7 @@ export class AddAgreementsCTA extends React.Component {
 			);
 		}
 
-		return addProductCTA;
+		return addAgreementsCTA;
 	}
 }
 

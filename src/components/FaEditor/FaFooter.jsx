@@ -17,6 +17,7 @@ class FaFooter extends React.Component {
 		this.onOpenFrameModal = this.onOpenFrameModal.bind(this);
 		this.onOpenNegotiationModal = this.onOpenNegotiationModal.bind(this);
 		this.onOpenCommercialProductModal = this.onOpenCommercialProductModal.bind(this);
+		this.onOpenFrameAgreementModal = this.onOpenFrameAgreementModal.bind(this);
 		this.onOpenAddonNegotiationModal = this.onOpenAddonNegotiationModal.bind(this);
 		this.onOpenAddonModal = this.onOpenAddonModal.bind(this);
 
@@ -79,6 +80,10 @@ class FaFooter extends React.Component {
 		this.props.toggleModals({ productModal: true });
 	}
 
+	onOpenFrameAgreementModal() {
+		this.props.toggleModals({ frameModal: true });
+	}
+
 	onOpenAddonModal() {
 		this.props.toggleModals({ addonModal: true });
 	}
@@ -91,7 +96,7 @@ class FaFooter extends React.Component {
 		let _fa = this.props.frameAgreements[this.props.faId];
 		let master = isMaster(_fa);
 
-		if (!_fa._ui.commercialProducts.length && !_fa._ui.standaloneAddons.length) {
+		if (!master && !_fa._ui.commercialProducts.length && !_fa._ui.standaloneAddons.length) {
 			return null;
 		}
 
@@ -105,14 +110,13 @@ class FaFooter extends React.Component {
 		let footer = '';
 
 		let _disabled_prod = !Object.keys(this.props.selectedProducts).length;
-		let _disabled_add = !Object.keys(this.props.selectedAddons).length;
+		let _disabled_add = !Object.keys(this.props.selectedAddons || {}).length;
 
 		let buttonVisibillityMap = {
 			addFa: evaluateExpressionOnAgreement(standardData.AddFrameAgreement, _fa) && master,
 			addProd:
 				evaluateExpressionOnAgreement(standardData.AddProducts, _fa) &&
-				this.props.activeTab === 0 &&
-				!master,
+				this.props.activeTab === 0,
 			addAdd:
 				evaluateExpressionOnAgreement(standardData.AddAddons, _fa) &&
 				this.props.activeTab === 1 &&
@@ -144,10 +148,10 @@ class FaFooter extends React.Component {
 				{buttonVisibillityMap.addProd && (
 					<button
 						className="fa-button fa-button--default"
-						onClick={this.onOpenCommercialProductModal}
+						onClick={master ? this.onOpenFrameAgreementModal : this.onOpenCommercialProductModal}
 					>
 						<Icon name="add" width="16" height="16" color="#0070d2" />
-						<span className="fa-button-icon">{window.SF.labels.btn_AddProducts}</span>
+						<span className="fa-button-icon">{window.SF.labels[master ? 'btn_AddFa' : 'btn_AddProducts']}</span>
 					</button>
 				)}
 

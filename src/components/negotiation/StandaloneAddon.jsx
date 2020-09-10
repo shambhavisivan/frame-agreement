@@ -51,6 +51,9 @@ export class StandaloneAddon extends React.Component {
 		let val_oneOff = false;
 		let val_recurring = false;
 
+		let _oneOffAllowed = this.props.addon.cspmb__Is_One_Off_Discount_Allowed__c;
+		let _recurringAllowed = this.props.addon.cspmb__Is_Recurring_Discount_Allowed__c;
+
 		try {
 			val_oneOff = this.props.validationAddons[this.props.faId][this.props.addon.Id].oneOff;
 		} catch (err) {}
@@ -93,7 +96,7 @@ export class StandaloneAddon extends React.Component {
 			if (oneOffDiscounts && !this.props.disableLevels) {
 				oneOffRow = (
 					<DropdownNegotiate
-						readOnly={this.props.readOnly}
+						readOnly={this.props.readOnly || !_oneOffAllowed}
 						invalid={val_oneOff}
 						discounts={oneOffDiscounts}
 						onChange={val => {
@@ -107,7 +110,7 @@ export class StandaloneAddon extends React.Component {
 			} else {
 				oneOffRow = (
 					<InputNegotiate
-						readOnly={this.props.readOnly || this.props.disableInputs}
+						readOnly={this.props.readOnly || this.props.disableInputs || !_oneOffAllowed}
 						invalid={val_oneOff}
 						onChange={val => {
 							this.negotiateInline(this.props.addon, 'oneOff', val);
@@ -128,7 +131,7 @@ export class StandaloneAddon extends React.Component {
 			if (recurringDiscounts && !this.props.disableLevels) {
 				recurringRow = (
 					<DropdownNegotiate
-						readOnly={this.props.readOnly}
+						readOnly={this.props.readOnly || !_recurringAllowed}
 						invalid={val_recurring}
 						discounts={recurringDiscounts}
 						onChange={val => {
@@ -142,7 +145,7 @@ export class StandaloneAddon extends React.Component {
 			} else {
 				recurringRow = (
 					<InputNegotiate
-						readOnly={this.props.readOnly || this.props.disableInputs}
+						readOnly={this.props.readOnly || this.props.disableInputs || !_recurringAllowed}
 						invalid={val_recurring}
 						onChange={val => {
 							this.negotiateInline(this.props.addon, 'recurring', val);

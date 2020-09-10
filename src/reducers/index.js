@@ -1610,6 +1610,10 @@ const rootReducer = (state = initialState, action) => {
 						_addon._discountLvIds = addonVsDiscount[addon.cspmb__Add_On_Price_Item__c];
 					}
 
+					// Keep allow fileds
+					_addon.cspmb__Is_One_Off_Discount_Allowed__c = _addon.cspmb__Add_On_Price_Item__r.cspmb__Is_One_Off_Discount_Allowed__c;
+					_addon.cspmb__Is_Recurring_Discount_Allowed__c = _addon.cspmb__Add_On_Price_Item__r.cspmb__Is_Recurring_Discount_Allowed__c;
+
 					delete _addon.cspmb__Add_On_Price_Item__r;
 					delete _addon.cspmb__Price_Item__r;
 

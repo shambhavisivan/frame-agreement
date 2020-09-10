@@ -913,7 +913,15 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public static List <cspmb__Add_On_Price_Item__c> getStandaloneAddons_p(List<Id> addonIds) {
-		List<String> addonMandatoryFields = new List<String> {'Id', 'Name', 'cspmb__One_Off_Charge__c', 'cspmb__Recurring_Charge__c', 'cspmb__Authorization_Level__c'};
+		List <String> addonMandatoryFields = new List <String> {
+			'Id',
+			'Name',
+			'cspmb__One_Off_Charge__c',
+			'cspmb__Recurring_Charge__c',
+			'cspmb__Is_One_Off_Discount_Allowed__c',
+			'cspmb__Is_Recurring_Discount_Allowed__c',
+			'cspmb__Authorization_Level__c'
+		};
 
 		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
 		String addFields = (String) FACSettings.get('csfam__standalone_addon_fields__c');
@@ -1756,48 +1764,53 @@ global with sharing class FrameRateManagerController {
 		return rateCardLines;
 	}
 
-	public static Map < Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> getAddons(List <Id> priceItemIdList) {
+	public static Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> getAddons(List <Id> priceItemIdList) {
 		// contains end result, mapping price item ids to their addons
-		Map < Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> prId_addons = new Map < Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> ();
+		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> prId_addons = new Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> ();
 
 		List <cspmb__Price_Item_Add_On_Price_Item_Association__c> priceItemAddonAssociations = [
-			select Id, cspmb__Price_Item__c, cspmb__Overrides_Add_On_Charges__c, cspmb__effective_end_date__c, cspmb__effective_start_date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c,
-				cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c, cspmb__Add_On_Price_Item__c, cspmb__Add_On_Price_Item__r.Name, cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c, cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c,
-				cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c
-			from cspmb__Price_Item_Add_On_Price_Item_Association__c
-			where cspmb__Price_Item__c in :priceItemIdList and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
-		];
-
+					select Id, cspmb__Price_Item__c, cspmb__Overrides_Add_On_Charges__c, cspmb__effective_end_date__c,
+					cspmb__effective_start_date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c,
+					cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c, cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c,
+					cspmb__Add_On_Price_Item__c, cspmb__Add_On_Price_Item__r.Name, cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c,
+					cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c, cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c,
+					cspmb__Add_On_Price_Item__r.cspmb__Is_One_Off_Discount_Allowed__c, cspmb__Add_On_Price_Item__r.cspmb__Is_Recurring_Discount_Allowed__c
+					from cspmb__Price_Item_Add_On_Price_Item_Association__c
+					where cspmb__Price_Item__c in: priceItemIdList and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
+				];
 
 		List <cspmb__Price_Item_Add_On_Price_Item_Association__c> filteredPriceItemAddonAssociations = new List <cspmb__Price_Item_Add_On_Price_Item_Association__c> ();
 
 		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson : priceItemAddonAssociations) {
 
-			Boolean start_invalid = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c != null && date.today() < addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c;
-			Boolean end_invalid = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c != null && date.today() > addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c;
+			Date effectiveStartDate = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c;
+			Date effectiveEndDate = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c;
+
+			Boolean start_invalid = effectiveStartDate != null && Date.today() < effectiveStartDate;
+			Boolean end_invalid = effectiveEndDate != null && Date.today() > effectiveStartDate;
 
 			Boolean start_invalid_assoc = addonAsson.cspmb__effective_start_date__c != null && date.today() < addonAsson.cspmb__effective_start_date__c;
 			Boolean end_invalid_assoc = addonAsson.cspmb__effective_end_date__c != null && date.today() > addonAsson.cspmb__effective_end_date__c;
-
+		
 			if (addonAsson.cspmb__Overrides_Add_On_Charges__c == false) {
 				addonAsson.cspmb__One_Off_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c;
 				addonAsson.cspmb__Recurring_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c;
 			}
-
+		
 			if (!(start_invalid || end_invalid) && !(start_invalid_assoc || end_invalid_assoc)) {
 				filteredPriceItemAddonAssociations.add(addonAsson);
 			}
-
+		
 		}
 
-		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson : filteredPriceItemAddonAssociations) {
+		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson: filteredPriceItemAddonAssociations) {
 			if (prId_addons.containsKey(addonAsson.cspmb__Price_Item__c)) {
 				// get addons lines for this price item
 				List <cspmb__Price_Item_Add_On_Price_Item_Association__c> tempAddList = prId_addons.get(addonAsson.cspmb__Price_Item__c);
 				tempAddList.add(addonAsson);
 				prId_addons.put(addonAsson.cspmb__Price_Item__c, tempAddList);
 			} else {
-				prId_addons.put(addonAsson.cspmb__Price_Item__c, new List <cspmb__Price_Item_Add_On_Price_Item_Association__c>{
+				prId_addons.put(addonAsson.cspmb__Price_Item__c, new List <cspmb__Price_Item_Add_On_Price_Item_Association__c> {
 					addonAsson
 				});
 			}

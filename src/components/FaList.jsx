@@ -321,7 +321,7 @@ class FaList extends Component {
 							.filter(fa => {
 								if (this.state.searchTerm) {
 									if (
-										fa.csconta__Agreement_Name__c
+										(fa.csconta__Agreement_Name__c || '')
 											.toLowerCase()
 											.includes(this.state.searchTerm.toLowerCase())
 									) {

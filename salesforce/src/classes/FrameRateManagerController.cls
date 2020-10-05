@@ -25,7 +25,6 @@ global with sharing class FrameRateManagerController {
 		'csconta__agreement_level__c'
 	};
 
-
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
 		if (accountId == null) {
@@ -207,6 +206,10 @@ global with sharing class FrameRateManagerController {
 		} else {
 			return json_data[0];
 		}
+	}
+
+	private static Fac_Settings__c getFacSetting() {
+		return Fac_Settings__c.getInstance(UserInfo.getUserId());
 	}
 
 	@RemoteAction
@@ -511,36 +514,35 @@ global with sharing class FrameRateManagerController {
 		return fields;
 	}
 
-	@TestVisible public static Map <String, Object> getCustomSettings() {
+	public static Map <String, Object> getCustomSettings() {
 		Map <String, Object> settingMap = new Map <String, Object> ();
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+		Fac_Settings__c facSettings = getFacSetting();
 
-		settingMap.put('price_item_fields', FACSettings.get('csfam__price_item_fields__c'));
-		settingMap.put('frame_agreement_fields', FACSettings.get('csfam__frame_agreement_fields__c'));
-		settingMap.put('truncate_product_fields', FACSettings.get('csfam__truncate_product_fields__c'));
-		settingMap.put('show_volume_fields', FACSettings.get('csfam__show_volume_fields__c'));
-		settingMap.put('product_chunk_size', FACSettings.get('csfam__product_chunk_size__c'));
-		settingMap.put('rcl_fields', FACSettings.get('csfam__rcl_fields__c'));
-		settingMap.put('standalone_addon_fields', FACSettings.get('csfam__standalone_addon_fields__c'));
-		settingMap.put('account_fields', FACSettings.get('csfam__account_fields__c'));
-		settingMap.put('approvers_revise', FACSettings.get('csfam__approvers_revise__c'));
-		settingMap.put('volume_fields_visibility', FACSettings.get('csfam__volume_fields_visibility__c'));
-		settingMap.put('usage_type_fields__c', FACSettings.get('csfam__usage_type_fields__c'));
-		settingMap.put('decomposition_chunk_size', FACSettings.get('csfam__decomposition_chunk_size__c'));
-		settingMap.put('discount_as_price', FACSettings.get('csfam__discount_as_price__c'));
-		settingMap.put('active_status_management__c', FACSettings.get('csfam__active_status_management__c'));
-		settingMap.put('decimal_places', FACSettings.get('csfam__decimal_places__c'));
-		settingMap.put('new_frame_agreement', FACSettings.get('csfam__new_frame_agreement__c'));
-		settingMap.put('input_minmax_restriction', FACSettings.get('csfam__input_minmax_restriction__c'));
+		settingMap.put('price_item_fields', facSettings.get('price_item_fields__c'));
+		settingMap.put('frame_agreement_fields', facSettings.get('frame_agreement_fields__c'));
+		settingMap.put('truncate_product_fields', facSettings.get('truncate_product_fields__c'));
+		settingMap.put('show_volume_fields', facSettings.get('show_volume_fields__c'));
+		settingMap.put('product_chunk_size', facSettings.get('product_chunk_size__c'));
+		settingMap.put('rcl_fields', facSettings.get('rcl_fields__c'));
+		settingMap.put('account_fields', facSettings.get('account_fields__c'));
+		settingMap.put('approvers_revise', facSettings.get('approvers_revise__c'));
+		settingMap.put('volume_fields_visibility', facSettings.get('volume_fields_visibility__c'));
+		settingMap.put('usage_type_fields__c', facSettings.get('usage_type_fields__c'));
+		settingMap.put('decomposition_chunk_size', facSettings.get('decomposition_chunk_size__c'));
+		settingMap.put('discount_as_price', facSettings.get('discount_as_price__c'));
+		settingMap.put('active_status_management__c', facSettings.get('active_status_management__c'));
+		settingMap.put('decimal_places', facSettings.get('decimal_places__c'));
+		settingMap.put('new_frame_agreement', facSettings.get('new_frame_agreement__c'));
+		settingMap.put('input_minmax_restriction', facSettings.get('input_minmax_restriction__c'));
 
-		settingMap.put('fa_editable_statuses', FACSettings.get('csfam__fa_editable_statuses__c'));
+		settingMap.put('fa_editable_statuses', facSettings.get('fa_editable_statuses__c'));
 
 		Map <String, Object> statuses = new Map <String, Object> ();
-		statuses.put('active_status', FACSettings.get('csfam__active_status__c'));
-		statuses.put('approved_status', FACSettings.get('csfam__approved_status__c'));
-		statuses.put('draft_status', FACSettings.get('csfam__draft_status__c'));
-		statuses.put('closed_status', FACSettings.get('csfam__closed_status__c'));
-		statuses.put('requires_approval_status', FACSettings.get('csfam__requires_approval_status__c'));
+		statuses.put('active_status', facSettings.get('active_status__c'));
+		statuses.put('approved_status', facSettings.get('approved_status__c'));
+		statuses.put('draft_status', facSettings.get('draft_status__c'));
+		statuses.put('closed_status', facSettings.get('closed_status__c'));
+		statuses.put('requires_approval_status', facSettings.get('requires_approval_status__c'));
 
 		settingMap.put('statuses', statuses);
 
@@ -548,19 +550,18 @@ global with sharing class FrameRateManagerController {
 	}
 
 
-	@TestVisible public static String getFaPrefix() {
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		Object prefix = FACSettings.get('csfam__fa_number_prefix__c');
+	public static String getFaPrefix() {
+		Fac_Settings__c facSettings = getFacSetting();
+		Object prefix = facSettings.get('fa_number_prefix__c');
 
 		if (prefix == null) {
 			return '';
 		} else {
 			return (String) prefix;
 		}
-
 	}
 
-	@TestVisible public static String parseNumberFromName(String faName) {
+	public static String parseNumberFromName(String faName) {
 		return  faName.split('-')[1];
 	}
 
@@ -773,8 +774,8 @@ global with sharing class FrameRateManagerController {
 			appReq.setComments('Submitted frame agreement for approval. Please approve.');
 			appReq.setObjectId(recordId);
 			//Submit the approval request
-			csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-			appReq.setProcessDefinitionNameOrId((String) FACSettings.get('csfam__approval_process_name__c'));
+			Fac_Settings__c facSettings = getFacSetting();
+			appReq.setProcessDefinitionNameOrId((String) facSettings.get('approval_process_name__c'));
 			appReq.setSkipEntryCriteria(true);
 			Approval.ProcessResult result = Approval.process(appReq);
 			System.debug('***Frame agreement is submitted for approval successfully: ' + result.isSuccess());
@@ -923,8 +924,8 @@ global with sharing class FrameRateManagerController {
 			'cspmb__Authorization_Level__c'
 		};
 
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		String addFields = (String) FACSettings.get('csfam__standalone_addon_fields__c');
+		Fac_Settings__c facSettings = FrameRateManagerController.getFacSetting();
+		String addFields = (String) facSettings.get('standalone_addon_fields__c');
 
 		List <String> addFieldsArr = new List <String>();
 
@@ -980,8 +981,8 @@ global with sharing class FrameRateManagerController {
 			'cspmb__Price_Item_Description__c'
 		};
 
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		String csFields = (String) FACSettings.get('csfam__price_item_fields__c');
+		Fac_Settings__c facSettings = getFacSetting();
+		String csFields = (String) facSettings.get('rcl_fields__c');
 		List <String> csFieldsArr = new List <String> ();
 
 		if (!String.isBlank(csFields)) {
@@ -1595,8 +1596,8 @@ global with sharing class FrameRateManagerController {
 			'Name'
 		};
 
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		String utFields = (String) FACSettings.get('csfam__usage_type_fields__c');
+		Fac_Settings__c facSettings = getFacSetting();
+		String utFields = (String) facSettings.get('usage_type_fields__c');
 		List <String> utFieldsArr = new List <String> ();
 
 		if (!String.isBlank(utFields)) {
@@ -1741,8 +1742,8 @@ global with sharing class FrameRateManagerController {
 			'cspmb__Rate_Card__c'
 		};
 
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		String csFields = (String) FACSettings.get('csfam__rcl_fields__c');
+		Fac_Settings__c facSettings = getFacSetting();
+		String csFields = (String) facSettings.get('rcl_fields__c');
 		List <String> csFieldsArr = new List <String> ();
 
 		if (!String.isBlank(csFields)) {
@@ -1787,20 +1788,19 @@ global with sharing class FrameRateManagerController {
 			Date effectiveEndDate = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c;
 
 			Boolean start_invalid = effectiveStartDate != null && Date.today() < effectiveStartDate;
-			Boolean end_invalid = effectiveEndDate != null && Date.today() > effectiveStartDate;
+			Boolean end_invalid = effectiveEndDate != null && Date.today() > effectiveEndDate;
 
 			Boolean start_invalid_assoc = addonAsson.cspmb__effective_start_date__c != null && date.today() < addonAsson.cspmb__effective_start_date__c;
 			Boolean end_invalid_assoc = addonAsson.cspmb__effective_end_date__c != null && date.today() > addonAsson.cspmb__effective_end_date__c;
-		
+
 			if (addonAsson.cspmb__Overrides_Add_On_Charges__c == false) {
 				addonAsson.cspmb__One_Off_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c;
 				addonAsson.cspmb__Recurring_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c;
 			}
-		
+
 			if (!(start_invalid || end_invalid) && !(start_invalid_assoc || end_invalid_assoc)) {
 				filteredPriceItemAddonAssociations.add(addonAsson);
 			}
-		
 		}
 
 		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson: filteredPriceItemAddonAssociations) {
@@ -2009,7 +2009,7 @@ global with sharing class FrameRateManagerController {
 		cloned.csconta__replaced_by__c = null;
 		insert cloned;
 
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+		Fac_Settings__c facSettings = getFacSetting();
 		String prefix = getFaPrefix();
 
 		cloned.csconta__frame_agreement_number__c = prefix + parseNumberFromName(original.Name);
@@ -2090,8 +2090,8 @@ global with sharing class FrameRateManagerController {
 
 		csconta__Frame_Agreement__c clonedFa = cloneFrameAgreement(faId);
 
-		csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
-		clonedFa.csconta__Status__c = (String) FACSettings.get('csfam__draft_status__c');
+		Fac_Settings__c facSettings = getFacSetting();
+		clonedFa.csconta__Status__c = (String) facSettings.get('draft_status__c');
 		clonedFa.csconta__replaced_frame_agreement__c = faId;
 
 		// String attachmentBody = getAttachmentBody(faId);
@@ -2174,7 +2174,7 @@ global with sharing class FrameRateManagerController {
 		fa = getFrameAgreement(fa.Id);
 		if (fa.csconta__replaced_frame_agreement__c == null) {
 
-			csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+			//ac_settings__c facSettings = Fac_Settings__c.getInstance(UserInfo.getUserId());
 			String prefix = getFaPrefix();
 
 			fa.csconta__frame_agreement_number__c = prefix + parseNumberFromName(fa.Name);
@@ -2421,7 +2421,7 @@ global with sharing class FrameRateManagerController {
 		if (retString == 'Success') {
 			try {
 				insert pipraList;
-				csfam__fac_settings__c FACSettings = csfam__fac_settings__c.getInstance(UserInfo.getUserId());
+				Fac_Settings__c facSettings = getFacSetting();
 				// Set active status to FA, and if its replacing another fa, set its effective start date
 				csconta__Frame_Agreement__c fa = [
 					select Id, csconta__Status__c, csconta__replaced_frame_agreement__c
@@ -2429,7 +2429,7 @@ global with sharing class FrameRateManagerController {
 					where Id = :faId
 					limit 1
 				];
-				fa.csconta__Status__c = (String) FACSettings.get('csfam__active_status__c');
+				fa.csconta__Status__c = (String) facSettings.get('active_status__c');
 				update fa;
 
 				// If this was a version of another fa we need to set the original to replaced/closed
@@ -2442,7 +2442,7 @@ global with sharing class FrameRateManagerController {
 						limit 1
 					];
 					if (original != null) {
-						original.csconta__Status__c = (String) FACSettings.get('csfam__closed_status__c');
+						original.csconta__Status__c = (String) facSettings.get('closed_status__c');
 						original.csconta__replaced_by__c = faId;
 						update original;
 					}

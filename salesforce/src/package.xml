@@ -22,7 +22,15 @@
     </types>
     <types>
         <members>*</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>*</members>
         <name>StaticResource</name>
     </types>
-    <version>44.0</version>
+    <types>
+        <members>*</members>
+        <name>CustomLabels</name>
+    </types>
+    <version>49.0</version>
 </Package>

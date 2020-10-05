@@ -1,7 +1,5 @@
-@isTest
-
+@IsTest
 private class FrameRateManagerControllerTest {
-
 	public static final String FAC_ATTACHMENT_NAME = 'FrameAgreementAttachment';
 	public static final String FAC_ATTACHMENT_DESC = 'Added products and negotiated data against Frame Agreement';
 	public static final Integer ITEMS_PER_PAGE = 20;
@@ -20,20 +18,32 @@ private class FrameRateManagerControllerTest {
 	}
 
 	static String setupPricingModel() {
+		FrameRateManagerControllerTest.setupSettings();
 		Account test_account = new Account(Name = 'TestAcc');
 		insert test_account;
 
 		Test.setCurrentPageReference(new PageReference('Page.FAMEditor'));
 		System.currentPageReference().getParameters().put('account', test_account.Id);
 		// commercial products
-		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(Name = 'cp_1', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
-		cspmb__Price_Item__c cp_2 = new cspmb__Price_Item__c(Name = 'cp_2', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
+		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
+			Name = 'cp_1', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00
+			);
+		cspmb__Price_Item__c cp_2 = new cspmb__Price_Item__c(
+			Name = 'cp_2', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00
+		);
 
-		cspmb__Price_Item__c cp_addon_inv = new cspmb__Price_Item__c(Name = 'cp_addon_inv', cspmb__Is_Active__c = true);
-		cspmb__Price_Item__c cp_addon_assoc_inv = new cspmb__Price_Item__c(Name = 'cp_addon_assoc_inv', cspmb__Is_Active__c = true);
+		cspmb__Price_Item__c cp_addon_inv = new cspmb__Price_Item__c(
+			Name = 'cp_addon_inv', cspmb__Is_Active__c = true
+		);
+		cspmb__Price_Item__c cp_addon_assoc_inv = new cspmb__Price_Item__c(
+			Name = 'cp_addon_assoc_inv', cspmb__Is_Active__c = true
+		);
 
 		Date invalidEndDate = Date.newInstance(1992, 3, 14);
-		cspmb__Price_Item__c cp_3 = new cspmb__Price_Item__c(Name = 'cp_3', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00, cspmb__Effective_End_Date__c = invalidEndDate);
+		cspmb__Price_Item__c cp_3 = new cspmb__Price_Item__c(
+			Name = 'cp_3', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00, cspmb__Effective_End_Date__c = invalidEndDate
+		);
 
 
 		insert cp_1;
@@ -43,17 +53,27 @@ private class FrameRateManagerControllerTest {
 		insert cp_addon_assoc_inv;
 
 		// allowances
-		cspmb__Usage_Type__c ut_main = new cspmb__Usage_Type__c(Name = 'ut_main', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Group');
+		cspmb__Usage_Type__c ut_main = new cspmb__Usage_Type__c(
+			Name = 'ut_main', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Group'
+		);
 
-		cspmb__Usage_Type__c ut_1 = new cspmb__Usage_Type__c(Name = 'ut_1', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Single');
-		cspmb__Usage_Type__c ut_2 = new cspmb__Usage_Type__c(Name = 'ut_2', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Single');
+		cspmb__Usage_Type__c ut_1 = new cspmb__Usage_Type__c(
+			Name = 'ut_1', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Single'
+		);
+		cspmb__Usage_Type__c ut_2 = new cspmb__Usage_Type__c(
+			Name = 'ut_2', cspmb__unit_of_measure__c = 'Minute', cspmb__type__c = 'Single'
+		);
 
 		insert ut_main;
 		insert ut_1;
 		insert ut_2;
 
-		cspmb__Usage_Type_Grouping__c ut_group_1 = new cspmb__Usage_Type_Grouping__c(cspmb__parent_usage_type__c = ut_main.Id, cspmb__child_usage_type__c = ut_1.Id);
-		cspmb__Usage_Type_Grouping__c ut_group_2 = new cspmb__Usage_Type_Grouping__c(cspmb__parent_usage_type__c = ut_main.Id, cspmb__child_usage_type__c = ut_2.Id);
+		cspmb__Usage_Type_Grouping__c ut_group_1 = new cspmb__Usage_Type_Grouping__c(
+			cspmb__parent_usage_type__c = ut_main.Id, cspmb__child_usage_type__c = ut_1.Id
+		);
+		cspmb__Usage_Type_Grouping__c ut_group_2 = new cspmb__Usage_Type_Grouping__c(
+			cspmb__parent_usage_type__c = ut_main.Id, cspmb__child_usage_type__c = ut_2.Id
+		);
 
 		insert ut_group_1;
 		insert ut_group_2;
@@ -65,15 +85,25 @@ private class FrameRateManagerControllerTest {
 		insert al_2;
 
 		// pricing element and types
-		cspmb__Pricing_Element_Type__c pricingElementType_1 = new cspmb__Pricing_Element_Type__c(cspmb__label__c = 'One-off charge', cspmb__type__c = 'One-off charge');
-		cspmb__Pricing_Element_Type__c pricingElementType_2 = new cspmb__Pricing_Element_Type__c(cspmb__type__c = 'Recurring Charge');
+		cspmb__Pricing_Element_Type__c pricingElementType_1 = new cspmb__Pricing_Element_Type__c(
+			cspmb__label__c = 'One-off charge', cspmb__type__c = 'One-off charge'
+		);
+		cspmb__Pricing_Element_Type__c pricingElementType_2 = new cspmb__Pricing_Element_Type__c(
+			cspmb__type__c = 'Recurring Charge'
+		);
 		insert pricingElementType_1;
 		insert pricingElementType_2;
 
 
-		cspmb__Pricing_Element__c pricingElement_1 = new cspmb__Pricing_Element__c(cspmb__pricing_element_type__c = pricingElementType_1.Id, cspmb__commercial_product__c = cp_1.Id);
-		cspmb__Pricing_Element__c pricingElement_2 = new cspmb__Pricing_Element__c(cspmb__pricing_element_type__c = pricingElementType_2.Id, cspmb__commercial_product__c = cp_1.Id);
-		cspmb__Pricing_Element__c pricingElement_invalid = new cspmb__Pricing_Element__c(cspmb__pricing_element_type__c = pricingElementType_2.Id, cspmb__commercial_product__c = cp_1.Id, cspmb__effective_end_date__c = invalidEndDate);
+		cspmb__Pricing_Element__c pricingElement_1 = new cspmb__Pricing_Element__c(
+			cspmb__pricing_element_type__c = pricingElementType_1.Id, cspmb__commercial_product__c = cp_1.Id
+		);
+		cspmb__Pricing_Element__c pricingElement_2 = new cspmb__Pricing_Element__c(
+			cspmb__pricing_element_type__c = pricingElementType_2.Id, cspmb__commercial_product__c = cp_1.Id
+		);
+		cspmb__Pricing_Element__c pricingElement_invalid = new cspmb__Pricing_Element__c(
+			cspmb__pricing_element_type__c = pricingElementType_2.Id, cspmb__commercial_product__c = cp_1.Id, cspmb__effective_end_date__c = invalidEndDate
+		);
 		insert pricingElement_1;
 		insert pricingElement_2;
 		insert pricingElement_invalid;
@@ -81,25 +111,43 @@ private class FrameRateManagerControllerTest {
 		cspmb__pricing_rule__c pr_1 = new cspmb__pricing_rule__c(cspmb__description__c = 'Test.');
 		insert pr_1;
 
-		cspmb__Price_Item_Pricing_Rule_Association__c pipra_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id, cspmb__pricing_element__c = pricingElement_1.Id);
-		cspmb__Price_Item_Pricing_Rule_Association__c pipra_2 = new cspmb__Price_Item_Pricing_Rule_Association__c(cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id, cspmb__pricing_element__c = pricingElement_2.Id);
-		cspmb__Price_Item_Pricing_Rule_Association__c pipra_3 = new cspmb__Price_Item_Pricing_Rule_Association__c(cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id, cspmb__pricing_element__c = pricingElement_invalid.Id);
+		cspmb__Price_Item_Pricing_Rule_Association__c pipra_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
+			cspmb__pricing_element__c = pricingElement_1.Id
+		);
+		cspmb__Price_Item_Pricing_Rule_Association__c pipra_2 = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
+			cspmb__pricing_element__c = pricingElement_2.Id
+		);
+		cspmb__Price_Item_Pricing_Rule_Association__c pipra_3 = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
+			cspmb__pricing_element__c = pricingElement_invalid.Id
+		);
 		insert pipra_1;
 		insert pipra_2;
 		insert pipra_3;
 
-		cspmb__Pricing_Rule_Group__c prg_1 = new cspmb__Pricing_Rule_Group__c(cspmb__description__c = 'Testing.', cspmb__pricing_rule_group_code__c = generateRandomString(10), csfam__standard_price_book__c = true);
+		cspmb__Pricing_Rule_Group__c prg_1 = new cspmb__Pricing_Rule_Group__c(
+			cspmb__description__c = 'Testing.', cspmb__pricing_rule_group_code__c = generateRandomString(10)
+		);
 		insert prg_1;
 
-		cspmb__Pricing_Rule_Group_Rule_Association__c prgra_1 = new cspmb__Pricing_Rule_Group_Rule_Association__c(cspmb__pricing_rule__c = pr_1.Id, cspmb__Pricing_Rule_Group__c = prg_1.Id);
+		cspmb__Pricing_Rule_Group_Rule_Association__c prgra_1 = new cspmb__Pricing_Rule_Group_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__Pricing_Rule_Group__c = prg_1.Id
+		);
 		insert prgra_1;
 
-		csutil__JSON_Data__c standardPricebook = new csutil__JSON_Data__c(Name = 'FA-StandardPricebook', csutil__value__c = prgra_1.Id);
+		csutil__JSON_Data__c standardPricebook = new csutil__JSON_Data__c(
+			Name = 'FA-StandardPricebook', csutil__value__c = prgra_1.Id
+		);
 		insert standardPricebook;
 
 		cspmb__Authorization_Level__c authLevel = new cspmb__Authorization_Level__c();
 		insert authLevel;
-		cspmb__Discount_Threshold__c discTres = new cspmb__Discount_Threshold__c(Name = 'testLevel', cspmb__Discount_Type__c = 'Percentage', cspmb__Discount_Threshold__c = 10.00, cspmb__Authorization_Level__c = authLevel.Id);
+		cspmb__Discount_Threshold__c discTres = new cspmb__Discount_Threshold__c(
+			Name = 'testLevel', cspmb__Discount_Type__c = 'Percentage',
+			cspmb__Discount_Threshold__c = 10.00, cspmb__Authorization_Level__c = authLevel.Id
+		);
 		insert discTres;
 
 
@@ -112,19 +160,33 @@ private class FrameRateManagerControllerTest {
 		// RC & RCL
 		cspmb__Rate_Card__c rc = new cspmb__Rate_Card__c(cspmb__Is_Active__c = true);
 		insert rc;
-		cspmb__Rate_Card_Line__c rcl = new cspmb__Rate_Card_Line__c(cspmb__Rate_Card__c = rc.Id, Name = 'testRCL', cspmb__Is_Active__c = true, cspmb__rate_value__c = 124.99, cspmb__Rate_Card_Line_Unit__c = 'Sample Unit');
+		cspmb__Rate_Card_Line__c rcl = new cspmb__Rate_Card_Line__c(
+			cspmb__Rate_Card__c = rc.Id, Name = 'testRCL', cspmb__Is_Active__c = true, cspmb__rate_value__c = 124.99, cspmb__Rate_Card_Line_Unit__c = 'Sample Unit'
+		);
 		insert rcl;
 		cspmb__Price_Item_Rate_Card_Association__c pirc = new cspmb__Price_Item_Rate_Card_Association__c(cspmb__Rate_Card__c = rc.Id, cspmb__Price_Item__c = cp_1.Id);
 		insert pirc;
 
 		// ADDONS
-		cspmb__Add_On_Price_Item__c add_1 = new cspmb__Add_On_Price_Item__c (Name = 'ADD1', cspmb__One_Off_Charge__c = 10.00, cspmb__Billing_Frequency__c = 'Monthly', cspmb__Is_Active__c = true);
-		cspmb__Add_On_Price_Item__c add_2 = new cspmb__Add_On_Price_Item__c (Name = 'ADD2', cspmb__One_Off_Charge__c = 10.00, cspmb__Billing_Frequency__c = 'Monthly', cspmb__Is_Active__c = true);
+		cspmb__Add_On_Price_Item__c add_1 = new cspmb__Add_On_Price_Item__c(
+			Name = 'ADD1', cspmb__One_Off_Charge__c = 10.00, cspmb__Billing_Frequency__c = 'Monthly', cspmb__Is_Active__c = true
+		);
+		cspmb__Add_On_Price_Item__c add_2 = new cspmb__Add_On_Price_Item__c(
+			Name = 'ADD2', cspmb__One_Off_Charge__c = 10.00, cspmb__Billing_Frequency__c = 'Monthly', cspmb__Is_Active__c = true
+		);
 
 
-		cspmb__Add_On_Price_Item__c add_invalid_start = new cspmb__Add_On_Price_Item__c (Name = 'ADD_INV_START', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Effective_Start_Date__c = Date.today().addDays(1));
-		cspmb__Add_On_Price_Item__c add_invalid_end = new cspmb__Add_On_Price_Item__c (Name = 'ADD_INV_END', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Effective_End_Date__c = Date.today().addDays(-1));
-		cspmb__Add_On_Price_Item__c add_inactive = new cspmb__Add_On_Price_Item__c (Name = 'ADD_INACTIVE', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = false);
+		cspmb__Add_On_Price_Item__c add_invalid_start = new cspmb__Add_On_Price_Item__c(
+			Name = 'ADD_INV_START', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true,
+			cspmb__Effective_Start_Date__c = Date.today().addDays(1)
+		);
+		cspmb__Add_On_Price_Item__c add_invalid_end = new cspmb__Add_On_Price_Item__c(
+			Name = 'ADD_INV_END', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true,
+			cspmb__Effective_End_Date__c = Date.today().addDays(-1)
+		);
+		cspmb__Add_On_Price_Item__c add_inactive = new cspmb__Add_On_Price_Item__c(
+			Name = 'ADD_INACTIVE', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = false
+		);
 
 		insert add_1;
 		insert add_2;
@@ -133,16 +195,34 @@ private class FrameRateManagerControllerTest {
 		insert add_invalid_end;
 		insert add_inactive;
 
-		cspmb__Price_Item_Add_On_Price_Item_Association__c add1assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_1.Id, cspmb__Overrides_Add_On_Charges__c = false);
-		cspmb__Price_Item_Add_On_Price_Item_Association__c add2assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_2.Id, cspmb__Price_Item__c = cp_3.Id);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add1assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(
+			cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_1.Id, cspmb__Overrides_Add_On_Charges__c = false
+		);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add2assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(
+			cspmb__Add_On_Price_Item__c = add_2.Id, cspmb__Price_Item__c = cp_3.Id
+		);
 
-		cspmb__Price_Item_Add_On_Price_Item_Association__c addValassocStart = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id);
-		cspmb__Price_Item_Add_On_Price_Item_Association__c addInvassocStart = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id, cspmb__effective_start_date__c = Date.today().addDays(1));
-		cspmb__Price_Item_Add_On_Price_Item_Association__c addInvassocEnd = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_2.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id, cspmb__effective_end_date__c = Date.today().addDays(-1));
+		cspmb__Price_Item_Add_On_Price_Item_Association__c addValassocStart = new cspmb__Price_Item_Add_On_Price_Item_Association__c(
+			cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id
+		);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c addInvassocStart = new cspmb__Price_Item_Add_On_Price_Item_Association__c(
+			cspmb__Add_On_Price_Item__c = add_1.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id,
+			cspmb__effective_start_date__c = Date.today().addDays(1)
+		);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c addInvassocEnd = new cspmb__Price_Item_Add_On_Price_Item_Association__c(
+			cspmb__Add_On_Price_Item__c = add_2.Id, cspmb__Price_Item__c = cp_addon_assoc_inv.Id,
+			cspmb__effective_end_date__c = Date.today().addDays(-1)
+		);
 
-		cspmb__Price_Item_Add_On_Price_Item_Association__c add3assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_invalid_start.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
-		cspmb__Price_Item_Add_On_Price_Item_Association__c add4assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_invalid_end.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
-		cspmb__Price_Item_Add_On_Price_Item_Association__c add5assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(cspmb__Add_On_Price_Item__c = add_inactive.Id, cspmb__Price_Item__c = cp_addon_inv.Id);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add3assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(
+			cspmb__Add_On_Price_Item__c = add_invalid_start.Id, cspmb__Price_Item__c = cp_addon_inv.Id
+		);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add4assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(
+			cspmb__Add_On_Price_Item__c = add_invalid_end.Id, cspmb__Price_Item__c = cp_addon_inv.Id
+		);
+		cspmb__Price_Item_Add_On_Price_Item_Association__c add5assoc = new cspmb__Price_Item_Add_On_Price_Item_Association__c(
+			cspmb__Add_On_Price_Item__c = add_inactive.Id, cspmb__Price_Item__c = cp_addon_inv.Id
+		);
 
 		insert add1assoc;
 		insert add2assoc;
@@ -156,13 +236,19 @@ private class FrameRateManagerControllerTest {
 		insert add5assoc;
 
 		// FRAME AGREEMENTS
-		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1', csconta__Account__c = test_account.Id);
+		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(
+			csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1', csconta__Account__c = test_account.Id
+		);
 		csconta__Frame_Agreement__c fa_2 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA2');
 		csconta__Frame_Agreement__c fa_3 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA3');
 
-		csconta__Frame_Agreement__c fa_master = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA-Master', csconta__agreement_level__c = 'Master Agreement');
+		csconta__Frame_Agreement__c fa_master = new csconta__Frame_Agreement__c(
+			csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA-Master', csconta__agreement_level__c = 'Master Agreement'
+		);
 
-		csconta__Frame_Agreement__c fA_account = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA_account', csconta__Account__c = test_account.Id);
+		csconta__Frame_Agreement__c fA_account = new csconta__Frame_Agreement__c(
+			csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA_account', csconta__Account__c = test_account.Id
+		);
 
 		insert fa_1;
 		insert fa_2;
@@ -176,7 +262,20 @@ private class FrameRateManagerControllerTest {
 		return decomposeData;
 	}
 
-	public static csfam__fac_settings__c setupSettings() {
+	@TestSetup
+	static void makeData(){
+		Fac_Settings__c facSettings = new Fac_Settings__c();
+		facSettings.active_status__c = 'Active';
+		facSettings.approved_status__c = 'Approved';
+		facSettings.closed_status__c = 'Replaced';
+		facSettings.draft_status__c = 'Draft';
+		facSettings.price_item_fields__c = 'cspmb__Contract_Term__c';
+		facSettings.rcl_fields__c = 'cspmb__Currency_Code__c';
+		facSettings.requires_approval_status__c = 'Requires Approval';
+		insert facSettings;
+	}
+
+	public static void setupSettings() {
 		csutil__JSON_Data__c headerData = new csutil__JSON_Data__c(Name = 'FA-Header', csutil__value__c = '[{"field":"csconta__Agreement_Name__c","readOnly":false,"label":"Agreement Name","type":"text","grid":2}]');
 		csutil__JSON_Data__c categorizationData = new csutil__JSON_Data__c(Name = 'FA-Categorization', csutil__value__c = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]');
 		csutil__JSON_Data__c customButtonData = new csutil__JSON_Data__c(Name = 'FA-Custom-Buttons', csutil__value__c = '[{"type":"action","label":"Action button","id":"bta1","method":"ActionFunction","hidden":["Active"]},{"type":"iframe","label":"iFrame button","id":"bta2","method":"iFrameFunction","hidden":["Active"]},{"type":"redirect","label":"Redirect button","id":"bta3","method":"RedirectFunction","hidden":["Active"]}]');
@@ -188,18 +287,6 @@ private class FrameRateManagerControllerTest {
 		insert standardButtonData;
 		insert categorizationData;
 		insert customTabsData;
-
-		csfam__fac_settings__c FACSettings = new csfam__fac_settings__c();
-		FACSettings.csfam__active_status__c = 'Active';
-		FACSettings.csfam__approved_status__c = 'Approved';
-		FACSettings.csfam__closed_status__c = 'Replaced';
-		FACSettings.csfam__draft_status__c = 'Draft';
-		FACSettings.csfam__price_item_fields__c = 'cspmb__Contract_Term__c';
-		FACSettings.csfam__rcl_fields__c = 'cspmb__Currency_Code__c, Category__c';
-		FACSettings.csfam__requires_approval_status__c = 'Requires Approval';
-		insert FACSettings;
-		return FACSettings;
-
 	}
 
 	public static testMethod void testConstructor() {
@@ -432,7 +519,6 @@ private class FrameRateManagerControllerTest {
 
 		Id userId = UserInfo.getUserId();
 
-
 		List<cspmb__Price_Item__c> cpList = [select Id from cspmb__Price_Item__c];
 		cspmb__Price_Item__c cp_addon_inv = [select Id from cspmb__Price_Item__c where Name = 'cp_addon_inv'];
 		cspmb__Price_Item__c cp_1 = [select Id from cspmb__Price_Item__c where Name = 'cp_1'];
@@ -644,10 +730,8 @@ private class FrameRateManagerControllerTest {
 	public static testMethod void testGetStandaloneAddons() {
 		setupPricingModel();
 
-		csfam__fac_settings__c FACSettings = new csfam__fac_settings__c();
-		FACSettings.csfam__standalone_addon_fields__c = '';
-		insert FACSettings;
-
+		Fac_Settings__c facSettings = FrameRateManagerControllerTest.loadFacSettings();
+		facSettings.standalone_addon_fields__c = '';
 
 		Test.startTest();
 
@@ -662,9 +746,8 @@ private class FrameRateManagerControllerTest {
 	public static testMethod void testFilterStandaloneAddons() {
 		setupPricingModel();
 
-		csfam__fac_settings__c FACSettings = new csfam__fac_settings__c();
-		FACSettings.csfam__standalone_addon_fields__c = '';
-		insert FACSettings;
+		Fac_Settings__c facSettings = FrameRateManagerControllerTest.loadFacSettings();
+		facSettings.standalone_addon_fields__c = '';
 
 		Test.startTest();
 
@@ -679,9 +762,8 @@ private class FrameRateManagerControllerTest {
 	public static testMethod void testGetAddonDiscountInformation() {
 		setupPricingModel();
 
-		csfam__fac_settings__c FACSettings = new csfam__fac_settings__c();
-		FACSettings.csfam__standalone_addon_fields__c = '';
-		insert FACSettings;
+		Fac_Settings__c facSettings = FrameRateManagerControllerTest.loadFacSettings();
+		facSettings.standalone_addon_fields__c = '';
 
 		Test.startTest();
 
@@ -782,9 +864,9 @@ private class FrameRateManagerControllerTest {
 
 	public static testMethod void testDecomposeAttachment() {
 		String decomposeData = setupPricingModel();
-		csfam__fac_settings__c FACSettings = setupSettings();
+		Fac_Settings__c facSettings = Fac_Settings__c.getInstance(UserInfo.getUserID());
 
-		system.debug('FACSettings:' + FACSettings);
+		system.debug('facSettings:' + facSettings);
 
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c, csconta__replaced_frame_agreement__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
 
@@ -865,6 +947,7 @@ private class FrameRateManagerControllerTest {
 	}
 
 	public static testMethod void testPriceItemDataEdgeCases() {
+		FrameRateManagerControllerTest.setupSettings();
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c();
 		insert cp_1;
 
@@ -881,6 +964,7 @@ private class FrameRateManagerControllerTest {
 	}
 
 	public static testMethod void testFrameAgreementMinorFunctions() {
+		FrameRateManagerControllerTest.setupSettings();
 
 		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c();
 		insert fa_1;
@@ -950,4 +1034,7 @@ private class FrameRateManagerControllerTest {
 		system.assertNotEquals(null, result2);
 	}
 
+	private static Fac_Settings__c loadFacSettings(){
+		return Fac_Settings__c.getInstance(UserInfo.getUserID());
+	}
 }

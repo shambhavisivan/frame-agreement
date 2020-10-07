@@ -1386,4 +1386,74 @@
         <shortDescription>util_negotiation_input_diff_label</shortDescription>
         <value>negotiated</value>
     </labels>
+    <labels>
+        <fullName>addAddonsCTAMessage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>There are no Add Ons in here</shortDescription>
+        <value>There are no Add Ons in here</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteAddons_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Are you sure you want to delete selected Add Ons?</shortDescription>
+        <value>Are you sure you want to delete selected Add Ons?</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteAddons_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete products</shortDescription>
+        <value>Delete products</value>
+    </labels>
+    <labels>
+        <fullName>btn_AddAddons</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Add Add Ons</shortDescription>
+        <value>Add Add Ons</value>
+    </labels>
+    <labels>
+        <fullName>btn_DeleteAddons</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete Add Ons</shortDescription>
+        <value>Delete Add Ons</value>
+    </labels>
+    <labels>
+        <fullName>modal_addAddons_input_search_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Filter addons</shortDescription>
+        <value>Filter addons</value>
+    </labels>
+    <labels>
+        <fullName>modal_addAddons_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Add stand-alone Add Ons</shortDescription>
+        <value>Add stand-alone Add Ons</value>
+    </labels>
+    <labels>
+        <fullName>modal_addon_categorization_switch</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Addon categorisation panel</shortDescription>
+        <value>Addon categorisation panel</value>
+    </labels>
+    <labels>
+        <fullName>modal_addon_categorization_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Addon Categorization</shortDescription>
+        <value>Addon Categorization</value>
+    </labels>
+    <labels>
+        <fullName>addons_tab_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Standalone Addons</shortDescription>
+        <value>Standalone Addons</value>
+    </labels>
 </CustomLabels>

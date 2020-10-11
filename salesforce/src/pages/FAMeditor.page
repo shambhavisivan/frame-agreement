@@ -403,7 +403,7 @@
 			background-image: url('{!URLFOR($Resource.fonts, 'img/cloudsense.png')}') !important;
 		}
 	</style>
-	<script src="{!$Resource.FrameAgreementResource}" type="text/javascript"/>
+	<script src="{!URLFOR($Resource.FrameAgreementResource,'bundle.js')}" type="text/javascript"/>
 	<script>
 		__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
 			supportsFiber: true,

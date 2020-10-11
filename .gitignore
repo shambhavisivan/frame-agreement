@@ -1,5 +1,5 @@
 /node_modules
-/dist/bundle.js
+*/dist
 /dist/DiscountCodes.js
 /dist/DynamicGroup.js
 /.tmp
@@ -8,6 +8,8 @@
 /coverage
 .idea
 /credentials.js
+/.sfdx
+FrameAgreementResource.resource
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies

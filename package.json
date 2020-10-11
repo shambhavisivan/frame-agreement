@@ -8,7 +8,7 @@
       "\\.svg": "<rootDir>/__mocks__/svgrMock.js"
     },
     "setupFilesAfterEnv": [
-      "<rootDir>dist/local_data.js",
+      "<rootDir>src/local-server/local_data.js",
       "<rootDir>__tests__/setupEnzyme.js"
     ],
     "testPathIgnorePatterns": [
@@ -17,6 +17,8 @@
     ]
   },
   "dependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.5.0",
     "moment": "^2.24.0",
     "react": "~16.7.0",
     "react-collapse": "^5.0.0",
@@ -33,14 +35,15 @@
     "react-router-dom": "~4.3.1",
     "react-select": "^2.4.3",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "zip-webpack-plugin": "^3.0.0"
   },
   "scripts": {
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
-    "start": "webpack-dev-server --port 8080 --config ./webpack.config.js --mode development",
-    "build": "webpack --config ./webpack.config.prod.js --mode development",
-    "deploy": "webpack --config ./webpack.config.prod.js --mode production && gulp"
+    "start": "NODE_ENV=development webpack-dev-server",
+    "build": "NODE_ENV=production webpack",
+    "deploy": "NODE_ENV=production webpack"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",

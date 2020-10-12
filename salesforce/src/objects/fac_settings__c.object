@@ -9,8 +9,7 @@
         <externalId>false</externalId>
         <label>Account Fields</label>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <length>255</length>
+        <type>TextArea</type>
     </fields>
     <fields>
         <fullName>active_status__c</fullName>
@@ -96,9 +95,8 @@
         <inlineHelpText>Draft, Requires Approval</inlineHelpText>
         <externalId>false</externalId>
         <label>FA Editable Statuses</label>
-        <type>Text</type>
+        <type>TextArea</type>
         <unique>false</unique>
-        <length>255</length>
     </fields>
     <fields>
         <fullName>fa_number_prefix__c</fullName>
@@ -116,9 +114,8 @@
         <inlineHelpText>csconta__agreement_level__c, csconta__Valid_From__c</inlineHelpText>
         <externalId>false</externalId>
         <label>Frame Agreement Fields</label>
-        <type>Text</type>
+        <type>TextArea</type>
         <unique>false</unique>
-        <length>255</length>
     </fields>
     <fields>
         <fullName>input_minmax_restriction__c</fullName>
@@ -134,9 +131,8 @@
         <description>Populate if additional fields should be displayed in Commercial Product lists.</description>
         <externalId>false</externalId>
         <label>Price Item Fields</label>
-        <type>Text</type>
+        <type>TextArea</type>
         <unique>false</unique>
-        <length>255</length>
     </fields>
     <fields>
         <fullName>product_chunk_size__c</fullName>
@@ -154,8 +150,7 @@
         <inlineHelpText>description__c</inlineHelpText>
         <externalId>false</externalId>
         <label>RCL Fields</label>
-        <type>Text</type>
-        <length>255</length>
+        <type>TextArea</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -193,8 +188,7 @@
         <inlineHelpText>mv,mvp</inlineHelpText>
         <externalId>false</externalId>
         <label>Show Volume Fields</label>
-        <type>Text</type>
-        <length>255</length>
+        <type>TextArea</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -212,8 +206,7 @@
         <inlineHelpText>mv,mvp</inlineHelpText>
         <externalId>false</externalId>
         <label>Usage Type Fields</label>
-        <type>Text</type>
-        <length>255</length>
+        <type>TextArea</type>
         <unique>false</unique>
     </fields>
     <fields>

@@ -7,7 +7,7 @@ global with sharing class FrameRateManagerController {
 	public static final String FAC_ATTACHMENT_NAME = 'FrameAgreementAttachment';
 	public static final String FAC_ATTACHMENT_DESC = 'Added products and negotiated data against Frame Agreement';
 	public String accountId;
-	public static final List <String> FA_FIELDS = new List <String>{
+	public static final List<String> FA_FIELDS = new List<String>{
 		'Id',
 		'Name',
 		'LastModifiedDate',
@@ -24,6 +24,7 @@ global with sharing class FrameRateManagerController {
 		'csconta__frame_agreement_number__c',
 		'csconta__agreement_level__c'
 	};
+	private static String MALFORMED_JSON_EXCEPTION = 'JSON value is malformed';
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -76,7 +77,7 @@ global with sharing class FrameRateManagerController {
 
 		String profile = getUserProfile();
 
-		List <csutil__JSON_Data__c> json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Header'
@@ -96,7 +97,7 @@ global with sharing class FrameRateManagerController {
 
 		String profile = getUserProfile();
 
-		List <csutil__JSON_Data__c> json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Custom-Buttons'
@@ -116,7 +117,7 @@ global with sharing class FrameRateManagerController {
 
 		String profile = getUserProfile();
 
-		List <csutil__JSON_Data__c> json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Standard-Buttons'
@@ -133,7 +134,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getCategorizationData() {
-		List <csutil__JSON_Data__c> json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Categorization'
@@ -147,7 +148,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getAddonCategorizationData() {
-		List <csutil__JSON_Data__c> json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Addon-Categorization'
@@ -161,7 +162,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getRelatedListsData() {
-		List <csutil__JSON_Data__c> json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Related-Lists'
@@ -178,7 +179,7 @@ global with sharing class FrameRateManagerController {
 
 		String profile = getUserProfile();
 
-		List <csutil__JSON_Data__c> json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-Custom-Tabs'
@@ -195,7 +196,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@TestVisible private static csutil__JSON_Data__c getStandardPricebook() {
-		List <csutil__JSON_Data__c> json_data = [
+		List<csutil__JSON_Data__c> json_data = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
 			where Name = 'FA-StandardPricebook'
@@ -213,11 +214,11 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, Object> getAccountsInformation(String faId, String whereClause) {
+	@TestVisible public static Map<String, Object> getAccountsInformation(String faId, String whereClause) {
 		// NEED
 		// count
 		// initial labels for associations
-		Map <String, Object> returnValues = new Map <String, Object> ();
+		Map<String, Object> returnValues = new Map<String, Object>();
 
 		// Get accounts entangled with this fa
 
@@ -239,7 +240,7 @@ global with sharing class FrameRateManagerController {
 			returnValues.put('main_account', mainAcc);
 		}
 		// create property for associations (id, account id, account name)
-		List <csconta__Account_Frame_Agreement_Association__c> associatedAccounts = new List <csconta__Account_Frame_Agreement_Association__c> ();
+		List<csconta__Account_Frame_Agreement_Association__c> associatedAccounts = new List<csconta__Account_Frame_Agreement_Association__c>();
 		associatedAccounts = [
 			select id, csconta__Account__r.Id, csconta__Account__r.Name
 			from csconta__Account_Frame_Agreement_Association__c
@@ -260,8 +261,8 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, List <Map<String, Object>>> getPicklistOptions(List <String> picklistFields) {
-		List <Schema.PicklistEntry> ple = new List <Schema.PicklistEntry> ();
+	@TestVisible public static Map <String, List<Map<String, Object>>> getPicklistOptions(List<String> picklistFields) {
+		List <Schema.PicklistEntry> ple = new List <Schema.PicklistEntry>();
 		String [] types = new String[]{
 			'csconta__Frame_Agreement__c'
 		};
@@ -270,16 +271,16 @@ global with sharing class FrameRateManagerController {
 
 		Map<String, Schema.SObjectField> fieldOptions = results[0].fields.getMap();
 
-		Map <String, List <Map<String, Object>>> optionMap = new Map <String, List <Map<String, Object>>>();
+		Map <String, List<Map<String, Object>>> optionMap = new Map <String, List<Map<String, Object>>>();
 
 		for (String field : picklistFields) {
 
 			ple = fieldOptions.get(field).getDescribe().getPicklistValues();
 
-			List <Map<String, Object>> options = new List <Map<String, Object>> ();
+			List<Map<String, Object>> options = new List<Map<String, Object>>();
 			// getLabel=OptionA;getValue=OptionA
 			for (Schema.PicklistEntry optionEntry : ple) {
-				Map<String, Object> option = new Map<String, Object> ();
+				Map<String, Object> option = new Map<String, Object>();
 				option.put('label', optionEntry.getLabel());
 				option.put('value', optionEntry.getValue());
 				options.add(option);
@@ -346,7 +347,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public static String getPointedObjectFromFa(String field) {
-		Map <String, Object> returnValues = new Map <String, Object> ();
+		Map<String, Object> returnValues = new Map<String, Object>();
 		String pointedObject = '';
 
 		//***********************************************************************************
@@ -367,8 +368,8 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, Object> getLookupInformation(String field, String column, String whereClause, String initValId) {
-		Map <String, Object> returnValues = new Map <String, Object> ();
+	@TestVisible public static Map<String, Object> getLookupInformation(String field, String column, String whereClause, String initValId) {
+		Map<String, Object> returnValues = new Map<String, Object>();
 
 		String accountId = getAccountId();
 
@@ -395,11 +396,11 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static List <Object> getLookupRecords(String jsonParameters) {
+	@TestVisible public static List<Object> getLookupRecords(String jsonParameters) {
 		String accountId = getAccountId();
 
-		Map <String, Object> parameters = (Map <String, Object>) JSON.deserializeUntyped(jsonParameters);
-		List <Object> returnValues = new List <Object> ();
+		Map<String, Object> parameters = (Map<String, Object>) JSON.deserializeUntyped(jsonParameters);
+		List<Object> returnValues = new List<Object>();
 
 		//***********************************
 		String pointedObject = '';
@@ -412,22 +413,22 @@ global with sharing class FrameRateManagerController {
 
 		}
 		//***********************************
-		List <String> columnsParsed = new List <String> ();
+		List<String> columnsParsed = new List<String>();
 
-		for (Object column : (List <Object>) parameters.get('columns')) {
+		for (Object column : (List<Object>) parameters.get('columns')) {
 			system.debug(String.valueOf(column));
 			columnsParsed.add(String.valueOf(column));
 		}
 
 		columnsParsed.add('Id');
-		List <String> uniqueList = getUniqueListElements(columnsParsed);
+		List<String> uniqueList = getUniqueListElements(columnsParsed);
 
 		//***********************************
 
 		String query = 'select  ' + String.join(uniqueList, ',') + ' from  ' + pointedObject;
 
 		// CONSTRUCT WHERE CLAUSE LIST
-		List <String> whereClauses = new List <String> ();
+		List<String> whereClauses = new List<String>();
 
 		if (parameters.containsKey('whereClause') && parameters.get('whereClause') != null) {
 			whereClauses.add((String) parameters.get('whereClause'));
@@ -461,22 +462,22 @@ global with sharing class FrameRateManagerController {
 	}
 
 
-	@TestVisible private static List <String> getCategorizationDataFields() {
-		List <String> returnData = new List <String> ();
+	@TestVisible private static List<String> getCategorizationDataFields() {
+		List<String> returnData = new List<String>();
 		csutil__JSON_Data__c json_data = getCategorizationData();
 
-		List <Object> categorizationData = new List <Object>();
+		List<Object> categorizationData = new List<Object>();
 
 		if (json_data != null) {
 			try {
-				categorizationData = (List <Object>) JSON.deserializeUntyped(json_data.csutil__value__c);
+				categorizationData = (List<Object>) JSON.deserializeUntyped(json_data.csutil__value__c);
 			} catch (Exception e) {
 
 			}
 		}
 
 		for (Object category : categorizationData) {
-			Map <String, Object> categoryMap = (Map <String, Object>) category;
+			Map<String, Object> categoryMap = (Map<String, Object>) category;
 			String fieldName = (String) categoryMap.get('field');
 			returnData.add(fieldName);
 		}
@@ -484,27 +485,27 @@ global with sharing class FrameRateManagerController {
 
 	}
 
-	@TestVisible private static List <String> getFieldsFromJSONData() {
+	@TestVisible private static List<String> getFieldsFromJSONData() {
 
 		csutil__JSON_Data__c json_data = getHeaderData();
 		String data;
 
 		if (json_data == null || json_data.csutil__value__c == null) {
-			return new List <String> ();
+			return new List<String>();
 		} else {
 			data = json_data.csutil__value__c;
 		}
 
-		List <Object> listData = (List <Object>) JSON.deserializeUntyped(data);
+		List<Object> listData = (List<Object>) JSON.deserializeUntyped(data);
 		system.debug(listData);
 
-		Set <String> fa_fields_set = new Set <String> ();
+		Set <String> fa_fields_set = new Set <String>();
 		fa_fields_set.addAll(FA_FIELDS);
 
-		List <String> fields = new List <String> ();
+		List<String> fields = new List<String>();
 
 		for (Object f : listData) {
-			Map <String, Object> converted = (Map <String, Object>) f;
+			Map<String, Object> converted = (Map<String, Object>) f;
 			String field = (String) converted.get('field');
 			if (!fa_fields_set.contains(field)) {
 				fields.add(field);
@@ -514,8 +515,8 @@ global with sharing class FrameRateManagerController {
 		return fields;
 	}
 
-	public static Map <String, Object> getCustomSettings() {
-		Map <String, Object> settingMap = new Map <String, Object> ();
+	public static Map<String, Object> getCustomSettings() {
+		Map<String, Object> settingMap = new Map<String, Object>();
 		Fac_Settings__c facSettings = getFacSetting();
 
 		settingMap.put('price_item_fields', facSettings.get('price_item_fields__c'));
@@ -537,7 +538,7 @@ global with sharing class FrameRateManagerController {
 
 		settingMap.put('fa_editable_statuses', facSettings.get('fa_editable_statuses__c'));
 
-		Map <String, Object> statuses = new Map <String, Object> ();
+		Map<String, Object> statuses = new Map<String, Object>();
 		statuses.put('active_status', facSettings.get('active_status__c'));
 		statuses.put('approved_status', facSettings.get('approved_status__c'));
 		statuses.put('draft_status', facSettings.get('draft_status__c'));
@@ -582,9 +583,9 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	@TestVisible public static Map < Id, List <PricingElementWrapper>> getPriceItemCharges(List <Id> priceItemIdList) {
+	@TestVisible public static Map < Id, List <PricingElementWrapper>> getPriceItemCharges(List<Id> priceItemIdList) {
 
-		Map <Id, List <PricingElementWrapper>> cpId_peWrapper = new Map <Id, List <PricingElementWrapper>> ();
+		Map <Id, List <PricingElementWrapper>> cpId_peWrapper = new Map <Id, List <PricingElementWrapper>>();
 		// Get all pricing elements and their types labels for commercial product
 		// Get all pricing element coorelated to this price item id along with the name of their pricing element type.
 		// These are the charges defined for this price item.
@@ -604,13 +605,13 @@ global with sharing class FrameRateManagerController {
 		}
 
 
-		Map <Id, Id> peId_cpId = new Map <Id, Id> ();
+		Map<Id, Id> peId_cpId = new Map<Id, Id>();
 
 		// Create a map for getting the price element type label from price element id
-		Map <Id, String> pricingElementLabels = new Map <Id, String> ();
-		Map <Id, String> pricingElementTypes = new Map <Id, String> ();
+		Map <Id, String> pricingElementLabels = new Map <Id, String>();
+		Map <Id, String> pricingElementTypes = new Map <Id, String>();
 
-		Set <Id> pricingElementIds = (new Map <Id, SObject> (priceElements)).keySet();
+		Set<Id> pricingElementIds = (new Map <Id, SObject> (priceElements)).keySet();
 
 		for (cspmb__Pricing_Element__c pricingElement : priceElements) {
 			String label = pricingElement.cspmb__pricing_element_type__r.cspmb__label__c;
@@ -637,7 +638,7 @@ global with sharing class FrameRateManagerController {
 		}
 
 		// Save id's of the pricing rules associated with this price book into the list
-		List <Id> pricingRuleList = new List <Id> ();
+		List<Id> pricingRuleList = new List<Id>();
 		for (cspmb__Pricing_Rule_Group_Rule_Association__c prgra : priceBookAssociations) {
 			pricingRuleList.add(prgra.cspmb__pricing_rule__c);
 		}
@@ -651,7 +652,7 @@ global with sharing class FrameRateManagerController {
 			where cspmb__pricing_element__c in:pricingElementIds and cspmb__pricing_rule__c in:pricingRuleList
 		];
 
-		List <PricingElementWrapper> priceItemChargesData = new List <PricingElementWrapper> ();
+		List <PricingElementWrapper> priceItemChargesData = new List <PricingElementWrapper>();
 		// for each pipra, create charges object
 		for (cspmb__Price_Item_Pricing_Rule_Association__c pipra : pipraList) {
 
@@ -675,7 +676,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, Object> getApprovalHistory(Id faId) {
+	@TestVisible public static Map<String, Object> getApprovalHistory(Id faId) {
 
 		List <ProcessInstance> listProcess = [
 			select Id, (
@@ -691,14 +692,14 @@ global with sharing class FrameRateManagerController {
 			order by CreatedDate desc, Id desc
 		];
 
-		Map <String, Object> approvalProcess = new Map <String, Object> ();
+		Map<String, Object> approvalProcess = new Map<String, Object>();
 
 		Id userId = UserInfo.getUserId();
 		Boolean isApprover = false;
 		Boolean isPending = false;
 		Boolean isInitiator = false;
 		Boolean userIsAdmin = isUserAdmin();
-		Set <Id> userIsDelegatedApprover = isUserDelegate(userId);
+		Set<Id> userIsDelegatedApprover = isUserDelegate(userId);
 
 		for (ProcessInstance pi : listProcess) {
 			for (ProcessInstanceHistory piwi : pi.StepsAndWorkitems) {
@@ -805,14 +806,14 @@ global with sharing class FrameRateManagerController {
 		return userisAdminOrDelegatedApprover;
 	}
 
-	@TestVisible public static Set <Id> isUserDelegate(Id userId) {
-		Set <Id> userQueues = new Set <Id> ();
+	@TestVisible public static Set<Id> isUserDelegate(Id userId) {
+		Set<Id> userQueues = new Set<Id>();
 		List <User> delegatedUserIds = [
 			select Id
 			from User
 			where DelegatedApproverId = :userId
 		];
-		Set <Id> delegatedUserId = new Set <Id> ();
+		Set<Id> delegatedUserId = new Set<Id>();
 		delegatedUserId.add(userId);
 		if (delegatedUserIds != null && !delegatedUserIds.isEmpty()) {
 			for (User user : delegatedUserIds) {
@@ -836,9 +837,9 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map <String, Object> getAppSettings(Id accountId) {
+	public static Map<String, Object> getAppSettings(Id accountId) {
 
-		Map <String, Object> appSettings = new Map <String, Object> ();
+		Map<String, Object> appSettings = new Map<String, Object>();
 
 		Account acc;
 		try {
@@ -851,13 +852,13 @@ global with sharing class FrameRateManagerController {
 			throw new ApplicationException('Cannot find account with Id:' + accountId);
 		}
 
-		List <Object> headerData = new List <Object> ();
-		List <Object> buttonCustom = new List <Object> ();
-		Map <String, Object> buttonStandard = new Map <String, Object> ();
-		List <Object> addonCategorizationData = new List <Object> ();
-		List <Object> categorizationData = new List <Object> ();
-		List <Object> relatedData = new List <Object> ();
-		List <Object> customTabs = new List <Object> ();
+		List<Object> headerData = new List<Object>();
+		List<Object> buttonCustom = new List<Object>();
+		Map<String, Object> buttonStandard = new Map<String, Object>();
+		List<Object> addonCategorizationData = new List<Object>();
+		List<Object> categorizationData = new List<Object>();
+		List<Object> relatedData = new List<Object>();
+		List<Object> customTabs = new List<Object>();
 
 		csutil__JSON_Data__c header_data = getHeaderData();
 		csutil__JSON_Data__c button_custom = getCustomButtonData();
@@ -868,31 +869,31 @@ global with sharing class FrameRateManagerController {
 		csutil__JSON_Data__c related_lists = getRelatedListsData();
 
 		if (header_data != null && header_data.csutil__value__c != null) {
-			headerData = (List <Object>) JSON.deserializeUntyped(header_data.csutil__value__c);
+			headerData = (List<Object>) JSON.deserializeUntyped(header_data.csutil__value__c);
 		}
 
 		if (button_custom != null && button_custom.csutil__value__c != null) {
-			buttonCustom = (List <Object>) JSON.deserializeUntyped(button_custom.csutil__value__c);
+			buttonCustom = (List<Object>) JSON.deserializeUntyped(button_custom.csutil__value__c);
 		}
 
 		if (button_standard != null && button_standard.csutil__value__c != null) {
-			buttonStandard = (Map <String, Object>) JSON.deserializeUntyped(button_standard.csutil__value__c);
+			buttonStandard = (Map<String, Object>) JSON.deserializeUntyped(button_standard.csutil__value__c);
 		}
 
 		if (categorization_data != null && categorization_data.csutil__value__c != null) {
-			categorizationData = (List <Object>) JSON.deserializeUntyped(categorization_data.csutil__value__c);
+			categorizationData = (List<Object>) JSON.deserializeUntyped(categorization_data.csutil__value__c);
 		}
 
 		if (addon_categorization_data != null && addon_categorization_data.csutil__value__c != null) {
-			addonCategorizationData = (List <Object>) JSON.deserializeUntyped(addon_categorization_data.csutil__value__c);
+			addonCategorizationData = (List<Object>) JSON.deserializeUntyped(addon_categorization_data.csutil__value__c);
 		}
 
 		if (related_lists != null && related_lists.csutil__value__c != null) {
-			relatedData = (List <Object>) JSON.deserializeUntyped(related_lists.csutil__value__c);
+			relatedData = (List<Object>) JSON.deserializeUntyped(related_lists.csutil__value__c);
 		}
 
 		if (custom_tabs != null && custom_tabs.csutil__value__c != null) {
-			customTabs = (List <Object>) JSON.deserializeUntyped(custom_tabs.csutil__value__c);
+			customTabs = (List<Object>) JSON.deserializeUntyped(custom_tabs.csutil__value__c);
 		}
 
 		appSettings.put('account', acc);
@@ -914,7 +915,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public static List <cspmb__Add_On_Price_Item__c> getStandaloneAddons_p(List<Id> addonIds) {
-		List <String> addonMandatoryFields = new List <String> {
+		List<String> addonMandatoryFields = new List<String> {
 			'Id',
 			'Name',
 			'cspmb__One_Off_Charge__c',
@@ -927,7 +928,7 @@ global with sharing class FrameRateManagerController {
 		Fac_Settings__c facSettings = FrameRateManagerController.getFacSetting();
 		String addFields = (String) facSettings.get('standalone_addon_fields__c');
 
-		List <String> addFieldsArr = new List <String>();
+		List<String> addFieldsArr = new List<String>();
 
 		if (!String.isBlank(addFields)) {
 			addFieldsArr = addFields.replaceAll('\\s+','').split(',');
@@ -957,17 +958,22 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	// public static List <cspmb__Price_Item__c> getCommercialProducts(Integer pageNum) {
-	public static List <cspmb__Price_Item__c> getCommercialProducts(List <String> priceItemIds) {
+	public static List<cspmb__Price_Item__c> getCommercialProducts(List<String> priceItemIds) {
 		if (priceItemIds == null || priceItemIds.isEmpty()) {
-			priceItemIds = new List <String> ();
+			priceItemIds = new List<String>();
 		}
+
+		String filterJsonValue = getInitialFilters();
+		if (filterJsonValue != null) {
+			return filterCommercialProducts(filterJsonValue);
+		}
+
 		return getCommercialProducts_p(priceItemIds);
 	}
 
-	private static List <cspmb__Price_Item__c> getCommercialProducts_p(List <Id> priceItemIds) {
+	private static List<cspmb__Price_Item__c> getCommercialProducts_p(List<Id> priceItemIds) {
 
-		List <String> standardFields = new List <String>{
+		List<String> standardFields = new List<String>{
 			'Id',
 			'Name',
 			'cspmb__Effective_Start_Date__c',
@@ -983,22 +989,22 @@ global with sharing class FrameRateManagerController {
 
 		Fac_Settings__c facSettings = getFacSetting();
 		String csFields = (String) facSettings.get('rcl_fields__c');
-		List <String> csFieldsArr = new List <String> ();
+		List<String> csFieldsArr = new List<String>();
 
 		if (!String.isBlank(csFields)) {
 			csFieldsArr = csFields.replaceAll('\\s+','').split(',');
 		}
 
-		List <String> categorizationFields = getCategorizationDataFields();
+		List<String> categorizationFields = getCategorizationDataFields();
 
 
-		List <String> fieldsArr = new List <String> ();
+		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
 		fieldsArr.addAll(csFieldsArr);
 		fieldsArr.addAll(categorizationFields);
 
 		// Remove duplicates
-		List <String> uniqueList = getUniqueListElements(fieldsArr);
+		List<String> uniqueList = getUniqueListElements(fieldsArr);
 
 		String query = 'select  ' + String.join(uniqueList, ',') + ' from cspmb__Price_Item__c ';
 		// DD ACCOUNT NULL CLAUSE
@@ -1016,16 +1022,38 @@ global with sharing class FrameRateManagerController {
 
 		query += 'limit 50000';
 
-		List <cspmb__Price_Item__c> cpList = database.query(query);
+		List<cspmb__Price_Item__c> cpList = database.query(query);
 		return cpList;
 	}
 
+	private static String getInitialFilters() {
+		csutil__JSON_Data__c faInitialCategorization = getJsonData('FA-Initial-Categorization');
+		if (faInitialCategorization != null && String.isNotBlank(faInitialCategorization.csutil__value__c)) {
+			return faInitialCategorization.csutil__value__c;
+		}
+		return null;
+	}
+
+	private static csutil__JSON_Data__c getJsonData(String jsonSettingKey){
+		List<csutil__JSON_Data__c> result = [
+			select csutil__value__c
+			from csutil__JSON_Data__c
+			where Name = :jsonSettingKey
+		];
+
+		if (result.isEmpty()) {
+			return null;
+		} else {
+			return result[0];
+		}
+	}
+
 	@RemoteAction
-	public static Map <String, Map<String, Object>> findReplacementCommercialProduct(List <Id> priceItemIds) {
+	public static Map <String, Map<String, Object>> findReplacementCommercialProduct(List<Id> priceItemIds) {
 		// Map old cp Id: replacement cp
 		Map <String, Map<String, Object>> returnMap = new Map <String, Map<String, Object>>();
 
-		List <String> standardFields = new List <String>{
+		List<String> standardFields = new List<String>{
 			'Id',
 			'Name',
 			'cspmb__Effective_Start_Date__c',
@@ -1040,7 +1068,7 @@ global with sharing class FrameRateManagerController {
 			' from cspmb__Price_Item__c' +
 			' where Id in :priceItemIds';
 
-		List <cspmb__Price_Item__c> oldProducts = database.query(query_old);
+		List<cspmb__Price_Item__c> oldProducts = database.query(query_old);
 
 		// if products are removed, no additional searching is required.
 		// FAM will remove them from the FA
@@ -1049,7 +1077,7 @@ global with sharing class FrameRateManagerController {
 		}
 
 		Map <String, Id> codeMap = new Map <String, Id>();
-		List <String> codeList = new List <String>();
+		List<String> codeList = new List<String>();
 
 		for (cspmb__Price_Item__c cp : oldProducts) {
 			if (cp.cspmb__Price_Item_Code__c != null) {
@@ -1076,7 +1104,7 @@ global with sharing class FrameRateManagerController {
 
 		query_new += 'limit 50000';
 
-		List <cspmb__Price_Item__c> cpListNew = database.query(query_new);
+		List<cspmb__Price_Item__c> cpListNew = database.query(query_new);
 
 		// If no products have been found using old price item code list
 		// then no (valid) replacement have been made
@@ -1095,11 +1123,11 @@ global with sharing class FrameRateManagerController {
 		query_rate_card_assoc += 'limit 50000';
 		//*******************************************************************
 
-		List <cspmb__Price_Item_Add_On_Price_Item_Association__c> expiredCpAdd = database.query(query_addons_assoc);
+		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> expiredCpAdd = database.query(query_addons_assoc);
 		Map <Id, Map<Id, String>> expiredCpAddMap = new Map <Id, Map<Id, String>>();
 
-		List <cspmb__Price_Item_Rate_Card_Association__c> expiredCpRc = database.query(query_rate_card_assoc);
-		Map <Id, List <String>> expiredCpRcMap = new Map <Id, List <String>>();
+		List<cspmb__Price_Item_Rate_Card_Association__c> expiredCpRc = database.query(query_rate_card_assoc);
+		Map<Id, List<String>> expiredCpRcMap = new Map<Id, List<String>>();
 
 		for (cspmb__Price_Item_Add_On_Price_Item_Association__c priap : expiredCpAdd) {
 
@@ -1115,7 +1143,7 @@ global with sharing class FrameRateManagerController {
 
 		for (cspmb__Price_Item_Rate_Card_Association__c pirca : expiredCpRc) {
 			if (expiredCpRcMap.containsKey(pirca.cspmb__Price_Item__c)) {
-				List <Id> tempCpIdList = expiredCpRcMap.get(pirca.cspmb__Price_Item__c);
+				List<Id> tempCpIdList = expiredCpRcMap.get(pirca.cspmb__Price_Item__c);
 				tempCpIdList.add(pirca.cspmb__Rate_Card__c);
 				expiredCpRcMap.put(pirca.cspmb__Price_Item__c, tempCpIdList);
 			} else {
@@ -1129,7 +1157,7 @@ global with sharing class FrameRateManagerController {
 			String oldCpId = codeMap.get(cp.cspmb__Price_Item_Code__c);
 			// returnMap.put(codeMap.get(cp.cspmb__Price_Item_Code__c), cp);
 			Map<Id, String> addonsUsedByOldCp = expiredCpAddMap.get(oldCpId);
-			List <String> rcUsedByOldCp = expiredCpRcMap.get(oldCpId);
+			List<String> rcUsedByOldCp = expiredCpRcMap.get(oldCpId);
 
 			Map<String, Object> replacementInfo = new Map<String, Object>();
 			replacementInfo.put('addon_vs_addon_assoc', addonsUsedByOldCp);
@@ -1143,28 +1171,32 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static List <cspmb__Price_Item__c> filterCommercialProducts(String filterData) {
+	public static List<cspmb__Price_Item__c> filterCommercialProducts(String filterData) {
 		String selectClause = 'Id';
 		String whereClause = '';
 
-		List <Object> categorizationData;
-		categorizationData = (List <Object>) JSON.deserializeUntyped(filterData);
+		List<Object> categorizationData;
+		try {
+			categorizationData = (List<Object>) JSON.deserializeUntyped(filterData);
+		} catch (Exception e) {
+			throw new ApplicationException(FrameRateManagerController.MALFORMED_JSON_EXCEPTION + e.getMessage());
+		}
 
 		//*******************************************************************
 		// Create list to hold fields: [values]
-		Map < String, List <String>> categoryQueryMap = new Map < String, List <String>> ();
+		Map<String, List<String>> categoryQueryMap = new Map<String, List<String>>();
 
 		//*******************************************************************
 		// Iterate JSON Data, check if the field exists in schema. If so append it to query
 
 		for (Object category : categorizationData) {
 			// category.get('field');
-			Map <String, Object> categoryMap = (Map <String, Object>) category;
+			Map<String, Object> categoryMap = (Map<String, Object>) category;
 			String fieldName = (String) categoryMap.get('field');
 
-			List <String> valuesList = new List <String> ();
+			List<String> valuesList = new List<String>();
 
-			List <Object> valuesObjArr = (List <Object>) categoryMap.get('values');
+			List<Object> valuesObjArr = (List<Object>) categoryMap.get('values');
 
 			for (Object valueObj : valuesObjArr) {
 				valuesList.add((String) valueObj);
@@ -1189,35 +1221,40 @@ global with sharing class FrameRateManagerController {
 
 		String query = 'select ' + selectClause + ' from cspmb__Price_Item__c ' + whereClause + ' limit 50000';
 
-		List <SObject> results = Database.query(query);
-		Set <Id> resultIds = (new Map <Id, SObject> (results)).keySet();
+		List<SObject> results = Database.query(query);
 
-		return getCommercialProducts_p(new List <Id> (resultIds));
+		if (results.size() == 0) {
+			return new List<SObject>();
+		}
+
+		Set<Id> resultIds = (new Map <Id, SObject> (results)).keySet();
+
+		return getCommercialProducts_p(new List<Id> (resultIds));
 	}
 
 	@RemoteAction
-	public static List <cspmb__Add_On_Price_Item__c> filterStandaloneAddons(String filterData) {
+	public static List<cspmb__Add_On_Price_Item__c> filterStandaloneAddons(String filterData) {
 		String selectClause = 'Id';
 		String whereClause = '';
 
-		List <Object> categorizationData;
-		categorizationData = (List <Object>) JSON.deserializeUntyped(filterData);
+		List<Object> categorizationData;
+		categorizationData = (List<Object>) JSON.deserializeUntyped(filterData);
 
 		//*******************************************************************
 		// Create list to hold fields: [values]
-		Map < String, List <String>> categoryQueryMap = new Map < String, List <String>> ();
+		Map<String, List<String>> categoryQueryMap = new Map<String, List<String>>();
 
 		//*******************************************************************
 		// Iterate JSON Data, check if the field exists in schema. If so append it to query
 
 		for (Object category : categorizationData) {
 			// category.get('field');
-			Map <String, Object> categoryMap = (Map <String, Object>) category;
+			Map<String, Object> categoryMap = (Map<String, Object>) category;
 			String fieldName = (String) categoryMap.get('field');
 
-			List <String> valuesList = new List <String> ();
+			List<String> valuesList = new List<String>();
 
-			List <Object> valuesObjArr = (List <Object>) categoryMap.get('values');
+			List<Object> valuesObjArr = (List<Object>) categoryMap.get('values');
 
 			for (Object valueObj : valuesObjArr) {
 				valuesList.add((String) valueObj);
@@ -1242,27 +1279,29 @@ global with sharing class FrameRateManagerController {
 
 		String query = 'select ' + selectClause + ' from cspmb__Add_On_Price_Item__c ' + whereClause + ' limit 50000';
 
-		List <SObject> results = Database.query(query);
-		Set <Id> resultIds = (new Map <Id, SObject> (results)).keySet();
+		List<SObject> results = Database.query(query);
+		Set<Id> resultIds = (new Map <Id, SObject> (results)).keySet();
 
-		return getStandaloneAddons_p(new List <Id> (resultIds));
+		return getStandaloneAddons_p(new List<Id> (resultIds));
 	}
 
 	@RemoteAction
-	public static List <cspmb__Discount_Threshold__c> getDiscountThresholds(List <Id> addonIdList, List <Id> cpIdList, List <Id> rcIdList) {
+	public static List<cspmb__Discount_Threshold__c> getDiscountThresholds(
+		List<Id> addonIdList, List<Id> cpIdList, List<Id> rcIdList
+	) {
 		// Get all auth levels from these addons and cp
-		List <Id> authlevelList = new List <Id>();
-		List <cspmb__price_item__c> cpList = [
+		List<Id> authlevelList = new List<Id>();
+		List<cspmb__price_item__c> cpList = [
 			Select Id, cspmb__Authorization_Level__c
 			from cspmb__price_item__c
 			where Id in :cpIdList and cspmb__Authorization_Level__c != null
 		];
-		List <cspmb__Add_On_Price_Item__c> addonList = [
+		List<cspmb__Add_On_Price_Item__c> addonList = [
 			Select Id, cspmb__Authorization_Level__c
 			from cspmb__Add_On_Price_Item__c
 			where Id in :addonIdList and cspmb__Authorization_Level__c != null
 		];
-		List <cspmb__Rate_Card__c> rcList = [
+		List<cspmb__Rate_Card__c> rcList = [
 			Select Id, cspmb__Authorization_Level__c
 			from cspmb__Rate_Card__c
 			where Id in :rcIdList and cspmb__Authorization_Level__c != null
@@ -1281,7 +1320,7 @@ global with sharing class FrameRateManagerController {
 		}
 
 		// get discount thresholds for these auth levels
-		List <cspmb__Discount_Threshold__c> dcList = [
+		List<cspmb__Discount_Threshold__c> dcList = [
 			select Id, Name, cspmb__Discount_Threshold__c, cspmb__Authorization_Level__c, cspmb__Discount_Type__c
 			from cspmb__Discount_Threshold__c
 			where cspmb__Authorization_Level__c in :authlevelList
@@ -1290,11 +1329,10 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static List <DiscountLevelWrapper> getDiscountevels(List <Id> addonIdList, List <Id> cpIdList) {
+	public static List<DiscountLevelWrapper> getDiscountevels(List<Id> addonIdList, List<Id> cpIdList) {
+		List<DiscountLevelWrapper> discountList = new List<DiscountLevelWrapper>();
 
-		List <DiscountLevelWrapper> discountList = new List <DiscountLevelWrapper> ();
-
-		List <cspmb__Discount_Association__c> discountAssocArr = new List <cspmb__Discount_Association__c> ();
+		List<cspmb__Discount_Association__c> discountAssocArr = new List<cspmb__Discount_Association__c>();
 
 		String assocQuery = 'select Id, cspmb__Add_On_Price_Item__c, cspmb__Discount_Level__c, cspmb__Price_Item__c,' +
 			'cspmb__Discount_Level__r.Id, cspmb__Discount_Level__r.Name, cspmb__Discount_Level__r.cspmb__Charge_Type__c,' +
@@ -1303,7 +1341,7 @@ global with sharing class FrameRateManagerController {
 			'cspmb__Discount_Level__r.cspmb__Maximum_Discount_Value__c, cspmb__Discount_Level__r.cspmb__Minimum_Discount_Value__c ' +
 			'from cspmb__Discount_Association__c where cspmb__Discount_Level__c != null';
 
-		List <String> whereClauses = new List <String>();
+		List<String> whereClauses = new List<String>();
 
 		if (addonIdList != null && !addonIdList.isEmpty()) {
 			whereClauses.add('cspmb__Add_On_Price_Item__c in :addonIdList');
@@ -1331,11 +1369,10 @@ global with sharing class FrameRateManagerController {
 
 	}
 
-	public static List <DiscountLevelWrapper> getAddonDiscountevels() {
+	public static List<DiscountLevelWrapper> getAddonDiscountevels() {
+		List<DiscountLevelWrapper> discountList = new List<DiscountLevelWrapper>();
 
-		List <DiscountLevelWrapper> discountList = new List <DiscountLevelWrapper> ();
-
-		List <cspmb__Discount_Association__c> discountAssocArr = new List <cspmb__Discount_Association__c> ();
+		List<cspmb__Discount_Association__c> discountAssocArr = new List<cspmb__Discount_Association__c>();
 
 		String assocQuery = 'select Id, cspmb__Add_On_Price_Item__c, cspmb__Discount_Level__c, cspmb__Price_Item__c,' +
 			'cspmb__Discount_Level__r.Id, cspmb__Discount_Level__r.Name, cspmb__Discount_Level__r.cspmb__Charge_Type__c,' +
@@ -1355,13 +1392,12 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map <String, Object> getAddonDiscountInformation() {
+	public static Map<String, Object> getAddonDiscountInformation() {
+		Map<String, Object> addonDiscInfo = new Map<String, Object>();
 
-		Map <String, Object> addonDiscInfo = new Map <String, Object>();
+		List<Id> authlevelList = new List<Id>();
 
-		List <Id> authlevelList = new List<Id>();
-
-		List <cspmb__Add_On_Price_Item__c> addonList = [
+		List<cspmb__Add_On_Price_Item__c> addonList = [
 			Select Id, cspmb__Authorization_Level__c
 			from cspmb__Add_On_Price_Item__c
 			where cspmb__Authorization_Level__c != null
@@ -1371,26 +1407,25 @@ global with sharing class FrameRateManagerController {
 			authlevelList.add(add.cspmb__Authorization_Level__c);
 		}
 
-		List <cspmb__Discount_Threshold__c> dcList = [
+		List<cspmb__Discount_Threshold__c> dcList = [
 			select Id, Name, cspmb__Discount_Threshold__c, cspmb__Authorization_Level__c, cspmb__Discount_Type__c
 			from cspmb__Discount_Threshold__c
 			where cspmb__Authorization_Level__c in :authlevelList
-		];        
+		];
 
 		addonDiscInfo.put('discLevels', getAddonDiscountevels());
 		addonDiscInfo.put('dcList', dcList);
 
 		return addonDiscInfo;
-
 	}
 
 
 
 	@RemoteAction
-	public static List <Map <String, Object>> getRelatedLists(Id faId) {
-		List <Map <String, Object>> resultList = new List <Map <String, Object>> ();
+	public static List<Map<String, Object>> getRelatedLists(Id faId) {
+		List<Map<String, Object>> resultList = new List<Map<String, Object>>();
 
-		List <Object> relatedData = new List <Object> ();
+		List<Object> relatedData = new List<Object>();
 
 		csutil__JSON_Data__c related_lists = getRelatedListsData();
 		String data;
@@ -1398,13 +1433,13 @@ global with sharing class FrameRateManagerController {
 		if (related_lists == null || related_lists.csutil__value__c == null) {
 			//
 		} else {
-			relatedData = (List <Object>) JSON.deserializeUntyped(related_lists.csutil__value__c);
+			relatedData = (List<Object>) JSON.deserializeUntyped(related_lists.csutil__value__c);
 		}
 
 		for (Object relatedListObject : relatedData) {
 
 			Map<String, Object> relatedList = (Map<String, Object>) relatedListObject;
-			Map <String, Object> relatedStructure = new Map <String, Object>();
+			Map<String, Object> relatedStructure = new Map<String, Object>();
 
 			String query = 'select ';
 			query += (String) relatedList.get('columns');
@@ -1427,53 +1462,53 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map <String, Object> getCommercialProductData(List <String> priceItemIdList) {
-		Map <Id, cpData> cpDataMap = new Map <Id, cpData> ();
+	public static Map<String, Object> getCommercialProductData(List<String> priceItemIdList) {
+		Map<Id, cpData> cpDataMap = new Map<Id, cpData>();
 
-		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> addons = getAddons(priceItemIdList);
+		Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> addons = getAddons(priceItemIdList);
 		// Get addonIds for discount levels
 		// These are the addons that we need to load beside cp
-		Map <Id, List <RateCard>> rateCards = getRateCards(priceItemIdList);
+		Map<Id, List<RateCard>> rateCards = getRateCards(priceItemIdList);
 		// got ratecards, load auth lv for them
-		List <Id> addonIdList = getAddonIdsForCp(priceItemIdList);
-		List <Id> rcIdList = getRateCardIdsForCp(priceItemIdList);
-		List <DiscountLevelWrapper> discountLevels = getDiscountevels(addonIdList, priceItemIdList);
+		List<Id> addonIdList = getAddonIdsForCp(priceItemIdList);
+		List<Id> rcIdList = getRateCardIdsForCp(priceItemIdList);
+		List<DiscountLevelWrapper> discountLevels = getDiscountevels(addonIdList, priceItemIdList);
 
 
-		List <cspmb__Discount_Threshold__c> discountThresholds = getDiscountThresholds(addonIdList, priceItemIdList, rcIdList);
+		List<cspmb__Discount_Threshold__c> discountThresholds = getDiscountThresholds(addonIdList, priceItemIdList, rcIdList);
 
 		Map <Id, List <PricingElementWrapper>> charges = getPriceItemCharges(priceItemIdList);
 
 		AllowancesWrapper allowanceUtStructure = getAllowances(priceItemIdList);
-		Map <Id, List <cspmb__Allowance__c>> allowances = allowanceUtStructure.allowanceMap;
+		Map<Id, List<cspmb__Allowance__c>> allowances = allowanceUtStructure.allowanceMap;
 
 
 		for (String priceItemId : priceItemIdList) {
-			List <cspmb__Price_Item_Add_On_Price_Item_Association__c> this_addons = addons.get(priceItemId);
+			List<cspmb__Price_Item_Add_On_Price_Item_Association__c> this_addons = addons.get(priceItemId);
 			if (this_addons == null) {
-				this_addons = new List <cspmb__Price_Item_Add_On_Price_Item_Association__c> ();
+				this_addons = new List<cspmb__Price_Item_Add_On_Price_Item_Association__c>();
 			}
 
 			List <PricingElementWrapper> this_charges = charges.get(priceItemId);
 			if (this_charges == null) {
-				this_charges = new List <PricingElementWrapper> ();
+				this_charges = new List <PricingElementWrapper>();
 			}
 
-			List <RateCard> this_rateCards = rateCards.get(priceItemId);
+			List<RateCard> this_rateCards = rateCards.get(priceItemId);
 			if (this_rateCards == null) {
-				this_rateCards = new List <RateCard> ();
+				this_rateCards = new List<RateCard>();
 			}
 
-			List <cspmb__Allowance__c> this_allowances = allowances.get(priceItemId);
+			List<cspmb__Allowance__c> this_allowances = allowances.get(priceItemId);
 
 			if (this_allowances == null) {
-				this_allowances = new List <cspmb__Allowance__c> ();
+				this_allowances = new List<cspmb__Allowance__c>();
 			}
 
 			cpDataMap.put(priceItemId, new cpData(this_addons, this_charges, this_rateCards, this_allowances));
 		}
 
-		Map <String, Object> collectiveCpData = new Map <String, Object>();
+		Map<String, Object> collectiveCpData = new Map<String, Object>();
 		collectiveCpData.put('discLevels', discountLevels);
 		collectiveCpData.put('discThresh', discountThresholds);
 		collectiveCpData.put('childUsageTypes', allowanceUtStructure.childUsageTypes);
@@ -1482,20 +1517,20 @@ global with sharing class FrameRateManagerController {
 		return collectiveCpData;
 	}
 
-	public static Map <Id, List <RateCard>> getRateCards(List <Id> priceItemIdList) {
+	public static Map<Id, List<RateCard>> getRateCards(List<Id> priceItemIdList) {
 		// contains end result, mapping price item ids to their rate cards
-		Map <Id, List <RateCard>> prId_RateCards = new Map <Id, List <RateCard>> ();
+		Map<Id, List<RateCard>> prId_RateCards = new Map<Id, List<RateCard>>();
 
 		if (priceItemIdList.isEmpty()) {
 			return prId_RateCards;
 		}
 
 		// contains information about which rate card belongs to which price item (rateCardId: priceItemId)
-		Map < Id, List<Id>> rateCard_priceItemMap = new Map < Id, List<Id>> ();
+		Map<Id, List<Id>> rateCard_priceItemMap = new Map<Id, List<Id>>();
 		// contains list of rate card ids to be loaded
-		List <Id> rateCardIdList = new List <Id> ();
+		List<Id> rateCardIdList = new List<Id>();
 
-		List <cspmb__Price_Item_Rate_Card_Association__c> rateCardAssocList = [
+		List<cspmb__Price_Item_Rate_Card_Association__c> rateCardAssocList = [
 			select Id, cspmb__Rate_Card__r.Id, cspmb__Price_Item__c
 			from cspmb__Price_Item_Rate_Card_Association__c
 			where cspmb__Price_Item__c in :priceItemIdList
@@ -1506,7 +1541,7 @@ global with sharing class FrameRateManagerController {
 			// rateCard_priceItemMap.put(pirca.cspmb__Rate_Card__r.Id, pirca.cspmb__Price_Item__c);
 
 			if (rateCard_priceItemMap.containsKey(pirca.cspmb__Rate_Card__r.Id)) {
-				List <Id> tempCpIdList = rateCard_priceItemMap.get(pirca.cspmb__Rate_Card__r.Id);
+				List<Id> tempCpIdList = rateCard_priceItemMap.get(pirca.cspmb__Rate_Card__r.Id);
 				tempCpIdList.add(pirca.cspmb__Price_Item__c);
 				rateCard_priceItemMap.put(pirca.cspmb__Rate_Card__r.Id, tempCpIdList);
 			} else {
@@ -1519,20 +1554,20 @@ global with sharing class FrameRateManagerController {
 		}
 		// ***************************************************
 		// contains information about which rate card has which rate card lines (rateCardId: rateCardLineList)
-		Map <Id, List <cspmb__Rate_Card_Line__c>> rcId_rateCardLineList = new Map < Id, List <cspmb__Rate_Card_Line__c>> ();
+		Map<Id, List<cspmb__Rate_Card_Line__c>> rcId_rateCardLineList = new Map<Id, List<cspmb__Rate_Card_Line__c>>();
 		// list of loaded/relevant rate card lines
-		List <cspmb__Rate_Card_Line__c> rateCardLines = getRateCardLines(rateCardIdList);
+		List<cspmb__Rate_Card_Line__c> rateCardLines = getRateCardLines(rateCardIdList);
 
 		for (cspmb__Rate_Card_Line__c rcl : rateCardLines) {
 
 			// mechanism populating list inside map, handles first occurence
 			if (rcId_rateCardLineList.containsKey(rcl.cspmb__Rate_Card__c)) {
 				// get rate card lines for this rate card
-				List <cspmb__Rate_Card_Line__c> tempRclList = rcId_rateCardLineList.get(rcl.cspmb__Rate_Card__c);
+				List<cspmb__Rate_Card_Line__c> tempRclList = rcId_rateCardLineList.get(rcl.cspmb__Rate_Card__c);
 				tempRclList.add(rcl);
 				rcId_rateCardLineList.put(rcl.cspmb__Rate_Card__c, tempRclList);
 			} else {
-				rcId_rateCardLineList.put(rcl.cspmb__Rate_Card__c, new List <cspmb__Rate_Card_Line__c>{
+				rcId_rateCardLineList.put(rcl.cspmb__Rate_Card__c, new List<cspmb__Rate_Card_Line__c>{
 					rcl
 				});
 			}
@@ -1540,23 +1575,25 @@ global with sharing class FrameRateManagerController {
 		}
 		// ***************************************************
 		// list of loaded/relevant rate cards
-		List <cspmb__Rate_Card__c> rateCardList = new List <cspmb__Rate_Card__c> ();
+		List<cspmb__Rate_Card__c> rateCardList = new List<cspmb__Rate_Card__c>();
 		rateCardList = [
-			select Id, Name, cspmb__Is_Active__c, cspmb__Effective_Start_Date__c, cspmb__Effective_End_Date__c, cspmb__Rate_Card_Code__c, cspmb__Authorization_Level__c, cspmb__Is_Authorization_Required__c
+			select Id, Name, cspmb__Is_Active__c, cspmb__Effective_Start_Date__c,
+			cspmb__Effective_End_Date__c, cspmb__Rate_Card_Code__c, cspmb__Authorization_Level__c,
+			cspmb__Is_Authorization_Required__c
 			from cspmb__Rate_Card__c
 			where cspmb__Is_Active__c = true
 			and Id IN:rateCardIdList
 		];
 
 		// ***************************************************
-		List <RateCard> rateCardModelList = new List <RateCard> ();
+		List<RateCard> rateCardModelList = new List<RateCard>();
 		for (cspmb__Rate_Card__c rc : rateCardList) {
 
 			Boolean start_invalid = rc.cspmb__Effective_Start_Date__c != null && date.today() < rc.cspmb__Effective_Start_Date__c;
 			Boolean end_invalid = rc.cspmb__Effective_End_Date__c != null && date.today() > rc.cspmb__Effective_End_Date__c;
 
 			if (!(start_invalid || end_invalid)) {
-				List <cspmb__Rate_Card_Line__c> rclList = new List <cspmb__Rate_Card_Line__c> ();
+				List<cspmb__Rate_Card_Line__c> rclList = new List<cspmb__Rate_Card_Line__c>();
 
 				if (rcId_rateCardLineList.containsKey(rc.Id)) {
 					// get list of rate card lines for this rate card
@@ -1569,15 +1606,15 @@ global with sharing class FrameRateManagerController {
 		// ***************************************************
 		for (RateCard rc : rateCardModelList) {
 
-			List <Id> corespondingPriceItemIds = rateCard_priceItemMap.get(rc.Id);
+			List<Id> corespondingPriceItemIds = rateCard_priceItemMap.get(rc.Id);
 
 			for (Id cpId : corespondingPriceItemIds) {
 
 				if (!prId_RateCards.containsKey(cpId)) {
-					prId_RateCards.put(cpId, new List <RateCard> ());
+					prId_RateCards.put(cpId, new List<RateCard>());
 				}
 
-				List <RateCard> tempRcList = prId_RateCards.get(cpId);
+				List<RateCard> tempRcList = prId_RateCards.get(cpId);
 				tempRcList.add(rc);
 				prId_RateCards.put(cpId, tempRcList);
 
@@ -1589,36 +1626,36 @@ global with sharing class FrameRateManagerController {
 		return prId_RateCards;
 	}
 
-	public static AllowancesWrapper getAllowances(List <Id> priceItemIdList) {
+	public static AllowancesWrapper getAllowances(List<Id> priceItemIdList) {
 
-		List <String> standardFields = new List <String>{
+		List<String> standardFields = new List<String>{
 			'Id',
 			'Name'
 		};
 
 		Fac_Settings__c facSettings = getFacSetting();
 		String utFields = (String) facSettings.get('usage_type_fields__c');
-		List <String> utFieldsArr = new List <String> ();
+		List<String> utFieldsArr = new List<String>();
 
 		if (!String.isBlank(utFields)) {
 			utFieldsArr = utFields.split(',');
 		}
 
-		List <String> fieldsArr = new List <String> ();
+		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
 		fieldsArr.addAll(utFieldsArr);
 
 		// Remove duplicates
-		List <String> uniqueUtFieldList = getUniqueListElements(fieldsArr);
+		List<String> uniqueUtFieldList = getUniqueListElements(fieldsArr);
 
-		List <cspmb__Commercial_Product_Allowance_Assoc__c> cpaaList = new List <cspmb__Commercial_Product_Allowance_Assoc__c> ();
+		List<cspmb__Commercial_Product_Allowance_Assoc__c> cpaaList = new List<cspmb__Commercial_Product_Allowance_Assoc__c>();
 		cpaaList = [
 			select Id, cspmb__allowance__c, cspmb__commercial_product__c
 			from cspmb__Commercial_Product_Allowance_Assoc__c
 			where cspmb__commercial_product__c in :priceItemIdList
 		];
 
-		List <String> allowIdList = new List <String>();
+		List<String> allowIdList = new List<String>();
 
 		for (cspmb__Commercial_Product_Allowance_Assoc__c cpaa : cpaaList) {
 			allowIdList.add(cpaa.cspmb__allowance__c);
@@ -1635,7 +1672,7 @@ global with sharing class FrameRateManagerController {
 		// ********************************************************************
 
 		// Extract parent usage types from allowances
-		List <String> mainUtIdList = new List <String>();
+		List<String> mainUtIdList = new List<String>();
 
 		for (cspmb__Allowance__c al : allowanceMap.values()) {
 			if (al.cspmb__usage_type__c != null) {
@@ -1645,23 +1682,23 @@ global with sharing class FrameRateManagerController {
 
 		// Find child usage types
 
-		List <cspmb__Usage_Type_Grouping__c> usageGroupingList = [
+		List<cspmb__Usage_Type_Grouping__c> usageGroupingList = [
 			Select Id, cspmb__child_usage_type__c, cspmb__parent_usage_type__c
 			from cspmb__Usage_Type_Grouping__c
 			where cspmb__parent_usage_type__c in :mainUtIdList
 		];
 
-		Map <Id, Set<Id>> mapChildParentSet = new Map <Id, Set<Id>>();
-		Map <Id, Id> mapChildParentUt = new Map <Id, Id>();
+		Map<Id, Set<Id>> mapChildParentSet = new Map<Id, Set<Id>>();
+		Map<Id, Id> mapChildParentUt = new Map<Id, Id>();
 
-		List <String> childUtIdList = new List <String>();
+		List<String> childUtIdList = new List<String>();
 		for (cspmb__Usage_Type_Grouping__c utg : usageGroupingList) {
 			childUtIdList.add(utg.cspmb__child_usage_type__c);
 
 			// mapChildParentUt.put(utg.cspmb__child_usage_type__c, utg.cspmb__parent_usage_type__c);
 
 			if (mapChildParentSet.containsKey(utg.cspmb__child_usage_type__c)) {
-			 Set <Id> tempSet = mapChildParentSet.get(utg.cspmb__child_usage_type__c);
+			 Set<Id> tempSet = mapChildParentSet.get(utg.cspmb__child_usage_type__c);
 			 tempSet.add(utg.cspmb__parent_usage_type__c);
 			 mapChildParentSet.put(utg.cspmb__child_usage_type__c, tempSet);
 			} else {
@@ -1683,11 +1720,11 @@ global with sharing class FrameRateManagerController {
 
 		for (cspmb__Usage_Type__c ut : database.query(ut_query)) {
 
-			Set <Id> parentIds = mapChildParentSet.get(ut.Id);
+			Set<Id> parentIds = mapChildParentSet.get(ut.Id);
 
 			for (Id parentId : parentIds) {
 				if (childUtMap.containsKey(parentId)) {
-					List <cspmb__Usage_Type__c> tempSet = childUtMap.get(parentId);
+					List<cspmb__Usage_Type__c> tempSet = childUtMap.get(parentId);
 					tempSet.add(ut);
 					childUtMap.put(parentId, tempSet);
 				} else {
@@ -1697,30 +1734,19 @@ global with sharing class FrameRateManagerController {
 
 		}
 
-
-		// ********************************************************************
-
-		// Map<Id, cspmb__Allowance__c> allowanceMap = new Map<Id, cspmb__Allowance__c>([
-		//         select Id, Name, cspmb__amount__c, cspmb__priority__c, cspmb__usage_type__c, cspmb__usage_type__r.cspmb__unit_of_measure__c
-		//         from cspmb__Allowance__c
-		//         where Id in :allowList
-		// ]);
-
-		Map <Id, List <cspmb__Allowance__c>> allowanceCpMap = new Map <Id, List <cspmb__Allowance__c>>();
+		Map<Id, List<cspmb__Allowance__c>> allowanceCpMap = new Map<Id, List<cspmb__Allowance__c>>();
 
 		for (cspmb__Commercial_Product_Allowance_Assoc__c cpallow : cpaaList) {
-
 			if (allowanceCpMap.containsKey(cpallow.cspmb__commercial_product__c)) {
 				// Get existing list
-				List <cspmb__Allowance__c> tempAllowList = allowanceCpMap.get(cpallow.cspmb__commercial_product__c);
+				List<cspmb__Allowance__c> tempAllowList = allowanceCpMap.get(cpallow.cspmb__commercial_product__c);
 				// add to that list
 				tempAllowList.add(allowanceMap.get(cpallow.cspmb__allowance__c));
 				// put it back, what a dumb language
 				allowanceCpMap.put(cpallow.cspmb__commercial_product__c, tempAllowList);
-
 			} else {
 				// Put new list with item already in there
-				allowanceCpMap.put(cpallow.cspmb__commercial_product__c, new List <cspmb__Allowance__c>{
+				allowanceCpMap.put(cpallow.cspmb__commercial_product__c, new List<cspmb__Allowance__c>{
 					allowanceMap.get(cpallow.cspmb__allowance__c)
 				});
 			}
@@ -1731,9 +1757,9 @@ global with sharing class FrameRateManagerController {
 
 	}
 
-	public static List <cspmb__Rate_Card_Line__c> getRateCardLines(List <String> rateCardLinesIdList) {
+	public static List<cspmb__Rate_Card_Line__c> getRateCardLines(List<String> rateCardLinesIdList) {
 
-		List <String> standardFields = new List <String>{
+		List<String> standardFields = new List<String>{
 			'Id',
 			'Name',
 			'cspmb__Cap_Unit__c',
@@ -1744,32 +1770,32 @@ global with sharing class FrameRateManagerController {
 
 		Fac_Settings__c facSettings = getFacSetting();
 		String csFields = (String) facSettings.get('rcl_fields__c');
-		List <String> csFieldsArr = new List <String> ();
+		List<String> csFieldsArr = new List<String>();
 
 		if (!String.isBlank(csFields)) {
 			csFieldsArr = csFields.split(',');
 		}
 
-		List <String> fieldsArr = new List <String> ();
+		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
 		fieldsArr.addAll(csFieldsArr);
 
 		// Remove duplicates
-		List <String> uniqueList = getUniqueListElements(fieldsArr);
+		List<String> uniqueList = getUniqueListElements(fieldsArr);
 
 
 		String query = 'select ' + String.join(uniqueList, ',') + ' from cspmb__Rate_Card_Line__c where cspmb__Rate_Card__c in :rateCardLinesIdList and cspmb__Is_Active__c = true';
-		List <cspmb__Rate_Card_Line__c> rateCardLines = new List <cspmb__Rate_Card_Line__c> ();
+		List<cspmb__Rate_Card_Line__c> rateCardLines = new List<cspmb__Rate_Card_Line__c>();
 		rateCardLines = database.query(query);
 
 		return rateCardLines;
 	}
 
-	public static Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> getAddons(List <Id> priceItemIdList) {
+	public static Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> getAddons(List<Id> priceItemIdList) {
 		// contains end result, mapping price item ids to their addons
-		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> prId_addons = new Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> ();
+		Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> prId_addons = new Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>>();
 
-		List <cspmb__Price_Item_Add_On_Price_Item_Association__c> priceItemAddonAssociations = [
+		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> priceItemAddonAssociations = [
 					select Id, cspmb__Price_Item__c, cspmb__Overrides_Add_On_Charges__c, cspmb__effective_end_date__c,
 					cspmb__effective_start_date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c,
 					cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c, cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c,
@@ -1780,7 +1806,7 @@ global with sharing class FrameRateManagerController {
 					where cspmb__Price_Item__c in: priceItemIdList and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
 				];
 
-		List <cspmb__Price_Item_Add_On_Price_Item_Association__c> filteredPriceItemAddonAssociations = new List <cspmb__Price_Item_Add_On_Price_Item_Association__c> ();
+		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> filteredPriceItemAddonAssociations = new List<cspmb__Price_Item_Add_On_Price_Item_Association__c>();
 
 		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson : priceItemAddonAssociations) {
 
@@ -1806,11 +1832,11 @@ global with sharing class FrameRateManagerController {
 		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson: filteredPriceItemAddonAssociations) {
 			if (prId_addons.containsKey(addonAsson.cspmb__Price_Item__c)) {
 				// get addons lines for this price item
-				List <cspmb__Price_Item_Add_On_Price_Item_Association__c> tempAddList = prId_addons.get(addonAsson.cspmb__Price_Item__c);
+				List<cspmb__Price_Item_Add_On_Price_Item_Association__c> tempAddList = prId_addons.get(addonAsson.cspmb__Price_Item__c);
 				tempAddList.add(addonAsson);
 				prId_addons.put(addonAsson.cspmb__Price_Item__c, tempAddList);
 			} else {
-				prId_addons.put(addonAsson.cspmb__Price_Item__c, new List <cspmb__Price_Item_Add_On_Price_Item_Association__c> {
+				prId_addons.put(addonAsson.cspmb__Price_Item__c, new List<cspmb__Price_Item_Add_On_Price_Item_Association__c> {
 					addonAsson
 				});
 			}
@@ -1819,14 +1845,14 @@ global with sharing class FrameRateManagerController {
 		return prId_addons;
 	}
 
-	public static List <Id> getAddonIdsForCp(List <Id> priceItemIdList) {
-		List <cspmb__Price_Item_Add_On_Price_Item_Association__c> priceItemAddonAssociations = [
+	public static List<Id> getAddonIdsForCp(List<Id> priceItemIdList) {
+		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> priceItemAddonAssociations = [
 			select Id, cspmb__Add_On_Price_Item__c, cspmb__Price_Item__c
 			from cspmb__Price_Item_Add_On_Price_Item_Association__c
 			where cspmb__Price_Item__c in :priceItemIdList and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
 		];
 
-		List <Id> addonIdList = new List <Id>();
+		List<Id> addonIdList = new List<Id>();
 		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAssoc : priceItemAddonAssociations) {
 			addonIdList.add(addonAssoc.cspmb__Add_On_Price_Item__c);
 		}
@@ -1834,14 +1860,14 @@ global with sharing class FrameRateManagerController {
 		return addonIdList;
 	}
 
-	public static List <Id> getRateCardIdsForCp(List <Id> priceItemIdList) {
-		List <cspmb__Price_Item_Rate_Card_Association__c> priceItemRcAssociation = [
+	public static List<Id> getRateCardIdsForCp(List<Id> priceItemIdList) {
+		List<cspmb__Price_Item_Rate_Card_Association__c> priceItemRcAssociation = [
 			select Id, cspmb__Rate_Card__c, cspmb__Price_Item__c
 			from cspmb__Price_Item_Rate_Card_Association__c
 			where cspmb__Price_Item__c in :priceItemIdList and cspmb__Rate_Card__r.cspmb__Is_Active__c = true
 		];
 
-		List <Id> rcIdList = new List <Id>();
+		List<Id> rcIdList = new List<Id>();
 		for (cspmb__Price_Item_Rate_Card_Association__c rcAsssoc : priceItemRcAssociation) {
 			rcIdList.add(rcAsssoc.cspmb__Rate_Card__c);
 		}
@@ -1851,7 +1877,7 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static List <csconta__Frame_Agreement__c> getFrameAgreements(String accountId) {
-		List <csconta__Frame_Agreement__c> faList = new List <csconta__Frame_Agreement__c> ();
+		List <csconta__Frame_Agreement__c> faList = new List <csconta__Frame_Agreement__c>();
 
 		// Test validity of Id
 		Id accId;
@@ -1871,14 +1897,14 @@ global with sharing class FrameRateManagerController {
 			where csconta__Account__c = :accountId
 			group by csconta__Frame_Agreement__c
 		];
-		List <String> junctionFaIdList = new List <String>();
+		List<String> junctionFaIdList = new List<String>();
 
 		for (AggregateResult fa : aggFa) {
 			junctionFaIdList.add((String) fa.get('csconta__Frame_Agreement__c'));
 		}
 
 		// ******************************************************
-		List <String> conjoined_fields = new List <String> ();
+		List<String> conjoined_fields = new List<String>();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
 
@@ -1891,7 +1917,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static String addFaToMaster(String faId, List <String> faIds) {
+	public static String addFaToMaster(String faId, List<String> faIds) {
 		// Check if fa is master
 
 		csconta__Frame_Agreement__c master = getFrameAgreement(faId);
@@ -1900,7 +1926,7 @@ global with sharing class FrameRateManagerController {
 			throw new AgreementNotMasterException('Frame agreement ' + faId + ' is not of level "Master Agreement" and may not recieve children.');
 		}
 
-		List <csconta__Frame_Agreement__c> faList = new List <csconta__Frame_Agreement__c> ();
+		List <csconta__Frame_Agreement__c> faList = new List <csconta__Frame_Agreement__c>();
 		faList = [
 			select Id, csconta__master_frame_agreement__c
 			from csconta__Frame_Agreement__c
@@ -1918,9 +1944,9 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static String removeFaFromMaster(String faId, List <String> faIds) {
+	public static String removeFaFromMaster(String faId, List<String> faIds) {
 
-		List <csconta__Frame_Agreement__c> faList = new List <csconta__Frame_Agreement__c> ();
+		List <csconta__Frame_Agreement__c> faList = new List <csconta__Frame_Agreement__c>();
 		faList = [
 			select Id, csconta__master_frame_agreement__c
 			from csconta__Frame_Agreement__c
@@ -1939,7 +1965,7 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static csconta__Frame_Agreement__c getFrameAgreement(Id faId) {
-		List <String> conjoined_fields = new List <String> ();
+		List<String> conjoined_fields = new List<String>();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
 		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c where Id = :faId limit 1';
@@ -1990,7 +2016,7 @@ global with sharing class FrameRateManagerController {
 	public static csconta__Frame_Agreement__c cloneFrameAgreement(Id faId) {
 
 
-		List <String> conjoined_fields = new List <String> ();
+		List<String> conjoined_fields = new List<String>();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
 
@@ -2028,7 +2054,7 @@ global with sharing class FrameRateManagerController {
 
 		Map<String, Schema.SObjectField> objectFields = Schema.getGlobalDescribe().get('csconta__Account_Frame_Agreement_Association__c').getDescribe().fields.getMap();
 
-		List <String> assocFieldList = new List <String> ();
+		List<String> assocFieldList = new List<String>();
 
 		for (String s : objectFields.keySet()) {
 			assocFieldList.add(s);
@@ -2038,13 +2064,7 @@ global with sharing class FrameRateManagerController {
 		query_assoc += ' from csconta__Account_Frame_Agreement_Association__c';
 		query_assoc += ' where csconta__Frame_Agreement__c = :faId';
 
-		// List <csconta__Account_Frame_Agreement_Association__c> originalAccountAssoc = [
-		//  select id, csconta__Account__c, csconta__Frame_Agreement__c
-		//  from csconta__Account_Frame_Agreement_Association__c
-		//  where csconta__Frame_Agreement__c = :faId
-		// ];
-
-		List <csconta__Account_Frame_Agreement_Association__c> clonedList = new List <csconta__Account_Frame_Agreement_Association__c>();
+		List<csconta__Account_Frame_Agreement_Association__c> clonedList = new List<csconta__Account_Frame_Agreement_Association__c>();
 
 		for (csconta__Account_Frame_Agreement_Association__c oas : database.query(query_assoc)) {
 			//clonedList.add(new csconta__Account_Frame_Agreement_Association__c(csconta__Account__c = oas.csconta__Account__c, csconta__Frame_Agreement__c = cloned.Id));
@@ -2056,7 +2076,7 @@ global with sharing class FrameRateManagerController {
 		insert clonedList;
 
 
-		List <csutil__JSON_Data__c> jsonData = [
+		List<csutil__JSON_Data__c> jsonData = [
 			select id, name, csutil__value__c
 			from csutil__JSON_Data__c
 			where name = 'FA-Clone-Observer'
@@ -2113,7 +2133,7 @@ global with sharing class FrameRateManagerController {
 	public static csconta__Frame_Agreement__c upsertFrameAgreements(Id faId, String fieldData) {
 		// String fieldData = '{"csconta__Status__c": "Active", "csconta__Agreement_Name__c": "test"}';
 
-		Map <String, Object> dataMap = (Map <String, Object>) JSON.deserializeUntyped(fieldData);
+		Map<String, Object> dataMap = (Map<String, Object>) JSON.deserializeUntyped(fieldData);
 
 		Map <String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
 		Schema.SObjectType leadSchema = schemaMap.get('csconta__Frame_Agreement__c');
@@ -2187,8 +2207,8 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static List <cspmb__Pricing_Element__c> getPricingElements(String priceItemId) {
 
-		List <Id> priceElementIdList = new List <Id> ();
-		Map < Id, cspmb__Price_Item_Pricing_Rule_Association__c > pricingElementObj = new Map < Id, cspmb__Price_Item_Pricing_Rule_Association__c > ();
+		List<Id> priceElementIdList = new List<Id>();
+		Map < Id, cspmb__Price_Item_Pricing_Rule_Association__c > pricingElementObj = new Map < Id, cspmb__Price_Item_Pricing_Rule_Association__c >();
 
 		for (cspmb__Price_Item_Pricing_Rule_Association__c pipra : [
 			select Id, cspmb__pricing_element__c
@@ -2199,7 +2219,7 @@ global with sharing class FrameRateManagerController {
 			pricingElementObj.put(pipra.cspmb__pricing_element__c, pipra);
 		}
 
-		List <cspmb__Pricing_Element__c> pricingElList = new List <cspmb__Pricing_Element__c> ();
+		List <cspmb__Pricing_Element__c> pricingElList = new List <cspmb__Pricing_Element__c>();
 
 		pricingElList = [
 			select Id, Name, cspmb__effective_end_date__c, cspmb__pricing_element_type__c, cspmb__effective_start_date__c,
@@ -2209,7 +2229,7 @@ global with sharing class FrameRateManagerController {
 				IN:priceElementIdList
 		];
 
-		List <cspmb__Pricing_Element__c> filteredPricingElements = new List <cspmb__Pricing_Element__c> ();
+		List <cspmb__Pricing_Element__c> filteredPricingElements = new List <cspmb__Pricing_Element__c>();
 
 		for (cspmb__Pricing_Element__c pricingElement : pricingElList) {
 
@@ -2352,7 +2372,7 @@ global with sharing class FrameRateManagerController {
 
 		return pr.Id;
 	}
-	
+
 	/**
 	* Decomposition 2/2 create pipra for every charge in attachment and associate it with appropriate record
 	* @param data formatted fa attachment
@@ -2365,16 +2385,16 @@ global with sharing class FrameRateManagerController {
 
 		String retString = 'Success';
 
-		List <Object> categorizationData;
+		List<Object> categorizationData;
 		List <cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = new List <cspmb__Price_Item_Pricing_Rule_Association__c>();
 
-		categorizationData = (List <Object>) JSON.deserializeUntyped(data);
+		categorizationData = (List<Object>) JSON.deserializeUntyped(data);
 		system.debug('***********data**************');
 		system.debug(categorizationData);
 
 		for (Object item : categorizationData) {
 			try {
-				Map <String, Object> categoryMap = (Map <String, Object>) item;
+				Map<String, Object> categoryMap = (Map<String, Object>) item;
 
 				String cpId = (String) categoryMap.get('cpId');
 				String cpaoaId = (String) categoryMap.get('cpaoaId');
@@ -2513,7 +2533,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map <String, Object> getDelta(Id faId1, Id faId2) {
+	public static Map<String, Object> getDelta(Id faId1, Id faId2) {
 		return API_1.getDelta(faId1, faId2);
 	}
 
@@ -2534,7 +2554,7 @@ global with sharing class FrameRateManagerController {
 			get;
 			set;
 		}
-		public List <cspmb__Rate_Card_Line__c> rateCardLines {
+		public List<cspmb__Rate_Card_Line__c> rateCardLines {
 			get;
 			set;
 		}
@@ -2548,7 +2568,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public class cpData {
-		public List <cspmb__Price_Item_Add_On_Price_Item_Association__c> addons {
+		public List<cspmb__Price_Item_Add_On_Price_Item_Association__c> addons {
 			get;
 			set;
 		}
@@ -2556,16 +2576,16 @@ global with sharing class FrameRateManagerController {
 			get;
 			set;
 		}
-		public List <RateCard> rateCards {
+		public List<RateCard> rateCards {
 			get;
 			set;
 		}
-		public List <cspmb__Allowance__c> allowances {
+		public List<cspmb__Allowance__c> allowances {
 			get;
 			set;
 		}
 
-		public cpData(List <cspmb__Price_Item_Add_On_Price_Item_Association__c> addonList, List <PricingElementWrapper> charges, List <RateCard> rateCardList, List <cspmb__Allowance__c> allowances) {
+		public cpData(List<cspmb__Price_Item_Add_On_Price_Item_Association__c> addonList, List <PricingElementWrapper> charges, List<RateCard> rateCardList, List<cspmb__Allowance__c> allowances) {
 			this.addons = addonList;
 			this.charges = charges;
 			this.rateCards = rateCardList;
@@ -2603,12 +2623,12 @@ global with sharing class FrameRateManagerController {
 			}
 			set;
 		}
-		public Map <Id, List <cspmb__Allowance__c>> allowanceMap {
+		public Map<Id, List<cspmb__Allowance__c>> allowanceMap {
 			get;
 			set;
 		}
 
-		public AllowancesWrapper(Map<Id, List<cspmb__Usage_Type__c>> childUsageTypes, Map <Id, List <cspmb__Allowance__c>> allowanceMap) {
+		public AllowancesWrapper(Map<Id, List<cspmb__Usage_Type__c>> childUsageTypes, Map<Id, List<cspmb__Allowance__c>> allowanceMap) {
 			this.childUsageTypes = childUsageTypes;
 			this.allowanceMap = allowanceMap;
 		}
@@ -2644,5 +2664,4 @@ global with sharing class FrameRateManagerController {
 			this.chargeType = chargeType;
 		}
 	}
-
 }

@@ -3,7 +3,7 @@ private class FrameRateManagerControllerTest {
 	public static final String FAC_ATTACHMENT_NAME = 'FrameAgreementAttachment';
 	public static final String FAC_ATTACHMENT_DESC = 'Added products and negotiated data against Frame Agreement';
 	public static final Integer ITEMS_PER_PAGE = 20;
-	public static final List <String> FA_FIELDS = new List <String>{
+	public static final List<String> FA_FIELDS = new List<String>{
 		'Id', 'Name', 'csconta__Account__r.Name', 'csconta__Agreement_Name__c', 'csconta__Pricing_Rule_Group__c', 'csconta__Status__c', 'csconta__Valid_From__c', 'csconta__Valid_To__c'
 	};
 
@@ -316,7 +316,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		Map <String, Object> csettings = FrameRateManagerController.getCustomSettings();
+		Map<String, Object> csettings = FrameRateManagerController.getCustomSettings();
 
 		Test.stopTest();
 
@@ -353,7 +353,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		Map <String, Object> accountsInfo = FrameRateManagerController.getAccountsInformation(fA_account.Id, null);
+		Map<String, Object> accountsInfo = FrameRateManagerController.getAccountsInformation(fA_account.Id, null);
 
 		Test.stopTest();
 
@@ -384,8 +384,8 @@ private class FrameRateManagerControllerTest {
 
 		FrameRateManagerController.deleteAccountAssociation(assoc_2.Id);
 
-		Map <String, Object> accountsInfo_1 = FrameRateManagerController.getAccountsInformation(fA_account.Id, null);
-		Map <String, Object> accountsInfo_2 = FrameRateManagerController.getAccountsInformation(fa_3.Id, 'Name != null');
+		Map<String, Object> accountsInfo_1 = FrameRateManagerController.getAccountsInformation(fA_account.Id, null);
+		Map<String, Object> accountsInfo_2 = FrameRateManagerController.getAccountsInformation(fa_3.Id, 'Name != null');
 
 		Test.stopTest();
 
@@ -422,7 +422,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		Map <String, Map<String, Object>> result = FrameRateManagerController.findReplacementCommercialProduct(new List <String>{cp_replace_1.Id});
+		Map <String, Map<String, Object>> result = FrameRateManagerController.findReplacementCommercialProduct(new List<String>{cp_replace_1.Id});
 
 		Test.stopTest();
 
@@ -442,9 +442,9 @@ private class FrameRateManagerControllerTest {
 		String whereClause = 'name != null';
 		String initValId = testAcc.Id;
 
-		Map <String, Object> params = new Map <String, Object> ();
+		Map<String, Object> params = new Map<String, Object> ();
 		params.put('pointedObject', 'Account');
-		params.put('columns', new List <String>{
+		params.put('columns', new List<String>{
 			'Name', 'Type'
 		});
 		params.put('whereClause', whereClause);
@@ -452,9 +452,9 @@ private class FrameRateManagerControllerTest {
 		params.put('lastId', null);
 		params.put('offset', 20);
 
-		Map <String, Object> params_2 = new Map <String, Object> ();
+		Map<String, Object> params_2 = new Map<String, Object> ();
 		params_2.put('field', field);
-		params_2.put('columns', new List <String>{
+		params_2.put('columns', new List<String>{
 			'Name', 'Type'
 		});
 		params_2.put('whereClause', null);
@@ -463,9 +463,9 @@ private class FrameRateManagerControllerTest {
 		params_2.put('offset', 20);
 
 
-		Map <String, Object> params_3 = new Map <String, Object> ();
+		Map<String, Object> params_3 = new Map<String, Object> ();
 		params_3.put('pointedObject', 'Account');
-		params_3.put('columns', new List <String>{
+		params_3.put('columns', new List<String>{
 			'Name', 'Type'
 		});
 		params_3.put('whereClause', null);
@@ -475,12 +475,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		Map <String, Object> info_1 = FrameRateManagerController.getLookupInformation(field, column, null, null);
-		Map <String, Object> info_2 = FrameRateManagerController.getLookupInformation(field, column, whereClause, initValId);
+		Map<String, Object> info_1 = FrameRateManagerController.getLookupInformation(field, column, null, null);
+		Map<String, Object> info_2 = FrameRateManagerController.getLookupInformation(field, column, whereClause, initValId);
 
-		List <Object> lookup_records_1 = FrameRateManagerController.getLookupRecords(JSON.serialize(params));
-		List <Object> lookup_records_2 = FrameRateManagerController.getLookupRecords(JSON.serialize(params_2));
-		List <Object> lookup_records_3 = FrameRateManagerController.getLookupRecords(JSON.serialize(params_3));
+		List<Object> lookup_records_1 = FrameRateManagerController.getLookupRecords(JSON.serialize(params));
+		List<Object> lookup_records_2 = FrameRateManagerController.getLookupRecords(JSON.serialize(params_2));
+		List<Object> lookup_records_3 = FrameRateManagerController.getLookupRecords(JSON.serialize(params_3));
 
 		// initialLabel
 		// count
@@ -495,24 +495,6 @@ private class FrameRateManagerControllerTest {
 		system.assertEquals(0, lookup_records_3.size());
 
 	}
-
-
-	// public static testMethod void testGetApprovalHistory() {
-
-	//     cspmb__Price_Item__c cp_1 = [select Id,Name from cspmb__Price_Item__c where Name='cp_accounts' limit 1];
-
-	//     Approval.ProcessSubmitRequest app = new Approval.ProcessSubmitRequest();
-	//     app.setObjectId(cp_1.id);
-	//     Approval.ProcessResult result = Approval.process(app);
-
-	//     Test.startTest();
-
-	//     FrameRateManagerController.getApprovalHistory(cp_1.Id);
-
-	//     Test.stopTest();
-
-	// }
-
 
 	public static testMethod void testMinorFunctions() {
 		setupPricingModel();
@@ -535,9 +517,9 @@ private class FrameRateManagerControllerTest {
 		Boolean isUserAdmin = FrameRateManagerController.isUserAdmin();
 		Set <Id> isUserDelegate = FrameRateManagerController.isUserDelegate(userId);
 
-		List <String> uniqueList = FrameRateManagerController.getUniqueListElements(new List<String>{'a1', 'a1', 'a2'});
+		List<String> uniqueList = FrameRateManagerController.getUniqueListElements(new List<String>{'a1', 'a1', 'a2'});
 
-		Map <String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList);
+		Map<String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList);
 
 		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> addonsInvalid = FrameRateManagerController.getAddons(new List <Id>{
 			cp_addon_inv.Id
@@ -577,8 +559,8 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		List <csconta__Frame_Agreement__c> faList = FrameRateManagerController.getFrameAgreements(acc.Id);
-		List <csconta__Frame_Agreement__c> faListInvalid = FrameRateManagerController.getFrameAgreements('invalid');
+		List<csconta__Frame_Agreement__c> faList = FrameRateManagerController.getFrameAgreements(acc.Id);
+		List<csconta__Frame_Agreement__c> faListInvalid = FrameRateManagerController.getFrameAgreements('invalid');
 
 		csconta__Frame_Agreement__c fa = FrameRateManagerController.getFrameAgreement(fa_1.Id);
 		FrameRateManagerController.setFrameAgreementState(fa_1.Id, 'Active');
@@ -614,7 +596,7 @@ private class FrameRateManagerControllerTest {
 		system.assertNotEquals('Success', invalidString_1);
 		system.assertNotEquals('Success', invalidString_2);
 
-		List <csconta__Frame_Agreement__c> emptyList = new List <csconta__Frame_Agreement__c>([select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA2']);
+		List<csconta__Frame_Agreement__c> emptyList = new List<csconta__Frame_Agreement__c>([select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA2']);
 		system.assertEquals(0, emptyList.size());
 		system.assertEquals('FA1', cloned_1_fa_1.csconta__Agreement_Name__c);
 		system.assertEquals(expectedExceptionThrown, true);
@@ -718,13 +700,41 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		List <cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
 
 		Test.stopTest();
 
 		system.assertEquals(5, cpIdList.size());
 		system.assertEquals(4, getCommercialProducts.size());
+	}
 
+	@IsTest
+	public static void getCommercialProductsWithInitialCategorizationFilter() {
+		setupPricingModel();
+		setupSettings();
+		insert new csutil__JSON_Data__c(
+			Name = 'FA-Initial-Categorization',
+			csutil__value__c = '[{"name": "Alpha","field": "cspmb__Role__c","values": ["Master"]}]'
+		);
+
+		List<cspmb__Price_Item__c> results = [
+			select Id
+			from cspmb__Price_Item__c
+		];
+		List<Id> cpIdList = new List<Id>();
+
+		for (cspmb__Price_Item__c cp : results) {
+			cpIdList.add(cp.Id);
+		}
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
+
+		Test.stopTest();
+
+		system.assertEquals(5, cpIdList.size());
+		system.assertEquals(0, getCommercialProducts.size());
 	}
 
 	public static testMethod void testGetStandaloneAddons() {
@@ -735,7 +745,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		List <cspmb__Add_On_Price_Item__c> saAddons = FrameRateManagerController.getStandaloneAddons();
+		List<cspmb__Add_On_Price_Item__c> saAddons = FrameRateManagerController.getStandaloneAddons();
 
 		Test.stopTest();
 
@@ -751,7 +761,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		List <cspmb__Add_On_Price_Item__c> saAddons = FrameRateManagerController.filterStandaloneAddons('[{"field":"cspmb__Billing_Frequency__c","values":["Monthly"]}]');
+		List<cspmb__Add_On_Price_Item__c> saAddons = FrameRateManagerController.filterStandaloneAddons('[{"field":"cspmb__Billing_Frequency__c","values":["Monthly"]}]');
 
 		Test.stopTest();
 
@@ -767,7 +777,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		Map <String, Object> addon_di = FrameRateManagerController.getAddonDiscountInformation();
+		Map<String, Object> addon_di = FrameRateManagerController.getAddonDiscountInformation();
 
 		Test.stopTest();
 
@@ -784,7 +794,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		List <cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(new List<Id>());
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(new List<Id>());
 
 		Test.stopTest();
 
@@ -792,22 +802,52 @@ private class FrameRateManagerControllerTest {
 
 	}
 
-	public static testMethod void testFilterCommercialProducts() {
+	public static testMethod void testFilterCommercialProductsReturnsEmpty() {
 		setupPricingModel();
-
 		setupSettings();
 		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]';
 
 		Test.startTest();
 
-		List <cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
+		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
 
 		Test.stopTest();
 
-		system.assertEquals(4, filteredCp.size());
+		system.assertEquals(0, filteredCp.size(), 'should return 0 cps because there is no discount type in test data');
 
 	}
 
+	@IsTest
+	public static void testFilterCommercialProducts() {
+		setupPricingModel();
+		setupSettings();
+		String data = '[{"name":"Alpha","field":"name","values":["cp_1"]}]';
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
+
+		Test.stopTest();
+
+		system.assertEquals(1, filteredCp.size());
+		System.assertEquals('cp_1', filteredCp[0].name);
+	}
+
+	@IsTest
+	public static void testFilterCommercialProductsThrowsException() {
+		setupPricingModel();
+		setupSettings();
+		String malformedData= '[{"name":"Alpha""field":"name","values":["cp_1"]}]';
+
+		Test.startTest();
+		try {
+			FrameRateManagerController.filterCommercialProducts(malformedData);
+			System.assert(false, 'Should always throw exception on malformed json.');
+		} catch (Exception e) {
+			System.assertEquals(true, e.getMessage().startsWith('JSON value is malformed'));
+		}
+		Test.stopTest();
+	}
 
 	public static testMethod void testApproval() {
 		setupPricingModel();
@@ -854,7 +894,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		List <cspmb__Pricing_Element__c> pricingElementsList = FrameRateManagerController.getPricingElements(cp_1.Id);
+		List<cspmb__Pricing_Element__c> pricingElementsList = FrameRateManagerController.getPricingElements(cp_1.Id);
 
 		Test.stopTest();
 
@@ -886,8 +926,8 @@ private class FrameRateManagerControllerTest {
 
 		system.assertEquals('Success', decomposeResult_1);
 
-		List <cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = [select Id from cspmb__Price_Item_Pricing_Rule_Association__c where cspmb__pricing_rule__c = :prId limit 10000];
-		List <cspmb__Price_Item_Pricing_Rule_Association__c> pipraList2 = [select Id from cspmb__Price_Item_Pricing_Rule_Association__c where cspmb__pricing_rule__c = :prId_2 limit 10000];
+		List<cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = [select Id from cspmb__Price_Item_Pricing_Rule_Association__c where cspmb__pricing_rule__c = :prId limit 10000];
+		List<cspmb__Price_Item_Pricing_Rule_Association__c> pipraList2 = [select Id from cspmb__Price_Item_Pricing_Rule_Association__c where cspmb__pricing_rule__c = :prId_2 limit 10000];
 
 		Test.stopTest();
 
@@ -900,7 +940,7 @@ private class FrameRateManagerControllerTest {
 		cspmb__Price_Item__c cp_1 = [select Id,Name from cspmb__Price_Item__c where Name = 'cp_1' limit 1];
 		cspmb__Price_Item__c cp_2 = [select Id,Name from cspmb__Price_Item__c where Name = 'cp_2' limit 1];
 
-		List <String> attachmentBodies = new List <String>();
+		List<String> attachmentBodies = new List<String>();
 
 		Test.startTest();
 
@@ -928,7 +968,7 @@ private class FrameRateManagerControllerTest {
 
 	public static testMethod void testPicklistOptions() {
 		Test.startTest();
-		Map <String, List <Map<String, Object>>> pickList = FrameRateManagerController.getPicklistOptions(new List <String>{
+		Map<String, List <Map<String, Object>>> pickList = FrameRateManagerController.getPicklistOptions(new List<String>{
 			'csconta__Status__c'
 		});
 		Test.stopTest();
@@ -975,11 +1015,6 @@ private class FrameRateManagerControllerTest {
 		String setStatusResult = FrameRateManagerController.setFrameAgreementState(fa_1.Id, 'Active');
 		csconta__Frame_Agreement__c clonedFa = FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
 		String deleteResult = FrameRateManagerController.deleteFrameAgreement(fa_1.Id);
-
-		// Map <String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(new List <Id>{
-		//      '01p1t00000M4Gqp'
-		// });
-
 		Test.stopTest();
 		system.assertNotEquals(null, faGet);
 		system.assertEquals('Success', setStatusResult);

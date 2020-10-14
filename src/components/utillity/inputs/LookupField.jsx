@@ -122,9 +122,9 @@ class LookupField extends React.Component {
 				params.columns = this.props.columns;
 				params.whereClause = this.filter;
 
-				if (val && val !== '') {
-					params.search = this.labelField + " like '%" + val + "%'";
-					infoMergedWhere = params.whereClause + ' and ' + params.search;
+				if (val) {
+					params.search = `${this.labelField} like '%${val}%'`;
+					infoMergedWhere = params.whereClause ? `${params.whereClause} and  ${params.search}` : params.search;
 				}
 
 				params.lastId = null;

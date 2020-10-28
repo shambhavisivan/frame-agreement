@@ -1,0 +1,15 @@
+{
+  "country": "GB",
+  "edition": "Developer",
+  "settings": {
+    "quoteSettings": {
+      "enableQuote": true
+    },
+    "apexSettings": {
+      "enableDisableParallelApexTesting": true
+    }
+  },
+  "orgName": "CloudSense",
+  "adminEmail": "sanjaykumar.jawahar@cloudsense.com",
+  "hasSampleData": "true"
+}

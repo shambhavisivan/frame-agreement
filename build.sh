@@ -2,15 +2,19 @@
 
 echo "reactapp: build and test"
 
-# TODO: should be updated to the latest ts-app.
+cd assets/src-frontend
 npm ci
 npm run build
+npm run lint
+npm run test
 
 EXITCODE=$?
 
 if [ $EXITCODE -ne 0 ]; then
 	exit $EXITCODE;
 fi
+
+cd ../..
 
 function changedFiles() {
 	git diff --name-only HEAD~1

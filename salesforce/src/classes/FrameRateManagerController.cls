@@ -988,7 +988,7 @@ global with sharing class FrameRateManagerController {
 		};
 
 		Fac_Settings__c facSettings = getFacSetting();
-		String csFields = (String) facSettings.get('rcl_fields__c');
+		String csFields = (String) facSettings.get('price_item_fields__c');
 		List<String> csFieldsArr = new List<String>();
 
 		if (!String.isBlank(csFields)) {

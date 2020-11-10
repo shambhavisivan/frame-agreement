@@ -270,7 +270,7 @@ private class FrameRateManagerControllerTest {
 		facSettings.closed_status__c = 'Replaced';
 		facSettings.draft_status__c = 'Draft';
 		facSettings.price_item_fields__c = 'cspmb__Contract_Term__c';
-		facSettings.rcl_fields__c = 'cspmb__Currency_Code__c';
+		facSettings.rcl_fields__c = 'cspmb__Currency_Code__c, cspmb__rate_card_line_code__c';
 		facSettings.requires_approval_status__c = 'Requires Approval';
 		insert facSettings;
 	}

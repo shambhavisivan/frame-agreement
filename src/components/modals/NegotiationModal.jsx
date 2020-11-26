@@ -220,6 +220,31 @@ class NegotiationModal extends Component {
 				// rated
 			}
 		});
+
+		(() => {
+			// create hardcoded legacy charges for product.
+			const legacyProducts = this.commercialProducts.filter(
+				(cp) => cp._charges.length === 0
+			);
+
+			if (legacyProducts.length) {
+				const oneOffCharge = {
+					Id: "dummy-id-oneoff",
+					Name: "One-off charge (Product)",
+					isLegacy: true,
+					type:'oneOff'
+				};
+
+				const recurringCharge = {
+					Id: "dummy-id-recurring",
+					Name: "Recurring charge (Product)",
+					isLegacy: true,
+					type:'recurring'
+				};
+
+				this._charges.push(oneOffCharge, recurringCharge);
+			}
+		})();
 	}
 
 	_setState(newState, callback) {
@@ -500,18 +525,58 @@ class NegotiationModal extends Component {
 		}
 
 		if (Object.keys(selected.charges).length) {
-			this.commercialProducts.forEach(cp => {
-				if (cp._charges) {
-					cp._charges.forEach(charge => {
-						if (selected.charges.hasOwnProperty(charge.Id)) {
-							attachment[cp.Id]._charges = attachment[cp.Id]._charges || {};
-							attachment[cp.Id]._charges[charge.Id] = attachment[cp.Id]._charges[charge.Id] || {};
-							attachment[cp.Id]._charges[charge.Id][charge._type] = applyDiscountRate(
-								attachment[cp.Id]._charges[charge.Id][charge._type] || charge[charge._type],
+			this.commercialProducts.forEach((cp) => {
+				if (cp._charges.length) {
+					cp._charges.forEach((charge) => {
+						if (
+							selected.charges.hasOwnProperty(charge.Id) &&
+							!charge.isLegacy
+						) {
+							attachment[cp.Id]._charges =
+								attachment[cp.Id]._charges || {};
+							attachment[cp.Id]._charges[charge.Id] =
+								attachment[cp.Id]._charges[charge.Id] || {};
+							attachment[cp.Id]._charges[charge.Id][
+								charge._type
+							] = applyDiscountRate(
+								attachment[cp.Id]._charges[charge.Id][
+									charge._type
+								] || charge[charge._type],
 								this.state
 							);
 						}
 					});
+				} else {
+					const oneOffCharge = cp.cspmb__One_Off_Charge__c;
+					const recurringCharge = cp.cspmb__Recurring_Charge__c;
+
+					if (oneOffCharge || recurringCharge) {
+						attachment[cp.Id]._product =
+							attachment[cp.Id]._product || {};
+						Object.keys(selected.charges).forEach((key) => {
+							let charge = selected.charges[key];
+							if (charge.isLegacy) {
+								if (charge.type == "oneOff" && oneOffCharge) {
+									attachment[
+										cp.Id
+									]._product.oneOff = applyDiscountRate(
+										oneOffCharge,
+										this.state
+									);
+								} else if (
+									charge.type == "recurring" &&
+									recurringCharge
+								) {
+									attachment[
+										cp.Id
+									]._product.recurring = applyDiscountRate(
+										recurringCharge,
+										this.state
+									);
+								}
+							}
+						});
+					}
 				}
 			});
 		}
@@ -543,6 +608,70 @@ class NegotiationModal extends Component {
 			);
 			console.log(this.state.attachment);
 		});
+	}
+
+	renderCharges(charge) {
+		return charge.isLegacy ? (
+			<li
+				onClick={() => {
+					this.onSelectRow(charge, "charges");
+				}}
+				key={charge.product + "-" + charge.Id}
+				className={
+					"list-row" +
+					(this.state.selected.charges[charge.Id]
+						? " selected-row"
+						: "")
+				}
+			>
+				<div className="list-cell">
+					<Checkbox
+						readOnly={
+							this.state.selected.charges[charge.Id]
+						}
+					/>{" "}
+					{charge.Name}
+				</div>
+			</li>
+		) : (
+			<li
+				onClick={() => {
+					this.onSelectRow(charge, "charges");
+				}}
+				key={charge.product + "-" + charge.Id}
+				className={
+					"list-row" +
+					(this.state.selected.charges[charge.Id]
+						? " selected-row"
+						: "")
+				}
+			>
+				<div className="list-cell">
+					<Checkbox
+						readOnly={
+							this.state.selected.charges[charge.Id]
+						}
+					/>{" "}
+					{charge.Name}
+				</div>
+					<div className="list-cell">
+						{" "}
+						{this._chCpMap[charge.Id]
+							.length +
+							"/" +
+							this.commercialProducts
+								.length}
+					</div>
+					<div className="list-cell">
+						{charge.chargeType}
+					</div>
+					<div className="list-cell">
+						<NumberFormat
+							value={charge[charge._type]}
+						/>
+					</div>
+			</li>
+		)
 	}
 
 	render() {
@@ -656,37 +785,9 @@ class NegotiationModal extends Component {
 
 					<ul className="table-list">
 						{this._charges
-							// .filter(ch => {
-							//   if (this.state.filter.intersection) {
-							//     return this._chCpMap[ch.Id].length === this.commercialProducts.length;
-							//   }
-							//   return true;
-							// })
 							.paginate(this.state.pagination.page_charges, this.state.pagination.pageSize)
 							.map((charge, i) => {
-								return (
-									<li
-										onClick={() => {
-											this.onSelectRow(charge, 'charges');
-										}}
-										key={charge.product + '-' + charge.Id}
-										className={
-											'list-row' + (this.state.selected.charges[charge.Id] ? ' selected-row' : '')
-										}
-									>
-										<div className="list-cell">
-											<Checkbox readOnly={this.state.selected.charges[charge.Id]} /> {charge.Name}
-										</div>
-										<div className="list-cell">
-											{' '}
-											{this._chCpMap[charge.Id].length + '/' + this.commercialProducts.length}
-										</div>
-										<div className="list-cell">{charge.chargeType}</div>
-										<div className="list-cell">
-											<NumberFormat value={charge[charge._type]} />
-										</div>
-									</li>
-								);
+								return this.renderCharges(charge)
 							})}
 					</ul>
 					<Pagination

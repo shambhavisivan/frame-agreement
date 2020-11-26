@@ -1006,6 +1006,13 @@ const rootReducer = (state = initialState, action) => {
 						_products[key]._rateCards[rcId] = data[key]._rateCards[rcId];
 					}
 				}
+				if (data[key]._product) {
+					_products[key]._product = _products[key]._product || {};
+					_products[key]._product = {
+						..._products[key]._product,
+						...data[key]._product,
+					};
+				}
 			}
 
 			return {

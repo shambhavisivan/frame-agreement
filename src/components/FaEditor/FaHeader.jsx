@@ -256,6 +256,7 @@ class FaHeader extends React.Component {
 
 						{evaluateExpressionOnAgreement(this.props.settings.ButtonStandardData.Save, _fa) ? (
 							<button
+								disabled = {this.props.isAttachmentLoading}
 								className="fa-button fa-button--transparent"
 								onClick={() => this.upsertFrameAgreements()}
 							>

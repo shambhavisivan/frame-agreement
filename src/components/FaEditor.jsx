@@ -518,7 +518,7 @@ export class FaEditor extends Component {
 					message={window.SF.labels.modal_unsavedChanges_alert}
 				/>
 
-				<FaHeader faId={this.faId} />
+				<FaHeader faId={this.faId} isAttachmentLoading={this.state.loading.attachment}/>
 
 				<div className="fa-main-body">
 					<div className="fa-main-body__inner">

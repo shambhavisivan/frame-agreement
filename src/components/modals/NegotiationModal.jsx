@@ -528,10 +528,7 @@ class NegotiationModal extends Component {
 			this.commercialProducts.forEach((cp) => {
 				if (cp._charges.length) {
 					cp._charges.forEach((charge) => {
-						if (
-							selected.charges.hasOwnProperty(charge.Id) &&
-							!charge.isLegacy
-						) {
+						if (selected.charges.hasOwnProperty(charge.Id)) {
 							attachment[cp.Id]._charges =
 								attachment[cp.Id]._charges || {};
 							attachment[cp.Id]._charges[charge.Id] =
@@ -551,26 +548,23 @@ class NegotiationModal extends Component {
 					const recurringCharge = cp.cspmb__Recurring_Charge__c;
 
 					if (oneOffCharge || recurringCharge) {
-						attachment[cp.Id]._product =
-							attachment[cp.Id]._product || {};
-						Object.keys(selected.charges).forEach((key) => {
-							let charge = selected.charges[key];
-							if (charge.isLegacy) {
+						attachment[cp.Id]._product = attachment[cp.Id]._product || {};
+						this._charges.forEach((charge) => {
+							if (
+								Object.keys(selected.charges).includes(charge.Id) &&
+								charge.isLegacy
+							) {
 								if (charge.type == "oneOff" && oneOffCharge) {
-									attachment[
-										cp.Id
-									]._product.oneOff = applyDiscountRate(
-										oneOffCharge,
+									attachment[cp.Id]._product.oneOff = applyDiscountRate(
+										attachment[cp.Id]._product.oneOff || oneOffCharge,
 										this.state
 									);
 								} else if (
 									charge.type == "recurring" &&
 									recurringCharge
 								) {
-									attachment[
-										cp.Id
-									]._product.recurring = applyDiscountRate(
-										recurringCharge,
+									attachment[cp.Id]._product.recurring = applyDiscountRate(
+										attachment[cp.Id]._product.recurring || recurringCharge,
 										this.state
 									);
 								}

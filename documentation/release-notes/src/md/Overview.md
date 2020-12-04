@@ -1,7 +1,7 @@
 # Overview
 
-Release date: 20/10/2020
+Release date: 04/12/2020
 
-Build number: 2.40
+Build number: 2.43
 
-Installation URL: /packaging/installPackage.apexp?p0=04t1t000003Pnql
+Installation URL: /packaging/installPackage.apexp?p0=04t1t000000knop

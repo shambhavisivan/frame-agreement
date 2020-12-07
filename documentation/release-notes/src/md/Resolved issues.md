@@ -2,5 +2,4 @@
 
 ## T-52655: Product Contract Attachment with null body
 
-Save button in the Fa editor page has been disable until the attachment for the Frame Agreement is loaded.
-
+The Save button on the Frame Agreement editor page is now disabled until the Frame Agreement Attachment is fully loaded.

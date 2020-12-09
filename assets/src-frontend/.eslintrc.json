@@ -7,9 +7,15 @@
     "prettier/@typescript-eslint"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["react-hooks"],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["react-hooks", "deprecation"],
   "rules": {
     "react/prop-types": 0,
+    "deprecation/deprecation": "error",
     "no-underscore-dangle": 0,
     "import/first": "error",
     "import/newline-after-import": "error",
@@ -59,12 +65,11 @@
       }
     ],
     "@typescript-eslint/explicit-function-return-type": "error",
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-empty-function": "error"
   },
   "overrides": [
     {
-      // Disable import/first rule for test files since we importing child component after mocking parent component
       "files": ["*.test.ts?(x)"],
       "rules": {
         "import/first": "off"

@@ -7,7 +7,7 @@
     "react-dom": "^17.0.1"
   },
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest --coverage --passWithNoTests",
     "test:watch": "jest --coverage --watch",
     "start": "NODE_ENV=development webpack-dev-server",
     "build": "NODE_ENV=production webpack",

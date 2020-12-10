@@ -101,8 +101,23 @@ if (process.env.NODE_ENV === 'production') {
 
 if (process.env.NODE_ENV === 'development') {
 	config.plugins.push(new HtmlWebpackPlugin({ template: 'src/local-server/index.html' }));
+
+	// Replace the -salesforce implementations with -mock implementations
+	config.plugins.push(
+		new webpack.NormalModuleReplacementPlugin(/(.*)-salesforce(\.*)/, function (resource) {
+			const resourceToBeBundled = resource.request.replace(/-salesforce/, `-mock`);
+
+			if (resourceToBeBundled !== resource.request) {
+				console.warn(
+					`Using ${resourceToBeBundled} instead of ${resource.request} in environment: ${process.env.NODE_ENV}`
+				);
+			}
+
+			resource.request = resourceToBeBundled;
+		})
+	);
+
 	config.devtool = 'source-map';
-	config.entry.bundle.unshift('./src/local-server/local_data.js');
 
 	const devServerConfig = {
 		devServer: {

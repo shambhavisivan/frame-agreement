@@ -13,6 +13,7 @@ interface SF {
 	apiSession: string;
 	actions: RemoteActions;
 	labels: Record<string, string>;
+	fieldLabels: Record<string, string>;
 }
 
 interface Window {
@@ -34,16 +35,15 @@ interface RemoteActions {
 	// TODO: define all actions
 }
 
-/* eslint-disable @typescript-eslint/naming-convention */
-// TODO: should be updated when the backend refactor is ready.
-interface Account {
-	Id: string;
-	Name: string;
-}
-
 // TODO define the unknowns
 interface AppSettings {
-	account: Account;
+	account: {
+		/* eslint-disable @typescript-eslint/naming-convention */
+		Id: string;
+		Name: string;
+		/* eslint-enable @typescript-eslint/naming-convention */
+	};
+	/* eslint-disable @typescript-eslint/naming-convention */
 	HeaderData: Record<string, unknown>;
 	CustomTabsData: Record<string, unknown>;
 	ButtonCustomData: Record<string, unknown>;
@@ -52,5 +52,5 @@ interface AppSettings {
 	AddonCategorizationData: Record<string, unknown>;
 	CategorizationData: Record<string, unknown>;
 	FACSettings: Record<string, Record<string, unknown>>;
+	/* eslint-enable @typescript-eslint/naming-convention */
 }
-/* eslint-enable @typescript-eslint/naming-convention */

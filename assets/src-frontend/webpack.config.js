@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ZipPlugin = require('zip-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 let config = {
 	mode: process.env.NODE_ENV,
@@ -91,6 +92,12 @@ let config = {
 		})
 	]
 };
+
+if (process.env.NODE_ENV === 'production') {
+	if (process.env.ANALYZE_BUNDLE === 'true') {
+		config.plugins.push(new BundleAnalyzerPlugin());
+	}
+}
 
 if (process.env.NODE_ENV === 'development') {
 	config.plugins.push(new HtmlWebpackPlugin({ template: 'src/local-server/index.html' }));

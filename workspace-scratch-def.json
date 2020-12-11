@@ -9,7 +9,12 @@
       "enableDisableParallelApexTesting": true
     }
   },
+  "objectSettings": {
+    "case": {
+      "defaultRecordType": "default"
+    }
+  },
   "orgName": "CloudSense",
   "adminEmail": "sanjaykumar.jawahar@cloudsense.com",
-  "hasSampleData": "true"
+  "hasSampleData": false
 }

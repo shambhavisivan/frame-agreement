@@ -272,6 +272,7 @@ private class FrameRateManagerControllerTest {
 		facSettings.price_item_fields__c = 'cspmb__Contract_Term__c';
 		facSettings.rcl_fields__c = 'cspmb__Currency_Code__c, cspmb__rate_card_line_code__c';
 		facSettings.requires_approval_status__c = 'Requires Approval';
+		facSettings.standalone_addon_fields__c = 'cspmb__Add_On_Price_Item_Code__c';
 		insert facSettings;
 	}
 
@@ -321,6 +322,7 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		system.assertNotEquals(null, csettings);
+		System.assertEquals(csettings.get('standalone_addon_fields'), 'cspmb__Add_On_Price_Item_Code__c');
 
 	}
 
@@ -742,7 +744,6 @@ private class FrameRateManagerControllerTest {
 
 		Fac_Settings__c facSettings = FrameRateManagerControllerTest.loadFacSettings();
 		facSettings.standalone_addon_fields__c = '';
-
 		Test.startTest();
 
 		List<cspmb__Add_On_Price_Item__c> saAddons = FrameRateManagerController.getStandaloneAddons();

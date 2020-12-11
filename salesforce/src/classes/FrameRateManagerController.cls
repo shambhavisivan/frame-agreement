@@ -535,7 +535,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('decimal_places', facSettings.get('decimal_places__c'));
 		settingMap.put('new_frame_agreement', facSettings.get('new_frame_agreement__c'));
 		settingMap.put('input_minmax_restriction', facSettings.get('input_minmax_restriction__c'));
-
+		settingMap.put('standalone_addon_fields', facSettings.standalone_addon_fields__c);
 		settingMap.put('fa_editable_statuses', facSettings.get('fa_editable_statuses__c'));
 
 		Map<String, Object> statuses = new Map<String, Object>();

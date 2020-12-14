@@ -94,7 +94,8 @@ class NegotiationStandaloneModal extends Component {
 			return +val.toFixed(8);
 		}
 
-		let attachment = this.state.attachment;
+		let attachment = {};
+		let associatedAddOns = this.state.attachment;
 
 		this.props.addons.forEach(add => {
 			// Ignore DL
@@ -107,11 +108,13 @@ class NegotiationStandaloneModal extends Component {
 				}
 			}
 
+			let addOn = { [add.Id]: {} };
+
 			if (this.state.applyRecurring && add.hasOwnProperty('cspmb__Recurring_Charge__c')) {
 				// If there aren't any RC DLs
 				if (!_dl.some(dl => isRecurring(dl.cspmb__Charge_Type__c))) {
-					attachment[add.Id].recurring = applyDiscountRate(
-						attachment[add.Id].recurring,
+					addOn[add.Id].recurring = applyDiscountRate(
+						associatedAddOns[add.Id]?.recurring || add.cspmb__Recurring_Charge__c,
 						this.state.discountMode
 					);
 				}
@@ -120,12 +123,14 @@ class NegotiationStandaloneModal extends Component {
 			if (this.state.applyOneOff && add.hasOwnProperty('cspmb__One_Off_Charge__c')) {
 				// If there aren't any NRC DLs
 				if (!_dl.some(dl => isOneOff(dl.cspmb__Charge_Type__c))) {
-					attachment[add.Id].oneOff = applyDiscountRate(
-						attachment[add.Id].oneOff,
+					addOn[add.Id].oneOff = applyDiscountRate(
+						associatedAddOns[add.Id]?.oneOff || add.cspmb__One_Off_Charge__c,
 						this.state.discountMode
 					);
 				}
 			}
+
+			attachment = { ...attachment, ...addOn };
 		});
 
 		this._setState({ attachment, actionTaken: true }, () => {

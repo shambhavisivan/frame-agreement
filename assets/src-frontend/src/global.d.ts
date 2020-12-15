@@ -33,6 +33,7 @@ type VfParams = {
 interface RemoteActions {
 	getAppSettings(paramsArray: [string]): Promise<AppSettings>;
 	// TODO: define all actions
+	getFrameAgreements(paramsArray: [string]): Promise<FrameAgreement[]>;
 }
 
 // TODO define the unknowns
@@ -52,5 +53,13 @@ interface AppSettings {
 	AddonCategorizationData: Record<string, unknown>;
 	CategorizationData: Record<string, unknown>;
 	FACSettings: Record<string, Record<string, unknown>>;
+	/* eslint-enable @typescript-eslint/naming-convention */
+}
+
+interface FrameAgreement {
+	/* eslint-disable @typescript-eslint/naming-convention */
+	Id: string;
+	LastModifiedDate: number;
+	Name: string;
 	/* eslint-enable @typescript-eslint/naming-convention */
 }

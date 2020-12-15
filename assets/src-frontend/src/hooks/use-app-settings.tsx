@@ -3,11 +3,13 @@ import { remoteActions, AppSettings } from '../datasources';
 
 export { QueryStatus } from 'react-query';
 
-export function useAppSettings(): {
+export function useAppSettings(
+	getAppSettings: () => Promise<AppSettings> = remoteActions.getAppSettings
+): {
 	status: QueryStatus;
 	settings: AppSettings | undefined;
 } {
-	const { status, data } = useQuery('appSettings', remoteActions.getAppSettings);
+	const { status, data } = useQuery('appSettings', getAppSettings);
 
 	return {
 		status,

@@ -1,22 +1,8 @@
-export interface Account {
-	id: string;
-	name: string;
-}
-
-export interface AppSettings {
-	account: Account;
-	headerData: Record<string, unknown>;
-	customTabsData: Record<string, unknown>;
-	buttonCustomData: Record<string, unknown>;
-	buttonStandardData: Record<string, unknown>;
-	relatedListsData: Record<string, unknown>;
-	addonCategorizationData: Record<string, unknown>;
-	categorizationData: Record<string, unknown>;
-	facSettings: Record<string, Record<string, unknown>>;
-}
+import { AppSettings, FrameAgreement } from './interfaces';
 
 export interface RemoteActions {
 	getAppSettings(): Promise<AppSettings>;
+	getFrameAgreements(): Promise<FrameAgreement[]>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -39,5 +25,19 @@ export const remoteActions: RemoteActions = {
 			categorizationData: settings.CategorizationData,
 			facSettings: settings.FACSettings
 		};
+	},
+
+	async getFrameAgreements(): Promise<FrameAgreement[]> {
+		/* eslint-disable deprecation/deprecation */
+		const agreements = await window.SF.actions.getFrameAgreements([window.SF.param.account]);
+		/* eslint-enable deprecation/deprecation */
+
+		return agreements.map(
+			(a): FrameAgreement => ({
+				id: a.Id,
+				name: a.Name,
+				lastModifiedDate: a.LastModifiedDate
+			})
+		);
 	}
 };

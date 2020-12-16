@@ -18,6 +18,7 @@ import {
 } from '../../utils/validation-service';
 
 import { createToast } from '~/src/actions';
+import { DiscountInput } from '../utillity/inputs/discount-input';
 
 // import { getFrameAgreements } from '~/src/actions';
 
@@ -27,9 +28,6 @@ const RATE_VALUE_FIELD = 'cspmb__rate_value__c';
 class NegotiationModal extends Component {
 	constructor(props) {
 		super(props);
-
-		this.discount = React.createRef();
-
 		this.productEllipsis = 3;
 		this.mounted = null;
 
@@ -38,6 +36,7 @@ class NegotiationModal extends Component {
 		this.applyDiscount = this.applyDiscount.bind(this);
 		this.onPropertyChange = this.onPropertyChange.bind(this);
 		this.onPropertyValueChange = this.onPropertyValueChange.bind(this);
+		this.onDiscountInputChange = this.onDiscountInputChange.bind(this);
 
 		this.commercialProductsMap = {};
 
@@ -471,11 +470,12 @@ class NegotiationModal extends Component {
 	}
 
 	applyDiscount() {
-		if (!+this.discount.current.value) {
+		const { discount } = this.state;
+		if (!+discount) {
 			return;
 		}
 
-		const _DISCOUNT = +this.discount.current.value * -1;
+		const _DISCOUNT = +discount * -1;
 		console.log(_DISCOUNT);
 
 		function applyDiscountRate(val, state) {
@@ -666,6 +666,10 @@ class NegotiationModal extends Component {
 					</div>
 			</li>
 		)
+	}
+
+	onDiscountInputChange(value) {
+		this.setState({ discount: value });
 	}
 
 	render() {
@@ -1117,13 +1121,10 @@ class NegotiationModal extends Component {
 								<h4 className="fa-modal-discount-title">
 									{window.SF.labels.modal_bulk_discount_input_title}
 								</h4>
-								<input
-									type="number"
-									min={0}
-									name=""
-									className="fa-input"
-									ref={this.discount}
-									placeholder={window.SF.labels.modal_bulk_input_placeholder}
+								<DiscountInput
+									value={this.state.discount}
+									mode={this.state.discountMode}
+									onChange={this.onDiscountInputChange}
 								/>
 							</div>
 							<div className="fa-modal-discount-item">

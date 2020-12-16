@@ -19,6 +19,7 @@ import {
 } from '../../utils/validation-service';
 
 import { createToast } from '~/src/actions';
+import { DiscountInput } from '../utillity/inputs/discount-input';
 
 const ADDON_VALUE_FIELD = 'cspmb__Recurring_Charge__c';
 const RATE_VALUE_FIELD = 'cspmb__rate_value__c';
@@ -238,13 +239,10 @@ class NegotiationStandaloneModal extends Component {
 								<h4 className="fa-modal-discount-title">
 									{window.SF.labels.modal_bulk_discount_input_title}
 								</h4>
-								<input
-									type="number"
-									min={0}
-									name=""
-									className="fa-input"
-									onChange={e => this._setState({ discount: +e.target.value })}
-									placeholder={window.SF.labels.modal_bulk_input_placeholder}
+								<DiscountInput
+									value={this.state.discount}
+									mode={this.state.discountMode}
+									onChange={value => this._setState({ discount: +value })}
 								/>
 							</div>
 							<div className="fa-modal-discount-item">

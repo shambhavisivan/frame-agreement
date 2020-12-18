@@ -2020,6 +2020,40 @@ global with sharing class FrameRateManagerController {
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
 
+		List<String> allFAFields =
+			new List<String>(
+				Schema.getGlobalDescribe().get('csconta__Frame_Agreement__c').getDescribe().fields.getMap().keySet()
+			);
+
+		csutil__JSON_Data__c cloneFieldsSetting = getJsonData('FA-Clone');
+
+		List<String> fieldsToAdd = new List<String>();
+
+		if(cloneFieldsSetting == null || cloneFieldsSetting.csutil__value__c == null) {
+			fieldsToAdd.addAll(allFAFields);
+		} else {
+			List<String> cloneFields = (List<String>) JSON.deserialize(cloneFieldsSetting.csutil__value__c, List<String>.class);
+
+			if(cloneFields.size() > 0) {
+				fieldsToAdd.addAll(cloneFields);
+			} else {
+				fieldsToAdd.addAll(allFAFields);
+			}
+		}
+
+		Boolean found;
+		for(String field: fieldsToAdd) {
+			found = false;
+			for(String existingField: conjoined_fields) {
+				if(existingField.toLowerCase().equals(field.toLowerCase())) {
+					found = true;
+				}
+			}
+			if(!found) {
+				conjoined_fields.add(field);
+			}
+		}
+
 		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c  where Id = :faId';
 
 		csconta__Frame_Agreement__c original;

@@ -1070,6 +1070,44 @@ private class FrameRateManagerControllerTest {
 		system.assertNotEquals(null, result2);
 	}
 
+	public static testMethod void testCloneFrameAgreementsWithCustomFields() {
+		setupSettings();
+
+		csutil__JSON_Data__c faCloneSettings = new csutil__JSON_Data__c(
+			Name = 'FA-Clone', csutil__value__c = '["csconta__master_frame_agreement__c"]'
+		);
+		insert faCloneSettings;
+
+		Account test_account = new Account(Name = 'TestAcc');
+		insert test_account;
+
+		csconta__Frame_Agreement__c masterFa = new csconta__Frame_Agreement__c(
+			csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'masterFA1', csconta__agreement_level__c = 'Master Agreement'
+		);
+		insert masterFa;
+
+		csconta__Frame_Agreement__c newFa = new csconta__Frame_Agreement__c(
+			csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1', csconta__Account__c = test_account.Id, csconta__master_frame_agreement__c = masterFa.Id
+		);
+		insert newFa;
+
+		csconta__Frame_Agreement__c original = [
+			select Id, csconta__master_frame_agreement__c
+			from csconta__Frame_Agreement__c
+			where Id = :newFa.Id limit 1
+		];
+
+		Test.startTest();
+
+		csconta__Frame_Agreement__c result = FrameRateManagerController.cloneFrameAgreement(newFa.Id);
+
+		Test.stopTest();
+
+		csconta__Frame_Agreement__c cloned = [select Id, csconta__master_frame_agreement__c from csconta__Frame_Agreement__c where Id = :result.Id limit 1];
+
+		System.assertEquals(original.csconta__master_frame_agreement__c, cloned.csconta__master_frame_agreement__c);
+	}
+
 	private static Fac_Settings__c loadFacSettings(){
 		return Fac_Settings__c.getInstance(UserInfo.getUserID());
 	}

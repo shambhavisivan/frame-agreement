@@ -2,7 +2,7 @@
 
 Frame Agreement Console is a Single Page Application used to manage Frame Agreements. It is opened in the context of a Salesforce Account and will list all associated Frame Agreements and allow creating new ones.
 
-## Selecting a Frame Agreement 
+## Selecting a Frame Agreement
 Frame Agreement negotiation starts with the following page: 
 
 
@@ -70,6 +70,7 @@ Key features:
 
 - Ability to select all Add Ons, Charges or Rates or only the shared ones among selected products
 - Ability to apply bulk discount to items - either as a percentage or a fixed amount
+- Ability to apply bulk discounts for products with legacy pricing.
 
 ## Approving Frame Agreement
 Once Frame Agreement is in Approval, it is possible to approve it directly from this application. 

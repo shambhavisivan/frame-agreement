@@ -34,47 +34,39 @@ export class FaTabs extends React.Component {
 			return true;
 		});
 
-		if (_tabs.length) {
-			customTabsComponent = (
-				<Tabs initial={0} onTabChange={this.props.onMainTabChange}>
-					<Tab label={window.SF.labels.products_tab_title}>
-						{this.props.loading ? (
-							<CommercialProductSkeleton count={5} />
-						) : (
-							<React.Fragment>{this.props.defaultTabs.cp}</React.Fragment>
-						)}
-					</Tab>
-					<Tab label={window.SF.labels.addons_tab_title}>
-						{this.props.loading ? (
-							<CommercialProductSkeleton count={5} />
-						) : (
-							<React.Fragment>{this.props.defaultTabs.addon}</React.Fragment>
-						)}
-					</Tab>
+		customTabsComponent = (
+			<Tabs initial={0} onTabChange={this.props.onMainTabChange}>
+				<Tab label={window.SF.labels.products_tab_title}>
+					{this.props.loading ? (
+						<CommercialProductSkeleton count={5} />
+					) : (
+						<React.Fragment>{this.props.defaultTabs.cp}</React.Fragment>
+					)}
+				</Tab>
+				<Tab label={window.SF.labels.addons_tab_title}>
+					{this.props.loading ? (
+						<CommercialProductSkeleton count={5} />
+					) : (
+						<React.Fragment>{this.props.defaultTabs.addon}</React.Fragment>
+					)}
+				</Tab>
 
-					{_tabs.map(tab => {
-						return (
-							<Tab
-								key={'tab-' + tab.container_id}
-								label={tab.label}
-								disabled={this.props.loading}
-								onEnter={() => {
-									this.callTabHandler(tab.onEnter, tab.container_id);
-								}}
-							>
-								<div key={tab.container_id} className="card products-card" id={tab.container_id} />
-							</Tab>
-						);
-					})}
-				</Tabs>
-			);
-		} else {
-			customTabsComponent = this.props.loading ? (
-				<CommercialProductSkeleton count={5} />
-			) : (
-				<React.Fragment>{this.props.children}</React.Fragment>
-			);
-		}
+				{_tabs.map(tab => {
+					return (
+						<Tab
+							key={'tab-' + tab.container_id}
+							label={tab.label}
+							disabled={this.props.loading}
+							onEnter={() => {
+								this.callTabHandler(tab.onEnter, tab.container_id);
+							}}
+						>
+							<div key={tab.container_id} className="card products-card" id={tab.container_id} />
+						</Tab>
+					);
+				})}
+			</Tabs>
+		);
 
 		return customTabsComponent;
 	}

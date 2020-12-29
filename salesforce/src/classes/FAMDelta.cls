@@ -1,6 +1,6 @@
 global with sharing class FAMDelta {
 
-	public static final List <String> CP_FIELDS = new List <String>{
+	public static final List<String> CP_FIELDS = new List<String>{
 		'Id',
 		'Name',
 		'cspmb__Effective_Start_Date__c',
@@ -18,7 +18,7 @@ global with sharing class FAMDelta {
 	}
 
 	@RemoteAction
-	public static Map <String, Object> getDelta(Id fa1, Id fa2) {
+	public static Map<String, Object> getDelta(Id fa1, Id fa2) {
 		// Will compare fa1 (original) to fa2
 
 		// Initialise final structure
@@ -36,36 +36,40 @@ global with sharing class FAMDelta {
 		String att_1 = EncodingUtil.base64Decode(encoded_att_1).toString();
 		String att_2 = EncodingUtil.base64Decode(encoded_att_2).toString();
 
-		Map < String, Object > products_1 = null;
-		Map < String, Object > products_2 = null;
+		Map<String, Object> sourceProducts = null;
+		Map<String, Object> targetProducts = null;
+		Map<String, Object> sourceAddons = null;
+		Map<String, Object> targetAddons = null;
 
 		if (att_1 != null) {
-			Map < String, Object > desAtt = (Map < String, Object >) JSON.deserializeUntyped(att_1);
-			products_1 = (Map < String, Object >) desAtt.get('products');
+			Map<String, Object> desAtt = (Map<String, Object>) JSON.deserializeUntyped(att_1);
+			sourceProducts = (Map<String, Object>) desAtt.get('products');
+			sourceAddons = (Map<String, Object>) desAtt.get('addons');
 		}
 
 		if (att_2 != null) {
-			Map < String, Object > desAtt2 = (Map < String, Object >) JSON.deserializeUntyped(att_2);
-			products_2 = (Map < String, Object >) desAtt2.get('products');
+			Map<String, Object> desAtt2 = (Map<String, Object>) JSON.deserializeUntyped(att_2);
+			targetProducts = (Map<String, Object>) desAtt2.get('products');
+			targetAddons = (Map<String, Object>) desAtt2.get('addons');
 		}
 
 		// Compare attachment
 
 		// 1) Products added/removed
-		Set <String> productIds_1;
-		Set <String> productIds_2;
+		Set<String> productIds_1;
+		Set<String> productIds_2;
 
 		// This will contain attachment diff for products
-		Map <Id, Object> fa_products = new Map <Id, Object>();
+		Map<Id, Object> fa_products = new Map<Id, Object>();
 
-		if (products_1 != null && products_2 != null) {
+		if (sourceProducts != null && targetProducts != null) {
 			// .clone() because apex will remove key from map if removed from Set created from keySet
-			productIds_1 = products_1.keySet().clone();
-			productIds_2 = products_2.keySet().clone();
+			productIds_1 = sourceProducts.keySet().clone();
+			productIds_2 = targetProducts.keySet().clone();
 
 		}
 
-		List <Id> unchangedProductIds = new List <Id> ();
+		List<Id> unchangedProductIds = new List<Id> ();
 		for (String cpId : productIds_1) {
 			if (productIds_2.contains(cpId)) {
 				// Unchanged
@@ -95,28 +99,27 @@ global with sharing class FAMDelta {
 		// Compare Addons
 		// Append compareAddons result to main structure
 
-		// ********************** FA FIELDS
-		Map <String, Object> diff_structure = compareFrameAgreements(fa1, fa2);
+		Map<String, Object> diff_structure = compareFrameAgreements(fa1, fa2);
 
 		for (String productId : unchangedProductIds) {
 
-			Map <String, Object> original_cp = (Map <String, Object>) products_1.get(productId);
-			Map <String, Object> secondary_cp = (Map <String, Object>) products_2.get(productId);
+			Map<String, Object> original_cp = (Map<String, Object>) sourceProducts.get(productId);
+			Map<String, Object> secondary_cp = (Map<String, Object>) targetProducts.get(productId);
 
 			// ********************** ADDONS
-			Map <String, addonWrap> addon_compare = new Map <String, addonWrap>();
+			Map<String, addonWrap> addon_compare = new Map<String, addonWrap>();
 
-			Map <String, Object> addons1 = (Map <String, Object>) original_cp.get('_addons');
-			Map <String, Object> addons2 = (Map <String, Object>) secondary_cp.get('_addons');
+			Map<String, Object> addons1 = (Map<String, Object>) original_cp.get('_addons');
+			Map<String, Object> addons2 = (Map<String, Object>) secondary_cp.get('_addons');
 
 			if (addons1 != null || addons2 != null) {
 
 				if (addons1 == null) {
-					addons1 = new Map <String, Object>();
+					addons1 = new Map<String, Object>();
 				}
 
 				if (addons2 == null) {
-					addons2 = new Map <String, Object>();
+					addons2 = new Map<String, Object>();
 				}
 
 				addon_compare = compareAddons(addons1, addons2);
@@ -124,19 +127,19 @@ global with sharing class FAMDelta {
 
 			// ********************** CHARGES
 
-			Map <String, Map <String, diffWrap>> charges_compare = new Map <String, Map <String, diffWrap>>();
+			Map<String, Map<String, diffWrap>> charges_compare = new Map<String, Map<String, diffWrap>>();
 
-			Map <String, Object> charges1 = (Map <String, Object>) original_cp.get('_charges');
-			Map <String, Object> charges2 = (Map <String, Object>) secondary_cp.get('_charges');
+			Map<String, Object> charges1 = (Map<String, Object>) original_cp.get('_charges');
+			Map<String, Object> charges2 = (Map<String, Object>) secondary_cp.get('_charges');
 
 			if (charges1 != null || charges2 != null) {
 
 				if (charges1 == null) {
-					charges1 = new Map <String, Object>();
+					charges1 = new Map<String, Object>();
 				}
 
 				if (charges2 == null) {
-					charges2 = new Map <String, Object>();
+					charges2 = new Map<String, Object>();
 				}
 
 				charges_compare = compareCharges(charges1, charges2);
@@ -144,19 +147,19 @@ global with sharing class FAMDelta {
 
 			// ********************** PRODUCTS
 
-			Map <String, diffWrap> products_compare = new Map <String, diffWrap>();
+			Map<String, diffWrap> products_compare = new Map<String, diffWrap>();
 
-			Map <String, Object> product1 = (Map <String, Object>) original_cp.get('_product');
-			Map <String, Object> product2 = (Map <String, Object>) secondary_cp.get('_product');
+			Map<String, Object> product1 = (Map<String, Object>) original_cp.get('_product');
+			Map<String, Object> product2 = (Map<String, Object>) secondary_cp.get('_product');
 
 			if (product1 != null || product2 != null) {
 
 				if (product1 == null) {
-					product1 = new Map <String, Object>();
+					product1 = new Map<String, Object>();
 				}
 
 				if (product2 == null) {
-					product2 = new Map <String, Object>();
+					product2 = new Map<String, Object>();
 				}
 
 				products_compare = compareProductCharges(product1, product2);
@@ -164,22 +167,22 @@ global with sharing class FAMDelta {
 
 			// ********************** RATE CARD
 
-			Map <String, rcWrap> rateCards_compare = new Map <String, rcWrap>();
+			Map<String, rcWrap> rateCards_compare = new Map<String, rcWrap>();
 
 			system.debug(productId + '-' + JSON.serialize(original_cp));
 			system.debug(productId + '-' + JSON.serialize(secondary_cp));
 
-			Map <String, Object> rcList1 = (Map <String, Object>) original_cp.get('_rateCards');
-			Map <String, Object> rcList2 = (Map <String, Object>) secondary_cp.get('_rateCards');
+			Map<String, Object> rcList1 = (Map<String, Object>) original_cp.get('_rateCards');
+			Map<String, Object> rcList2 = (Map<String, Object>) secondary_cp.get('_rateCards');
 
 			if (rcList1 != null || rcList2 != null) {
 
 				if (rcList1 == null) {
-					rcList1 = new Map <String, Object>();
+					rcList1 = new Map<String, Object>();
 				}
 
 				if (rcList2 == null) {
-					rcList2 = new Map <String, Object>();
+					rcList2 = new Map<String, Object>();
 				}
 
 				rateCards_compare = compareRateCards(rcList1, rcList2);
@@ -187,8 +190,8 @@ global with sharing class FAMDelta {
 
 			// ********************** VOLUMES
 
-			Map <String, Object> volumes1 = (Map <String, Object>) original_cp.get('_volume');
-			Map <String, Object> volumes2 = (Map <String, Object>) secondary_cp.get('_volume');
+			Map<String, Object> volumes1 = (Map<String, Object>) original_cp.get('_volume');
+			Map<String, Object> volumes2 = (Map<String, Object>) secondary_cp.get('_volume');
 
 			system.debug(volumes1);
 			system.debug(volumes2);
@@ -202,15 +205,32 @@ global with sharing class FAMDelta {
 			system.debug(isAllNull1);
 			system.debug(isAllNull2);
 
-			Map <String, diffWrap> volume_compare = new Map <String, diffWrap>();
+			Map<String, diffWrap> volume_compare = new Map<String, diffWrap>();
 
 			if (!isAllNull1 || !isAllNull2) {
 				volume_compare = compareVolume(volumes1, volumes2);
 			}
 
 			// ********************** DONE COMPARING
-			fa_products.put(productId, new attachmentWrap(addon_compare, charges_compare, products_compare, rateCards_compare, volume_compare));
+			fa_products.put(productId,
+				new attachmentWrap(
+					addon_compare, charges_compare, products_compare, rateCards_compare, volume_compare
+				)
+			);
 
+		}
+
+		// Compare standalone Addons
+		if (sourceAddons != null || targetAddons != null) {
+			if(sourceAddons == null) {
+				sourceAddons = new Map<String, Object>();
+			}
+
+			if(targetAddons == null) {
+				targetAddons = new Map<String, Object>();
+			}
+
+			diff_structure.put('_addons', compareAddons(sourceAddons, targetAddons));
 		}
 
 
@@ -222,13 +242,13 @@ global with sharing class FAMDelta {
 		return diff_structure;
 	}
 
-	public static Map <String, diffWrap> compareVolume(Map <String, Object> volumes1, Map <String, Object> volumes2) {
+	public static Map<String, diffWrap> compareVolume(Map<String, Object> volumes1, Map<String, Object> volumes2) {
 		// muc, mucp, mv, mvp
-		Set <String> volumeFields = new Set<String>{
+		Set<String> volumeFields = new Set<String>{
 			'muc', 'mucp', 'mv', 'mvp'
 		};
 
-		Map <String, diffWrap> result = new Map <String, diffWrap>();
+		Map<String, diffWrap> result = new Map<String, diffWrap>();
 
 		for (String vf : volumeFields) {
 			Decimal vf_val_1 = (Decimal) volumes1.get(vf);
@@ -244,17 +264,16 @@ global with sharing class FAMDelta {
 		return result;
 	}
 
-	public static Map <String, addonWrap> compareAddons(Map <String, Object> addons1, Map <String, Object> addons2) {
+	public static Map<String, addonWrap> compareAddons(Map<String, Object> addons1, Map<String, Object> addons2) {
 
-		Map <String, addonWrap> result = new Map <String, addonWrap>();
+		Map<String, addonWrap> result = new Map<String, addonWrap>();
 
-		Set <String> secondaryAddonsIds = addons2.keySet();
+		Set<String> secondaryAddonsIds = addons2.keySet();
 
 		for (String addonId : addons1.keySet()) {
 
-
-			Map <String, Object> addon1 = (Map <String, Object>) addons1.get(addonId);
-			Map <String, Object> addon2 = (Map <String, Object>) addons2.get(addonId);
+			Map<String, Object> addon1 = (Map<String, Object>) addons1.get(addonId);
+			Map<String, Object> addon2 = (Map<String, Object>) addons2.get(addonId);
 
 			if (secondaryAddonsIds.contains(addonId)) {
 				// Existing
@@ -313,8 +332,11 @@ global with sharing class FAMDelta {
 				Decimal oneOff = (Decimal) addon1.get('oneOff');
 				Decimal recurring = (Decimal) addon1.get('recurring');
 
-				// result.put(addonId, new addonWrap(new diffWrap(oneOff, nullInt, 'removed'), new diffWrap(recurring, nullInt, 'removed'), 'removed'));
-				result.put(addonId, new addonWrap(new diffWrap(oneOff, null, 'removed'), new diffWrap(recurring, null, 'removed'), 'removed'));
+				result.put(
+					addonId,
+					new addonWrap(new diffWrap(oneOff, null, 'removed'),
+					new diffWrap(recurring, null, 'removed'), 'removed')
+				);
 
 				// Remove this add on Id from the list
 				secondaryAddonsIds.remove(addonId);
@@ -327,21 +349,28 @@ global with sharing class FAMDelta {
 
 		for (String addedAddonId : secondaryAddonsIds) {
 			// added
-			Map <String, Object> addon2 = (Map <String, Object>) addons2.get(addedAddonId);
+			Map<String, Object> addon2 = (Map<String, Object>) addons2.get(addedAddonId);
 
 			Decimal oneOff = (Decimal) addon2.get('oneOff');
 			Decimal recurring = (Decimal) addon2.get('recurring');
 
-			result.put(addedAddonId, new addonWrap(new diffWrap(null, oneOff, 'added'), new diffWrap(null, recurring, 'added'), 'added'));
+			result.put(
+				addedAddonId,
+				new addonWrap(new diffWrap(null, oneOff, 'added'),
+				new diffWrap(null, recurring, 'added'), 'added')
+			);
 
 		}
 
 		return result;
 	}
 
-	public static Map <String, diffWrap> compareProductCharges(Map <String, Object> p_charge1, Map <String, Object> p_charge2) {
+	public static Map<String, diffWrap> compareProductCharges(
+		Map<String, Object> p_charge1,
+		Map<String, Object> p_charge2
+	) {
 
-		Map <String, diffWrap> result = new Map <String, diffWrap>();
+		Map<String, diffWrap> result = new Map<String, diffWrap>();
 
 		String oneOffStatus = 'unchanged';
 		if (p_charge1.get('oneOff') != p_charge2.get('oneOff')) {
@@ -360,25 +389,28 @@ global with sharing class FAMDelta {
 		return result;
 	}
 
-	public static Map <String, Map <String, diffWrap>> compareCharges(Map <String, Object> charges1, Map <String, Object> charges2) {
+	public static Map<String, Map<String, diffWrap>> compareCharges(
+		Map<String, Object> charges1,
+		Map<String, Object> charges2
+	) {
 
-		Map <String, Map <String, diffWrap>> result = new Map <String, Map <String, diffWrap>>();
+		Map<String, Map<String, diffWrap>> result = new Map<String, Map<String, diffWrap>>();
 
-		Set <String> secondaryChargesIds = charges2.keySet();
+		Set<String> secondaryChargesIds = charges2.keySet();
 
 
 		for (String chargeId : charges1.keySet()) {
 
-			Map <String, diffWrap> this_diff = new Map <String, diffWrap>();
+			Map<String, diffWrap> this_diff = new Map<String, diffWrap>();
 
 			String chargeStatus = 'unchanged';
 
-			Map <String, Object> this_charge = (Map <String, Object>) charges1.get(chargeId);
+			Map<String, Object> this_charge = (Map<String, Object>) charges1.get(chargeId);
 
 			if (charges2.containsKey(chargeId)) {
 				// Existing
 
-				Map <String, Object> secondary_charge = (Map <String, Object>) charges2.get(chargeId);
+				Map<String, Object> secondary_charge = (Map<String, Object>) charges2.get(chargeId);
 
 				if (this_charge.containsKey('oneOff')) {
 
@@ -388,7 +420,11 @@ global with sharing class FAMDelta {
 						chargeStatus = 'changed';
 					}
 
-					this_diff.put('oneOff', new diffWrap(this_charge.get('oneOff'), secondary_charge.get('oneOff'), oneOffStatus));
+					this_diff.put(
+						'oneOff',
+						new diffWrap(this_charge.get('oneOff'),
+						secondary_charge.get('oneOff'), oneOffStatus)
+					);
 				}
 
 				if (this_charge.containsKey('recurring')) {
@@ -397,7 +433,12 @@ global with sharing class FAMDelta {
 						recurringStatus = 'changed';
 						chargeStatus = 'changed';
 					}
-					this_diff.put('recurring', new diffWrap(this_charge.get('recurring'), secondary_charge.get('recurring'), recurringStatus));
+					this_diff.put(
+						'recurring',
+						new diffWrap(this_charge.get('recurring'),
+						secondary_charge.get('recurring'),
+						recurringStatus)
+					);
 				}
 
 				secondaryChargesIds.remove(chargeId);
@@ -417,9 +458,9 @@ global with sharing class FAMDelta {
 		}
 
 		for (String chargeId : secondaryChargesIds) {
-			Map <String, diffWrap> this_diff = new Map <String, diffWrap>();
+			Map<String, diffWrap> this_diff = new Map<String, diffWrap>();
 			// added
-			Map <String, Object> secondary_charge = (Map <String, Object>) charges2.get(chargeId);
+			Map<String, Object> secondary_charge = (Map<String, Object>) charges2.get(chargeId);
 
 			String chargeType = '';
 			if (secondary_charge.containsKey('recurring')) {
@@ -435,22 +476,22 @@ global with sharing class FAMDelta {
 
 	}
 
-	public static Map <String, rcWrap> compareRateCards(Map <String, Object> rcList1, Map <String, Object> rcList2) {
+	public static Map<String, rcWrap> compareRateCards(Map<String, Object> rcList1, Map<String, Object> rcList2) {
 
-		Set <String> rc2rclSet = rcList2.keySet();
+		Set<String> rc2rclSet = rcList2.keySet();
 
-		Map <String, rcWrap> result = new Map <String, rcWrap>();
+		Map<String, rcWrap> result = new Map<String, rcWrap>();
 
 		for (String rcId : rcList1.keySet()) {
 
 			String rcStatus = 'unchanged';
-			Map <String, Object> this_rc = (Map <String, Object>) rcList1.get(rcId);
+			Map<String, Object> this_rc = (Map<String, Object>) rcList1.get(rcId);
 
-			Map <String, diffWrap> this_diff = new Map <String, diffWrap>();
+			Map<String, diffWrap> this_diff = new Map<String, diffWrap>();
 
-			if (rcList2.containsKey(rcId)) {
+			if (rcList2.containsKey(rcId)){
 				// Existing
-				Map <String, Object> secondary_rc = (Map <String, Object>) rcList2.get(rcId);
+				Map<String, Object> secondary_rc = (Map<String, Object>) rcList2.get(rcId);
 
 				for (String rclId : this_rc.keySet()) {
 
@@ -463,7 +504,11 @@ global with sharing class FAMDelta {
 							rcStatus = 'changed';
 						}
 
-						this_diff.put(rclId, new diffWrap((Decimal) this_rc.get(rclId), (Decimal) secondary_rc.get(rclId), rclStatus));
+						this_diff.put(
+							rclId,
+							new diffWrap((Decimal) this_rc.get(rclId),
+							(Decimal) secondary_rc.get(rclId), rclStatus)
+						);
 
 					} else {
 						// Removed rcl
@@ -495,9 +540,9 @@ global with sharing class FAMDelta {
 
 		for (String rcId : rc2rclSet) {
 			// added
-			Map <String, diffWrap> this_diff = new Map <String, diffWrap>();
+			Map<String, diffWrap> this_diff = new Map<String, diffWrap>();
 
-			Map <String, Object> secondary_rc = (Map <String, Object>) rcList2.get(rcId);
+			Map<String, Object> secondary_rc = (Map<String, Object>) rcList2.get(rcId);
 
 			for (String rclId : secondary_rc.keySet()) {
 				this_diff.put(rclId, new diffWrap(null, (Decimal) secondary_rc.get(rclId), 'added'));
@@ -509,14 +554,14 @@ global with sharing class FAMDelta {
 		return result;
 	}
 
-	public static Map <String, Object> compareFrameAgreements(String faId1, String faId2) {
+	public static Map<String, Object> compareFrameAgreements(String faId1, String faId2) {
 
-		Map <String, Object> result = new Map <String, Object>();
+		Map<String, Object> result = new Map<String, Object>();
 
 		csconta__Frame_Agreement__c fa1 = FrameRateManagerController.getFrameAgreement(faId1);
 		csconta__Frame_Agreement__c fa2 = FrameRateManagerController.getFrameAgreement(faId2);
 
-		Set <String> excluded_fields = new Set <String>{
+		Set<String> excluded_fields = new Set<String>{
 			'LastModifiedDate', 'Id', 'Name', 'csconta__frame_agreement_number__c'
 		};
 
@@ -527,9 +572,19 @@ global with sharing class FAMDelta {
 		for (String fieldName : fa1PopulatedFields.keySet()) {
 			if (!excluded_fields.contains(fieldName) && !fieldName.endsWith('__r')) {
 				if (fa1PopulatedFields.get(fieldName) != fa2PopulatedFields.get(fieldName)) {
-					result.put(fieldName, new diffWrap(fa1PopulatedFields.get(fieldName), fa2PopulatedFields.get(fieldName), 'changed'));
+					result.put(
+						fieldName,
+						new diffWrap(fa1PopulatedFields.get(fieldName),
+						fa2PopulatedFields.get(fieldName),
+						'changed')
+					);
 				} else {
-					result.put(fieldName, new diffWrap(fa1PopulatedFields.get(fieldName), fa2PopulatedFields.get(fieldName), 'unchanged'));
+					result.put(
+						fieldName,
+						new diffWrap(fa1PopulatedFields.get(fieldName),
+						fa2PopulatedFields.get(fieldName),
+						'unchanged')
+					);
 				}
 			}
 		}
@@ -596,13 +651,13 @@ global with sharing class FAMDelta {
 			set;
 		}
 
-		public Map <String, diffWrap> rcl {
+		public Map<String, diffWrap> rcl {
 			get;
 			set;
 		}
 
 
-		public rcWrap(Map <String, diffWrap> rcl, String status) {
+		public rcWrap(Map<String, diffWrap> rcl, String status) {
 			this.rcl = rcl;
 			this.status = status;
 		}
@@ -610,29 +665,35 @@ global with sharing class FAMDelta {
 	}
 
 	public class attachmentWrap {
-		public Map <String, addonWrap> addons {
+		public Map<String, addonWrap> addons {
 			get;
 			set;
 		}
 
-		public Map <String, Map <String, diffWrap>> charges {
+		public Map<String, Map<String, diffWrap>> charges {
 			get;
 			set;
 		}
-		public Map <String, diffWrap> product {
+		public Map<String, diffWrap> product {
 			get;
 			set;
 		}
-		public Map <String, rcWrap> rateCard {
+		public Map<String, rcWrap> rateCard {
 			get;
 			set;
 		}
-		public Map <String, diffWrap> volume {
+		public Map<String, diffWrap> volume {
 			get;
 			set;
 		}
 
-		public attachmentWrap(Map <String, addonWrap> addons, Map <String, Map <String, diffWrap>> charges, Map <String, diffWrap> product, Map <String, rcWrap> rateCard, Map <String, diffWrap> volume) {
+		public attachmentWrap(
+			Map<String, addonWrap> addons,
+			Map<String, Map<String, diffWrap>> charges,
+			Map<String, diffWrap> product,
+			Map<String, rcWrap> rateCard,
+			Map<String, diffWrap> volume
+		) {
 			this.addons = addons;
 			this.charges = charges;
 			this.product = product;

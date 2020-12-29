@@ -7,14 +7,15 @@ private class FAMDeltaTest {
 
 		String h = EncodingUtil.ConvertTohex(b);
 
-		String guid = h.SubString(0, 8) + '-' + h.SubString(8, 12) + '-' + h.SubString(12, 16) + '-' + h.SubString(16, 20) + '-' + h.substring(20);
+		String guid = h.SubString(0, 8) + '-' + h.SubString(8, 12) + '-' +
+			h.SubString(12, 16) + '-' + h.SubString(16, 20) + '-' + h.substring(20);
 
 		return guid;
 	}
 
-	static Map <String, Integer> setupVolumeParams(Integer muc, Integer mucp, Integer mv, Integer mvp) {
+	static Map<String, Integer> setupVolumeParams(Integer muc, Integer mucp, Integer mv, Integer mvp) {
 
-		Map <String, Integer> volumes = new Map <String, Integer>();
+		Map<String, Integer> volumes = new Map<String, Integer>();
 
 		volumes.put('muc', muc);
 		volumes.put('mucp', mucp);
@@ -24,9 +25,9 @@ private class FAMDeltaTest {
 		return volumes;
 	}
 
-	static Map <String, Integer> setupRateCardsParams(List <Integer> rclvalues) {
+	static Map<String, Integer> setupRateCardsParams(List<Integer> rclvalues) {
 
-		Map <String, Integer> rcAtt = new Map <String, Integer>();
+		Map<String, Integer> rcAtt = new Map<String, Integer>();
 
 		for (Integer i = 0; i < rclvalues.size(); i++) {
 			rcAtt.put('rcl' + i, rclvalues[i]);
@@ -38,13 +39,13 @@ private class FAMDeltaTest {
 		return rcAtt;
 	}
 
-	static Map <String, Object> setupAddonsParams(List <Integer> oneOffList, List <Integer> recurringList) {
+	static Map<String, Object> setupAddonsParams(List<Integer> oneOffList, List<Integer> recurringList) {
 		// Always have the same length
-		Map <String, Object> addons = new Map <String, Object>();
+		Map<String, Object> addons = new Map<String, Object>();
 
 		for (Integer i = 0; i < oneOffList.size(); i++) {
 
-			Map <String, Integer> att = new Map <String, Integer>();
+			Map<String, Integer> att = new Map<String, Integer>();
 			att.put('oneOff', oneOffList[i]);
 			att.put('recurring', recurringList[i]);
 
@@ -58,17 +59,17 @@ private class FAMDeltaTest {
 	public static testMethod void testCompareVolume() {
 
 		// Basic
-		Map <String, Integer> volume1 = setupVolumeParams(120, 2140, 10500, 330);
-		Map <String, Integer> volume2 = setupVolumeParams(330, 2140, 1100, 330);
+		Map<String, Integer> volume1 = setupVolumeParams(120, 2140, 10500, 330);
+		Map<String, Integer> volume2 = setupVolumeParams(330, 2140, 1100, 330);
 
 		// Null
-		Map <String, Integer> volume3 = setupVolumeParams(null, 2140, 10500, 330);
-		Map <String, Integer> volume4 = setupVolumeParams(120, 2140, null, 500);
+		Map<String, Integer> volume3 = setupVolumeParams(null, 2140, 10500, 330);
+		Map<String, Integer> volume4 = setupVolumeParams(120, 2140, null, 500);
 
 		Test.startTest();
 
-		Map <String, FAMDelta.diffWrap> result1 = FAMDelta.compareVolume(volume1, volume2);
-		Map <String, FAMDelta.diffWrap> result2 = FAMDelta.compareVolume(volume3, volume4);
+		Map<String, FAMDelta.diffWrap> result1 = FAMDelta.compareVolume(volume1, volume2);
+		Map<String, FAMDelta.diffWrap> result2 = FAMDelta.compareVolume(volume3, volume4);
 
 		Test.stopTest();
 
@@ -114,46 +115,46 @@ private class FAMDeltaTest {
 	public static testMethod void testCompareAddons() {
 
 		// Basic
-		Map <String, Object> addons1 = setupAddonsParams(new List <Integer>{
+		Map<String, Object> addons1 = setupAddonsParams(new List<Integer>{
 			19, 45, null, 32, 16
-		}, new List <Integer>{
+		}, new List<Integer>{
 			85, 41, null, 52, 10
 		});
-		Map <String, Object> addons2 = setupAddonsParams(new List <Integer>{
+		Map<String, Object> addons2 = setupAddonsParams(new List<Integer>{
 			19, 55, null, 74, 16
-		}, new List <Integer>{
+		}, new List<Integer>{
 			85, 52, null, 32, 11
 		});
 
 		// Added
-		Map <String, Object> addons3 = setupAddonsParams(new List <Integer>{
+		Map<String, Object> addons3 = setupAddonsParams(new List<Integer>{
 			19, 45, 32
-		}, new List <Integer>{
+		}, new List<Integer>{
 			19, 52, 32
 		});
-		Map <String, Object> addons4 = setupAddonsParams(new List <Integer>{
+		Map<String, Object> addons4 = setupAddonsParams(new List<Integer>{
 			19, 52, 32, 46
-		}, new List <Integer>{
+		}, new List<Integer>{
 			10, 22, 23, 16
 		});
 
 		// Removed
-		Map <String, Object> addons5 = setupAddonsParams(new List <Integer>{
+		Map<String, Object> addons5 = setupAddonsParams(new List<Integer>{
 			19, 52, 32, 46
-		}, new List <Integer>{
+		}, new List<Integer>{
 			10, 22, 23, 16
 		});
-		Map <String, Object> addons6 = setupAddonsParams(new List <Integer>{
+		Map<String, Object> addons6 = setupAddonsParams(new List<Integer>{
 			19, 45, 32
-		}, new List <Integer>{
+		}, new List<Integer>{
 			19, 52, 32
 		});
 
 		Test.startTest();
 
-		Map <String, FAMDelta.addonWrap> basic = FAMDelta.compareAddons(addons1, addons2);
-		Map <String, FAMDelta.addonWrap> added = FAMDelta.compareAddons(addons3, addons4);
-		Map <String, FAMDelta.addonWrap> removed = FAMDelta.compareAddons(addons5, addons6);
+		Map<String, FAMDelta.addonWrap> basic = FAMDelta.compareAddons(addons1, addons2);
+		Map<String, FAMDelta.addonWrap> added = FAMDelta.compareAddons(addons3, addons4);
+		Map<String, FAMDelta.addonWrap> removed = FAMDelta.compareAddons(addons5, addons6);
 
 		Test.stopTest();
 
@@ -213,10 +214,10 @@ private class FAMDeltaTest {
 
 	public static testMethod void testCompareProductCharges() {
 		// Setup
-		Map <String, Integer> pcharges1 = new Map <String, Integer>();
-		Map <String, Integer> pcharges2 = new Map <String, Integer>();
-		Map <String, Integer> pcharges3 = new Map <String, Integer>();
-		Map <String, Integer> pcharges4 = new Map <String, Integer>();
+		Map<String, Integer> pcharges1 = new Map<String, Integer>();
+		Map<String, Integer> pcharges2 = new Map<String, Integer>();
+		Map<String, Integer> pcharges3 = new Map<String, Integer>();
+		Map<String, Integer> pcharges4 = new Map<String, Integer>();
 
 		pcharges1.put('oneOff', null);
 		pcharges1.put('recurring', 2140);
@@ -232,9 +233,9 @@ private class FAMDeltaTest {
 
 		Test.startTest();
 
-		Map <String, FAMDelta.diffWrap> diff1 = FAMDelta.compareProductCharges(pcharges1, pcharges2);
-		Map <String, FAMDelta.diffWrap> diff2 = FAMDelta.compareProductCharges(pcharges1, pcharges3);
-		Map <String, FAMDelta.diffWrap> diff3 = FAMDelta.compareProductCharges(pcharges1, pcharges4);
+		Map<String, FAMDelta.diffWrap> diff1 = FAMDelta.compareProductCharges(pcharges1, pcharges2);
+		Map<String, FAMDelta.diffWrap> diff2 = FAMDelta.compareProductCharges(pcharges1, pcharges3);
+		Map<String, FAMDelta.diffWrap> diff3 = FAMDelta.compareProductCharges(pcharges1, pcharges4);
 
 		Test.stopTest();
 
@@ -268,67 +269,67 @@ private class FAMDeltaTest {
 	public static testMethod void testCompareCharges() {
 		// Setup
 
-		Map <String, Map <String, Integer>> chargeAtt1 = new Map <String, Map <String, Integer>>();
-		chargeAtt1.put('charges1', new Map <String, Integer>{
+		Map<String, Map<String, Integer>> chargeAtt1 = new Map<String, Map<String, Integer>>();
+		chargeAtt1.put('charges1', new Map<String, Integer>{
 			'oneOff' => 2140
 		});
-		chargeAtt1.put('charges3', new Map <String, Integer>{
+		chargeAtt1.put('charges3', new Map<String, Integer>{
 			'recurring' => 330
 		});
-		chargeAtt1.put('charges5', new Map <String, Integer>{
+		chargeAtt1.put('charges5', new Map<String, Integer>{
 			'oneOff' => 330
 		});
-		chargeAtt1.put('charges7', new Map <String, Integer>{
+		chargeAtt1.put('charges7', new Map<String, Integer>{
 			'recurring' => 10500
 		});
-		chargeAtt1.put('charges9', new Map <String, Integer>{
+		chargeAtt1.put('charges9', new Map<String, Integer>{
 			'oneOff' => 250
 		});
 
-		Map <String, Map <String, Integer>> chargeAtt2 = new Map <String, Map <String, Integer>>();
-		chargeAtt2.put('charges1', new Map <String, Integer>{
+		Map<String, Map<String, Integer>> chargeAtt2 = new Map<String, Map<String, Integer>>();
+		chargeAtt2.put('charges1', new Map<String, Integer>{
 			'oneOff' => 2140
 		});
-		chargeAtt2.put('charges3', new Map <String, Integer>{
+		chargeAtt2.put('charges3', new Map<String, Integer>{
 			'recurring' => 330
 		});
-		chargeAtt2.put('charges5', new Map <String, Integer>{
+		chargeAtt2.put('charges5', new Map<String, Integer>{
 			'oneOff' => 2140
 		});
-		chargeAtt2.put('charges7', new Map <String, Integer>{
+		chargeAtt2.put('charges7', new Map<String, Integer>{
 			'recurring' => 330
 		});
-		chargeAtt2.put('charges9', new Map <String, Integer>{
+		chargeAtt2.put('charges9', new Map<String, Integer>{
 			'recurring' => 500
 		});
 
 		Test.startTest();
 
-		Map <String, Map <String, FAMDelta.diffWrap>> diff = FAMDelta.compareCharges(chargeAtt1, chargeAtt2);
+		Map<String, Map<String, FAMDelta.diffWrap>> diff = FAMDelta.compareCharges(chargeAtt1, chargeAtt2);
 
 		Test.stopTest();
 
-		Map <String, FAMDelta.diffWrap> diff1 = diff.get('charges1');
+		Map<String, FAMDelta.diffWrap> diff1 = diff.get('charges1');
 		system.assertEquals('unchanged', diff1.get('oneOff').status);
 		system.assertEquals(2140, diff1.get('oneOff').new_value);
 		system.assertEquals(2140, diff1.get('oneOff').old_value);
 
-		Map <String, FAMDelta.diffWrap> diff2 = diff.get('charges3');
+		Map<String, FAMDelta.diffWrap> diff2 = diff.get('charges3');
 		system.assertEquals('unchanged', diff2.get('recurring').status);
 		system.assertEquals(330, diff2.get('recurring').old_value);
 		system.assertEquals(330, diff2.get('recurring').new_value);
 
-		Map <String, FAMDelta.diffWrap> diff3 = diff.get('charges5');
+		Map<String, FAMDelta.diffWrap> diff3 = diff.get('charges5');
 		system.assertEquals('changed', diff3.get('oneOff').status);
 		system.assertEquals(330, diff3.get('oneOff').old_value);
 		system.assertEquals(2140, diff3.get('oneOff').new_value);
 
-		Map <String, FAMDelta.diffWrap> diff4 = diff.get('charges7');
+		Map<String, FAMDelta.diffWrap> diff4 = diff.get('charges7');
 		system.assertEquals('changed', diff4.get('recurring').status);
 		system.assertEquals(10500, diff4.get('recurring').old_value);
 		system.assertEquals(330, diff4.get('recurring').new_value);
 
-		Map <String, FAMDelta.diffWrap> diff5 = diff.get('charges9');
+		Map<String, FAMDelta.diffWrap> diff5 = diff.get('charges9');
 		system.assertEquals('changed', diff5.get('oneOff').status);
 		system.assertEquals(250, diff5.get('oneOff').old_value);
 		system.assertEquals(null, diff5.get('oneOff').new_value);
@@ -338,7 +339,7 @@ private class FAMDeltaTest {
 	public static testMethod void testCompareRateCards() {
 		// Setup
 
-		Map <String, Map <String, Integer>> rcAtt1 = new Map <String, Map <String, Integer>>();
+		Map<String, Map<String, Integer>> rcAtt1 = new Map<String, Map<String, Integer>>();
 		rcAtt1.put('rc1', setupRateCardsParams(new List<Integer>{
 			124, 55, 32
 		}));
@@ -353,7 +354,7 @@ private class FAMDeltaTest {
 		}));
 
 
-		Map <String, Map <String, Integer>> rcAtt2 = new Map <String, Map <String, Integer>>();
+		Map<String, Map<String, Integer>> rcAtt2 = new Map<String, Map<String, Integer>>();
 		rcAtt2.put('rc1', setupRateCardsParams(new List<Integer>{
 			124, 22, 33
 		}));
@@ -370,14 +371,14 @@ private class FAMDeltaTest {
 		Test.startTest();
 
 		// https://pastebin.com/3fCVXbTy
-		Map <String, FAMDelta.rcWrap> diff = FAMDelta.compareRateCards(rcAtt1, rcAtt2);
+		Map<String, FAMDelta.rcWrap> diff = FAMDelta.compareRateCards(rcAtt1, rcAtt2);
 
 		Test.stopTest();
 
 		FAMDelta.rcWrap rc1 = diff.get('rc1');
 		system.assertEquals('changed', rc1.status);
 
-		Map <String, FAMDelta.diffWrap> rcl1List = rc1.rcl;
+		Map<String, FAMDelta.diffWrap> rcl1List = rc1.rcl;
 		system.assertEquals('unchanged', rcl1List.get('rcl0').status);
 		system.assertEquals('changed', rcl1List.get('rcl1').status);
 		system.assertEquals('changed', rcl1List.get('rcl2').status);
@@ -386,7 +387,7 @@ private class FAMDeltaTest {
 		FAMDelta.rcWrap rc2 = diff.get('rc2');
 		system.assertEquals('unchanged', rc2.status);
 
-		Map <String, FAMDelta.diffWrap> rcl2List = rc2.rcl;
+		Map<String, FAMDelta.diffWrap> rcl2List = rc2.rcl;
 		system.assertEquals('unchanged', rcl2List.get('rcl0').status);
 		// system.assertEquals('added', rcl2List.get('rcl1').status);
 
@@ -394,7 +395,7 @@ private class FAMDeltaTest {
 		FAMDelta.rcWrap rc3 = diff.get('rc3');
 		system.assertEquals('unchanged', rc3.status);
 
-		Map <String, FAMDelta.diffWrap> rcl3List = rc3.rcl;
+		Map<String, FAMDelta.diffWrap> rcl3List = rc3.rcl;
 		system.assertEquals('unchanged', rcl3List.get('rcl0').status);
 		system.assertEquals('unchanged', rcl3List.get('rcl1').status);
 		system.assertEquals('changed', rcl3List.get('rcl2').status);
@@ -403,7 +404,7 @@ private class FAMDeltaTest {
 		FAMDelta.rcWrap rc4 = diff.get('rc4');
 		system.assertEquals('added', rc4.status);
 
-		Map <String, FAMDelta.diffWrap> rcl4List = rc4.rcl;
+		Map<String, FAMDelta.diffWrap> rcl4List = rc4.rcl;
 		system.assertEquals('added', rcl4List.get('rcl0').status);
 		system.assertEquals('added', rcl4List.get('rcl1').status);
 		system.assertEquals('added', rcl4List.get('rcl2').status);
@@ -412,7 +413,7 @@ private class FAMDeltaTest {
 		FAMDelta.rcWrap rc5 = diff.get('rc5');
 		system.assertEquals('removed', rc5.status);
 
-		Map <String, FAMDelta.diffWrap> rcl5List = rc5.rcl;
+		Map<String, FAMDelta.diffWrap> rcl5List = rc5.rcl;
 		system.assertEquals('removed', rcl5List.get('rcl0').status);
 		system.assertEquals('removed', rcl5List.get('rcl1').status);
 		system.assertEquals('removed', rcl5List.get('rcl2').status);
@@ -421,8 +422,18 @@ private class FAMDeltaTest {
 	}
 
 	public static testMethod void testCompareFrameAgreements() {
-		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Frame Agreement', csconta__Status__c = 'Draft');
-		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Master Agreement', csconta__Status__c = 'Active');
+		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Frame Agreement',
+			csconta__Status__c = 'Draft'
+		);
+		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Master Agreement',
+			csconta__Status__c = 'Active'
+		);
 
 		insert fa1;
 		insert fa2;
@@ -430,7 +441,7 @@ private class FAMDeltaTest {
 
 		Test.startTest();
 
-		Map <String, Object> diff = FAMDelta.compareFrameAgreements(fa1.Id, fa2.Id);
+		Map<String, Object> diff = FAMDelta.compareFrameAgreements(fa1.Id, fa2.Id);
 
 		Test.stopTest();
 
@@ -449,8 +460,18 @@ private class FAMDeltaTest {
 	}
 
 	public static testMethod void testGetDiff() {
-		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Frame Agreement', csconta__Status__c = 'Draft');
-		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Master Agreement', csconta__Status__c = 'Active');
+		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Frame Agreement',
+			csconta__Status__c = 'Draft'
+		);
+		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Master Agreement',
+			csconta__Status__c = 'Active'
+		);
 
 		insert fa1;
 		insert fa2;
@@ -465,7 +486,7 @@ private class FAMDeltaTest {
 
 		Test.startTest();
 
-		Map <String, Object> diff = FAMDelta.getDelta(fa1.Id, fa2.Id);
+		Map<String, Object> diff = FAMDelta.getDelta(fa1.Id, fa2.Id);
 
 		Test.stopTest();
 		system.debug(JSON.serialize(diff));
@@ -474,8 +495,18 @@ private class FAMDeltaTest {
 	}
 
 	public static testMethod void testGetDiffNoCharges() {
-		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Frame Agreement', csconta__Status__c = 'Draft');
-		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Master Agreement', csconta__Status__c = 'Active');
+		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Frame Agreement',
+			csconta__Status__c = 'Draft'
+		);
+		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Master Agreement',
+			csconta__Status__c = 'Active'
+		);
 
 		insert fa1;
 		insert fa2;
@@ -491,7 +522,7 @@ private class FAMDeltaTest {
 
 		Test.startTest();
 
-		Map <String, Object> diff_no_charges = FAMDelta.getDelta(fa1.Id, fa2.Id);
+		Map<String, Object> diff_no_charges = FAMDelta.getDelta(fa1.Id, fa2.Id);
 
 		Test.stopTest();
 
@@ -500,8 +531,18 @@ private class FAMDeltaTest {
 	}
 
 	public static testMethod void testGetDiffNoAddons() {
-		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Frame Agreement', csconta__Status__c = 'Draft');
-		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Master Agreement', csconta__Status__c = 'Active');
+		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Frame Agreement',
+			csconta__Status__c = 'Draft'
+		);
+		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Master Agreement',
+			csconta__Status__c = 'Active'
+		);
 
 		insert fa1;
 		insert fa2;
@@ -517,7 +558,7 @@ private class FAMDeltaTest {
 
 		Test.startTest();
 
-		Map <String, Object> diff_no_addons = FAMDelta.getDelta(fa1.Id, fa2.Id);
+		Map<String, Object> diff_no_addons = FAMDelta.getDelta(fa1.Id, fa2.Id);
 
 		Test.stopTest();
 		system.debug(JSON.serialize(diff_no_addons));
@@ -527,8 +568,18 @@ private class FAMDeltaTest {
 	}
 
 	public static testMethod void testGetDiffNoAttachment() {
-		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Frame Agreement', csconta__Status__c = 'Draft');
-		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(csconta__Agreement_Name__c = 'FA SAME', csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6), csconta__agreement_level__c = 'Master Agreement', csconta__Status__c = 'Active');
+		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Frame Agreement',
+			csconta__Status__c = 'Draft'
+		);
+		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Master Agreement',
+			csconta__Status__c = 'Active'
+		);
 
 		insert fa1;
 		insert fa2;
@@ -545,7 +596,7 @@ private class FAMDeltaTest {
 		Test.startTest();
 
 		try {
-			Map <String, Object> diff = FAMDelta.getDelta(fa1.Id, fa2.Id);
+			Map<String, Object> diff = FAMDelta.getDelta(fa1.Id, fa2.Id);
 		} catch (Exception e) {
 			expectedExceptionThrown = true;
 			errorMessage = e.getMessage();
@@ -557,6 +608,43 @@ private class FAMDeltaTest {
 		system.assertEquals(errorMessage, 'Attachment not present in one of the frame agreements!');
 
 
+	}
+
+	public static testMethod void testGetDiffStandaloneAddons() {
+		csconta__Frame_Agreement__c fa1 =
+			new csconta__Frame_Agreement__c(
+				csconta__agreement_name__c = 'FA SAME',
+				csconta__effective_end_date__c = DateTime.newInstance(2020, 12, 29, 13, 6, 6),
+				csconta__agreement_level__c = 'Frame Agreement', csconta__Status__c = 'Draft'
+			);
+		csconta__Frame_Agreement__c fa2 =
+			new csconta__Frame_Agreement__c(
+				csconta__agreement_name__c = 'FA SAME',
+				csconta__effective_end_date__c = DateTime.newInstance(2020, 12, 29, 13, 6, 6),
+				csconta__agreement_level__c = 'Master Agreement', csconta__Status__c = 'Active'
+			);
+
+		insert fa1;
+		insert fa2;
+
+		String att_standalone_addons_1 = '{"custom":{},"products":{"a1p4K000000Lj6DQAS":{"_volume":{"mv":10,"mvp":10,"muc":null,"mucp":null},"_addons":{"a1k4K000001DxthQAC":{"oneOff":9,"recurring":10}},"_product":{"oneOff":100,"recurring":1.99},"_allowances":{}}},"addons":{"a1N4K000000YOi7UAG":{"oneOff":9,"recurring":12}}}';
+		String att_standalone_addons_2 = '{"custom":{},"products":{"a1p4K000000Lj6DQAS":{"_volume":{"mv":10,"mvp":10,"muc":null,"mucp":null},"_addons":{"a1k4K000001DxthQAC":{"oneOff":9,"recurring":10}},"_product":{"oneOff":100,"recurring":1.99},"_allowances":{}}},"addons":{"a1N4K000000YOi7UAG":{"oneOff":10,"recurring":12}}}';
+
+		FrameRateManagerController.saveAttachment(fa1.Id, att_standalone_addons_1);
+		FrameRateManagerController.saveAttachment(fa2.Id, att_standalone_addons_2);
+
+		Test.startTest();
+
+		Map<String, Object> diff_standalone_addons = FAMDelta.getDelta(fa1.Id, fa2.Id);
+
+		Test.stopTest();
+
+		Map<String, FAMDelta.addonWrap> standaloneAddons =
+			(Map<String, FAMDelta.addonWrap>) diff_standalone_addons.get('_addons');
+		System.assert(standaloneAddons != null, 'getDelta includes diff for standalone addons');
+
+		FAMDelta.addonWrap changedAddon = (FAMDelta.addonWrap) standaloneAddons.get('a1N4K000000YOi7UAG');
+		System.assertEquals('changed', changedAddon.status);
 	}
 
 }

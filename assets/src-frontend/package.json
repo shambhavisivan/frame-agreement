@@ -11,10 +11,12 @@
   "scripts": {
     "test": "jest --coverage --passWithNoTests",
     "test:watch": "jest --coverage --watch",
+    "test:debug": "node --inspect node_modules/.bin/jest --runInBand",
     "start": "NODE_ENV=development webpack-dev-server",
     "build": "NODE_ENV=production webpack",
     "build:analyze": "NODE_ENV=production ANALYZE_BUNDLE=true webpack",
-    "lint": "eslint \"**/*.ts?(x)\""
+    "lint": "eslint \"**/*.ts?(x)\"",
+    "lint-fix": "eslint \"**/*.ts?(x)\" --fix"
   },
   "devDependencies": {
     "@babel/preset-env": "7.12.1",
@@ -57,3 +59,4 @@
     "zip-webpack-plugin": "3.0.0"
   }
 }
+

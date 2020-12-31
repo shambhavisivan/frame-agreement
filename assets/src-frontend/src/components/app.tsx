@@ -14,8 +14,8 @@ export function App(): ReactElement {
 			<RemoteActionsProvider queryCache={queryCache} remoteActions={remoteActions}>
 				<Header />
 				<Pages />
+				<ReactQueryDevtools initialIsOpen={false} />
 			</RemoteActionsProvider>
-			<ReactQueryDevtools initialIsOpen={false} />
 		</>
 	);
 }

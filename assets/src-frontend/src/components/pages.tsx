@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
 import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import { FrameAgreementDetails } from './frame-agreement-details';
-import { FrameAgreementList } from './frame-agreement-list';
+import { FrameAgreementDetails } from './fa-details';
+import { FrameAgreementList } from './fa-list';
+import { NotFound } from './not-found';
 
 export function Pages(): ReactElement {
 	return (
@@ -14,7 +15,7 @@ export function Pages(): ReactElement {
 					<FrameAgreementList />
 				</Route>
 				<Redirect exact from="/" to="/agreement" />
-				<Route path="*" component={(): ReactElement => <>'not found'</>} />
+				<Route path="*" component={NotFound} />
 			</Switch>
 		</Router>
 	);

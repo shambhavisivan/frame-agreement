@@ -1,5 +1,5 @@
-import { useQuery, QueryStatus } from 'react-query';
-import { remoteActions, AppSettings } from '../datasources';
+import { QueryStatus, useQuery } from 'react-query';
+import { AppSettings, remoteActions } from '../datasources';
 
 export { QueryStatus } from 'react-query';
 

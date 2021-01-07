@@ -3,6 +3,14 @@
 echo "reactapp: build and test"
 
 cd assets/src-frontend
+
+set +ex                     # immediate script fail off, echo off
+export NVM_DIR="$HOME/.nvm" # set local path to NVM
+. ~/.nvm/nvm.sh             # add NVM into the Shell session
+nvm install
+nvm use > /dev/null 2>&1
+set -ex                     # immediate script fail on (default), echo on (default)
+
 npm ci
 npm run build
 npm run lint

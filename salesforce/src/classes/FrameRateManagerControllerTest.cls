@@ -1092,7 +1092,7 @@ private class FrameRateManagerControllerTest {
 		insert newFa;
 
 		csconta__Frame_Agreement__c original = [
-			select Id, csconta__master_frame_agreement__c
+			select Id, csconta__master_frame_agreement__c, csconta__frame_agreement_number__c
 			from csconta__Frame_Agreement__c
 			where Id = :newFa.Id limit 1
 		];
@@ -1103,9 +1103,14 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		csconta__Frame_Agreement__c cloned = [select Id, csconta__master_frame_agreement__c from csconta__Frame_Agreement__c where Id = :result.Id limit 1];
+		csconta__Frame_Agreement__c cloned = [
+			select Id, csconta__master_frame_agreement__c, csconta__frame_agreement_number__c
+			from csconta__Frame_Agreement__c
+			where Id = :result.Id limit 1
+		];
 
 		System.assertEquals(original.csconta__master_frame_agreement__c, cloned.csconta__master_frame_agreement__c);
+		System.assertNotEquals(original.csconta__frame_agreement_number__c, cloned.csconta__frame_agreement_number__c);
 	}
 
 	private static Fac_Settings__c loadFacSettings(){

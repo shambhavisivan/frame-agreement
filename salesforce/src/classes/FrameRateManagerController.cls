@@ -2072,9 +2072,6 @@ global with sharing class FrameRateManagerController {
 		Fac_Settings__c facSettings = getFacSetting();
 		String prefix = getFaPrefix();
 
-		cloned.csconta__frame_agreement_number__c = prefix + parseNumberFromName(original.Name);
-		update cloned;
-
 		Attachment originalAttachment = getAttachment(faId);
 
 
@@ -2125,7 +2122,11 @@ global with sharing class FrameRateManagerController {
 			}
 		}
 
-		return getFrameAgreement(cloned.Id);
+		cloned = getFrameAgreement(cloned.Id);
+		cloned.csconta__frame_agreement_number__c = prefix + parseNumberFromName(cloned.Name);
+		update cloned;
+
+		return cloned;
 	}
 
 	/**

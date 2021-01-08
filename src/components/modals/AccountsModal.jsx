@@ -239,7 +239,11 @@ class AccountsModal extends Component {
 				if (val && val !== '') {
 					params.search = "Name like '%" + val + "%'";
 				} else {
-					this.setState({ searchedRecords: [] });
+					this.setState({
+						searchedRecords: [],
+						loadingOverlay: false,
+						loadingRecords: false
+					});
 					return;
 				}
 

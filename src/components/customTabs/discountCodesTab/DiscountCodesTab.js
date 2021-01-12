@@ -328,9 +328,20 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	return _negoArray.length;
 };
 
+//TODO: change this implementation when merging FAM and FAM-EXT
+let addedCps;
+setTimeout(() => {
+	window.FAM.subscribe('onBeforeAddProducts', data => {
+		return new Promise(resolve => {
+			addedCps = data
+			resolve(data);
+		});
+	});
+}, 0);
+
 window.FAM.subscribe('onAfterAddProducts', data => {
 	return new Promise(async resolve => {
-		negotiateDiscountCodesForProducts(data).then(r => {
+		negotiateDiscountCodesForProducts(addedCps).then(r => {
 			// resolves length of impacted entitites
 			r && window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
 			resolve(data);

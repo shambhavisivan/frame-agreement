@@ -495,6 +495,15 @@ class NegotiationModal extends Component {
 			return +val.toFixed(8);
 		}
 
+		function isDiscountAllowed(chargeType, commercialProduct) {
+			const chargeAllowed = {
+				oneOff: commercialProduct.cspmb__Is_One_Off_Discount_Allowed__c,
+				recurring: commercialProduct.cspmb__Is_Recurring_Discount_Allowed__c
+			};
+
+			return chargeAllowed[chargeType];
+		}
+
 		let selected = { ...this.state.selected };
 		let attachment = this.state.attachment;
 
@@ -506,13 +515,13 @@ class NegotiationModal extends Component {
 							attachment[cp.Id]._addons = attachment[cp.Id]._addons || {};
 							attachment[cp.Id]._addons[addon.Id] = attachment[cp.Id]._addons[addon.Id] || {};
 
-							if (addon.cspmb__One_Off_Charge__c) {
+							if (addon.cspmb__One_Off_Charge__c && isDiscountAllowed('oneOff', cp)) {
 								attachment[cp.Id]._addons[addon.Id].oneOff = applyDiscountRate(
 									attachment[cp.Id]._addons[addon.Id].oneOff || addon.cspmb__One_Off_Charge__c,
 									this.state
 								);
 							}
-							if (addon.cspmb__Recurring_Charge__c) {
+							if (addon.cspmb__Recurring_Charge__c && isDiscountAllowed('recurring', cp)) {
 								attachment[cp.Id]._addons[addon.Id].recurring = applyDiscountRate(
 									attachment[cp.Id]._addons[addon.Id].recurring || addon.cspmb__Recurring_Charge__c,
 									this.state
@@ -528,9 +537,11 @@ class NegotiationModal extends Component {
 			this.commercialProducts.forEach((cp) => {
 				if (cp._charges.length) {
 					cp._charges.forEach((charge) => {
-						if (selected.charges.hasOwnProperty(charge.Id)) {
-							attachment[cp.Id]._charges =
-								attachment[cp.Id]._charges || {};
+						if (
+							selected.charges.hasOwnProperty(charge.Id) &&
+							isDiscountAllowed(charge._type, cp)
+						) {
+							attachment[cp.Id]._charges = attachment[cp.Id]._charges || {};
 							attachment[cp.Id]._charges[charge.Id] =
 								attachment[cp.Id]._charges[charge.Id] || {};
 							attachment[cp.Id]._charges[charge.Id][
@@ -554,14 +565,19 @@ class NegotiationModal extends Component {
 								Object.keys(selected.charges).includes(charge.Id) &&
 								charge.isLegacy
 							) {
-								if (charge.type == "oneOff" && oneOffCharge) {
+								if (
+									charge.type == 'oneOff' &&
+									oneOffCharge &&
+									isDiscountAllowed(charge.type, cp)
+								) {
 									attachment[cp.Id]._product.oneOff = applyDiscountRate(
 										attachment[cp.Id]._product.oneOff || oneOffCharge,
 										this.state
 									);
 								} else if (
-									charge.type == "recurring" &&
-									recurringCharge
+									charge.type == 'recurring' &&
+									recurringCharge &&
+									isDiscountAllowed(charge.type, cp)
 								) {
 									attachment[cp.Id]._product.recurring = applyDiscountRate(
 										attachment[cp.Id]._product.recurring || recurringCharge,

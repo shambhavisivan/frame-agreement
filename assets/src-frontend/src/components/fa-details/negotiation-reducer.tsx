@@ -5,8 +5,8 @@ type RateCardId = string;
 type ProductId = string;
 
 interface Negotiable {
-	original: number | null;
-	negotiated: number | null;
+	original: number | undefined;
+	negotiated: number | undefined;
 }
 
 interface Volume {

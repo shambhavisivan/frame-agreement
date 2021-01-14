@@ -188,8 +188,8 @@ namespace SfGlobal {
 		Name: string;
 		cspmb__Contract_Term__c: string;
 		cspmb__Is_Active__c: boolean;
-		cspmb__Recurring_Charge__c: number | null;
-		cspmb__One_Off_Charge__c: number | null;
+		cspmb__Recurring_Charge__c: number | undefined;
+		cspmb__One_Off_Charge__c: number | undefined;
 	}
 
 	/* eslint-enable @typescript-eslint/naming-convention */

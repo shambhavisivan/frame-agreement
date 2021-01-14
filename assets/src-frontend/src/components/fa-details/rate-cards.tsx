@@ -58,8 +58,8 @@ interface RateCardLineProps {
 	rateCardLineId: string;
 	name: string;
 	value: {
-		original: number | null;
-		negotiated: number | null;
+		original: number | undefined;
+		negotiated: number | undefined;
 	};
 	onNegotiatedChanged: (value: number) => void;
 }

@@ -52,14 +52,15 @@ export interface Volume {
 
 export interface FrameAgreement {
 	id: string;
-	lastModifiedDate: number;
+	lastModifiedDate?: number;
 	name: string;
 }
 
 export interface CommercialProduct {
 	addons: Addon[];
-	allowances: Allowance[];
+	allowances?: Allowance[];
 	rateCards: RateCard[];
+	charges: { id: string }[];
 }
 
 export interface CommercialProductData {
@@ -95,7 +96,7 @@ export interface CommercialProductStandalone {
 	id: string;
 	name: string;
 	contractTerm: string;
-	isActive: boolean;
-	oneOffCharge: number | null;
-	recurringCharge: number | null;
+	isActive?: boolean;
+	oneOffCharge?: number;
+	recurringCharge?: number;
 }

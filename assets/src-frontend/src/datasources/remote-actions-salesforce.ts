@@ -1,14 +1,10 @@
+import { deforcify } from './deforcify';
 import {
-	Addon,
-	Allowance,
 	AppSettings,
 	Attachment,
-	CommercialProduct,
 	CommercialProductData,
 	CommercialProductStandalone,
-	FrameAgreement,
-	RateCard,
-	RateCardLine
+	FrameAgreement
 } from './interfaces';
 
 /* eslint-disable deprecation/deprecation */
@@ -26,12 +22,6 @@ export interface RemoteActions {
 	): Promise<FrameAgreement>;
 	saveAttachment(faId: string, attachment: Attachment): Promise<string>;
 }
-
-const toFrameAgreement = (a: SfGlobal.FrameAgreement): FrameAgreement => ({
-	id: a.Id,
-	name: a.Name,
-	lastModifiedDate: a.LastModifiedDate
-});
 
 export const remoteActions: RemoteActions = {
 	async getAppSettings(): Promise<AppSettings> {
@@ -56,66 +46,19 @@ export const remoteActions: RemoteActions = {
 	async getFrameAgreements(): Promise<FrameAgreement[]> {
 		const agreements = await SF.actions.getFrameAgreements([SF.param.account]);
 
-		return agreements.map(toFrameAgreement);
+		return agreements.map(deforcify);
 	},
 
 	async getCommercialProductData(ids: string[]): Promise<CommercialProductData> {
 		const commercialProductData = await SF.actions.getCommercialProductData([ids]);
 
-		const toAddon = (addon: SfGlobal.Addon): Addon => ({
-			id: addon.Id
-		});
-
-		const toRateCard = (rateCard: SfGlobal.RateCard): RateCard => ({
-			id: rateCard.Id,
-			name: rateCard.Name,
-			rateCardLines: rateCard.rateCardLines.map(toRateCardLine),
-			authId: rateCard.authId
-		});
-
-		const toRateCardLine = (rateCardLine: SfGlobal.RateCardLine): RateCardLine => ({
-			id: rateCardLine.Id,
-			name: rateCardLine.Name,
-			rateValue: rateCardLine.cspmb__rate_value__c
-		});
-
-		const toAllowance = (allowance: SfGlobal.Allowance): Allowance => ({
-			id: allowance.Id,
-			name: allowance.Name
-		});
-
-		return {
-			cpData: Object.fromEntries(
-				Object.entries(commercialProductData.cpData).map(
-					([sfId, value]: [string, SfGlobal.CommercialProduct]): [
-						string,
-						CommercialProduct
-					] => {
-						return [
-							sfId,
-							{
-								addons: value.addons.map(toAddon),
-								allowances: value.allowances.map(toAllowance),
-								rateCards: value.rateCards.map(toRateCard)
-							}
-						];
-					}
-				)
-			)
-		};
+		return deforcify(commercialProductData);
 	},
 
 	async getCommercialProducts(): Promise<CommercialProductStandalone[]> {
 		const commercialProducts = await SF.actions.getCommercialProducts();
 
-		return commercialProducts.map((cp) => ({
-			contractTerm: cp.cspmb__Contract_Term__c,
-			id: cp.Id,
-			isActive: cp.cspmb__Is_Active__c,
-			name: cp.Name,
-			oneOffCharge: cp.cspmb__One_Off_Charge__c,
-			recurringCharge: cp.cspmb__Recurring_Charge__c
-		}));
+		return commercialProducts.map(deforcify);
 	},
 
 	async upsertFrameAgreements(
@@ -127,7 +70,7 @@ export const remoteActions: RemoteActions = {
 			JSON.stringify(fieldData)
 		]);
 
-		return toFrameAgreement(frameAgreement);
+		return deforcify(frameAgreement);
 	},
 
 	async saveAttachment(faId: string, attachment: Attachment): Promise<string> {

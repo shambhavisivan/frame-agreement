@@ -4,7 +4,7 @@ export function Negotiation({
 	negotiable,
 	onNegotiatedChanged
 }: {
-	negotiable: { original: number | null; negotiated: number | null };
+	negotiable: { original: number | undefined; negotiated: number | undefined };
 	onNegotiatedChanged: (value: number) => void;
 }): ReactElement {
 	const [input, setInput] = useState(String(negotiable.negotiated || negotiable.original));

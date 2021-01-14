@@ -31,11 +31,11 @@ describe('negotiationReducer', () => {
 					product: {
 						oneOff: {
 							original: 100,
-							negotiated: null
+							negotiated: undefined
 						},
 						recurring: {
 							original: 200,
-							negotiated: null
+							negotiated: undefined
 						}
 					}
 				}
@@ -56,7 +56,7 @@ describe('negotiationReducer', () => {
 						product: {
 							oneOff: {
 								original: 100,
-								negotiated: null
+								negotiated: undefined
 							},
 							recurring: {
 								original: 200,
@@ -92,11 +92,11 @@ describe('negotiationReducer', () => {
 					product: {
 						oneOff: {
 							original: 100,
-							negotiated: null
+							negotiated: undefined
 						},
 						recurring: {
 							original: 200,
-							negotiated: null
+							negotiated: undefined
 						}
 					}
 				}
@@ -123,7 +123,7 @@ describe('negotiationReducer', () => {
 							},
 							recurring: {
 								original: 200,
-								negotiated: null
+								negotiated: undefined
 							}
 						}
 					}
@@ -156,18 +156,18 @@ describe('negotiationReducer', () => {
 						[testRateCartId]: {
 							[testRateCardLineId1]: {
 								original: 10,
-								negotiated: null
+								negotiated: undefined
 							}
 						}
 					},
 					product: {
 						oneOff: {
 							original: 100,
-							negotiated: null
+							negotiated: undefined
 						},
 						recurring: {
 							original: 200,
-							negotiated: null
+							negotiated: undefined
 						}
 					}
 				}
@@ -196,11 +196,11 @@ describe('negotiationReducer', () => {
 						product: {
 							oneOff: {
 								original: 100,
-								negotiated: null
+								negotiated: undefined
 							},
 							recurring: {
 								original: 200,
-								negotiated: null
+								negotiated: undefined
 							}
 						}
 					}
@@ -234,11 +234,11 @@ describe('negotiationReducer', () => {
 					product: {
 						oneOff: {
 							original: 100,
-							negotiated: null
+							negotiated: undefined
 						},
 						recurring: {
 							original: 200,
-							negotiated: null
+							negotiated: undefined
 						}
 					}
 				}
@@ -261,11 +261,11 @@ describe('negotiationReducer', () => {
 					product: {
 						oneOff: {
 							original: 200,
-							negotiated: null
+							negotiated: undefined
 						},
 						recurring: {
 							original: 300,
-							negotiated: null
+							negotiated: undefined
 						}
 					}
 				},
@@ -280,11 +280,11 @@ describe('negotiationReducer', () => {
 					product: {
 						oneOff: {
 							original: 1000,
-							negotiated: null
+							negotiated: undefined
 						},
 						recurring: {
 							original: 2000,
-							negotiated: null
+							negotiated: undefined
 						}
 					}
 				}
@@ -318,11 +318,11 @@ describe('negotiationReducer', () => {
 						product: {
 							oneOff: {
 								original: 200,
-								negotiated: null
+								negotiated: undefined
 							},
 							recurring: {
 								original: 300,
-								negotiated: null
+								negotiated: undefined
 							}
 						}
 					},
@@ -337,11 +337,11 @@ describe('negotiationReducer', () => {
 						product: {
 							oneOff: {
 								original: 1000,
-								negotiated: null
+								negotiated: undefined
 							},
 							recurring: {
 								original: 2000,
-								negotiated: null
+								negotiated: undefined
 							}
 						}
 					}
@@ -382,22 +382,22 @@ describe('negotiationReducer', () => {
 						[rateCardId1]: {
 							[rateCartLineId1]: {
 								original: 1,
-								negotiated: null
+								negotiated: undefined
 							},
 							[rateCartLineId2]: {
 								original: 2,
-								negotiated: null
+								negotiated: undefined
 							}
 						}
 					},
 					product: {
 						recurring: {
 							original: 100,
-							negotiated: null
+							negotiated: undefined
 						},
 						oneOff: {
 							original: 200,
-							negotiated: null
+							negotiated: undefined
 						}
 					}
 				}

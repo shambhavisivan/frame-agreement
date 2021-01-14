@@ -1,70 +1,15 @@
-var SF;
+/* eslint-disable @typescript-eslint/naming-convention */
+function makeId(n = 15): string {
+	let text = '';
+	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-window.localMode = true;
-
-window.getLabels = () => {
-	let res = {};
-
-	Object.keys(window.SF.labels).forEach(lb => {
-		res[lb] = `{!$Label.${lb}}`.replace(/"/g, "'");
-		// res[lb] = `{!$Label.${lb}}`;
-	});
-
-	return res;
-};
-
-function createPromise(result, timeout = 500) {
-	return new Promise(resolve => {
-		setTimeout(() => {
-			resolve(result);
-		}, 0);
-	});
-}
-
-function makeId(n = 15) {
-	var text = '';
-	var possible =
-		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-	for (var i = 0; i < n; i++)
+	for (let i = 0; i < n; i++)
 		text += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return text;
 }
 
-function getRandomFromArr(arr) {
-	return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function filterProducts(dataArr) {
-	dataArr = JSON.parse(dataArr);
-	var dataMap = {};
-	dataArr.forEach(data => {
-		dataMap[data.field] = data.values;
-	});
-
-	return commercialProducts.filter(cp => {
-		for (var key in dataMap) {
-			if (cp.hasOwnProperty(key)) {
-				if (!dataMap[key].includes(cp[key])) {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}
-		return true;
-	});
-}
-
-const nullValues = false;
-
-const settings = {
-	status: 'Draft'
-	// status: "Active"
-};
-
-const approval = {
+export const approval = {
 	isApprover: true,
 	isAdmin: true,
 	currentUser: '0051t0000025wM9AAI',
@@ -285,14 +230,14 @@ const approval = {
 		}
 	]
 };
-const approval2 = {
+export const approval2 = {
 	isApprover: false,
 	isAdmin: false,
 	currentUser: '0051t0000025wM9AAI',
 	listProcess: []
 };
 
-const FACSettings = {
+export const FACSettings = {
 	fa_editable_statuses: 'Draft, Requires Approval',
 	// price_item_fields: "Name, cspmb__Contract_Term__c, cspmb__Price_Item_Description__c, cspmb__Is_Authorization_Required__c, CurrencyIsoCode",
 	price_item_fields: 'Id, cspmb__Is_Recurring_Discount_Allowed__c',
@@ -321,7 +266,7 @@ const FACSettings = {
 	truncate_product_fields: true
 };
 
-const relatedLists = [
+export const relatedLists = [
 	{
 		label: 'Account',
 		columns: 'Id, csconta__Agreement_Name__c',
@@ -548,7 +493,7 @@ const relatedLists = [
 	}
 ];
 
-const frameAgreements = [
+export const frameAgreements = [
 	{
 		Id: 'a1t1t0000009wpQAAQ',
 		Name: 'AGR-000000',
@@ -653,7 +598,7 @@ const frameAgreements = [
 	}
 ];
 
-const STANDALONE_ADDONS = [
+export const STANDALONE_ADDONS = [
 	{
 		Id: 'a0w1t0000002hSaAAI',
 		Name: 'Extra 200MB',
@@ -673,7 +618,7 @@ const STANDALONE_ADDONS = [
 	}
 ];
 
-const STANDALONE_ADDONS_AL_INFO = {
+export const STANDALONE_ADDONS_AL_INFO = {
 	discLevels: [
 		{
 			addonId: 'a0w1t0000002hSaAAI',
@@ -740,13 +685,12 @@ const STANDALONE_ADDONS_AL_INFO = {
 	]
 };
 
-const childUsageTypes = {
+export const childUsageTypes = {
 	a201t0000009yECAAY: [
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: 'a201t0000009yEHAAY',
 			Name: 'National Calls to Fixed',
@@ -755,8 +699,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: 'a201t0000009yETAAY',
 			Name: 'National Calls to Mobile',
@@ -765,8 +708,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: 'a201t0000009yEAAAY',
 			Name: 'Appliance Usage Types; an unlikely big Name',
@@ -775,8 +717,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -785,8 +726,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -795,8 +735,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -805,8 +744,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -815,8 +753,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -825,8 +762,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -835,8 +771,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -845,8 +780,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -855,8 +789,7 @@ const childUsageTypes = {
 		{
 			attributes: {
 				type: 'cspmb__Usage_Type__c',
-				url:
-					'/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
+				url: '/services/data/v46.0/sobjects/cspmb__Usage_Type__c/a201t0000009yEHAAY'
 			},
 			Id: makeId(15),
 			Name: 'Universal UT',
@@ -865,7 +798,96 @@ const childUsageTypes = {
 	]
 };
 
-const productData = {
+interface MainUsageType {
+	cspmb__unit_of_measure__c: string;
+	Name: string;
+	cspmb__type__c: string;
+	Id: string;
+	childUsageTypes: ChildUsageType[];
+}
+
+interface ChildUsageType {
+	Id: string;
+	Name: string;
+	cspmb__unit_of_measure__c: string;
+}
+
+interface Allowance {
+	Id: string;
+	Name: string;
+	cspmb__amount__c: number;
+	cspmb__priority__c: number;
+	cspmb__usage_type__c: string;
+	mainUsageType: MainUsageType;
+}
+
+interface Charge {
+	chargeType: string;
+	Id: string;
+	Name: string;
+	recurring?: number;
+	oneOff?: number;
+}
+
+interface Addon {
+	Id: string;
+	cspmb__Price_Item__c: string;
+	cspmb__Overrides_Add_On_Charges__c: boolean;
+	cspmb__Add_On_Price_Item__c: string;
+	cspmb__One_Off_Charge__c?: number;
+	cspmb__Recurring_Charge__c?: number;
+	cspmb__Add_On_Price_Item__r: AddOnPriceItem;
+}
+
+interface AddOnPriceItem {
+	cspmb__Effective_Start_Date__c: number;
+	Name: string;
+	cspmb__Authorization_Level__c: string;
+	cspmb__One_Off_Charge__c?: number;
+	cspmb__Recurring_Charge__c?: number;
+	Id: string;
+}
+
+interface RateCard {
+	Id: string;
+	Name: string;
+	authId?: string;
+	rateCardLines: RateCardLine[];
+}
+
+interface RateCardLine {
+	Id: string;
+	Name: string;
+	cspmb__rate_value__c?: number;
+	cspmb__usage_type__c: string;
+	cspmb__Rate_Card__c: string;
+	cspmb__Currency_Code__c: string;
+	cspmb__usage_type__r: UsageType;
+	cspmb__Cap_Unit__c?: string;
+	cspmb__Weekend__c?: number;
+	usageTypeName: string;
+}
+
+interface UsageType {
+	Name: string;
+	Id: string;
+}
+
+/**
+ * The interface needed to be specified explicitly because the productData
+ * array elements are not consistent in their shape leading to bad type
+ * inferrence so deforcify was unable to cnvert the type correctly.
+ */
+export interface SfProductData {
+	[key: string]: {
+		addons: Addon[];
+		allowances?: Allowance[];
+		charges: Charge[];
+		rateCards: RateCard[];
+	};
+}
+
+export const productData: SfProductData = {
 	a1F1t0000001JBoEAM: {
 		addons: [],
 		allowances: [],
@@ -1330,13 +1352,13 @@ const productData = {
 	}
 };
 
-const attachment =
+export const attachment =
 	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMUYxdDAwMDAwMDFKQmpFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwM1NibkVBRSI6e319LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2Nn19LCJhMUYxdDAwMDAwMDFKQ0RFQTIiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2M319LCJhMUYxdDAwMDAwMDFKQzhFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjIzOS40MX19LCJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwMmNJTUVBWSI6eyJvbmVPZmYiOjcuNjQsInJlY3VycmluZyI6Ny43NX0sImExQTF0MDAwMDAwM1NjZkVBRSI6eyJvbmVPZmYiOjcuNDksInJlY3VycmluZyI6NzkuNDR9fSwiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6N30sImExSTF0MDAwMDAxV2t6akVBQyI6eyJyZWN1cnJpbmciOjEyfX0sIl9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxUXhyRUFFIjp7ImExTTF0MDAwMDAwQkZyVkVBVyI6MTI0Ljk5fX19fX0=';
 
-const attachmentMaster =
+export const attachmentMaster =
 	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMXQxdDAwMDAwMEEwZ09BQVMiOiJhMXQxdDAwMDAwMEEwZ09BQVMifX0';
 
-const AuthLevels = [
+export const AuthLevels = [
 	{
 		Id: 'a151t000000rmV7AAI',
 		Name: 'RCL1.1',
@@ -1402,7 +1424,7 @@ const AuthLevels = [
 	}
 ];
 
-const DiscLevels_general = [
+export const DiscLevels_general = [
 	{
 		discountLevel: {
 			Id: 'a141t00000137a8AAA',
@@ -1491,7 +1513,7 @@ const DiscLevels_general = [
 	}
 ];
 
-const DiscLevels = [
+export const DiscLevels = [
 	{
 		discountLevel: {
 			Id: 'a141t000003DckQAAS',
@@ -1587,7 +1609,7 @@ const DiscLevels = [
 	}
 ];
 
-const Delta = {
+export const Delta = {
 	csconta__Account__c: {
 		new_value: '0011t00000Pq1WRAAZ',
 		old_value: '0011t00000Pq1WRAAZ',
@@ -1943,14 +1965,14 @@ const Delta = {
 	}
 };
 
-const CustomTabsData = [
+export const CustomTabsData = [
 	{
 		label: 'Custom tab',
 		container_id: 'customTab1',
 		onEnter: 'customTabEnter'
 	}
 ];
-const HeaderData = [
+export const HeaderData = [
 	{
 		field: 'csconta__Agreement_Name__c',
 		readOnly: false,
@@ -2054,7 +2076,7 @@ const HeaderData = [
 	}
 ];
 
-const CategorizationData = [
+export const CategorizationData = [
 	{
 		name: 'Alpha',
 		field: 'Categorization_Alpha__c',
@@ -2066,7 +2088,7 @@ const CategorizationData = [
 		values: ['10GB', '20GB', '50GB', '100GB']
 	}
 ];
-const AddonCategorizationData = [
+export const AddonCategorizationData = [
 	{
 		name: 'Alpha',
 		field: 'cspmb__Billing_Frequency__c',
@@ -2078,7 +2100,7 @@ const AddonCategorizationData = [
 		values: ['Percentage', 'Amount']
 	}
 ];
-const RelatedListsData = [
+export const RelatedListsData = [
 	{
 		label: 'Account',
 		object: 'csconta__Frame_Agreement__c',
@@ -2093,7 +2115,7 @@ const RelatedListsData = [
 	}
 ];
 
-const ButtonCustomData = [
+export const ButtonCustomData = [
 	{
 		type: 'action',
 		label: 'Action button',
@@ -2141,20 +2163,20 @@ const ButtonCustomData = [
 	}
 ];
 
-const ButtonStandardData = {
-	"Save": ["Draft", "Requires Approval"],
-	"SubmitForApproval": ["Requires Approval"],
-	"Submit": ["Approved"],
-	"Delta": "*",
-	"DeleteProducts": ["Draft", "Requires Approval"],
-	"DeleteAddons": ["Draft", "Requires Approval"],
-	"BulkNegotiate": "csfam__arb_field_bool__c == true",
-	"BulkNegotiateAddons": ["Draft", "Requires Approval"],
-	"AddProducts": ["Draft", "Requires Approval"],
-	"AddAddons": ["Draft", "Requires Approval"]
+export const ButtonStandardData = {
+	Save: ['Draft', 'Requires Approval'],
+	SubmitForApproval: ['Requires Approval'],
+	Submit: ['Approved'],
+	Delta: '*',
+	DeleteProducts: ['Draft', 'Requires Approval'],
+	DeleteAddons: ['Draft', 'Requires Approval'],
+	BulkNegotiate: 'csfam__arb_field_bool__c == true',
+	BulkNegotiateAddons: ['Draft', 'Requires Approval'],
+	AddProducts: ['Draft', 'Requires Approval'],
+	AddAddons: ['Draft', 'Requires Approval']
 };
 
-const commercialProducts = [
+export const commercialProducts = [
 	{
 		Id: 'a1F1t0000001JBoEAM',
 		Name: 'Mobile L_7',
@@ -2310,7 +2332,7 @@ const commercialProducts = [
 	}
 ];
 
-const commercialProducts_large = [
+export const commercialProducts_large = [
 	{
 		Id: 'a273E000000BHcTQAW',
 		Name: 'Elisa Netti Lite SLA P1K24',
@@ -2515,8 +2537,7 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzxJQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti tabletti, Peruspalvelu, yksi toimipaikka',
+		Name: 'Elisa Kassa Kauppiaan paketti tabletti, Peruspalvelu, yksi toimipaikka',
 		cspmb__Recurring_Charge__c: 84,
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Price_Item_Description__c: 'Peruspalvelu, yksi toimipaikka',
@@ -2532,8 +2553,7 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzxLQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti tabletti, Kuittiprintteri: kiinteä, Star mPOP',
+		Name: 'Elisa Kassa Kauppiaan paketti tabletti, Kuittiprintteri: kiinteä, Star mPOP',
 		cspmb__Recurring_Charge__c: 16,
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Price_Item_Description__c: 'Kuittiprintteri: kiinteä, Star mPOP',
@@ -2549,8 +2569,7 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzxNQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti työasema, Peruspalvelu, yski toimipiste',
+		Name: 'Elisa Kassa Kauppiaan paketti työasema, Peruspalvelu, yski toimipiste',
 		cspmb__Recurring_Charge__c: 84,
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Price_Item_Description__c: 'Peruspalvelu, yski toimipiste',
@@ -2582,8 +2601,7 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzxRQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti työasema, Termokuittitulostin Star TSP654 USB',
+		Name: 'Elisa Kassa Kauppiaan paketti työasema, Termokuittitulostin Star TSP654 USB',
 		cspmb__Recurring_Charge__c: 9,
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Price_Item_Description__c: 'Termokuittitulostin Star TSP654 USB',
@@ -2591,22 +2609,18 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzxSQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti työasema, Viivakoodinlukija Newland NLS-HR22 Dorad',
+		Name: 'Elisa Kassa Kauppiaan paketti työasema, Viivakoodinlukija Newland NLS-HR22 Dorad',
 		cspmb__Recurring_Charge__c: 4.9,
 		cspmb__Is_Authorization_Required__c: false,
-		cspmb__Price_Item_Description__c:
-			'Viivakoodinlukija Newland NLS-HR22 Dorada',
+		cspmb__Price_Item_Description__c: 'Viivakoodinlukija Newland NLS-HR22 Dorada',
 		CurrencyIsoCode: 'EUR'
 	},
 	{
 		Id: 'a273E000000AzxTQAS',
-		Name:
-			'Elisa Kassa viivakoodin lukija, viivakoodinlukija Newland NLS-HR22 Dorada',
+		Name: 'Elisa Kassa viivakoodin lukija, viivakoodinlukija Newland NLS-HR22 Dorada',
 		cspmb__Recurring_Charge__c: 144,
 		cspmb__Is_Authorization_Required__c: false,
-		cspmb__Price_Item_Description__c:
-			'viivakoodinlukija Newland NLS-HR22 Dorada',
+		cspmb__Price_Item_Description__c: 'viivakoodinlukija Newland NLS-HR22 Dorada',
 		CurrencyIsoCode: 'EUR'
 	},
 	{
@@ -2627,12 +2641,10 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzxWQAS',
-		Name:
-			'Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 Bluetooth',
+		Name: 'Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 Bluetooth',
 		cspmb__One_Off_Charge__c: 360,
 		cspmb__Is_Authorization_Required__c: false,
-		cspmb__Price_Item_Description__c:
-			'termokuittitulostin Star TSP654 Bluetooth',
+		cspmb__Price_Item_Description__c: 'termokuittitulostin Star TSP654 Bluetooth',
 		CurrencyIsoCode: 'EUR'
 	},
 	{
@@ -2845,8 +2857,7 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzzJQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti tabletti, Peruspalvelu, yksi toimipaikka',
+		Name: 'Elisa Kassa Kauppiaan paketti tabletti, Peruspalvelu, yksi toimipaikka',
 		cspmb__Recurring_Charge__c: 84,
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Price_Item_Description__c: 'Peruspalvelu, yksi toimipaikka',
@@ -2862,8 +2873,7 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzzLQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti tabletti, Kuittiprintteri: kiinteä, Star mPOP',
+		Name: 'Elisa Kassa Kauppiaan paketti tabletti, Kuittiprintteri: kiinteä, Star mPOP',
 		cspmb__Recurring_Charge__c: 16,
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Price_Item_Description__c: 'Kuittiprintteri: kiinteä, Star mPOP',
@@ -2879,8 +2889,7 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzzNQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti työasema, Peruspalvelu, yski toimipiste',
+		Name: 'Elisa Kassa Kauppiaan paketti työasema, Peruspalvelu, yski toimipiste',
 		cspmb__Recurring_Charge__c: 84,
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Price_Item_Description__c: 'Peruspalvelu, yski toimipiste',
@@ -2912,8 +2921,7 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzzRQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti työasema, Termokuittitulostin Star TSP654 USB',
+		Name: 'Elisa Kassa Kauppiaan paketti työasema, Termokuittitulostin Star TSP654 USB',
 		cspmb__Recurring_Charge__c: 9,
 		cspmb__Is_Authorization_Required__c: false,
 		cspmb__Price_Item_Description__c: 'Termokuittitulostin Star TSP654 USB',
@@ -2921,22 +2929,18 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzzSQAS',
-		Name:
-			'Elisa Kassa Kauppiaan paketti työasema, Viivakoodinlukija Newland NLS-HR22 Dorad',
+		Name: 'Elisa Kassa Kauppiaan paketti työasema, Viivakoodinlukija Newland NLS-HR22 Dorad',
 		cspmb__Recurring_Charge__c: 4.9,
 		cspmb__Is_Authorization_Required__c: false,
-		cspmb__Price_Item_Description__c:
-			'Viivakoodinlukija Newland NLS-HR22 Dorada',
+		cspmb__Price_Item_Description__c: 'Viivakoodinlukija Newland NLS-HR22 Dorada',
 		CurrencyIsoCode: 'EUR'
 	},
 	{
 		Id: 'a273E000000AzzTQAS',
-		Name:
-			'Elisa Kassa viivakoodin lukija, viivakoodinlukija Newland NLS-HR22 Dorada',
+		Name: 'Elisa Kassa viivakoodin lukija, viivakoodinlukija Newland NLS-HR22 Dorada',
 		cspmb__Recurring_Charge__c: 144,
 		cspmb__Is_Authorization_Required__c: false,
-		cspmb__Price_Item_Description__c:
-			'viivakoodinlukija Newland NLS-HR22 Dorada',
+		cspmb__Price_Item_Description__c: 'viivakoodinlukija Newland NLS-HR22 Dorada',
 		CurrencyIsoCode: 'EUR'
 	},
 	{
@@ -2957,12 +2961,10 @@ const commercialProducts_large = [
 	},
 	{
 		Id: 'a273E000000AzzWQAS',
-		Name:
-			'Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 Bluetooth',
+		Name: 'Elisa Kassa kuittiprintteri, termokuittitulostin Star TSP654 Bluetooth',
 		cspmb__One_Off_Charge__c: 360,
 		cspmb__Is_Authorization_Required__c: false,
-		cspmb__Price_Item_Description__c:
-			'termokuittitulostin Star TSP654 Bluetooth',
+		cspmb__Price_Item_Description__c: 'termokuittitulostin Star TSP654 Bluetooth',
 		CurrencyIsoCode: 'EUR'
 	},
 	{
@@ -3010,8 +3012,7 @@ const commercialProducts_large = [
 		Name: 'Elisa Toimisto 365, Skype for Business PSTN Conferencing, AddOn',
 		cspmb__Recurring_Charge__c: 4,
 		cspmb__Is_Authorization_Required__c: false,
-		cspmb__Price_Item_Description__c:
-			'Skype for Business PSTN Conferencing, AddOn',
+		cspmb__Price_Item_Description__c: 'Skype for Business PSTN Conferencing, AddOn',
 		CurrencyIsoCode: 'EUR'
 	},
 	{
@@ -3544,7 +3545,7 @@ const commercialProducts_large = [
 	}
 ];
 
-const newFA = {
+export const newFA = {
 	Id: 'newFaId',
 	Name: 'AGR-000000',
 	csconta__Account__c: '0011t00000DSEtnAAH',
@@ -3563,865 +3564,3 @@ const newFA = {
 		Id: '0011t00000DSEtnAAH'
 	}
 };
-
-const lookupAccountData = [];
-for (var i = 0; i < 2000; i++) {
-	lookupAccountData.push({
-		Name:
-			getRandomFromArr([
-				'Pyramid Construction #',
-				'Express Logistics #',
-				'University no.',
-				'United Oil &amp; Gas Corp. '
-			]) + i,
-		Type:
-			'Customer-' +
-			getRandomFromArr([
-				'Prospect',
-				'Direct',
-				'Channel',
-				'Consumer',
-				'Random',
-				'Schmustomer'
-			]),
-		Id: makeId(15)
-	});
-}
-
-lookupAccountData.sort((a, b) => (a.Id > b.Id ? 1 : b.Id > a.Id ? -1 : 0));
-
-// const priceItemData = {"a1F1t00000017Y0EAI":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t00000017Y0EAI","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001QxrEAE","Name":"RC1","rateCardLines":[{"Id":"a1M1t000000BFrVEAW","Name":"RCL1.1","cspmb__Cap_Unit__c":"Sample Cap Unit","cspmb__rate_value__c":124.99,"cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"},{"Id":"a1M1t000000peaJEAQ","Name":"RCL_1_1","cspmb__Rate_Card__c":"a1N1t0000001QxrEAE"}]}]},"a1F1t0000001JBUEA2":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnNAAU","Name":"ADD2","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBUEA2","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":62.19,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]},"a1F1t0000001JBeEAM":{"addons":[{"Id":"a0w1t0000002hSaAAI","Name":"ADD1","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":22,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"},{"Id":"a0w1t000000zDnhAAE","Name":"ADD3","cspmb__Is_Active__c":true,"cspmb__Recurring_Charge__c":43,"cspmb__Effective_Start_Date__c":1545868800000,"cspmb__Billing_Frequency__c":"Monthly","cspmb__Authorization_Level__c":"a0x1t000000yZF3AAM"}],"Id":"a1F1t0000001JBeEAM","rateCards":[{"authId":"a0x1t000000yZF3AAM","Id":"a1N1t0000001X2dEAE","Name":"RC2","rateCardLines":[{"Id":"a1M1t000000peXUEAY","Name":"RCL_1","cspmb__rate_value__c":55.98,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXZEAY","Name":"RCL_2","cspmb__rate_value__c":65.43,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"},{"Id":"a1M1t000000peXeEAI","Name":"RCL_3","cspmb__rate_value__c":62.19,"cspmb__Rate_Card__c":"a1N1t0000001X2dEAE"}]}]}};
-
-window.react_logs = [];
-
-window.SF = SF = {
-	param: {
-		account: '0011t00000DSEtn'
-	},
-	labels: {
-		accounts_modal_no_assoc: '--no associated accounts',
-		accounts_modal_no_main: '--no account',
-		addAgreementsCTAMessage: 'There are no Agreements in here',
-		addProductCTAMessage: 'There are no Products in here',
-		addAddonsCTAMessage: 'There are no Add Ons in here',
-		addons_header_name: 'Name',
-		addons_header_oneOff: 'One Off Charge',
-		addons_header_oneOff_neg: 'Negotiated One Off',
-		addons_header_recc: 'Recurring Charge',
-		addons_header_recc_neg: 'Negotiated Recurring',
-		alert_btn_cancel: 'Cancel',
-		alert_cloneFa_btn_action: 'Clone',
-		alert_cloneFa_message:
-			'Are you sure you want to clone this frame agreement?',
-		alert_cloneFa_title: 'Clone Frame Agreement',
-		alert_deleteAgreements_message:
-			'Are you sure you want to delete selected agreements?',
-		alert_deleteAgreements_title: 'Delete agreements',
-		alert_deleteProducts_btn_action: 'Delete',
-		alert_deleteProducts_message:
-			'Are you sure you want to delete selected products?',
-		alert_deleteAddons_message:
-			'Are you sure you want to delete selected Add Ons?',
-		alert_deleteProducts_title: 'Delete products',
-		alert_deleteAddons_title: 'Delete Add Ons',
-		allowances_amount: 'Amount',
-		allowances_name: 'Name',
-		allowances_priority: 'Priority',
-		allowances_usage_types: 'Usage Types',
-		approval_action_approve: 'Approve',
-		approval_action_reassign: 'Reassign',
-		approval_action_recall: 'Recall',
-		approval_action_reject: 'Reject',
-		approval_message_placeholder: 'Enter comment...',
-		approval_message_title: 'Comment',
-		approval_table_header_action: 'Action',
-		approval_table_header_actualApprover: 'Actual Approver',
-		approval_table_header_assignedTo: 'Assigned to',
-		approval_table_header_comments: 'Comments',
-		approval_table_header_date: 'Date',
-		approval_table_header_status: 'Status',
-		approval_title: 'Approval history',
-		btn_AddFa: 'Add Frame Agreements',
-		btn_AddNewAgreement: 'Add new Agreement',
-		btn_AddProducts: 'Add Products',
-		btn_AddAddons: 'Add Add Ons',
-		btn_BulkNegotiate: 'Negotiate Products',
-		btn_BulkNegotiateAddons: 'Negotiate Add ons',
-		btn_CalcDelta: 'Calculate Delta',
-		btn_Close: 'Close',
-		btn_DeleteAgreements: 'Delete Agreements',
-		btn_DeleteProducts: 'Delete Products',
-		btn_DeleteAddons: 'Delete Add Ons',
-		btn_Delta: 'Compare Agreements',
-		btn_Done: 'Done',
-		btn_NewVersion: 'Create New Version',
-		btn_Save: 'Save',
-		btn_Submit: 'Activate',
-		btn_SubmitForApproval: 'Submit For Approval',
-		btn_delta_switch_delta: 'Switch to Delta View',
-		btn_delta_switch_fa: 'Switch to FA View',
-		charges_header_name: 'Charge Name',
-		charges_header_neg: 'Negotiated One Off',
-		charges_header_oneOff: 'One Off Adjustment',
-		charges_header_recc: 'Recurring Adjustment',
-		charges_header_recc_neg: 'Negotiated Recurring',
-		charges_header_type: 'Charge Type',
-		delta_fa_fields: 'Frame Agreement Fields',
-		delta_status_added: 'Added',
-		delta_status_changed: 'Changed',
-		delta_status_removed: 'Removed',
-		delta_status_unchanged: 'Unchanged',
-		delta_title: 'Delta Viewer',
-		faMenuActionAccounts: 'Accounts',
-		faMenuActionClone: 'Clone',
-		faMenuActionDelete: 'Delete',
-		faMenuActionEdit: 'Edit',
-		faNameHeaderCell: 'FA name',
-		fa_master_chip: 'Master',
-		fa_none: '--none',
-		fa_tab: 'Frame Agreement',
-		fa_volume: 'Volume',
-		famext_btn_test_targeting: 'Test Targeting',
-		famext_discount_amount: 'Amount',
-		famext_discount_percentage: 'Percentage',
-		famext_discount_type: 'Discount Type',
-		famext_dynamic_groups_title: 'Dynamic groups',
-		famext_expression: 'Expression',
-		famext_expression_comp: 'Expression components',
-		famext_field: 'Field',
-		famext_group_name: 'Group Name',
-		famext_logic: 'Logic',
-		famext_manager_Editable: 'Editable',
-		famext_manager_Sequence: 'Sequence',
-		famext_manager_add_new_comp: 'Add new component',
-		famext_manager_group_type: 'Group Type',
-		famext_manager_parse: 'Parse',
-		famext_toast_dc_applied: 'Discount codes applied!',
-		famext_toast_dc_appliance_warning_title: 'Discount codes not applied!',
-		famext_toast_dc_appliance_warning_message:
-			'Some discount codes are added but not applied.',
-		famext_oneOff: 'One-off charge',
-		famext_oneOff: 'One-off charge',
-		famext_operator_equals: 'Equals',
-		famext_operator_greater_or_equal: 'Greater or equal',
-		famext_operator_greater_than: 'Greater than',
-		famext_operator_in: 'In',
-		famext_operator_less_or_equal: 'Less or equal',
-		famext_operator_less_than: 'Less than',
-		famext_operator_like: 'Like',
-		famext_operator_not_equals: 'Not equals',
-		famext_operator_not_in: 'Not In',
-		famext_placeholder_addGroup: 'Add group...',
-		famext_recurring: 'Recurring charge',
-		famext_targeting_not_initiated: 'Query has not been executed yet!',
-		famext_value: 'Value',
-		frameAgreementListTitle: 'Agreement List',
-		frameAgreementTitle: 'Frame Agreement Negotiation Console',
-		frame_agreements_title: 'Frame Agreements',
-		header_customDropdownPlaceholder: 'Custom',
-		header_frameAgreementEditorTitle: 'Frame Agreement Details',
-		header_frameAgreementMasterTitle: 'Master Frame Agreement',
-		input_quickSearchPlaceholder: 'Quick search',
-		modal_addFa_title: 'Add Frame Agreements',
-		modal_addProduct_input_search_placeholder: 'Filter products',
-		modal_addAddons_input_search_placeholder: 'Filter addons',
-		modal_addProduct_title: 'Add Product to Frame Agreement',
-		modal_addAddons_title: 'Add stand-alone Addons',
-		modal_bluk_rateFilter_dropdownPlaceholder: '-- select a property ---',
-		modal_bluk_rateFilter_propertyTitle: 'Select rate card line property:',
-		modal_bluk_rateFilter_propertyValueTitle: 'Select value:',
-		modal_bluk_rateFilter_title: 'Filter Rate Card Lines',
-		modal_bulk_btn_apply: 'Apply discount',
-		modal_bulk_btn_fixed: 'Fixed Amount',
-		modal_bulk_btn_percentage: 'Percentage',
-		modal_bulk_btn_save: 'Save to Frame Agreement',
-		modal_bulk_discount_input_title: 'Discount to selection',
-		modal_bulk_discount_title: 'Discount options',
-		modal_bulk_input_placeholder: 'Enter discount value',
-		modal_bulk_selected_title: 'Selected Products',
-		modal_bulk_addons_selected_title: 'Selected Add Ons',
-		modal_bulk_title: 'Bulk Negotiation',
-		modal_categorization_btn_add: 'Add Selected',
-		modal_categorization_btn_apply: 'Apply Filter',
-		modal_categorization_btn_clear: 'Clear Filter',
-		modal_categorization_switch: 'Product categorisation panel',
-		modal_addon_categorization_switch: 'Addon categorisation panel',
-		modal_categorization_title: 'Product Categorization',
-		modal_addon_categorization_title: 'Addon Categorization',
-		modal_charge_table_header_chargeType: 'Charge Type',
-		modal_charge_table_header_name: 'Name',
-		modal_charge_table_header_oneOff: 'One Off',
-		modal_charge_table_header_presentIn: 'Present In',
-		modal_charge_table_header_rateValue: 'Rate Value',
-		modal_charge_table_header_recurring: 'Recurring',
-		modal_charge_table_header_unit: 'Unit',
-		modal_charge_table_header_value: 'Value',
-		modal_lookup_input_search_placeholder: 'Filter records...',
-		modal_unsavedChanges_alert:
-			'You have unsaved changes, are you sure you want to leave?',
-		no_fa_message: 'There are no Frame Agreements in here.',
-		no_fa_message_2: 'Create at least one frame agreements.',
-		product_charge_header_name: 'Charge Name',
-		product_charge_header_oneOff: 'One Off Adjustment',
-		product_charge_header_oneOff_neg: 'Negotiated One Off',
-		product_charge_header_recc: 'Recurring Adjustment',
-		product_charge_header_recc_neg: 'Negotiated Recurring',
-		products_addons: 'Add Ons',
-		products_allowances: 'Allowances',
-		products_charges: 'Charges',
-		products_display_columns: 'Display Columns',
-		products_productNameHeaderCell: 'Product Name',
-		products_product_charges: 'Charges (product)',
-		products_rates: 'Rate Cards',
-		products_tab_title: 'Products',
-		addons_tab_title: 'Standalon Addons',
-		products_title: 'Products',
-		products_title_empty: 'Product Negotiation',
-		products_volume_minUsageComm: 'Min. usage commitment',
-		products_volume_minUsageCommPeriod: 'Min. usage commitment period',
-		products_volume_minVol: 'Minimum vol',
-		products_volume_minVolPeriod: 'Minimum vol. period',
-		rate_cards_header_name: 'Name',
-		rate_cards_header_usage: 'Usage Type',
-		rate_cards_header_value: 'Rate Value',
-		rate_cards_header_value_neg: 'Negotiated Value',
-		rl_emptyList: 'No records for this related list',
-		rl_tab: 'Related Lists',
-		save_fa_message: 'Save frame agreement before adding products!',
-		save_fa_products_message:
-			'They will be visible as soon as you create them.',
-		toast_approvalAction_failed: 'action failed!',
-		toast_approvalAction_success: 'action successful!',
-		toast_created_fa: 'Successfuly created new frame agreement.!',
-		toast_decomposition_failed: 'Deleting associations made from this attempt.',
-		toast_decomposition_revered: 'Deleted all created associations.',
-		toast_decomposition_success: 'Created associations',
-		toast_decomposition_title_failed: 'Activation failed!',
-		toast_decomposition_title_revered: 'Activation reverted!',
-		toast_decomposition_title_success: 'Activation succeded!',
-		toast_discount_calculated: 'Changes have to be saved to Frame Agreement.!',
-		toast_discount_calculated_title: 'Discount calculated!',
-		toast_failed_title: 'Failed!',
-		toast_invalid_handler: 'Handler not defined',
-		toast_invalid_handler_title: 'Invalid handler!',
-		toast_saved_fa: 'Successfuly saved frame agreement.!',
-		toast_submitForApproval_failed: 'Unable to start approval process.',
-		toast_submitForApproval_success: 'Successfuly submitted for approval!',
-		toast_success_title: 'Submitted!',
-		toast_success_title: 'Submitted!',
-		toast_success_title: 'Submitted!',
-		usage_type_name_field: 'Name',
-		usage_type_undefined: 'No usage type',
-		util_datepicker_today: 'Today',
-		util_input_formula_placehoder: '--not calculated',
-		util_input_lookup_placehoder: 'No record selected',
-		util_input_text_enter: 'Enter',
-		util_negotiation_input_diff_label: 'negotiated'
-	},
-	fieldLabels: {},
-	apiSession: '{!$Api.Session_ID}',
-	invokeAction: function(remoteActionName, parametersArr = []) {
-		let data = null;
-		switch (remoteActionName) {
-			case 'getFrameAgreements':
-				return createPromise(frameAgreements, 500);
-
-			case 'getCommercialProducts':
-				return createPromise(commercialProducts, 500);
-			// return createPromise(commercialProducts_large);
-
-			case 'cloneFrameAgreement':
-				var faArr = frameAgreements.filter(fa => {
-					return fa.Id === parametersArr[0];
-				});
-				var fa = JSON.parse(JSON.stringify(faArr[0]));
-				fa.Id = fa.Id.slice(0, -3) + makeId(3);
-				frameAgreements.push(fa);
-				return createPromise(fa);
-
-			case 'getAppSettings':
-				data = {
-					commercialProductCount: 10,
-					frameAgreementsCount: 3,
-					itemsPerPage: 20,
-					ButtonCustomData,
-					ButtonStandardData,
-					CategorizationData,
-					AddonCategorizationData,
-					RelatedListsData,
-					HeaderData,
-					CustomTabsData,
-					account: {
-						Id: '0019E00000w3I9OQAU',
-						Name: 'Elisa & OY'
-					},
-					// DiscLevels: DiscLevels,
-					// AuthLevels: AuthLevels,
-					FACSettings: FACSettings
-				};
-				return createPromise(data, 500);
-
-			case 'getAddons':
-				return createPromise(Addons);
-
-			case 'filterStandaloneAddons':
-				return createPromise([getRandomFromArr(STANDALONE_ADDONS)]);
-
-			case 'upsertFrameAgreements':
-				if (parametersArr[0] !== null) {
-					return createPromise(JSON.parse(parametersArr[1]));
-				} else {
-					return createPromise({
-						...newFA,
-						csconta__agreement_level__c: parametersArr[1]
-					});
-				}
-
-			case 'getAttachmentBody':
-				var fa = frameAgreements.find(fa => fa.Id === parametersArr[0]);
-				var master = fa.csconta__agreement_level__c === 'Master Frame';
-
-				if (master) {
-					return createPromise(attachmentMaster, 500);
-				} else {
-					return createPromise(attachment, 500);
-				}
-
-			case 'getStandaloneAddons':
-				return createPromise(STANDALONE_ADDONS);
-
-			case 'getAddonDiscountInformation':
-				return createPromise(STANDALONE_ADDONS_AL_INFO);
-
-			case 'getAttachmentBody':
-				return createPromise(attachment, 1000);
-
-			case 'getApprovalHistory':
-				return createPromise(getRandomFromArr([approval, approval]));
-
-			case 'getRateCards': // Obsolete
-				return createPromise(rateCards);
-
-			case 'approveRejectRecallRecord': // Obsolete
-				return createPromise(true);
-
-			case 'reassignApproval': // Obsolete
-				return createPromise(true);
-
-			case 'getDelta': // Obsolete
-				return createPromise(Delta);
-
-			case 'submitForApproval': // Obsolete
-				return createPromise(getRandomFromArr([true, true, true]));
-
-			case 'saveAttachment':
-				return createPromise(parametersArr[1]);
-
-			case 'createPricingRuleGroup':
-				return createPromise('pricingRuleId');
-
-			case 'decomposeAttachment':
-				return createPromise('Success', 1000);
-
-			case 'undoDecomposition':
-				return createPromise('Success', 2000);
-
-			case 'filterCommercialProducts':
-				return createPromise(filterProducts(parametersArr[0]));
-
-			case 'setFrameAgreementState':
-				return createPromise(getRandomFromArr(['Success']));
-
-			case 'createNewVersionOfFrameAgrement':
-				let newFa = JSON.parse(
-					JSON.stringify(
-						frameAgreements.filter(fa => fa.Id === parametersArr[0])[0]
-					)
-				);
-
-				newFa.Id = makeId(15);
-				newFa.csconta__Status__c = 'Draft';
-				newFa.csconta__Agreement_Name__c =
-					newFa.csconta__Agreement_Name__c + '_v2';
-
-				return createPromise(newFa);
-
-			case 'getFrameAgreement':
-				var fa = frameAgreements.filter(fa => fa.Id === parametersArr[0])[0];
-				fa = JSON.parse(JSON.stringify(fa));
-				delete fa._ui;
-				return createPromise(fa);
-
-			case 'deleteFrameAgreement':
-				return createPromise('Success');
-
-			case 'getCommercialProductData':
-				var responseData = {
-					cpData: [],
-					discLevels: DiscLevels,
-					childUsageTypes: childUsageTypes,
-					discThresh: AuthLevels
-				};
-
-				var priceItemIdList = parametersArr[0];
-
-				priceItemIdList.forEach(priceItemId => {
-					responseData.cpData[priceItemId] = productData[priceItemId];
-				});
-
-				return createPromise(responseData);
-
-			case 'getLookupRecords':
-				var getLookupRecordsData;
-				var param = JSON.parse(parametersArr[0]);
-				var lastIndex;
-
-				if (param.field === 'csconta__replaced_frame_agreement__c') {
-					getLookupRecordsData = [
-						{
-							csconta__Agreement_Name__c: 'My Agreement',
-							Id: 'a1t1t000000ZRdPAAW'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test A',
-							Id: 'a1t1t000000ZRafAAG'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test A',
-							Id: 'a1t1t000000ZRaaAAG'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test A',
-							Id: 'a1t1t000000ZRaVAAW'
-						},
-						{
-							csconta__Agreement_Name__c: 'IBM Frame Agreement',
-							Id: 'a1t1t000000EOtBAAW'
-						},
-						{
-							Id: 'a1t1t000000EPvDAAW'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test #3',
-							Id: 'a1t1t000000EP9nAAG'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test #3',
-							Id: 'a1t1t000000EOuxAAG'
-						},
-						{
-							csconta__Agreement_Name__c: ';lk;l',
-							Id: 'a1t1t000000ZSNjAAO'
-						},
-						{
-							csconta__Agreement_Name__c: ';lk;l',
-							Id: 'a1t1t000000ZSNyAAO'
-						},
-						{
-							csconta__Agreement_Name__c: '.....',
-							Id: 'a1t1t000000ZSMHAA4'
-						},
-						{
-							csconta__Agreement_Name__c: 'dsgsdg',
-							Id: 'a1t1t000000ZSOcAAO'
-						},
-						{
-							Id: 'a1t1t000000ZSP6AAO'
-						},
-						{
-							csconta__Agreement_Name__c: ';lk;l',
-							Id: 'a1t1t000000ZSMgAAO'
-						},
-						{
-							csconta__Agreement_Name__c: ';lk;l',
-							Id: 'a1t1t000000ZSMlAAO'
-						},
-						{
-							csconta__Agreement_Name__c: ';lk;l',
-							Id: 'a1t1t000000ZSMMAA4'
-						},
-						{
-							csconta__Agreement_Name__c: '.....',
-							Id: 'a1t1t000000ZSMbAAO'
-						},
-						{
-							csconta__Agreement_Name__c: ';lk;l',
-							Id: 'a1t1t000000ZSNtAAO'
-						},
-						{
-							csconta__Agreement_Name__c: ';lk;l',
-							Id: 'a1t1t000000ZSNoAAO'
-						},
-						{
-							csconta__Agreement_Name__c: '.....',
-							Id: 'a1t1t000000ZSO8AAO'
-						},
-						{
-							Id: 'a1t1t000000ZSQEAA4'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test #1',
-							Id: 'a1t1t000000ZSQ4AAO'
-						},
-						{
-							csconta__Agreement_Name__c: '123213',
-							Id: 'a1t1t000000ZSR2AAO'
-						},
-						{
-							csconta__Agreement_Name__c: 'FA 1',
-							Id: 'a1t1t000000ZSQnAAO'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test 1',
-							Id: 'a1t1t000000ZSPkAAO'
-						},
-						{
-							csconta__Agreement_Name__c: 'Frame Agreement #1',
-							Id: 'a1t1t000000ZR7LAAW'
-						},
-						{
-							Id: 'a1t1t000000ZSM2AAO'
-						},
-						{
-							Id: 'a1t1t000000ZSPXAA4'
-						},
-						{
-							csconta__Agreement_Name__c: '.....',
-							Id: 'a1t1t000000ZSO3AAO'
-						},
-						{
-							csconta__Agreement_Name__c: 'SIMON',
-							Id: 'a1t1t000000ZSPuAAO'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test #2',
-							Id: 'a1t1t000000ZSUQAA4'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test #1',
-							Id: 'a1t1t000000ZSTmAAO'
-						},
-						{
-							csconta__Agreement_Name__c: 'Test #2',
-							Id: 'a1t1t000000ZSUaAAO'
-						}
-					];
-				} else if (
-					param.field === 'csconta__Account__c' ||
-					param.pointedObject === 'Account'
-				) {
-					let data;
-					if (param.search) {
-						param.search = param.search.substring(
-							param.search.indexOf('%') + 1,
-							param.search.lastIndexOf('%')
-						);
-						data = lookupAccountData.filter(r =>
-							r.Name.toLowerCase().includes(param.search)
-						);
-					} else {
-						data = lookupAccountData.map(r => r);
-					}
-
-					lastIndex = data.findIndex(r => r.Id === param.lastId);
-					lastIndex = lastIndex === -1 ? 0 : lastIndex;
-					getLookupRecordsData = data.slice(
-						lastIndex + 1,
-						lastIndex + param.offset + 1
-					);
-				}
-
-				return createPromise(getLookupRecordsData, 2000);
-
-			case 'getLookupInformation':
-				var lookupInformation;
-				if (parametersArr[0] === 'csconta__replaced_frame_agreement__c') {
-					lookupInformation = {
-						count: 33
-					};
-				} else if (
-					parametersArr[0] === 'csconta__Account__c' ||
-					parametersArr[0] === 'Account'
-				) {
-					lookupInformation = {
-						initialLabel: 'Test Account',
-						count: 2000
-					};
-				}
-
-				return createPromise(lookupInformation);
-
-			case 'getPicklistOptions':
-				if (parametersArr[0][0] === 'csconta__agreement_level__c') {
-					return createPromise({
-						csconta__agreement_level__c: [
-							{ label: 'Master Agreement trans.', value: 'Master Agreement' },
-							{ label: 'Frame Agreement trans.', value: 'Frame Agreement' }
-						]
-					});
-				}
-
-				const OPTIONS = [
-					{
-						label: 'OptionA',
-						value: 'OptionA'
-					},
-					{
-						label: 'OptionB',
-						value: 'OptionB'
-					},
-					{
-						label: 'OptionC',
-						value: 'OptionC'
-					}
-				];
-				var result = {};
-				parametersArr[0].forEach(f => {
-					result[f] = OPTIONS;
-				});
-
-				return createPromise(result);
-
-			case 'getFieldLabels':
-				var result = {};
-				if (parametersArr[0] === 'csconta__Frame_Agreement__c') {
-					result = {
-						id: 'Record ID',
-						ownerid: 'Owner ID',
-						isdeleted: 'Deleted',
-						name: 'Frame Agreement Sequence',
-						createddate: 'Created Date',
-						createdbyid: 'Created By ID',
-						lastmodifieddate: 'Last Modified Date',
-						lastmodifiedbyid: 'Last Modified By ID',
-						systemmodstamp: 'System Modstamp',
-						lastactivitydate: 'Last Activity Date',
-						lastvieweddate: 'Last Viewed Date',
-						lastreferenceddate: 'Last Referenced Date',
-						csconta__account__c: 'Account',
-						csconta__agreement_name__c: 'Agreement Name',
-						csconta__main_contact__c: 'Main Contact',
-						csconta__pricing_rule_group__c: 'Pricing Rule Group',
-						csconta__status__c: 'Status',
-						csconta__valid_from__c: 'Valid From',
-						csconta__valid_to__c: 'Valid To',
-						csfam__arb_field_text__c: 'Arb Field Text trans.',
-						csfam__arb_field_text_2__c: 'Arb Field Text 2',
-						csfam__arb_field_text_3__c: 'Arb Field Text 3',
-						csfam__arb_field_date__c: 'Arb Field Date',
-						csfam__arb_field_textarea__c: 'Arb Field Textarea',
-						csfam__arb_field_bool__c: 'Arb Field Bool trans.',
-						csfam__arb_field_integer__c: 'Arb Field Integer',
-						csfam__arb_picklist__c: 'Arb Picklist',
-						csconta__effective_end_date__c: 'Effective End Date',
-						csconta__effective_start_date__c: 'Effective Start Date',
-						csconta__replaced_frame_agreement__c: 'Replaced Frame Agreement',
-						csfam__arb_formula__c: 'Arb Formula',
-						csconta__frame_agreement_number__c: 'Frame Agreement Number',
-						csconta__agreement_level__c: 'Agreement Level',
-						csfam__arb_url_field__c: 'Arb Url Field',
-						csconta__master_frame_agreement__c: 'Master Frame Agreement',
-						csconta__replaced_by__c: 'Replaced By'
-					};
-				}
-
-				if (parametersArr[0] === 'cspmb__Price_Item__c') {
-					result = {
-						id: 'Record ID',
-						ownerid: 'Owner ID',
-						isdeleted: 'Deleted',
-						name: 'Commercial Product Name',
-						createddate: 'Created Date',
-						createdbyid: 'Created By ID',
-						lastmodifieddate: 'Last Modified Date',
-						lastmodifiedbyid: 'Last Modified By ID',
-						systemmodstamp: 'System Modstamp',
-						lastvieweddate: 'Last Viewed Date',
-						lastreferenceddate: 'Last Referenced Date',
-						cspmb__account__c: 'Account',
-						cspmb__apply_one_off_charge_account_discount__c:
-							'Apply One-Off Charge Account Discount',
-						cspmb__apply_recurring_charge_account_discount__c:
-							'Apply Recurring Charge Account Discount',
-						cspmb__authorization_level__c: 'Authorization Level',
-						cspmb__billing_frequency__c: 'Billing Frequency',
-						cspmb__contract_term__c: 'Contract Term',
-						cspmb__currency_code__c: 'Currency Code',
-						cspmb__current_version__c: 'Current Version',
-						cspmb__discount_type__c: 'Discount Type',
-						cspmb__effective_end_date__c: 'Effective End Date',
-						cspmb__effective_start_date__c: 'Effective Start Date',
-						cspmb__is_active__c: 'Is Active',
-						cspmb__is_authorization_required__c: 'Is Authorization Required',
-						cspmb__is_one_off_discount_allowed__c:
-							'Is One-Off Discount Allowed',
-						cspmb__is_recurring_discount_allowed__c:
-							'Is Recurring Discount Allowed',
-						cspmb__master_price_item__c: 'Master Commercial Product',
-						cspmb__one_off_charge_code__c: 'One-Off Charge Code',
-						cspmb__one_off_charge_external_id__c: 'One-Off Charge External Id',
-						cspmb__one_off_charge__c: 'One-Off Charge',
-						cspmb__one_off_cost__c: 'One-Off Cost',
-						cspmb__price_item_code__c: 'Commercial Product Code',
-						cspmb__price_item_description__c: 'Commercial Product Description',
-						cspmb__product_definition_name__c: 'Product Definition Name',
-						cspmb__recurring_charge_code__c: 'Recurring Charge Code',
-						cspmb__recurring_charge_external_id__c:
-							'Recurring Charge External Id',
-						cspmb__recurring_charge__c: 'Recurring Charge',
-						cspmb__recurring_cost__c: 'Recurring Cost',
-						cspmb__role__c: 'Role',
-						cspmb__version_number__c: 'Version Number',
-						csfam__categorization_alpha__c: 'Categorization Alpha',
-						csfam__categorization_beta__c: 'Categorization Beta'
-					};
-				}
-
-				if (parametersArr[0] === 'cspmb__Add_On_Price_Item__c') {
-					result = {
-						id: 'Record ID',
-						ownerid: 'Owner ID',
-						isdeleted: 'Deleted',
-						name: 'Add On Name',
-						createddate: 'Created Date',
-						createdbyid: 'Created By ID',
-						lastmodifieddate: 'Last Modified Date',
-						lastmodifiedbyid: 'Last Modified By ID',
-						systemmodstamp: 'System Modstamp',
-						lastactivitydate: 'Last Activity Date',
-						lastvieweddate: 'Last Viewed Date',
-						lastreferenceddate: 'Last Referenced Date',
-						cspmb__account__c: 'Account',
-						cspmb__add_on_price_item_code__c: 'Add On Code',
-						cspmb__add_on_price_item_description__c: 'Add On Description',
-						cspmb__apply_one_off_charge_account_discount__c:
-							'Apply One-Off Charge Account Discount',
-						cspmb__apply_recurring_charge_account_discount__c:
-							'Apply Recurring Charge Account Discount',
-						cspmb__authorization_level__c: 'Authorization Level',
-						cspmb__billing_frequency__c: 'Billing Frequency',
-						cspmb__contract_term__c: 'Contract Term',
-						cspmb__currency_code__c: 'Currency Code',
-						cspmb__current_version__c: 'Current Version',
-						cspmb__discount_type__c: 'Discount Type',
-						cspmb__effective_end_date__c: 'Effective End Date',
-						cspmb__effective_start_date__c: 'Effective Start Date',
-						cspmb__is_active__c: 'Is Active',
-						cspmb__is_authorization_required__c: 'Is Authorization Required',
-						cspmb__is_one_off_discount_allowed__c:
-							'Is One-Off Discount Allowed',
-						cspmb__is_recurring_discount_allowed__c:
-							'Is Recurring Discount Allowed',
-						cspmb__one_off_charge_code__c: 'One-Off Charge Code',
-						cspmb__one_off_charge_external_id__c: 'One-Off Charge External Id',
-						cspmb__one_off_charge__c: 'One-Off Charge',
-						cspmb__one_off_cost__c: 'One-Off Cost',
-						cspmb__product_definition_name__c: 'Product Definition Name',
-						cspmb__recurring_charge_code__c: 'Recurring Charge Code',
-						cspmb__recurring_charge_external_id__c:
-							'Recurring Charge External Id',
-						cspmb__recurring_charge__c: 'Recurring Charge',
-						cspmb__recurring_cost__c: 'Recurring Cost',
-						cspmb__sequence__c: 'Sequence',
-						cspmb__version_number__c: 'Version Number'
-					};
-				}
-
-				return createPromise(result);
-
-			case 'getAccountsInformation':
-				var accountsInformation = {
-					main_account: {
-						Id: '0011t00000DQdZEAA1',
-						Name: 'Pyramid Construction Inc.'
-					},
-					associated_accounts: [
-						{
-							Id: 'a1o1t000000jDS5AAM',
-							csconta__Account__c: '0011t00000Pq1WRAAZ',
-							csconta__Account__r: {
-								Id: '0011t00000Pq1WRAAZ',
-								Name: 'Test Account'
-							}
-						}
-					],
-					count: 2014
-				};
-				return createPromise(accountsInformation);
-
-			case 'getRelatedLists':
-				return createPromise(relatedLists);
-
-			case 'addAccountAssociation':
-				var newAssociation = {
-					Id: makeId(8),
-					csconta__Account__c: parametersArr[1],
-					csconta__Account__r: {
-						Id: parametersArr[1],
-						Name: 'Universal name'
-					}
-				};
-				return createPromise(newAssociation);
-
-			default:
-				return createPromise('Success');
-		}
-	}
-};
-
-// ****************************************************************
-
-// Object.defineProperty(Array.prototype, 'intercept', {
-//     value: function(callback) {
-//         if (!Array.isArray(this)) {
-//         	return this;
-//         }
-//         callback(this.length);
-//         return this;
-//     }
-// });
-// ******************** Custom tabs example **************************
-// [
-//   {
-//     "label": "Custom tab",
-//     "container_id": "customTab1",
-//     "onEnter": "customTabEnter"
-//   }
-// ]
-
-// window.FAM.subscribe('onLoad', data => {
-// 	return new Promise(resolve => {
-// 		window.FAM.registerMethod('customTabEnter', id => {
-// 			return new Promise(resolve => {
-// 				setTimeout(() => {
-// 					// ****************************
-// 					console.log('Entered tab with id:' + id);
-// 					document.getElementById(id).innerHTML =
-// 						'<h1>Some Title</h1><span>test</span>';
-// 					// ****************************
-// 					resolve();
-// 				});
-// 			});
-// 		});
-// 		resolve(data);
-// 	});
-// });
-
-/*********************************************************/
-// window.FAM.subscribe("onFaSelect", (data) => {
-//     return new Promise(resolve => {
-//         resolve({
-//         	disableDiscountLevels: true,
-// 			disableInlineDiscounts: true
-//         });
-//     });
-// })
-
-/*********************************************************/
-// window.FAM.subscribe("DCE_onLoadDiscountCodes", (data) => {
-//     return new Promise(resolve => {
-//     	console.log(data);
-//         resolve(data);
-//     });
-// })
-/*********************************************************/

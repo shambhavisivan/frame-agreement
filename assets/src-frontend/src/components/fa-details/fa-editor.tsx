@@ -110,7 +110,7 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 								{
 									name: rateCardLine.name,
 									original: rateCardLine.rateValue,
-									negotiated: null
+									negotiated: undefined
 								}
 							])
 						)
@@ -119,11 +119,11 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 				product: {
 					recurring: {
 						original: product.recurringCharge,
-						negotiated: null
+						negotiated: undefined
 					},
 					oneOff: {
 						original: product.oneOffCharge,
-						negotiated: null
+						negotiated: undefined
 					}
 				},
 				volume: {

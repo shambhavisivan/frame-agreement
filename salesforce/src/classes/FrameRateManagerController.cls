@@ -2153,7 +2153,6 @@ global with sharing class FrameRateManagerController {
 		// saveAttachment(clonedFa.Id, attachmentBody);
 
 		original.csconta__replaced_by__c = clonedFa.Id;
-		original.csconta__effective_end_date__c = datetime.now();
 
 		clonedFa.csconta__frame_agreement_number__c = original.csconta__frame_agreement_number__c;
 		clonedFa.csconta__effective_end_date__c = null;
@@ -2479,26 +2478,31 @@ global with sharing class FrameRateManagerController {
 				Fac_Settings__c facSettings = getFacSetting();
 				// Set active status to FA, and if its replacing another fa, set its effective start date
 				csconta__Frame_Agreement__c fa = [
-					select Id, csconta__Status__c, csconta__replaced_frame_agreement__c
+					select id, csconta__status__c, csconta__replaced_frame_agreement__c
 					from csconta__Frame_Agreement__c
-					where Id = :faId
+					where id = :faId
 					limit 1
 				];
-				fa.csconta__Status__c = (String) facSettings.get('active_status__c');
+				fa.csconta__status__c = (String) facSettings.get('active_status__c');
 				update fa;
 
 				// If this was a version of another fa we need to set the original to replaced/closed
 				if (fa.csconta__replaced_frame_agreement__c != null) {
 					fa.csconta__effective_start_date__c = datetime.now();
 					csconta__Frame_Agreement__c original = [
-						select Id, csconta__Status__c
+						select id, csconta__status__c, csconta__effective_end_date__c
 						from csconta__Frame_Agreement__c
-						where Id = :fa.csconta__replaced_frame_agreement__c
+						where id = :fa.csconta__replaced_frame_agreement__c
 						limit 1
 					];
 					if (original != null) {
-						original.csconta__Status__c = (String) facSettings.get('closed_status__c');
+						original.csconta__status__c = (String) facSettings.get('closed_status__c');
 						original.csconta__replaced_by__c = faId;
+
+						if (original.csconta__effective_end_date__c != null) {
+							original.csconta__effective_end_date__c = datetime.now();
+						}
+
 						update original;
 					}
 				}

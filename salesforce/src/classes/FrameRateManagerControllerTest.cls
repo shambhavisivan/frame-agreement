@@ -1113,6 +1113,70 @@ private class FrameRateManagerControllerTest {
 		System.assertNotEquals(original.csconta__frame_agreement_number__c, cloned.csconta__frame_agreement_number__c);
 	}
 
+	public static testMethod void testVersioningImpactOnEndDate() {
+		Account test_account = new Account(name = 'TestAcc');
+		insert test_account;
+
+		datetime testDate = datetime.newInstance(2021, 2, 1);
+
+		csconta__Frame_Agreement__c originalFa = new csconta__Frame_Agreement__c(
+			csconta__status__c = 'Draft',
+			csconta__agreement_Name__c = 'FA1',
+			csconta__effective_end_date__c = testDate
+		);
+		insert originalFa;
+
+		Test.startTest();
+
+		csconta__Frame_Agreement__c result = FrameRateManagerController.createNewVersionOfFrameAgreement(originalFa.Id);
+
+		Test.stopTest();
+
+		originalFa = [
+			select id, csconta__effective_end_date__c
+			from csconta__Frame_Agreement__c
+			where id = :originalFa.id
+			limit 1
+		];
+
+		System.assertEquals(originalFa.csconta__effective_end_date__c, testDate);
+	}
+
+	public static testMethod void testActivationImpactOnOldVersions() {
+		Account test_account = new Account(name = 'TestAcc');
+		insert test_account;
+
+		String decomposeData = setupPricingModel();
+
+		datetime testDate = datetime.newInstance(2021, 2, 1);
+
+		csconta__Frame_Agreement__c originalFa = new csconta__Frame_Agreement__c(
+			csconta__status__c = 'Draft',
+			csconta__agreement_Name__c = 'FA1',
+			csconta__effective_end_date__c = testDate
+		);
+		insert originalFa;
+
+		csconta__Frame_Agreement__c result = FrameRateManagerController.createNewVersionOfFrameAgreement(originalFa.id);
+		Id prId = FrameRateManagerController.createPricingRuleGroup(result.id);
+
+		Test.startTest();
+
+		FrameRateManagerController.decomposeAttachment(decomposeData, prId, result.id);
+
+		Test.stopTest();
+
+		originalFa = [
+			select id, csconta__effective_end_date__c
+			from csconta__Frame_Agreement__c
+			where id = :originalFa.id
+			limit 1
+		];
+		Date newEndDate = originalFa.csconta__effective_end_date__c.date();
+
+		System.assertEquals(newEndDate, Date.today());
+	}
+
 	private static Fac_Settings__c loadFacSettings(){
 		return Fac_Settings__c.getInstance(UserInfo.getUserID());
 	}

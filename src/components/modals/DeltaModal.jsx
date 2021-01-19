@@ -129,7 +129,7 @@ class DeltaModal extends Component {
 		}
 		console.log([this.state.primaryId, this.state.secondaryId]);
 		_promiseArray.push(
-			window.SF.invokeAction('getDelta', [this.state.primaryId, this.state.secondaryId])
+			window.SF.invokeAction('getDelta', [this.state.secondaryId, this.state.primaryId])
 		);
 
 		Promise.all(_promiseArray).then(

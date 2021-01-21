@@ -1172,7 +1172,7 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static List<cspmb__Price_Item__c> filterCommercialProducts(String filterData) {
-		String selectClause = 'Id';
+		String selectClause = 'id';
 		String whereClause = '';
 
 		List<Object> categorizationData;
@@ -1215,7 +1215,8 @@ global with sharing class FrameRateManagerController {
 					operator = ' or ';
 				}
 
-				whereClause += operator + fieldName + ' in :valuesList';
+				whereClause +=
+					operator + fieldName + ' in (\'' + String.join(valuesList, '\',\'') + '\')';
 			}
 		}
 

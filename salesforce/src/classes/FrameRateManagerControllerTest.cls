@@ -1176,6 +1176,52 @@ private class FrameRateManagerControllerTest {
 
 		System.assertEquals(newEndDate, Date.today());
 	}
+	public static testMethod void testFilterWithMultipleConditions() {
+		cspmb__Price_Item__c mobileL = new cspmb__Price_Item__c(
+			name = 'Mobile L',
+			cspmb__contract_term__c = '36 Months',
+			cspmb__discount_type__c = 'Amount',
+			cspmb__is_active__c = true
+		);
+
+		cspmb__Price_Item__c mobileXL = new cspmb__Price_Item__c(
+			name = 'Mobile XL',
+			cspmb__contract_term__c = '48 Months',
+			cspmb__discount_type__c = 'Percentage',
+			cspmb__is_active__c = true
+		);
+
+		cspmb__Price_Item__c mobileXXL = new cspmb__Price_Item__c(
+			name = 'Mobile XXL',
+			cspmb__contract_term__c = '60 Months',
+			cspmb__discount_type__c = 'Negative Line Item',
+			cspmb__is_active__c = true
+		);
+
+		insert mobileL;
+		insert mobileXL;
+		insert mobileXXL;
+
+		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage"]},{"name":"Beta","field":"cspmb__contract_term__c","values":["36 Months"]}]';
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
+
+		Test.stopTest();
+
+		Set<Id> filteredIds = new Set<Id>();
+
+		for (cspmb__Price_Item__c cp: filteredCp) {
+			filteredIds.add(cp.id);
+		}
+
+		System.assertEquals(2, filteredCp.size());
+		System.assertEquals(true, filteredIds.contains(mobileL.id), 'Contains MobileL');
+		System.assertEquals(true, filteredIds.contains(mobileXL.id), 'Contains MobileXL');
+		System.assertEquals(false, filteredIds.contains(mobileXXL.id), 'Does not contain MobileXXL');
+
+	}
 
 	private static Fac_Settings__c loadFacSettings(){
 		return Fac_Settings__c.getInstance(UserInfo.getUserID());

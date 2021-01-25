@@ -4,14 +4,14 @@ import { CommercialProductStandalone, remoteActions } from '../datasources';
 export { QueryStatus } from 'react-query';
 
 export function useCommercialProducts(
-	getCommercialProducts: () => Promise<
-		CommercialProductStandalone[]
-	> = remoteActions.getCommercialProducts
+	cpIds: string[] = []
 ): {
 	status: QueryStatus;
 	data?: CommercialProductStandalone[];
 } {
-	const { status, data } = useQuery('commercialProducts', getCommercialProducts);
+	const { status, data } = useQuery(['commercialProducts', cpIds], () =>
+		remoteActions.getCommercialProducts(cpIds)
+	);
 
 	return {
 		status,

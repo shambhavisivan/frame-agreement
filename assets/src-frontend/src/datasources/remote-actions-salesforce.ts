@@ -15,13 +15,19 @@ export interface RemoteActions {
 	getAppSettings(): Promise<AppSettings>;
 	getFrameAgreements(): Promise<FrameAgreement[]>;
 	getCommercialProductData(ids: string[]): Promise<CommercialProductData>;
-	getCommercialProducts(): Promise<CommercialProductStandalone[]>;
+	getCommercialProducts(cpIds: string[] | null): Promise<CommercialProductStandalone[]>;
 	upsertFrameAgreements(
 		faId: string | null,
 		fieldData: Partial<FrameAgreement>
 	): Promise<FrameAgreement>;
 	saveAttachment(faId: string, attachment: Attachment): Promise<string>;
 }
+
+const toFrameAgreement = (a: SfGlobal.FrameAgreement): FrameAgreement => ({
+	id: a.Id,
+	name: a.Name,
+	lastModifiedDate: a.LastModifiedDate
+});
 
 export const remoteActions: RemoteActions = {
 	async getAppSettings(): Promise<AppSettings> {
@@ -44,19 +50,25 @@ export const remoteActions: RemoteActions = {
 	},
 
 	async getFrameAgreements(): Promise<FrameAgreement[]> {
-		const agreements = await SF.actions.getFrameAgreements([SF.param.account]);
+		const agreements = await SF.invokeAction('getFrameAgreements', [SF.param.account]);
 
-		return agreements.map(deforcify);
+		return agreements.map(toFrameAgreement);
 	},
 
 	async getCommercialProductData(ids: string[]): Promise<CommercialProductData> {
-		const commercialProductData = await SF.actions.getCommercialProductData([ids]);
+		const commercialProductData: SfGlobal.CommercialProductData = await SF.invokeAction(
+			'getCommercialProductData',
+			[ids]
+		);
 
 		return deforcify(commercialProductData);
 	},
 
-	async getCommercialProducts(): Promise<CommercialProductStandalone[]> {
-		const commercialProducts = await SF.actions.getCommercialProducts();
+	async getCommercialProducts(cpIds: string[]): Promise<CommercialProductStandalone[]> {
+		const commercialProducts: SfGlobal.CommercialProductStandalone[] = await SF.invokeAction(
+			'getCommercialProducts',
+			[cpIds]
+		);
 
 		return commercialProducts.map(deforcify);
 	},
@@ -65,7 +77,7 @@ export const remoteActions: RemoteActions = {
 		faId: string | null,
 		fieldData: Partial<FrameAgreement>
 	): Promise<FrameAgreement> {
-		const frameAgreement = await SF.actions.upsertFrameAgreements([
+		const frameAgreement = await SF.invokeAction('upsertFrameAgreements', [
 			faId,
 			JSON.stringify(fieldData)
 		]);
@@ -74,6 +86,6 @@ export const remoteActions: RemoteActions = {
 	},
 
 	async saveAttachment(faId: string, attachment: Attachment): Promise<string> {
-		return SF.actions.saveAttachment([faId, JSON.stringify(attachment)]);
+		return await SF.invokeAction('saveAttachment', [faId, JSON.stringify(attachment)]);
 	}
 };

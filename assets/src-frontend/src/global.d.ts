@@ -19,11 +19,10 @@ namespace SfGlobal {
 		params: VfParams;
 		decodeEntities(): Record<string, unknown> | string;
 		decodeObject(obj: Record<string, unknown>): Record<string, unknown>;
-		// TODO: infer type dynamically from a RemoteAction
-		invokeAction(
-			remoteActionName: 'getAppSettings',
-			parametersArr?: [string]
-		): Promise<AppSettings>;
+		invokeAction<T extends keyof RemoteActions>(
+			remoteActionName: T,
+			...parametersArr: Parameters<RemoteActions[T]>
+		): Promise<ReturnType<RemoteActions[T]>>;
 		param: {
 			account: string;
 		};
@@ -38,7 +37,7 @@ namespace SfGlobal {
 		// TODO: define all actions
 		getFrameAgreements(paramsArray: [string]): Promise<FrameAgreement[]>;
 		getCommercialProductData(paramsArray: [string[]]): Promise<CommercialProductData>;
-		getCommercialProducts(): Promise<CommercialProductStandalone[]>;
+		getCommercialProducts(cpIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
 		upsertFrameAgreements(paramsArray: [string | null, string]): Promise<FrameAgreement>;
 		saveAttachment(paramsArray: [string, string]): Promise<string>;
 	}
@@ -86,7 +85,7 @@ namespace SfGlobal {
 	}
 
 	interface CpData {
-		[sfId: string]: CommercialProduct;
+		[cpId: string]: CommercialProduct;
 	}
 
 	interface CommercialProduct {

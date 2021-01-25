@@ -13,7 +13,11 @@ export type DeforcifiedKeyName<
 	? `${Uncapitalize<ToPascalCase<S>>}`
 	: S;
 
-type DeforcifiedObjectElement<T> = T extends object ? Deforcified<T> : T;
+type DeforcifiedObjectElement<T> = T extends (infer R)[] // Is it an array?
+	? Deforcified<R>[] // deforcify each element of array
+	: T extends object // or is it just an object
+	? Deforcified<T> // deforcify the object
+	: T; // if neither keep the type as is
 
 export type Deforcified<T> = {
 	[K in keyof T as DeforcifiedKeyName<K>]: DeforcifiedObjectElement<T[K]>;

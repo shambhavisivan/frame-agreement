@@ -1223,6 +1223,36 @@ private class FrameRateManagerControllerTest {
 
 	}
 
+	@IsTest
+	private static void testGetUserLocale(){
+		User u = createMockUserForProfile('System Administrator');
+
+		System.runAs(u) {
+			Test.startTest();
+			Map<String, String> returnVal = FrameRateManagerController.getUserLocale();
+			Test.stopTest();
+
+			System.assertEquals(returnVal.get('userLocaleLang'), 'en');
+			System.assertEquals(returnVal.get('userLocaleCountry'), 'US');
+			System.assertEquals(returnVal.get('decimalSeparator'), '.');
+		}
+	}
+
+	private static User createMockUser(Id profileId) {
+		User u = new User(alias = 'TestUser', email='test@email.com',
+		emailencodingkey='UTF-8', lastname='Testing',
+		languagelocalekey='en_US', localesidkey='en_US', profileid = profileId,
+		timezonesidkey='America/Los_Angeles', username= System.now().millisecond() + 'p***n.m****l@***.com');
+		insert u;
+		return  u;
+	}
+
+	private static User createMockUserForProfile(String profileName) {
+		Profile p = [SELECT Id FROM profile WHERE name like :profileName limit 1];
+
+		return createMockUser(p.id);
+	}
+
 	private static Fac_Settings__c loadFacSettings(){
 		return Fac_Settings__c.getInstance(UserInfo.getUserID());
 	}

@@ -2577,6 +2577,22 @@ global with sharing class FrameRateManagerController {
 		return API_1.getDelta(faId1, faId2);
 	}
 
+	@RemoteAction
+	public static Map<String, String> getUserLocale() {
+		Map<String, String> userLocaleMap = new Map<String,String>();
+		String[] userLocale = UserInfo.getLocale().split('_');
+		userLocaleMap.put('userLocaleLang', userLocale[0]);
+		userLocaleMap.put('userLocaleCountry', userLocale[1]);
+		// hack to get decimal separator for apps using vfpages.
+		Decimal value = 1000.10;
+		String formattedValue = value.format();
+		String thousandSep = formattedValue.substring(1,2);
+		String decimalSep = formattedValue.substring(5,6);
+		userLocaleMap.put('decimalSeparator', decimalSep);
+
+		return userLocaleMap;
+	}
+
 
 	//******************************************* DECOMPOSITION END ***************************************
 

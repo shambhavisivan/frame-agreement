@@ -343,4 +343,13 @@ export const log = {
 	}
 };
 
+export function isDiscountAllowed(chargeType, productOrAddon) {
+	const chargeAllowed = {
+		oneOff: productOrAddon.cspmb__Is_One_Off_Discount_Allowed__c,
+		recurring: productOrAddon.cspmb__Is_Recurring_Discount_Allowed__c
+	};
+
+	return chargeAllowed[chargeType];
+}
+
 export default sharedService;

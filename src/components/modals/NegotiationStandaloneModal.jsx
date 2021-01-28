@@ -10,7 +10,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 import Pagination from '../utillity/Pagination';
 import NumberFormat from '~/src/components/negotiation/NumberFormat';
 import Render from '../utillity/Render';
-import { isOneOff, isRecurring } from '../../utils/shared-service';
+import { isDiscountAllowed, isOneOff, isRecurring } from '../../utils/shared-service';
 
 import {
 	validateAddons,
@@ -111,9 +111,13 @@ class NegotiationStandaloneModal extends Component {
 
 			let addOn = { [add.Id]: {} };
 
-			if (this.state.applyRecurring && add.hasOwnProperty('cspmb__Recurring_Charge__c')) {
+			if (
+				this.state.applyRecurring &&
+				add.hasOwnProperty('cspmb__Recurring_Charge__c') &&
+				isDiscountAllowed('recurring', add)
+			) {
 				// If there aren't any RC DLs
-				if (!_dl.some(dl => isRecurring(dl.cspmb__Charge_Type__c))) {
+				if (!_dl.some((dl) => isRecurring(dl.cspmb__Charge_Type__c))) {
 					addOn[add.Id].recurring = applyDiscountRate(
 						associatedAddOns[add.Id]?.recurring || add.cspmb__Recurring_Charge__c,
 						this.state.discountMode
@@ -121,9 +125,13 @@ class NegotiationStandaloneModal extends Component {
 				}
 			}
 
-			if (this.state.applyOneOff && add.hasOwnProperty('cspmb__One_Off_Charge__c')) {
+			if (
+				this.state.applyOneOff &&
+				add.hasOwnProperty('cspmb__One_Off_Charge__c') &&
+				isDiscountAllowed('oneOff', add)
+			) {
 				// If there aren't any NRC DLs
-				if (!_dl.some(dl => isOneOff(dl.cspmb__Charge_Type__c))) {
+				if (!_dl.some((dl) => isOneOff(dl.cspmb__Charge_Type__c))) {
 					addOn[add.Id].oneOff = applyDiscountRate(
 						associatedAddOns[add.Id]?.oneOff || add.cspmb__One_Off_Charge__c,
 						this.state.discountMode

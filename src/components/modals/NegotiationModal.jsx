@@ -19,6 +19,7 @@ import {
 
 import { createToast } from '~/src/actions';
 import { DiscountInput } from '../utillity/inputs/discount-input';
+import { isDiscountAllowed } from '../../utils/shared-service';
 
 // import { getFrameAgreements } from '~/src/actions';
 
@@ -495,15 +496,6 @@ class NegotiationModal extends Component {
 			return +val.toFixed(8);
 		}
 
-		function isDiscountAllowed(chargeType, commercialProduct) {
-			const chargeAllowed = {
-				oneOff: commercialProduct.cspmb__Is_One_Off_Discount_Allowed__c,
-				recurring: commercialProduct.cspmb__Is_Recurring_Discount_Allowed__c
-			};
-
-			return chargeAllowed[chargeType];
-		}
-
 		let selected = { ...this.state.selected };
 		let attachment = this.state.attachment;
 
@@ -515,13 +507,13 @@ class NegotiationModal extends Component {
 							attachment[cp.Id]._addons = attachment[cp.Id]._addons || {};
 							attachment[cp.Id]._addons[addon.Id] = attachment[cp.Id]._addons[addon.Id] || {};
 
-							if (addon.cspmb__One_Off_Charge__c && isDiscountAllowed('oneOff', cp)) {
+							if (addon.cspmb__One_Off_Charge__c && isDiscountAllowed('oneOff', addon)) {
 								attachment[cp.Id]._addons[addon.Id].oneOff = applyDiscountRate(
 									attachment[cp.Id]._addons[addon.Id].oneOff || addon.cspmb__One_Off_Charge__c,
 									this.state
 								);
 							}
-							if (addon.cspmb__Recurring_Charge__c && isDiscountAllowed('recurring', cp)) {
+							if (addon.cspmb__Recurring_Charge__c && isDiscountAllowed('recurring', addon)) {
 								attachment[cp.Id]._addons[addon.Id].recurring = applyDiscountRate(
 									attachment[cp.Id]._addons[addon.Id].recurring || addon.cspmb__Recurring_Charge__c,
 									this.state

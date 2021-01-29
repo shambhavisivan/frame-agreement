@@ -9,6 +9,7 @@ import {
 	validateCSV,
 	isJson,
 	truncateCPField,
+	isDiscountAllowed,
 } from '../../../utils/shared-service';
 
 import Icon from '../../utillity/Icon';
@@ -98,6 +99,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 
 	// resetCode is used for removing discount code, it will reset the product negotiation and then refresh all negotiation
 
+	let facSettings = redux_store.getState().settings.FACSettings;
 	let _commercialProducts;
 	let active_fa = await window.FAM.api.getActiveFrameAgreement();
 
@@ -111,12 +113,17 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 	function calculateDiscount(type, discount, original) {
 		// Used to calculate discount based on a) 2type (absolute/percentage), b) discount (value) c) original (value of charge)
 		let result;
-		discount = Math.abs(+discount);
 
 		if (type === 'Amount') {
 			result = original - discount;
 		} else {
 			result = original - (original * discount) / 100;
+		}
+
+		// clamp the result between 0 and original
+		// if restriction is enabled or if it's based on percentage
+		if (facSettings.input_minmax_restriction || type === 'Percentage') {
+			result = Math.max(0, Math.min(result, original));
 		}
 
 		return result;
@@ -231,7 +238,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 					if (cpc.records.product[cp.Id]) {
 						if (
 							cpc.hasOwnProperty('csfamext__recurring_charge__c') &&
-							charge.hasOwnProperty('recurring')
+							charge.hasOwnProperty('recurring') &&
+							isDiscountAllowed('recurring', cp)
 						) {
 							_recurring = calculateDiscount(
 								cpc.csfamext__discount_type__c,
@@ -242,7 +250,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 
 						if (
 							cpc.hasOwnProperty('csfamext__one_off_charge__c') &&
-							charge.hasOwnProperty('oneOff')
+							charge.hasOwnProperty('oneOff') &&
+							isDiscountAllowed('oneOff', cp)
 						) {
 							_oneOff = calculateDiscount(
 								cpc.csfamext__discount_type__c,
@@ -280,7 +289,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 				.forEach(cpc => {
 					if (
 						!!cpc.hasOwnProperty('csfamext__recurring_charge__c') &&
-						_originalProductValues[cp.Id].hasOwnProperty('recurring')
+						_originalProductValues[cp.Id].hasOwnProperty('recurring') &&
+						isDiscountAllowed('recurring', cp)
 					) {
 						_recurring = calculateDiscount(
 							cpc.csfamext__discount_type__c,
@@ -291,7 +301,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 
 					if (
 						!!cpc.hasOwnProperty('csfamext__one_off_charge__c') &&
-						_originalProductValues[cp.Id].hasOwnProperty('oneOff')
+						_originalProductValues[cp.Id].hasOwnProperty('oneOff') &&
+						isDiscountAllowed('oneOff', cp)
 					) {
 						_oneOff = calculateDiscount(
 							cpc.csfamext__discount_type__c,

@@ -1117,12 +1117,12 @@ private class FrameRateManagerControllerTest {
 		Account test_account = new Account(name = 'TestAcc');
 		insert test_account;
 
-		datetime testDate = datetime.newInstance(2021, 2, 1);
+		Datetime futureDate =  Datetime.now().addDays(1);
 
 		csconta__Frame_Agreement__c originalFa = new csconta__Frame_Agreement__c(
 			csconta__status__c = 'Draft',
 			csconta__agreement_Name__c = 'FA1',
-			csconta__effective_end_date__c = testDate
+			csconta__effective_end_date__c = futureDate
 		);
 		insert originalFa;
 
@@ -1139,7 +1139,7 @@ private class FrameRateManagerControllerTest {
 			limit 1
 		];
 
-		System.assertEquals(originalFa.csconta__effective_end_date__c, testDate);
+		System.assertEquals(originalFa.csconta__effective_end_date__c, futureDate);
 	}
 
 	public static testMethod void testActivationImpactOnOldVersions() {
@@ -1148,21 +1148,46 @@ private class FrameRateManagerControllerTest {
 
 		String decomposeData = setupPricingModel();
 
-		datetime testDate = datetime.newInstance(2021, 2, 1);
+		Datetime futureDate = Datetime.now().addDays(1);
+		Datetime pastDate = Datetime.now().addDays(-1);
 
 		csconta__Frame_Agreement__c originalFa = new csconta__Frame_Agreement__c(
 			csconta__status__c = 'Draft',
-			csconta__agreement_Name__c = 'FA1',
-			csconta__effective_end_date__c = testDate
+			csconta__agreement_name__c = 'FA1',
+			csconta__effective_end_date__c = futureDate
 		);
 		insert originalFa;
+
+		csconta__Frame_Agreement__c originalFaWithNoEndDate = new csconta__Frame_Agreement__c(
+			csconta__status__c = 'Draft',
+			csconta__agreement_name__c = 'FA2',
+			csconta__effective_end_date__c = null
+		);
+		insert originalFaWithNoEndDate;
+
+		csconta__Frame_Agreement__c expiredOriginalFa = new csconta__Frame_Agreement__c(
+			csconta__status__c = 'Draft',
+			csconta__agreement_name__c = 'FA3',
+			csconta__effective_end_date__c = pastDate
+		);
+		insert expiredOriginalFa;
 
 		csconta__Frame_Agreement__c result = FrameRateManagerController.createNewVersionOfFrameAgreement(originalFa.id);
 		Id prId = FrameRateManagerController.createPricingRuleGroup(result.id);
 
+		csconta__Frame_Agreement__c resultFa2 =
+			FrameRateManagerController.createNewVersionOfFrameAgreement(originalFaWithNoEndDate.id);
+		Id prIdFa2 = FrameRateManagerController.createPricingRuleGroup(resultFa2.id);
+
+		csconta__Frame_Agreement__c resultFa3 =
+			FrameRateManagerController.createNewVersionOfFrameAgreement(expiredOriginalFa.id);
+		Id prIdFa3 = FrameRateManagerController.createPricingRuleGroup(resultFa3.id);
+
 		Test.startTest();
 
 		FrameRateManagerController.decomposeAttachment(decomposeData, prId, result.id);
+		FrameRateManagerController.decomposeAttachment(decomposeData, prIdFa2, resultFa2.id);
+		FrameRateManagerController.decomposeAttachment(decomposeData, prIdFa3, resultFa3.id);
 
 		Test.stopTest();
 
@@ -1172,9 +1197,27 @@ private class FrameRateManagerControllerTest {
 			where id = :originalFa.id
 			limit 1
 		];
+
+		originalFaWithNoEndDate = [
+			select id, csconta__effective_end_date__c
+			from csconta__Frame_Agreement__c
+			where id = :originalFaWithNoEndDate.id
+			limit 1
+		];
+
+		expiredOriginalFa = [
+			select id, csconta__effective_end_date__c
+			from csconta__Frame_Agreement__c
+			where id = :expiredOriginalFa.id
+			limit 1
+		];
+
 		Date newEndDate = originalFa.csconta__effective_end_date__c.date();
+		Date newEndDateFa2 = originalFaWithNoEndDate.csconta__effective_end_date__c.date();
 
 		System.assertEquals(newEndDate, Date.today());
+		System.assertEquals(newEndDateFa2, Date.today());
+		System.assertEquals(expiredOriginalFa.csconta__effective_end_date__c, pastDate);
 	}
 	public static testMethod void testFilterWithMultipleConditions() {
 		cspmb__Price_Item__c mobileL = new cspmb__Price_Item__c(

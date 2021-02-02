@@ -2500,7 +2500,13 @@ global with sharing class FrameRateManagerController {
 						original.csconta__status__c = (String) facSettings.get('closed_status__c');
 						original.csconta__replaced_by__c = faId;
 
-						if (original.csconta__effective_end_date__c != null) {
+						// if the original does not have an end date or
+						// the end date is in the future, we need to end it now
+						// leave the end date intact if it is already ended
+						if (
+							original.csconta__effective_end_date__c == null ||
+							original.csconta__effective_end_date__c > datetime.now()
+						) {
 							original.csconta__effective_end_date__c = datetime.now();
 						}
 

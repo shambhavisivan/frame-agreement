@@ -1618,6 +1618,34 @@ const Delta = {
 		old_value: true,
 		status: 'unchanged'
 	},
+	_addons: {
+		a1A1t0000003SXxEAM: {
+			oneOff: {
+				new_value: 10,
+				old_value: 5,
+				status: 'changed'
+			},
+			recurring: {
+				new_value: 21.79,
+				old_value: 19.79,
+				status: 'changed'
+			},
+			status: 'changed'
+		},
+		a1A1t0000003SgeEAE: {
+			oneOff: {
+				new_value: 10.99,
+				old_value: 10.99,
+				status: 'unchanged'
+			},
+			recurring: {
+				new_value: 31.99,
+				old_value: 31.99,
+				status: 'unchanged'
+			},
+			status: 'unchanged'
+		}
+	},
 	_products: {
 		a1F1t0000001JCDEA2: 'removed',
 		a1F1t0000001JBjEAM: 'added',

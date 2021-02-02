@@ -339,6 +339,7 @@ class DeltaStructure extends Component {
 
 		let _faFields = copy(this.props.data);
 		delete _faFields._products;
+		delete _faFields._addons;
 
 		return (
 			<div className="delta-container">

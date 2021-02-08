@@ -25,6 +25,7 @@ global with sharing class FrameRateManagerController {
 		'csconta__agreement_level__c'
 	};
 	private static String MALFORMED_JSON_EXCEPTION = 'JSON value is malformed';
+	public static String NO_CATALOGUE_ID_MSG = 'Configure a default catalogue ID to proceed';
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -1041,11 +1042,7 @@ global with sharing class FrameRateManagerController {
 			where Name = :jsonSettingKey
 		];
 
-		if (result.isEmpty()) {
-			return null;
-		} else {
-			return result[0];
-		}
+		return result.isEmpty() ? null : result[0];
 	}
 
 	@RemoteAction
@@ -2597,6 +2594,21 @@ global with sharing class FrameRateManagerController {
 		userLocaleMap.put('decimalSeparator', decimalSep);
 
 		return userLocaleMap;
+	}
+
+	@RemoteAction
+	public static String getDefaultCatalogueId() {
+		csutil__JSON_Data__c defaultCatalogueData = (
+			FrameRateManagerController.getJsonData('FA-defaultcatalogue')
+		);
+
+		String catalogueId = defaultCatalogueData.csutil__value__c;
+
+		if (String.isBlank(catalogueId)) {
+			throw new ApplicationException(FrameRateManagerController.NO_CATALOGUE_ID_MSG);
+		}
+
+		return catalogueId;
 	}
 
 

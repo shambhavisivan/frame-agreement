@@ -1299,4 +1299,47 @@ private class FrameRateManagerControllerTest {
 	private static Fac_Settings__c loadFacSettings(){
 		return Fac_Settings__c.getInstance(UserInfo.getUserID());
 	}
+
+	@IsTest
+	private static void testGetCatalogueId() {
+		cspmb__Catalogue__c catalogue = new cspmb__Catalogue__c (
+			name = 'catalogue-test'
+		);
+		insert catalogue;
+
+		insert new csutil__JSON_Data__c (
+			Name = 'FA-defaultcatalogue', csutil__value__c = catalogue.id
+		);
+
+		Test.startTest();
+		String resultCatalogue = FrameRateManagerController.getDefaultCatalogueId();
+		Test.stopTest();
+
+		System.assertEquals(catalogue.id, resultCatalogue);
+	}
+
+	@IsTest
+	private static void testToThrowErrorGetCatalogueId() {
+		cspmb__Catalogue__c catalogue = new cspmb__Catalogue__c (
+			name = 'catalogue-test'
+		);
+		insert catalogue;
+
+		insert new csutil__JSON_Data__c (
+			Name = 'FA-defaultcatalogue', csutil__value__c = ''
+		);
+
+		String exceptionMessage = '';
+
+		Test.startTest();
+		try {
+			FrameRateManagerController.getDefaultCatalogueId();
+			System.assert(false, 'above call should through an exception');
+		} catch (Exception e) {
+			exceptionMessage = e.getMessage();
+		}
+		Test.stopTest();
+
+		System.assertEquals(exceptionMessage, FrameRateManagerController.NO_CATALOGUE_ID_MSG);
+	}
 }

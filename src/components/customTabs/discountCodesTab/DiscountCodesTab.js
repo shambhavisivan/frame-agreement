@@ -120,10 +120,13 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			result = original - (original * discount) / 100;
 		}
 
-		// clamp the result between 0 and original
-		// if restriction is enabled or if it's based on percentage
+		/*
+			if restriction is enabled or if it's based on percentage
+			ignore discounts that result in negative values or values
+			greater than the original values
+		*/
 		if (facSettings.input_minmax_restriction || type === 'Percentage') {
-			result = Math.max(0, Math.min(result, original));
+			return (result < 0 || result > original) ? original : result;
 		}
 
 		return result;

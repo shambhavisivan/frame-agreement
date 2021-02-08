@@ -109,7 +109,12 @@ class NegotiationStandaloneModal extends Component {
 				}
 			}
 
-			let addOn = { [add.Id]: {} };
+			let addOn = {
+				[add.Id]: {
+					recurring: associatedAddOns[add.Id]?.recurring,
+					oneOff: associatedAddOns[add.Id]?.oneOff
+				}
+			};
 
 			if (
 				this.state.applyRecurring &&

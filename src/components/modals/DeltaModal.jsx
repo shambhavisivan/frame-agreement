@@ -381,7 +381,7 @@ class DeltaModal extends Component {
 							<button
 								className="fa-button fa-button--default"
 								onClick={this.calculateDelta}
-								disabled={!this.state.secondaryId}
+								disabled={!this.state.secondaryId || !this.state.primaryId}
 							>
 								{window.SF.labels.btn_CalcDelta}
 							</button>

@@ -462,13 +462,13 @@ private class FAMDeltaTest {
 	public static testMethod void testGetDiff() {
 		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
 			csconta__Agreement_Name__c = 'FA SAME',
-			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
 			csconta__agreement_level__c = 'Frame Agreement',
 			csconta__Status__c = 'Draft'
 		);
 		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
 			csconta__Agreement_Name__c = 'FA SAME',
-			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
 			csconta__agreement_level__c = 'Master Agreement',
 			csconta__Status__c = 'Active'
 		);
@@ -497,13 +497,13 @@ private class FAMDeltaTest {
 	public static testMethod void testGetDiffNoCharges() {
 		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
 			csconta__Agreement_Name__c = 'FA SAME',
-			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
 			csconta__agreement_level__c = 'Frame Agreement',
 			csconta__Status__c = 'Draft'
 		);
 		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
 			csconta__Agreement_Name__c = 'FA SAME',
-			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
 			csconta__agreement_level__c = 'Master Agreement',
 			csconta__Status__c = 'Active'
 		);
@@ -533,13 +533,13 @@ private class FAMDeltaTest {
 	public static testMethod void testGetDiffNoAddons() {
 		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
 			csconta__Agreement_Name__c = 'FA SAME',
-			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
 			csconta__agreement_level__c = 'Frame Agreement',
 			csconta__Status__c = 'Draft'
 		);
 		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
 			csconta__Agreement_Name__c = 'FA SAME',
-			csconta__effective_end_date__c = DateTime.newInstance(2019, 12, 17, 13, 6, 6),
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
 			csconta__agreement_level__c = 'Master Agreement',
 			csconta__Status__c = 'Active'
 		);
@@ -606,8 +606,6 @@ private class FAMDeltaTest {
 
 		system.assertEquals(expectedExceptionThrown, true);
 		system.assertEquals(errorMessage, 'Attachment not present in one of the frame agreements!');
-
-
 	}
 
 	public static testMethod void testGetDiffStandaloneAddons() {

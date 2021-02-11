@@ -346,11 +346,13 @@ class FaMaster extends Component {
 									}}
 									placeholder={window.SF.labels.input_quickSearchPlaceholder}
 								/>
-								<DropdownCheckbox
-									object="csconta__Frame_Agreement__c"
-									options={this.props.faFields}
-									onChange={this.props.toggleFaFieldVisibility}
-								/>
+								{this.props.faFields.length ? (
+									<DropdownCheckbox
+										object="csconta__Frame_Agreement__c"
+										options={this.props.faFields}
+										onChange={this.props.toggleFaFieldVisibility}
+									/>
+								) : null}
 							</div>
 						</div>
 

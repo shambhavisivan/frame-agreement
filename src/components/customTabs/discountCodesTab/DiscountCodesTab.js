@@ -25,6 +25,8 @@ let ACTIVE_FA = null;
 
 const DEFAULT_DESCRIPTION = '--new dynamic group description';
 
+const SUBSCRIPTIONS = {};
+
 const isObjectEmpty = obj => {
 	return Object.entries(obj).length === 0 && obj.constructor === Object;
 };
@@ -395,7 +397,12 @@ class DiscountCodesTab extends React.Component {
 	}
 
 	componentDidMount() {
-		window.FAM.subscribe('onBeforeSaveFrameAgreement', data => {
+		if (SUBSCRIPTIONS['onBeforeSaveFrameAgreement']) {
+			const { unsubscribe } = SUBSCRIPTIONS['onBeforeSaveFrameAgreement'];
+			typeof unsubscribe === 'function' && unsubscribe();
+		}
+
+		SUBSCRIPTIONS['onBeforeSaveFrameAgreement'] = window.FAM.subscribe('onBeforeSaveFrameAgreement', data => {
 			return new Promise(async resolve => {
 				if (this.state.unapplied.length) {
 					window.FAM.api.toast(

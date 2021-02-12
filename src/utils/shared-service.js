@@ -121,7 +121,13 @@ export const validateCSV = str => {
 
 export const isObject = a => !!a && a.constructor === Object;
 
-export const copy = obj => JSON.parse(JSON.stringify(obj));
+export const copy = (obj) => {
+	try {
+		return JSON.parse(JSON.stringify(obj));
+	} catch (e) {
+		return obj;
+	}
+};
 
 export const isOneOff = type => {
 	if (typeof type !== 'string' || !type) {

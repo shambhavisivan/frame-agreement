@@ -1541,7 +1541,7 @@ const rootReducer = (state = initialState, action) => {
 				// key -> old cp Id
 				let new_cp = state.commercialProducts.find(cp => cp.Id === replacementData[key].new_cp.Id);
 
-				let old_addons = copy(_attachment.products[key]._addons);
+				let old_addons = copy(_attachment.products[key]._addons) || {};
 				let new_addons = {};
 
 				// since attachment is indexed by addon assoc id, we need to traverse the cp data to find addon -> addon assoc correlation
@@ -1566,16 +1566,18 @@ const rootReducer = (state = initialState, action) => {
 				//**************************************************************************
 				let rcIdSet = new Set(replacementData[key].rc || []);
 
-				let old_rc = copy(_attachment.products[key]._rateCards);
+				let old_rc = copy(_attachment.products[key]._rateCards) || {};
 
-				replacementData[key].rc.forEach(rc => {
-					if (_attachment.products[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)) {
-						_attachment.products[new_cp.Id]._rateCards[rc.Id] = {
-							..._attachment.products[new_cp.Id]._rateCards[rc.Id],
-							...old_rc[rc.Id]
-						};
-					}
-				});
+				if (replacementData[key].rc) {
+					replacementData[key].rc.forEach((rc) => {
+						if (_attachment.products[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)) {
+							_attachment.products[new_cp.Id]._rateCards[rc.Id] = {
+								..._attachment.products[new_cp.Id]._rateCards[rc.Id],
+								...old_rc[rc.Id]
+							};
+						}
+					});
+				}
 
 				_attachment.products[new_cp.Id]._rateCards = {
 					..._attachment.products[new_cp.Id]._rateCards,

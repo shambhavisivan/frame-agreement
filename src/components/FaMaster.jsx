@@ -360,8 +360,9 @@ class FaMaster extends Component {
 									<Checkbox
 										className="fa-margin-right-sm"
 										value={
+											Object.keys(this.state.selectedAgreements).length > 0 &&
 											addedFa.filter(this._faFilterMethod).length ===
-											Object.keys(this.state.selectedAgreements).length
+												Object.keys(this.state.selectedAgreements).length
 										}
 										onChange={() => {
 											this.onSelectAllAgreements(addedFa.filter(this._faFilterMethod));

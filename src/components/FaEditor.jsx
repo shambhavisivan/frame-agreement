@@ -17,17 +17,15 @@ import {
 	setDisableDiscount,
 	getRelatedLists,
 	replaceCpEntities,
-	getCommercialProductData
+	getCommercialProductData,
+	executeFrameAgreementAction
 } from '../actions';
 
 import { publish, findReplacementCommercialProduct } from '../api';
 
 import {
-	truncateCPField,
 	log,
 	isMaster,
-	parseExpression,
-	evaluateExpressionOnAgreement
 } from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
@@ -50,6 +48,8 @@ import FaFooter from './FaEditor/FaFooter';
 import FaTabs from './FaEditor/FaTabs';
 import FaHeader from './FaEditor/FaHeader';
 import FaModals from './FaEditor/FaModals';
+
+import * as frameAgreementActions from '../actions/frameAgreementActions';
 
 window.editor = {};
 
@@ -142,18 +142,42 @@ export class FaEditor extends Component {
 				resolve(data);
 			});
 		});
+
+		// Enable save on FA events
+		SUBSCRIPTIONS['sub5'] = window.FAM.subscribe('onFaUpdate', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
+				});
+				resolve(data);
+			});
+		});
+
+		// Enable save on negotiated events
+		SUBSCRIPTIONS['sub6'] = window.FAM.subscribe('onAfterNegotiate', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
+				});
+				resolve(data);
+			});
+		});
 	}
 
 	componentWillUnmount() {
 		this.mounted = false;
-
 		delete window.FAM.api.getActiveFrameAgreement;
 		for (var key in SUBSCRIPTIONS) {
 			SUBSCRIPTIONS[key].unsubscribe();
 		}
+		this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLEAR_ATTACHMENT)
+		if (this.state.actionTaken && this.editable) {
+			this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.RESET)
+		}
 	}
 
 	async componentDidMount() {
+		this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLONE)
 		const cpFilterEvent = async () => {
 			let perFaCpFilterList = await publish(
 				'onLoadCommercialProducts',
@@ -261,6 +285,7 @@ export class FaEditor extends Component {
 						// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
 						await this.props.getCommercialProductData(_filteredCpIdList);
 						await this.props.addProductsToFa(this.faId, _filteredCpIdList);
+						await this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLONE);
 
 						if (Object.keys(cpReplacementData).length) {
 							// cpReplacementData contains info about which addons and rc old cp was attached to
@@ -603,7 +628,8 @@ const mapDispatchToProps = {
 	setDisableDiscount,
 	getRelatedLists,
 	replaceCpEntities,
-	getCommercialProductData
+	getCommercialProductData,
+	executeFrameAgreementAction
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaEditor));

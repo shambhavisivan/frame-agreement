@@ -1,4 +1,5 @@
 import { decodeEntities, getFieldLabel } from '../utils/shared-service';
+import * as actions from "./frameAgreementActions";
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
 const _defaultModals = {
@@ -353,7 +354,7 @@ export function cloneFrameAgreement(faId) {
 
 // ***********************************************************************
 
-export const _deleteFrameAgreement = faId => ({
+const _deleteFrameAgreement = faId => ({
 	type: 'DELETE_FA',
 	payload: faId
 });
@@ -392,7 +393,7 @@ export const setDisableDiscount = (faId, disableConfig) => ({
 
 // ***********************************************************************
 
-export const _recievePriceItemData = result => ({
+const _recievePriceItemData = result => ({
 	type: 'RECIEVE_PRICE_ITEM_DATA',
 	payload: result
 });
@@ -429,7 +430,7 @@ export const getCommercialProductData = priceItemIdList => {
 
 // ***********************************************************************
 
-export const _addFaToMaster = (faId, agreements) => ({
+const _addFaToMaster = (faId, agreements) => ({
 	type: 'ADD_FA',
 	payload: { faId, agreements }
 });
@@ -444,7 +445,7 @@ export function addFaToMaster(faId, agreements) {
 	};
 }
 
-export const _removeFaFromMaster = (faId, agreements) => ({
+const _removeFaFromMaster = (faId, agreements) => ({
 	type: 'REMOVE_FA',
 	payload: { faId, agreements }
 });
@@ -461,7 +462,7 @@ export function removeFaFromMaster(faId, agreements) {
 
 // ***********************************************************************
 
-export const _replaceCpEntities = (faId, replacementData) => ({
+const _replaceCpEntities = (faId, replacementData) => ({
 	type: 'REPLACE_CHARGES',
 	payload: { faId, replacementData }
 });
@@ -477,7 +478,7 @@ export function replaceCpEntities(faId, replacementData) {
 
 // ***********************************************************************
 
-export const _addProductsToFa = (faId, products) => ({
+const _addProductsToFa = (faId, products) => ({
 	type: 'ADD_PRODUCTS',
 	payload: { faId, products }
 });
@@ -492,7 +493,7 @@ export function addProductsToFa(faId, products) {
 }
 // ***********************************************************************
 
-export const _addAddonsToFa = (faId, addons) => ({
+const _addAddonsToFa = (faId, addons) => ({
 	type: 'ADD_ADDONS',
 	payload: { faId, addons }
 });
@@ -508,7 +509,7 @@ export function addAddonsToFa(faId, addons) {
 
 // ***********************************************************************
 
-export const _resetNegotiation = (faId, entitiyMap) => ({
+const _resetNegotiation = (faId, entitiyMap) => ({
 	type: 'RESET_NEGOTIATION',
 	payload: { faId, entitiyMap }
 });
@@ -521,7 +522,7 @@ export function resetNegotiation(faId, entitiyMap) {
 
 // ***********************************************************************
 
-export const _removeProductsFromFa = (faId, products) => ({
+const _removeProductsFromFa = (faId, products) => ({
 	type: 'REMOVE_PRODUCTS',
 	payload: { faId, products }
 });
@@ -536,7 +537,7 @@ export function removeProductsFromFa(faId, products) {
 }
 // ***********************************************************************
 
-export const _removeAddonsFromFa = (faId, addons) => ({
+const _removeAddonsFromFa = (faId, addons) => ({
 	type: 'REMOVE_ADDONS',
 	payload: { faId, addons }
 });
@@ -552,7 +553,7 @@ export function removeAddonsFromFa(faId, addons) {
 
 // ***********************************************************************
 
-export const _filterCommercialProducts = result => ({
+const _filterCommercialProducts = result => ({
 	type: 'FILTER_COMMERCIAL_PRODUCTS',
 	payload: result
 });
@@ -575,7 +576,7 @@ export function filterCommercialProducts(filterData) {
 
 // ***********************************************************************
 
-export const recieveGetFrameAgreements = result => ({
+const recieveGetFrameAgreements = result => ({
 	type: 'RECIEVE_FRAME_AGREEMENTS',
 	payload: result
 });
@@ -596,7 +597,7 @@ export function getFrameAgreements() {
 
 // ***********************************************************************
 
-export const recieveGetAttachment = (faId, data) => ({
+const recieveGetAttachment = (faId, data) => ({
 	type: 'RECIEVE_GET_ATTACHMENT',
 	payload: { faId, data }
 });
@@ -653,7 +654,7 @@ export function getAttachment(faId) {
 // }
 // ***********************************************************************
 
-export const _saveFrameAgreement = upsertedFa => ({
+const _saveFrameAgreement = upsertedFa => ({
 	type: 'SAVE_FA',
 	payload: upsertedFa
 });
@@ -704,6 +705,7 @@ export function saveFrameAgreement(frameAgreement) {
 		return Promise.all(promiseArray).then(
 			response => {
 				dispatch(_saveFrameAgreement(response[0]));
+				dispatch(cloneAgreementBeforeChanges(frameAgreement.Id))
 				return response;
 			},
 			error => {}
@@ -712,7 +714,7 @@ export function saveFrameAgreement(frameAgreement) {
 }
 // ***********************************************************************
 
-export const _updateFrameAgreement = (faId, field, value) => ({
+const _updateFrameAgreement = (faId, field, value) => ({
 	type: 'UPDATE_FA',
 	payload: { faId, field, value }
 });
@@ -724,7 +726,7 @@ export function updateFrameAgreement(faId, field, value) {
 }
 // ***********************************************************************
 
-export const _updateIgnoreSettings = data => ({
+const _updateIgnoreSettings = data => ({
 	type: 'UPDATE_IGNORE',
 	payload: data
 });
@@ -735,7 +737,7 @@ export function updateIgnoreSettings(newIgnoreSettings) {
 	};
 }
 // ***********************************************************************
-export const _createFrameAgreement = result => ({
+const _createFrameAgreement = result => ({
 	type: 'CREATE_FA',
 	payload: result
 });
@@ -808,4 +810,47 @@ export function getCommercialProducts() {
 			});
 		});
 	};
+}
+
+// ***********************************************************************
+
+const _cloneAgreementBeforeChanges = frameAgreementId => ({
+	type: 'CLONE_FRAME_AGREEMENT',
+	payload: frameAgreementId
+})
+
+// ***********************************************************************
+
+const _resetAgreementChanges = frameAgreementId => ({
+	type: 'RESET_CURRENT_FRAME_AGREEMENT_CHANGES',
+	payload: frameAgreementId
+})
+
+// ***********************************************************************
+
+const _clearFrameAgreementAttachment = frameAgreementId => ({
+	type: 'CLEAR_FA_ATTACHMENT',
+	payload: frameAgreementId
+})
+
+export function executeFrameAgreementAction(frameAgreementId, action) {
+	return (dispatch) => {
+		switch (action) {
+			case actions.CLONE:
+				return new Promise(async (resolve, reject) => {
+					dispatch(_cloneAgreementBeforeChanges(frameAgreementId));
+					resolve();
+				});
+			case actions.RESET:
+				return new Promise(async (resolve, reject) => {
+					dispatch(_resetAgreementChanges(frameAgreementId));
+					resolve();
+				});
+			case actions.CLEAR_ATTACHMENT:
+				return new Promise(async (resolve, reject) => {
+					dispatch(_clearFrameAgreementAttachment(frameAgreementId));
+					resolve();
+				});
+		}
+	}
 }

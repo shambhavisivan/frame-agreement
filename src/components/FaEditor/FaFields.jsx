@@ -19,9 +19,6 @@ export class FaFields extends React.Component {
 
 		this.onFieldChange = this.onFieldChange.bind(this);
 
-		if (hasSubscription('onFaUpdate')) {
-			this.handleIgnoreSettingsHook();
-		}
 	}
 
 	onFieldChange(field, value) {

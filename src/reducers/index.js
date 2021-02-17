@@ -27,6 +27,7 @@ const initialState = {
 	ignoreSettings: {},
 	accounts: [],
 	frameAgreements: {},
+	currentFrameAgreement: {},
 	commercialProducts: null,
 	standaloneAddons: null,
 	productFields: [],
@@ -2058,6 +2059,38 @@ const rootReducer = (state = initialState, action) => {
 					}
 				}
 			};
+
+		case 'CLONE_FRAME_AGREEMENT':
+			let frameAgreementId = action.payload;
+
+			return {
+				...state,
+				currentFrameAgreement: JSON.parse(JSON.stringify(state.frameAgreements[frameAgreementId]))
+			}
+
+		case 'RESET_CURRENT_FRAME_AGREEMENT_CHANGES':
+			frameAgreementId = action.payload;
+
+			return {
+				...state,
+				frameAgreements : {
+					...state.frameAgreements,
+					[frameAgreementId]: JSON.parse(JSON.stringify(state.currentFrameAgreement))
+				},
+				currentFrameAgreement: {}
+			}
+
+		case 'CLEAR_FA_ATTACHMENT':
+			frameAgreementId = action.payload;
+			let attachmentClearedFrameAgreement = JSON.parse(JSON.stringify(state.frameAgreements[frameAgreementId]))
+			attachmentClearedFrameAgreement._ui.attachment = null
+			return {
+				...state,
+				frameAgreements : {
+					...state.frameAgreements,
+					[frameAgreementId]: { ...attachmentClearedFrameAgreement }
+				}
+			}
 
 		default:
 			// SAVE_ATTACHMENT, RECIEVE_GET_ATTACHMENT, FILTER_COMMERCIAL_PRODUCTS, GET_APPROVAL_HISTORY

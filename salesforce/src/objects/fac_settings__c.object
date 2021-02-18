@@ -236,6 +236,23 @@
         <type>Number</type>
         <unique>false</unique>
     </fields>
+    <fields>
+        <fullName>certificate_name__c</fullName>
+        <description>Certificate name used to authorize dispatchcer service without extensions.</description>
+        <inlineHelpText>selfsigned</inlineHelpText>
+        <externalId>false</externalId>
+        <label>Security Certificate Name</label>
+        <type>TextArea</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>dispatcher_service_url__c</fullName>
+        <description>Url endpoint of dispatcher service.</description>
+        <externalId>false</externalId>
+        <label>Dispatcher Service Url</label>
+        <type>TextArea</type>
+        <unique>false</unique>
+    </fields>
     <label>FAC Setting</label>
     <listViews>
         <fullName>All</fullName>

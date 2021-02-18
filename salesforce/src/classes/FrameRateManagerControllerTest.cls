@@ -273,6 +273,8 @@ private class FrameRateManagerControllerTest {
 		facSettings.rcl_fields__c = 'cspmb__Currency_Code__c, cspmb__rate_card_line_code__c';
 		facSettings.requires_approval_status__c = 'Requires Approval';
 		facSettings.standalone_addon_fields__c = 'cspmb__Add_On_Price_Item_Code__c';
+		facSettings.certificate_name__c = 'selfcert';
+		facSettings.dispatcher_service_url__c = 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com';
 		insert facSettings;
 	}
 
@@ -1341,5 +1343,14 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		System.assertEquals(exceptionMessage, FrameRateManagerController.NO_CATALOGUE_ID_MSG);
+	}
+
+	@IsTest
+	public static void testToGetDSAuthToken() {
+		Test.startTest();
+		String response = FrameRateManagerController.getDispatcherAuthToken();
+		Test.stopTest();
+
+		System.assertEquals(response, 'TOKEN');
 	}
 }

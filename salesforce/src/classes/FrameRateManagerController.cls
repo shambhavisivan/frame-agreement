@@ -210,7 +210,7 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	private static Fac_Settings__c getFacSetting() {
+	public static Fac_Settings__c getFacSetting() {
 		return Fac_Settings__c.getInstance(UserInfo.getUserId());
 	}
 
@@ -2609,6 +2609,11 @@ global with sharing class FrameRateManagerController {
 		}
 
 		return catalogueId;
+	}
+
+	@RemoteAction
+	public static String getDispatcherAuthToken() {
+		return DispatcherServiceController.getAuthorisationToken();
 	}
 
 

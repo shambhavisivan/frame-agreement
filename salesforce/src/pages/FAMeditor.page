@@ -138,7 +138,8 @@
 				getDelta: "{!$RemoteAction.FrameRateManagerController.getDelta}",
 				getRelatedLists: "{!$RemoteAction.FrameRateManagerController.getRelatedLists}",
 				removeFaFromMaster: "{!$RemoteAction.FrameRateManagerController.removeFaFromMaster}",
-				getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}"
+				getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}",
+				getDispatcherAuthToken: "{!$RemoteAction.FrameRateManagerController.getDispatcherAuthToken}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

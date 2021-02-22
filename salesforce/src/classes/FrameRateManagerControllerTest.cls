@@ -325,6 +325,7 @@ private class FrameRateManagerControllerTest {
 
 		system.assertNotEquals(null, csettings);
 		System.assertEquals(csettings.get('standalone_addon_fields'), 'cspmb__Add_On_Price_Item_Code__c');
+		System.assertEquals(csettings.get('dispatcherServiceUrl'), 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com');
 
 	}
 
@@ -1348,9 +1349,9 @@ private class FrameRateManagerControllerTest {
 	@IsTest
 	public static void testToGetDSAuthToken() {
 		Test.startTest();
-		String response = FrameRateManagerController.getDispatcherAuthToken();
+		DispatcherServiceController.DispatcherServiceToken response = FrameRateManagerController.getDispatcherAuthToken('fam/app');
 		Test.stopTest();
 
-		System.assertEquals(response, 'TOKEN');
+		System.assertEquals(response.token, 'TOKEN');
 	}
 }

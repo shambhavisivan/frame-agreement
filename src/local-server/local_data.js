@@ -318,7 +318,8 @@ const FACSettings = {
 		draft_status: 'Draft',
 		requires_approval_status: 'Requires Approval'
 	},
-	truncate_product_fields: true
+	truncate_product_fields: true,
+	dispatcherServiceUrl: 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com'
 };
 
 const relatedLists = [
@@ -4390,6 +4391,15 @@ window.SF = SF = {
 					}
 				};
 				return createPromise(newAssociation);
+			case 'getDispatcherAuthToken':
+				const dispatcherToken = {
+					// change the generated auth token here to make requests locally.
+					token: '00D4K000003rDxS:95e65c66-bb05-48a1-8f17-9e71a866f41f',
+					orgId: "00D4K000003rDxS",
+					userAgent: navigator.userAgent
+				}
+
+				return createPromise(dispatcherToken);
 
 			default:
 				return createPromise('Success');

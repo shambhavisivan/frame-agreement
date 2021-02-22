@@ -538,6 +538,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('input_minmax_restriction', facSettings.get('input_minmax_restriction__c'));
 		settingMap.put('standalone_addon_fields', facSettings.standalone_addon_fields__c);
 		settingMap.put('fa_editable_statuses', facSettings.get('fa_editable_statuses__c'));
+		settingMap.put('dispatcherServiceUrl', facSettings.dispatcher_service_url__c);
 
 		Map<String, Object> statuses = new Map<String, Object>();
 		statuses.put('active_status', facSettings.get('active_status__c'));
@@ -2612,8 +2613,8 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static String getDispatcherAuthToken() {
-		return DispatcherServiceController.getAuthorisationToken();
+	public static DispatcherServiceController.DispatcherServiceToken getDispatcherAuthToken(String userAgent) {
+		return DispatcherServiceController.getAuthorisationToken(userAgent);
 	}
 
 

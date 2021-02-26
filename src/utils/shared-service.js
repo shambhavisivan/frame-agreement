@@ -1,6 +1,7 @@
 'use strict';
 
 let SF = {};
+let orgUrl = null;
 
 let sharedService = {
 	SF: SF
@@ -77,13 +78,27 @@ export const isJson = str => {
 	return true;
 };
 
-export const openSFLink = Id => {
-	var url = window.location.origin + '/' + Id;
+//Partner Community has path-prefix else fallback with window location
+export const openSFLink = async (Id) => {
+
+	if (!orgUrl) {
+		orgUrl = await window.SF.invokeAction('getOrgUrl', []).then(response => {
+			return response;
+		});
+	}
+
+	let url = orgUrl;
+
+	if (url) {
+		url = url + '/' + Id;
+	} else {
+		url = window.location.origin + '/' + Id
+	}
 
 	if (window.sforce && window.sforce.one) {
 		window.sforce.one.navigateToSObject(Id);
 	} else {
-		var win = window.open(window.location.origin + '/' + Id, '_blank');
+		var win = window.open(url, '_blank');
 		win.focus();
 	}
 };

@@ -100,8 +100,7 @@ export class FaFields extends React.Component {
 const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
-		ignoreSettings: state.ignoreSettings,
-		settings: state.settings
+		ignoreSettings: state.ignoreSettings
 	};
 };
 

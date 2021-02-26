@@ -1342,4 +1342,18 @@ private class FrameRateManagerControllerTest {
 
 		System.assertEquals(exceptionMessage, FrameRateManagerController.NO_CATALOGUE_ID_MSG);
 	}
+
+	//TODO: add test for partner user, there is a licensing issue in scratch org, we will take this later on
+	@IsTest
+	private static void testOrgUrl() {
+		User user = createMockUserForProfile('System Administrator');
+
+		System.runAs(user) {
+			Test.startTest();
+			String returnedOrgUrl = FrameRateManagerController.getOrgUrl();
+			Test.stopTest();
+
+			System.assertNotEquals(returnedOrgUrl, null);
+		}
+	}
 }

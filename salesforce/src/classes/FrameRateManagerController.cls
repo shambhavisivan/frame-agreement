@@ -2611,6 +2611,18 @@ global with sharing class FrameRateManagerController {
 		return catalogueId;
 	}
 
+	@RemoteAction
+	public static String getOrgUrl() {
+		String orgUrl = URL.getOrgDomainUrl().toExternalForm();
+		String communityId = Network.getNetworkId();
+
+		if (String.isNotBlank(communityId)) {
+			ConnectApi.Community community = connectapi.Communities.getCommunity(communityId);
+			orgUrl = community.siteUrl;
+		}
+
+		return orgUrl;
+	}
 
 	//******************************************* DECOMPOSITION END ***************************************
 

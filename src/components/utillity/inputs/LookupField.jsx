@@ -4,7 +4,7 @@ import Modal from 'react-responsive-modal';
 import Icon from '../Icon';
 import Lookup from '../Lookup';
 
-import { decodeEntities, openSFLink } from '../../../utils/shared-service';
+import { decodeEntities, openSFLink } from '~/src/utils/shared-service';
 
 class LookupField extends React.Component {
 	// disabled={!this.props.editable}

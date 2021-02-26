@@ -32,7 +32,6 @@ import {
 import FaList from './components/FaList';
 import FaEditor from './components/FaEditor';
 import FaMaster from './components/FaMaster';
-import Icon from './components/utillity/Icon';
 
 import LandingSkeleton from './components/skeletons/LandingSkeleton';
 import EditorSkeleton from './components/skeletons/EditorSkeleton';

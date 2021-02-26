@@ -4394,12 +4394,15 @@ window.SF = SF = {
 			case 'getDispatcherAuthToken':
 				const dispatcherToken = {
 					// change the generated auth token here to make requests locally.
-					token: '00D4K000003rDxS:95e65c66-bb05-48a1-8f17-9e71a866f41f',
+					token: '00D4K000003rDxS:cf22d49b-c34d-4436-bc3b-a26b51eb3940',
 					orgId: "00D4K000003rDxS",
 					userAgent: navigator.userAgent
 				}
 
 				return createPromise(dispatcherToken);
+
+				case 'getDefaultCatalogueId':
+				return createPromise('test-catalogue-id');
 
 			default:
 				return createPromise('Success');

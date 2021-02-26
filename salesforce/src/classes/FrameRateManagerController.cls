@@ -962,7 +962,7 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static List<cspmb__Price_Item__c> getCommercialProducts(List<String> priceItemIds) {
 		if (priceItemIds == null || priceItemIds.isEmpty()) {
-			priceItemIds = new List<String>();
+			return new List<cspmb__Price_Item__c>();
 		}
 
 		String filterJsonValue = getInitialFilters();
@@ -999,7 +999,6 @@ global with sharing class FrameRateManagerController {
 
 		List<String> categorizationFields = getCategorizationDataFields();
 
-
 		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
 		fieldsArr.addAll(csFieldsArr);
@@ -1008,20 +1007,9 @@ global with sharing class FrameRateManagerController {
 		// Remove duplicates
 		List<String> uniqueList = getUniqueListElements(fieldsArr);
 
-		String query = 'select  ' + String.join(uniqueList, ',') + ' from cspmb__Price_Item__c ';
-		// DD ACCOUNT NULL CLAUSE
-		query += 'where cspmb__Account__c = null ';
-		// ADD ACTIVE CLAUSE
-		query += 'and cspmb__Is_Active__c = true ';
-		// ADD START DATE CHECK CLAUSE
-		query += 'and (cspmb__Effective_Start_Date__c = null OR (cspmb__Effective_Start_Date__c != null and cspmb__Effective_Start_Date__c < TODAY)) ';
-		// ADD END DATE CHECK CLAUSE
-		query += 'and (cspmb__Effective_End_Date__c = null OR (cspmb__Effective_End_Date__c != null and cspmb__Effective_End_Date__c > TODAY)) ';
-
-		if (!priceItemIds.isEmpty()) {
-			query += 'and Id in :priceItemIds ';
-		}
-
+		String query = 'select  ' + String.join(uniqueList, ',');
+		query += ' from cspmb__Price_Item__c ';
+		query += 'where Id in :priceItemIds ';
 		query += 'limit 50000';
 
 		List<cspmb__Price_Item__c> cpList = database.query(query);

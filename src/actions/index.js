@@ -1,3 +1,4 @@
+import { queryCpIdsInCatalogue } from '../graphql-actions';
 import { decodeEntities, getFieldLabel } from '../utils/shared-service';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
@@ -797,15 +798,12 @@ export const recieveCommercialProducts = result => ({
 });
 
 export function getCommercialProducts() {
-	return function(dispatch) {
-		// dispatch(requestCommercialProducts());
-
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getCommercialProducts', [null]).then(response => {
-				dispatch(recieveCommercialProducts(response));
-				resolve(response);
-				return response;
-			});
-		});
+	return async function (dispatch) {
+		const cpIdsInCatalogue = await queryCpIdsInCatalogue();
+		const response = await window.SF.invokeAction("getCommercialProducts", [
+			cpIdsInCatalogue,
+		]);
+		dispatch(recieveCommercialProducts(response));
+		return response;
 	};
 }

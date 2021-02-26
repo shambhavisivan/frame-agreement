@@ -224,3 +224,12 @@ export function submitForApproval(faId) {
 		});
 	});
 }
+
+export const getDefaultCatalogueId = async (_) => {
+	try {
+		const catalogueId = await window.SF.invokeAction('getDefaultCatalogueId',[]);
+		return catalogueId;
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};

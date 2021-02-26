@@ -710,7 +710,7 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		system.assertEquals(5, cpIdList.size());
-		system.assertEquals(4, getCommercialProducts.size());
+		system.assertEquals(5, getCommercialProducts.size());
 	}
 
 	@IsTest
@@ -802,7 +802,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(4, getCommercialProducts.size());
+		system.assertEquals(0, getCommercialProducts.size());
 
 	}
 

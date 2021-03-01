@@ -1,6 +1,7 @@
 "use strict";
 const axios = require("axios");
 let authTokenCache = null;
+let appSettingsCache = null;
 
 /**
  * method helps in getting the authorisation token for PRE requests
@@ -27,11 +28,14 @@ const graphQlEndpoint = {
 };
 
 const createConnection = async () => {
-	const appSettings = await window.SF.invokeAction("getAppSettings", [
-		window.SF.param.account,
-	]);
+	if (!appSettingsCache) {
+		appSettingsCache = await window.SF.invokeAction("getAppSettings", [
+			window.SF.param.account,
+		]);
+	}
+
 	return axios.create({
-		baseURL: appSettings.FACSettings.dispatcherServiceUrl,
+		baseURL: appSettingsCache.FACSettings.dispatcherServiceUrl,
 		timeout: 5000,
 	});
 };

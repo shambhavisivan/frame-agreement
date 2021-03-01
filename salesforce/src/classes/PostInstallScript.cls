@@ -3,7 +3,6 @@ global class PostInstallScript implements InstallHandler {
 	public static final String FA_RELATED_LISTS_KEY = 'FA-Related-Lists';
 	public static final String FA_HEADER_KEY = 'FA-Header';
 	public static final String FA_CATEGORIZATION_KEY = 'FA-Categorization';
-	public static final String FA_INITIAL_CATEGORIZATION_KEY = 'FA-Initial-Categorization';
 	public static final String FA_STANDARDPRICEBOOK_KEY = 'FA-StandardPricebook';
 	public static final String FA_CUSTOM_BUTTONS_KEY = 'FA-Custom-Buttons';
 
@@ -36,7 +35,6 @@ global class PostInstallScript implements InstallHandler {
 	private static List<csutil__JSON_Data__c> populateSettingsWithEmptyValue() {
 		return new List<csutil__JSON_Data__c> {
 			PostInstallScript.populateJsonSetting(PostInstallScript.FA_CATEGORIZATION_KEY, ''),
-			PostInstallScript.populateJsonSetting(PostInstallScript.FA_INITIAL_CATEGORIZATION_KEY, ''),
 			PostInstallScript.populateJsonSetting(PostInstallScript.FA_STANDARDPRICEBOOK_KEY, ''),
 			PostInstallScript.populateJsonSetting(PostInstallScript.FA_CUSTOM_BUTTONS_KEY, '')
 		};

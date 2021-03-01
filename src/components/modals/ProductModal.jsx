@@ -3,14 +3,14 @@ import { connect } from 'react-redux';
 
 import Modal from 'react-responsive-modal';
 
-import { filterCommercialProducts } from '~/src/actions';
 import { publish } from '../../api';
 
 import Icon from '../utillity/Icon';
-import Checkbox from '../utillity/inputs/Checkbox';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
+import { queryCategoriesInCatalogue, queryProductsInCategory } from '../../graphql-actions';
+import { invokeGetCommercialProducts } from '../../actions'
 
 class ProductModal extends Component {
 	constructor(props) {
@@ -18,57 +18,9 @@ class ProductModal extends Component {
 		this.togglePanel = this.togglePanel.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.addProducts = this.addProducts.bind(this);
+		this.loadCommercialProducts = this.loadCommercialProducts.bind(this);
 
-		this.resetFilter = this.resetFilter.bind(this);
-		this.applyFilter = this.applyFilter.bind(this);
-
-		/* CategorizationData
-    [
-      {
-        "field": "Categorization_Alpha__c",
-        "name": "Alpha",
-        "values": [
-          "Fixed",
-          "Mobile",
-          "Static"
-        ]
-      },
-      {
-        "field": "Categorization_Beta__c",
-        "name": "Beta",
-        "values": [
-          "10GB",
-          "20GB",
-          "50GB",
-          "100GB"
-        ]
-      }
-    ]
-    */
-
-		/* this.categoryMap
-      {
-        "Categorization_Alpha__c": {
-          "label": "Alpha",
-          "open": false,
-          "values": {
-            "Fixed": false,
-            "Mobile": false,
-            "Static": false
-          }
-        },
-        "Categorization_Beta__c": {
-          "label": "Beta",
-          "open": false,
-          "values": {
-            "10GB": false,
-            "20GB": false,
-            "50GB": false,
-            "100GB": false
-          }
-        }
-      }
-    */
+		this.categoryId = null;
 
 		let _commercialProducts = this.props.commercialProducts;
 
@@ -89,7 +41,7 @@ class ProductModal extends Component {
 			panel: false,
 			expanded: false,
 			actionTaken: false,
-			filter: this.initFilterData(),
+			filter: [],
 			productFilter: '',
 			commercialProducts: this.notAddedCommercialProducts,
 			selected: {},
@@ -103,21 +55,9 @@ class ProductModal extends Component {
 		console.warn(this.priceItemFields);
 	}
 
-	initFilterData() {
-		let categoryMap = {};
-
-		this.props.settings.CategorizationData.forEach(cat => {
-			categoryMap[cat.field] = {};
-
-			categoryMap[cat.field].label = cat.name;
-			categoryMap[cat.field].open = false;
-			categoryMap[cat.field].values = {};
-
-			cat.values.forEach(value => {
-				categoryMap[cat.field].values[value] = false;
-			});
-		});
-		return categoryMap;
+	async componentDidMount() {
+		const categoriesInCatalogue = await queryCategoriesInCatalogue();
+		this.setState({ filter: [...categoriesInCatalogue] })
 	}
 
 	onCloseModal() {
@@ -128,66 +68,24 @@ class ProductModal extends Component {
 		this.props.onCloseModal();
 	}
 
-	togglePanel(value) {
-		this.setState({
-			panel: !this.state.panel
-		});
+	togglePanel() {
+		this.setState(prevState => ({
+			panel: !prevState.panel
+		}));
 	}
 
-	// filterCategories(cp) {
-	//   return true;
-	// }
-
-	toggleFilter(name, value) {
-		this.setState({
-			filter: {
-				...this.state.filter,
-				[name]: {
-					...this.state.filter[name],
-					values: {
-						...this.state.filter[name].values,
-						[value]: !this.state.filter[name].values[value]
-					}
-				}
-			}
-		});
-	}
-
-	resetFilter(name, value) {
-		this.setState({
-			filter: this.initFilterData(),
-			commercialProducts: this.notAddedCommercialProducts
-		});
-	}
-
-	async applyFilter() {
-		// Prepare data
-		let filterData = [];
-
-		for (var field in this.state.filter) {
-			let cat = {
-				field: field,
-				values: []
-			};
-
-			for (var key in this.state.filter[field].values) {
-				if (this.state.filter[field].values[key]) {
-					cat.values.push(key);
-				}
-			}
-
-			if (cat.values.length) {
-				filterData.push(cat);
-			}
+	async loadCommercialProducts(categoryId) {
+		// filter cps for category
+		if (this.categoryId !== categoryId) {
+			this.categoryId = categoryId;
+			const linkedProducts = await queryProductsInCategory(categoryId);
+			const linkedProductIds = linkedProducts.map(cp => cp.id);
+			// refetch cps from apex for the linked products.
+			const commercialProducts = await window.SF.invokeAction("getCommercialProducts", [
+				linkedProductIds,
+			]);
+			this.setState({ commercialProducts });
 		}
-
-		let result = await this.props.filterCommercialProducts(filterData);
-
-		let perFaCpFilterList = await publish('onLoadCommercialProducts', result);
-
-		this.setState({
-			commercialProducts: perFaCpFilterList.filter(cp => !this.addedProductsIds.includes(cp.Id))
-		});
 	}
 
 	getCommercialProductsCount() {
@@ -209,24 +107,6 @@ class ProductModal extends Component {
 		this.setState({ expanded: !this.state.expanded }, () => {
 			console.log('Expand:', this.state.expanded);
 		});
-	}
-
-	toggleCategoryCollapse(name) {
-		console.log('Toggling ', name);
-		this.setState(
-			{
-				filter: {
-					...this.state.filter,
-					[name]: {
-						...this.state.filter[name],
-						open: !this.state.filter[name].open
-					}
-				}
-			},
-			() => {
-				console.log(this.state.filter[name]);
-			}
-		);
 	}
 
 	selectProduct(product) {
@@ -313,71 +193,33 @@ class ProductModal extends Component {
 									</div>
 								</div>
 								<div className="fa-modal-product-list">
-									{Object.keys(this.state.filter).map(key => {
-										let category = this.state.filter[key];
-
-										return (
-											<div className="fa-modal-product-list-categories" key={key}>
-												<div
-													onClick={() => {
-														this.toggleCategoryCollapse(key);
-													}}
-												>
-													<Icon
-														name={category.open ? 'chevrondown' : 'chevronright'}
-														width="12"
-														height="12"
-														color="#747474"
-													/>
-													<span className="fa-modal-product-list-categories-item">
-														{category.label}
-													</span>
+									<ul>
+										{this.state.filter.length ? this.state.filter.map(category => {
+											return (
+												<div className="fa-modal-product-list-categories">
+													<li
+														key={category.id}
+														onClick={async () =>
+															await this.loadCommercialProducts(category.id)
+														}
+													>
+														<span>{category.name}</span>
+													</li>
 												</div>
-
-												{category.open && (
-													<ul>
-														{Object.keys(category.values).map(val => {
-															return (
-																<li
-																	key={val}
-																	onClick={() => {
-																		this.toggleFilter(key, val);
-																	}}
-																>
-																	<Checkbox small={true} readOnly={category.values[val]} />
-																	<span>{val}</span>
-																</li>
-															);
-														})}
-													</ul>
-												)}
-											</div>
-										);
-									})}
+											);
+										}) : (<div>
+											<p>Link atleast one category to the default catalogue to enable filter</p>
+										</div>)
+										}
+									</ul>
 								</div>
 							</div>
-						</div>
-						<div className="fa-modal-button-group">
-							<button
-								onClick={this.resetFilter}
-								className="fa-button fa-button--default"
-								disabled={false}
-							>
-								{window.SF.labels.modal_categorization_btn_clear}
-							</button>
-							<button
-								onClick={this.applyFilter}
-								className="fa-button fa-button--default"
-								disabled={false}
-							>
-								{window.SF.labels.modal_categorization_btn_apply}
-							</button>
 						</div>
 					</div>
 
 					<div className="fa-modal-table-container">
 						<div className="fa-modal-navigation">
-							{this.props.settings.CategorizationData.length && !this.state.panel ? (
+							{!this.state.panel ? (
 								<div className="fa-flex fa-flex-middle" onClick={this.togglePanel}>
 									<div className="fa-modal-categorization-switch">
 										<Icon name="color_swatch" width="14" height="14" color="#0070d2" />
@@ -503,14 +345,10 @@ class ProductModal extends Component {
 
 const mapStateToProps = state => {
 	return {
-		commercialProducts: state.commercialProducts,
 		productFields: state.productFields,
-		settings: state.settings
+		settings: state.settings,
+		commercialProducts: state.commercialProducts
 	};
 };
 
-const mapDispatchToProps = {
-	filterCommercialProducts
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductModal);
+export default connect(mapStateToProps)(ProductModal);

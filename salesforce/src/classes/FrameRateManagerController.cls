@@ -965,11 +965,6 @@ global with sharing class FrameRateManagerController {
 			return new List<cspmb__Price_Item__c>();
 		}
 
-		String filterJsonValue = getInitialFilters();
-		if (filterJsonValue != null) {
-			return filterCommercialProducts(filterJsonValue);
-		}
-
 		return getCommercialProducts_p(priceItemIds);
 	}
 
@@ -997,12 +992,9 @@ global with sharing class FrameRateManagerController {
 			csFieldsArr = csFields.replaceAll('\\s+','').split(',');
 		}
 
-		List<String> categorizationFields = getCategorizationDataFields();
-
 		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
 		fieldsArr.addAll(csFieldsArr);
-		fieldsArr.addAll(categorizationFields);
 
 		// Remove duplicates
 		List<String> uniqueList = getUniqueListElements(fieldsArr);
@@ -1014,14 +1006,6 @@ global with sharing class FrameRateManagerController {
 
 		List<cspmb__Price_Item__c> cpList = database.query(query);
 		return cpList;
-	}
-
-	private static String getInitialFilters() {
-		csutil__JSON_Data__c faInitialCategorization = getJsonData('FA-Initial-Categorization');
-		if (faInitialCategorization != null && String.isNotBlank(faInitialCategorization.csutil__value__c)) {
-			return faInitialCategorization.csutil__value__c;
-		}
-		return null;
 	}
 
 	private static csutil__JSON_Data__c getJsonData(String jsonSettingKey){
@@ -1154,69 +1138,6 @@ global with sharing class FrameRateManagerController {
 		}
 
 		return returnMap;
-	}
-
-	@RemoteAction
-	public static List<cspmb__Price_Item__c> filterCommercialProducts(String filterData) {
-		String selectClause = 'id';
-		String whereClause = '';
-
-		List<Object> categorizationData;
-		try {
-			categorizationData = (List<Object>) JSON.deserializeUntyped(filterData);
-		} catch (Exception e) {
-			throw new ApplicationException(FrameRateManagerController.MALFORMED_JSON_EXCEPTION + e.getMessage());
-		}
-
-		//*******************************************************************
-		// Create list to hold fields: [values]
-		Map<String, List<String>> categoryQueryMap = new Map<String, List<String>>();
-
-		//*******************************************************************
-		// Iterate JSON Data, check if the field exists in schema. If so append it to query
-
-		for (Object category : categorizationData) {
-			// category.get('field');
-			Map<String, Object> categoryMap = (Map<String, Object>) category;
-			String fieldName = (String) categoryMap.get('field');
-
-			List<String> valuesList = new List<String>();
-
-			List<Object> valuesObjArr = (List<Object>) categoryMap.get('values');
-
-			for (Object valueObj : valuesObjArr) {
-				valuesList.add((String) valueObj);
-			}
-
-			categoryQueryMap.put(fieldName, valuesList);
-
-			if (!valuesList.isEmpty()) {
-				selectClause += ',' + fieldName;
-
-				String operator = '';
-
-				if (String.isEmpty(whereClause)) {
-					operator = ' where ';
-				} else {
-					operator = ' or ';
-				}
-
-				whereClause +=
-					operator + fieldName + ' in (\'' + String.join(valuesList, '\',\'') + '\')';
-			}
-		}
-
-		String query = 'select ' + selectClause + ' from cspmb__Price_Item__c ' + whereClause + ' limit 50000';
-
-		List<SObject> results = Database.query(query);
-
-		if (results.size() == 0) {
-			return new List<SObject>();
-		}
-
-		Set<Id> resultIds = (new Map <Id, SObject> (results)).keySet();
-
-		return getCommercialProducts_p(new List<Id> (resultIds));
 	}
 
 	@RemoteAction

@@ -713,35 +713,6 @@ private class FrameRateManagerControllerTest {
 		system.assertEquals(5, getCommercialProducts.size());
 	}
 
-	@IsTest
-	public static void getCommercialProductsWithInitialCategorizationFilter() {
-		setupPricingModel();
-		setupSettings();
-		insert new csutil__JSON_Data__c(
-			Name = 'FA-Initial-Categorization',
-			csutil__value__c = '[{"name": "Alpha","field": "cspmb__Role__c","values": ["Master"]}]'
-		);
-
-		List<cspmb__Price_Item__c> results = [
-			select Id
-			from cspmb__Price_Item__c
-		];
-		List<Id> cpIdList = new List<Id>();
-
-		for (cspmb__Price_Item__c cp : results) {
-			cpIdList.add(cp.Id);
-		}
-
-		Test.startTest();
-
-		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
-
-		Test.stopTest();
-
-		system.assertEquals(5, cpIdList.size());
-		system.assertEquals(0, getCommercialProducts.size());
-	}
-
 	public static testMethod void testGetStandaloneAddons() {
 		setupPricingModel();
 
@@ -804,53 +775,6 @@ private class FrameRateManagerControllerTest {
 
 		system.assertEquals(0, getCommercialProducts.size());
 
-	}
-
-	public static testMethod void testFilterCommercialProductsReturnsEmpty() {
-		setupPricingModel();
-		setupSettings();
-		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]';
-
-		Test.startTest();
-
-		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
-
-		Test.stopTest();
-
-		system.assertEquals(0, filteredCp.size(), 'should return 0 cps because there is no discount type in test data');
-
-	}
-
-	@IsTest
-	public static void testFilterCommercialProducts() {
-		setupPricingModel();
-		setupSettings();
-		String data = '[{"name":"Alpha","field":"name","values":["cp_1"]}]';
-
-		Test.startTest();
-
-		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
-
-		Test.stopTest();
-
-		system.assertEquals(1, filteredCp.size());
-		System.assertEquals('cp_1', filteredCp[0].name);
-	}
-
-	@IsTest
-	public static void testFilterCommercialProductsThrowsException() {
-		setupPricingModel();
-		setupSettings();
-		String malformedData= '[{"name":"Alpha""field":"name","values":["cp_1"]}]';
-
-		Test.startTest();
-		try {
-			FrameRateManagerController.filterCommercialProducts(malformedData);
-			System.assert(false, 'Should always throw exception on malformed json.');
-		} catch (Exception e) {
-			System.assertEquals(true, e.getMessage().startsWith('JSON value is malformed'));
-		}
-		Test.stopTest();
 	}
 
 	public static testMethod void testApproval() {
@@ -1221,52 +1145,6 @@ private class FrameRateManagerControllerTest {
 		System.assertEquals(newEndDate, Date.today());
 		System.assertEquals(newEndDateFa2, Date.today());
 		System.assertEquals(expiredOriginalFa.csconta__effective_end_date__c, pastDate);
-	}
-	public static testMethod void testFilterWithMultipleConditions() {
-		cspmb__Price_Item__c mobileL = new cspmb__Price_Item__c(
-			name = 'Mobile L',
-			cspmb__contract_term__c = '36 Months',
-			cspmb__discount_type__c = 'Amount',
-			cspmb__is_active__c = true
-		);
-
-		cspmb__Price_Item__c mobileXL = new cspmb__Price_Item__c(
-			name = 'Mobile XL',
-			cspmb__contract_term__c = '48 Months',
-			cspmb__discount_type__c = 'Percentage',
-			cspmb__is_active__c = true
-		);
-
-		cspmb__Price_Item__c mobileXXL = new cspmb__Price_Item__c(
-			name = 'Mobile XXL',
-			cspmb__contract_term__c = '60 Months',
-			cspmb__discount_type__c = 'Negative Line Item',
-			cspmb__is_active__c = true
-		);
-
-		insert mobileL;
-		insert mobileXL;
-		insert mobileXXL;
-
-		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage"]},{"name":"Beta","field":"cspmb__contract_term__c","values":["36 Months"]}]';
-
-		Test.startTest();
-
-		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
-
-		Test.stopTest();
-
-		Set<Id> filteredIds = new Set<Id>();
-
-		for (cspmb__Price_Item__c cp: filteredCp) {
-			filteredIds.add(cp.id);
-		}
-
-		System.assertEquals(2, filteredCp.size());
-		System.assertEquals(true, filteredIds.contains(mobileL.id), 'Contains MobileL');
-		System.assertEquals(true, filteredIds.contains(mobileXL.id), 'Contains MobileXL');
-		System.assertEquals(false, filteredIds.contains(mobileXXL.id), 'Does not contain MobileXXL');
-
 	}
 
 	@IsTest

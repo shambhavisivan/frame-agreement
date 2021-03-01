@@ -3955,9 +3955,6 @@ window.SF = SF = {
 			case 'undoDecomposition':
 				return createPromise('Success', 2000);
 
-			case 'filterCommercialProducts':
-				return createPromise(filterProducts(parametersArr[0]));
-
 			case 'setFrameAgreementState':
 				return createPromise(getRandomFromArr(['Success']));
 
@@ -4391,15 +4388,13 @@ window.SF = SF = {
 					}
 				};
 				return createPromise(newAssociation);
-			case 'getDispatcherAuthToken':
-				const dispatcherToken = {
-					// change the generated auth token here to make requests locally.
-					token: '00D4K000003rDxS:cf22d49b-c34d-4436-bc3b-a26b51eb3940',
-					orgId: "00D4K000003rDxS",
-					userAgent: navigator.userAgent
-				}
-
-				return createPromise(dispatcherToken);
+				case 'getDispatcherAuthToken':
+					const dispatcherToken = {
+						// change the generated auth token here to make requests locally.
+						token: '00D4K000003rDxS:cf22d49b-c34d-4436-bc3b-a26b51eb3940',
+						orgId: "00D4K000003rDxS",
+						userAgent: navigator.userAgent
+					}
 
 				case 'getDefaultCatalogueId':
 				return createPromise('test-catalogue-id');

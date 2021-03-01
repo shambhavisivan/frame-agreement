@@ -279,16 +279,6 @@ describe('select_actions', () => {
 				});
 		});
 
-		it('should create an filterCommercialProducts action', () => {
-			return actions
-				.filterCommercialProducts([])(store.dispatch)
-				.then(resp => {
-					const executed_actions = store.getActions();
-					expect(executed_actions[0].type).toEqual('FILTER_COMMERCIAL_PRODUCTS');
-					expect(resp.length).toEqual(11);
-				});
-		});
-
 		it('should create an getFrameAgreements action', () => {
 			return actions
 				.getFrameAgreements()(store.dispatch)

@@ -551,31 +551,6 @@ export function removeAddonsFromFa(faId, addons) {
 	};
 }
 
-// ***********************************************************************
-
-export const _filterCommercialProducts = result => ({
-	type: 'FILTER_COMMERCIAL_PRODUCTS',
-	payload: result
-});
-
-export function filterCommercialProducts(filterData) {
-	return function(dispatch) {
-		// dispatch(requestPriceItemData());
-
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('filterCommercialProducts', [JSON.stringify(filterData)]).then(
-				response => {
-					dispatch(_filterCommercialProducts(response));
-					resolve(response);
-					return response;
-				}
-			);
-		});
-	};
-}
-
-// ***********************************************************************
-
 export const recieveGetFrameAgreements = result => ({
 	type: 'RECIEVE_FRAME_AGREEMENTS',
 	payload: result

@@ -116,7 +116,6 @@
 				createNewVersionOfFrameAgreement: "{!$RemoteAction.FrameRateManagerController.createNewVersionOfFrameAgreement}",
 				getCommercialProducts: "{!$RemoteAction.FrameRateManagerController.getCommercialProducts}",
 				findReplacementCommercialProduct: "{!$RemoteAction.FrameRateManagerController.findReplacementCommercialProduct}",
-				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
 				getPricingElements: "{!$RemoteAction.FrameRateManagerController.getPricingElements}",
 				getCommercialProductData: "{!$RemoteAction.FrameRateManagerController.getCommercialProductData}",
 				saveAttachment: "{!$RemoteAction.FrameRateManagerController.saveAttachment}",

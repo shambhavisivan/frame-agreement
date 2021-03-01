@@ -65,7 +65,6 @@ public class PostInstallScriptTest {
 		PostInstallScript postInstallScriptCls = new PostInstallScript();
 		List<String> keysWithEmptyValues = new List<String> {
 			PostInstallScript.FA_CATEGORIZATION_KEY,
-			PostInstallScript.FA_INITIAL_CATEGORIZATION_KEY,
 			PostInstallScript.FA_STANDARDPRICEBOOK_KEY,
 			PostInstallScript.FA_CUSTOM_BUTTONS_KEY
 		};
@@ -85,7 +84,7 @@ public class PostInstallScriptTest {
 			index++;
 		}
 
-		System.assertEquals(4, index);
+		System.assertEquals(3, index);
 	}
 
 	@IsTest

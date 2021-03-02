@@ -192,6 +192,7 @@ export class CommercialProduct extends React.Component {
 											>
 												<InputVolume
 													readOnly={!_editable}
+													disabled={this.props.disableFrameAgreementOperations}
 													value={_attachment._volume[f.volume]}
 													onChange={val => {
 														this.updateVolume(f.volume, val);
@@ -247,7 +248,11 @@ export class CommercialProduct extends React.Component {
 									disabled={!this.props.product._addons.length}
 								>
 									<Addons
-										readOnly={!_editable || (_disableLevels && _disableInputs)}
+										readOnly={
+											this.props.disableFrameAgreementOperations ||
+											!_editable ||
+											(_disableLevels && _disableInputs)
+										}
 										disableInputs={_productIgnored || _disableInputs}
 										disableLevels={_productIgnored || _disableLevels}
 										validation={this.props.validation[this.productId].addons}
@@ -267,7 +272,11 @@ export class CommercialProduct extends React.Component {
 								>
 									{this.props.product._charges.length ? (
 										<Charges
-											readOnly={!_editable || (_disableLevels && _disableInputs)}
+											readOnly={
+												this.props.disableFrameAgreementOperations ||
+												!_editable ||
+												(_disableLevels && _disableInputs)
+											}
 											disableInputs={_productIgnored || _disableInputs}
 											disableLevels={_productIgnored || _disableLevels}
 											oneOffAllowed={this.props.product.cspmb__Is_One_Off_Discount_Allowed__c}
@@ -283,7 +292,11 @@ export class CommercialProduct extends React.Component {
 										/>
 									) : (
 										<ProductCharges
-											readOnly={!_editable || (_disableLevels && _disableInputs)}
+											readOnly={
+												this.props.disableFrameAgreementOperations ||
+												!_editable ||
+												(_disableLevels && _disableInputs)
+											}
 											product={this.props.product}
 											disableInputs={_productIgnored || _disableInputs}
 											disableLevels={_productIgnored || _disableLevels}
@@ -303,7 +316,11 @@ export class CommercialProduct extends React.Component {
 									disabled={!this.props.product._rateCards.length}
 								>
 									<Rates
-										readOnly={!_editable || _disableInputs}
+										readOnly={
+											this.props.disableFrameAgreementOperations ||
+											!_editable ||
+											_disableInputs
+										}
 										validation={this.props.validation[this.productId].rated}
 										attachment={_attachment._rateCards || {}}
 										rateCards={this.props.product._rateCards}
@@ -335,7 +352,8 @@ const mapStateToProps = state => {
 		validationProduct: state.validationProduct,
 		productFields: state.productFields,
 		ignoreSettings: state.ignoreSettings,
-		settings: state.settings
+		settings: state.settings,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 	};
 };
 

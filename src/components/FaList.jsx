@@ -339,6 +339,7 @@ class FaList extends Component {
 										}}
 										key={fa.Id}
 										agreement={fa}
+										disabled={this.props.disableFrameAgreementOperations}
 									/>
 								);
 							})}
@@ -371,7 +372,8 @@ const mapStateToProps = state => {
 		frameAgreements: state.frameAgreements,
 		settings: state.settings,
 		accounts: state.accounts,
-		handlers: state.handlers
+		handlers: state.handlers,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 	};
 };
 

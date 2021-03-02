@@ -44,6 +44,14 @@ class InputVolume extends Component {
 					</span>
 				</div>
 			);
+		} else if (this.props.disabled) {
+			return (
+				<div className="negotiate-input-wrapper readOnly">
+					<span>
+						{this.props.value ? this.props.value : 0}
+					</span>
+				</div>
+			);
 		} else {
 			return (
 				<div className={'negotiate-input-wrapper' + (this.state.focus ? ' focused' : '')}>

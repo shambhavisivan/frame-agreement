@@ -47,7 +47,8 @@ const initialState = {
 		negotiateModal: false,
 		negotiateStandaloneModal: false
 	},
-	toasts: []
+	toasts: [],
+	disableFrameAgreementOperations: false
 	// activeId: null
 };
 
@@ -2117,6 +2118,12 @@ const rootReducer = (state = initialState, action) => {
 						_ui: { ...state.frameAgreements[faId]._ui, approval: data }
 					}
 				}
+			};
+
+		case 'TOGGLE_FRAME_AGREEMENT_OPERATIONS':
+			return {
+				...state,
+				disableFrameAgreementOperations: action.payload
 			};
 
 		case 'CLONE_FRAME_AGREEMENT':

@@ -8,7 +8,8 @@ import {
 	setFrameAgreementState,
 	createToast,
 	executeFrameAgreementAction,
-	validateFrameAgreement
+	validateFrameAgreement,
+	toggleFrameAgreementOperations
 } from '../actions';
 
 import { approveRejectRecallRecord, reassignApproval } from '~/src/api';
@@ -107,11 +108,13 @@ export class ApprovalProcess extends React.Component {
 	}
 
 	approvalAction(actionType, reassignTo = null) {
+		this.props.toggleFrameAgreementOperations(true);
 		if (actionType === 'Reassign') {
 			reassignApproval(
 				this.props.faId,
 				reassignTo || this.props.frameAgreements[this.props.faId]._ui.approval.currentUser
 			);
+			this.props.toggleFrameAgreementOperations(false);
 		} else {
 			let _nextFaState;
 
@@ -156,6 +159,8 @@ export class ApprovalProcess extends React.Component {
 						this.props.validateFrameAgreement(this.props.faId);
 					}
 					this.props.executeFrameAgreementAction(this.props.faId, frameAgreementActions.CLONE);
+				}).finally(() => {
+					this.props.toggleFrameAgreementOperations(false);
 				});
 		}
 	}
@@ -209,6 +214,7 @@ export class ApprovalProcess extends React.Component {
 									<button
 										className="fa-button fa-button--default"
 										onClick={() => this.approvalAction('Reassign')}
+										disabled={this.props.disableFrameAgreementOperations}
 									>
 										<Icon name="change_owner" height="14" width="14" />
 										<span className="fa-padding-left-xsm">
@@ -220,6 +226,7 @@ export class ApprovalProcess extends React.Component {
 									<button
 										className="fa-button fa-button--default"
 										onClick={() => this.approvalAction('Removed')}
+										disabled={this.props.disableFrameAgreementOperations}
 									>
 										<Icon name="undo" height="14" width="14" />
 										<span className="fa-padding-left-xsm">
@@ -231,6 +238,7 @@ export class ApprovalProcess extends React.Component {
 									<button
 										className="fa-button fa-button--default"
 										onClick={() => this.approvalAction('Approve')}
+										disabled={this.props.disableFrameAgreementOperations}
 									>
 										<Icon name="approval" height="14" width="14" />
 										<span className="fa-padding-left-xsm">
@@ -242,6 +250,7 @@ export class ApprovalProcess extends React.Component {
 									<button
 										className="fa-button fa-button--default"
 										onClick={() => this.approvalAction('Reject')}
+										disabled={this.props.disableFrameAgreementOperations}
 									>
 										<Icon name="dislike" height="14" width="14" />
 										<span className="fa-padding-left-xsm">
@@ -339,7 +348,8 @@ export class ApprovalProcess extends React.Component {
 const mapStateToProps = state => {
 	return {
 		settings: state.settings,
-		frameAgreements: state.frameAgreements
+		frameAgreements: state.frameAgreements,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 	};
 };
 
@@ -349,7 +359,8 @@ const mapDispatchToProps = {
 	setFrameAgreementState,
 	createToast,
 	executeFrameAgreementAction,
-	validateFrameAgreement
+	validateFrameAgreement,
+	toggleFrameAgreementOperations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApprovalProcess);

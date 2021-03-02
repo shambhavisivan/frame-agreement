@@ -94,7 +94,7 @@ class FrameAgreementRow extends React.Component {
 						<Icon name="threedots_vertical" width="16" height="16" color="#0070d2" />
 					</button>
 				</div>
-				{this.state.menu && (
+				{this.state.menu && !this.props.disabled && (
 					<div
 						className="fa-dropdown fa-dropdown--secondary"
 						aria-hidden={!this.state.menu}

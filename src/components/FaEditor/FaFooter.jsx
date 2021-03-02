@@ -139,7 +139,11 @@ class FaFooter extends React.Component {
 		footer = (
 			<div className="fa-main-footer">
 				{buttonVisibillityMap.addFa && (
-					<button className="fa-button fa-button--default" onClick={this.onOpenFrameModal}>
+					<button
+						className="fa-button fa-button--default"
+						disabled={this.props.disableFrameAgreementOperations}
+						onClick={this.onOpenFrameModal}
+					>
 						<Icon name="add" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">{window.SF.labels.btn_AddFa}</span>
 					</button>
@@ -148,6 +152,7 @@ class FaFooter extends React.Component {
 				{buttonVisibillityMap.addProd && (
 					<button
 						className="fa-button fa-button--default"
+						disabled={this.props.disableFrameAgreementOperations}
 						onClick={master ? this.onOpenFrameAgreementModal : this.onOpenCommercialProductModal}
 					>
 						<Icon name="add" width="16" height="16" color="#0070d2" />
@@ -156,7 +161,11 @@ class FaFooter extends React.Component {
 				)}
 
 				{buttonVisibillityMap.addAdd && (
-					<button className="fa-button fa-button--default" onClick={this.onOpenAddonModal}>
+					<button
+						className="fa-button fa-button--default"
+						disabled={this.props.disableFrameAgreementOperations}
+						onClick={this.onOpenAddonModal}
+					>
 						<Icon name="add" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">{window.SF.labels.btn_AddAddons}</span>
 					</button>
@@ -164,8 +173,11 @@ class FaFooter extends React.Component {
 
 				{buttonVisibillityMap.bulk && (
 					<button
-						disabled={_disabled_prod}
 						className="fa-button fa-button--default"
+						disabled={
+							_disabled_prod ||
+							this.props.disableFrameAgreementOperations
+						}
 						onClick={this.onOpenNegotiationModal}
 					>
 						<Icon name="user" width="16" height="16" color="#0070d2" />
@@ -175,8 +187,11 @@ class FaFooter extends React.Component {
 
 				{buttonVisibillityMap.addBulk && (
 					<button
-						disabled={_disabled_add}
 						className="fa-button fa-button--default"
+						disabled={
+							_disabled_add ||
+							this.props.disableFrameAgreementOperations
+						}
 						onClick={this.onOpenAddonNegotiationModal}
 					>
 						<Icon name="user" width="16" height="16" color="#0070d2" />
@@ -186,8 +201,11 @@ class FaFooter extends React.Component {
 
 				{buttonVisibillityMap.deleteProd && (
 					<button
-						disabled={_disabled_prod}
 						className="fa-button fa-button--default"
+						disabled={
+							_disabled_prod ||
+							this.props.disableFrameAgreementOperations
+						}
 						onClick={this.props.onRemoveProducts}
 					>
 						<Icon name="delete" width="16" height="16" color="#0070d2" />
@@ -199,8 +217,11 @@ class FaFooter extends React.Component {
 
 				{buttonVisibillityMap.deleteAdd && (
 					<button
-						disabled={_disabled_add}
 						className="fa-button fa-button--default"
+						disabled={
+							_disabled_add ||
+							this.props.disableFrameAgreementOperations
+						}
 						onClick={this.props.onRemoveAddons}
 					>
 						<Icon name="delete" width="16" height="16" color="#0070d2" />
@@ -214,6 +235,7 @@ class FaFooter extends React.Component {
 							key={btnObj.id + i}
 							id={btnObj.id}
 							className="fa-button fa-button--default"
+							disabled={this.props.disableFrameAgreementOperations}
 							onClick={() => this.callHandler(btnObj)}
 						>
 							<Icon name="salesforce1" width="16" height="16" color="#0070d2" />
@@ -242,7 +264,8 @@ const mapStateToProps = state => {
 		frameAgreements: state.frameAgreements,
 		commercialProducts: state.commercialProducts,
 		settings: state.settings,
-		handlers: state.handlers
+		handlers: state.handlers,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 	};
 };
 

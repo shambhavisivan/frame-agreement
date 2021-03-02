@@ -160,18 +160,30 @@ class AddonsTab extends React.Component {
 						.map(add => {
 							return (
 								<StandaloneAddon
-									key={'add-' + add.Id}
+									key={"add-" + add.Id}
 									addon={add}
 									faId={this.props.faId}
-									readOnly={!_editable}
+									readOnly={
+										this.props
+											.disableFrameAgreementOperations ||
+										!_editable
+									}
 									disableInputs={_disableInputs}
 									disableLevels={_disableLevels}
-									onSelect={addon => this.props.onSelectAddon(addon)}
-									onNegotiate={data => {
+									onSelect={(addon) =>
+										this.props.onSelectAddon(addon)
+									}
+									onNegotiate={(data) => {
 										this.onNegotiate(data, add.Id);
 									}}
-									attachment={this.props.frameAgreements[this.props.faId]._ui.attachment.addons}
-									selected={!!this.props.selectedAddons[add.Id]}
+									attachment={
+										this.props.frameAgreements[
+											this.props.faId
+										]._ui.attachment.addons
+									}
+									selected={
+										!!this.props.selectedAddons[add.Id]
+									}
 								/>
 							);
 						})}
@@ -219,7 +231,8 @@ const mapStateToProps = state => {
 		currentFrameAgreement: state.currentFrameAgreement,
 		settings: state.settings,
 		handlers: state.handlers,
-		productFields: state.productFields
+		productFields: state.productFields,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 	};
 };
 

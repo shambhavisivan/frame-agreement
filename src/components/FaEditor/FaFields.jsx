@@ -78,7 +78,12 @@ export class FaFields extends React.Component {
 								{row.map(f => {
 									return (
 										<SFField
-											editable={!f.readOnly && _editable}
+											editable={
+												!f.readOnly &&
+												_editable &&
+												!this.props
+													.disableFrameAgreementOperations
+											}
 											onChange={this.onFieldChange}
 											key={f.field}
 											field={f}
@@ -100,7 +105,9 @@ export class FaFields extends React.Component {
 const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
-		ignoreSettings: state.ignoreSettings
+		ignoreSettings: state.ignoreSettings,
+		settings: state.settings,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 	};
 };
 

@@ -26,7 +26,8 @@ import {
 	saveFrameAgreement,
 	setCustomData,
 	setFrameAgreementState,
-	validateFrameAgreement
+	validateFrameAgreement,
+	toggleFrameAgreementOperations
 } from './actions';
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
@@ -197,6 +198,7 @@ export class App extends Component {
 		 */
 		window.FAM.api.activateFrameAgreement = async faId => {
 			// 1) Create a structure that is matching one element -> one pipra
+			this.props.toggleFrameAgreementOperations(true);
 			let _attachment_prod = {};
 			let _attachment_addon = {};
 
@@ -354,6 +356,7 @@ export class App extends Component {
 					window.SF.labels.toast_decomposition_success + ' (' + structure.length + ')'
 				);
 			}
+			this.props.toggleFrameAgreementOperations(false);
 		};
 
 		/**
@@ -664,7 +667,8 @@ const mapDispatchToProps = {
 	saveFrameAgreement,
 	setCustomData,
 	setFrameAgreementState,
-	validateFrameAgreement
+	validateFrameAgreement,
+	toggleFrameAgreementOperations
 };
 
 const mapStateToProps = state => {

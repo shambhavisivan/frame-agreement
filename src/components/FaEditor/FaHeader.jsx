@@ -10,7 +10,8 @@ import {
 	refreshFrameAgreement,
 	getApprovalHistory,
 	createNewVersionOfFrameAgreement,
-	toggleModals
+	toggleModals,
+	toggleFrameAgreementOperations
 } from '~/src/actions';
 
 import { publish, submitForApproval } from '~/src/api';
@@ -72,7 +73,7 @@ class FaHeader extends React.Component {
 		await publish('onBeforeSubmit');
 
 		let _result;
-
+		this.props.toggleFrameAgreementOperations(true);
 		return new Promise((resolve, reject) => {
 			submitForApproval(this.props.faId)
 				.then(async response => {
@@ -102,6 +103,8 @@ class FaHeader extends React.Component {
 						},
 						err => {}
 					);
+				}).finally(() => {
+					this.props.toggleFrameAgreementOperations(false);
 				});
 		});
 	}
@@ -184,6 +187,7 @@ class FaHeader extends React.Component {
 					className="fa-dropdown"
 					buttons={customButtons}
 					onAction={this.callHandler}
+					disabled = {this.props.disableFrameAgreementOperations}
 				/>
 			);
 		} else {
@@ -198,6 +202,7 @@ class FaHeader extends React.Component {
 									this.callHandler(btnObj);
 								}}
 								className="fa-button fa-button--transparent"
+								disabled = {this.props.disableFrameAgreementOperations}
 							>
 								{btnObj.label}
 							</button>
@@ -256,7 +261,10 @@ class FaHeader extends React.Component {
 
 						{evaluateExpressionOnAgreement(this.props.settings.ButtonStandardData.Save, _fa) ? (
 							<button
-								disabled = {this.props.isAttachmentLoading}
+								disabled={
+									this.props.isAttachmentLoading ||
+									this.props.disableFrameAgreementOperations
+								}
 								className="fa-button fa-button--transparent"
 								onClick={() => this.upsertFrameAgreements()}
 							>
@@ -272,9 +280,17 @@ class FaHeader extends React.Component {
 								<button
 									className="fa-button fa-button--transparent"
 									disabled={
-										!this.props.frameAgreements[this.props.faId]._ui.approvalNeeded ||
-										(!this.props.frameAgreements[this.props.faId]._ui.commercialProducts.length &&
-											!this.props.frameAgreements[this.props.faId]._ui.standaloneAddons.length)
+										!this.props.frameAgreements[
+											this.props.faId
+										]._ui.approvalNeeded ||
+										(!this.props.frameAgreements[
+											this.props.faId
+										]._ui.commercialProducts.length &&
+											!this.props.frameAgreements[
+												this.props.faId
+											]._ui.standaloneAddons.length) ||
+										this.props
+											.disableFrameAgreementOperations
 									}
 									onClick={this.onSubmitForApproval}
 								>
@@ -293,7 +309,11 @@ class FaHeader extends React.Component {
 						{evaluateExpressionOnAgreement(this.props.settings.ButtonStandardData.Submit, _fa) &&
 							this.props.faId &&
 							!master && (
-								<button className="fa-button fa-button--transparent" onClick={this.onDecompose}>
+								<button
+									className="fa-button fa-button--transparent"
+									disabled={this.props.disableFrameAgreementOperations}
+									onClick={this.onDecompose}
+								>
 									{window.SF.labels.btn_Submit}
 								</button>
 							)}
@@ -304,6 +324,7 @@ class FaHeader extends React.Component {
 							!master && (
 								<button
 									className="fa-button fa-button--transparent"
+									disabled={this.props.disableFrameAgreementOperations}
 									onClick={this.createNewVersion}
 								>
 									{window.SF.labels.btn_NewVersion}
@@ -329,7 +350,8 @@ const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
 		settings: state.settings,
-		handlers: state.handlers
+		handlers: state.handlers,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 		// approvalNeeded: state.approvalNeeded
 	};
 };
@@ -340,7 +362,8 @@ const mapDispatchToProps = {
 	saveFrameAgreement,
 	refreshFrameAgreement,
 	getApprovalHistory,
-	createNewVersionOfFrameAgreement
+	createNewVersionOfFrameAgreement,
+	toggleFrameAgreementOperations
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaHeader));

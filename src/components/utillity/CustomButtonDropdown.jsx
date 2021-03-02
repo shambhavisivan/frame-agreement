@@ -53,6 +53,7 @@ class CustomButtonDropdown extends React.Component {
 				<button
 					className={'fa-button fa-button--' + (this.props.brand ? 'brand' : 'transparent')}
 					onClick={this.showMenu}
+					disabled={this.props.disabled}
 				>
 					<span>{this.props.label || window.SF.labels.header_customDropdownPlaceholder}</span>
 					<Icon name={this.state.menu ? 'up' : 'down'} height="14" width="14" />

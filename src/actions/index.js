@@ -186,19 +186,22 @@ export function setFrameAgreementState(faId, newStatus) {
 		});
 	};
 }
-// ***********************************************************************
-export const _createNewVersionOfFrameAgreement = newFa => ({
+
+const _createNewVersionOfFrameAgreement = newFa => ({
 	type: 'NEW_VERSION',
 	payload: newFa
 });
 
 export function createNewVersionOfFrameAgreement(faId) {
 	return function(dispatch) {
+		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise((resolve, reject) => {
 			window.SF.invokeAction('createNewVersionOfFrameAgreement', [faId]).then(response => {
 				dispatch(_createNewVersionOfFrameAgreement(response));
 				resolve(response);
 				return response;
+			}).finally(() => {
+				dispatch(toggleFrameAgreementOperations(false));
 			});
 		});
 	};
@@ -332,8 +335,8 @@ export function getPicklistOptions(picklistFields) {
 		});
 	};
 }
-// ***********************************************************************
-export const recieveCloneFrameAgreement = result => ({
+
+const recieveCloneFrameAgreement = result => ({
 	type: 'RECIEVE_CLONE_FA',
 	payload: result
 });
@@ -341,18 +344,18 @@ export const recieveCloneFrameAgreement = result => ({
 export function cloneFrameAgreement(faId) {
 	return function(dispatch) {
 		// dispatch(requestAppSettings());
-
+		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise((resolve, reject) => {
 			window.SF.invokeAction('cloneFrameAgreement', [faId]).then(response => {
 				dispatch(recieveCloneFrameAgreement(response));
 				resolve(response);
 				return response;
+			}).finally(() => {
+				dispatch(toggleFrameAgreementOperations(false));
 			});
 		});
 	};
 }
-
-// ***********************************************************************
 
 const _deleteFrameAgreement = faId => ({
 	type: 'DELETE_FA',
@@ -362,7 +365,7 @@ const _deleteFrameAgreement = faId => ({
 export function deleteFrameAgreement(faId) {
 	return function(dispatch) {
 		// dispatch(requestPriceItemData());
-
+		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise((resolve, reject) => {
 			window.SF.invokeAction('deleteFrameAgreement', [faId]).then(response => {
 				if (response === 'Success') {
@@ -372,6 +375,8 @@ export function deleteFrameAgreement(faId) {
 				}
 				resolve(response);
 				return response;
+			}).finally(() => {
+				dispatch(toggleFrameAgreementOperations(false));
 			});
 		});
 	};
@@ -661,6 +666,7 @@ const _saveFrameAgreement = upsertedFa => ({
 
 export function saveFrameAgreement(frameAgreement) {
 	return function(dispatch) {
+		dispatch(toggleFrameAgreementOperations(true));
 		if (frameAgreement === undefined) {
 			console.error('No Frame agreement!');
 		}
@@ -709,7 +715,9 @@ export function saveFrameAgreement(frameAgreement) {
 				return response;
 			},
 			error => {}
-		);
+		).finally(() => {
+			dispatch(toggleFrameAgreementOperations(false));
+		});
 	};
 }
 // ***********************************************************************
@@ -811,6 +819,20 @@ export function getCommercialProducts() {
 		});
 	};
 }
+
+export function toggleFrameAgreementOperations(disableFlag) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_toggleFrameAgreementOperations(disableFlag));
+			resolve();
+		});
+	};
+}
+
+const _toggleFrameAgreementOperations = disableFlag => ({
+	type: 'TOGGLE_FRAME_AGREEMENT_OPERATIONS',
+	payload: disableFlag
+})
 
 // ***********************************************************************
 

@@ -16,7 +16,8 @@ import {
 	removeFaFromMaster,
 	negotiate,
 	getRelatedLists,
-	getCommercialProductData
+	getCommercialProductData,
+	executeFrameAgreementAction
 } from '../actions';
 
 import { publish } from '../api';
@@ -52,6 +53,8 @@ import AddAgreementsCTA from './FaEditor/AddAgreementsCTA';
 
 // Skeletons
 import CommercialProductSkeleton from './skeletons/CommercialProductSkeleton';
+
+import * as frameAgreementActions from '../actions/frameAgreementActions';
 
 window.editor = {};
 
@@ -148,6 +151,15 @@ class FaMaster extends Component {
 				resolve(data);
 			});
 		});
+		// Enable save on FA events
+		SUBSCRIPTIONS['sub5'] = window.FAM.subscribe('onFaUpdate', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
+				});
+				resolve(data);
+			});
+		});
 	}
 
 	componentWillUnmount() {
@@ -156,9 +168,14 @@ class FaMaster extends Component {
 		for (var key in SUBSCRIPTIONS) {
 			SUBSCRIPTIONS[key].unsubscribe();
 		}
+		this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLEAR_ATTACHMENT);
+		if (this.state.actionTaken && window.FAM.api.isAgreementEditable(this.faId)) {
+			this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.RESET);
+		}
 	}
 
 	componentDidMount() {
+		this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLONE);
 		let _promiseArray = [];
 
 		if (!this.props.frameAgreements[this.faId]._ui.hasOwnProperty('relatedList')) {
@@ -516,7 +533,8 @@ const mapDispatchToProps = {
 	removeFaFromMaster,
 	negotiate,
 	getRelatedLists,
-	getCommercialProductData
+	getCommercialProductData,
+	executeFrameAgreementAction
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaMaster));

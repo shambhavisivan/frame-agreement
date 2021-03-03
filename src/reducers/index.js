@@ -1512,6 +1512,13 @@ const rootReducer = (state = initialState, action) => {
 
 				let _newVisible = parseExpression(cb.visible);
 
+				if (
+					_legacyVisible.components.length > 0 &&
+					_newVisible?.components?.length > 0
+				) {
+					_legacyVisible.operators.push("&&");
+				}
+
 				cb.expressions = {
 					operators: [..._legacyVisible.operators, ..._newVisible.operators],
 					components: [..._legacyVisible.components, ..._newVisible.components]

@@ -210,7 +210,7 @@ export const parseExpression = (expString = '') => {
 	expString = expString.replace(/( |\(|\))/g, '');
 
 	try {
-		let operatorsString = expString.replace(/\w+(!=|==)(\w|')+/g, ',');
+		let operatorsString = expString.replace(/[\w.]+[!=]=[\w']+/g, ',');
 
 		if (operatorsString.startsWith(',')) {
 			operatorsString = operatorsString.substring(1);

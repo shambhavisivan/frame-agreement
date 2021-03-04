@@ -50,6 +50,13 @@ export class FaTabs extends React.Component {
 						<React.Fragment>{this.props.defaultTabs.addon}</React.Fragment>
 					)}
 				</Tab>
+				<Tab label={window.SF.labels.offers_tab_title}>
+					{this.props.loading ? (
+						<CommercialProductSkeleton count={5} />
+					) : (
+						<React.Fragment>{this.props.defaultTabs.offers}</React.Fragment>
+					)}
+				</Tab>
 
 				{_tabs.map(tab => {
 					return (

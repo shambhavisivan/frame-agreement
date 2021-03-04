@@ -10,7 +10,8 @@ const _defaultModals = {
 	frameModal: false,
 	deltaModal: false,
 	negotiateStandaloneModal: false,
-	negotiateModal: false
+	negotiateModal: false,
+	offersModal: false,
 };
 
 // ***********************************************************************
@@ -428,7 +429,30 @@ export const getCommercialProductData = priceItemIdList => {
 	};
 };
 
-// ***********************************************************************
+export const receiveOfferData = result => ({
+	type: 'RECIEVE_OFFER_DATA',
+	payload: result
+});
+
+export const getOfferData = offerIdList => {
+	return async function(dispatch) {
+		const offerChunks = offerIdList.chunk(window.SF.product_chunk_size || 100);
+
+		const promiseArray = offerChunks.map(cpChunk => {
+			return window.SF.invokeAction('getOfferData', [cpChunk]);
+		});
+
+		try {
+			const results = await Promise.all(promiseArray);
+
+			const merged_result = results.reduce((acc, val) => {
+				return { ...acc, ...val };
+			}, {});
+
+			dispatch(receiveOfferData(merged_result))
+		} catch(e) {}
+	}
+}
 
 export const _addFaToMaster = (faId, agreements) => ({
 	type: 'ADD_FA',
@@ -491,7 +515,6 @@ export function addProductsToFa(faId, products) {
 		});
 	};
 }
-// ***********************************************************************
 
 export const _addAddonsToFa = (faId, addons) => ({
 	type: 'ADD_ADDONS',
@@ -535,7 +558,8 @@ export function removeProductsFromFa(faId, products) {
 		});
 	};
 }
-// ***********************************************************************
+
+
 
 export const _removeAddonsFromFa = (faId, addons) => ({
 	type: 'REMOVE_ADDONS',
@@ -780,5 +804,46 @@ export function getCommercialProducts() {
 		]);
 		dispatch(recieveCommercialProducts(response));
 		return response;
+	};
+}
+
+const recieveOffers = result => ({
+	type: "RECEIVE_OFFERS",
+	payload: result,
+});
+
+export function getOffers() {
+	return function (dispatch) {
+		return window.SF.invokeAction("getOffers", [null]).then((response) => {
+			dispatch(recieveOffers(response));
+		});
+	};
+}
+
+const _addOffersToFa = (faId, offers) => ({
+	type: 'ADD_OFFERS',
+	payload: { faId, offers }
+});
+
+export function addOffersToFa(faId, offers) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_addOffersToFa(faId, offers));
+			resolve(offers);
+		});
+	};
+}
+
+const _removeOffersFromFa = (faId, offers) => ({
+	type: 'REMOVE_OFFERS',
+	payload: { faId, offers }
+});
+
+export function removeOffersFromFa(faId, offers) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_removeOffersFromFa(faId, offers));
+			resolve(offers);
+		});
 	};
 }

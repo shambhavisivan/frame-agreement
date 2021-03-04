@@ -18,6 +18,7 @@ const initialState = {
 	initialised: {
 		fa_loaded: false,
 		cp_loaded: false,
+		of_loaded: false,
 		settings_loaded: false
 	},
 	settings: {
@@ -29,12 +30,14 @@ const initialState = {
 	frameAgreements: {},
 	commercialProducts: null,
 	standaloneAddons: null,
+	offers: [],
 	productFields: [],
 	faFields: [],
 	activeFa: null,
 	validation: {},
 	validationAddons: {},
 	validationProduct: {},
+	validationOffers: {},
 	// approvalNeeded: false, // true -> needs validation
 	handlers: {},
 	modals: {
@@ -44,7 +47,8 @@ const initialState = {
 		addonModal: false,
 		frameModal: false,
 		negotiateModal: false,
-		negotiateStandaloneModal: false
+		negotiateStandaloneModal: false,
+		offersModal: false
 	},
 	toasts: []
 	// activeId: null
@@ -269,6 +273,7 @@ function getProductValidation(validation) {
 function getNewAttachment(headerData, fa) {
 	return {
 		commercialProducts: [],
+		offers: [],
 		standaloneAddons: [],
 		approvalNeeded: false,
 		headerRows: organizeHeaderFields(headerData, fa),
@@ -406,6 +411,7 @@ const rootReducer = (state = initialState, action) => {
 				var _fa = state.frameAgreements[faId];
 				var _products = _fa._ui.attachment.products;
 				var _addons = _fa._ui.attachment.addons;
+				var _offers = _fa._ui.attachment.offers;
 				var bulkValidation = {};
 				var validationAddons = validateAddons(_fa._ui.standaloneAddons, _addons);
 
@@ -428,6 +434,30 @@ const rootReducer = (state = initialState, action) => {
 							negotiatedRecurring: _products[cp.Id]._product.recurring,
 							authLevel: cp.cspmb__Authorization_Level__c || null,
 							Name: cp.Name
+						});
+					}
+				});
+
+
+				_fa._ui.offers.forEach(offer => {
+					bulkValidation[offer.Id] = {
+						addons: validateAddons(offer._addons, _offers[offer.Id]._addons || {}),
+						rated: validateRateCardLines(offer._rateCards, _offers[offer.Id]._rateCards || {}),
+						charges: validateCharges(
+							offer._charges,
+							offer.cspmb__Authorization_Level__c,
+							_offers[offer.Id]._charges || {}
+						)
+					};
+
+					if (_offers[offer.Id]._product) {
+						bulkValidation[offer.Id].product = validateProduct({
+							oneOff: offer.cspmb__One_Off_Charge__c,
+							negotiatedOneOff: _offers[offer.Id]._product.oneOff,
+							recurring: offer.cspmb__Recurring_Charge__c,
+							negotiatedRecurring: _offers[offer.Id]._product.recurring,
+							authLevel: offer.cspmb__Authorization_Level__c || null,
+							Name: offer.Name
 						});
 					}
 				});
@@ -1368,7 +1398,9 @@ const rootReducer = (state = initialState, action) => {
 				'AddAddons',
 				'DeleteAddons',
 				'AddFrameAgreement',
-				'NewVersion'
+				'NewVersion',
+				'AddOffers',
+				'DeleteOffers'
 			];
 
 			const fullStatusSet = new Set(Object.values(action.payload.FACSettings.statuses));
@@ -1718,7 +1750,6 @@ const rootReducer = (state = initialState, action) => {
 				...{ commercialProducts: state.commercialProducts }
 			};
 
-		// **********************************************
 		case 'ADD_PRODUCTS':
 			var faId = action.payload.faId;
 			var productIds = new Set(action.payload.products);
@@ -1757,7 +1788,6 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
-		// **********************************************
 		case 'ADD_ADDONS':
 			var faId = action.payload.faId;
 			var addonIds = new Set(action.payload.addons);
@@ -1984,7 +2014,7 @@ const rootReducer = (state = initialState, action) => {
 					}
 				}
 			};
-		// **********************************************
+
 		case 'REMOVE_ADDONS':
 			var faId = action.payload.faId;
 			var addonIds = action.payload.addons;
@@ -2027,6 +2057,7 @@ const rootReducer = (state = initialState, action) => {
 
 			var _commercialProducts = state.commercialProducts.filter(cp => attachment.products[cp.Id]);
 			var _standaloneAddons = state.standaloneAddons.filter(add => attachment.addons[add.Id]);
+			var _offers = state.offers.filter(offer => attachment.offers[offer.Id])
 
 			return {
 				...state,
@@ -2038,7 +2069,8 @@ const rootReducer = (state = initialState, action) => {
 							...state.frameAgreements[faId]._ui,
 							attachment,
 							commercialProducts: _commercialProducts,
-							standaloneAddons: _standaloneAddons
+							standaloneAddons: _standaloneAddons,
+							offers: _offers
 						}
 					}
 				}
@@ -2057,6 +2089,261 @@ const rootReducer = (state = initialState, action) => {
 						_ui: { ...state.frameAgreements[faId]._ui, approval: data }
 					}
 				}
+			};
+
+		case 'ADD_OFFERS':
+			var faId = action.payload.faId;
+			var offerIds = new Set(action.payload.offers);
+
+			var _attachment = { ...state.frameAgreements[faId]._ui.attachment } || {
+				custom: '',
+				offers: {}
+			};
+
+			var newOffers = [];
+
+			state.offers.forEach(offer => {
+				if (offerIds.has(offer.Id)) {
+					if (!_attachment.offers.hasOwnProperty(offer.Id)) {
+						_attachment.offers[offer.Id] = enrichAttachment(offer);
+					}
+					newOffers.push(offer);
+				}
+			});
+
+			newOffers = new Set([...state.frameAgreements[faId]._ui.offers, ...newOffers]);
+			newOffers = Array.from(newOffers);
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: _attachment,
+							offers: newOffers
+						}
+					}
+				}
+			};
+
+		case 'REMOVE_OFFERS':
+			var faId = action.payload.faId;
+			var offerIds = action.payload.offers;
+
+			var _offersAttachment = state.frameAgreements[faId]._ui.attachment.offers;
+
+			var _offers = state.frameAgreements[faId]._ui.offers;
+			_offers = _offers.filter(offer => !offerIds.includes(offer.Id));
+
+			offerIds.forEach(cpId => {
+				delete _offersAttachment[cpId];
+			});
+
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+			var _attachment = { ..._attachment, offers: _offersAttachment };
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							offers: _offers,
+							attachment: _attachment
+						}
+					}
+				}
+			};
+
+		case 'RECEIVE_OFFERS':
+			var offers = action.payload;
+
+			// validate
+			offers.forEach(offer => {
+				if (!offer.hasOwnProperty('cspmb__Is_One_Off_Discount_Allowed__c')) {
+					offer.cspmb__Is_One_Off_Discount_Allowed__c = false;
+				}
+
+				if (!offer.hasOwnProperty('cspmb__Is_Recurring_Discount_Allowed__c')) {
+					offer.cspmb__Is_Recurring_Discount_Allowed__c = false;
+				}
+			});
+
+			return {
+				...state,
+				...{ offers },
+				...{ initialised: { ...state.initialised, ...{ of_loaded: true } } }
+			};
+
+		case 'RECIEVE_OFFER_DATA':
+			const offerVsDiscount = {};
+
+			var _DiscLevels = [
+				...(state.settings.DiscLevels || []),
+				...formatDiscLevels(action.payload.discLevels)
+			];
+
+			// Remove duplicates
+			_DiscLevels = [...new Set(_DiscLevels.map(dc => JSON.stringify(dc)))].map(dc =>
+				JSON.parse(dc)
+			);
+
+			var _AuthLevels = {
+				...state.settings.AuthLevels,
+				...formatDiscThresh(action.payload.discThresh)
+			};
+
+			_DiscLevels.forEach(lv => {
+				if (lv.priceItemId) {
+					offerVsDiscount[lv.priceItemId] = offerVsDiscount[lv.priceItemId] || [];
+					offerVsDiscount[lv.priceItemId].push(lv);
+				}
+			});
+
+			var offerData = action.payload.cpData;
+			for (var key in offerData) {
+				var offerIndex = state.offers.findIndex(pi => {
+					return pi.Id === key;
+				});
+
+				if (offerIndex === -1) {
+					console.error(
+						'Cannot find offer ' +
+							key +
+							' in:' +
+							state.offers.map(cp => cp.Id).slice(0, 20) +
+							'...'
+					);
+					continue;
+				}
+
+				if (offerVsDiscount[key]) {
+					state.offers[offerIndex]._discountLvIds = offerVsDiscount[key];
+				}
+
+				const offerAddonVsDiscount = {};
+
+				_DiscLevels.forEach(lv => {
+					if (lv.addonId) {
+						offerAddonVsDiscount[lv.addonId] = offerAddonVsDiscount[lv.addonId] || [];
+						offerAddonVsDiscount[lv.addonId].push(lv);
+					}
+				});
+
+				function formatAddons(addon) {
+					let _addon = { ...addon };
+
+					_addon.cspmb__One_Off_Charge__c = _addon.hasOwnProperty('cspmb__One_Off_Charge__c')
+						? addon.cspmb__One_Off_Charge__c
+						: null;
+					_addon.cspmb__Recurring_Charge__c = _addon.hasOwnProperty('cspmb__Recurring_Charge__c')
+						? addon.cspmb__Recurring_Charge__c
+						: null;
+
+					_addon.cspmb__Authorization_Level__c =
+						_addon.cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c;
+					_addon.Name = _addon.cspmb__Add_On_Price_Item__r.Name;
+
+					if (offerAddonVsDiscount[addon.cspmb__Add_On_Price_Item__c]) {
+						_addon._discountLvIds = offerAddonVsDiscount[addon.cspmb__Add_On_Price_Item__c];
+					}
+
+					// Keep allow fileds
+					_addon.cspmb__Is_One_Off_Discount_Allowed__c = _addon.cspmb__Add_On_Price_Item__r.cspmb__Is_One_Off_Discount_Allowed__c;
+					_addon.cspmb__Is_Recurring_Discount_Allowed__c = _addon.cspmb__Add_On_Price_Item__r.cspmb__Is_Recurring_Discount_Allowed__c;
+
+					delete _addon.cspmb__Add_On_Price_Item__r;
+					delete _addon.cspmb__Price_Item__r;
+
+					return _addon;
+				}
+
+				state.offers[offerIndex]._addons = offerData[key].addons.map(addon =>
+					formatAddons(addon)
+				);
+
+				state.offers[offerIndex]._charges = offerData[key].charges.map(
+					charge => {
+						let retCharge = { ...charge };
+						if (
+							charge.chargeType
+								.toLowerCase()
+								.replace(/\s+/g, '')
+								.replace(/\W/g, '') === 'oneoffcharge'
+						) {
+							delete retCharge.recurring;
+							retCharge._type = 'oneOff';
+						} else if (
+							charge.chargeType
+								.toLowerCase()
+								.replace(/\s+/g, '')
+								.replace(/\W/g, '') === 'recurringcharge'
+						) {
+							delete retCharge.oneOff;
+							retCharge._type = 'recurring';
+						} else {
+							retCharge = null;
+						}
+						return retCharge;
+					}
+				);
+
+				state.offers[offerIndex]._charges = state.offers[
+					offerIndex
+				]._charges.filter(charge => {
+					return charge != null;
+				});
+
+				state.offers[offerIndex]._rateCards = offerData[key].rateCards.map(
+					rc => {
+						rc.rateCardLines.forEach(rcl => {
+							rcl.usageTypeName = rcl.hasOwnProperty('cspmb__usage_type__r')
+								? rcl.cspmb__usage_type__r.Name
+								: null;
+						});
+						return rc;
+					}
+				);
+
+				offerData[key].allowances = offerData[key].allowances || [];
+
+				offerData[key].allowances.forEach(all => {
+					if (all.hasOwnProperty('cspmb__usage_type__r')) {
+						all.mainUsageType = JSON.parse(JSON.stringify(all.cspmb__usage_type__r));
+						delete all.cspmb__usage_type__r;
+						delete all.mainUsageType.attributes;
+
+						// Associate child UT
+						if (
+							action.payload.childUsageTypes &&
+							action.payload.childUsageTypes.hasOwnProperty(all.mainUsageType.Id)
+						) {
+							all.mainUsageType.childUsageTypes =
+								action.payload.childUsageTypes[all.mainUsageType.Id];
+						} else {
+							all.mainUsageType.childUsageTypes = [];
+						}
+					}
+				});
+
+				state.offers[offerIndex]._allowances = offerData[key].allowances || [];
+
+				state.offers[offerIndex]._dataLoaded = true;
+			}
+
+			return {
+				...state,
+				settings: {
+					...state.settings,
+					DiscLevels: _DiscLevels,
+					AuthLevels: _AuthLevels
+				},
+				...{ offers: state.offers }
 			};
 
 		default:

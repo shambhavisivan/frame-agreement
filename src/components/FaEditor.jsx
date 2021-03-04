@@ -17,7 +17,8 @@ import {
 	setDisableDiscount,
 	getRelatedLists,
 	replaceCpEntities,
-	getCommercialProductData
+	getCommercialProductData,
+	removeOffersFromFa,
 } from '../actions';
 
 import { publish, findReplacementCommercialProduct } from '../api';
@@ -50,6 +51,7 @@ import FaFooter from './FaEditor/FaFooter';
 import FaTabs from './FaEditor/FaTabs';
 import FaHeader from './FaEditor/FaHeader';
 import FaModals from './FaEditor/FaModals';
+import OffersTab from './FaEditor/OffersTab';
 
 window.editor = {};
 
@@ -69,6 +71,9 @@ export class FaEditor extends Component {
 		this.toggleVisibility = this.toggleVisibility.bind(this);
 		this.onActionTaken = this.onActionTaken.bind(this);
 		this._setState = this._setState.bind(this);
+		this.onSelectOffer = this.onSelectOffer.bind(this);
+		this.onSelectAllOffers = this.onSelectAllOffers.bind(this);
+		this.onRemoveOffers = this.onRemoveOffers.bind(this);
 
 		// ****************************************** API ******************************************
 		window.FAM.api.getActiveFrameAgreement = () =>
@@ -96,6 +101,7 @@ export class FaEditor extends Component {
 			activeTabIndex: 0,
 			selectedProducts: {},
 			selectedAddons: {},
+			selectedOffers: {},
 			loading: {
 				attachment: true
 			},
@@ -355,7 +361,7 @@ export class FaEditor extends Component {
 			);
 
 			await this.props.removeProductsFromFa(this.faId, productsToDelete);
-			
+
 			this.props.validateFrameAgreement(this.faId);
 			window.FAM.api.validateStatusConsistency(this.faId);
 
@@ -463,8 +469,6 @@ export class FaEditor extends Component {
 		this.props.toggleFieldVisibility(index);
 	}
 
-	/**************************************************/
-
 	async upsertFrameAgreements() {
 		var data = { ...this.props.frameAgreements[this.faId] };
 		data = await publish('onBeforeSaveFrameAgreement', data);
@@ -492,6 +496,80 @@ export class FaEditor extends Component {
 			});
 	}
 
+	onSelectAllOffers(allOffers) {
+		let selectedOffers = { ...this.state.selectedOffers };
+
+		if (allOffers.length === Object.keys(this.state.selectedOffers).length) {
+			selectedOffers = {};
+		} else {
+			allOffers.forEach(cp => {
+				selectedOffers[cp.Id] = cp;
+			});
+		}
+
+		this._setState({
+			selectedOffers
+		});
+	}
+
+	onSelectOffer(offer) {
+		let selectedOffers = { ...this.state.selectedOffers };
+
+		if (selectedOffers[offer.Id]) {
+			delete selectedOffers[offer.Id];
+		} else {
+			selectedOffers[offer.Id] = offer;
+		}
+		this._setState({
+			selectedOffers
+		});
+	}
+
+	async _removeOffers() {
+		return new Promise(async resolve => {
+			const offersToDelete = await publish(
+				'onBeforeDeleteOffers',
+				Object.keys(this.state.selectedOffers)
+			);
+
+			await this.props.removeOffersFromFa(this.faId, offersToDelete);
+
+			this.props.validateFrameAgreement(this.faId);
+			window.FAM.api.validateStatusConsistency(this.faId);
+
+			this._setState(
+				{
+					selectedProducts: {}
+				},
+				() => {
+					publish(
+						'onAfterDeleteOffers',
+						this.props.frameAgreements[this.faId]._ui.offers.map(cp => cp.Id)
+					);
+					resolve(this.props.frameAgreements[this.faId]._ui.attachment);
+				}
+			);
+		});
+	}
+
+	onRemoveOffers() {
+		confirmAlert({
+			customUI: ({ onClose }) => {
+				return (
+					<ConfirmationModal
+						title={window.SF.labels.alert_deleteOffers_title}
+						message={window.SF.labels.alert_deleteOffers_message}
+						onCancel={onClose}
+						onConfirm={() => {
+							this._removeOffers();
+						}}
+						confirmText={window.SF.labels.alert_deleteOffers_title}
+					/>
+				);
+			}
+		});
+	}
+
 	render() {
 		let _cpDefaultTab = (
 			<CommercialProductsTab
@@ -508,6 +586,15 @@ export class FaEditor extends Component {
 				selectedAddons={this.state.selectedAddons}
 				onSelectAddon={this.onSelectAddon}
 				onSelectAllAddons={this.onSelectAllAddons}
+			/>
+		);
+
+		let _offersDefaultTab = (
+			<OffersTab
+				faId={this.faId}
+				selectedOffers={this.state.selectedOffers}
+				onSelectOffer={this.onSelectOffer}
+				onSelectAllOffers={this.onSelectOffer}
 			/>
 		);
 
@@ -542,7 +629,7 @@ export class FaEditor extends Component {
 
 						<FaTabs
 							faId={this.faId}
-							defaultTabs={{ cp: _cpDefaultTab, addon: _addDefaultTab }}
+							defaultTabs={{ cp: _cpDefaultTab, addon: _addDefaultTab, offers: _offersDefaultTab }}
 							loading={this.state.loading.attachment}
 							onMainTabChange={i => {
 								this.setState({ activeTabIndex: i });
@@ -566,8 +653,10 @@ export class FaEditor extends Component {
 						activeTab={this.state.activeTabIndex}
 						selectedProducts={this.state.selectedProducts}
 						selectedAddons={this.state.selectedAddons}
+						selectedOffers={this.state.selectedOffers}
 						onRemoveProducts={() => this.onRemoveProducts()}
 						onRemoveAddons={() => this.onRemoveAddons()}
+						onRemoveOffers={() => this.onRemoveOffers()}
 					/>
 				)}
 
@@ -575,6 +664,7 @@ export class FaEditor extends Component {
 					faId={this.faId}
 					selectedProducts={this.state.selectedProducts}
 					selectedAddons={this.state.selectedAddons}
+					selectedOffers={this.state.selectedOffers}
 				/>
 			</div>
 		);
@@ -603,7 +693,8 @@ const mapDispatchToProps = {
 	setDisableDiscount,
 	getRelatedLists,
 	replaceCpEntities,
-	getCommercialProductData
+	getCommercialProductData,
+	removeOffersFromFa,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaEditor));

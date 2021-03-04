@@ -33,3 +33,18 @@ export const queryProductsInCategory = async (categoryId) => {
 		resolve(productsInCategory[categoryId]);
 	});
 };
+
+const offersInCategory = {
+	categoryid1: [
+		{ id: "ofid-1", name: "Samsung A7" },
+		{ id: "ofid-2", name: "Samsung A12" },
+	],
+	categoryid2: [
+		{ id: "ofid-1", name: "Apple Macbook Pro" },
+		{ id: "ofid-2", name: "Apple Airbook" },
+	],
+};
+
+export const queryOffersInCategory = async categoryId => {
+	return Promise.resolve(offersInCategory[categoryId]);
+}

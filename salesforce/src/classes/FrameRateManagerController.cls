@@ -585,7 +585,7 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	@TestVisible public static Map < Id, List <PricingElementWrapper>> getPriceItemCharges(List<Id> priceItemIdList) {
+	@TestVisible public static Map < Id, List <PricingElementWrapper>> getCommercialProductCharges(List<Id> priceItemIdList) {
 
 		Map <Id, List <PricingElementWrapper>> cpId_peWrapper = new Map <Id, List <PricingElementWrapper>>();
 		// Get all pricing elements and their types labels for commercial product
@@ -969,8 +969,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	private static List<cspmb__Price_Item__c> getCommercialProducts_p(List<Id> priceItemIds) {
-
-		List<String> standardFields = new List<String>{
+		List<String> standardFields = new List<String> {
 			'Id',
 			'Name',
 			'cspmb__Effective_Start_Date__c',
@@ -1369,8 +1368,7 @@ global with sharing class FrameRateManagerController {
 
 	}
 
-	@RemoteAction
-	public static Map<String, Object> getCommercialProductData(List<String> priceItemIdList) {
+	private static Map<String, Object> getCommercialProductsData(List<String> priceItemIdList) {
 		Map<Id, cpData> cpDataMap = new Map<Id, cpData>();
 
 		Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> addons = getAddons(priceItemIdList);
@@ -1385,7 +1383,7 @@ global with sharing class FrameRateManagerController {
 
 		List<cspmb__Discount_Threshold__c> discountThresholds = getDiscountThresholds(addonIdList, priceItemIdList, rcIdList);
 
-		Map <Id, List <PricingElementWrapper>> charges = getPriceItemCharges(priceItemIdList);
+		Map <Id, List <PricingElementWrapper>> charges = getCommercialProductCharges(priceItemIdList);
 
 		AllowancesWrapper allowanceUtStructure = getAllowances(priceItemIdList);
 		Map<Id, List<cspmb__Allowance__c>> allowances = allowanceUtStructure.allowanceMap;
@@ -2524,6 +2522,21 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static DispatcherServiceController.DispatcherServiceToken getDispatcherAuthToken(String userAgent) {
 		return DispatcherServiceController.getAuthorisationToken(userAgent);
+	}
+
+	@RemoteAction
+	public static Map<String, Object> getCommercialProductData(List<String> commercialProductIdList) {
+		return FrameRateManagerController.getCommercialProductsData(commercialProductIdList);
+	}
+
+	@RemoteAction
+	public static Map<String, Object> getOfferData(List<String> offerIdList) {
+		return FrameRateManagerController.getCommercialProductsData(offerIdList);
+	}
+
+	@RemoteAction
+	public static List<cspmb__Price_Item__c> getOffers(List<String> offerIdList) {
+		return FrameRateManagerController.getCommercialProducts_p(offerIdList);
 	}
 
 

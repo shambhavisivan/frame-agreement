@@ -139,7 +139,9 @@
 				removeFaFromMaster: "{!$RemoteAction.FrameRateManagerController.removeFaFromMaster}",
 				getLookupRecords: "{!$RemoteAction.FrameRateManagerController.getLookupRecords}",
 				getDispatcherAuthToken: "{!$RemoteAction.FrameRateManagerController.getDispatcherAuthToken}",
-				getDefaultCatalogueId: "{!$RemoteAction.FrameRateManagerController.getDefaultCatalogueId}"
+				getDefaultCatalogueId: "{!$RemoteAction.FrameRateManagerController.getDefaultCatalogueId}",
+				getOffers: "{!$RemoteAction.FrameRateManagerController.getOffers}",
+				getOfferData: "{!$RemoteAction.FrameRateManagerController.getOfferData}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

@@ -329,7 +329,7 @@ private class FrameRateManagerControllerTest {
 
 	}
 
-	public static testMethod void testGetPriceItemCharges() {
+	public static testMethod void testgetCommercialProductCharges() {
 		setupPricingModel();
 
 		Map<Id, cspmb__Price_Item__c> cp_1 = new Map<Id, cspmb__Price_Item__c>([select Id,Name from cspmb__Price_Item__c where Name = 'cp_1']);
@@ -337,9 +337,9 @@ private class FrameRateManagerControllerTest {
 
 
 		Test.startTest();
-		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMap = FrameRateManagerController.getPriceItemCharges(cpIdList);
+		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMap = FrameRateManagerController.getCommercialProductCharges(cpIdList);
 		// Invalid Id
-		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMapEmpty = FrameRateManagerController.getPriceItemCharges(new List <Id>{
+		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMapEmpty = FrameRateManagerController.getCommercialProductCharges(new List <Id>{
 			'01p1t00000M4Gqp'
 		});
 

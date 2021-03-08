@@ -19,7 +19,7 @@ export const queryCpIdsInCatalogue = async () => {
 			throw new Error(response.error);
 		} else {
 			return response.data.productsInCatalogue.data.map((cp) => {
-				if (cp.role && cp.role === ROLE_CP_PRE) {
+				if (cp.role && cp.role === ROLE_CP) {
 					return cp.id;
 				}
 			});

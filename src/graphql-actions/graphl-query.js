@@ -3,7 +3,8 @@ export const PRODUCTS_IN_CATALOGUE = `query Products($catalogueId: ID!) {
 		data {
 			id
 			name
-			role
+			role(version: "2-0-0")
+			type
 		}
 		hasMore
 		nextPage {
@@ -33,7 +34,8 @@ query Products($categoryId: ID!) {
 		data {
 			id
 			name
-			role
+			role(version: "2-0-0")
+			type
 			sequence
 			primary
 		}

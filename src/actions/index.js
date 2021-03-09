@@ -1,4 +1,4 @@
-import { queryCpIdsInCatalogue } from '../graphql-actions';
+import { queryCpIdsInCatalogue } from '../graphql-actions/api-actions-graphql';
 import { decodeEntities, getFieldLabel } from '../utils/shared-service';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE

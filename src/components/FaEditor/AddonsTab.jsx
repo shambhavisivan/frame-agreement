@@ -144,6 +144,9 @@ class AddonsTab extends React.Component {
 								/>
 							</div>
 							<div className="container__fields">
+								<span className="list-cell">
+									{getFieldLabel('cspmb__Add_On_Price_Item__c', 'name')}
+								</span>
 								{_addonFields.map(f => {
 									return (
 										<span key={'header-' + f} className="list-cell">

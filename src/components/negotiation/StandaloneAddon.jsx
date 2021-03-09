@@ -174,10 +174,13 @@ export class StandaloneAddon extends React.Component {
 						/>
 					</div>
 					<div className="container__fields">
+						<div className="fields__item fields__item--title" onClick={this.onExpandProduct}>
+							{this.props.addon.Name}
+						</div>
 						{this.props.settings.FACSettings.standalone_addon_fields.map((f, i) => {
 							return (
 								<div
-									className={'fields__item ' + (!i ? 'fields__item--title' : '')}
+									className={'fields__item'}
 									key={'fadd' + 'id' + i}
 									onClick={this.onExpandProduct}
 								>

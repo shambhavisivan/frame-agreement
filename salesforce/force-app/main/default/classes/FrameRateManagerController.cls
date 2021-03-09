@@ -60,7 +60,10 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public static List<String> getUniqueListElements(List<String> originalList) {
-		Set<String> inputSet = new Set<String>(originalList);
+		Set<String> inputSet = new Set<String>();
+		for (String fieldName : originalList) {
+			inputSet.add(fieldName.toLowerCase());
+		}
 		return new List<String>(inputSet);
 	}
 

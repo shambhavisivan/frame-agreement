@@ -269,10 +269,10 @@ private class FrameRateManagerControllerTest {
 		facSettings.approved_status__c = 'Approved';
 		facSettings.closed_status__c = 'Replaced';
 		facSettings.draft_status__c = 'Draft';
-		facSettings.price_item_fields__c = 'cspmb__Contract_Term__c';
+		facSettings.price_item_fields__c = 'cspmb__Contract_Term__c, cspmb__One_Off_Charge__c, cspmb__ONE_OFF_CHARGE__c';
 		facSettings.rcl_fields__c = 'cspmb__Currency_Code__c, cspmb__rate_card_line_code__c';
 		facSettings.requires_approval_status__c = 'Requires Approval';
-		facSettings.standalone_addon_fields__c = 'cspmb__Add_On_Price_Item_Code__c';
+		facSettings.standalone_addon_fields__c = 'cspmb__Add_On_Price_Item_Code__c, cspmb__One_Off_Charge__c, cspmb__ONE_OFF_CHARGE__c';
 		insert facSettings;
 	}
 

@@ -33,42 +33,66 @@ export class FaTabs extends React.Component {
 			}
 			return true;
 		});
-
+		const { hiddenTabs } = this.props.settings;
 		customTabsComponent = (
-			<Tabs initial={0} onTabChange={this.props.onMainTabChange}>
-				<Tab label={window.SF.labels.products_tab_title}>
-					{this.props.loading ? (
-						<CommercialProductSkeleton count={5} />
-					) : (
-						<React.Fragment>{this.props.defaultTabs.cp}</React.Fragment>
-					)}
-				</Tab>
-				<Tab label={window.SF.labels.addons_tab_title}>
-					{this.props.loading ? (
-						<CommercialProductSkeleton count={5} />
-					) : (
-						<React.Fragment>{this.props.defaultTabs.addon}</React.Fragment>
-					)}
-				</Tab>
+			<Tabs
+				initial={this.props.activeTabIndex}
+				onTabChange={this.props.onMainTabChange}
+			>
+				{!hiddenTabs?.product ? (
+					<Tab label={window.SF.labels.products_tab_title}>
+						{this.props.loading ? (
+							<CommercialProductSkeleton count={5} />
+						) : (
+							<React.Fragment>
+								{this.props.defaultTabs.cp}
+							</React.Fragment>
+						)}
+					</Tab>
+				) : (
+					<div></div>
+				)}
+				{!hiddenTabs?.addon ? (
+					<Tab label={window.SF.labels.addons_tab_title}>
+						{this.props.loading ? (
+							<CommercialProductSkeleton count={5} />
+						) : (
+							<React.Fragment>
+								{this.props.defaultTabs.addon}
+							</React.Fragment>
+						)}
+					</Tab>
+				) : (
+					<div></div>
+				)}
 				<Tab label={window.SF.labels.offers_tab_title}>
 					{this.props.loading ? (
 						<CommercialProductSkeleton count={5} />
 					) : (
-						<React.Fragment>{this.props.defaultTabs.offers}</React.Fragment>
+						<React.Fragment>
+							{this.props.defaultTabs.offers}
+						</React.Fragment>
 					)}
 				</Tab>
 
-				{_tabs.map(tab => {
+				{_tabs.map((tab) => {
 					return (
 						<Tab
-							key={'tab-' + tab.container_id}
+							key={"tab-" + tab.container_id}
 							label={tab.label}
 							disabled={this.props.loading}
 							onEnter={() => {
-								this.callTabHandler(tab.onEnter, tab.container_id);
+								this.callTabHandler(
+									tab.onEnter,
+									tab.container_id
+								);
 							}}
 						>
-							<div key={tab.container_id} className="card products-card" id={tab.container_id} />
+							<div
+								key={tab.container_id}
+								className="card products-card"
+								id={tab.container_id}
+							/>
 						</Tab>
 					);
 				})}

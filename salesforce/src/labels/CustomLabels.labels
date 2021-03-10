@@ -1484,4 +1484,11 @@
         <shortDescription>Standalone Addons</shortDescription>
         <value>Standalone Addons</value>
     </labels>
+    <labels>
+        <fullName>msg_no_catalogue_id</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>msg_no_catalogue_id</shortDescription>
+        <value>Configure a default catalogue ID to proceed</value>
+    </labels>
 </CustomLabels>

@@ -24,8 +24,10 @@ global with sharing class FrameRateManagerController {
 		'csconta__frame_agreement_number__c',
 		'csconta__agreement_level__c'
 	};
-	private static String MALFORMED_JSON_EXCEPTION = 'JSON value is malformed';
-	public static String NO_CATALOGUE_ID_MSG = 'Configure a default catalogue ID to proceed';
+	public static final String NO_CATALOGUE_ID_MSG = System.Label.msg_no_catalogue_id;
+	public static final List<String> TAB_NAME_CONFIG_LIST = new List<String> {
+		 'product', 'addon'
+	};
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -907,6 +909,7 @@ global with sharing class FrameRateManagerController {
 		appSettings.put('AddonCategorizationData', addonCategorizationData);
 		appSettings.put('CategorizationData', categorizationData);
 		appSettings.put('FACSettings', getCustomSettings());
+		appSettings.put('hiddenTabs', getHiddenTabConfig());
 
 		return appSettings;
 	}
@@ -2537,6 +2540,27 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static List<cspmb__Price_Item__c> getOffers(List<String> offerIdList) {
 		return FrameRateManagerController.getCommercialProducts_p(offerIdList);
+	}
+
+	@TestVisible
+	private static Map<String, Boolean> getHiddenTabConfig() {
+		csutil__JSON_Data__c tabVisibilityData = (
+			FrameRateManagerController.getJsonData('FA-hiddentabs')
+		);
+
+		String hiddenTabs  = tabVisibilityData?.csutil__value__c;
+		Map<String, Boolean> hiddenTabMap = new Map<String, Boolean>();
+		if (String.isNotBlank(hiddenTabs)) {
+			List<String> hiddenTabList = (List<String>) Json.deserialize(hiddenTabs, List<String>.class);
+
+			for (String tabName : hiddenTabList) {
+				if(TAB_NAME_CONFIG_LIST.contains(tabName)) {
+					hiddenTabMap.put(tabName, true);
+				}
+			}
+		}
+
+		return hiddenTabMap;
 	}
 
 

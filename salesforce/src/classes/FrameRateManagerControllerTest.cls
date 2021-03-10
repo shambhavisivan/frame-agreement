@@ -1232,4 +1232,27 @@ private class FrameRateManagerControllerTest {
 
 		System.assertEquals(response.token, 'TOKEN');
 	}
+
+	@IsTest
+	public static void testGetHiddenTabConfig() {
+		insert new csutil__JSON_Data__c(
+			Name = 'FA-hiddentabs', csutil__value__c = '["product"]'
+		);
+
+		Test.startTest();
+		Map<String, Boolean> responseMap = FrameRateManagerController.getHiddenTabConfig();
+		Test.stopTest();
+
+		System.assertEquals(responseMap.size(), 1);
+		System.assertEquals(responseMap.get('product'), true);
+	}
+
+	@IsTest
+	public static void testNullOnGetHiddenTabConfig() {
+		Test.startTest();
+		Map<String, Boolean> responseMap = FrameRateManagerController.getHiddenTabConfig();
+		Test.stopTest();
+
+		System.assertEquals(responseMap.size(), 0);
+	}
 }

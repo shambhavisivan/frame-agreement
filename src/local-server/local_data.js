@@ -3900,7 +3900,10 @@ window.SF = SF = {
 					},
 					// DiscLevels: DiscLevels,
 					// AuthLevels: AuthLevels,
-					FACSettings: FACSettings
+					FACSettings: FACSettings,
+					hiddenTabs: {
+						product: true,
+					}
 				};
 				return createPromise(data, 500);
 
@@ -4406,7 +4409,7 @@ window.SF = SF = {
 				case 'getDispatcherAuthToken':
 					const dispatcherToken = {
 						// change the generated auth token here to make requests locally.
-						token: '00D4K000003rDxS:cf22d49b-c34d-4436-bc3b-a26b51eb3940',
+						token: '00D4K000003rDxS:8dfff001-7b73-4bc8-9b72-c0a5aea47f3b',
 						orgId: "00D4K000003rDxS",
 						userAgent: navigator.userAgent
 					}

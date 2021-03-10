@@ -74,6 +74,7 @@ export class FaEditor extends Component {
 		this.onSelectOffer = this.onSelectOffer.bind(this);
 		this.onSelectAllOffers = this.onSelectAllOffers.bind(this);
 		this.onRemoveOffers = this.onRemoveOffers.bind(this);
+		this.setActiveTabIndex = this.setActiveTabIndex.bind(this);
 
 		// ****************************************** API ******************************************
 		window.FAM.api.getActiveFrameAgreement = () =>
@@ -166,6 +167,19 @@ export class FaEditor extends Component {
 				resolve(data);
 			});
 		});
+	}
+
+	setActiveTabIndex() {
+		const { hiddenTabs } = this.props.settings;
+		let index = 0;
+		if (Object.keys(hiddenTabs).includes('product')) {
+			index += 1
+			if (Object.keys(hiddenTabs).includes('addon')) {
+				index += 1;
+			}
+		}
+
+		this.setState({ activeTabIndex: index });
 	}
 
 	componentWillUnmount() {
@@ -310,6 +324,8 @@ export class FaEditor extends Component {
 		// **************************************
 		this.editable = window.FAM.api.isAgreementEditable(this.faId);
 		// **************************************
+
+		this.setActiveTabIndex();
 	}
 
 	componentDidUpdate() {
@@ -652,6 +668,7 @@ export class FaEditor extends Component {
 							onMainTabChange={i => {
 								this.setState({ activeTabIndex: i });
 							}}
+							activeTabIndex ={this.state.activeTabIndex}
 						>
 							<CommercialProductsTab
 								faId={this.faId}

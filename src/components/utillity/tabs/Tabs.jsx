@@ -9,6 +9,12 @@ class Tabs extends React.Component {
 		this.handleTabClick = this.handleTabClick.bind(this);
 	}
 
+	componentDidUpdate(prevProps) {
+		if (prevProps.initial !== this.props.initial) {
+			this.setState({activeTabIndex:this.props.initial})
+		}
+	}
+
 	// Toggle currently active tab
 	handleTabClick(i) {
 		this.setState({

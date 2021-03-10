@@ -60,12 +60,21 @@ export class CommercialProduct extends React.Component {
 	}
 
 	async onNegotiate(type, data) {
+		let initialFrameAgreementProducts = this.props.currentFrameAgreement._ui.attachment?.products;
 		if (type === '_addons') {
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
 				'addons',
-				validateAddons(this.props.product._addons, data)
+				validateAddons(
+					this.props.product._addons,
+					data,
+					initialFrameAgreementProducts[this.productId]?._addons || {},
+					{
+						frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+						facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
+					}
+				)
 			);
 		}
 
@@ -77,7 +86,12 @@ export class CommercialProduct extends React.Component {
 				validateCharges(
 					this.props.product._charges,
 					this.props.product.cspmb__Authorization_Level__c,
-					data
+					data,
+					initialFrameAgreementProducts[this.productId]?._charges || {},
+					{
+						frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+						facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
+					}
 				)
 			);
 		}
@@ -87,7 +101,15 @@ export class CommercialProduct extends React.Component {
 				this.props.faId,
 				this.productId,
 				'rated',
-				validateRateCardLines(this.props.product._rateCards, data)
+				validateRateCardLines(
+					this.props.product._rateCards,
+					data,
+					initialFrameAgreementProducts[this.productId]?._rateCards || {},
+					{
+						frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+						facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
+					}
+				)
 			);
 		}
 
@@ -103,6 +125,12 @@ export class CommercialProduct extends React.Component {
 					negotiatedRecurring: data.recurring,
 					authLevel: this.props.product.cspmb__Authorization_Level__c || null,
 					Name: this.props.product.Name
+				}, {
+					negotiatedOneOff: initialFrameAgreementProducts[this.productId]?._product?.oneOff,
+					negotiatedRecurring: initialFrameAgreementProducts[this.productId]?._product?.recurring,
+				}, {
+					frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+					facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
 				})
 			);
 		}
@@ -302,6 +330,7 @@ export class CommercialProduct extends React.Component {
 const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
+		currentFrameAgreement: state.currentFrameAgreement,
 		validation: state.validation,
 		validationProduct: state.validationProduct,
 		productFields: state.productFields,

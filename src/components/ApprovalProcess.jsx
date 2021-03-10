@@ -6,10 +6,13 @@ import {
 	getApprovalHistory,
 	refreshFrameAgreement,
 	setFrameAgreementState,
-	createToast
+	createToast,
+	executeFrameAgreementAction
 } from '../actions';
 
 import { approveRejectRecallRecord, reassignApproval } from '~/src/api';
+
+import * as frameAgreementActions from '../actions/frameAgreementActions';
 
 export class ApprovalProcess extends React.Component {
 	constructor(props) {
@@ -147,6 +150,7 @@ export class ApprovalProcess extends React.Component {
 				.then(() => {
 					this.setState({ comment: '' });
 					this.refreshApprovalHistory();
+					this.props.executeFrameAgreementAction(this.props.faId, frameAgreementActions.CLONE);
 				});
 		}
 	}
@@ -338,7 +342,8 @@ const mapDispatchToProps = {
 	getApprovalHistory,
 	refreshFrameAgreement,
 	setFrameAgreementState,
-	createToast
+	createToast,
+	executeFrameAgreementAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApprovalProcess);

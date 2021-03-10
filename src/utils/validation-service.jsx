@@ -17,7 +17,7 @@ const getMinValue = (value, discount, type) => {
 	return +returnValue.toFixed(8);
 };
 
-export const validateAddons = (data, attachment) => {
+export const validateAddons = (data, attachment, initialFrameAgreementAttachment, status) => {
 	let validation = window.SF.getAuthLevels();
 
 	let detailedMap = {};
@@ -28,12 +28,20 @@ export const validateAddons = (data, attachment) => {
 				addon
 			};
 
-			if (attachment[addon.Id] && typeof attachment[addon.Id].oneOff !== 'undefined') {
+			if (attachment[addon.Id]?.oneOff) {
 				negotiationFormat.negotiatedOneOff = attachment[addon.Id].oneOff;
+
+				if (initialFrameAgreementAttachment[addon.Id]?.oneOff) {
+					negotiationFormat.initialNegotiatedOneOff = initialFrameAgreementAttachment[addon.Id].oneOff;
+				}
 			}
 
-			if (attachment[addon.Id] && typeof attachment[addon.Id].recurring !== 'undefined') {
+			if (attachment[addon.Id]?.recurring) {
 				negotiationFormat.negotiatedRecurring = attachment[addon.Id].recurring;
+
+				if (initialFrameAgreementAttachment[addon.Id]?.recurring) {
+					negotiationFormat.initialNegotiatedRecurring = initialFrameAgreementAttachment[addon.Id].recurring;
+				}
 			}
 
 			detailedMap = { ...detailedMap, ...validate(negotiationFormat) };
@@ -72,7 +80,12 @@ export const validateAddons = (data, attachment) => {
 						) || 0;
 
 					if (
-						negotiationFormat.negotiatedOneOff != null &&
+						negotiationFormat.negotiatedOneOff &&
+						!isIgnoreAuthorization(
+							negotiationFormat.initialNegotiatedOneOff,
+							negotiationFormat.negotiatedOneOff,
+							status
+						) &&
 						negotiationFormat.negotiatedOneOff < minOneOff.toFixedNumber()
 					) {
 						_logMessages.push(
@@ -91,7 +104,12 @@ export const validateAddons = (data, attachment) => {
 					}
 
 					if (
-						negotiationFormat.negotiatedRecurring != null &&
+						negotiationFormat.negotiatedRecurring &&
+						!isIgnoreAuthorization(
+							negotiationFormat.initialNegotiatedRecurring,
+							negotiationFormat.negotiatedRecurring,
+							status
+						) &&
 						negotiationFormat.negotiatedRecurring < minRecurring.toFixedNumber()
 					) {
 						_logMessages.push(
@@ -124,7 +142,7 @@ export const validateAddons = (data, attachment) => {
 	return detailedMap;
 };
 
-export const validateProduct = data => {
+export const validateProduct = (data, initialFrameAgreementData, status) => {
 	/*
     {
     	oneOff: Integer,
@@ -168,7 +186,15 @@ export const validateProduct = data => {
 						thresh.cspmb__Discount_Type__c
 					) || 0;
 
-				if (data.negotiatedOneOff != null && data.negotiatedOneOff < minOneOff.toFixedNumber()) {
+				if (
+					data.negotiatedOneOff &&
+					!isIgnoreAuthorization(
+						initialFrameAgreementData?.negotiatedOneOff,
+						data.negotiatedOneOff,
+						status
+					) &&
+					data.negotiatedOneOff < minOneOff.toFixedNumber()
+				) {
 					_logMessages.push(
 						'Minimal value for oneOff on ' +
 							data.Name +
@@ -185,7 +211,12 @@ export const validateProduct = data => {
 				}
 
 				if (
-					data.negotiatedRecurring != null &&
+					data.negotiatedRecurring &&
+					!isIgnoreAuthorization(
+						initialFrameAgreementData?.negotiatedRecurring,
+						data.negotiatedRecurring,
+						status
+					) &&
 					data.negotiatedRecurring < minRecurring.toFixedNumber()
 				) {
 					_logMessages.push(
@@ -216,7 +247,7 @@ export const validateProduct = data => {
 	return errataMap;
 };
 
-export const validateCharges = (data, authLevel, attachment) => {
+export const validateCharges = (data, authLevel, attachment, initialFrameAgreementAttachment, status) => {
 	let validation = window.SF.getAuthLevels();
 
 	/*
@@ -244,13 +275,19 @@ export const validateCharges = (data, authLevel, attachment) => {
 	if (attachment) {
 		data.forEach(charge => {
 			let negotiatedValue;
+			let initialNegotiatedValue;
 			try {
 				negotiatedValue = attachment[charge.Id][charge._type];
+
+				if (initialFrameAgreementAttachment[charge.Id]) {
+					initialNegotiatedValue = initialFrameAgreementAttachment[charge.Id][charge._type];
+				}
 			} catch (err) {}
 
 			let negotiationFormat = {
 				charge,
-				negotiatedValue
+				negotiatedValue,
+				initialNegotiatedValue
 			};
 
 			detailedMap = {
@@ -286,7 +323,12 @@ export const validateCharges = (data, authLevel, attachment) => {
 						) || 0;
 
 					if (
-						typeof negotiationFormat.negotiatedValue !== 'undefined' &&
+						negotiationFormat.negotiatedValue &&
+						!isIgnoreAuthorization(
+							negotiationFormat.initialNegotiatedValue,
+							negotiationFormat.negotiatedValue,
+							status
+						) &&
 						negotiationFormat.negotiatedValue < minValue.toFixedNumber()
 					) {
 						_logMessages.push(
@@ -319,17 +361,17 @@ export const validateCharges = (data, authLevel, attachment) => {
 	return detailedMap;
 };
 
-export const validateRateCardLines = (data, data2) => {
+export const validateRateCardLines = (rcData, data2, initialFrameAgreementAttachment, status) => {
 	let validation = window.SF.getAuthLevels();
 
 	let detailedMap = {};
 	let rcArr, rcl, attachment, authLevel;
 
-	if (Array.isArray(data)) {
-		rcArr = data;
+	if (Array.isArray(rcData)) {
+		rcArr = rcData;
 		attachment = data2;
 	} else {
-		rcl = data;
+		rcl = rcData;
 		authLevel = data2;
 	}
 
@@ -341,7 +383,11 @@ export const validateRateCardLines = (data, data2) => {
 					negotiatedValue: attachment[_rc.Id] && attachment[_rc.Id][_rcl.Id]
 				};
 
-				if (negotiationFormat.negotiatedValue != null) {
+				if (negotiationFormat.negotiatedValue) {
+
+					if (initialFrameAgreementAttachment[_rc.Id]) {
+						negotiationFormat.initialNegotiatedValue = initialFrameAgreementAttachment[_rc.Id][_rcl.Id]
+					}
 					detailedMap = {
 						...detailedMap,
 						...validate(negotiationFormat, _rc.authId)
@@ -350,7 +396,7 @@ export const validateRateCardLines = (data, data2) => {
 			});
 		});
 	} else if (rcl) {
-		return validate(data, authLevel);
+		return validate(rcData, authLevel);
 	}
 
 	function validate(negotiationFormat, authLevel) {
@@ -376,7 +422,12 @@ export const validateRateCardLines = (data, data2) => {
 							thresh.cspmb__Discount_Type__c
 						) || 0;
 
-					if (negotiationFormat.negotiatedValue.toFixedNumber() < minValue.toFixedNumber()) {
+					if (!isIgnoreAuthorization(
+							negotiationFormat.initialNegotiatedValue,
+							negotiationFormat.negotiatedValue,
+							status
+						) &&
+						negotiationFormat.negotiatedValue.toFixedNumber() < minValue.toFixedNumber()) {
 						_logMessages.push(
 							'Minimal value for  ' +
 								rcl.Name +
@@ -406,3 +457,19 @@ export const validateRateCardLines = (data, data2) => {
 	}
 	return detailedMap;
 };
+
+/*
+ * Check initial negotiated value(before user making changes) and current negotiateData(after user making any changes)
+ * to prevent approval needed flag being flipped to true
+ */
+const isIgnoreAuthorization = (initialNegotiatedValue, currentNegotiatedValue, status) => {
+	let ignoreAuthorization = false;
+
+	if (status?.facApprovedStatus && status.frameAgreementStatus === status.facApprovedStatus) {
+
+		if (initialNegotiatedValue === currentNegotiatedValue) {
+			ignoreAuthorization = true;
+		}
+	}
+	return ignoreAuthorization;
+}

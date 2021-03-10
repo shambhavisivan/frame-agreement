@@ -49,9 +49,18 @@ class AddonsTab extends React.Component {
 	}
 
 	async onNegotiate(data, addonId) {
+		let initialFrameAgreementStandaloneAddOn = this.props.currentFrameAgreement._ui.attachment?.addons;
 		this.props.setAddonValidation(
 			this.props.faId,
-			validateAddons(this.props.frameAgreements[this.props.faId]._ui.standaloneAddons, data)
+			validateAddons(
+				this.props.frameAgreements[this.props.faId]._ui.standaloneAddons,
+				data,
+				initialFrameAgreementStandaloneAddOn || {},
+				{
+					frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+					facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
+				}
+			)
 		);
 
 		data = await publish('onBeforeNegotiate', data);
@@ -207,6 +216,7 @@ class AddonsTab extends React.Component {
 const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
+		currentFrameAgreement: state.currentFrameAgreement,
 		settings: state.settings,
 		handlers: state.handlers,
 		productFields: state.productFields

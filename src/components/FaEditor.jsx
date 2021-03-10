@@ -18,7 +18,8 @@ import {
 	getRelatedLists,
 	replaceCpEntities,
 	getCommercialProductData,
-	executeFrameAgreementAction
+	executeFrameAgreementAction,
+	setFrameAgreementState
 } from '../actions';
 
 import { publish, findReplacementCommercialProduct } from '../api';
@@ -170,9 +171,20 @@ export class FaEditor extends Component {
 		for (var key in SUBSCRIPTIONS) {
 			SUBSCRIPTIONS[key].unsubscribe();
 		}
-		this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLEAR_ATTACHMENT)
+		this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLEAR_ATTACHMENT);
+
 		if (this.state.actionTaken && this.editable) {
-			this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.RESET)
+			this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.RESET);
+
+			if (
+				this.props.currentFrameAgreement.csconta__Status__c !==
+				this.props.frameAgreements[this.faId].csconta__Status__c
+			) {
+				this.props.setFrameAgreementState(
+					this.faId,
+					this.props.currentFrameAgreement.csconta__Status__c
+				);
+			}
 		}
 	}
 
@@ -285,7 +297,6 @@ export class FaEditor extends Component {
 						// this.props.getCommercialProductData(this.faId, IdsToLoad).then(r => {
 						await this.props.getCommercialProductData(_filteredCpIdList);
 						await this.props.addProductsToFa(this.faId, _filteredCpIdList);
-						await this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLONE);
 
 						if (Object.keys(cpReplacementData).length) {
 							// cpReplacementData contains info about which addons and rc old cp was attached to
@@ -304,6 +315,7 @@ export class FaEditor extends Component {
 		}
 
 		Promise.all(_promiseArray).then(async response => {
+			await this.props.executeFrameAgreementAction(this.faId, frameAgreementActions.CLONE);
 			await cpFilterEvent();
 			await onLoadingFinished();
 		});
@@ -380,7 +392,6 @@ export class FaEditor extends Component {
 			);
 
 			await this.props.removeProductsFromFa(this.faId, productsToDelete);
-			
 			this.props.validateFrameAgreement(this.faId);
 			window.FAM.api.validateStatusConsistency(this.faId);
 
@@ -610,6 +621,7 @@ const mapStateToProps = state => {
 	return {
 		commercialProducts: state.commercialProducts,
 		frameAgreements: state.frameAgreements,
+		currentFrameAgreement: state.currentFrameAgreement,
 		settings: state.settings
 	};
 };
@@ -629,7 +641,8 @@ const mapDispatchToProps = {
 	getRelatedLists,
 	replaceCpEntities,
 	getCommercialProductData,
-	executeFrameAgreementAction
+	executeFrameAgreementAction,
+	setFrameAgreementState
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaEditor));

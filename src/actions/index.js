@@ -705,7 +705,7 @@ export function saveFrameAgreement(frameAgreement) {
 		return Promise.all(promiseArray).then(
 			response => {
 				dispatch(_saveFrameAgreement(response[0]));
-				dispatch(cloneAgreementBeforeChanges(frameAgreement.Id))
+				dispatch(executeFrameAgreementAction(frameAgreement.Id, actions.CLONE));
 				return response;
 			},
 			error => {}

@@ -7,7 +7,8 @@ import {
 	refreshFrameAgreement,
 	setFrameAgreementState,
 	createToast,
-	executeFrameAgreementAction
+	executeFrameAgreementAction,
+	validateFrameAgreement
 } from '../actions';
 
 import { approveRejectRecallRecord, reassignApproval } from '~/src/api';
@@ -150,6 +151,10 @@ export class ApprovalProcess extends React.Component {
 				.then(() => {
 					this.setState({ comment: '' });
 					this.refreshApprovalHistory();
+
+					if (_nextFaState === this.props.settings.FACSettings.statuses.approved_status) {
+						this.props.validateFrameAgreement(this.props.faId);
+					}
 					this.props.executeFrameAgreementAction(this.props.faId, frameAgreementActions.CLONE);
 				});
 		}
@@ -343,7 +348,8 @@ const mapDispatchToProps = {
 	refreshFrameAgreement,
 	setFrameAgreementState,
 	createToast,
-	executeFrameAgreementAction
+	executeFrameAgreementAction,
+	validateFrameAgreement
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApprovalProcess);

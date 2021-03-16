@@ -407,6 +407,34 @@
         <value>Charge Type</value>
     </labels>
     <labels>
+        <fullName>cp_meta_header_attribute_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cp_meta_attribute_name</shortDescription>
+        <value>Attribute Name</value>
+    </labels>
+    <labels>
+        <fullName>cp_meta_header_values</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cp_meta_header_values</shortDescription>
+        <value>Values</value>
+    </labels>
+    <labels>
+        <fullName>cp_meta_header_read_only</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cp_meta_header_read_only</shortDescription>
+        <value>Read Only</value>
+    </labels>
+    <labels>
+        <fullName>cp_meta_header_required</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cp_meta_header_required</shortDescription>
+        <value>Required</value>
+    </labels>
+    <labels>
         <fullName>delta_fa_fields</fullName>
         <language>en_US</language>
         <protected>true</protected>

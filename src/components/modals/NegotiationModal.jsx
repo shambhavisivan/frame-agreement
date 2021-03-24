@@ -21,6 +21,8 @@ import { createToast } from '~/src/actions';
 import { DiscountInput } from '../utillity/inputs/discount-input';
 import { isDiscountAllowed } from '../../utils/shared-service';
 
+import * as Constants from '~/src/utils/constants'
+
 // import { getFrameAgreements } from '~/src/actions';
 
 const ADDON_VALUE_FIELD = 'cspmb__Recurring_Charge__c';
@@ -41,10 +43,19 @@ class NegotiationModal extends Component {
 
 		this.commercialProductsMap = {};
 
-		this.commercialProducts = this.props.commercialProducts.filter(product => {
-			this.commercialProductsMap[product.Id] = product;
-			return this.props.products.includes(product.Id);
-		});
+		this.commercialProducts = [];
+
+		if (props.commercialProductType === Constants.PRODUCT_TYPE_OFFER) {
+			this.commercialProducts = this.props.offers.filter(product => {
+				this.commercialProductsMap[product.Id] = product;
+				return this.props.products.includes(product.Id);
+			});
+		} else {
+			this.commercialProducts = this.props.commercialProducts.filter(product => {
+				this.commercialProductsMap[product.Id] = product;
+				return this.props.products.includes(product.Id);
+			});
+		}
 
 		/*********************************************************************************************************************************************************/
 		this._addon_assoc = this.commercialProducts.reduce(
@@ -1167,6 +1178,7 @@ class NegotiationModal extends Component {
 const mapStateToProps = state => {
 	return {
 		commercialProducts: state.commercialProducts,
+		offers: state.offers,
 		validation: state.validation,
 		settings: state.settings
 	};

@@ -29,6 +29,13 @@
         <value>There are no Products in here</value>
     </labels>
     <labels>
+        <fullName>addOfferCTAMessage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addOfferCTAMessage</shortDescription>
+        <value>There are no Offers in here</value>
+    </labels>
+    <labels>
         <fullName>addons_header_name</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -120,11 +127,25 @@
         <value>Are you sure you want to delete selected products?</value>
     </labels>
     <labels>
+        <fullName>alert_deleteOffers_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_deleteOffers_message</shortDescription>
+        <value>Are you sure you want to delete selected offers?</value>
+    </labels>
+    <labels>
         <fullName>alert_deleteProducts_title</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>alert_deleteProducts_title</shortDescription>
         <value>Delete products</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteOffers_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete Offers</shortDescription>
+        <value>Delete Offers</value>
     </labels>
     <labels>
         <fullName>allowances_amount</fullName>
@@ -1149,6 +1170,13 @@
         <value>Products</value>
     </labels>
     <labels>
+        <fullName>offers_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Offers</shortDescription>
+        <value>Offers</value>
+    </labels>
+    <labels>
         <fullName>products_title_empty</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1490,5 +1518,33 @@
         <protected>true</protected>
         <shortDescription>msg_no_catalogue_id</shortDescription>
         <value>Configure a default catalogue ID to proceed</value>
+    </labels>
+    <labels>
+        <fullName>offers_tab_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Offers</shortDescription>
+        <value>Offers</value>
+    </labels>
+    <labels>
+        <fullName>btn_AddOffers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Offers</shortDescription>
+        <value>Add Offers</value>
+    </labels>
+    <labels>
+        <fullName>btn_BulkNegotiateOffers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Negotiate Offers</shortDescription>
+        <value>Negotiate Offers</value>
+    </labels>
+    <labels>
+        <fullName>btn_DeleteOffers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete Offers</shortDescription>
+        <value>Delete Offers</value>
     </labels>
 </CustomLabels>

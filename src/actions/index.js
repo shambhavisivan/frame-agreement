@@ -12,6 +12,7 @@ const _defaultModals = {
 	negotiateStandaloneModal: false,
 	negotiateModal: false,
 	offersModal: false,
+	negotiateOffersModal: false,
 };
 
 // ***********************************************************************
@@ -847,3 +848,13 @@ export function removeOffersFromFa(faId, offers) {
 		});
 	};
 }
+
+export const negotiateOffers = (faId, priceItemId, type, data) => ({
+	type: 'NEGOTIATE_OFFERS',
+	payload: { faId, priceItemId, type, data }
+});
+
+export const bulkNegotiateOffers = (faId, data) => ({
+	type: 'NEGOTIATE_BULK_OFFERS',
+	payload: { faId, data }
+});

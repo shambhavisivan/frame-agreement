@@ -8,6 +8,8 @@ import ActionIframe from '~/src/components/modals/ActionIframe';
 
 import { createToast, toggleModals, validateFrameAgreement } from '~/src/actions';
 
+import * as Constants from '~/src/utils/constants';
+
 class FaFooter extends React.Component {
 	constructor(props) {
 		super(props);
@@ -97,11 +99,20 @@ class FaFooter extends React.Component {
 		this.props.toggleModals({ offersModal: true });
 	}
 
+	onOpenOfferNegotiationModal() {
+		this.props.toggleModals({ negotiateOffersModal: true });
+	}
+
 	render() {
 		let _fa = this.props.frameAgreements[this.props.faId];
 		let master = isMaster(_fa);
 
-		if (!master && !_fa._ui.commercialProducts.length && !_fa._ui.standaloneAddons.length) {
+		if (
+			!master &&
+			!_fa._ui.commercialProducts.length &&
+			!_fa._ui.standaloneAddons.length &&
+			!_fa._ui.offers.length
+		) {
 			return null;
 		}
 
@@ -144,6 +155,10 @@ class FaFooter extends React.Component {
 				!hiddenTabs?.addon && evaluateExpressionOnAgreement(standardData.DeleteAddons, _fa) && this.props.activeTab === 1,
 			addOffer:
 				evaluateExpressionOnAgreement(standardData.AddOffers, _fa) &&
+				this.props.activeTab === 2 &&
+				!master,
+			bulkNegotiateOffers:
+				evaluateExpressionOnAgreement(standardData.BulkNegotiateOffers, _fa) &&
 				this.props.activeTab === 2 &&
 				!master,
 			deleteOffer:
@@ -229,6 +244,17 @@ class FaFooter extends React.Component {
 					>
 						<Icon name="add" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">{window.SF.labels.btn_AddOffers}</span>
+					</button>
+				)}
+
+				{buttonVisibillityMap.bulkNegotiateOffers && (
+					<button
+						disabled={_disabled_offer}
+						className="fa-button fa-button--default"
+						onClick={() => this.onOpenOfferNegotiationModal()}
+					>
+						<Icon name="user" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_BulkNegotiateOffers}</span>
 					</button>
 				)}
 

@@ -48,7 +48,8 @@ const initialState = {
 		frameModal: false,
 		negotiateModal: false,
 		negotiateStandaloneModal: false,
-		offersModal: false
+		offersModal: false,
+		negotiateOffersModal: false
 	},
 	toasts: []
 	// activeId: null
@@ -1400,7 +1401,8 @@ const rootReducer = (state = initialState, action) => {
 				'AddFrameAgreement',
 				'NewVersion',
 				'AddOffers',
-				'DeleteOffers'
+				'DeleteOffers',
+				'BulkNegotiateOffers'
 			];
 
 			const fullStatusSet = new Set(Object.values(action.payload.FACSettings.statuses));
@@ -2051,6 +2053,10 @@ const rootReducer = (state = initialState, action) => {
 			var faId = action.payload.faId;
 			var attachment = action.payload.data || {};
 
+			if (attachment.offers) {
+				attachment.offers = {};
+			}
+
 			if (!attachment.hasOwnProperty('addons')) {
 				attachment.addons = {};
 			}
@@ -2344,6 +2350,87 @@ const rootReducer = (state = initialState, action) => {
 					AuthLevels: _AuthLevels
 				},
 				...{ offers: state.offers }
+			};
+
+		case 'NEGOTIATE_OFFERS':
+			var faId = action.payload.faId;
+			var priceItemId = action.payload.priceItemId;
+			var type = action.payload.type;
+			var data = action.payload.data;
+
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+
+			if (!_attachment) {
+				log.bg.red('Negotiation failed; attachment not loaded for FA:' + faId);
+				return { ...state };
+			}
+
+			_attachment.offers = {
+				..._attachment.offers,
+				[priceItemId]: { ..._attachment.offers[priceItemId], [type]: data }
+			};
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: _attachment
+					}
+				}
+			};
+
+		case 'NEGOTIATE_BULK_OFFERS':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			var _offers = state.frameAgreements[faId]._ui.attachment.offers;
+
+			for (var key in _offers) {
+				if (data[key]._addons) {
+					_offers[key]._addons = _offers[key]._addons || {};
+					_offers[key]._addons = {
+						..._offers[key]._addons,
+						...data[key]._addons
+					};
+				}
+				if (data[key]._charges) {
+					_offers[key]._charges = _offers[key]._charges || {};
+					_offers[key]._charges = {
+						..._offers[key]._charges,
+						...data[key]._charges
+					};
+				}
+				if (data[key]._rateCards) {
+					_offers[key]._rateCards = _offers[key]._rateCards || {};
+					for (var rcId in data[key]._rateCards) {
+						_offers[key]._rateCards[rcId] = data[key]._rateCards[rcId];
+					}
+				}
+				if (data[key]._product) {
+					_offers[key]._product = _offers[key]._product || {};
+					_offers[key]._product = {
+						..._offers[key]._product,
+						...data[key]._product,
+					};
+				}
+			}
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: {
+							...state.frameAgreements[faId]._ui.attachment,
+							offers: _offers
+						}
+					}
+				}
 			};
 
 		default:

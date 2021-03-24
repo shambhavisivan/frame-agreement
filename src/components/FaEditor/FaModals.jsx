@@ -24,8 +24,11 @@ import {
 	getCommercialProductData,
 	getOfferData,
 	addOffersToFa,
+	bulkNegotiateOffers
 } from '~/src/actions';
 import OffersModal from '../modals/OffersModal';
+
+import * as Constants from '~/src/utils/constants'
 
 class FaModals extends React.Component {
 	constructor(props) {
@@ -38,6 +41,7 @@ class FaModals extends React.Component {
 		this.onBulkNegotiate = this.onBulkNegotiate.bind(this);
 		this.onBulkNegotiateAddons = this.onBulkNegotiateAddons.bind(this);
 		this.onAddOffers = this.onAddOffers.bind(this);
+		this.onBulkNegotiateOffers = this.onBulkNegotiateOffers.bind(this);
 	}
 
 	componentWillUnmount() {
@@ -148,6 +152,17 @@ class FaModals extends React.Component {
 		publish('onAfterAddProducts', agreements);
 	}
 
+	async onBulkNegotiateOffers(data) {
+		data = await publish('onBeforeBulkNegotiation', data);
+
+		this.props.bulkNegotiateOffers(this.props.faId, data);
+		this.props.validateFrameAgreement(this.props.faId);
+		window.FAM.api.validateStatusConsistency(this.props.faId);
+
+		publish('onAfterBulkNegotiation', this.props.frameAgreements[this.props.faId]._ui.attachment);
+		this.onCloseModal();
+	}
+
 	onCloseModal() {
 		this.props.toggleModals();
 	}
@@ -255,6 +270,19 @@ class FaModals extends React.Component {
 			);
 		}
 		// *******************************************************
+		let negotiateOffersModal = null;
+		if (this.props.modals.negotiateOffersModal) {
+			negotiateOffersModal = (
+				<NegotiationModal
+					open={this.props.modals.negotiateOffersModal}
+					products={Object.keys(this.props.selectedOffers)}
+					attachment={this.props.frameAgreements[this.props.faId]._ui.attachment.offers}
+					onNegotiate={this.onBulkNegotiateOffers}
+					onCloseModal={this.onCloseModal}
+					commercialProductType={Constants.PRODUCT_TYPE_OFFER}
+				/>
+			);
+		}
 
 		return (
 			<React.Fragment>
@@ -265,6 +293,7 @@ class FaModals extends React.Component {
 				{addonModal}
 				{negotiateModal}
 				{negotiateStandaloneModal}
+				{negotiateOffersModal}
 			</React.Fragment>
 		);
 	}
@@ -291,6 +320,7 @@ const mapDispatchToProps = {
 	getCommercialProductData,
 	getOfferData,
 	addOffersToFa,
+	bulkNegotiateOffers
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FaModals);

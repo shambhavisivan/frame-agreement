@@ -29,7 +29,7 @@ import SettingsContext from '~/src/utils/settings-context.js';
 
 import { publish } from '~/src/api';
 
-import { setValidation, setFrameAgreementState, negotiate } from '~/src/actions';
+import { setValidation, setFrameAgreementState, negotiateOffers } from '~/src/actions';
 
 export class Offer extends React.Component {
 	constructor(props) {
@@ -110,7 +110,7 @@ export class Offer extends React.Component {
 
 		window.FAM.api.validateStatusConsistency(this.props.faId);
 
-		this.props.negotiate(this.props.faId, this.offerId, type, data);
+		this.props.negotiateOffers(this.props.faId, this.offerId, type, data);
 
 		publish('onAfterNegotiate', this.props.frameAgreements[this.props.faId]._ui.attachment);
 	}
@@ -312,7 +312,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	setValidation,
 	setFrameAgreementState,
-	negotiate
+	negotiateOffers
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Offer);

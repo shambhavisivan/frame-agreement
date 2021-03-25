@@ -352,4 +352,86 @@ export function isDiscountAllowed(chargeType, productOrAddon) {
 	return chargeAllowed[chargeType];
 }
 
+export function negotiateData(dataObject, productList, productsInAttachment) {
+	const cp = productList.find(_cp => _cp.Id === dataObject.priceItemId);
+
+	if (!cp) {
+		console.error(
+			"Cannot find commercial product with Id " +
+				dataObject.priceItemId +
+				" in active Frame Agreement!"
+		);
+		return;
+	}
+	if (!dataObject.hasOwnProperty("value")) {
+		console.error("No value provided for negotiation!");
+		return;
+	}
+	// ********************************** Addons
+	if (dataObject.hasOwnProperty("cpAddon")) {
+		if (dataObject.value.hasOwnProperty("oneOff")) {
+			productsInAttachment[dataObject.priceItemId]._addons[
+				dataObject.cpAddon
+			].oneOff = dataObject.value.oneOff;
+		}
+		if (dataObject.value.hasOwnProperty("recurring")) {
+			productsInAttachment[dataObject.priceItemId]._addons[
+				dataObject.cpAddon
+			].recurring = dataObject.value.recurring;
+		}
+	}
+	// ********************************* Charge
+	else if (dataObject.hasOwnProperty("charge")) {
+		// Charge validation
+		let charge = cp._charges.find((_ch) => _ch.Id === dataObject.charge);
+		let type;
+		if (charge.chargeType === "One-off Charge") {
+			type = "oneOff";
+		}
+		if (charge.chargeType === "Recurring Charge") {
+			type = "recurring";
+		}
+		if (!dataObject.value.hasOwnProperty(type)) {
+			console.error(
+				"Pricing element " + charge.Id + " has invalid charge type!"
+			);
+			return;
+		}
+
+		productsInAttachment[dataObject.priceItemId]._charges[dataObject.charge][type] =
+			dataObject.value[type];
+	}
+	// *********************************
+	else if (dataObject.hasOwnProperty("rateCard")) {
+		// RCL
+		if (!dataObject.hasOwnProperty("rateCardLine")) {
+			console.error("No rate card line Id provided!");
+			return;
+		}
+
+		dataObject.value = +dataObject.value;
+
+		if (
+			typeof dataObject.value !== "number" &&
+			!Number.isNaN(dataObject.value)
+		) {
+			console.error("Value for RCL not integer!");
+			return;
+		}
+
+		productsInAttachment[dataObject.priceItemId]._rateCards[dataObject.rateCard][
+			dataObject.rateCardLine
+		] = dataObject.value;
+	}
+	// *********************************
+	else {
+		// Product negotiation
+		productsInAttachment[dataObject.priceItemId]._product = {
+			...productsInAttachment[dataObject.priceItemId]._product,
+			...dataObject.value,
+		};
+	}
+	// *********************************
+}
+
 export default sharedService;

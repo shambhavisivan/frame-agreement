@@ -873,6 +873,10 @@ export const negotiateOffers = (faId, priceItemId, type, data) => ({
 
 export const bulkNegotiateOffers = (faId, data) => ({
 	type: 'NEGOTIATE_BULK_OFFERS',
+});
+
+export const apiNegotiateOffer = (faId, data) => ({
+	 type: 'NEGOTIATE_API_OFFER',
 	payload: { faId, data }
 });
 

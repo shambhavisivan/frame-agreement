@@ -30,7 +30,8 @@ import {
 	getOffers,
 	getOfferData,
 	addOffersToFa,
-	removeOffersFromFa
+	removeOffersFromFa,
+	apiNegotiateOffer
 } from './actions';
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
@@ -55,6 +56,7 @@ import {
 	submitForApproval
 } from './api';
 
+const OFFER = 'OFFER';
 export class App extends Component {
 	constructor(props) {
 		super(props);
@@ -611,22 +613,29 @@ export class App extends Component {
 		 * @param  Object data 		negotiation structure
 		 * @return Promise(attachment) updated attachment
 		 */
-		window.FAM.api.negotiate = (faId, data = window.mandatory('negotiate()')) => {
-			let self = this;
-			return new Promise(async (resolve, reject) => {
-				data = await publish('onBeforeNegotiate', data);
+		window.FAM.api.negotiate = async (faId, data = window.mandatory('negotiate()')) => {
+			data = await publish('onBeforeNegotiate', data);
+			this.props.apiNegotiate(faId, data);
+			publish('onAfterNegotiate', this.props.frameAgreements[faId]._ui.attachment);
 
-				this.props.apiNegotiate(faId, data);
+			this.props.validateFrameAgreement(faId);
 
-				publish('onAfterNegotiate', this.props.frameAgreements[faId]._ui.attachment);
+			await window.FAM.api.validateStatusConsistency(faId);
 
-				self.props.validateFrameAgreement(faId);
-
-				await window.FAM.api.validateStatusConsistency(faId);
-
-				resolve(this.props.frameAgreements[faId]._ui.attachment);
-			});
+			return (this.props.frameAgreements[faId]._ui.attachment);
 		};
+
+		window.FAM.api.negotiateOffers = async (faId, data = window.mandatory('negotiate()')) => {
+			data = await publish('onBeforeOfferNegotiate', data);
+			this.props.apiNeogotiateOffer(faId, data);
+			publish('onAfterOfferNegotiate', this.props.frameAgreements[faId]._ui.attachment);
+
+			this.props.validateFrameAgreement(faId);
+
+			await window.FAM.api.validateStatusConsistency(faId);
+
+			return (this.props.frameAgreements[faId]._ui.attachment);
+		}
 
 		window.SF.getAuthLevels = () => this.props.settings.AuthLevels || {};
 
@@ -660,6 +669,10 @@ export class App extends Component {
 			faId = window.mandatory('addOffers()'),
 			offers = []
 		) => {
+			if (!offers.length) {
+				return;
+			}
+
 			offers = await publish('onBeforeAddOffers', offers);
 
 			if (offers.some(cp_id => cp_id.length === 15)) {
@@ -846,7 +859,8 @@ const mapDispatchToProps = {
 	getOffers,
 	getOfferData,
 	addOffersToFa,
-	removeOffersFromFa
+	removeOffersFromFa,
+	apiNegotiateOffer
 };
 
 const mapStateToProps = state => {

@@ -4,7 +4,8 @@ import {
 	validateCSV,
 	getFieldLabel,
 	parseExpression,
-	evaluateExpressionOnAgreement
+	evaluateExpressionOnAgreement,
+	negotiateData
 } from '../utils/shared-service';
 
 import {
@@ -1154,85 +1155,10 @@ const rootReducer = (state = initialState, action) => {
 			var _fa = state.frameAgreements[faId];
 			var _products = _fa._ui.attachment.products;
 
-			function negotiateData(dataObject) {
-				let cp = _fa._ui.commercialProducts.find(_cp => _cp.Id === dataObject.priceItemId);
-
-				if (!cp) {
-					console.error(
-						'Cannot find commercial product with Id ' +
-							dataObject.priceItemId +
-							' in active Frame Agreement!'
-					);
-					return;
-				}
-				if (!dataObject.hasOwnProperty('value')) {
-					console.error('No value provided for negotiation!');
-					return;
-				}
-				// ********************************** Addons
-				if (dataObject.hasOwnProperty('cpAddon')) {
-					if (dataObject.value.hasOwnProperty('oneOff')) {
-						_products[dataObject.priceItemId]._addons[dataObject.cpAddon].oneOff =
-							dataObject.value.oneOff;
-					}
-					if (dataObject.value.hasOwnProperty('recurring')) {
-						_products[dataObject.priceItemId]._addons[dataObject.cpAddon].recurring =
-							dataObject.value.recurring;
-					}
-				}
-				// ********************************* Charge
-				else if (dataObject.hasOwnProperty('charge')) {
-					// Charge validation
-					let charge = cp._charges.find(_ch => _ch.Id === dataObject.charge);
-					let type;
-					if (charge.chargeType === 'One-off Charge') {
-						type = 'oneOff';
-					}
-					if (charge.chargeType === 'Recurring Charge') {
-						type = 'recurring';
-					}
-					if (!dataObject.value.hasOwnProperty(type)) {
-						console.error('Pricing element ' + charge.Id + ' has invalid charge type!');
-						return;
-					}
-
-					_products[dataObject.priceItemId]._charges[dataObject.charge][type] =
-						dataObject.value[type];
-				}
-				// *********************************
-				else if (dataObject.hasOwnProperty('rateCard')) {
-					// RCL
-					if (!dataObject.hasOwnProperty('rateCardLine')) {
-						console.error('No rate card line Id provided!');
-						return;
-					}
-
-					dataObject.value = +dataObject.value;
-
-					if (typeof dataObject.value !== 'number' && !Number.isNaN(dataObject.value)) {
-						console.error('Value for RCL not integer!');
-						return;
-					}
-
-					_products[dataObject.priceItemId]._rateCards[dataObject.rateCard][
-						dataObject.rateCardLine
-					] = dataObject.value;
-				}
-				// *********************************
-				else {
-					// Product negotiation
-					_products[dataObject.priceItemId]._product = {
-						..._products[dataObject.priceItemId]._product,
-						...dataObject.value
-					};
-				}
-				// *********************************
-			}
-
 			if (Array.isArray(data)) {
-				data.forEach(negotiateData);
+				data.forEach(dataObject => negotiateData(dataObject, _.fa._ui.commercialProducts, _products));
 			} else {
-				negotiateData(data);
+				negotiateData(data, _.fa._ui.commercialProducts, _products);
 			}
 
 			return {
@@ -1249,7 +1175,6 @@ const rootReducer = (state = initialState, action) => {
 					}
 				}
 			};
-		// *************************************
 
 		case 'RECIEVE_PICKLIST_OPTIONS':
 			var options = action.payload;
@@ -2134,7 +2059,6 @@ const rootReducer = (state = initialState, action) => {
 			var faId = action.payload.faId;
 			var attachment = action.payload.data || {};
 
-			// To prevent existing FA attachment from breaking
 			if (!attachment.offers) {
 				attachment.offers = {};
 			}
@@ -2461,6 +2385,39 @@ const rootReducer = (state = initialState, action) => {
 						...state.frameAgreements[faId],
 						_ui: state.frameAgreements[faId]._ui,
 						attachment: _attachment
+					}
+				}
+			};
+
+		case 'NEGOTIATE_API_OFFER':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			if (!state.frameAgreements[faId]._ui.attachment) {
+				log.bg.red('Negotiation failed; attachment not loaded for FA:' + faId);
+				return { ...state };
+			}
+
+			var _fa = state.frameAgreements[faId];
+			var offers = _fa._ui.attachment.offers;
+
+			if (Array.isArray(data)) {
+				data.forEach(dataObject => negotiateData(dataObject, _fa._ui.offers, offers));
+			} else {
+				negotiateOfferData(data, _fa._ui.offers, offers);
+			}
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: {
+							...state.frameAgreements[faId]._ui.attachment,
+							offers
+						}
 					}
 				}
 			};

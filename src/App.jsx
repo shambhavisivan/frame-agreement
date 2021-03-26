@@ -200,10 +200,12 @@ export class App extends Component {
 			// 1) Create a structure that is matching one element -> one pipra
 			let _attachment_prod = {};
 			let _attachment_addon = {};
+			let _attachment_offer = {};
 
 			try {
 				_attachment_prod = this.props.frameAgreements[faId]._ui.attachment.products || {};
 				_attachment_addon = this.props.frameAgreements[faId]._ui.attachment.addons || {};
+				_attachment_offer = this.props.frameAgreements[faId]._ui.attachment.offers || {};
 			} catch (err) {
 				// No attachment or no products
 			}
@@ -257,6 +259,60 @@ export class App extends Component {
 				});
 			}
 
+			for (var offerId in _attachment_offer) {
+				if (_attachment_offer[offerId].hasOwnProperty("_addons")) {
+					let addons = _attachment_offer[offerId]._addons;
+					for (var offerAddOnAssocationId in addons) {
+						structure.push({
+							cpaoaId: offerAddOnAssocationId,
+							recurring: addons[
+								offerAddOnAssocationId
+							].hasOwnProperty("recurring")
+								? addons[offerAddOnAssocationId].recurring
+								: null,
+							oneOff: addons[
+								offerAddOnAssocationId
+							].hasOwnProperty("oneOff")
+								? addons[offerAddOnAssocationId].oneOff
+								: null,
+						});
+					}
+				}
+
+				if (_attachment_offer[offerId].hasOwnProperty("_charges")) {
+					let charges = _attachment_offer[offerId]._charges;
+					for (var chargeId in charges) {
+						structure.push({
+							peId: chargeId,
+							recurring: charges[chargeId].hasOwnProperty(
+								"recurring"
+							)
+								? charges[chargeId].recurring
+								: null,
+							oneOff: charges[chargeId].hasOwnProperty("oneOff")
+								? charges[chargeId].oneOff
+								: null,
+						});
+					}
+				}
+
+				if (_attachment_offer[offerId].hasOwnProperty("_product")) {
+					structure.push({
+						cpId: offerId,
+						recurring: _attachment_offer[
+							offerId
+						]._product.hasOwnProperty("recurring")
+							? _attachment_offer[offerId]._product.recurring
+							: null,
+						oneOff: _attachment_offer[
+							offerId
+						]._product.hasOwnProperty("oneOff")
+							? _attachment_offer[offerId]._product.oneOff
+							: null,
+					});
+				}
+			}
+
 			// 2) Remove items that have no charge value
 			structure = structure.filter(item => item.recurring !== null || item.oneOff !== null);
 
@@ -303,7 +359,7 @@ export class App extends Component {
 			// Wait for all to resolve
 			let result = await Promise.all(decompositionPromiseArray);
 			publish('onAfterActivation', PR_ID);
-			
+
 			result = new Set(result);
 			//********************************************
 

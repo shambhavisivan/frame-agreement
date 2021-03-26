@@ -1032,7 +1032,7 @@ global with sharing class FrameRateManagerController {
 		};
 
 		// Get information on old commercial products (mainly for price item code)
-		String query_old = 'select  ' + 
+		String query_old = 'select  ' +
 			String.join(standardFields, ',') +
 			' from cspmb__Price_Item__c' +
 			' where Id in :priceItemIds';
@@ -1068,7 +1068,7 @@ global with sharing class FrameRateManagerController {
 		query_new += 'and (cspmb__Effective_Start_Date__c = null OR (cspmb__Effective_Start_Date__c != null and cspmb__Effective_Start_Date__c < TODAY)) ';
 		// ADD END DATE CHECK CLAUSE
 		query_new += 'and (cspmb__Effective_End_Date__c = null OR (cspmb__Effective_End_Date__c != null and cspmb__Effective_End_Date__c > TODAY)) ';
-		
+
 		query_new += 'and cspmb__Price_Item_Code__c in :codeList ';
 
 		query_new += 'limit 50000';

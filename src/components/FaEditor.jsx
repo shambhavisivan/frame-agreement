@@ -19,6 +19,11 @@ import {
 	replaceCpEntities,
 	getCommercialProductData,
 	removeOffersFromFa,
+	getOffers,
+	getOfferData,
+	addOffersToFa,
+	replaceOfferEntities,
+	setFrameAgreementOfferFilter
 } from '../actions';
 
 import { publish, findReplacementCommercialProduct } from '../api';
@@ -208,6 +213,22 @@ export class FaEditor extends Component {
 			return true;
 		};
 
+		const offerFilterEvent = async () => {
+			let perFaOfferFilterList = await publish(
+				'onLoadOffers',
+				this.props.offers
+			);
+			// If there was any filtering done
+			if (perFaOfferFilterList.length !== this.props.offers.length) {
+				this.props.setFrameAgreementOfferFilter(
+					this.faId,
+					new Set(perFaOfferFilterList.map(offer => offer.Id))
+				);
+			}
+
+			return true;
+		};
+
 		const onLoadingFinished = async () => {
 			this.props.validateFrameAgreement(this.faId);
 			window.FAM.api.validateStatusConsistency(this.faId);
@@ -266,8 +287,8 @@ export class FaEditor extends Component {
 						) {
 							this.props.createToast(
 								'warning',
-								'Invalid product found!',
-								'Some products have expired or have been removed. (Check the logs for more information)',
+								window.SF.labels.toast_invalid_product_title,
+								window.SF.labels.toast_invalid_product,
 								3000
 							);
 
@@ -277,8 +298,8 @@ export class FaEditor extends Component {
 							);
 							this.props.createToast(
 								'info',
-								'Searching for replacement product!',
-								'FAM will try to find replacement products and match it with charges of expired one...',
+								window.SF.labels.toast_search_replacement_product_title,
+								window.SF.labels.toast_search_replacement_product,
 								5000
 							);
 
@@ -311,6 +332,81 @@ export class FaEditor extends Component {
 						}
 					}
 
+					let offerIdsToLoad = Object.keys(resp_attachment.offers || {});
+
+					for (var key in resp_attachment.offers) {
+						resp_attachment.offers[key] = resp_attachment.offers[key] || {};
+					}
+
+					if (offerIdsToLoad.length) {
+						// Check if any offers have been deleted
+						let _offerIdsToLoadSet = new Set(offerIdsToLoad);
+						let _filteredOfferIdList = [];
+
+						if (!this.props.offersLoaded) {
+							await this.props.getOffers();
+						}
+
+						this.props.offers.forEach(offer => {
+							if (_offerIdsToLoadSet.has(offer.Id)) {
+								_offerIdsToLoadSet.delete(offer.Id);
+								_filteredOfferIdList.push(offer.Id);
+							}
+						});
+
+						let offerReplacementData = {};
+						if (
+							_offerIdsToLoadSet.size &&
+							!isMaster(this.props.frameAgreements[this.faId]) &&
+							this.props.frameAgreements[this.faId].csconta__Status__c !==
+								this.props.settings.FACSettings.statuses.active_status
+						) {
+							this.props.createToast(
+								'warning',
+								window.SF.labels.toast_invalid_offer_title,
+								window.SF.labels.toast_invalid_offer,
+								3000
+							);
+
+							log.orange(
+								'These offers cannot be found in getOffers response:',
+								Array.from(_offerIdsToLoadSet)
+							);
+							this.props.createToast(
+								'info',
+								window.SF.labels.toast_search_replacement_offer_title,
+								window.SF.labels.toast_search_replacement_offer,
+								5000
+							);
+
+							offerReplacementData = await findReplacementCommercialProduct([..._offerIdsToLoadSet]);
+						}
+
+						if (Object.keys(offerReplacementData).length) {
+							// get replacement data as well
+							_filteredOfferIdList = [
+								...new Set([
+									..._filteredOfferIdList,
+									...Object.values(offerReplacementData).map(offer => offer.new_cp.Id)
+								])
+							];
+						}
+
+						// Get data for offer products
+						await this.props.getOfferData(_filteredOfferIdList);
+						await this.props.addOffersToFa(this.faId, _filteredOfferIdList);
+
+						if (Object.keys(offerReplacementData).length) {
+							// offerReplacementData contains info about which addons and rc old offer was attached to
+							await this.props.replaceOfferEntities(this.faId, offerReplacementData);
+
+							await window.SF.invokeAction('saveAttachment', [
+								this.faId,
+								JSON.stringify(this.props.frameAgreements[this.faId]._ui.attachment)
+							]);
+						}
+					}
+
 					return;
 				})
 			);
@@ -318,6 +414,7 @@ export class FaEditor extends Component {
 
 		Promise.all(_promiseArray).then(async response => {
 			await cpFilterEvent();
+			await offerFilterEvent();
 			await onLoadingFinished();
 		});
 
@@ -710,7 +807,9 @@ const mapStateToProps = state => {
 	return {
 		commercialProducts: state.commercialProducts,
 		frameAgreements: state.frameAgreements,
-		settings: state.settings
+		settings: state.settings,
+		offers: state.offers,
+		offersLoaded: state.initialised.of_loaded,
 	};
 };
 
@@ -730,6 +829,11 @@ const mapDispatchToProps = {
 	replaceCpEntities,
 	getCommercialProductData,
 	removeOffersFromFa,
+	getOffers,
+	getOfferData,
+	addOffersToFa,
+	replaceOfferEntities,
+	setFrameAgreementOfferFilter
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaEditor));

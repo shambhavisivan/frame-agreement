@@ -858,3 +858,22 @@ export const bulkNegotiateOffers = (faId, data) => ({
 	type: 'NEGOTIATE_BULK_OFFERS',
 	payload: { faId, data }
 });
+
+export const setFrameAgreementOfferFilter = (faId, offerIdSet) => ({
+	type: 'SET_OFFER_FILTER',
+	payload: { faId, offerIdSet }
+});
+
+const _replaceOfferEntities = (faId, replacementData) => ({
+	type: 'REPLACE_OFFER_CHARGES',
+	payload: { faId, replacementData }
+});
+
+export function replaceOfferEntities(faId, replacementData) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_replaceOfferEntities(faId, replacementData));
+			resolve();
+		});
+	};
+}

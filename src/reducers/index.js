@@ -2053,7 +2053,8 @@ const rootReducer = (state = initialState, action) => {
 			var faId = action.payload.faId;
 			var attachment = action.payload.data || {};
 
-			if (attachment.offers) {
+			// To prevent existing FA attachment from breaking
+			if (!attachment.offers) {
 				attachment.offers = {};
 			}
 
@@ -2431,6 +2432,83 @@ const rootReducer = (state = initialState, action) => {
 						}
 					}
 				}
+			};
+
+		case 'SET_OFFER_FILTER':
+			var _faId = action.payload.faId;
+			var _filterSet = action.payload.offerIdSet;
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[_faId]: {
+						...state.frameAgreements[_faId],
+						_ui: { ...state.frameAgreements[_faId]._ui, _offerFilter: _filterSet }
+					}
+				}
+			};
+
+		case 'REPLACE_OFFER_CHARGES':
+			const offerReplacementData = action.payload.replacementData;
+
+			var faId = action.payload.faId;
+			var _attachment = { ...state.frameAgreements[faId]._ui.attachment };
+
+			for (var key in offerReplacementData) {
+				// key -> old offer Id
+				let new_cp = state.offers.find(offer => offer.Id === offerReplacementData[key].new_cp.Id);
+
+				if (!new_cp) {
+					continue;
+				}
+
+				let old_addons = copy(_attachment.offers[key]._addons);
+				let new_addons = {};
+
+				// since attachment is indexed by addon assoc id, we need to traverse the offer data to find addon -> addon assoc correlation
+				new_cp._addons.forEach(add => {
+					if (
+						offerReplacementData[key].addon_vs_addon_assoc.hasOwnProperty(
+							add.cspmb__Add_On_Price_Item__c
+						)
+					) {
+						// This addon is shared by both old and new offers
+						new_addons[add.Id] = copy(
+							old_addons[offerReplacementData[key].addon_vs_addon_assoc[add.cspmb__Add_On_Price_Item__c]]
+						);
+					}
+				});
+
+				_attachment.offers[new_cp.Id]._addons = {
+					..._attachment.offers[new_cp.Id]._addons,
+					...new_addons
+				};
+
+				let rcIdSet = new Set(offerReplacementData[key].rc || []);
+
+				let old_rc = copy(_attachment.offers[key]._rateCards);
+
+				offerReplacementData[key].rc.forEach(rc => {
+					if (_attachment.offers[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)) {
+						_attachment.offers[new_cp.Id]._rateCards[rc.Id] = {
+							..._attachment.offers[new_cp.Id]._rateCards[rc.Id],
+							...old_rc[rc.Id]
+						};
+					}
+				});
+
+				_attachment.offers[new_cp.Id]._rateCards = {
+					..._attachment.offers[new_cp.Id]._rateCards,
+					...old_rc
+				};
+				// remove old offer from attachment
+				delete _attachment.offers[key];
+			}
+
+			return {
+				...state,
+				attachment: _attachment
 			};
 
 		default:

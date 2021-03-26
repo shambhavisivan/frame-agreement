@@ -1394,6 +1394,62 @@
         <value>Submitted!</value>
     </labels>
     <labels>
+        <fullName>toast_invalid_product_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Invalid product found!</shortDescription>
+        <value>Invalid product found!</value>
+    </labels>
+    <labels>
+        <fullName>toast_invalid_product</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Expired product message</shortDescription>
+        <value>Some products have expired or have been removed. (Check the logs for more information)</value>
+    </labels>
+    <labels>
+        <fullName>toast_search_replacement_product_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Searching for replacement product!</shortDescription>
+        <value>Searching for replacement product!</value>
+    </labels>
+    <labels>
+        <fullName>toast_search_replacement_product</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Product replacement message</shortDescription>
+        <value>FAM will try to find replacement products and match it with charges of expired one...</value>
+    </labels>
+    <labels>
+        <fullName>toast_invalid_offer_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Invalid offer found!</shortDescription>
+        <value>Invalid offer found!</value>
+    </labels>
+    <labels>
+        <fullName>toast_invalid_offer</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Expired offer message</shortDescription>
+        <value>Some offers have expired or have been removed. (Check the logs for more information)</value>
+    </labels>
+    <labels>
+        <fullName>toast_search_replacement_offer_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Searching for replacement offer!</shortDescription>
+        <value>Searching for replacement offer!</value>
+    </labels>
+    <labels>
+        <fullName>toast_search_replacement_offer</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Offer replacement message</shortDescription>
+        <value>FAM will try to find replacement offers and match it with charges of expired one...</value>
+    </labels>
+    <labels>
         <fullName>usage_type_name_field</fullName>
         <language>en_US</language>
         <protected>true</protected>

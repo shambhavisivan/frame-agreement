@@ -17,7 +17,7 @@ import {
 } from "../../utils/shared-service";
 import { toggleFieldVisibility, getOffers } from "~/src/actions";
 
-import AddProductCTA from "./AddProductCTA";
+import AddOfferCTA from './AddOfferCTA';
 
 class OffersTab extends React.Component {
 	constructor(props) {
@@ -198,10 +198,10 @@ class OffersTab extends React.Component {
 		} else {
 			commercialProducts = (
 				<div>
-					<AddProductCTA
+					<AddOfferCTA
 						render={
 							!this.props.frameAgreements[this.props.faId]._ui
-								.commercialProducts.length
+								.offers.length
 						}
 						disabled={!_editable || !_isAddProductsEnabled}
 					/>

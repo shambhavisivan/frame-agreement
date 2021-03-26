@@ -2539,6 +2539,9 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static List<cspmb__Price_Item__c> getOffers(List<String> offerIdList) {
+		if (offerIdList == null || offerIdList.isEmpty()) {
+			return new List<cspmb__Price_Item__c>();
+		}
 		return FrameRateManagerController.getCommercialProducts_p(offerIdList);
 	}
 

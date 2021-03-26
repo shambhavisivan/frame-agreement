@@ -38,7 +38,7 @@ export class Offer extends React.Component {
 		this.onExpandOffer = this.onExpandOffer.bind(this);
 
 		this.offerId = this.props.offer.Id;
-		this.validation = this.props.validation || {};
+		this.validation = this.props.validationOffersInfo || {};
 		this.state = {
 			loading: false,
 			open: false
@@ -133,8 +133,8 @@ export class Offer extends React.Component {
 				<div
 					className={
 						'product-card__container' +
-						(this.state.open ? ' product-open' : '') + ''
-						// TODO highlight in red if offer is invalid
+						(this.state.open ? ' product-open' : '') +
+						(this.props.validationOffers[this.offerId] ? ' invalid-product' : '')
 					}
 				>
 					<div className="container__header">
@@ -221,7 +221,7 @@ export class Offer extends React.Component {
 										readOnly={!_editable || (_disableLevels && _disableInputs)}
 										disableInputs={_productIgnored || _disableInputs}
 										disableLevels={_productIgnored || _disableLevels}
-										validation={this.props.validation[this.offerId].addons}
+										validation={this.props.validationOffersInfo[this.offerId].addons}
 										attachment={_attachment._addons || {}}
 										addons={this.props.offer._addons}
 										onNegotiate={data => {
@@ -244,7 +244,7 @@ export class Offer extends React.Component {
 											oneOffAllowed={this.props.offer.cspmb__Is_One_Off_Discount_Allowed__c}
 											recurringAllowed={this.props.offer.cspmb__Is_Recurring_Discount_Allowed__c}
 											levels={this.props.offer._discountLvIds}
-											validation={this.props.validation[this.offerId].charges}
+											validation={this.props.validationOffersInfo[this.offerId].charges}
 											attachment={_attachment._charges || {}}
 											onNegotiate={data => {
 												this.onNegotiate('_charges', data);
@@ -261,7 +261,7 @@ export class Offer extends React.Component {
 											oneOffAllowed={this.props.offer.cspmb__Is_One_Off_Discount_Allowed__c}
 											recurringAllowed={this.props.offer.cspmb__Is_Recurring_Discount_Allowed__c}
 											levels={this.props.offer._discountLvIds}
-											validation={this.props.validation[this.offerId].product}
+											validation={this.props.validationOffersInfo[this.offerId].product}
 											attachment={_attachment._product || {}}
 											onNegotiate={data => {
 												this.onNegotiate('_product', data);
@@ -275,7 +275,7 @@ export class Offer extends React.Component {
 								>
 									<Rates
 										readOnly={!_editable || _disableInputs}
-										validation={this.props.validation[this.offerId].rated}
+										validation={this.props.validationOffersInfo[this.offerId].rated}
 										attachment={_attachment._rateCards || {}}
 										rateCards={this.props.offer._rateCards}
 										onNegotiate={data => {
@@ -301,8 +301,8 @@ export class Offer extends React.Component {
 const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
-		validation: state.validation,
-		validationProduct: state.validationProduct,
+		validationOffers: state.validationOffers,
+		validationOffersInfo: state.validationOffersInfo,
 		productFields: state.productFields,
 		ignoreSettings: state.ignoreSettings,
 		settings: state.settings

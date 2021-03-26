@@ -35,6 +35,7 @@ const initialState = {
 	faFields: [],
 	activeFa: null,
 	validation: {},
+	validationOffersInfo: {},
 	validationAddons: {},
 	validationProduct: {},
 	validationOffers: {},
@@ -233,39 +234,65 @@ function formatDiscLevels(dlList = []) {
 	return _DiscLevels;
 }
 
-function getApprovalNeeded(validation, addonValidation = []) {
-	let _validation = Object.keys(validation).reduce((acc, key) => {
+function getApprovalNeeded(cpValidation, addonValidation = [], offerValidation = {}) {
+	return (
+		getCpApprovalNeeded(cpValidation) ||
+		getAddOnApprovalNeeded(addonValidation) ||
+		getOfferApprovalNeeded(offerValidation)
+	);
+}
+
+function getCpApprovalNeeded(cpValidation) {
+	let _cpValidation = Object.keys(cpValidation).reduce((acc, key) => {
 		let collection = [];
-		if (validation[key].addons) {
-			Object.values(validation[key].addons).forEach(item => {
+		if (cpValidation[key].addons) {
+			Object.values(cpValidation[key].addons).forEach(item => {
 				item.hasOwnProperty('oneOff') && collection.push(item.oneOff);
 				item.hasOwnProperty('recurring') && collection.push(item.recurring);
 			});
 		}
-		if (validation[key].charges) {
-			collection = [...collection, ...Object.values(validation[key].charges)];
+		if (cpValidation[key].charges) {
+			collection = [...collection, ...Object.values(cpValidation[key].charges)];
 		}
-		if (validation[key].product) {
-			collection = [...collection, ...Object.values(validation[key].product)];
+		if (cpValidation[key].product) {
+			collection = [...collection, ...Object.values(cpValidation[key].product)];
 		}
-		if (validation[key].rated) {
-			collection = [...collection, ...Object.values(validation[key].rated)];
+		if (cpValidation[key].rated) {
+			collection = [...collection, ...Object.values(cpValidation[key].rated)];
 		}
 		return [...acc, ...collection];
 	}, []);
 
-	let _addonValidation = Object.values(addonValidation).reduce((acc, iter) => {
+	return _cpValidation.some(r => r === true);
+}
+
+function getAddOnApprovalNeeded(addOnValidation) {
+	let _addonValidation = Object.values(addOnValidation).reduce((acc, iter) => {
 		return [...acc, ...Object.values(iter)];
 	}, []);
 
-	return [..._validation, ..._addonValidation].some(r => r === true);
+	return _addonValidation.some(r => r === true);
 }
 
-function getProductValidation(validation) {
+function getOfferApprovalNeeded(offerValidation) {
+	return getCpApprovalNeeded(offerValidation);
+}
+
+function getProductValidation(cpValidation) {
 	let _productValidation = {};
-	for (var key in validation) {
-		_productValidation[key] = getApprovalNeeded({
-			[key]: validation[key]
+	for (var key in cpValidation) {
+		_productValidation[key] = getCpApprovalNeeded({
+			[key]: cpValidation[key]
+		});
+	}
+	return _productValidation;
+}
+
+function getOfferValidation(offerValidation) {
+	let _productValidation = {};
+	for (var key in offerValidation) {
+		_productValidation[key] = getOfferApprovalNeeded({
+			[key]: offerValidation[key]
 		});
 	}
 	return _productValidation;
@@ -407,6 +434,7 @@ const rootReducer = (state = initialState, action) => {
 			}
 
 			var validation;
+			var validationOffersInfo;
 
 			if (priceItemId === null) {
 				var _fa = state.frameAgreements[faId];
@@ -414,6 +442,7 @@ const rootReducer = (state = initialState, action) => {
 				var _addons = _fa._ui.attachment.addons;
 				var _offers = _fa._ui.attachment.offers;
 				var bulkValidation = {};
+				var bulkValidationOffers = {};
 				var validationAddons = validateAddons(_fa._ui.standaloneAddons, _addons);
 
 				_fa._ui.commercialProducts.forEach(cp => {
@@ -441,7 +470,7 @@ const rootReducer = (state = initialState, action) => {
 
 
 				_fa._ui.offers.forEach(offer => {
-					bulkValidation[offer.Id] = {
+					bulkValidationOffers[offer.Id] = {
 						addons: validateAddons(offer._addons, _offers[offer.Id]._addons || {}),
 						rated: validateRateCardLines(offer._rateCards, _offers[offer.Id]._rateCards || {}),
 						charges: validateCharges(
@@ -452,7 +481,7 @@ const rootReducer = (state = initialState, action) => {
 					};
 
 					if (_offers[offer.Id]._product) {
-						bulkValidation[offer.Id].product = validateProduct({
+						bulkValidationOffers[offer.Id].product = validateProduct({
 							oneOff: offer.cspmb__One_Off_Charge__c,
 							negotiatedOneOff: _offers[offer.Id]._product.oneOff,
 							recurring: offer.cspmb__Recurring_Charge__c,
@@ -464,6 +493,7 @@ const rootReducer = (state = initialState, action) => {
 				});
 
 				validation = bulkValidation;
+				validationOffersInfo = bulkValidationOffers;
 			} else {
 				validation = {
 					...state.validation,
@@ -477,13 +507,20 @@ const rootReducer = (state = initialState, action) => {
 				};
 			}
 
-			var approvalNeeded = getApprovalNeeded(validation, validationAddons);
+			var approvalNeeded = getApprovalNeeded(
+				validation,
+				validationAddons,
+				validationOffersInfo
+			);
 			var validationProduct = getProductValidation(validation);
+			var validationOffers = getOfferValidation(validationOffersInfo);
 
 			return {
 				...state,
 				validation,
+				validationOffersInfo,
 				validationProduct,
+				validationOffers,
 				validationAddons: { ...state.validationAddons, [faId]: validationAddons },
 				frameAgreements: {
 					...state.frameAgreements,
@@ -510,7 +547,7 @@ const rootReducer = (state = initialState, action) => {
 						...state.frameAgreements[faId],
 						_ui: {
 							...state.frameAgreements[faId]._ui,
-							approvalNeeded: getApprovalNeeded(validation, validationAddons)
+							approvalNeeded: getAddOnApprovalNeeded(validation)
 						}
 					}
 				}
@@ -538,14 +575,28 @@ const rootReducer = (state = initialState, action) => {
 					}
 				};
 			} else if (action.payload.type === null) {
-				var validation = { ...state.validation, ...action.payload.priceItemId };
-				var approvalNeeded = validationAddons && getApprovalNeeded(validation);
+				var validation = {
+					...state.validation,
+					...action.payload.priceItemId,
+				};
 				var validationProduct = getProductValidation(validation);
+				var validationOffersInfo = {
+					...state.validationOffersInfo,
+					...action.payload.priceItemId,
+				};
+				var validationOffers = getOfferValidation(validationOffersInfo);
+				var approvalNeeded = getApprovalNeeded(
+					validation,
+					validationAddons,
+					validationOffersInfo
+				);
 
 				return {
 					...state,
 					validation,
+					validationOffersInfo,
 					validationProduct,
+					validationOffers,
 					frameAgreements: {
 						...state.frameAgreements,
 						[faId]: {
@@ -555,22 +606,48 @@ const rootReducer = (state = initialState, action) => {
 					}
 				};
 			} else {
-				var validation = {
-					...state.validation,
-					[action.payload.priceItemId]: {
-						...state.validation[action.payload.priceItemId],
-						[action.payload.type]: {
-							...state.validation[action.payload.priceItemId][action.payload.type],
-							...action.payload.data
+				var validation = { ...state.validation }
+				var validationOffersInfo = { ...state.validationOffersInfo }
+
+				if (state.validation[action.payload.priceItemId]) {
+					validation = {
+						...state.validation,
+						[action.payload.priceItemId]: {
+							...state.validation[action.payload.priceItemId],
+							[action.payload.type]: {
+								...state.validation[action.payload.priceItemId][action.payload.type],
+								...action.payload.data
+							}
 						}
-					}
-				};
-				var approvalNeeded = validationAddons && getApprovalNeeded(validation);
+					};
+				}
+
+				if (state.validationOffersInfo[action.payload.priceItemId]) {
+					validationOffersInfo = {
+						...state.validationOffersInfo,
+						[action.payload.priceItemId]: {
+							...state.validationOffersInfo[action.payload.priceItemId],
+							[action.payload.type]: {
+								...state.validationOffersInfo[action.payload.priceItemId][action.payload.type],
+								...action.payload.data
+							}
+						}
+					};
+				}
+				var approvalNeeded = getApprovalNeeded(
+					validation,
+					validationAddons,
+					validationOffersInfo
+				);
 				var validationProduct = getProductValidation(validation);
+				var validationOffers = getOfferValidation(validationOffersInfo);
+
 				return {
 					...state,
 					validation,
+					validationOffersInfo,
 					validationProduct,
+					validationOffers,
 					frameAgreements: {
 						...state.frameAgreements,
 						[faId]: {
@@ -978,11 +1055,15 @@ const rootReducer = (state = initialState, action) => {
 						...state.frameAgreements[faId],
 						_ui: {
 							...state.frameAgreements[faId]._ui,
-							approvalNeeded: getApprovalNeeded(state.validation, validationAddons),
-							attachment: _attachment
+							approvalNeeded: getApprovalNeeded(
+								state.validation,
+								validationAddons,
+								state.validationOffersInfo
+							),
+							attachment: _attachment,
 						},
-					}
-				}
+					},
+				},
 			};
 
 		case 'NEGOTIATE_BULK_ADDONS':

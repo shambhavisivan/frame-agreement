@@ -26,7 +26,11 @@ import {
 	saveFrameAgreement,
 	setCustomData,
 	setFrameAgreementState,
-	validateFrameAgreement
+	validateFrameAgreement,
+	getOffers,
+	getOfferData,
+	addOffersToFa,
+	removeOffersFromFa
 } from './actions';
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
@@ -626,6 +630,123 @@ export class App extends Component {
 
 		window.SF.getAuthLevels = () => this.props.settings.AuthLevels || {};
 
+		/**
+		 * fetches a list of offers, can be filtered by fa id
+		 * @param  String faId - get cp for this specific fa
+		 * @return List<Object> - offers
+		 */
+		 window.FAM.api.getOffers = async faId => {
+			if (!faId) {
+				return this.props.getOffers();
+			} else {
+				if (this.props.frameAgreements[faId]._ui.attachment === null) {
+					let resp_attachment = await this.props.getAttachment(faId);
+					// No need to wait for this one, we only need products
+					this.props.getOfferData(Object.keys(resp_attachment.offers));
+
+					return this.props.frameAgreements[faId]._ui.offers;
+				} else {
+					return this.props.frameAgreements[faId]._ui.offers;
+				}
+			}
+		};
+
+		/**
+		 * adds offer to frame agreement
+		 * @param  String faId - Frame agreement id
+		 * @param List<Object> - List of offers to add
+		 */
+		 window.FAM.api.addOffers = async (
+			faId = window.mandatory('addOffers()'),
+			offers = []
+		) => {
+			offers = await publish('onBeforeAddOffers', offers);
+
+			if (offers.some(cp_id => cp_id.length === 15)) {
+				console.warn('Converting to 18 char Id...');
+				// Generate 15: 18 map
+				let charMap = {};
+				this.props.offers.forEach(offer => {
+					charMap[offer.Id.substring(0, 15)] = offer.Id;
+				});
+
+				offers = offers.map(offer_id => {
+
+					if (offer_id.length === 15) {
+						return charMap[offer_id];
+					}
+					return offer_id;
+				});
+			}
+
+			let _offersSet = new Set(offers);
+
+			// Sort out offers data
+			let IdsToLoad = this.props.offers.reduce((acc, offer) => {
+
+				if (_offersSet.has(offer.Id)) {
+
+					if (!offer._dataLoaded) {
+						return [...acc, ...[offer.Id]];
+					} else {
+						return acc;
+					}
+				} else {
+					return acc;
+				}
+			}, []);
+
+			// IF not, load attachment for FA
+			if (this.props.frameAgreements[faId]._ui.attachment === null) {
+				let resp_attachment = await this.props.getAttachment(faId);
+				IdsToLoad = [...IdsToLoad, ...Object.keys(resp_attachment.offers)];
+			}
+
+			await this.props.getOfferData(IdsToLoad);
+			await this.props.addOffersToFa(faId, offers);
+			this.props.validateFrameAgreement(faId);
+
+			await publish(
+				'onAfterAddOffers',
+				this.props.frameAgreements[faId]._ui.offers.map(offer => offer.Id)
+			);
+
+			await window.SF.invokeAction('saveAttachment', [
+				faId,
+				JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+			]);
+			return this.props.frameAgreements[faId];
+		};
+
+		/**
+		 * remove offers from fa
+		 * @param  String faId - Frame agreement id
+		 * @param List<Object> - List of offers to delete
+		 */
+		window.FAM.api.removeOffers = (faId = window.mandatory('addOffers()'), offers = []) => {
+			return new Promise(async resolve => {
+				let offersToDelete = await publish('onBeforeDeleteOffers', offers);
+
+				// IF not, load attachment for FA
+				if (this.props.frameAgreements[faId]._ui.attachment === null) {
+					let resp_attachment = await this.props.getAttachment(faId);
+				}
+
+				await this.props.removeOffersFromFa(faId, offersToDelete);
+				await publish(
+					'onAfterDeleteOffers',
+					this.props.frameAgreements[faId]._ui.offers.map(offer => offer.Id)
+				);
+
+				await window.SF.invokeAction('saveAttachment', [
+					faId,
+					JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+				]);
+				resolve(this.props.frameAgreements[faId]._ui.attachment);
+			});
+		};
+
+
 		Promise.all([
 			this.props.getAppSettings(),
 			window.SF.invokeAction('getFieldLabels', ['cspmb__Usage_Type__c']).then(r => {
@@ -721,7 +842,11 @@ const mapDispatchToProps = {
 	saveFrameAgreement,
 	setCustomData,
 	setFrameAgreementState,
-	validateFrameAgreement
+	validateFrameAgreement,
+	getOffers,
+	getOfferData,
+	addOffersToFa,
+	removeOffersFromFa
 };
 
 const mapStateToProps = state => {
@@ -730,7 +855,8 @@ const mapStateToProps = state => {
 		commercialProducts: state.commercialProducts,
 		settings: state.settings,
 		validation: state.validation,
-		initialised: state.initialised
+		initialised: state.initialised,
+		offers: state.offers
 	};
 };
 

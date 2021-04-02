@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>decomposition_chunk_size__c</fullName>
+    <description>Number of items we will process on decomposition in one remote action. Used to tweak performance in case of issues with Salesforce limits.</description>
+    <externalId>false</externalId>
+    <label>Decomposition Chunk Size</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

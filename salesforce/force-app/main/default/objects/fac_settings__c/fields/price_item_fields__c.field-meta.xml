@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>price_item_fields__c</fullName>
+    <description>Populate if additional fields should be displayed in Commercial Product lists.</description>
+    <externalId>false</externalId>
+    <label>Price Item Fields</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>TextArea</type>
+</CustomField>

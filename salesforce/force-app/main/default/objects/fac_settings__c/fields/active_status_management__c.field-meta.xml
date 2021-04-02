@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>active_status_management__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>On threshold breach while negotiating: FAM will automatically change status of FA to requires_approval_status__c. If all charges are within the threshold limits, it will return it back to draft_status__c.</description>
+    <externalId>false</externalId>
+    <label>Active Status Management</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

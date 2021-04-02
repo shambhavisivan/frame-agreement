@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>discount_as_price__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>If selected, negotiated discount will be shown as new price instead of price difference.</description>
+    <externalId>false</externalId>
+    <label>Discount As Price</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,7 +1,7 @@
 {
     "packageDirectories": [
       {
-        "path": "salesforce/src",
+        "path": "salesforce/force-app",
         "default": true
       }
     ],

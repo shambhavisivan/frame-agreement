@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>volume_fields_visibility__c</fullName>
+    <description>Additional fields to be shown in account table while associating them with Frame Agreement. On the condition that csfam__show_volume_fields__c is set to true: here you can list volume fields you want to show. Fields are respresented with abbreviation (mv,mvp,muc,mucp)</description>
+    <externalId>false</externalId>
+    <inlineHelpText>mv,mvp</inlineHelpText>
+    <label>Volume Fields Visibility</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>TextArea</type>
+</CustomField>

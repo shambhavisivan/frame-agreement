@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>account_fields__c</fullName>
+    <description>Additional fields to be shown in account table while associating them with Frame Agreement</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Name,csfam__Active__c,Type</inlineHelpText>
+    <label>Account Fields</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>TextArea</type>
+</CustomField>

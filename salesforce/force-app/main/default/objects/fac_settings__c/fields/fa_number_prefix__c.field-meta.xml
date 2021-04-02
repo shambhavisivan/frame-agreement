@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>fa_number_prefix__c</fullName>
+    <description>Prefix that is going to be assigned to Frame Agreement Number.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>FA_</inlineHelpText>
+    <label>FA Number Prefix</label>
+    <length>255</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

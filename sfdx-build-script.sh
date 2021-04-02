@@ -34,7 +34,7 @@ echo "Installing Cloudsense Contracts"
 sfdx force:package:install --package 04t0J0000002VDL -u $orgAlias -w 20
 
 echo "Deploying source code"
-sfdx force:mdapi:deploy -d salesforce/src -u $orgAlias -w 20
+sfdx force:source:push --targetusername $orgAlias -w 20
 
 echo "Running tests"
 sfdx force:apex:test:run -l RunLocalTests -u $orgAlias -r human -w 60

@@ -9,7 +9,7 @@ import Icon from '../utillity/Icon';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
-import {queryCategoriesInCatalogue, queryOffersInCategory} from '../../graphql-actions/api-actions-mock'
+import { queryCategoriesInCatalogue, queryOffersInCategory } from '~/src/graphql-actions';
 
 class OffersModal extends Component {
 	constructor(props) {
@@ -66,7 +66,10 @@ class OffersModal extends Component {
 			const offers = await window.SF.invokeAction("getOffers", [
 				linkedOfferIds,
 			]);
-			this.setState({ offers });
+			const notAddedOffers = offers.filter(
+				offer => !this.addedOfferIds.includes(offer.Id)
+			);
+			this.setState({ notAddedOffers });
 		}
 	}
 

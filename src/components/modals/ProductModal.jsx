@@ -9,8 +9,9 @@ import Icon from '../utillity/Icon';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
-import { queryCategoriesInCatalogue, queryProductsInCategory } from '../../graphql-actions';
-import { invokeGetCommercialProducts } from '../../actions'
+import { queryCategoriesInCatalogue, queryProductsInCategory } from '~/src/graphql-actions';
+
+import * as Constants from '~/src/utils/constants'
 
 class ProductModal extends Component {
 	constructor(props) {
@@ -84,7 +85,10 @@ class ProductModal extends Component {
 			const commercialProducts = await window.SF.invokeAction("getCommercialProducts", [
 				linkedProductIds,
 			]);
-			this.setState({ commercialProducts });
+			let notAddedCommercialProducts = commercialProducts.filter(
+				cp => !this.addedProductsIds.includes(cp.Id)
+			);
+			this.setState({ notAddedCommercialProducts });
 		}
 	}
 

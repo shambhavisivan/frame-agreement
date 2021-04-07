@@ -4,6 +4,7 @@ import { PRODUCTS_IN_CATALOGUE, CATEGORIES_IN_CATALOGUE, PRODUCTS_IN_CATEGORY } 
 
 const TYPE_CP = "CommercialProduct";
 const ROLE_BASIC = "Basic";
+const ROLE_OFFER = "Offer";
 
 export const queryCpIdsInCatalogue = async () => {
 	const catalogueId = await getDefaultCatalogueId();
@@ -74,7 +75,37 @@ export const queryProductsInCategory = async (categoryId) => {
 		if (!response.isSuccess) {
 			throw new Error(response.error);
 		} else {
-			return response.data.productsInCategory.data;
+			return response.data.productsInCategory.data.filter(
+				(cp) => cp.role && cp.role === ROLE_BASIC && cp.type === TYPE_CP
+			);
+		}
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};
+
+export const queryOffersInCategory = async (categoryId) => {
+	if (!categoryId) {
+		throw new Error(
+			"category Id cannot be null for queryOffersInCategory"
+		);
+	}
+	const variables = {
+		categoryId: categoryId,
+	};
+
+	try {
+		const response = await invokeGraphQLService(
+			PRODUCTS_IN_CATEGORY,
+			variables
+		);
+
+		if (!response.isSuccess) {
+			throw new Error(response.error);
+		} else {
+			return response.data.productsInCategory.data.filter(
+				(cp) => cp.role && cp.role === ROLE_OFFER && cp.type === TYPE_CP
+			);
 		}
 	} catch (error) {
 		throw new Error(error.message);

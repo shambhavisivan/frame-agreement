@@ -45,7 +45,7 @@ class NegotiationModal extends Component {
 
 		this.commercialProducts = [];
 
-		if (props.commercialProductType === Constants.PRODUCT_TYPE_OFFER) {
+		if (props.commercialProductType === Constants.ROLE_OFFER) {
 			this.commercialProducts = this.props.offers.filter(product => {
 				this.commercialProductsMap[product.Id] = product;
 				return this.props.products.includes(product.Id);

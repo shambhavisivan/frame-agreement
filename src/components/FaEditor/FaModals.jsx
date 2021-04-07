@@ -279,7 +279,7 @@ class FaModals extends React.Component {
 					attachment={this.props.frameAgreements[this.props.faId]._ui.attachment.offers}
 					onNegotiate={this.onBulkNegotiateOffers}
 					onCloseModal={this.onCloseModal}
-					commercialProductType={Constants.PRODUCT_TYPE_OFFER}
+					commercialProductType={Constants.ROLE_OFFER}
 				/>
 			);
 		}

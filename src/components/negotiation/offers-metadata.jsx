@@ -1,26 +1,6 @@
 import React, { Component } from "react";
 import Pagination from "../utillity/Pagination";
 
-/**
- * props.data =
- *  {
-  	 version: '1-0-0',
-	 attributes: [
-			{
-				name: 'Colour',
-				values: ['Midnight Green', 'SpaceGrey', 'Silver', 'Gold'],
-				readOnly: false,
-				required: true
-			},
-			{
-				name: 'Memory',
-				values: ['64', '128'],
-				readOnly: true,
-				required: true
-			}
-		]
-	}
- */
 export class OffersMetadata extends Component {
 	constructor(props) {
 		super(props);
@@ -47,7 +27,7 @@ export class OffersMetadata extends Component {
 						<li key={meta.name} className="list-row">
 							<div className="list-cell">{meta.name}</div>
 							<div className="list-cell">
-								{meta.values.join(',')}
+								{meta.values.flatMap(obj => obj.value).join(', ')}
 							</div>
 							<div className="list-cell">
 								<input

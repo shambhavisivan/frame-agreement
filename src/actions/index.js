@@ -1,4 +1,8 @@
-import { queryCpIdsInCatalogue } from '../graphql-actions/api-actions-graphql';
+import {
+	queryCpIdsInCatalogue,
+	queryCpMetadataByIds,
+	queryOfferIdsInCatalogue
+} from '../graphql-actions/api-actions-graphql';
 import { decodeEntities, getFieldLabel } from '../utils/shared-service';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
@@ -443,15 +447,27 @@ export const getOfferData = offerIdList => {
 			return window.SF.invokeAction('getOfferData', [cpChunk]);
 		});
 
+		promiseArray.push(queryCpMetadataByIds(offerIdList));
+
 		try {
 			const results = await Promise.all(promiseArray);
+			const productMetadata = results.pop();
 
 			const merged_result = results.reduce((acc, val) => {
 				return { ...acc, ...val };
 			}, {});
 
+			productMetadata.forEach(product => {
+				merged_result.cpData[product.id] = {
+					...merged_result.cpData[product.id],
+					commercialProductMetadata: product.commercialProductMetadata
+				}
+			});
+
 			dispatch(receiveOfferData(merged_result))
-		} catch(e) {}
+		} catch(e) {
+			throw new Error(e.message);
+		}
 	}
 }
 
@@ -814,8 +830,9 @@ const recieveOffers = result => ({
 });
 
 export function getOffers() {
-	return function (dispatch) {
-		return window.SF.invokeAction("getOffers", [null]).then((response) => {
+	return async function (dispatch) {
+		const offerIdsInCatalogue = await queryOfferIdsInCatalogue();
+		return window.SF.invokeAction("getOffers", [offerIdsInCatalogue]).then((response) => {
 			dispatch(recieveOffers(response));
 		});
 	};

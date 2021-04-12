@@ -30,6 +30,7 @@ import SettingsContext from '~/src/utils/settings-context.js';
 import { publish } from '~/src/api';
 
 import { setValidation, setFrameAgreementState, negotiateOffers } from '~/src/actions';
+import { OffersMetadata } from './offers-metadata';
 
 export class Offer extends React.Component {
 	constructor(props) {
@@ -288,6 +289,9 @@ export class Offer extends React.Component {
 									disabled={!this.props.offer._allowances.length}
 								>
 									<Allowances data={this.props.offer._allowances} />
+								</Tab>
+								<Tab label={window.SF.labels.offer_metadata_header} disabled={!this.props.offer._metadata}>
+										<OffersMetadata data={this.props.offer._metadata.attributeMetadata} />
 								</Tab>
 							</Tabs>
 						</div>

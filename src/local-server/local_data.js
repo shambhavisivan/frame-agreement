@@ -3701,6 +3701,10 @@ window.SF = SF = {
 		charges_header_recc: 'Recurring Adjustment',
 		charges_header_recc_neg: 'Negotiated Recurring',
 		charges_header_type: 'Charge Type',
+		cp_meta_header_attribute_name: 'Attribute Name',
+		cp_meta_header_values: 'Values',
+		cp_meta_header_read_only: 'Read Only',
+		cp_meta_header_required: 'Required',
 		delta_fa_fields: 'Frame Agreement Fields',
 		delta_status_added: 'Added',
 		delta_status_changed: 'Changed',
@@ -3797,6 +3801,7 @@ window.SF = SF = {
 			'You have unsaved changes, are you sure you want to leave?',
 		no_fa_message: 'There are no Frame Agreements in here.',
 		no_fa_message_2: 'Create at least one frame agreements.',
+		offer_metadata_header: 'Metadata',
 		offers_tab_title: 'Offers',
 		offers_title: 'Offers',
 		offers_title_empty: 'Offer Negotiation',
@@ -3904,7 +3909,7 @@ window.SF = SF = {
 					// AuthLevels: AuthLevels,
 					FACSettings: FACSettings,
 					hiddenTabs: {
-						product: true,
+						addons: true
 					}
 				};
 				return createPromise(data, 500);
@@ -4003,7 +4008,7 @@ window.SF = SF = {
 			case 'getOfferData':
 			case 'getCommercialProductData':
 				var responseData = {
-					cpData: [],
+					cpData: {},
 					discLevels: DiscLevels,
 					childUsageTypes: childUsageTypes,
 					discThresh: AuthLevels

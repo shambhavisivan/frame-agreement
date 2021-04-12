@@ -48,3 +48,49 @@ const offersInCategory = {
 export const queryOffersInCategory = async categoryId => {
 	return Promise.resolve(offersInCategory[categoryId]);
 }
+
+export const queryOfferIdsInCatalogue = () => Promise.resolve(productIds);
+
+const cpMetadata = [
+	{
+	  "id": "a1F1t0000001JBjEAM",
+	  "name": "Mobile L_6",
+	  "commercialProductMetadata": {
+		"attributeMetadata": {
+		  "version": "2-0-0",
+		  "attributes": [
+			{
+			  "name": "Colour",
+			  "values": [
+				{
+				  "value": "Midnight Green"
+				},
+				{
+				  "value": "SpaceGrey"
+				},
+				{
+				  "value": "Silver"
+				},
+				{
+				  "value": "Gold"
+				}
+			  ]
+			},
+			{
+			  "name": "Memory",
+			  "values": [
+				{
+				  "value": "64"
+				},
+				{
+				  "value": "128"
+				}
+			  ]
+			}
+		  ]
+		}
+	  }
+	}
+  ]
+
+export const queryCpMetadataByIds = () => Promise.resolve(cpMetadata);

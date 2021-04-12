@@ -1,6 +1,6 @@
 import { getDefaultCatalogueId } from "../api";
 import { invokeGraphQLService } from "../utils/dispatcher-service";
-import { PRODUCTS_IN_CATALOGUE, CATEGORIES_IN_CATALOGUE, PRODUCTS_IN_CATEGORY } from "./graphl-query";
+import { PRODUCTS_IN_CATALOGUE, CATEGORIES_IN_CATALOGUE, PRODUCTS_IN_CATEGORY, PRODUCT_METADATA_BY_IDS } from "./graphl-query";
 
 const TYPE_CP = "CommercialProduct";
 const ROLE_BASIC = "Basic";
@@ -111,3 +111,51 @@ export const queryOffersInCategory = async (categoryId) => {
 		throw new Error(error.message);
 	}
 };
+
+export const queryOfferIdsInCatalogue = async () => {
+	const catalogueId = await getDefaultCatalogueId();
+	const variables = {
+		catalogueId: catalogueId,
+	};
+
+	try {
+		const response = await invokeGraphQLService(
+			PRODUCTS_IN_CATALOGUE,
+			variables
+		);
+		if (!response.isSuccess) {
+			throw new Error(response.error);
+		} else {
+			return response.data.productsInCatalogue.data
+				.filter(
+					(cp) =>
+						cp.role && cp.role === ROLE_OFFER && cp.type === TYPE_CP
+				)
+				.map((cp) => cp.id);
+		}
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};
+
+
+export const queryCpMetadataByIds = async productIds => {
+	const variables = {
+		productIds
+	};
+
+	try {
+		const response = await invokeGraphQLService(
+			PRODUCT_METADATA_BY_IDS,
+			variables
+		);
+
+		if (!response.isSuccess) {
+			throw new Error(response.error);
+		} else {
+			return response.data.productsByIds;
+		}
+	} catch(error) {
+		console.error('Error fetching metadata', error);
+	}
+}

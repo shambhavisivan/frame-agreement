@@ -2420,6 +2420,7 @@ const rootReducer = (state = initialState, action) => {
 				});
 
 				state.offers[offerIndex]._allowances = offerData[key].allowances || [];
+				state.offers[offerIndex]._metadata = offerData[key].commercialProductMetadata || {};
 
 				state.offers[offerIndex]._dataLoaded = true;
 			}

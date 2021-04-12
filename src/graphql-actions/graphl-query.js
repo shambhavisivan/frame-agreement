@@ -47,3 +47,24 @@ query Products($categoryId: ID!) {
 	}
 }
 `;
+
+export const PRODUCT_METADATA_BY_IDS = `
+query PRODUCT_BY_IDS($productIds: [ID!]!) {
+	productsByIds(productIds: $productIds ) {
+		id
+		name
+		commercialProductMetadata {
+			attributeMetadata {
+				version
+				attributes {
+					name
+					values {
+						value
+					}
+				}
+			}
+		}
+	}
+}
+
+`;

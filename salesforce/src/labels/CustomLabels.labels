@@ -1072,6 +1072,13 @@
         <value>Create at least one frame agreements.</value>
     </labels>
     <labels>
+        <fullName>offer_metadata_header</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>offer_metadata_header</shortDescription>
+        <value>Metadata</value>
+    </labels>
+    <labels>
         <fullName>product_charge_header_name</fullName>
         <language>en_US</language>
         <protected>true</protected>

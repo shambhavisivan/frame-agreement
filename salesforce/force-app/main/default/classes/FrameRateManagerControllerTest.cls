@@ -138,7 +138,7 @@ private class FrameRateManagerControllerTest {
 		insert prgra_1;
 
 		csutil__JSON_Data__c standardPricebook = new csutil__JSON_Data__c(
-			Name = 'FA-StandardPricebook', csutil__value__c = prgra_1.Id
+			Name = 'FA-StandardPricebook', csutil__value__c = prg_1.Id
 		);
 		insert standardPricebook;
 
@@ -290,7 +290,8 @@ private class FrameRateManagerControllerTest {
 		insert customTabsData;
 	}
 
-	public static testMethod void testConstructor() {
+	@isTest
+	public static void testConstructor() {
 		setupPricingModel();
 		setupSettings();
 
@@ -299,7 +300,8 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 	}
 
-	public static testMethod void testConstructorInvalid() {
+	@isTest
+	public static void testConstructorInvalid() {
 		Test.startTest();
 		Boolean exceptionOccured = false;
 		try {
@@ -308,11 +310,11 @@ private class FrameRateManagerControllerTest {
 			exceptionOccured = true;
 		}
 		Test.stopTest();
-		system.assertEquals(true, exceptionOccured);
+		System.assertEquals(true, exceptionOccured);
 	}
 
-
-	public static testMethod void testGetCustomSettings() {
+	@isTest
+	public static void testGetCustomSettings() {
 		setupPricingModel();
 
 		Test.startTest();
@@ -321,12 +323,13 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertNotEquals(null, csettings);
+		System.assertNotEquals(null, csettings);
 		System.assertEquals(csettings.get('standalone_addon_fields'), 'cspmb__Add_On_Price_Item_Code__c');
 
 	}
 
-	public static testMethod void testGetPriceItemCharges() {
+	@isTest
+	public static void testGetPriceItemCharges() {
 		setupPricingModel();
 
 		Map<Id, cspmb__Price_Item__c> cp_1 = new Map<Id, cspmb__Price_Item__c>([select Id,Name from cspmb__Price_Item__c where Name = 'cp_1']);
@@ -342,12 +345,13 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertNotEquals(null, picMap);
-		system.assertEquals(0, picMapEmpty.keySet().size());
+		System.assertNotEquals(null, picMap);
+		System.assertEquals(0, picMapEmpty.keySet().size());
 
 	}
 
-	public static testMethod void testGetAccountsInformation() {
+	@isTest
+	public static void testGetAccountsInformation() {
 		setupPricingModel();
 
 		Account testAcc = [Select Id, Name from Account where Name = 'TestAcc' limit 1];
@@ -362,16 +366,17 @@ private class FrameRateManagerControllerTest {
 		Account resultMainAccount = (Account) accountsInfo.get('main_account');
 		List <csconta__Account_Frame_Agreement_Association__c> associatedAcc = (List <csconta__Account_Frame_Agreement_Association__c>) accountsInfo.get('associated_accounts');
 
-		system.assertEquals((String) testAcc.Id, resultMainAccount.Id);
-		system.assertEquals(1, accountsInfo.get('count'));
-		system.assertEquals(0, associatedAcc.size());
+		System.assertEquals((String) testAcc.Id, resultMainAccount.Id);
+		System.assertEquals(1, accountsInfo.get('count'));
+		System.assertEquals(0, associatedAcc.size());
 
 	}
 
 	// deleteAccountAssociation(String assocId)
 	// addAccountAssociation(String faId, String accountId)
 
-	public static testMethod void testAddDeleteAccountAssociation() {
+	@isTest
+	public static void testAddDeleteAccountAssociation() {
 		setupPricingModel();
 
 		Account testAcc = [Select Id, Name from Account where Name = 'TestAcc' limit 1];
@@ -394,12 +399,13 @@ private class FrameRateManagerControllerTest {
 		List <csconta__Account_Frame_Agreement_Association__c> associatedAcc_1 = (List <csconta__Account_Frame_Agreement_Association__c>) accountsInfo_1.get('associated_accounts');
 		List <csconta__Account_Frame_Agreement_Association__c> associatedAcc_2 = (List <csconta__Account_Frame_Agreement_Association__c>) accountsInfo_2.get('associated_accounts');
 
-		system.assertEquals(1, associatedAcc_1.size());
-		system.assertEquals(0, associatedAcc_2.size());
+		System.assertEquals(1, associatedAcc_1.size());
+		System.assertEquals(0, associatedAcc_2.size());
 
 	}
 
-	public static testMethod void testGetFieldLabels() {
+	@isTest
+	public static void testGetFieldLabels() {
 		setupPricingModel();
 
 		Test.startTest();
@@ -409,11 +415,12 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		Boolean isEffectiveDateInFields = fields.containsKey('cspmb__billing_frequency__c');
-		system.assertEquals(isEffectiveDateInFields, true);
+		System.assertEquals(isEffectiveDateInFields, true);
 
 	}
 
-	public static testMethod void getFindReplacementCommercialProduct() {
+	@isTest
+	public static void getFindReplacementCommercialProduct() {
 		setupPricingModel();
 
 		cspmb__Price_Item__c cp_replace_1 = new cspmb__Price_Item__c(Name = 'cp_replace_1', cspmb__Price_Item_Code__c = 'PC333C', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
@@ -429,11 +436,12 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		Boolean isCp2InResponse = JSON.serialize(result).contains(cp_replace_2.Id);
-		system.assertEquals(isCp2InResponse, true);
+		System.assertEquals(isCp2InResponse, true);
 
 	}
 
-	public static testMethod void testGetLookupInformation() {
+	@isTest
+	public static void testGetLookupInformation() {
 		setupPricingModel();
 		setupSettings();
 
@@ -489,16 +497,17 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(2, info_1.size());
-		system.assertEquals(3, info_2.size());
+		System.assertEquals(2, info_1.size());
+		System.assertEquals(3, info_2.size());
 
-		system.assertEquals(1, lookup_records_1.size());
-		system.assertEquals(1, lookup_records_2.size());
-		system.assertEquals(0, lookup_records_3.size());
+		System.assertEquals(1, lookup_records_1.size());
+		System.assertEquals(1, lookup_records_2.size());
+		System.assertEquals(0, lookup_records_3.size());
 
 	}
 
-	public static testMethod void testMinorFunctions() {
+	@isTest
+	public static void testMinorFunctions() {
 		setupPricingModel();
 
 		Id userId = UserInfo.getUserId();
@@ -541,17 +550,18 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(uniqueList.size(), 2);
-		system.assertEquals(addonAssoc_cp_addon_inv.size(), 2);
-		system.assertEquals(addonsInvalid.keySet().size(), 0);
-		system.assertEquals(addonsValid.keySet().size(), 1);
-		system.assertEquals(addons2InvalidAssoc1Valid.keySet().size(), 1);
-		//system.assertEquals(1, isUserDelegate.size());
-		//system.assertEquals(3, commercialProductData.keySet().size());
+		System.assertEquals(uniqueList.size(), 2);
+		System.assertEquals(addonAssoc_cp_addon_inv.size(), 2);
+		System.assertEquals(addonsInvalid.keySet().size(), 0);
+		System.assertEquals(addonsValid.keySet().size(), 1);
+		System.assertEquals(addons2InvalidAssoc1Valid.keySet().size(), 1);
+		//System.assertEquals(1, isUserDelegate.size());
+		//System.assertEquals(3, commercialProductData.keySet().size());
 
 	}
 
-	public static testMethod void testFrameAgreements() {
+	@isTest
+	public static void testFrameAgreements() {
 		setupPricingModel();
 		setupSettings();
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
@@ -590,21 +600,22 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest(); /**********/
 
-		system.assertEquals(2, faList.size());
-		system.assertEquals(fa_1.Id, fa.Id);
+		System.assertEquals(2, faList.size());
+		System.assertEquals(fa_1.Id, fa.Id);
 
 		fa_1 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
-		system.assertEquals('Active', fa_1.csconta__Status__c);
-		system.assertNotEquals('Success', invalidString_1);
-		system.assertNotEquals('Success', invalidString_2);
+		System.assertEquals('Active', fa_1.csconta__Status__c);
+		System.assertNotEquals('Success', invalidString_1);
+		System.assertNotEquals('Success', invalidString_2);
 
 		List<csconta__Frame_Agreement__c> emptyList = new List<csconta__Frame_Agreement__c>([select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA2']);
-		system.assertEquals(0, emptyList.size());
-		system.assertEquals('FA1', cloned_1_fa_1.csconta__Agreement_Name__c);
-		system.assertEquals(expectedExceptionThrown, true);
+		System.assertEquals(0, emptyList.size());
+		System.assertEquals('FA1', cloned_1_fa_1.csconta__Agreement_Name__c);
+		System.assertEquals(expectedExceptionThrown, true);
 	}
 
-	public static testMethod void testCreateNewFrameAgreement() {
+	@isTest
+	public static void testCreateNewFrameAgreement() {
 		setupPricingModel();
 		setupSettings();
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__frame_agreement_number__c, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
@@ -616,10 +627,11 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(fa_1_clone_2.csconta__frame_agreement_number__c, fa_1.csconta__frame_agreement_number__c);
+		System.assertEquals(fa_1_clone_2.csconta__frame_agreement_number__c, fa_1.csconta__frame_agreement_number__c);
 	}
 
-	public static testMethod void testCloneFrameAgreementWithAssociations() {
+	@isTest
+	public static void testCloneFrameAgreementWithAssociations() {
 		setupPricingModel();
 
 		Account testAcc = [Select Id, Name from Account where Name = 'TestAcc' limit 1];
@@ -634,12 +646,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(1, cloned_assoc_list.size());
+		System.assertEquals(1, cloned_assoc_list.size());
 
 	}
 
-
-	public static testMethod void testUpsertFrameAgreement() {
+	@isTest
+	public static void testUpsertFrameAgreement() {
 		setupPricingModel();
 		setupSettings();
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c, csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
@@ -654,10 +666,11 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest(); /**********/
 
 		fa_1 = [select Id, csconta__Status__c, csconta__Agreement_Name__c from csconta__Frame_Agreement__c where Id = :fa_1.Id limit 1];
-		system.assertEquals('FA1_CHANGED', fa_1.csconta__Agreement_Name__c);
+		System.assertEquals('FA1_CHANGED', fa_1.csconta__Agreement_Name__c);
 	}
 
-	public static testMethod void testGetAppSettings() {
+	@isTest
+	public static void testGetAppSettings() {
 		setupPricingModel();
 
 		setupSettings();
@@ -669,11 +682,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertNotEquals(null, appSetting);
+		System.assertNotEquals(null, appSetting);
 
 	}
 
-	public static testMethod void testGetAppSettingsNull() {
+	@isTest
+	public static void testGetAppSettingsNull() {
 		setupPricingModel();
 
 		Account acc = [select Id from Account where Name = 'TestAcc' limit 1];
@@ -684,12 +698,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertNotEquals(null, appSetting);
+		System.assertNotEquals(null, appSetting);
 
 	}
 
-
-	public static testMethod void testGetCommercialProducts() {
+	@isTest
+	public static void testGetCommercialProducts() {
 		setupPricingModel();
 		setupSettings();
 
@@ -706,8 +720,165 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(5, cpIdList.size());
-		system.assertEquals(4, getCommercialProducts.size());
+		System.assertEquals(5, cpIdList.size());
+		System.assertEquals(4, getCommercialProducts.size());
+	}
+
+	@IsTest
+	static void testCPLegacyPricing() {
+		setupPricingModel();
+		setupSettings();
+
+		cspmb__Price_Item__c cp = new cspmb__Price_Item__c(
+			Name = 'cp_temp',
+			cspmb__One_Off_Charge__c = 9.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 11.99
+		);
+		insert cp;
+
+		List<Id> cpIdList = new List<Id> {cp.Id};
+
+		List<cspmb__pricing_rule__c> pr = [select id, cspmb__description__c from cspmb__pricing_rule__c];
+
+		cspmb__Price_Item_Pricing_Rule_Association__c cppra = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__one_off_adjustment_type__c = 'Absolute Discount',
+			cspmb__price_item__c = cp.id,
+			cspmb__recurring_adjustment_type__c = 'Absolute Discount',
+			cspmb__pricing_rule__c = pr[0].id
+		);
+		insert cppra;
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
+
+		Test.stopTest();
+
+		cp = [
+			select Name, cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c
+			from cspmb__Price_Item__c
+			where id = :cp.id
+		];
+		cppra = [
+			select cspmb__one_off_adjustment__c, cspmb__recurring_adjustment__c
+			from cspmb__Price_Item_Pricing_Rule_Association__c
+			where cspmb__price_item__c = :cp.id
+		];
+
+		System.assertEquals(9, cp.cspmb__One_Off_Charge__c);
+		System.assertEquals(11.99, cp.cspmb__Recurring_Charge__c);
+
+		System.assertEquals(null, cppra.cspmb__one_off_adjustment__c);
+		System.assertEquals(null, cppra.cspmb__recurring_adjustment__c);
+
+		System.assertEquals(9, getCommercialProducts[0].cspmb__One_Off_Charge__c);
+		System.assertEquals(11.99, getCommercialProducts[0].cspmb__Recurring_Charge__c);
+	}
+
+	@IsTest
+	static void testCPAdvancedPricing(){
+		setupPricingModel();
+		setupSettings();
+
+		cspmb__Price_Item__c cp = new cspmb__Price_Item__c(
+			Name = 'cp_temp', cspmb__Is_Active__c = true
+		);
+		insert cp;
+
+		List<Id> cpIdList = new List<Id> {cp.Id};
+
+		List<cspmb__pricing_rule__c> pr = [select id, cspmb__description__c from cspmb__pricing_rule__c];
+
+		cspmb__Price_Item_Pricing_Rule_Association__c cppra = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__one_off_adjustment__c = 9.00,
+			cspmb__one_off_adjustment_type__c = 'Initial Price',
+			cspmb__price_item__c = cp.Id,
+			cspmb__recurring_adjustment__c = 11.99,
+			cspmb__recurring_adjustment_type__c = 'Initial Price',
+			cspmb__pricing_rule__c = pr[0].Id
+		);
+		insert cppra;
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
+
+		Test.stopTest();
+
+		cp = [
+			select Name, cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c
+			from cspmb__Price_Item__c
+			where id = :cp.id
+		];
+		cppra = [
+			select cspmb__one_off_adjustment__c, cspmb__recurring_adjustment__c
+			from cspmb__Price_Item_Pricing_Rule_Association__c
+			where cspmb__price_item__c = :cp.id
+		];
+
+		System.assertEquals(null, cp.cspmb__One_Off_Charge__c);
+		System.assertEquals(null, cp.cspmb__Recurring_Charge__c);
+
+		System.assertEquals(9, cppra.cspmb__one_off_adjustment__c);
+		System.assertEquals(11.99, cppra.cspmb__recurring_adjustment__c);
+
+		System.assertEquals(9, getCommercialProducts[0].cspmb__One_Off_Charge__c);
+		System.assertEquals(11.99, getCommercialProducts[0].cspmb__Recurring_Charge__c);
+	}
+
+	@IsTest
+	static void testCPAdvancedAndLegacyPricing(){
+		setupPricingModel();
+		setupSettings();
+
+		cspmb__Price_Item__c cp = new cspmb__Price_Item__c(
+			Name = 'cp_temp',
+			cspmb__One_Off_Charge__c = 1.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 2.00
+		);
+		insert cp;
+
+		List<Id> cpIdList = new List<Id> {cp.Id};
+
+		List<cspmb__pricing_rule__c> pr = [select id, cspmb__description__c from cspmb__pricing_rule__c];
+
+		cspmb__Price_Item_Pricing_Rule_Association__c cppra = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__one_off_adjustment__c = 3.00,
+			cspmb__one_off_adjustment_type__c = 'Initial Price',
+			cspmb__price_item__c = cp.Id,
+			cspmb__recurring_adjustment__c = 4.00,
+			cspmb__recurring_adjustment_type__c = 'Initial Price',
+			cspmb__pricing_rule__c = pr[0].Id
+		);
+		insert cppra;
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
+
+		Test.stopTest();
+
+		cp = [
+			select Name, cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c
+			from cspmb__Price_Item__c
+			where id = :cp.id
+		];
+		cppra = [
+			select cspmb__one_off_adjustment__c, cspmb__recurring_adjustment__c
+			from cspmb__Price_Item_Pricing_Rule_Association__c
+			where cspmb__price_item__c = :cp.id
+			];
+
+		System.assertEquals(1, cp.cspmb__One_Off_Charge__c);
+		System.assertEquals(2, cp.cspmb__Recurring_Charge__c);
+
+		System.assertEquals(3, cppra.cspmb__one_off_adjustment__c);
+		System.assertEquals(4, cppra.cspmb__recurring_adjustment__c);
+
+		System.assertEquals(3, getCommercialProducts[0].cspmb__One_Off_Charge__c);
+		System.assertEquals(4, getCommercialProducts[0].cspmb__Recurring_Charge__c);
 	}
 
 	@IsTest
@@ -735,11 +906,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(5, cpIdList.size());
-		system.assertEquals(0, getCommercialProducts.size());
+		System.assertEquals(5, cpIdList.size());
+		System.assertEquals(0, getCommercialProducts.size());
 	}
 
-	public static testMethod void testGetStandaloneAddons() {
+	@isTest
+	public static void testGetStandaloneAddons() {
 		setupPricingModel();
 
 		Fac_Settings__c facSettings = FrameRateManagerControllerTest.loadFacSettings();
@@ -750,11 +922,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(2, saAddons.size());
+		System.assertEquals(2, saAddons.size());
 
 	}
 
-	public static testMethod void testFilterStandaloneAddons() {
+	@isTest
+	public static void testFilterStandaloneAddons() {
 		setupPricingModel();
 
 		Fac_Settings__c facSettings = FrameRateManagerControllerTest.loadFacSettings();
@@ -766,11 +939,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(2, saAddons.size());
+		System.assertEquals(2, saAddons.size());
 
 	}
 
-	public static testMethod void testGetAddonDiscountInformation() {
+	@isTest
+	public static void testGetAddonDiscountInformation() {
 		setupPricingModel();
 
 		Fac_Settings__c facSettings = FrameRateManagerControllerTest.loadFacSettings();
@@ -782,13 +956,14 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(true, addon_di.containsKey('discLevels'));
-		system.assertEquals(true, addon_di.containsKey('dcList'));
+		System.assertEquals(true, addon_di.containsKey('discLevels'));
+		System.assertEquals(true, addon_di.containsKey('dcList'));
 
 	}
 
 
-	public static testMethod void testGetCommercialProductsNull() {
+	@isTest
+	public static void testGetCommercialProductsNull() {
 		setupPricingModel();
 
 		setupSettings();
@@ -799,11 +974,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(4, getCommercialProducts.size());
+		System.assertEquals(4, getCommercialProducts.size());
 
 	}
 
-	public static testMethod void testFilterCommercialProductsReturnsEmpty() {
+	@isTest
+	public static void testFilterCommercialProductsReturnsEmpty() {
 		setupPricingModel();
 		setupSettings();
 		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]';
@@ -814,7 +990,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(0, filteredCp.size(), 'should return 0 cps because there is no discount type in test data');
+		System.assertEquals(0, filteredCp.size(), 'should return 0 cps because there is no discount type in test data');
 
 	}
 
@@ -830,7 +1006,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(1, filteredCp.size());
+		System.assertEquals(1, filteredCp.size());
 		System.assertEquals('cp_1', filteredCp[0].name);
 	}
 
@@ -850,7 +1026,8 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 	}
 
-	public static testMethod void testApproval() {
+	@isTest
+	public static void testApproval() {
 		setupPricingModel();
 
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
@@ -883,11 +1060,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		// system.assertEquals();
+		// System.assertEquals();
 
 	}
 
-	public static testMethod void testPricingElements() {
+	@isTest
+	public static void testPricingElements() {
 		setupPricingModel();
 
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
@@ -899,22 +1077,23 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(2, pricingElementsList.size());
+		System.assertEquals(2, pricingElementsList.size());
 
 	}
 
-	public static testMethod void testDecomposeAttachment() {
+	@isTest
+	public static void testDecomposeAttachment() {
 		String decomposeData = setupPricingModel();
 		Fac_Settings__c facSettings = Fac_Settings__c.getInstance(UserInfo.getUserID());
 
-		system.debug('facSettings:' + facSettings);
+		System.debug('facSettings:' + facSettings);
 
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c, csconta__replaced_frame_agreement__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
 
 		csconta__Frame_Agreement__c fa_2 = [select Id, csconta__Status__c, csconta__replaced_frame_agreement__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA2' limit 1];
 		fa_2.csconta__replaced_frame_agreement__c = fa_1.Id;
 		update fa_2;
-		system.debug('fa_2:' + fa_2);
+		System.debug('fa_2:' + fa_2);
 		Test.startTest();
 
 		Id prId = FrameRateManagerController.createPricingRuleGroup(fa_1.Id);
@@ -925,18 +1104,19 @@ private class FrameRateManagerControllerTest {
 
 		FrameRateManagerController.undoDecomposition(prId);
 
-		system.assertEquals('Success', decomposeResult_1);
+		System.assertEquals('Success', decomposeResult_1);
 
 		List<cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = [select Id from cspmb__Price_Item_Pricing_Rule_Association__c where cspmb__pricing_rule__c = :prId limit 10000];
 		List<cspmb__Price_Item_Pricing_Rule_Association__c> pipraList2 = [select Id from cspmb__Price_Item_Pricing_Rule_Association__c where cspmb__pricing_rule__c = :prId_2 limit 10000];
 
 		Test.stopTest();
 
-		system.assertEquals(0, pipraList.size()); // Deleted
-		system.assertEquals(6, pipraList2.size());
+		System.assertEquals(0, pipraList.size()); // Deleted
+		System.assertEquals(6, pipraList2.size());
 	}
 
-	public static testMethod void testAttachmentMethods() {
+	@isTest
+	public static void testAttachmentMethods() {
 		setupPricingModel();
 		cspmb__Price_Item__c cp_1 = [select Id,Name from cspmb__Price_Item__c where Name = 'cp_1' limit 1];
 		cspmb__Price_Item__c cp_2 = [select Id,Name from cspmb__Price_Item__c where Name = 'cp_2' limit 1];
@@ -958,36 +1138,39 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals('TestBody_1', attachmentBodies[0]);
-		system.assertEquals('TestBody_2', attachmentBodies[1]);
-		system.assertEquals('TestBody_3', attachmentBodies[2]);
-		system.assertEquals('TestBody_4', attachmentBodies[3]);
-		system.assertEquals('VGVzdEJvZHlfNA==', attachmentBodies[4]);
-		system.assertEquals(null, attachmentBodies[5]);
+		System.assertEquals('TestBody_1', attachmentBodies[0]);
+		System.assertEquals('TestBody_2', attachmentBodies[1]);
+		System.assertEquals('TestBody_3', attachmentBodies[2]);
+		System.assertEquals('TestBody_4', attachmentBodies[3]);
+		System.assertEquals('VGVzdEJvZHlfNA==', attachmentBodies[4]);
+		System.assertEquals(null, attachmentBodies[5]);
 
 	}
 
-	public static testMethod void testPicklistOptions() {
+	@isTest
+	public static void testPicklistOptions() {
 		Test.startTest();
 		Map<String, List <Map<String, Object>>> pickList = FrameRateManagerController.getPicklistOptions(new List<String>{
 			'csconta__Status__c'
 		});
 		Test.stopTest();
 
-		system.assertEquals(1, pickList.keySet().size());
+		System.assertEquals(1, pickList.keySet().size());
 	}
 
-	public static testMethod void TestGetPointedObjectFromFa() {
+	@isTest
+	public static void TestGetPointedObjectFromFa() {
 		Test.startTest();
 
 		String pointedObject = FrameRateManagerController.getPointedObjectFromFa('csconta__Pricing_Rule_Group__c');
 
 		Test.stopTest();
 
-		system.assertEquals('cspmb__Pricing_Rule_Group__c', pointedObject);
+		System.assertEquals('cspmb__Pricing_Rule_Group__c', pointedObject);
 	}
 
-	public static testMethod void testPriceItemDataEdgeCases() {
+	@isTest
+	public static void testPriceItemDataEdgeCases() {
 		FrameRateManagerControllerTest.setupSettings();
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c();
 		insert cp_1;
@@ -1000,11 +1183,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(0, emptyList.keySet().size());
+		System.assertEquals(0, emptyList.keySet().size());
 
 	}
 
-	public static testMethod void testFrameAgreementMinorFunctions() {
+	@isTest
+	public static void testFrameAgreementMinorFunctions() {
 		FrameRateManagerControllerTest.setupSettings();
 
 		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c();
@@ -1017,15 +1201,15 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c clonedFa = FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
 		String deleteResult = FrameRateManagerController.deleteFrameAgreement(fa_1.Id);
 		Test.stopTest();
-		system.assertNotEquals(null, faGet);
-		system.assertEquals('Success', setStatusResult);
-		system.assertNotEquals(null, clonedFa);
-		system.assertEquals('Success', deleteResult);
+		System.assertNotEquals(null, faGet);
+		System.assertEquals('Success', setStatusResult);
+		System.assertNotEquals(null, clonedFa);
+		System.assertEquals('Success', deleteResult);
 
 	}
 
-
-	public static testMethod void testFrameAgreementMasterFunctions() {
+	@isTest
+	public static void testFrameAgreementMasterFunctions() {
 
 		setupPricingModel();
 
@@ -1054,11 +1238,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertEquals(originalChildSize, faListWithMasterSetAfterAdd);
-		system.assertEquals(1, faListWithMasterSetAfterDelete);
+		System.assertEquals(originalChildSize, faListWithMasterSetAfterAdd);
+		System.assertEquals(1, faListWithMasterSetAfterDelete);
 	}
 
-	public static testMethod void testAccountLookupErrors() {
+	@isTest
+	public static void testAccountLookupErrors() {
 		Test.startTest();
 
 		String result1 = FrameRateManagerController.deleteAccountAssociation('01p1t00000M4Gqp');
@@ -1066,11 +1251,12 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		system.assertNotEquals('Success', result1);
-		system.assertNotEquals(null, result2);
+		System.assertNotEquals('Success', result1);
+		System.assertNotEquals(null, result2);
 	}
 
-	public static testMethod void testCloneFrameAgreementsWithCustomFields() {
+	@isTest
+	public static void testCloneFrameAgreementsWithCustomFields() {
 		setupSettings();
 
 		csutil__JSON_Data__c faCloneSettings = new csutil__JSON_Data__c(
@@ -1113,7 +1299,8 @@ private class FrameRateManagerControllerTest {
 		System.assertNotEquals(original.csconta__frame_agreement_number__c, cloned.csconta__frame_agreement_number__c);
 	}
 
-	public static testMethod void testVersioningImpactOnEndDate() {
+	@isTest
+	public static void testVersioningImpactOnEndDate() {
 		Account test_account = new Account(name = 'TestAcc');
 		insert test_account;
 
@@ -1142,7 +1329,8 @@ private class FrameRateManagerControllerTest {
 		System.assertEquals(originalFa.csconta__effective_end_date__c, futureDate);
 	}
 
-	public static testMethod void testActivationImpactOnOldVersions() {
+	@isTest
+	public static void testActivationImpactOnOldVersions() {
 		Account test_account = new Account(name = 'TestAcc');
 		insert test_account;
 
@@ -1219,7 +1407,9 @@ private class FrameRateManagerControllerTest {
 		System.assertEquals(newEndDateFa2, Date.today());
 		System.assertEquals(expiredOriginalFa.csconta__effective_end_date__c, pastDate);
 	}
-	public static testMethod void testFilterWithMultipleConditions() {
+
+	@isTest
+	public static void testFilterWithMultipleConditions() {
 		cspmb__Price_Item__c mobileL = new cspmb__Price_Item__c(
 			name = 'Mobile L',
 			cspmb__contract_term__c = '36 Months',

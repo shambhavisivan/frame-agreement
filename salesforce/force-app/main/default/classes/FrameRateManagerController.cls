@@ -341,7 +341,7 @@ global with sharing class FrameRateManagerController {
 			];
 		} catch (Exception e) {
 			// result = e.getMessage();
-			system.debug(e.getMessage());
+			System.debug(e.getMessage());
 		}
 
 		return association;
@@ -387,7 +387,7 @@ global with sharing class FrameRateManagerController {
 			returnValues.put('initialLabel', database.query(query_init)[0].get(column));
 		}
 
-		system.debug(query_count);
+		System.debug(query_count);
 		returnValues.put('count', database.countQuery(query_count));
 		returnValues.put('object', pointedObject);
 
@@ -417,7 +417,7 @@ global with sharing class FrameRateManagerController {
 		List<String> columnsParsed = new List<String>();
 
 		for (Object column : (List<Object>) parameters.get('columns')) {
-			system.debug(String.valueOf(column));
+			System.debug(String.valueOf(column));
 			columnsParsed.add(String.valueOf(column));
 		}
 
@@ -454,7 +454,7 @@ global with sharing class FrameRateManagerController {
 		query = query + ' order by id';
 		query = query + ' limit ' + String.valueOf(parameters.get('offset'));
 
-		system.debug(query);
+		System.debug(query);
 
 		returnValues = database.query(query);
 
@@ -498,7 +498,7 @@ global with sharing class FrameRateManagerController {
 		}
 
 		List<Object> listData = (List<Object>) JSON.deserializeUntyped(data);
-		system.debug(listData);
+		System.debug(listData);
 
 		Set <String> fa_fields_set = new Set <String>();
 		fa_fields_set.addAll(FA_FIELDS);
@@ -1008,7 +1008,7 @@ global with sharing class FrameRateManagerController {
 		List<String> uniqueList = getUniqueListElements(fieldsArr);
 
 		String query = 'select  ' + String.join(uniqueList, ',') + ' from cspmb__Price_Item__c ';
-		// DD ACCOUNT NULL CLAUSE
+		// ADD ACCOUNT NULL CLAUSE
 		query += 'where cspmb__Account__c = null ';
 		// ADD ACTIVE CLAUSE
 		query += 'and cspmb__Is_Active__c = true ';
@@ -1021,10 +1021,57 @@ global with sharing class FrameRateManagerController {
 			query += 'and Id in :priceItemIds ';
 		}
 
-		query += 'limit 50000';
+		query += 'limit 20000';
 
-		List<cspmb__Price_Item__c> cpList = database.query(query);
-		return cpList;
+		Map<Id, cspmb__Price_Item__c> cpList = new Map<Id, cspmb__Price_Item__c>(
+			(List<cspmb__Price_Item__c>) database.query(query)
+		);
+
+
+		// modification of cpList is added because of PLM advanced pricing regulation
+		// fetching recurring and one-off adjustment, then showing them in one-off and recurring charge of CP
+
+		csutil__JSON_Data__c standardPricebook = getStandardPricebook();
+
+		if (String.isEmpty(standardPricebook?.csutil__value__c)) {
+			return cpList.values();
+		}
+
+		List<cspmb__Pricing_Rule_Group_Rule_Association__c> prgs = [
+			select id, cspmb__pricing_rule_group__c, cspmb__pricing_rule__c
+			from cspmb__Pricing_Rule_Group_Rule_Association__c
+			where cspmb__pricing_rule_group__c = :standardPricebook.csutil__value__c
+		];
+
+		List<Id> pricingRuleList = new List<Id>();
+		for (cspmb__Pricing_Rule_Group_Rule_Association__c prgra : prgs) {
+			pricingRuleList.add(prgra.cspmb__pricing_rule__c);
+		}
+
+		List<String> adjustmentTypeList = new List<String> {'Initial Price', 'Price Override'};
+		List<cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = new List<cspmb__Price_Item_Pricing_Rule_Association__c>();
+		if (!prgs.isEmpty()){
+			pipraList = [
+				select id, cspmb__recurring_adjustment__c, cspmb__one_off_adjustment__c, cspmb__price_item__c,
+					cspmb__pricing_rule__c, cspmb__one_off_adjustment_type__c, cspmb__recurring_adjustment_type__c
+				from cspmb__Price_Item_Pricing_Rule_Association__c
+				where cspmb__price_item__c in :cpList.values()
+				and cspmb__pricing_rule__c in :pricingRuleList
+				and (cspmb__one_off_adjustment_type__c in :adjustmentTypeList
+					or cspmb__one_off_adjustment_type__c in :adjustmentTypeList)
+			];
+		}
+
+		// update one-off and recurring charge of CP
+		for (cspmb__Price_Item_Pricing_Rule_Association__c cppra : pipraList) {
+			if (cpList.get(cppra.cspmb__price_item__c) != null) {
+				cspmb__Price_Item__c pi = cpList.get(cppra.cspmb__price_item__c);
+				pi.cspmb__one_off_charge__c = cppra.cspmb__one_off_adjustment__c;
+				pi.cspmb__recurring_charge__c = cppra.cspmb__recurring_adjustment__c;
+			}
+		}
+
+		return cpList.values();
 	}
 
 	private static String getInitialFilters() {
@@ -1060,7 +1107,7 @@ global with sharing class FrameRateManagerController {
 		};
 
 		// Get information on old commercial products (mainly for price item code)
-		String query_old = 'select  ' + 
+		String query_old = 'select  ' +
 			String.join(standardFields, ',') +
 			' from cspmb__Price_Item__c' +
 			' where Id in :priceItemIds';
@@ -1096,7 +1143,7 @@ global with sharing class FrameRateManagerController {
 		query_new += 'and (cspmb__Effective_Start_Date__c = null OR (cspmb__Effective_Start_Date__c != null and cspmb__Effective_Start_Date__c < TODAY)) ';
 		// ADD END DATE CHECK CLAUSE
 		query_new += 'and (cspmb__Effective_End_Date__c = null OR (cspmb__Effective_End_Date__c != null and cspmb__Effective_End_Date__c > TODAY)) ';
-		
+
 		query_new += 'and cspmb__Price_Item_Code__c in :codeList ';
 
 		query_new += 'limit 50000';
@@ -1445,7 +1492,7 @@ global with sharing class FrameRateManagerController {
 			query += ' where ' + (String) relatedList.get('fa_lookup') + ' = :faId';
 			query += ' limit 50000';
 
-			system.debug(query);
+			System.debug(query);
 
 			relatedStructure.put('label', (String) relatedList.get('label'));
 			relatedStructure.put('object', (String) relatedList.get('object'));
@@ -2134,7 +2181,7 @@ global with sharing class FrameRateManagerController {
 	*/
 	@RemoteAction
 	public static csconta__Frame_Agreement__c createNewVersionOfFrameAgreement(Id faId) {
-		system.debug('createNewVersionOfFrameAgreement ' + faId);
+		System.debug('createNewVersionOfFrameAgreement ' + faId);
 		csconta__Frame_Agreement__c original = getFrameAgreement(faId);
 
 		if (original == null) {
@@ -2183,7 +2230,7 @@ global with sharing class FrameRateManagerController {
 		for (String key : dataMap.keySet()) {
 
 			if (fieldMap.get(key) == null) {
-				system.debug(Logginglevel.WARN, '' + key + ' not valid field on csconta__Frame_Agreement__c');
+				System.debug(Logginglevel.WARN, '' + key + ' not valid field on csconta__Frame_Agreement__c');
 				continue;
 			}
 
@@ -2421,8 +2468,8 @@ global with sharing class FrameRateManagerController {
 		List <cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = new List <cspmb__Price_Item_Pricing_Rule_Association__c>();
 
 		categorizationData = (List<Object>) JSON.deserializeUntyped(data);
-		system.debug('***********data**************');
-		system.debug(categorizationData);
+		System.debug('***********data**************');
+		System.debug(categorizationData);
 
 		for (Object item : categorizationData) {
 			try {
@@ -2461,9 +2508,9 @@ global with sharing class FrameRateManagerController {
 				if (oneOff != null) {
 					pipra.cspmb__one_off_adjustment__c = oneOff;
 				}
-				system.debug(pipra);
+				System.debug(pipra);
 				pipraList.add(pipra);
-				system.debug('pipraList *** ' + pipraList);
+				System.debug('pipraList *** ' + pipraList);
 
 			} catch (Exception e) {
 				retString = e.getMessage();

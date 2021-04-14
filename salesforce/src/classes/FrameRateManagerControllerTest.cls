@@ -524,7 +524,10 @@ private class FrameRateManagerControllerTest {
 
 		List<String> uniqueList = FrameRateManagerController.getUniqueListElements(new List<String>{'a1', 'a1', 'a2'});
 
-		Map<String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList);
+		Map<String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(
+			cpIdList,
+			new List<Id>()
+		);
 
 		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> addonsInvalid = FrameRateManagerController.getAddons(new List <Id>{
 			cp_addon_inv.Id

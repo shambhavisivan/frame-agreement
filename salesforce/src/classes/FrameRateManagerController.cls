@@ -1371,33 +1371,33 @@ global with sharing class FrameRateManagerController {
 
 	}
 
-	private static Map<String, Object> getCommercialProductsData(List<String> priceItemIdList) {
+	private static Map<String, Object> getCommercialProductsData(
+		List<String> priceItemIdList,
+		List<Id> addonIdList
+	) {
 		Map<Id, cpData> cpDataMap = new Map<Id, cpData>();
 
-		Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> addons = getAddons(priceItemIdList);
-		// Get addonIds for discount levels
-		// These are the addons that we need to load beside cp
 		Map<Id, List<RateCard>> rateCards = getRateCards(priceItemIdList);
 		// got ratecards, load auth lv for them
-		List<Id> addonIdList = getAddonIdsForCp(priceItemIdList);
 		List<Id> rcIdList = getRateCardIdsForCp(priceItemIdList);
 		List<DiscountLevelWrapper> discountLevels = getDiscountevels(addonIdList, priceItemIdList);
 
 
-		List<cspmb__Discount_Threshold__c> discountThresholds = getDiscountThresholds(addonIdList, priceItemIdList, rcIdList);
+		List<cspmb__Discount_Threshold__c> discountThresholds = getDiscountThresholds(
+			addonIdList,
+			priceItemIdList,
+			rcIdList
+		);
 
-		Map <Id, List <PricingElementWrapper>> charges = getCommercialProductCharges(priceItemIdList);
+		Map <Id, List <PricingElementWrapper>> charges = getCommercialProductCharges(
+			priceItemIdList
+		);
 
 		AllowancesWrapper allowanceUtStructure = getAllowances(priceItemIdList);
 		Map<Id, List<cspmb__Allowance__c>> allowances = allowanceUtStructure.allowanceMap;
 
 
 		for (String priceItemId : priceItemIdList) {
-			List<cspmb__Price_Item_Add_On_Price_Item_Association__c> this_addons = addons.get(priceItemId);
-			if (this_addons == null) {
-				this_addons = new List<cspmb__Price_Item_Add_On_Price_Item_Association__c>();
-			}
-
 			List <PricingElementWrapper> this_charges = charges.get(priceItemId);
 			if (this_charges == null) {
 				this_charges = new List <PricingElementWrapper>();
@@ -1414,7 +1414,7 @@ global with sharing class FrameRateManagerController {
 				this_allowances = new List<cspmb__Allowance__c>();
 			}
 
-			cpDataMap.put(priceItemId, new cpData(this_addons, this_charges, this_rateCards, this_allowances));
+			cpDataMap.put(priceItemId, new cpData(this_charges, this_rateCards, this_allowances));
 		}
 
 		Map<String, Object> collectiveCpData = new Map<String, Object>();
@@ -2528,13 +2528,19 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map<String, Object> getCommercialProductData(List<String> commercialProductIdList) {
-		return FrameRateManagerController.getCommercialProductsData(commercialProductIdList);
+	public static Map<String, Object> getCommercialProductData(
+		List<String> commercialProductIdList,
+		List<Id> addonIdList
+	) {
+		return FrameRateManagerController.getCommercialProductsData(
+			commercialProductIdList,
+			addonIdList
+		);
 	}
 
 	@RemoteAction
-	public static Map<String, Object> getOfferData(List<String> offerIdList) {
-		return FrameRateManagerController.getCommercialProductsData(offerIdList);
+	public static Map<String, Object> getOfferData(List<String> offerIdList, List<Id> addonIdList) {
+		return FrameRateManagerController.getCommercialProductsData(offerIdList, addonIdList);
 	}
 
 	@RemoteAction
@@ -2597,10 +2603,6 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public class cpData {
-		public List<cspmb__Price_Item_Add_On_Price_Item_Association__c> addons {
-			get;
-			set;
-		}
 		public List <PricingElementWrapper> charges {
 			get;
 			set;
@@ -2614,8 +2616,11 @@ global with sharing class FrameRateManagerController {
 			set;
 		}
 
-		public cpData(List<cspmb__Price_Item_Add_On_Price_Item_Association__c> addonList, List <PricingElementWrapper> charges, List<RateCard> rateCardList, List<cspmb__Allowance__c> allowances) {
-			this.addons = addonList;
+		public cpData(
+			List <PricingElementWrapper> charges,
+			List<RateCard> rateCardList,
+			List<cspmb__Allowance__c> allowances
+		) {
 			this.charges = charges;
 			this.rateCards = rateCardList;
 			this.allowances = allowances;

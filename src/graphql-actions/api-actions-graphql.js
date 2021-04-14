@@ -1,6 +1,11 @@
 import { getDefaultCatalogueId } from "../api";
 import { invokeGraphQLService } from "../utils/dispatcher-service";
-import { PRODUCTS_IN_CATALOGUE, CATEGORIES_IN_CATALOGUE, PRODUCTS_IN_CATEGORY, PRODUCT_METADATA_BY_IDS } from "./graphl-query";
+import {
+	PRODUCTS_IN_CATALOGUE,
+	CATEGORIES_IN_CATALOGUE,
+	PRODUCTS_IN_CATEGORY,
+	PRODUCT_DATA_BY_IDS,
+} from "./graphl-query";
 
 const TYPE_CP = "CommercialProduct";
 const ROLE_BASIC = "Basic";
@@ -139,14 +144,14 @@ export const queryOfferIdsInCatalogue = async () => {
 };
 
 
-export const queryCpMetadataByIds = async productIds => {
+export const queryCpDataByIds = async productIds => {
 	const variables = {
 		productIds
 	};
 
 	try {
 		const response = await invokeGraphQLService(
-			PRODUCT_METADATA_BY_IDS,
+			PRODUCT_DATA_BY_IDS,
 			variables
 		);
 
@@ -156,6 +161,6 @@ export const queryCpMetadataByIds = async productIds => {
 			return response.data.productsByIds;
 		}
 	} catch(error) {
-		console.error('Error fetching metadata', error);
+		throw new Error(error.message);
 	}
 }

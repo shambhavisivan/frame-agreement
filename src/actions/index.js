@@ -1,9 +1,9 @@
 import {
 	queryCpIdsInCatalogue,
-	queryCpMetadataByIds,
+	queryCpDataByIds,
 	queryOfferIdsInCatalogue
 } from '../graphql-actions/api-actions-graphql';
-import { decodeEntities, getFieldLabel } from '../utils/shared-service';
+import { decodeEntities, getFieldLabel, restructureProductData } from '../utils/shared-service';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
 const _defaultModals = {
@@ -407,9 +407,21 @@ export const _recievePriceItemData = result => ({
 const _getCommercialProductData = priceItemIdList => {
 	return new Promise(async (resolve, reject) => {
 		let priceItemChunks = priceItemIdList.chunk(window.SF.product_chunk_size || 100);
+		let addonData = await queryCpDataByIds(priceItemIdList);
+		let cpData = restructureProductData(addonData);
 
 		let promiseArray = priceItemChunks.map(cpChunk => {
-			return window.SF.invokeAction('getCommercialProductData', [cpChunk]);
+			let addonIdList = cpChunk.flatMap((productId) =>
+				cpData[productId]
+					? cpData[productId].addons.map(
+							(addon) => addon.cspmb__Add_On_Price_Item__c
+					  )
+					: []
+			);
+			return window.SF.invokeAction("getCommercialProductData", [
+				cpChunk,
+				addonIdList,
+			]);
 		});
 
 		let results = await Promise.all(promiseArray);
@@ -417,6 +429,12 @@ const _getCommercialProductData = priceItemIdList => {
 		let merged_result = results.reduce((acc, val) => {
 			return { ...acc, ...val };
 		}, {});
+
+		for (let id in cpData) {
+			if (merged_result.cpData[id]) {
+				merged_result.cpData[id].addons = cpData[id].addons;
+			}
+		}
 
 		resolve(merged_result);
 	});
@@ -442,29 +460,40 @@ export const receiveOfferData = result => ({
 export const getOfferData = offerIdList => {
 	return async function(dispatch) {
 		const offerChunks = offerIdList.chunk(window.SF.product_chunk_size || 100);
-
-		const promiseArray = offerChunks.map(cpChunk => {
-			return window.SF.invokeAction('getOfferData', [cpChunk]);
-		});
-
-		promiseArray.push(queryCpMetadataByIds(offerIdList));
-
 		try {
+			const offerMeta = await queryCpDataByIds(offerIdList);
+			const offerData = restructureProductData(offerMeta);
+
+			const promiseArray = offerChunks.map((cpChunk) => {
+				const addonIdList = cpChunk.flatMap((productId) =>
+					offerData[productId]
+						? offerData[productId].addons.map(
+								(addon) => addon.cspmb__Add_On_Price_Item__c
+						  )
+						: []
+				);
+				return window.SF.invokeAction("getOfferData", [cpChunk, addonIdList]);
+			});
+
 			const results = await Promise.all(promiseArray);
-			const productMetadata = results.pop();
 
 			const merged_result = results.reduce((acc, val) => {
 				return { ...acc, ...val };
 			}, {});
 
-			productMetadata.forEach(product => {
-				merged_result.cpData[product.id] = {
-					...merged_result.cpData[product.id],
-					commercialProductMetadata: product.commercialProductMetadata
-				}
-			});
+			for (const offerId in merged_result.cpData) {
+				merged_result.cpData[
+					offerId
+				].commercialProductMetadata = offerMeta.find(
+					(product) => product.id === offerId
+				)?.commercialProductMetadata;
 
-			dispatch(receiveOfferData(merged_result))
+				merged_result.cpData[offerId].addons = offerData[offerId]
+					? offerData[offerId].addons
+					: [];
+			}
+
+			dispatch(receiveOfferData(merged_result));
 		} catch(e) {
 			throw new Error(e.message);
 		}

@@ -503,4 +503,24 @@ export const restructureProductData = productData => {
 	}, {});
 }
 
+export const sortDynamicGroupsBySequence = (aDynamicGroup, bDynamicGroup) => {
+	if (
+		aDynamicGroup.csfamext__sequence__c ==
+		bDynamicGroup.csfamext__sequence__c
+	) {
+		return 0;
+	} else if (
+		!aDynamicGroup.csfamext__sequence__c ||
+		isNaN(aDynamicGroup.csfamext__sequence__c)
+	) {
+		return 1;
+	} else if (
+		!bDynamicGroup.csfamext__sequence__c ||
+		isNaN(bDynamicGroup.csfamext__sequence__c)
+	) {
+		return -1;
+	}
+	return aDynamicGroup.csfamext__sequence__c - bDynamicGroup.csfamext__sequence__c;
+}
+
 export default sharedService;

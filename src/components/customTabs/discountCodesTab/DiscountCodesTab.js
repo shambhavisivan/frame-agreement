@@ -163,7 +163,7 @@ async function negotiateData(data, active_fa, removed_group) {
 	}, {});
 
 	data.forEach(cp => {
-		if (rcl_codes.length && cp._rateCards.length && cp._rateCards) {
+		if (rcl_codes.length && cp._rateCards?.length) {
 			// rcl is nested inside rc, flatten this structure to avoid nested loop
 			let _rateCardLines = cp._rateCards.reduce((acc, iter) => [...acc, ...iter.rateCardLines], []);
 
@@ -326,7 +326,7 @@ const negotiateDiscountCodesForItems = async (data, removed_group, type = COMMER
 	if (type === COMMERCIAL_PRODUCT) {
 		await window.FAM.api.negotiate(active_fa.Id, _negoArray);
 	} else if (type === OFFER) {
-		await window.FAM.api.negotiateOffer(active_fa.Id, _negoArray);
+		await window.FAM.api.negotiateOffers(active_fa.Id, _negoArray);
 	}
 
 	await window.FAM.api.saveFrameAgreement(active_fa.Id);
@@ -712,9 +712,11 @@ class DiscountCodesTab extends React.Component {
 		Promise.all([
 			negotiateDiscountCodesForItems(),
 			negotiateDiscountCodesForItems(null, null, OFFER)
-		]).then(r => {
-			window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
-			window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
+		]).then(negotiatedResults => {
+			if (negotiatedResults.some(result => result)) {
+				window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
+				window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
+			}
 		});
 	}
 

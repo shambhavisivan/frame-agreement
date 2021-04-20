@@ -39,6 +39,15 @@ class SFDatePicker extends Component {
 		this.handleDataChange = this.handleDataChange.bind(this);
 	}
 
+	componentDidUpdate(prevProps, prevState) {
+		if (this.props.initialDate && this.state.dateValue !== new Date(this.props.initialDate)
+		 && prevProps.initialDate !== this.props.initialDate) {
+			this.setState({
+				dateValue: this.props.initialDate ? new Date(this.props.initialDate) : null
+			});
+		}
+	}
+
 	handleDataChange(date) {
 		if (!this.props.disabled) {
 			this.setState({

@@ -26,23 +26,49 @@ private class FrameRateManagerControllerTest {
 		System.currentPageReference().getParameters().put('account', test_account.Id);
 		// commercial products
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
-			Name = 'cp_1', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00
-			);
+			Name = 'cp_1',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Price_Item_Code__c = 'cp_1',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
 		cspmb__Price_Item__c cp_2 = new cspmb__Price_Item__c(
-			Name = 'cp_2', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00
+			Name = 'cp_2',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Price_Item_Code__c = 'cp_2',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 
 		cspmb__Price_Item__c cp_addon_inv = new cspmb__Price_Item__c(
-			Name = 'cp_addon_inv', cspmb__Is_Active__c = true
+			Name = 'cp_addon_inv',
+			cspmb__Is_Active__c = true,
+			cspmb__Price_Item_Code__c = 'cp_addon_inv',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 		cspmb__Price_Item__c cp_addon_assoc_inv = new cspmb__Price_Item__c(
-			Name = 'cp_addon_assoc_inv', cspmb__Is_Active__c = true
+			Name = 'cp_addon_assoc_inv',
+			cspmb__Is_Active__c = true,
+			cspmb__Price_Item_Code__c = 'cp_addon_assoc_inv',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 
 		Date invalidEndDate = Date.newInstance(1992, 3, 14);
 		cspmb__Price_Item__c cp_3 = new cspmb__Price_Item__c(
-			Name = 'cp_3', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true,
-			cspmb__Recurring_Charge__c = 15 - 00, cspmb__Effective_End_Date__c = invalidEndDate
+			Name = 'cp_3',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Effective_End_Date__c = invalidEndDate,
+			cspmb__Price_Item_Code__c = 'cp_3',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 
 
@@ -419,8 +445,24 @@ private class FrameRateManagerControllerTest {
 	public static testMethod void getFindReplacementCommercialProduct() {
 		setupPricingModel();
 
-		cspmb__Price_Item__c cp_replace_1 = new cspmb__Price_Item__c(Name = 'cp_replace_1', cspmb__Price_Item_Code__c = 'PC333C', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
-		cspmb__Price_Item__c cp_replace_2 = new cspmb__Price_Item__c(Name = 'cp_replace_2', cspmb__Price_Item_Code__c = 'PC333C', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
+		cspmb__Price_Item__c cp_replace_1 = new cspmb__Price_Item__c(
+			Name = 'cp_replace_1',
+			cspmb__Price_Item_Code__c = 'PC333C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
+		cspmb__Price_Item__c cp_replace_2 = new cspmb__Price_Item__c(
+			Name = 'cp_replace_2',
+			cspmb__Price_Item_Code__c = 'PC333C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
 
 		insert cp_replace_1;
 		insert cp_replace_2;
@@ -919,7 +961,11 @@ private class FrameRateManagerControllerTest {
 
 	public static testMethod void testPriceItemDataEdgeCases() {
 		FrameRateManagerControllerTest.setupSettings();
-		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c();
+		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
+			cspmb__Price_Item_Code__c = 'cp_1',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
 		insert cp_1;
 
 		Test.startTest();

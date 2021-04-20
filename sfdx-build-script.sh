@@ -22,7 +22,7 @@ echo "Installing Configurator 1.500"
 sfdx force:package:install --package 04t2K000000gNTQ -u $orgAlias -w 20
 
 echo "Installing Product and Pricing Data Model"
-sfdx force:package:install --package 04t1p000000U4BD -u $orgAlias -w 20
+sfdx force:package:install --package 04t08000000FE70 -u $orgAlias -w 20
 
 echo "Installing Cloudsense CRM Extension"
 sfdx force:package:install --package 04t58000000JU3G -u $orgAlias -w 20

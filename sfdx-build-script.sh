@@ -33,6 +33,9 @@ sfdx force:package:install --package 04t2S0000002IT0 -u $orgAlias -w 20
 echo "Installing Cloudsense Contracts"
 sfdx force:package:install --package 04t0J0000002VDL -u $orgAlias -w 20
 
+echo "Installing CloudSense Advanced Pricing Integration"
+sfdx force:package:install --package 04t3g0000008xa6 -u $orgAlias -w 20
+
 echo "Deploying source code"
 sfdx force:source:push --targetusername $orgAlias -w 20
 

@@ -21,8 +21,14 @@ import {
 	validateFrameAgreement,
 	addProductsToFa,
 	addAddonsToFa,
-	getCommercialProductData
+	getCommercialProductData,
+	getOfferData,
+	addOffersToFa,
+	bulkNegotiateOffers
 } from '~/src/actions';
+import OffersModal from '../modals/OffersModal';
+
+import * as Constants from '~/src/utils/constants'
 
 class FaModals extends React.Component {
 	constructor(props) {
@@ -34,6 +40,8 @@ class FaModals extends React.Component {
 		this.onAddAddons = this.onAddAddons.bind(this);
 		this.onBulkNegotiate = this.onBulkNegotiate.bind(this);
 		this.onBulkNegotiateAddons = this.onBulkNegotiateAddons.bind(this);
+		this.onAddOffers = this.onAddOffers.bind(this);
+		this.onBulkNegotiateOffers = this.onBulkNegotiateOffers.bind(this);
 	}
 
 	componentWillUnmount() {
@@ -94,6 +102,35 @@ class FaModals extends React.Component {
 		return this.props.frameAgreements[this.props.faId];
 	}
 
+	async onAddOffers(offers = []) {
+		offers = await publish('onBeforeAddOffers', offers);
+
+		const _offersSet = new Set(offers);
+
+		const idsToLoad = this.props.offers.reduce((acc, offer) => {
+			if (_offersSet.has(offer.Id)) {
+				if (!offer._dataLoaded) {
+					return acc.concat([offer.Id]);
+				} else {
+					return acc;
+				}
+			} else {
+				return acc;
+			}
+		}, []);
+
+		await this.props.getOfferData(idsToLoad);
+		await this.props.addOffersToFa(this.props.faId, Array.from(_offersSet));
+		this.props.validateFrameAgreement(this.props.faId);
+
+		publish(
+			'onAfterAddOffers',
+			this.props.frameAgreements[this.props.faId]._ui.offers.map(cp => cp.Id)
+		);
+		this.onCloseModal();
+		return this.props.frameAgreements[this.props.faId];
+	}
+
 	async onAddAddons(addons = []) {
 		addons = await publish('onBeforeAddStandaloneAddons', addons);
 
@@ -115,6 +152,17 @@ class FaModals extends React.Component {
 		publish('onAfterAddProducts', agreements);
 	}
 
+	async onBulkNegotiateOffers(data) {
+		data = await publish('onBeforeBulkNegotiation', data);
+
+		this.props.bulkNegotiateOffers(this.props.faId, data);
+		this.props.validateFrameAgreement(this.props.faId);
+		window.FAM.api.validateStatusConsistency(this.props.faId);
+
+		publish('onAfterBulkNegotiation', this.props.frameAgreements[this.props.faId]._ui.attachment);
+		this.onCloseModal();
+	}
+
 	onCloseModal() {
 		this.props.toggleModals();
 	}
@@ -134,6 +182,20 @@ class FaModals extends React.Component {
 				/>
 			);
 		}
+		// *******************************************************
+		let offersModal = null;
+		if (this.props.modals.offersModal) {
+			offersModal = (
+				<OffersModal
+					offerFilter={_fa._ui._filter}
+					open={this.props.modals.offersModal}
+					addedOffers={this.props.frameAgreements[this.props.faId]._ui.offers}
+					onAddOffers={this.onAddOffers}
+					onCloseModal={this.onCloseModal}
+				/>
+			);
+		}
+
 		// *******************************************************
 		let addonModal = null;
 		if (this.props.modals.addonModal) {
@@ -208,15 +270,30 @@ class FaModals extends React.Component {
 			);
 		}
 		// *******************************************************
+		let negotiateOffersModal = null;
+		if (this.props.modals.negotiateOffersModal) {
+			negotiateOffersModal = (
+				<NegotiationModal
+					open={this.props.modals.negotiateOffersModal}
+					products={Object.keys(this.props.selectedOffers)}
+					attachment={this.props.frameAgreements[this.props.faId]._ui.attachment.offers}
+					onNegotiate={this.onBulkNegotiateOffers}
+					onCloseModal={this.onCloseModal}
+					commercialProductType={Constants.ROLE_OFFER}
+				/>
+			);
+		}
 
 		return (
 			<React.Fragment>
 				{actionModal}
 				{faModal}
 				{productModal}
+				{offersModal}
 				{addonModal}
 				{negotiateModal}
 				{negotiateStandaloneModal}
+				{negotiateOffersModal}
 			</React.Fragment>
 		);
 	}
@@ -226,6 +303,7 @@ const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
 		commercialProducts: state.commercialProducts,
+		offers: state.offers,
 		modals: state.modals
 	};
 };
@@ -239,7 +317,10 @@ const mapDispatchToProps = {
 	addProductsToFa,
 	addAddonsToFa,
 	validateFrameAgreement,
-	getCommercialProductData
+	getCommercialProductData,
+	getOfferData,
+	addOffersToFa,
+	bulkNegotiateOffers
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FaModals);

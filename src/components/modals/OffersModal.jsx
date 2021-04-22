@@ -9,32 +9,28 @@ import Icon from '../utillity/Icon';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
-import { queryCategoriesInCatalogue, queryProductsInCategory } from '~/src/graphql-actions';
+import { queryCategoriesInCatalogue, queryOffersInCategory } from '~/src/graphql-actions';
 
-import * as Constants from '~/src/utils/constants'
-
-class ProductModal extends Component {
+class OffersModal extends Component {
 	constructor(props) {
 		super(props);
 		this.togglePanel = this.togglePanel.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
-		this.addProducts = this.addProducts.bind(this);
-		this.loadCommercialProducts = this.loadCommercialProducts.bind(this);
+		this.addOffers = this.addOffers.bind(this);
 
-		this.categoryId = null;
 
-		let _commercialProducts = this.props.commercialProducts;
+		let _offers = this.props.offers;
 
-		if (this.props.cpFilter) {
-			_commercialProducts = this.props.commercialProducts.filter(cp =>
-				this.props.cpFilter.has(cp.Id)
+		if (this.props.offerFilter) {
+			_offers = this.props.offers.filter(cp =>
+				this.props.offerFilter.has(cp.Id)
 			);
 		}
 
-		this.addedProductsIds = this.props.addedProducts.map(cp => cp.Id);
+		this.addedOfferIds = this.props.addedOffers.map(cp => cp.Id);
 
-		this.notAddedCommercialProducts = _commercialProducts.filter(
-			cp => !this.addedProductsIds.includes(cp.Id)
+		this.notAddedOffers = _offers.filter(
+			cp => !this.addedOfferIds.includes(cp.Id)
 		);
 
 		this.state = {
@@ -43,8 +39,8 @@ class ProductModal extends Component {
 			expanded: false,
 			actionTaken: false,
 			filter: [],
-			productFilter: '',
-			commercialProducts: this.notAddedCommercialProducts,
+			offerFilter: '',
+			offers: this.notAddedOffers,
 			selected: {},
 			pagination: {
 				page: 1,
@@ -52,13 +48,29 @@ class ProductModal extends Component {
 			}
 		};
 
-		this.priceItemFields = this.props.productFields.filter(f => !f.volume);
-		console.warn(this.priceItemFields);
+		this.offerFields = this.props.productFields.filter(f => !f.volume);
+		this.categoryId = null;
 	}
 
 	async componentDidMount() {
 		const categoriesInCatalogue = await queryCategoriesInCatalogue();
 		this.setState({ filter: [...categoriesInCatalogue] })
+	}
+
+	async loadOffers(categoryId) {
+		if (this.categoryId !== categoryId) {
+			this.categoryId = categoryId;
+			const linkedOffers = await queryOffersInCategory(categoryId);
+			const linkedOfferIds = linkedOffers.map(offer => offer.id);
+			// refetch cps from apex for the linked products.
+			const offers = await window.SF.invokeAction("getOffers", [
+				linkedOfferIds,
+			]);
+			const notAddedOffers = offers.filter(
+				offer => !this.addedOfferIds.includes(offer.Id)
+			);
+			this.setState({ notAddedOffers });
+		}
 	}
 
 	onCloseModal() {
@@ -69,36 +81,19 @@ class ProductModal extends Component {
 		this.props.onCloseModal();
 	}
 
-	togglePanel() {
-		this.setState(prevState => ({
-			panel: !prevState.panel
-		}));
+	togglePanel(value) {
+		this.setState({
+			panel: !this.state.panel
+		});
 	}
 
-	async loadCommercialProducts(categoryId) {
-		// filter cps for category
-		if (this.categoryId !== categoryId) {
-			this.categoryId = categoryId;
-			const linkedProducts = await queryProductsInCategory(categoryId);
-			const linkedProductIds = linkedProducts.map(cp => cp.id);
-			// refetch cps from apex for the linked products.
-			const commercialProducts = await window.SF.invokeAction("getCommercialProducts", [
-				linkedProductIds,
-			]);
-			let notAddedCommercialProducts = commercialProducts.filter(
-				cp => !this.addedProductsIds.includes(cp.Id)
-			);
-			this.setState({ notAddedCommercialProducts });
-		}
-	}
+	getOffersCount() {
+		let cpSize = this.state.offers.length;
 
-	getCommercialProductsCount() {
-		let cpSize = this.state.commercialProducts.length;
-
-		if (this.state.productFilter) {
-			cpSize = this.state.commercialProducts.filter(cp => {
-				if (this.state.productFilter && this.state.productFilter.length >= 2) {
-					return cp.Name.toLowerCase().includes(this.state.productFilter.toLowerCase());
+		if (this.state.offerFilter) {
+			cpSize = this.state.offers.filter(cp => {
+				if (this.state.offerFilter && this.state.offerFilter.length >= 2) {
+					return cp.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
 				} else {
 					return true;
 				}
@@ -108,18 +103,16 @@ class ProductModal extends Component {
 	}
 
 	toggleExpanded() {
-		this.setState({ expanded: !this.state.expanded }, () => {
-			console.log('Expand:', this.state.expanded);
-		});
+		this.setState({ expanded: !this.state.expanded });
 	}
 
-	selectProduct(product) {
-		let currentState = !!this.state.selected[product.Id];
+	selectOffer(offer) {
+		let currentState = !!this.state.selected[offer.Id];
 		let newState = { ...this.state.selected };
 		if (currentState) {
-			delete newState[product.Id];
+			delete newState[offer.Id];
 		} else {
-			newState[product.Id] = true;
+			newState[offer.Id] = true;
 		}
 
 		this.setState(
@@ -135,8 +128,8 @@ class ProductModal extends Component {
 		);
 	}
 
-	addProducts() {
-		this.props.onAddProducts(Object.keys(this.state.selected));
+	addOffers() {
+		this.props.onAddOffers(Object.keys(this.state.selected));
 		this.setState({
 			actionTaken: false,
 			selected: {}
@@ -176,7 +169,7 @@ class ProductModal extends Component {
 					>
 						<Icon name="expand_alt" width="24" height="24" color="white" />
 					</span>
-					<h2 className="fa-modal-header-title">{window.SF.labels.modal_addProduct_title}</h2>
+					<h2 className="fa-modal-header-title">{window.SF.labels.modal_addOffers_title}</h2>
 				</div>
 
 				<div
@@ -204,7 +197,7 @@ class ProductModal extends Component {
 													<li
 														key={category.id}
 														onClick={async () =>
-															await this.loadCommercialProducts(category.id)
+															await this.loadOffers(category.id)
 														}
 													>
 														<span>{category.name}</span>
@@ -212,7 +205,7 @@ class ProductModal extends Component {
 												</div>
 											);
 										}) : (<div>
-											<p>Link atleast one category to the default catalogue to enable filter</p>
+											<p>window.SF.labels.warning_no_offers_linked</p>
 										</div>)
 										}
 									</ul>
@@ -223,7 +216,7 @@ class ProductModal extends Component {
 
 					<div className="fa-modal-table-container">
 						<div className="fa-modal-navigation">
-							{!this.state.panel ? (
+							{this.props.settings.CategorizationData.length && !this.state.panel ? (
 								<div className="fa-flex fa-flex-middle" onClick={this.togglePanel}>
 									<div className="fa-modal-categorization-switch">
 										<Icon name="color_swatch" width="14" height="14" color="#0070d2" />
@@ -241,7 +234,7 @@ class ProductModal extends Component {
 									placeholder={window.SF.labels.modal_addProduct_input_search_placeholder}
 									value={this.state.searchValue}
 									onChange={val => {
-										this.setState({ productFilter: val });
+										this.setState({ offerFilter: val });
 									}}
 								/>
 							</div>
@@ -250,7 +243,7 @@ class ProductModal extends Component {
 						<div>
 							<div className="fa-modal-product-list-header">
 								<div className="header-th">{getFieldLabel('cspmb__Price_Item__c', 'name')}</div>
-								{this.priceItemFields.map(f => {
+								{this.offerFields.map(f => {
 									return (
 										<div key={f.name} className="header-th">
 											<span>
@@ -261,10 +254,10 @@ class ProductModal extends Component {
 								})}
 							</div>
 							<div className="fa-modal-product-list">
-								{this.state.commercialProducts
+								{this.state.offers
 									.filter(cp => {
-										if (this.state.productFilter && this.state.productFilter.length >= 2) {
-											return cp.Name.toLowerCase().includes(this.state.productFilter.toLowerCase());
+										if (this.state.offerFilter && this.state.offerFilter.length >= 2) {
+											return cp.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
 										} else {
 											return true;
 										}
@@ -275,10 +268,10 @@ class ProductModal extends Component {
 											<div
 												key={cp.Id}
 												className={'product-row' + (this.state.selected[cp.Id] ? ' selected' : '')}
-												onClick={() => this.selectProduct(cp)}
+												onClick={() => this.selectOffer(cp)}
 											>
 												<span>{cp.Name}</span>
-												{this.priceItemFields.map(f => {
+												{this.offerFields.map(f => {
 													return (
 														<span key={cp.Id + '-' + f.name}>
 															{(() => {
@@ -315,7 +308,7 @@ class ProductModal extends Component {
 
 				<div className="fa-modal-footer">
 					<Pagination
-						totalSize={this.getCommercialProductsCount()}
+						totalSize={this.getOffersCount()}
 						pageSize={this.state.pagination.pageSize}
 						page={this.state.pagination.page}
 						onPageSizeChange={newPageSize => {
@@ -335,7 +328,7 @@ class ProductModal extends Component {
 					/>
 
 					<button
-						onClick={this.addProducts}
+						onClick={this.addOffers}
 						className="fa-button fa-button--brand"
 						disabled={!this.state.actionTaken}
 					>
@@ -349,10 +342,10 @@ class ProductModal extends Component {
 
 const mapStateToProps = state => {
 	return {
+		offers: state.offers,
 		productFields: state.productFields,
-		settings: state.settings,
-		commercialProducts: state.commercialProducts
+		settings: state.settings
 	};
 };
 
-export default connect(mapStateToProps)(ProductModal);
+export default connect(mapStateToProps)(OffersModal);

@@ -10,6 +10,7 @@ import {
 	isJson,
 	truncateCPField,
 	isDiscountAllowed,
+	sortDynamicGroupsBySequence,
 } from '../../../utils/shared-service';
 
 import Icon from '../../utillity/Icon';
@@ -26,6 +27,9 @@ let ACTIVE_FA = null;
 const DEFAULT_DESCRIPTION = '--new dynamic group description';
 
 const SUBSCRIPTIONS = {};
+
+const COMMERCIAL_PRODUCT = 'COMMERCIAL_PRODUCT';
+const OFFER = 'OFFER';
 
 const isObjectEmpty = obj => {
 	return Object.entries(obj).length === 0 && obj.constructor === Object;
@@ -70,73 +74,35 @@ const getPicklistLabel = field =>
 		? window.SF.customPicklistLabels[field]
 		: null;
 
-const negotiateDiscountCodesForProducts = async (data, removed_group) => {
-	// get discount codes
-	// group all rcl codes
-	// group all cp codes
-
-	// Loop cp
-	// do they have rate cards?
-	// get all rate card lines from cp._rateCards > rateCardLines (FOI: Id, cspmb__Rate_Card__c, cspmb__rate_value__c)
-
-	// Loop these rcl
-	// cross reference rcl with rcl codes
-	// Match?
-	// you have original price, and negotiation info from group
-	// append it to negoArray
-	// in case of multiple codes being applied to same rcl, apply last one (overwrite while looping codes)
-
-	// ********************************
-
-	// get products (from data)
-	// Loop cp
-	// cross reference the list with cp codes
-	// Match?
-	// check code for oneOff/recc
-	// apply appropriate discount and append to negoArray
-	// in case of multiple codes being applied to same cp, apply last one (overwrite while looping codes)
-
-	// ********************************
-	// send negoArray to negotiate API
-
-	// resetCode is used for removing discount code, it will reset the product negotiation and then refresh all negotiation
-
+function calculateDiscount(type, discount, original) {
+	/*
+		Used to calculate discount based on
+		a) 2type (absolute/percentage)
+		b) discount (value)
+		c) original (value of charge)
+	*/
+	let result;
 	let facSettings = redux_store.getState().settings.FACSettings;
-	let _commercialProducts;
-	let active_fa = await window.FAM.api.getActiveFrameAgreement();
-
-	if (!data) {
-		_commercialProducts = active_fa._ui.commercialProducts;
+	if (type === 'Amount') {
+		result = original - discount;
 	} else {
-		_commercialProducts = active_fa._ui.commercialProducts.filter(cp => data.includes(cp.Id));
+		result = original - (original * discount) / 100;
 	}
 
-	// **************************************** HELPERS
-	function calculateDiscount(type, discount, original) {
-		// Used to calculate discount based on a) 2type (absolute/percentage), b) discount (value) c) original (value of charge)
-		let result;
-
-		if (type === 'Amount') {
-			result = original - discount;
-		} else {
-			result = original - (original * discount) / 100;
-		}
-
-		/*
-			if restriction is enabled or if it's based on percentage
-			ignore discounts that result in negative values or values
-			greater than the original values
-		*/
-		if (facSettings.input_minmax_restriction || type === 'Percentage') {
-			return (result < 0 || result > original) ? original : result;
-		}
-
-		return result;
+	/*
+		if restriction is enabled or if it's based on percentage
+		ignore discounts that result in negative values or values
+		greater than the original values
+	*/
+	if (facSettings.input_minmax_restriction || type === 'Percentage') {
+		return (result < 0 || result > original) ? original : result;
 	}
 
-	// ****************************************
-	// Will hold negotiation API compliant structure
-	let _negoArray = [];
+	return result;
+}
+
+async function negotiateData(data, active_fa, removed_group) {
+    let _negoArray = [];
 
 	let discountCodes = await window.FAM.api.getCustomData(active_fa.Id);
 
@@ -155,7 +121,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 		return;
 	}
 
-	discountCodes.sort((a, b) => a.csfamext__sequence__c - b.csfamext__sequence__c);
+	discountCodes.sort(sortDynamicGroupsBySequence);
 
 	// window.FAM.api.resetNegotiation(active_fa.Id);
 	// log.bg.red('---NEGOTIATION RESET');
@@ -197,8 +163,8 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 		return { ...acc, [iter.Id]: _data };
 	}, {});
 
-	_commercialProducts.forEach(cp => {
-		if (rcl_codes.length && cp._rateCards.length && cp._rateCards) {
+	data.forEach(cp => {
+		if (rcl_codes.length && cp._rateCards?.length) {
 			// rcl is nested inside rc, flatten this structure to avoid nested loop
 			let _rateCardLines = cp._rateCards.reduce((acc, iter) => [...acc, ...iter.rateCardLines], []);
 
@@ -334,10 +300,35 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 			}
 		}
 	});
-	// Return length of applied groups
-	console.log('Discount negotiating:', _negoArray);
 
-	let negoResult = await window.FAM.api.negotiate(active_fa.Id, _negoArray);
+	return _negoArray;
+}
+
+const negotiateDiscountCodesForItems = async (data, removed_group, type = COMMERCIAL_PRODUCT) => {
+	let cpsOrOffers;
+	let active_fa = await window.FAM.api.getActiveFrameAgreement();
+
+	if (!data) {
+		cpsOrOffers =
+			type === COMMERCIAL_PRODUCT
+				? active_fa._ui.commercialProducts
+				: active_fa._ui.offers;
+	} else {
+		cpsOrOffers =
+			type === COMMERCIAL_PRODUCT
+				? active_fa._ui.commercialProducts.filter((cp) =>
+						data.includes(cp.Id)
+				  )
+				: active_fa._ui.offers;
+	}
+
+	// Will hold negotiation API compliant structure
+	const _negoArray = negotiateData(data || cpsOrOffers, active_fa, removed_group);
+	if (type === COMMERCIAL_PRODUCT) {
+		await window.FAM.api.negotiate(active_fa.Id, _negoArray);
+	} else if (type === OFFER) {
+		await window.FAM.api.negotiateOffers(active_fa.Id, _negoArray);
+	}
 
 	await window.FAM.api.saveFrameAgreement(active_fa.Id);
 
@@ -346,6 +337,7 @@ const negotiateDiscountCodesForProducts = async (data, removed_group) => {
 
 //TODO: change this implementation when merging FAM and FAM-EXT
 let addedCps;
+let addedOffers;
 setTimeout(() => {
 	window.FAM.subscribe('onBeforeAddProducts', data => {
 		return new Promise(resolve => {
@@ -353,17 +345,34 @@ setTimeout(() => {
 			resolve(data);
 		});
 	});
+
+	window.FAM.subscribe('onBeforeAddOffers', data => {
+		return new Promise(resolve => {
+			addedOffers = data
+			resolve(data);
+		});
+	});
 }, 0);
 
 window.FAM.subscribe('onAfterAddProducts', data => {
 	return new Promise(async resolve => {
-		negotiateDiscountCodesForProducts(addedCps).then(r => {
+		negotiateDiscountCodesForItems(addedCps).then(r => {
 			// resolves length of impacted entitites
 			r && window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
 			resolve(data);
 		});
 	});
 });
+
+window.FAM.subscribe('onAfterAddOffers', data => {
+	return new Promise(async resolve => {
+		negotiateDiscountCodesForItems(addedOffers, null, OFFER).then(r => {
+			// resolves length of impacted entitites
+			r && window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
+			resolve(data);
+		});
+	});
+})
 
 class DiscountCodesTab extends React.Component {
 	constructor(props, context) {
@@ -498,13 +507,15 @@ class DiscountCodesTab extends React.Component {
 
 			let _codesMap = {};
 			// Enrich the groups
-			_response_codes.forEach(group => {
-				group.csfamext__one_off_charge__c = group.csfamext__one_off_charge__c || 0;
-				group.csfamext__recurring_charge__c = group.csfamext__recurring_charge__c || 0;
-				group.csfamext__rate_value__c = group.csfamext__rate_value__c || 0;
+			_response_codes
+				.sort(sortDynamicGroupsBySequence)
+				.forEach((group) => {
+					group.csfamext__one_off_charge__c = group.csfamext__one_off_charge__c || 0;
+					group.csfamext__recurring_charge__c = group.csfamext__recurring_charge__c || 0;
+					group.csfamext__rate_value__c = group.csfamext__rate_value__c || 0;
 
-				_codesMap[group.Id] = group;
-			});
+					_codesMap[group.Id] = group;
+				});
 
 			let _availableGroups = _response_codes.map(group => {
 				return {
@@ -701,9 +712,14 @@ class DiscountCodesTab extends React.Component {
 
 		await this.updateCustomData();
 
-		negotiateDiscountCodesForProducts().then(r => {
-			window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
-			window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
+		Promise.all([
+			negotiateDiscountCodesForItems(),
+			negotiateDiscountCodesForItems(null, null, OFFER)
+		]).then(negotiatedResults => {
+			if (negotiatedResults.some(result => result)) {
+				window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
+				window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
+			}
 		});
 	}
 
@@ -723,7 +739,7 @@ class DiscountCodesTab extends React.Component {
 				this.blank = '';
 				this.updateSelectListGroups();
 				this.updateCustomData().then(response => {
-					negotiateDiscountCodesForProducts(null, removed_group);
+					negotiateDiscountCodesForItems(null, removed_group);
 				});
 			}
 		);
@@ -839,7 +855,9 @@ class DiscountCodesTab extends React.Component {
 		}
 
 		customData = customData === '' ? {} : customData;
-		customData.codes = Object.values(this.state.added);
+		customData.codes = Object.values(this.state.added).sort(
+			sortDynamicGroupsBySequence
+		);
 
 		let setResponse = await window.FAM.api.setCustomData(ACTIVE_FA.Id, customData);
 
@@ -884,221 +902,376 @@ class DiscountCodesTab extends React.Component {
 					<div className="product-card__container commercial-product-container-bare product-card__container--header">
 						<div className="container__header">
 							<div className="container__fields">
-								<span className="list-cell">{getLabel('name')}</span>
-								{this.customSetting.dynamic_group_fields.map(f => {
-									return (
-										<div key={f} className="list-cell">
-											<span>{getLabel(f)}</span>
-										</div>
-									);
-								})}
+								<span className="list-cell">
+									{getLabel("name")}
+								</span>
+								{this.customSetting.dynamic_group_fields.map(
+									(f) => {
+										return (
+											<div key={f} className="list-cell">
+												<span>{getLabel(f)}</span>
+											</div>
+										);
+									}
+								)}
 							</div>
 						</div>
 					</div>
 
-					{Object.values(this.state.added).map(group => (
-						<div
-							className={
-								'product-card__container' + (this.state.open === group.Id ? ' product-open' : '')
-							}
-							key={group.Id}
-						>
+					{Object.values(this.state.added)
+						.sort(sortDynamicGroupsBySequence)
+						.map((group) => (
 							<div
-								className="container__header"
-								onClick={() => {
-									this.setState({
-										open: this.state.open === group.Id ? null : group.Id,
-									});
-								}}
+								className={
+									"product-card__container" +
+									(this.state.open === group.Id
+										? " product-open"
+										: "")
+								}
+								key={group.Id}
 							>
-								<div className="container__fields">
-									<div className="fields__item fields__item--title">{group.Name}</div>
-									{this.customSetting.dynamic_group_fields.map(f => {
-										let _fieldLabel = '-';
-										if (group.hasOwnProperty(f)) {
-											if (getPicklistLabel(f)) {
-												_fieldLabel = getPicklistLabel(f)[group[f]];
-											} else {
-												_fieldLabel = group[f].toString();
-											}
-										}
+								<div
+									className="container__header"
+									onClick={() => {
+										this.setState({
+											open:
+												this.state.open === group.Id
+													? null
+													: group.Id,
+										});
+									}}
+								>
+									<div className="container__fields">
+										<div className="fields__item fields__item--title">
+											{group.Name}
+										</div>
+										{this.customSetting.dynamic_group_fields.map(
+											(f) => {
+												let _fieldLabel = "-";
+												if (group.hasOwnProperty(f)) {
+													if (getPicklistLabel(f)) {
+														_fieldLabel = getPicklistLabel(
+															f
+														)[group[f]];
+													} else {
+														_fieldLabel = group[
+															f
+														].toString();
+													}
+												}
 
-										return (
-											<div key={f} className="fields__item">
-												<span>{_fieldLabel}</span>
-											</div>
-										);
-									})}
+												return (
+													<div
+														key={f}
+														className="fields__item"
+													>
+														<span>
+															{_fieldLabel}
+														</span>
+													</div>
+												);
+											}
+										)}
+									</div>
+
+									{this.state.editable ? (
+										<div
+											className="container__checkbox"
+											onClick={(e) => {
+												e.preventDefault();
+												return this.onRemoveGroup(
+													group
+												);
+											}}
+										>
+											<Icon
+												name="delete"
+												height="14"
+												width="14"
+												color="#0070d2"
+											/>
+										</div>
+									) : null}
 								</div>
 
-								{this.state.editable ? (
-									<div
-										className="container__checkbox"
-										onClick={e => {
-											e.preventDefault();
-											return this.onRemoveGroup(group);
-										}}
-									>
-										<Icon name="delete" height="14" width="14" color="#0070d2" />
+								{this.state.open === group.Id &&
+								_active.records ? (
+									<div className="commercial-product-body">
+										<div className="tab-body-left">
+											<div className="input-box big dynamic-group-discounts">
+												<div>
+													<label>Discount type</label>
+													<select
+														value={
+															group.csfamext__discount_type__c
+														}
+														placeholder="Add Dynamic Group"
+														disabled={
+															!this.state
+																.editable ||
+															!group.csfamext__fam_editable__c
+														}
+														onChange={(e) => {
+															this.onChangeDiscountType(
+																group.Id,
+																e.target.value
+															);
+														}}
+													>
+														<option value="">
+															{
+																window.SF.labels
+																	.fa_none
+															}
+														</option>
+														<option
+															value={"Amount"}
+														>
+															{
+																window.SF
+																	.customPicklistLabels
+																	.csfamext__discount_type__c
+																	.Amount
+															}
+														</option>
+														<option
+															value={"Percentage"}
+														>
+															{
+																window.SF
+																	.customPicklistLabels
+																	.csfamext__discount_type__c
+																	.Percentage
+															}
+														</option>
+													</select>
+												</div>
+
+												{group.csfamext__target_object__c ===
+													"Commercial Product" ||
+												(group.csfamext__target_object__c ===
+													"Both" &&
+													!this.customSetting
+														.universal_discount_fields) ? (
+													<React.Fragment>
+														<div>
+															<label>
+																{
+																	window.SF
+																		.labels
+																		.famext_oneOff
+																}
+															</label>
+															<DebounceInput
+																debounceTimeout={
+																	300
+																}
+																disabled={
+																	!this.state
+																		.editable
+																}
+																spellCheck="false"
+																min={
+																	this.getMinMax(
+																		group.csfamext__discount_type__c
+																	).min
+																}
+																max={
+																	this.getMinMax(
+																		group.csfamext__discount_type__c
+																	).max
+																}
+																className=""
+																type="number"
+																onChange={(
+																	e
+																) => {
+																	this.onChangeDiscount(
+																		group.Id,
+																		"csfamext__one_off_charge__c",
+																		+e
+																			.target
+																			.value
+																	);
+																}}
+																value={
+																	group.csfamext__one_off_charge__c
+																}
+															/>
+														</div>
+
+														<div>
+															<label>
+																Recurring charge
+															</label>
+															<DebounceInput
+																debounceTimeout={
+																	300
+																}
+																disabled={
+																	!this.state
+																		.editable
+																}
+																spellCheck="false"
+																min={
+																	this.getMinMax(
+																		group.csfamext__discount_type__c
+																	).min
+																}
+																max={
+																	this.getMinMax(
+																		group.csfamext__discount_type__c
+																	).max
+																}
+																className=""
+																type="number"
+																onChange={(
+																	e
+																) => {
+																	this.onChangeDiscount(
+																		group.Id,
+																		"csfamext__recurring_charge__c",
+																		+e
+																			.target
+																			.value
+																	);
+																}}
+																value={
+																	group.csfamext__recurring_charge__c
+																}
+															/>
+														</div>
+													</React.Fragment>
+												) : (
+													""
+												)}
+
+												{group.csfamext__target_object__c ===
+													"Rate Card Line" ||
+												(group.csfamext__target_object__c ===
+													"Both" &&
+													!this.customSetting
+														.universal_discount_fields) ? (
+													<div>
+														<label>Value</label>
+														<DebounceInput
+															debounceTimeout={
+																300
+															}
+															spellCheck="false"
+															className=""
+															min={
+																this.getMinMax(
+																	group.csfamext__discount_type__c
+																).min
+															}
+															max={
+																this.getMinMax(
+																	group.csfamext__discount_type__c
+																).max
+															}
+															type="number"
+															onChange={(e) => {
+																this.onChangeDiscount(
+																	group.Id,
+																	"csfamext__rate_value__c",
+																	+e.target
+																		.value
+																);
+															}}
+															value={
+																group.csfamext__rate_value__c
+															}
+														/>
+													</div>
+												) : (
+													""
+												)}
+
+												{this.customSetting
+													.universal_discount_fields &&
+												group.csfamext__target_object__c ===
+													"Both" ? (
+													<div>
+														<label>Discount</label>
+														<DebounceInput
+															debounceTimeout={
+																300
+															}
+															spellCheck="false"
+															className=""
+															min={
+																this.getMinMax(
+																	group.csfamext__discount_type__c
+																).min
+															}
+															max={
+																this.getMinMax(
+																	group.csfamext__discount_type__c
+																).max
+															}
+															type="number"
+															onChange={(e) => {
+																this.onChangeDiscount(
+																	group.Id,
+																	"csfamext__rate_value__c",
+																	+e.target
+																		.value
+																);
+																this.onChangeDiscount(
+																	group.Id,
+																	"csfamext__one_off_charge__c",
+																	+e.target
+																		.value
+																);
+																this.onChangeDiscount(
+																	group.Id,
+																	"csfamext__recurring_charge__c",
+																	+e.target
+																		.value
+																);
+															}}
+															value={
+																group.csfamext__rate_value__c
+															}
+														/>
+													</div>
+												) : (
+													""
+												)}
+											</div>
+										</div>
+										<div className="tab-body-right">
+											<DGTargets
+												target={getTargetObjectCode(
+													_active.csfamext__target_object__c
+												)}
+												results={_active.records}
+												bothEntities={
+													_active.csfamext__target_object__c ===
+													"Both"
+												}
+												fields={
+													this.customSetting[
+														this.state
+															.currentTarget ===
+														"product"
+															? "price_item_fields"
+															: "rcl_fields"
+													]
+												}
+												onTest={(target) =>
+													this.loadRecordsForDg(
+														_active.Id,
+														target
+													)
+												}
+											/>
+										</div>
 									</div>
 								) : null}
 							</div>
-
-							{this.state.open === group.Id && _active.records ? (
-								<div className="commercial-product-body">
-									<div className="tab-body-left">
-										<div className="input-box big dynamic-group-discounts">
-											<div>
-												<label>Discount type</label>
-												<select
-													value={group.csfamext__discount_type__c}
-													placeholder="Add Dynamic Group"
-													disabled={!this.state.editable || !group.csfamext__fam_editable__c}
-													onChange={e => {
-														this.onChangeDiscountType(group.Id, e.target.value);
-													}}
-												>
-													<option value="">{window.SF.labels.fa_none}</option>
-													<option value={'Amount'}>
-														{window.SF.customPicklistLabels.csfamext__discount_type__c.Amount}
-													</option>
-													<option value={'Percentage'}>
-														{window.SF.customPicklistLabels.csfamext__discount_type__c.Percentage}
-													</option>
-												</select>
-											</div>
-
-											{group.csfamext__target_object__c === 'Commercial Product' ||
-											(group.csfamext__target_object__c === 'Both' &&
-												!this.customSetting.universal_discount_fields) ? (
-												<React.Fragment>
-													<div>
-														<label>{window.SF.labels.famext_oneOff}</label>
-														<DebounceInput
-															debounceTimeout={300}
-															disabled={!this.state.editable}
-															spellCheck="false"
-															min={this.getMinMax(group.csfamext__discount_type__c).min}
-															max={this.getMinMax(group.csfamext__discount_type__c).max}
-															className=""
-															type="number"
-															onChange={e => {
-																this.onChangeDiscount(
-																	group.Id,
-																	'csfamext__one_off_charge__c',
-																	+e.target.value
-																);
-															}}
-															value={group.csfamext__one_off_charge__c}
-														/>
-													</div>
-
-													<div>
-														<label>Recurring charge</label>
-														<DebounceInput
-															debounceTimeout={300}
-															disabled={!this.state.editable}
-															spellCheck="false"
-															min={this.getMinMax(group.csfamext__discount_type__c).min}
-															max={this.getMinMax(group.csfamext__discount_type__c).max}
-															className=""
-															type="number"
-															onChange={e => {
-																this.onChangeDiscount(
-																	group.Id,
-																	'csfamext__recurring_charge__c',
-																	+e.target.value
-																);
-															}}
-															value={group.csfamext__recurring_charge__c}
-														/>
-													</div>
-												</React.Fragment>
-											) : (
-												''
-											)}
-
-											{group.csfamext__target_object__c === 'Rate Card Line' ||
-											(group.csfamext__target_object__c === 'Both' &&
-												!this.customSetting.universal_discount_fields) ? (
-												<div>
-													<label>Value</label>
-													<DebounceInput
-														debounceTimeout={300}
-														spellCheck="false"
-														className=""
-														min={this.getMinMax(group.csfamext__discount_type__c).min}
-														max={this.getMinMax(group.csfamext__discount_type__c).max}
-														type="number"
-														onChange={e => {
-															this.onChangeDiscount(
-																group.Id,
-																'csfamext__rate_value__c',
-																+e.target.value
-															);
-														}}
-														value={group.csfamext__rate_value__c}
-													/>
-												</div>
-											) : (
-												''
-											)}
-
-											{this.customSetting.universal_discount_fields &&
-											group.csfamext__target_object__c === 'Both' ? (
-												<div>
-													<label>Discount</label>
-													<DebounceInput
-														debounceTimeout={300}
-														spellCheck="false"
-														className=""
-														min={this.getMinMax(group.csfamext__discount_type__c).min}
-														max={this.getMinMax(group.csfamext__discount_type__c).max}
-														type="number"
-														onChange={e => {
-															this.onChangeDiscount(
-																group.Id,
-																'csfamext__rate_value__c',
-																+e.target.value
-															);
-															this.onChangeDiscount(
-																group.Id,
-																'csfamext__one_off_charge__c',
-																+e.target.value
-															);
-															this.onChangeDiscount(
-																group.Id,
-																'csfamext__recurring_charge__c',
-																+e.target.value
-															);
-														}}
-														value={group.csfamext__rate_value__c}
-													/>
-												</div>
-											) : (
-												''
-											)}
-										</div>
-									</div>
-									<div className="tab-body-right">
-										<DGTargets
-											target={getTargetObjectCode(_active.csfamext__target_object__c)}
-											results={_active.records}
-											bothEntities={_active.csfamext__target_object__c === 'Both'}
-											fields={
-												this.customSetting[
-													this.state.currentTarget === 'product'
-														? 'price_item_fields'
-														: 'rcl_fields'
-												]
-											}
-											onTest={target => this.loadRecordsForDg(_active.Id, target)}
-										/>
-									</div>
-								</div>
-							) : null}
-						</div>
-					))}
+						))}
 				</div>
 				{Object.values(this.state.added).length ? (
 					<div className="discount-codes-footer">

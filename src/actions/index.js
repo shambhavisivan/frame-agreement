@@ -1,5 +1,10 @@
-import { decodeEntities, getFieldLabel } from '../utils/shared-service';
 import * as actions from "./frameAgreementActions";
+import {
+	queryCpIdsInCatalogue,
+	queryCpDataByIds,
+	queryOfferIdsInCatalogue
+} from '../graphql-actions/api-actions-graphql';
+import { decodeEntities, getFieldLabel, restructureProductData } from '../utils/shared-service';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
 const _defaultModals = {
@@ -10,7 +15,9 @@ const _defaultModals = {
 	frameModal: false,
 	deltaModal: false,
 	negotiateStandaloneModal: false,
-	negotiateModal: false
+	negotiateModal: false,
+	offersModal: false,
+	negotiateOffersModal: false,
 };
 
 // ***********************************************************************
@@ -406,9 +413,21 @@ const _recievePriceItemData = result => ({
 const _getCommercialProductData = priceItemIdList => {
 	return new Promise(async (resolve, reject) => {
 		let priceItemChunks = priceItemIdList.chunk(window.SF.product_chunk_size || 100);
+		let addonData = await queryCpDataByIds(priceItemIdList);
+		let cpData = restructureProductData(addonData);
 
 		let promiseArray = priceItemChunks.map(cpChunk => {
-			return window.SF.invokeAction('getCommercialProductData', [cpChunk]);
+			let addonIdList = cpChunk.flatMap((productId) =>
+				cpData[productId]
+					? cpData[productId].addons.map(
+							(addon) => addon.cspmb__Add_On_Price_Item__c
+					  )
+					: []
+			);
+			return window.SF.invokeAction("getCommercialProductData", [
+				cpChunk,
+				addonIdList,
+			]);
 		});
 
 		let results = await Promise.all(promiseArray);
@@ -416,6 +435,12 @@ const _getCommercialProductData = priceItemIdList => {
 		let merged_result = results.reduce((acc, val) => {
 			return { ...acc, ...val };
 		}, {});
+
+		for (let id in cpData) {
+			if (merged_result.cpData[id]) {
+				merged_result.cpData[id].addons = cpData[id].addons;
+			}
+		}
 
 		resolve(merged_result);
 	});
@@ -433,7 +458,53 @@ export const getCommercialProductData = priceItemIdList => {
 	};
 };
 
-// ***********************************************************************
+export const receiveOfferData = result => ({
+	type: 'RECIEVE_OFFER_DATA',
+	payload: result
+});
+
+export const getOfferData = offerIdList => {
+	return async function(dispatch) {
+		const offerChunks = offerIdList.chunk(window.SF.product_chunk_size || 100);
+		try {
+			const offerMeta = await queryCpDataByIds(offerIdList);
+			const offerData = restructureProductData(offerMeta);
+
+			const promiseArray = offerChunks.map((cpChunk) => {
+				const addonIdList = cpChunk.flatMap((productId) =>
+					offerData[productId]
+						? offerData[productId].addons.map(
+								(addon) => addon.cspmb__Add_On_Price_Item__c
+						  )
+						: []
+				);
+				return window.SF.invokeAction("getOfferData", [cpChunk, addonIdList]);
+			});
+
+			const results = await Promise.all(promiseArray);
+
+			const merged_result = results.reduce((acc, val) => {
+				return { ...acc, ...val };
+			}, {});
+
+			for (const offerId in merged_result.cpData) {
+				merged_result.cpData[
+					offerId
+				].commercialProductMetadata = offerMeta.find(
+					(product) => product.id === offerId
+				)?.commercialProductMetadata;
+
+				merged_result.cpData[offerId].addons = offerData[offerId]
+					? offerData[offerId].addons
+					: [];
+			}
+
+			dispatch(receiveOfferData(merged_result));
+		} catch(e) {
+			throw new Error(e.message);
+		}
+	}
+}
 
 const _addFaToMaster = (faId, agreements) => ({
 	type: 'ADD_FA',
@@ -496,7 +567,6 @@ export function addProductsToFa(faId, products) {
 		});
 	};
 }
-// ***********************************************************************
 
 const _addAddonsToFa = (faId, addons) => ({
 	type: 'ADD_ADDONS',
@@ -540,7 +610,8 @@ export function removeProductsFromFa(faId, products) {
 		});
 	};
 }
-// ***********************************************************************
+
+
 
 const _removeAddonsFromFa = (faId, addons) => ({
 	type: 'REMOVE_ADDONS',
@@ -556,32 +627,7 @@ export function removeAddonsFromFa(faId, addons) {
 	};
 }
 
-// ***********************************************************************
-
-const _filterCommercialProducts = result => ({
-	type: 'FILTER_COMMERCIAL_PRODUCTS',
-	payload: result
-});
-
-export function filterCommercialProducts(filterData) {
-	return function(dispatch) {
-		// dispatch(requestPriceItemData());
-
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('filterCommercialProducts', [JSON.stringify(filterData)]).then(
-				response => {
-					dispatch(_filterCommercialProducts(response));
-					resolve(response);
-					return response;
-				}
-			);
-		});
-	};
-}
-
-// ***********************************************************************
-
-const recieveGetFrameAgreements = result => ({
+export const recieveGetFrameAgreements = result => ({
 	type: 'RECIEVE_FRAME_AGREEMENTS',
 	payload: result
 });
@@ -807,15 +853,54 @@ export const recieveCommercialProducts = result => ({
 });
 
 export function getCommercialProducts() {
-	return function(dispatch) {
-		// dispatch(requestCommercialProducts());
+	return async function (dispatch) {
+		const cpIdsInCatalogue = await queryCpIdsInCatalogue();
+		const response = await window.SF.invokeAction("getCommercialProducts", [
+			cpIdsInCatalogue,
+		]);
+		dispatch(recieveCommercialProducts(response));
+		return response;
+	};
+}
 
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getCommercialProducts', [null]).then(response => {
-				dispatch(recieveCommercialProducts(response));
-				resolve(response);
-				return response;
-			});
+const recieveOffers = result => ({
+	type: "RECEIVE_OFFERS",
+	payload: result,
+});
+
+export function getOffers() {
+	return async function (dispatch) {
+		const offerIdsInCatalogue = await queryOfferIdsInCatalogue();
+		return window.SF.invokeAction("getOffers", [offerIdsInCatalogue]).then((response) => {
+			dispatch(recieveOffers(response));
+		});
+	};
+}
+
+const _addOffersToFa = (faId, offers) => ({
+	type: 'ADD_OFFERS',
+	payload: { faId, offers }
+});
+
+export function addOffersToFa(faId, offers) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_addOffersToFa(faId, offers));
+			resolve(offers);
+		});
+	};
+}
+
+const _removeOffersFromFa = (faId, offers) => ({
+	type: 'REMOVE_OFFERS',
+	payload: { faId, offers }
+});
+
+export function removeOffersFromFa(faId, offers) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_removeOffersFromFa(faId, offers));
+			resolve(offers);
 		});
 	};
 }
@@ -875,4 +960,37 @@ export function executeFrameAgreementAction(frameAgreementId, action) {
 				});
 		}
 	}
+}
+
+export const negotiateOffers = (faId, priceItemId, type, data) => ({
+	type: 'NEGOTIATE_OFFERS',
+	payload: { faId, priceItemId, type, data }
+});
+
+export const bulkNegotiateOffers = (faId, data) => ({
+	type: 'NEGOTIATE_BULK_OFFERS',
+});
+
+export const apiNegotiateOffer = (faId, data) => ({
+	 type: 'NEGOTIATE_API_OFFER',
+	payload: { faId, data }
+});
+
+export const setFrameAgreementOfferFilter = (faId, offerIdSet) => ({
+	type: 'SET_OFFER_FILTER',
+	payload: { faId, offerIdSet }
+});
+
+const _replaceOfferEntities = (faId, replacementData) => ({
+	type: 'REPLACE_OFFER_CHARGES',
+	payload: { faId, replacementData }
+});
+
+export function replaceOfferEntities(faId, replacementData) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			dispatch(_replaceOfferEntities(faId, replacementData));
+			resolve();
+		});
+	};
 }

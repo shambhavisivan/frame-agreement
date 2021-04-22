@@ -10,6 +10,7 @@ import {
 	validateCSV,
 	makeId,
 	truncateCPField,
+	sortDynamicGroupsBySequence,
 } from '../../../utils/shared-service';
 import LogicForm from '../utility/LogicForm';
 import Icon from '../../utillity/Icon';
@@ -109,13 +110,15 @@ class DynamicGroupTab extends React.Component {
 
 			let _groupsMap = {};
 			// Enrich the groups
-			_response_groups.forEach(group => {
-				group.csfamext__one_off_charge__c = group.csfamext__one_off_charge__c || 0;
-				group.csfamext__recurring_charge__c = group.csfamext__recurring_charge__c || 0;
-				group.csfamext__rate_value__c = group.csfamext__rate_value__c || 0;
+			_response_groups
+				.sort(sortDynamicGroupsBySequence)
+				.forEach((group) => {
+					group.csfamext__one_off_charge__c = group.csfamext__one_off_charge__c || 0;
+					group.csfamext__recurring_charge__c = group.csfamext__recurring_charge__c || 0;
+					group.csfamext__rate_value__c = group.csfamext__rate_value__c || 0;
 
-				_groupsMap[group.Id] = group;
-			});
+					_groupsMap[group.Id] = group;
+				});
 
 			let _selectGroups = _response_groups.map(group => {
 				return {
@@ -338,7 +341,9 @@ class DynamicGroupTab extends React.Component {
 		}
 
 		customData = customData === '' ? {} : customData;
-		customData.group = Object.values(this.state.added);
+		customData.group = Object.values(this.state.added).sort(
+			sortDynamicGroupsBySequence
+		);
 
 		let setResponse = await window.FAM.api.setCustomData(ACTIVE_FA.Id, customData);
 		console.log('Custom data saved:', this.state);
@@ -546,12 +551,16 @@ class DynamicGroupTab extends React.Component {
 			<div id="dynamic-group-tab" className="card products-card">
 				<div className="products-card__inner">
 					<div className="products-card__header">
-						<span className="products__title">{window.SF.labels.famext_dynamic_groups_title}</span>
+						<span className="products__title">
+							{window.SF.labels.famext_dynamic_groups_title}
+						</span>
 						<div className="header__inputs">
 							<Select
 								className="dg-select"
 								isDisabled={!this.state.editable}
-								placeholder={window.SF.labels.famext_placeholder_addGroup}
+								placeholder={
+									window.SF.labels.famext_placeholder_addGroup
+								}
 								value={this.blank}
 								options={this.state.selectGroups}
 								onChange={this.onAddGroup}
@@ -565,288 +574,506 @@ class DynamicGroupTab extends React.Component {
 						<div className="container__header">
 							<div className="container__fields">
 								<span className="list-cell">
-									{getFieldLabel('csfamext__Dynamic_Group__c', 'name')}
+									{getFieldLabel(
+										"csfamext__Dynamic_Group__c",
+										"name"
+									)}
 								</span>
-								{this.customSetting.dynamic_group_fields.map(f => {
-									return (
-										<div key={f} className="list-cell">
-											<span>
-												{getFieldLabel('csfamext__Dynamic_Group__c', f) || truncateCPField(f)}
-											</span>
-										</div>
-									);
-								})}
+								{this.customSetting.dynamic_group_fields.map(
+									(f) => {
+										return (
+											<div key={f} className="list-cell">
+												<span>
+													{getFieldLabel(
+														"csfamext__Dynamic_Group__c",
+														f
+													) || truncateCPField(f)}
+												</span>
+											</div>
+										);
+									}
+								)}
 							</div>
 						</div>
 					</div>
 
-					{Object.values(this.state.added).map(group => (
-						<div
-							className={
-								'product-card__container' + (this.state.open === group.Id ? ' product-open' : '')
-							}
-							key={group.Id}
-						>
+					{Object.values(this.state.added)
+						.sort(sortDynamicGroupsBySequence)
+						.map((group) => (
 							<div
-								className="container__header"
-								onClick={() => {
-									console.log(this.state);
-									this.setState({
-										open: this.state.open === group.Id ? null : group.Id,
-									});
-								}}
+								className={
+									"product-card__container" +
+									(this.state.open === group.Id
+										? " product-open"
+										: "")
+								}
+								key={group.Id}
 							>
-								<div className="container__fields">
-									<div className="fields__item fields__item--title">{group.Name}</div>
-									{this.customSetting.dynamic_group_fields.map(f => {
-										let _fieldLabel = '-';
+								<div
+									className="container__header"
+									onClick={() => {
+										console.log(this.state);
+										this.setState({
+											open:
+												this.state.open === group.Id
+													? null
+													: group.Id,
+										});
+									}}
+								>
+									<div className="container__fields">
+										<div className="fields__item fields__item--title">
+											{group.Name}
+										</div>
+										{this.customSetting.dynamic_group_fields.map(
+											(f) => {
+												let _fieldLabel = "-";
 
-										if (group.hasOwnProperty(f)) {
-											if (getPicklistLabel(f)) {
-												_fieldLabel = getPicklistLabel(f)[group[f]];
-											} else {
-												_fieldLabel = group[f].toString();
+												if (group.hasOwnProperty(f)) {
+													if (getPicklistLabel(f)) {
+														_fieldLabel = getPicklistLabel(
+															f
+														)[group[f]];
+													} else {
+														_fieldLabel = group[
+															f
+														].toString();
+													}
+												}
+
+												return (
+													<div
+														key={f}
+														className="fields__item"
+													>
+														<span>
+															{_fieldLabel}
+														</span>
+													</div>
+												);
 											}
-										}
-
-										return (
-											<div key={f} className="fields__item">
-												<span>{_fieldLabel}</span>
-											</div>
-										);
-									})}
-								</div>
-								{this.state.editable ? (
-									<div
-										className="container__checkbox"
-										onClick={e => {
-											e.preventDefault();
-											return this.onRemoveGroup(group);
-										}}
-									>
-										<Icon name="delete" height="14" width="14" color="#0070d2" />
-									</div>
-								) : null}
-							</div>
-
-							{this.state.open === group.Id ? (
-								<div className="commercial-product-body">
-									<div className="tab-body-left">
-										{group.csfamext__expression__c ? (
-											<div className="input-box">
-												<label className="dg-label">{window.SF.labels.famext_expression}</label>
-												<div className="">
-													<pre>{group.csfamext__expression__c}</pre>
-												</div>
-											</div>
-										) : (
-											''
 										)}
+									</div>
+									{this.state.editable ? (
+										<div
+											className="container__checkbox"
+											onClick={(e) => {
+												e.preventDefault();
+												return this.onRemoveGroup(
+													group
+												);
+											}}
+										>
+											<Icon
+												name="delete"
+												height="14"
+												width="14"
+												color="#0070d2"
+											/>
+										</div>
+									) : null}
+								</div>
 
-										{group.csfamext__fam_editable__c && this.state.editable ? (
-											<React.Fragment>
-												<div className="input-box">
-													<label className="dg-label">{window.SF.labels.famext_logic}</label>
-													<div className="input-field">
-														<DebounceInput
-															spellCheck="false"
-															placeholder="(0 OR 1) AND (2 OR 3)"
-															debounceTimeout={300}
-															disabled={!group.circuits.length}
-															className="dg-input dg-input-large"
-															type="text"
-															onChange={e => {
-																this.onChangeLogic(group.Id, e.target.value);
-															}}
-															value={group.logic}
-														/>
-													</div>
-												</div>
-
-												{group.circuits.length ? (
-													<div className="input-box">
-														<label className="dg-label">
-															{window.SF.labels.famext_expression_comp}
-														</label>
-
-														<div className="dg-group-circuits">
-															{group.circuits.map((circ, i) => {
-																return (
-																	<div className="dg-circuit" key={circ.Id}>
-																		<div className="dg-circuit-index">{i + ') '}</div>
-																		<div className="dg-circuit-configuration">
-																			{circ.field + ' ' + circ.operator + ' ' + circ.value}
-																		</div>
-
-																		{circ.parsable ? (
-																			<div
-																				className={
-																					'dg-circuit-parsed ' + (circ.parsed ? 'checked' : '')
-																				}
-																				onClick={() => {
-																					this.setParse(group.Id, circ.Id, !circ.parsed);
-																				}}
-																			>
-																				<span>
-																					{window.SF.labels.famext_manager_parse}:{' '}
-																					{circ.parsed ? 'On' : 'Off'}
-																				</span>
-																			</div>
-																		) : (
-																			''
-																		)}
-
-																		<div
-																			className="dg-circuit-remove"
-																			onClick={() => this.onRemoveLogicCircuit(group.Id, circ)}
-																		>
-																			<Icon name="delete" height="14" width="14" color="white" />
-																		</div>
-																	</div>
-																);
-															})}
-														</div>
-													</div>
-												) : (
-													''
-												)}
-
+								{this.state.open === group.Id ? (
+									<div className="commercial-product-body">
+										<div className="tab-body-left">
+											{group.csfamext__expression__c ? (
 												<div className="input-box">
 													<label className="dg-label">
-														{window.SF.labels.famext_manager_add_new_comp}
+														{
+															window.SF.labels
+																.famext_expression
+														}
 													</label>
-													<LogicForm onAdd={circuit => this.onAddLogicCircuit(group.Id, circuit)} />
+													<div className="">
+														<pre>
+															{
+																group.csfamext__expression__c
+															}
+														</pre>
+													</div>
 												</div>
-											</React.Fragment>
-										) : (
-											''
-										)}
+											) : (
+												""
+											)}
 
-										<div className="input-box dynamic-group-discounts">
-											<div>
-												<label>{window.SF.labels.famext_discount_type}</label>
-												<select
-													value={group.csfamext__discount_type__c}
-													disabled={!this.state.editable}
-													placeholder={window.SF.labels.famext_placeholder_addGroup}
-													onChange={e => {
-														this.onChangeDiscount(
-															group.Id,
-															'csfamext__discount_type__c',
-															e.target.value
-														);
-													}}
-												>
-													<option value="">{window.SF.labels.fa_none}</option>
-													<option value={'Amount'}>
-														{window.SF.customPicklistLabels.csfamext__discount_type__c.Amount}
-													</option>
-													<option value={'Percentage'}>
-														{window.SF.customPicklistLabels.csfamext__discount_type__c.Percentage}
-													</option>
-												</select>
-											</div>
-
-											{group.csfamext__target_object__c === 'Commercial Product' ? (
+											{group.csfamext__fam_editable__c &&
+											this.state.editable ? (
 												<React.Fragment>
-													<div>
-														<label>{window.SF.labels.famext_oneOff}</label>
-														<DebounceInput
-															debounceTimeout={300}
-															minLength={1}
-															disabled={!this.state.editable}
-															spellCheck="false"
-															className=""
-															type="number"
-															onChange={e => {
-																this.onChangeDiscount(
-																	group.Id,
-																	'csfamext__one_off_charge__c',
-																	+e.target.value
-																);
-															}}
-															value={group.csfamext__one_off_charge__c}
-														/>
+													<div className="input-box">
+														<label className="dg-label">
+															{
+																window.SF.labels
+																	.famext_logic
+															}
+														</label>
+														<div className="input-field">
+															<DebounceInput
+																spellCheck="false"
+																placeholder="(0 OR 1) AND (2 OR 3)"
+																debounceTimeout={
+																	300
+																}
+																disabled={
+																	!group
+																		.circuits
+																		.length
+																}
+																className="dg-input dg-input-large"
+																type="text"
+																onChange={(
+																	e
+																) => {
+																	this.onChangeLogic(
+																		group.Id,
+																		e.target
+																			.value
+																	);
+																}}
+																value={
+																	group.logic
+																}
+															/>
+														</div>
 													</div>
 
-													<div>
-														<label>{window.SF.labels.famext_recurring}</label>
-														<DebounceInput
-															debounceTimeout={300}
-															minLength={1}
-															disabled={!this.state.editable}
-															spellCheck="false"
-															className=""
-															type="number"
-															onChange={e => {
-																this.onChangeDiscount(
+													{group.circuits.length ? (
+														<div className="input-box">
+															<label className="dg-label">
+																{
+																	window.SF
+																		.labels
+																		.famext_expression_comp
+																}
+															</label>
+
+															<div className="dg-group-circuits">
+																{group.circuits.map(
+																	(
+																		circ,
+																		i
+																	) => {
+																		return (
+																			<div
+																				className="dg-circuit"
+																				key={
+																					circ.Id
+																				}
+																			>
+																				<div className="dg-circuit-index">
+																					{i +
+																						") "}
+																				</div>
+																				<div className="dg-circuit-configuration">
+																					{circ.field +
+																						" " +
+																						circ.operator +
+																						" " +
+																						circ.value}
+																				</div>
+
+																				{circ.parsable ? (
+																					<div
+																						className={
+																							"dg-circuit-parsed " +
+																							(circ.parsed
+																								? "checked"
+																								: "")
+																						}
+																						onClick={() => {
+																							this.setParse(
+																								group.Id,
+																								circ.Id,
+																								!circ.parsed
+																							);
+																						}}
+																					>
+																						<span>
+																							{
+																								window
+																									.SF
+																									.labels
+																									.famext_manager_parse
+																							}
+																							:{" "}
+																							{circ.parsed
+																								? "On"
+																								: "Off"}
+																						</span>
+																					</div>
+																				) : (
+																					""
+																				)}
+
+																				<div
+																					className="dg-circuit-remove"
+																					onClick={() =>
+																						this.onRemoveLogicCircuit(
+																							group.Id,
+																							circ
+																						)
+																					}
+																				>
+																					<Icon
+																						name="delete"
+																						height="14"
+																						width="14"
+																						color="white"
+																					/>
+																				</div>
+																			</div>
+																		);
+																	}
+																)}
+															</div>
+														</div>
+													) : (
+														""
+													)}
+
+													<div className="input-box">
+														<label className="dg-label">
+															{
+																window.SF.labels
+																	.famext_manager_add_new_comp
+															}
+														</label>
+														<LogicForm
+															onAdd={(circuit) =>
+																this.onAddLogicCircuit(
 																	group.Id,
-																	'csfamext__recurring_charge__c',
-																	+e.target.value
-																);
-															}}
-															value={group.csfamext__recurring_charge__c}
+																	circuit
+																)
+															}
 														/>
 													</div>
 												</React.Fragment>
 											) : (
+												""
+											)}
+
+											<div className="input-box dynamic-group-discounts">
 												<div>
-													<label>{window.SF.labels.famext_value}</label>
-													<DebounceInput
-														debounceTimeout={300}
-														minLength={1}
-														spellCheck="false"
-														className=""
-														type="number"
-														onChange={e => {
+													<label>
+														{
+															window.SF.labels
+																.famext_discount_type
+														}
+													</label>
+													<select
+														value={
+															group.csfamext__discount_type__c
+														}
+														disabled={
+															!this.state.editable
+														}
+														placeholder={
+															window.SF.labels
+																.famext_placeholder_addGroup
+														}
+														onChange={(e) => {
 															this.onChangeDiscount(
 																group.Id,
-																'csfamext__rate_value__c',
-																+e.target.value
+																"csfamext__discount_type__c",
+																e.target.value
 															);
 														}}
-														value={group.csfamext__rate_value__c}
-													/>
+													>
+														<option value="">
+															{
+																window.SF.labels
+																	.fa_none
+															}
+														</option>
+														<option
+															value={"Amount"}
+														>
+															{
+																window.SF
+																	.customPicklistLabels
+																	.csfamext__discount_type__c
+																	.Amount
+															}
+														</option>
+														<option
+															value={"Percentage"}
+														>
+															{
+																window.SF
+																	.customPicklistLabels
+																	.csfamext__discount_type__c
+																	.Percentage
+															}
+														</option>
+													</select>
+												</div>
+
+												{group.csfamext__target_object__c ===
+												"Commercial Product" ? (
+													<React.Fragment>
+														<div>
+															<label>
+																{
+																	window.SF
+																		.labels
+																		.famext_oneOff
+																}
+															</label>
+															<DebounceInput
+																debounceTimeout={
+																	300
+																}
+																minLength={1}
+																disabled={
+																	!this.state
+																		.editable
+																}
+																spellCheck="false"
+																className=""
+																type="number"
+																onChange={(
+																	e
+																) => {
+																	this.onChangeDiscount(
+																		group.Id,
+																		"csfamext__one_off_charge__c",
+																		+e
+																			.target
+																			.value
+																	);
+																}}
+																value={
+																	group.csfamext__one_off_charge__c
+																}
+															/>
+														</div>
+
+														<div>
+															<label>
+																{
+																	window.SF
+																		.labels
+																		.famext_recurring
+																}
+															</label>
+															<DebounceInput
+																debounceTimeout={
+																	300
+																}
+																minLength={1}
+																disabled={
+																	!this.state
+																		.editable
+																}
+																spellCheck="false"
+																className=""
+																type="number"
+																onChange={(
+																	e
+																) => {
+																	this.onChangeDiscount(
+																		group.Id,
+																		"csfamext__recurring_charge__c",
+																		+e
+																			.target
+																			.value
+																	);
+																}}
+																value={
+																	group.csfamext__recurring_charge__c
+																}
+															/>
+														</div>
+													</React.Fragment>
+												) : (
+													<div>
+														<label>
+															{
+																window.SF.labels
+																	.famext_value
+															}
+														</label>
+														<DebounceInput
+															debounceTimeout={
+																300
+															}
+															minLength={1}
+															spellCheck="false"
+															className=""
+															type="number"
+															onChange={(e) => {
+																this.onChangeDiscount(
+																	group.Id,
+																	"csfamext__rate_value__c",
+																	+e.target
+																		.value
+																);
+															}}
+															value={
+																group.csfamext__rate_value__c
+															}
+														/>
+													</div>
+												)}
+											</div>
+										</div>
+										<div className="tab-body-right">
+											{this.state.targetingResults[
+												this.state.added[
+													this.state.open
+												].Id
+											] ? (
+												<DGTargets
+													results={
+														this.state
+															.targetingResults[
+															this.state.added[
+																this.state.open
+															].Id
+														]
+													}
+													fields={
+														this.customSetting[
+															_active.csfamext__target_object__c ===
+															"Commercial Product"
+																? "price_item_fields"
+																: "rcl_fields"
+														]
+													}
+													onTest={this.testTargeting}
+												/>
+											) : (
+												<div className="add-product-box">
+													<span className="box-header-1">
+														{
+															window.SF.labels
+																.famext_targeting_not_initiated
+														}
+													</span>
+
+													<div className="box-button-container">
+														<button
+															className="fa-button fa-button--brand"
+															onClick={
+																this
+																	.testTargeting
+															}
+														>
+															{
+																window.SF.labels
+																	.famext_btn_test_targeting
+															}
+														</button>
+													</div>
 												</div>
 											)}
 										</div>
 									</div>
-									<div className="tab-body-right">
-										{this.state.targetingResults[this.state.added[this.state.open].Id] ? (
-											<DGTargets
-												results={this.state.targetingResults[this.state.added[this.state.open].Id]}
-												fields={
-													this.customSetting[
-														_active.csfamext__target_object__c === 'Commercial Product'
-															? 'price_item_fields'
-															: 'rcl_fields'
-													]
-												}
-												onTest={this.testTargeting}
-											/>
-										) : (
-											<div className="add-product-box">
-												<span className="box-header-1">
-													{window.SF.labels.famext_targeting_not_initiated}
-												</span>
-
-												<div className="box-button-container">
-													<button
-														className="fa-button fa-button--brand"
-														onClick={this.testTargeting}
-													>
-														{window.SF.labels.famext_btn_test_targeting}
-													</button>
-												</div>
-											</div>
-										)}
-									</div>
-								</div>
-							) : (
-								''
-							)}
-						</div>
-					))}
+								) : (
+									""
+								)}
+							</div>
+						))}
 				</div>
 			</div>
 		);

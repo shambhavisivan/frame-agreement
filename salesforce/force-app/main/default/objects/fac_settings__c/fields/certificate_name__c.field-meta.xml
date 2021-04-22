@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>certificate_name__c</fullName>
+    <description>Certificate name used to authorize dispatchcer service without extensions.</description>
+    <inlineHelpText>selfsigned</inlineHelpText>
+    <externalId>false</externalId>
+    <label>Security Certificate Name</label>
+    <type>TextArea</type>
+    <unique>false</unique>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+</CustomField>

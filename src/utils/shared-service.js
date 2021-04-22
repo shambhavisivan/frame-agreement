@@ -373,4 +373,175 @@ export function isDiscountAllowed(chargeType, productOrAddon) {
 	return chargeAllowed[chargeType];
 }
 
+export function negotiateData(dataObject, productList, productsInAttachment) {
+	const cp = productList.find(_cp => _cp.Id === dataObject.priceItemId);
+
+	if (!cp) {
+		console.error(
+			"Cannot find commercial product with Id " +
+				dataObject.priceItemId +
+				" in active Frame Agreement!"
+		);
+		return;
+	}
+	if (!dataObject.hasOwnProperty("value")) {
+		console.error("No value provided for negotiation!");
+		return;
+	}
+	// ********************************** Addons
+	if (dataObject.hasOwnProperty("cpAddon")) {
+		if (dataObject.value.hasOwnProperty("oneOff")) {
+			productsInAttachment[dataObject.priceItemId]._addons[
+				dataObject.cpAddon
+			].oneOff = dataObject.value.oneOff;
+		}
+		if (dataObject.value.hasOwnProperty("recurring")) {
+			productsInAttachment[dataObject.priceItemId]._addons[
+				dataObject.cpAddon
+			].recurring = dataObject.value.recurring;
+		}
+	}
+	// ********************************* Charge
+	else if (dataObject.hasOwnProperty("charge")) {
+		// Charge validation
+		let charge = cp._charges.find((_ch) => _ch.Id === dataObject.charge);
+		let type;
+		if (charge.chargeType === "One-off Charge") {
+			type = "oneOff";
+		}
+		if (charge.chargeType === "Recurring Charge") {
+			type = "recurring";
+		}
+		if (!dataObject.value.hasOwnProperty(type)) {
+			console.error(
+				"Pricing element " + charge.Id + " has invalid charge type!"
+			);
+			return;
+		}
+
+		productsInAttachment[dataObject.priceItemId]._charges[dataObject.charge][type] =
+			dataObject.value[type];
+	}
+	// *********************************
+	else if (dataObject.hasOwnProperty("rateCard")) {
+		// RCL
+		if (!dataObject.hasOwnProperty("rateCardLine")) {
+			console.error("No rate card line Id provided!");
+			return;
+		}
+
+		dataObject.value = +dataObject.value;
+
+		if (
+			typeof dataObject.value !== "number" &&
+			!Number.isNaN(dataObject.value)
+		) {
+			console.error("Value for RCL not integer!");
+			return;
+		}
+
+		productsInAttachment[dataObject.priceItemId]._rateCards[dataObject.rateCard][
+			dataObject.rateCardLine
+		] = dataObject.value;
+	}
+	// *********************************
+	else {
+		// Product negotiation
+		productsInAttachment[dataObject.priceItemId]._product = {
+			...productsInAttachment[dataObject.priceItemId]._product,
+			...dataObject.value,
+		};
+	}
+	// *********************************
+}
+
+const renameAddonFields = (addonObject, addonAssocId) => {
+	const result = {
+		Id: addonAssocId,
+		cspmb__Add_On_Price_Item__c: addonObject.id,
+		cspmb__One_Off_Charge__c: addonObject.pricing?.listOneOffPrice,
+		cspmb__Recurring_Charge__c: addonObject.pricing?.listRecurringPrice,
+		cspmb__Add_On_Price_Item__r: {
+			Id: addonObject.id,
+			Name: addonObject.name,
+			cspmb__Effective_End_Date__c: addonObject.effectiveEndDate,
+			cspmb__Effective_Start_Date__c: addonObject.effectiveStartDate,
+			cspmb__One_Off_Charge__c: addonObject.pricing?.listOneOffPrice,
+			cspmb__Recurring_Charge__c: addonObject.pricing?.listRecurringPrice,
+		},
+	};
+
+	if (addonObject.customFields) {
+		addonObject.customFields.forEach(field => {
+			try {
+			    result.cspmb__Add_On_Price_Item__r[field.key] = JSON.parse(field.value);
+		    } catch(e) {
+				result.cspmb__Add_On_Price_Item__r[field.key] = field.value;
+			}
+		})
+	}
+
+	return result;
+}
+
+const restructureAddonData = availableChildProducts => {
+	const addons = [];
+
+	const getAssocId = product => {
+		const assocId = product.externalIds.find(
+			(id) => id.key === "associationSfId"
+		)?.value;
+
+		if (!assocId) {
+			throw new Error("Unable to find addon association ID");
+		}
+
+		return assocId;
+	};
+
+	availableChildProducts.forEach(productOrGroup => {
+		if (productOrGroup.product) {
+			const assocId = getAssocId(productOrGroup);
+			addons.push(renameAddonFields(productOrGroup.product, assocId));
+		} else if (productOrGroup.group && productOrGroup.group.members) {
+			productOrGroup.group.members.forEach(member => {
+				const assocId = getAssocId(member);
+				addons.push(renameAddonFields(member.product, assocId));
+			})
+		}
+	});
+
+	return addons;
+}
+
+export const restructureProductData = productData => {
+	return productData.reduce((result, product) => {
+		result[product.id] = {
+			addons: restructureAddonData(product.availableChildProducts),
+		};
+
+		return result;
+	}, {});
+}
+
+export const sortDynamicGroupsBySequence = (aDynamicGroup, bDynamicGroup) => {
+	if (
+		aDynamicGroup.csfamext__sequence__c ==
+		bDynamicGroup.csfamext__sequence__c
+	) {
+		return 0;
+	} else if (
+		!aDynamicGroup.csfamext__sequence__c ||
+		isNaN(aDynamicGroup.csfamext__sequence__c)
+	) {
+		return 1;
+	} else if (
+		!bDynamicGroup.csfamext__sequence__c ||
+		isNaN(bDynamicGroup.csfamext__sequence__c)
+	) {
+		return -1;
+	}
+	return aDynamicGroup.csfamext__sequence__c - bDynamicGroup.csfamext__sequence__c;
+}
+
 export default sharedService;

@@ -160,6 +160,24 @@ class FaMaster extends Component {
 				resolve(data);
 			});
 		});
+		// Enable save on events
+		SUBSCRIPTIONS['sub6'] = window.FAM.subscribe('onAfterAddOffers', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
+				});
+				resolve(data);
+			});
+		});
+		// Enable save on events
+		SUBSCRIPTIONS['sub7'] = window.FAM.subscribe('onAfterDeleteOffers', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
+				});
+				resolve(data);
+			});
+		});
 	}
 
 	componentWillUnmount() {

@@ -8,6 +8,8 @@ import ActionIframe from '~/src/components/modals/ActionIframe';
 
 import { createToast, toggleModals, validateFrameAgreement } from '~/src/actions';
 
+import * as Constants from '~/src/utils/constants';
+
 class FaFooter extends React.Component {
 	constructor(props) {
 		super(props);
@@ -20,6 +22,7 @@ class FaFooter extends React.Component {
 		this.onOpenFrameAgreementModal = this.onOpenFrameAgreementModal.bind(this);
 		this.onOpenAddonNegotiationModal = this.onOpenAddonNegotiationModal.bind(this);
 		this.onOpenAddonModal = this.onOpenAddonModal.bind(this);
+		this.onOpenOffersModal = this.onOpenOffersModal.bind(this);
 
 		this.state = {
 			actionIframe: false,
@@ -92,11 +95,24 @@ class FaFooter extends React.Component {
 		this.props.toggleModals({ frameModal: true });
 	}
 
+	onOpenOffersModal() {
+		this.props.toggleModals({ offersModal: true });
+	}
+
+	onOpenOfferNegotiationModal() {
+		this.props.toggleModals({ negotiateOffersModal: true });
+	}
+
 	render() {
 		let _fa = this.props.frameAgreements[this.props.faId];
 		let master = isMaster(_fa);
 
-		if (!master && !_fa._ui.commercialProducts.length && !_fa._ui.standaloneAddons.length) {
+		if (
+			!master &&
+			!_fa._ui.commercialProducts.length &&
+			!_fa._ui.standaloneAddons.length &&
+			!_fa._ui.offers.length
+		) {
 			return null;
 		}
 
@@ -111,14 +127,16 @@ class FaFooter extends React.Component {
 
 		let _disabled_prod = !Object.keys(this.props.selectedProducts).length;
 		let _disabled_add = !Object.keys(this.props.selectedAddons || {}).length;
+		let _disabled_offer = !Object.keys(this.props.selectedOffers).length;
+		const { hiddenTabs } = this.props.settings
 
 		let buttonVisibillityMap = {
 			addFa: evaluateExpressionOnAgreement(standardData.AddFrameAgreement, _fa) && master,
 			addProd:
-				evaluateExpressionOnAgreement(standardData.AddProducts, _fa) &&
+				!hiddenTabs?.product && evaluateExpressionOnAgreement(standardData.AddProducts, _fa) &&
 				this.props.activeTab === 0,
 			addAdd:
-				evaluateExpressionOnAgreement(standardData.AddAddons, _fa) &&
+				!hiddenTabs?.addon && evaluateExpressionOnAgreement(standardData.AddAddons, _fa) &&
 				this.props.activeTab === 1 &&
 				!master,
 			addBulk:
@@ -126,14 +144,25 @@ class FaFooter extends React.Component {
 				this.props.activeTab === 1 &&
 				!master,
 			bulk:
-				evaluateExpressionOnAgreement(standardData.BulkNegotiate, _fa) &&
+				!hiddenTabs?.product && evaluateExpressionOnAgreement(standardData.BulkNegotiate, _fa) &&
 				this.props.activeTab === 0 &&
 				!master,
 			deleteProd:
-				evaluateExpressionOnAgreement(standardData.DeleteProducts, _fa) &&
+				!hiddenTabs?.product && evaluateExpressionOnAgreement(standardData.DeleteProducts, _fa) &&
 				this.props.activeTab === 0,
 			deleteAdd:
-				evaluateExpressionOnAgreement(standardData.DeleteAddons, _fa) && this.props.activeTab === 1
+				evaluateExpressionOnAgreement(standardData.DeleteAddons, _fa) && this.props.activeTab === 1 &&
+				!hiddenTabs?.addon && evaluateExpressionOnAgreement(standardData.DeleteAddons, _fa) && this.props.activeTab === 1,
+			addOffer:
+				evaluateExpressionOnAgreement(standardData.AddOffers, _fa) &&
+				this.props.activeTab === 2 &&
+				!master,
+			bulkNegotiateOffers:
+				evaluateExpressionOnAgreement(standardData.BulkNegotiateOffers, _fa) &&
+				this.props.activeTab === 2 &&
+				!master,
+			deleteOffer:
+				evaluateExpressionOnAgreement(standardData.DeleteOffers, _fa) && this.props.activeTab === 2
 		};
 
 		footer = (
@@ -228,6 +257,41 @@ class FaFooter extends React.Component {
 						<span className="fa-button-icon">{window.SF.labels.btn_DeleteAddons}</span>
 					</button>
 				)}
+
+				{buttonVisibillityMap.addOffer && (
+					<button
+						className="fa-button fa-button--default"
+						onClick={this.onOpenOffersModal}
+					>
+						<Icon name="add" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_AddOffers}</span>
+					</button>
+				)}
+
+				{buttonVisibillityMap.bulkNegotiateOffers && (
+					<button
+						disabled={_disabled_offer}
+						className="fa-button fa-button--default"
+						onClick={() => this.onOpenOfferNegotiationModal()}
+					>
+						<Icon name="user" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">{window.SF.labels.btn_BulkNegotiateOffers}</span>
+					</button>
+				)}
+
+				{buttonVisibillityMap.deleteOffer && (
+					<button
+						disabled={_disabled_offer}
+						className="fa-button fa-button--default"
+						onClick={this.props.onRemoveOffers}
+					>
+						<Icon name="delete" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">
+							{window.SF.labels.btn_DeleteOffers}
+						</span>
+					</button>
+				)}
+
 
 				{customButtonsFooter.map((btnObj, i) => {
 					return (

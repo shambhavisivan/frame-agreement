@@ -26,23 +26,49 @@ private class FrameRateManagerControllerTest {
 		System.currentPageReference().getParameters().put('account', test_account.Id);
 		// commercial products
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
-			Name = 'cp_1', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00
-			);
+			Name = 'cp_1',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Price_Item_Code__c = 'cp_1',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
 		cspmb__Price_Item__c cp_2 = new cspmb__Price_Item__c(
-			Name = 'cp_2', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00
+			Name = 'cp_2',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Price_Item_Code__c = 'cp_2',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 
 		cspmb__Price_Item__c cp_addon_inv = new cspmb__Price_Item__c(
-			Name = 'cp_addon_inv', cspmb__Is_Active__c = true
+			Name = 'cp_addon_inv',
+			cspmb__Is_Active__c = true,
+			cspmb__Price_Item_Code__c = 'cp_addon_inv',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 		cspmb__Price_Item__c cp_addon_assoc_inv = new cspmb__Price_Item__c(
-			Name = 'cp_addon_assoc_inv', cspmb__Is_Active__c = true
+			Name = 'cp_addon_assoc_inv',
+			cspmb__Is_Active__c = true,
+			cspmb__Price_Item_Code__c = 'cp_addon_assoc_inv',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 
 		Date invalidEndDate = Date.newInstance(1992, 3, 14);
 		cspmb__Price_Item__c cp_3 = new cspmb__Price_Item__c(
-			Name = 'cp_3', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true,
-			cspmb__Recurring_Charge__c = 15 - 00, cspmb__Effective_End_Date__c = invalidEndDate
+			Name = 'cp_3',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Effective_End_Date__c = invalidEndDate,
+			cspmb__Price_Item_Code__c = 'cp_3',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 
 
@@ -273,6 +299,8 @@ private class FrameRateManagerControllerTest {
 		facSettings.rcl_fields__c = 'cspmb__Currency_Code__c, cspmb__rate_card_line_code__c';
 		facSettings.requires_approval_status__c = 'Requires Approval';
 		facSettings.standalone_addon_fields__c = 'cspmb__Add_On_Price_Item_Code__c, cspmb__One_Off_Charge__c, cspmb__ONE_OFF_CHARGE__c';
+		facSettings.certificate_name__c = 'selfcert';
+		facSettings.dispatcher_service_url__c = 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com';
 		insert facSettings;
 	}
 
@@ -324,7 +352,10 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		System.assertNotEquals(null, csettings);
-		System.assertEquals(csettings.get('standalone_addon_fields'), 'cspmb__Add_On_Price_Item_Code__c');
+		System.assertEquals(csettings.get('standalone_addon_fields'),
+			'cspmb__Add_On_Price_Item_Code__c, cspmb__One_Off_Charge__c, cspmb__ONE_OFF_CHARGE__c');
+		System.assertEquals(csettings.get('dispatcherServiceUrl'),
+			'https://cs-messaging-dispatcher-eu-dev.herokuapp.com');
 
 	}
 
@@ -337,9 +368,9 @@ private class FrameRateManagerControllerTest {
 
 
 		Test.startTest();
-		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMap = FrameRateManagerController.getPriceItemCharges(cpIdList);
+		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMap = FrameRateManagerController.getCommercialProductCharges(cpIdList);
 		// Invalid Id
-		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMapEmpty = FrameRateManagerController.getPriceItemCharges(new List <Id>{
+		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMapEmpty = FrameRateManagerController.getCommercialProductCharges(new List <Id>{
 			'01p1t00000M4Gqp'
 		});
 
@@ -423,8 +454,24 @@ private class FrameRateManagerControllerTest {
 	public static void getFindReplacementCommercialProduct() {
 		setupPricingModel();
 
-		cspmb__Price_Item__c cp_replace_1 = new cspmb__Price_Item__c(Name = 'cp_replace_1', cspmb__Price_Item_Code__c = 'PC333C', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
-		cspmb__Price_Item__c cp_replace_2 = new cspmb__Price_Item__c(Name = 'cp_replace_2', cspmb__Price_Item_Code__c = 'PC333C', cspmb__One_Off_Charge__c = 10.00, cspmb__Is_Active__c = true, cspmb__Recurring_Charge__c = 15 - 00);
+		cspmb__Price_Item__c cp_replace_1 = new cspmb__Price_Item__c(
+			Name = 'cp_replace_1',
+			cspmb__Price_Item_Code__c = 'PC333C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
+		cspmb__Price_Item__c cp_replace_2 = new cspmb__Price_Item__c(
+			Name = 'cp_replace_2',
+			cspmb__Price_Item_Code__c = 'PC333C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
 
 		insert cp_replace_1;
 		insert cp_replace_2;
@@ -530,7 +577,10 @@ private class FrameRateManagerControllerTest {
 
 		List<String> uniqueList = FrameRateManagerController.getUniqueListElements(new List<String>{'a1', 'a1', 'a2'});
 
-		Map<String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(cpIdList);
+		Map<String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(
+			cpIdList,
+			new List<Id>()
+		);
 
 		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> addonsInvalid = FrameRateManagerController.getAddons(new List <Id>{
 			cp_addon_inv.Id
@@ -721,7 +771,7 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		System.assertEquals(5, cpIdList.size());
-		System.assertEquals(4, getCommercialProducts.size());
+		System.assertEquals(5, getCommercialProducts.size());
 	}
 
 	@IsTest
@@ -733,7 +783,10 @@ private class FrameRateManagerControllerTest {
 			Name = 'cp_temp',
 			cspmb__One_Off_Charge__c = 9.00,
 			cspmb__Is_Active__c = true,
-			cspmb__Recurring_Charge__c = 11.99
+			cspmb__Recurring_Charge__c = 11.99,
+			cspmb__Price_Item_Code__c = 'cp_temp',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 		insert cp;
 
@@ -782,7 +835,11 @@ private class FrameRateManagerControllerTest {
 		setupSettings();
 
 		cspmb__Price_Item__c cp = new cspmb__Price_Item__c(
-			Name = 'cp_temp', cspmb__Is_Active__c = true
+			Name = 'cp_temp',
+			cspmb__Is_Active__c = true,
+			cspmb__Price_Item_Code__c = 'cp_temp',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 		insert cp;
 
@@ -836,7 +893,10 @@ private class FrameRateManagerControllerTest {
 			Name = 'cp_temp',
 			cspmb__One_Off_Charge__c = 1.00,
 			cspmb__Is_Active__c = true,
-			cspmb__Recurring_Charge__c = 2.00
+			cspmb__Recurring_Charge__c = 2.00,
+			cspmb__Price_Item_Code__c = 'cp_temp',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
 		);
 		insert cp;
 
@@ -879,35 +939,6 @@ private class FrameRateManagerControllerTest {
 
 		System.assertEquals(3, getCommercialProducts[0].cspmb__One_Off_Charge__c);
 		System.assertEquals(4, getCommercialProducts[0].cspmb__Recurring_Charge__c);
-	}
-
-	@IsTest
-	public static void getCommercialProductsWithInitialCategorizationFilter() {
-		setupPricingModel();
-		setupSettings();
-		insert new csutil__JSON_Data__c(
-			Name = 'FA-Initial-Categorization',
-			csutil__value__c = '[{"name": "Alpha","field": "cspmb__Role__c","values": ["Master"]}]'
-		);
-
-		List<cspmb__Price_Item__c> results = [
-			select Id
-			from cspmb__Price_Item__c
-		];
-		List<Id> cpIdList = new List<Id>();
-
-		for (cspmb__Price_Item__c cp : results) {
-			cpIdList.add(cp.Id);
-		}
-
-		Test.startTest();
-
-		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
-
-		Test.stopTest();
-
-		System.assertEquals(5, cpIdList.size());
-		System.assertEquals(0, getCommercialProducts.size());
 	}
 
 	@isTest
@@ -974,57 +1005,10 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		System.assertEquals(4, getCommercialProducts.size());
+		System.assertEquals(0, getCommercialProducts.size());
 
 	}
 
-	@isTest
-	public static void testFilterCommercialProductsReturnsEmpty() {
-		setupPricingModel();
-		setupSettings();
-		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]';
-
-		Test.startTest();
-
-		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
-
-		Test.stopTest();
-
-		System.assertEquals(0, filteredCp.size(), 'should return 0 cps because there is no discount type in test data');
-
-	}
-
-	@IsTest
-	public static void testFilterCommercialProducts() {
-		setupPricingModel();
-		setupSettings();
-		String data = '[{"name":"Alpha","field":"name","values":["cp_1"]}]';
-
-		Test.startTest();
-
-		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
-
-		Test.stopTest();
-
-		System.assertEquals(1, filteredCp.size());
-		System.assertEquals('cp_1', filteredCp[0].name);
-	}
-
-	@IsTest
-	public static void testFilterCommercialProductsThrowsException() {
-		setupPricingModel();
-		setupSettings();
-		String malformedData= '[{"name":"Alpha""field":"name","values":["cp_1"]}]';
-
-		Test.startTest();
-		try {
-			FrameRateManagerController.filterCommercialProducts(malformedData);
-			System.assert(false, 'Should always throw exception on malformed json.');
-		} catch (Exception e) {
-			System.assertEquals(true, e.getMessage().startsWith('JSON value is malformed'));
-		}
-		Test.stopTest();
-	}
 
 	@isTest
 	public static void testApproval() {
@@ -1172,7 +1156,11 @@ private class FrameRateManagerControllerTest {
 	@isTest
 	public static void testPriceItemDataEdgeCases() {
 		FrameRateManagerControllerTest.setupSettings();
-		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c();
+		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
+			cspmb__Price_Item_Code__c = 'cp_1',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
 		insert cp_1;
 
 		Test.startTest();
@@ -1408,54 +1396,6 @@ private class FrameRateManagerControllerTest {
 		System.assertEquals(expiredOriginalFa.csconta__effective_end_date__c, pastDate);
 	}
 
-	@isTest
-	public static void testFilterWithMultipleConditions() {
-		cspmb__Price_Item__c mobileL = new cspmb__Price_Item__c(
-			name = 'Mobile L',
-			cspmb__contract_term__c = '36 Months',
-			cspmb__discount_type__c = 'Amount',
-			cspmb__is_active__c = true
-		);
-
-		cspmb__Price_Item__c mobileXL = new cspmb__Price_Item__c(
-			name = 'Mobile XL',
-			cspmb__contract_term__c = '48 Months',
-			cspmb__discount_type__c = 'Percentage',
-			cspmb__is_active__c = true
-		);
-
-		cspmb__Price_Item__c mobileXXL = new cspmb__Price_Item__c(
-			name = 'Mobile XXL',
-			cspmb__contract_term__c = '60 Months',
-			cspmb__discount_type__c = 'Negative Line Item',
-			cspmb__is_active__c = true
-		);
-
-		insert mobileL;
-		insert mobileXL;
-		insert mobileXXL;
-
-		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage"]},{"name":"Beta","field":"cspmb__contract_term__c","values":["36 Months"]}]';
-
-		Test.startTest();
-
-		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
-
-		Test.stopTest();
-
-		Set<Id> filteredIds = new Set<Id>();
-
-		for (cspmb__Price_Item__c cp: filteredCp) {
-			filteredIds.add(cp.id);
-		}
-
-		System.assertEquals(2, filteredCp.size());
-		System.assertEquals(true, filteredIds.contains(mobileL.id), 'Contains MobileL');
-		System.assertEquals(true, filteredIds.contains(mobileXL.id), 'Contains MobileXL');
-		System.assertEquals(false, filteredIds.contains(mobileXXL.id), 'Does not contain MobileXXL');
-
-	}
-
 	@IsTest
 	private static void testGetUserLocale(){
 		User u = createMockUserForProfile('System Administrator');
@@ -1545,5 +1485,37 @@ private class FrameRateManagerControllerTest {
 
 			System.assertNotEquals(returnedOrgUrl, null);
 		}
+	}
+
+	@IsTest
+	public static void testToGetDSAuthToken() {
+		Test.startTest();
+		DispatcherServiceController.DispatcherServiceToken response = FrameRateManagerController.getDispatcherAuthToken('fam/app');
+		Test.stopTest();
+
+		System.assertEquals(response.token, 'TOKEN');
+	}
+
+	@IsTest
+	public static void testGetHiddenTabConfig() {
+		insert new csutil__JSON_Data__c(
+			Name = 'FA-hiddentabs', csutil__value__c = '["product"]'
+		);
+
+		Test.startTest();
+		Map<String, Boolean> responseMap = FrameRateManagerController.getHiddenTabConfig();
+		Test.stopTest();
+
+		System.assertEquals(responseMap.size(), 1);
+		System.assertEquals(responseMap.get('product'), true);
+	}
+
+	@IsTest
+	public static void testNullOnGetHiddenTabConfig() {
+		Test.startTest();
+		Map<String, Boolean> responseMap = FrameRateManagerController.getHiddenTabConfig();
+		Test.stopTest();
+
+		System.assertEquals(responseMap.size(), 0);
 	}
 }

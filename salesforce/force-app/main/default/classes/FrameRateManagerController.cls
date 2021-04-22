@@ -24,8 +24,10 @@ global with sharing class FrameRateManagerController {
 		'csconta__frame_agreement_number__c',
 		'csconta__agreement_level__c'
 	};
-	private static String MALFORMED_JSON_EXCEPTION = 'JSON value is malformed';
-	public static String NO_CATALOGUE_ID_MSG = 'Configure a default catalogue ID to proceed';
+	public static final String NO_CATALOGUE_ID_MSG = System.Label.msg_no_catalogue_id;
+	public static final List<String> TAB_NAME_CONFIG_LIST = new List<String> {
+		 'product', 'addon'
+	};
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -213,7 +215,7 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	private static Fac_Settings__c getFacSetting() {
+	public static Fac_Settings__c getFacSetting() {
 		return Fac_Settings__c.getInstance(UserInfo.getUserId());
 	}
 
@@ -541,6 +543,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('input_minmax_restriction', facSettings.get('input_minmax_restriction__c'));
 		settingMap.put('standalone_addon_fields', facSettings.standalone_addon_fields__c);
 		settingMap.put('fa_editable_statuses', facSettings.get('fa_editable_statuses__c'));
+		settingMap.put('dispatcherServiceUrl', facSettings.dispatcher_service_url__c);
 
 		Map<String, Object> statuses = new Map<String, Object>();
 		statuses.put('active_status', facSettings.get('active_status__c'));
@@ -587,7 +590,7 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	@TestVisible public static Map < Id, List <PricingElementWrapper>> getPriceItemCharges(List<Id> priceItemIdList) {
+	@TestVisible public static Map < Id, List <PricingElementWrapper>> getCommercialProductCharges(List<Id> priceItemIdList) {
 
 		Map <Id, List <PricingElementWrapper>> cpId_peWrapper = new Map <Id, List <PricingElementWrapper>>();
 		// Get all pricing elements and their types labels for commercial product
@@ -909,6 +912,7 @@ global with sharing class FrameRateManagerController {
 		appSettings.put('AddonCategorizationData', addonCategorizationData);
 		appSettings.put('CategorizationData', categorizationData);
 		appSettings.put('FACSettings', getCustomSettings());
+		appSettings.put('hiddenTabs', getHiddenTabConfig());
 
 		return appSettings;
 	}
@@ -964,20 +968,14 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static List<cspmb__Price_Item__c> getCommercialProducts(List<String> priceItemIds) {
 		if (priceItemIds == null || priceItemIds.isEmpty()) {
-			priceItemIds = new List<String>();
-		}
-
-		String filterJsonValue = getInitialFilters();
-		if (filterJsonValue != null) {
-			return filterCommercialProducts(filterJsonValue);
+			return new List<cspmb__Price_Item__c>();
 		}
 
 		return getCommercialProducts_p(priceItemIds);
 	}
 
 	private static List<cspmb__Price_Item__c> getCommercialProducts_p(List<Id> priceItemIds) {
-
-		List<String> standardFields = new List<String>{
+		List<String> standardFields = new List<String> {
 			'Id',
 			'Name',
 			'cspmb__Effective_Start_Date__c',
@@ -999,30 +997,16 @@ global with sharing class FrameRateManagerController {
 			csFieldsArr = csFields.replaceAll('\\s+','').split(',');
 		}
 
-		List<String> categorizationFields = getCategorizationDataFields();
-
-
 		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
 		fieldsArr.addAll(csFieldsArr);
-		fieldsArr.addAll(categorizationFields);
 
 		// Remove duplicates
 		List<String> uniqueList = getUniqueListElements(fieldsArr);
 
-		String query = 'select  ' + String.join(uniqueList, ',') + ' from cspmb__Price_Item__c ';
-		// ADD ACCOUNT NULL CLAUSE
-		query += 'where cspmb__Account__c = null ';
-		// ADD ACTIVE CLAUSE
-		query += 'and cspmb__Is_Active__c = true ';
-		// ADD START DATE CHECK CLAUSE
-		query += 'and (cspmb__Effective_Start_Date__c = null OR (cspmb__Effective_Start_Date__c != null and cspmb__Effective_Start_Date__c < TODAY)) ';
-		// ADD END DATE CHECK CLAUSE
-		query += 'and (cspmb__Effective_End_Date__c = null OR (cspmb__Effective_End_Date__c != null and cspmb__Effective_End_Date__c > TODAY)) ';
-
-		if (!priceItemIds.isEmpty()) {
-			query += 'and Id in :priceItemIds ';
-		}
+		String query = 'select  ' + String.join(uniqueList, ',');
+		query += ' from cspmb__Price_Item__c ';
+		query += 'where Id in :priceItemIds ';
 
 		query += 'limit 20000';
 
@@ -1075,14 +1059,6 @@ global with sharing class FrameRateManagerController {
 		}
 
 		return cpList.values();
-	}
-
-	private static String getInitialFilters() {
-		csutil__JSON_Data__c faInitialCategorization = getJsonData('FA-Initial-Categorization');
-		if (faInitialCategorization != null && String.isNotBlank(faInitialCategorization.csutil__value__c)) {
-			return faInitialCategorization.csutil__value__c;
-		}
-		return null;
 	}
 
 	private static csutil__JSON_Data__c getJsonData(String jsonSettingKey){
@@ -1215,69 +1191,6 @@ global with sharing class FrameRateManagerController {
 		}
 
 		return returnMap;
-	}
-
-	@RemoteAction
-	public static List<cspmb__Price_Item__c> filterCommercialProducts(String filterData) {
-		String selectClause = 'id';
-		String whereClause = '';
-
-		List<Object> categorizationData;
-		try {
-			categorizationData = (List<Object>) JSON.deserializeUntyped(filterData);
-		} catch (Exception e) {
-			throw new ApplicationException(FrameRateManagerController.MALFORMED_JSON_EXCEPTION + e.getMessage());
-		}
-
-		//*******************************************************************
-		// Create list to hold fields: [values]
-		Map<String, List<String>> categoryQueryMap = new Map<String, List<String>>();
-
-		//*******************************************************************
-		// Iterate JSON Data, check if the field exists in schema. If so append it to query
-
-		for (Object category : categorizationData) {
-			// category.get('field');
-			Map<String, Object> categoryMap = (Map<String, Object>) category;
-			String fieldName = (String) categoryMap.get('field');
-
-			List<String> valuesList = new List<String>();
-
-			List<Object> valuesObjArr = (List<Object>) categoryMap.get('values');
-
-			for (Object valueObj : valuesObjArr) {
-				valuesList.add((String) valueObj);
-			}
-
-			categoryQueryMap.put(fieldName, valuesList);
-
-			if (!valuesList.isEmpty()) {
-				selectClause += ',' + fieldName;
-
-				String operator = '';
-
-				if (String.isEmpty(whereClause)) {
-					operator = ' where ';
-				} else {
-					operator = ' or ';
-				}
-
-				whereClause +=
-					operator + fieldName + ' in (\'' + String.join(valuesList, '\',\'') + '\')';
-			}
-		}
-
-		String query = 'select ' + selectClause + ' from cspmb__Price_Item__c ' + whereClause + ' limit 50000';
-
-		List<SObject> results = Database.query(query);
-
-		if (results.size() == 0) {
-			return new List<SObject>();
-		}
-
-		Set<Id> resultIds = (new Map <Id, SObject> (results)).keySet();
-
-		return getCommercialProducts_p(new List<Id> (resultIds));
 	}
 
 	@RemoteAction
@@ -1509,34 +1422,33 @@ global with sharing class FrameRateManagerController {
 
 	}
 
-	@RemoteAction
-	public static Map<String, Object> getCommercialProductData(List<String> priceItemIdList) {
+	private static Map<String, Object> getCommercialProductsData(
+		List<String> priceItemIdList,
+		List<Id> addonIdList
+	) {
 		Map<Id, cpData> cpDataMap = new Map<Id, cpData>();
 
-		Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> addons = getAddons(priceItemIdList);
-		// Get addonIds for discount levels
-		// These are the addons that we need to load beside cp
 		Map<Id, List<RateCard>> rateCards = getRateCards(priceItemIdList);
 		// got ratecards, load auth lv for them
-		List<Id> addonIdList = getAddonIdsForCp(priceItemIdList);
 		List<Id> rcIdList = getRateCardIdsForCp(priceItemIdList);
 		List<DiscountLevelWrapper> discountLevels = getDiscountevels(addonIdList, priceItemIdList);
 
 
-		List<cspmb__Discount_Threshold__c> discountThresholds = getDiscountThresholds(addonIdList, priceItemIdList, rcIdList);
+		List<cspmb__Discount_Threshold__c> discountThresholds = getDiscountThresholds(
+			addonIdList,
+			priceItemIdList,
+			rcIdList
+		);
 
-		Map <Id, List <PricingElementWrapper>> charges = getPriceItemCharges(priceItemIdList);
+		Map <Id, List <PricingElementWrapper>> charges = getCommercialProductCharges(
+			priceItemIdList
+		);
 
 		AllowancesWrapper allowanceUtStructure = getAllowances(priceItemIdList);
 		Map<Id, List<cspmb__Allowance__c>> allowances = allowanceUtStructure.allowanceMap;
 
 
 		for (String priceItemId : priceItemIdList) {
-			List<cspmb__Price_Item_Add_On_Price_Item_Association__c> this_addons = addons.get(priceItemId);
-			if (this_addons == null) {
-				this_addons = new List<cspmb__Price_Item_Add_On_Price_Item_Association__c>();
-			}
-
 			List <PricingElementWrapper> this_charges = charges.get(priceItemId);
 			if (this_charges == null) {
 				this_charges = new List <PricingElementWrapper>();
@@ -1553,7 +1465,7 @@ global with sharing class FrameRateManagerController {
 				this_allowances = new List<cspmb__Allowance__c>();
 			}
 
-			cpDataMap.put(priceItemId, new cpData(this_addons, this_charges, this_rateCards, this_allowances));
+			cpDataMap.put(priceItemId, new cpData(this_charges, this_rateCards, this_allowances));
 		}
 
 		Map<String, Object> collectiveCpData = new Map<String, Object>();
@@ -2674,6 +2586,57 @@ global with sharing class FrameRateManagerController {
 		return orgUrl;
 	}
 
+	@RemoteAction
+	public static DispatcherServiceController.DispatcherServiceToken getDispatcherAuthToken(String userAgent) {
+		return DispatcherServiceController.getAuthorisationToken(userAgent);
+	}
+
+	@RemoteAction
+	public static Map<String, Object> getCommercialProductData(
+		List<String> commercialProductIdList,
+		List<Id> addonIdList
+	) {
+		return FrameRateManagerController.getCommercialProductsData(
+			commercialProductIdList,
+			addonIdList
+		);
+	}
+
+	@RemoteAction
+	public static Map<String, Object> getOfferData(List<String> offerIdList, List<Id> addonIdList) {
+		return FrameRateManagerController.getCommercialProductsData(offerIdList, addonIdList);
+	}
+
+	@RemoteAction
+	public static List<cspmb__Price_Item__c> getOffers(List<String> offerIdList) {
+		if (offerIdList == null || offerIdList.isEmpty()) {
+			return new List<cspmb__Price_Item__c>();
+		}
+		return FrameRateManagerController.getCommercialProducts_p(offerIdList);
+	}
+
+	@TestVisible
+	private static Map<String, Boolean> getHiddenTabConfig() {
+		csutil__JSON_Data__c tabVisibilityData = (
+			FrameRateManagerController.getJsonData('FA-hiddentabs')
+		);
+
+		String hiddenTabs  = tabVisibilityData?.csutil__value__c;
+		Map<String, Boolean> hiddenTabMap = new Map<String, Boolean>();
+		if (String.isNotBlank(hiddenTabs)) {
+			List<String> hiddenTabList = (List<String>) Json.deserialize(hiddenTabs, List<String>.class);
+
+			for (String tabName : hiddenTabList) {
+				if(TAB_NAME_CONFIG_LIST.contains(tabName)) {
+					hiddenTabMap.put(tabName, true);
+				}
+			}
+		}
+
+		return hiddenTabMap;
+	}
+
+
 	//******************************************* DECOMPOSITION END ***************************************
 
 	// WRAPPERS
@@ -2704,10 +2667,6 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public class cpData {
-		public List<cspmb__Price_Item_Add_On_Price_Item_Association__c> addons {
-			get;
-			set;
-		}
 		public List <PricingElementWrapper> charges {
 			get;
 			set;
@@ -2721,8 +2680,11 @@ global with sharing class FrameRateManagerController {
 			set;
 		}
 
-		public cpData(List<cspmb__Price_Item_Add_On_Price_Item_Association__c> addonList, List <PricingElementWrapper> charges, List<RateCard> rateCardList, List<cspmb__Allowance__c> allowances) {
-			this.addons = addonList;
+		public cpData(
+			List <PricingElementWrapper> charges,
+			List<RateCard> rateCardList,
+			List<cspmb__Allowance__c> allowances
+		) {
 			this.charges = charges;
 			this.rateCards = rateCardList;
 			this.allowances = allowances;

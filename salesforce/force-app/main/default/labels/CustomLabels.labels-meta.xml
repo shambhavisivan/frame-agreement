@@ -29,6 +29,13 @@
         <value>There are no Products in here</value>
     </labels>
     <labels>
+        <fullName>addOfferCTAMessage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>addOfferCTAMessage</shortDescription>
+        <value>There are no Offers in here</value>
+    </labels>
+    <labels>
         <fullName>addons_header_name</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -120,11 +127,25 @@
         <value>Are you sure you want to delete selected products?</value>
     </labels>
     <labels>
+        <fullName>alert_deleteOffers_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>alert_deleteOffers_message</shortDescription>
+        <value>Are you sure you want to delete selected offers?</value>
+    </labels>
+    <labels>
         <fullName>alert_deleteProducts_title</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>alert_deleteProducts_title</shortDescription>
         <value>Delete products</value>
+    </labels>
+    <labels>
+        <fullName>alert_deleteOffers_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete Offers</shortDescription>
+        <value>Delete Offers</value>
     </labels>
     <labels>
         <fullName>allowances_amount</fullName>
@@ -405,6 +426,34 @@
         <protected>true</protected>
         <shortDescription>charges_header_type</shortDescription>
         <value>Charge Type</value>
+    </labels>
+    <labels>
+        <fullName>cp_meta_header_attribute_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cp_meta_attribute_name</shortDescription>
+        <value>Attribute Name</value>
+    </labels>
+    <labels>
+        <fullName>cp_meta_header_values</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cp_meta_header_values</shortDescription>
+        <value>Values</value>
+    </labels>
+    <labels>
+        <fullName>cp_meta_header_read_only</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cp_meta_header_read_only</shortDescription>
+        <value>Read Only</value>
+    </labels>
+    <labels>
+        <fullName>cp_meta_header_required</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cp_meta_header_required</shortDescription>
+        <value>Required</value>
     </labels>
     <labels>
         <fullName>delta_fa_fields</fullName>
@@ -1023,6 +1072,13 @@
         <value>Create at least one frame agreements.</value>
     </labels>
     <labels>
+        <fullName>offer_metadata_header</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>offer_metadata_header</shortDescription>
+        <value>Metadata</value>
+    </labels>
+    <labels>
         <fullName>product_charge_header_name</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1119,6 +1175,13 @@
         <protected>true</protected>
         <shortDescription>products_title</shortDescription>
         <value>Products</value>
+    </labels>
+    <labels>
+        <fullName>offers_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Offers</shortDescription>
+        <value>Offers</value>
     </labels>
     <labels>
         <fullName>products_title_empty</fullName>
@@ -1338,6 +1401,62 @@
         <value>Submitted!</value>
     </labels>
     <labels>
+        <fullName>toast_invalid_product_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Invalid product found!</shortDescription>
+        <value>Invalid product found!</value>
+    </labels>
+    <labels>
+        <fullName>toast_invalid_product</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Expired product message</shortDescription>
+        <value>Some products have expired or have been removed. (Check the logs for more information)</value>
+    </labels>
+    <labels>
+        <fullName>toast_search_replacement_product_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Searching for replacement product!</shortDescription>
+        <value>Searching for replacement product!</value>
+    </labels>
+    <labels>
+        <fullName>toast_search_replacement_product</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Product replacement message</shortDescription>
+        <value>FAM will try to find replacement products and match it with charges of expired one...</value>
+    </labels>
+    <labels>
+        <fullName>toast_invalid_offer_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Invalid offer found!</shortDescription>
+        <value>Invalid offer found!</value>
+    </labels>
+    <labels>
+        <fullName>toast_invalid_offer</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Expired offer message</shortDescription>
+        <value>Some offers have expired or have been removed. (Check the logs for more information)</value>
+    </labels>
+    <labels>
+        <fullName>toast_search_replacement_offer_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Searching for replacement offer!</shortDescription>
+        <value>Searching for replacement offer!</value>
+    </labels>
+    <labels>
+        <fullName>toast_search_replacement_offer</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Offer replacement message</shortDescription>
+        <value>FAM will try to find replacement offers and match it with charges of expired one...</value>
+    </labels>
+    <labels>
         <fullName>usage_type_name_field</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1455,5 +1574,40 @@
         <protected>true</protected>
         <shortDescription>Standalone Addons</shortDescription>
         <value>Standalone Addons</value>
+    </labels>
+    <labels>
+        <fullName>msg_no_catalogue_id</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>msg_no_catalogue_id</shortDescription>
+        <value>Configure a default catalogue ID to proceed</value>
+    </labels>
+    <labels>
+        <fullName>offers_tab_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Offers</shortDescription>
+        <value>Offers</value>
+    </labels>
+    <labels>
+        <fullName>btn_AddOffers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Offers</shortDescription>
+        <value>Add Offers</value>
+    </labels>
+    <labels>
+        <fullName>btn_BulkNegotiateOffers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Negotiate Offers</shortDescription>
+        <value>Negotiate Offers</value>
+    </labels>
+    <labels>
+        <fullName>btn_DeleteOffers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete Offers</shortDescription>
+        <value>Delete Offers</value>
     </labels>
 </CustomLabels>

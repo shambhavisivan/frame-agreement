@@ -27,7 +27,12 @@ import {
 	setCustomData,
 	setFrameAgreementState,
 	validateFrameAgreement,
-	toggleFrameAgreementOperations
+	toggleFrameAgreementOperations,
+	getOffers,
+	getOfferData,
+	addOffersToFa,
+	removeOffersFromFa,
+	apiNegotiateOffer
 } from './actions';
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
@@ -51,6 +56,7 @@ import {
 	submitForApproval
 } from './api';
 
+const OFFER = 'OFFER';
 export class App extends Component {
 	constructor(props) {
 		super(props);
@@ -201,10 +207,12 @@ export class App extends Component {
 			this.props.toggleFrameAgreementOperations(true);
 			let _attachment_prod = {};
 			let _attachment_addon = {};
+			let _attachment_offer = {};
 
 			try {
 				_attachment_prod = this.props.frameAgreements[faId]._ui.attachment.products || {};
 				_attachment_addon = this.props.frameAgreements[faId]._ui.attachment.addons || {};
+				_attachment_offer = this.props.frameAgreements[faId]._ui.attachment.offers || {};
 			} catch (err) {
 				// No attachment or no products
 			}
@@ -258,6 +266,60 @@ export class App extends Component {
 				});
 			}
 
+			for (var offerId in _attachment_offer) {
+				if (_attachment_offer[offerId].hasOwnProperty("_addons")) {
+					let addons = _attachment_offer[offerId]._addons;
+					for (var offerAddOnAssocationId in addons) {
+						structure.push({
+							cpaoaId: offerAddOnAssocationId,
+							recurring: addons[
+								offerAddOnAssocationId
+							].hasOwnProperty("recurring")
+								? addons[offerAddOnAssocationId].recurring
+								: null,
+							oneOff: addons[
+								offerAddOnAssocationId
+							].hasOwnProperty("oneOff")
+								? addons[offerAddOnAssocationId].oneOff
+								: null,
+						});
+					}
+				}
+
+				if (_attachment_offer[offerId].hasOwnProperty("_charges")) {
+					let charges = _attachment_offer[offerId]._charges;
+					for (var chargeId in charges) {
+						structure.push({
+							peId: chargeId,
+							recurring: charges[chargeId].hasOwnProperty(
+								"recurring"
+							)
+								? charges[chargeId].recurring
+								: null,
+							oneOff: charges[chargeId].hasOwnProperty("oneOff")
+								? charges[chargeId].oneOff
+								: null,
+						});
+					}
+				}
+
+				if (_attachment_offer[offerId].hasOwnProperty("_product")) {
+					structure.push({
+						cpId: offerId,
+						recurring: _attachment_offer[
+							offerId
+						]._product.hasOwnProperty("recurring")
+							? _attachment_offer[offerId]._product.recurring
+							: null,
+						oneOff: _attachment_offer[
+							offerId
+						]._product.hasOwnProperty("oneOff")
+							? _attachment_offer[offerId]._product.oneOff
+							: null,
+					});
+				}
+			}
+
 			// 2) Remove items that have no charge value
 			structure = structure.filter(item => item.recurring !== null || item.oneOff !== null);
 
@@ -304,7 +366,7 @@ export class App extends Component {
 			// Wait for all to resolve
 			let result = await Promise.all(decompositionPromiseArray);
 			publish('onAfterActivation', PR_ID);
-			
+
 			result = new Set(result);
 			//********************************************
 
@@ -553,24 +615,152 @@ export class App extends Component {
 		 * @param  Object data 		negotiation structure
 		 * @return Promise(attachment) updated attachment
 		 */
-		window.FAM.api.negotiate = (faId, data = window.mandatory('negotiate()')) => {
-			let self = this;
-			return new Promise(async (resolve, reject) => {
-				data = await publish('onBeforeNegotiate', data);
+		window.FAM.api.negotiate = async (faId, data = window.mandatory('negotiate()')) => {
+			data = await publish('onBeforeNegotiate', data);
+			this.props.apiNegotiate(faId, data);
+			publish('onAfterNegotiate', this.props.frameAgreements[faId]._ui.attachment);
 
-				this.props.apiNegotiate(faId, data);
+			this.props.validateFrameAgreement(faId);
 
-				publish('onAfterNegotiate', this.props.frameAgreements[faId]._ui.attachment);
+			await window.FAM.api.validateStatusConsistency(faId);
 
-				self.props.validateFrameAgreement(faId);
+			return (this.props.frameAgreements[faId]._ui.attachment);
+		};
 
-				await window.FAM.api.validateStatusConsistency(faId);
+		window.FAM.api.negotiateOffers = async (faId, data = window.mandatory('negotiate()')) => {
+			data = await publish('onBeforeOfferNegotiate', data);
+			this.props.apiNegotiateOffer(faId, data);
+			publish('onAfterOfferNegotiate', this.props.frameAgreements[faId]._ui.attachment);
 
+			this.props.validateFrameAgreement(faId);
+
+			await window.FAM.api.validateStatusConsistency(faId);
+
+			return (this.props.frameAgreements[faId]._ui.attachment);
+		}
+
+		window.SF.getAuthLevels = () => this.props.settings.AuthLevels || {};
+
+		/**
+		 * fetches a list of offers, can be filtered by fa id
+		 * @param  String faId - get cp for this specific fa
+		 * @return List<Object> - offers
+		 */
+		 window.FAM.api.getOffers = async faId => {
+			if (!faId) {
+				return this.props.getOffers();
+			} else {
+				if (this.props.frameAgreements[faId]._ui.attachment === null) {
+					let resp_attachment = await this.props.getAttachment(faId);
+					// No need to wait for this one, we only need products
+					this.props.getOfferData(Object.keys(resp_attachment.offers));
+
+					return this.props.frameAgreements[faId]._ui.offers;
+				} else {
+					return this.props.frameAgreements[faId]._ui.offers;
+				}
+			}
+		};
+
+		/**
+		 * adds offer to frame agreement
+		 * @param  String faId - Frame agreement id
+		 * @param List<Object> - List of offers to add
+		 */
+		 window.FAM.api.addOffers = async (
+			faId = window.mandatory('addOffers()'),
+			offers = []
+		) => {
+			if (!offers.length) {
+				return;
+			}
+
+			offers = await publish('onBeforeAddOffers', offers);
+
+			if (offers.some(cp_id => cp_id.length === 15)) {
+				console.warn('Converting to 18 char Id...');
+				// Generate 15: 18 map
+				let charMap = {};
+				this.props.offers.forEach(offer => {
+					charMap[offer.Id.substring(0, 15)] = offer.Id;
+				});
+
+				offers = offers.map(offer_id => {
+
+					if (offer_id.length === 15) {
+						return charMap[offer_id];
+					}
+					return offer_id;
+				});
+			}
+
+			let _offersSet = new Set(offers);
+
+			// Sort out offers data
+			let IdsToLoad = this.props.offers.reduce((acc, offer) => {
+
+				if (_offersSet.has(offer.Id)) {
+
+					if (!offer._dataLoaded) {
+						return [...acc, ...[offer.Id]];
+					} else {
+						return acc;
+					}
+				} else {
+					return acc;
+				}
+			}, []);
+
+			// IF not, load attachment for FA
+			if (this.props.frameAgreements[faId]._ui.attachment === null) {
+				let resp_attachment = await this.props.getAttachment(faId);
+				IdsToLoad = [...IdsToLoad, ...Object.keys(resp_attachment.offers)];
+			}
+
+			await this.props.getOfferData(IdsToLoad);
+			await this.props.addOffersToFa(faId, offers);
+			this.props.validateFrameAgreement(faId);
+
+			await publish(
+				'onAfterAddOffers',
+				this.props.frameAgreements[faId]._ui.offers.map(offer => offer.Id)
+			);
+
+			await window.SF.invokeAction('saveAttachment', [
+				faId,
+				JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+			]);
+			return this.props.frameAgreements[faId];
+		};
+
+		/**
+		 * remove offers from fa
+		 * @param  String faId - Frame agreement id
+		 * @param List<Object> - List of offers to delete
+		 */
+		window.FAM.api.removeOffers = (faId = window.mandatory('addOffers()'), offers = []) => {
+			return new Promise(async resolve => {
+				let offersToDelete = await publish('onBeforeDeleteOffers', offers);
+
+				// IF not, load attachment for FA
+				if (this.props.frameAgreements[faId]._ui.attachment === null) {
+					let resp_attachment = await this.props.getAttachment(faId);
+				}
+
+				await this.props.removeOffersFromFa(faId, offersToDelete);
+				await publish(
+					'onAfterDeleteOffers',
+					this.props.frameAgreements[faId]._ui.offers.map(offer => offer.Id)
+				);
+
+				await window.SF.invokeAction('saveAttachment', [
+					faId,
+					JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+				]);
 				resolve(this.props.frameAgreements[faId]._ui.attachment);
 			});
 		};
 
-		window.SF.getAuthLevels = () => this.props.settings.AuthLevels || {};
 
 		Promise.all([
 			this.props.getAppSettings(),
@@ -668,7 +858,12 @@ const mapDispatchToProps = {
 	setCustomData,
 	setFrameAgreementState,
 	validateFrameAgreement,
-	toggleFrameAgreementOperations
+	toggleFrameAgreementOperations,
+	getOffers,
+	getOfferData,
+	addOffersToFa,
+	removeOffersFromFa,
+	apiNegotiateOffer
 };
 
 const mapStateToProps = state => {
@@ -677,7 +872,8 @@ const mapStateToProps = state => {
 		commercialProducts: state.commercialProducts,
 		settings: state.settings,
 		validation: state.validation,
-		initialised: state.initialised
+		initialised: state.initialised,
+		offers: state.offers
 	};
 };
 

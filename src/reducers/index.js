@@ -4,7 +4,8 @@ import {
 	validateCSV,
 	getFieldLabel,
 	parseExpression,
-	evaluateExpressionOnAgreement
+	evaluateExpressionOnAgreement,
+	negotiateData
 } from '../utils/shared-service';
 
 import {
@@ -18,6 +19,7 @@ const initialState = {
 	initialised: {
 		fa_loaded: false,
 		cp_loaded: false,
+		of_loaded: false,
 		settings_loaded: false
 	},
 	settings: {
@@ -30,12 +32,15 @@ const initialState = {
 	currentFrameAgreement: {},
 	commercialProducts: null,
 	standaloneAddons: null,
+	offers: [],
 	productFields: [],
 	faFields: [],
 	activeFa: null,
 	validation: {},
+	validationOffersInfo: {},
 	validationAddons: {},
 	validationProduct: {},
+	validationOffers: {},
 	// approvalNeeded: false, // true -> needs validation
 	handlers: {},
 	modals: {
@@ -45,7 +50,9 @@ const initialState = {
 		addonModal: false,
 		frameModal: false,
 		negotiateModal: false,
-		negotiateStandaloneModal: false
+		negotiateStandaloneModal: false,
+		offersModal: false,
+		negotiateOffersModal: false
 	},
 	toasts: [],
 	disableFrameAgreementOperations: false
@@ -230,39 +237,65 @@ function formatDiscLevels(dlList = []) {
 	return _DiscLevels;
 }
 
-function getApprovalNeeded(validation, addonValidation = []) {
-	let _validation = Object.keys(validation).reduce((acc, key) => {
+function getApprovalNeeded(cpValidation, addonValidation = [], offerValidation = {}) {
+	return (
+		getCpApprovalNeeded(cpValidation) ||
+		getAddOnApprovalNeeded(addonValidation) ||
+		getOfferApprovalNeeded(offerValidation)
+	);
+}
+
+function getCpApprovalNeeded(cpValidation) {
+	let _cpValidation = Object.keys(cpValidation).reduce((acc, key) => {
 		let collection = [];
-		if (validation[key].addons) {
-			Object.values(validation[key].addons).forEach(item => {
+		if (cpValidation[key].addons) {
+			Object.values(cpValidation[key].addons).forEach(item => {
 				item.hasOwnProperty('oneOff') && collection.push(item.oneOff);
 				item.hasOwnProperty('recurring') && collection.push(item.recurring);
 			});
 		}
-		if (validation[key].charges) {
-			collection = [...collection, ...Object.values(validation[key].charges)];
+		if (cpValidation[key].charges) {
+			collection = [...collection, ...Object.values(cpValidation[key].charges)];
 		}
-		if (validation[key].product) {
-			collection = [...collection, ...Object.values(validation[key].product)];
+		if (cpValidation[key].product) {
+			collection = [...collection, ...Object.values(cpValidation[key].product)];
 		}
-		if (validation[key].rated) {
-			collection = [...collection, ...Object.values(validation[key].rated)];
+		if (cpValidation[key].rated) {
+			collection = [...collection, ...Object.values(cpValidation[key].rated)];
 		}
 		return [...acc, ...collection];
 	}, []);
 
-	let _addonValidation = Object.values(addonValidation).reduce((acc, iter) => {
+	return _cpValidation.some(r => r === true);
+}
+
+function getAddOnApprovalNeeded(addOnValidation) {
+	let _addonValidation = Object.values(addOnValidation).reduce((acc, iter) => {
 		return [...acc, ...Object.values(iter)];
 	}, []);
 
-	return [..._validation, ..._addonValidation].some(r => r === true);
+	return _addonValidation.some(r => r === true);
 }
 
-function getProductValidation(validation) {
+function getOfferApprovalNeeded(offerValidation) {
+	return getCpApprovalNeeded(offerValidation);
+}
+
+function getProductValidation(cpValidation) {
 	let _productValidation = {};
-	for (var key in validation) {
-		_productValidation[key] = getApprovalNeeded({
-			[key]: validation[key]
+	for (var key in cpValidation) {
+		_productValidation[key] = getCpApprovalNeeded({
+			[key]: cpValidation[key]
+		});
+	}
+	return _productValidation;
+}
+
+function getOfferValidation(offerValidation) {
+	let _productValidation = {};
+	for (var key in offerValidation) {
+		_productValidation[key] = getOfferApprovalNeeded({
+			[key]: offerValidation[key]
 		});
 	}
 	return _productValidation;
@@ -271,6 +304,7 @@ function getProductValidation(validation) {
 function getNewAttachment(headerData, fa) {
 	return {
 		commercialProducts: [],
+		offers: [],
 		standaloneAddons: [],
 		approvalNeeded: false,
 		headerRows: organizeHeaderFields(headerData, fa),
@@ -403,11 +437,13 @@ const rootReducer = (state = initialState, action) => {
 			}
 
 			var validation;
+			var validationOffersInfo;
 
 			if (priceItemId === null) {
 				var _fa = state.frameAgreements[faId];
 				var _products = _fa._ui.attachment.products;
 				var _addons = _fa._ui.attachment.addons;
+				var _offers = _fa._ui.attachment.offers;
 				var bulkValidation = {};
 				var _initialFrameAgreementStandaloneAddOn = state.currentFrameAgreement._ui.attachment?.addons;
 				var validationAddons = validateAddons(
@@ -420,6 +456,7 @@ const rootReducer = (state = initialState, action) => {
 					}
 				);
 				var _initialFrameAgreementProducts = state.currentFrameAgreement._ui.attachment?.products;
+				var bulkValidationOffers = {};
 
 				_fa._ui.commercialProducts.forEach(cp => {
 					bulkValidation[cp.Id] = {
@@ -472,7 +509,32 @@ const rootReducer = (state = initialState, action) => {
 					}
 				});
 
+
+				_fa._ui.offers.forEach(offer => {
+					bulkValidationOffers[offer.Id] = {
+						addons: validateAddons(offer._addons, _offers[offer.Id]._addons || {}),
+						rated: validateRateCardLines(offer._rateCards, _offers[offer.Id]._rateCards || {}),
+						charges: validateCharges(
+							offer._charges,
+							offer.cspmb__Authorization_Level__c,
+							_offers[offer.Id]._charges || {}
+						)
+					};
+
+					if (_offers[offer.Id]._product) {
+						bulkValidationOffers[offer.Id].product = validateProduct({
+							oneOff: offer.cspmb__One_Off_Charge__c,
+							negotiatedOneOff: _offers[offer.Id]._product.oneOff,
+							recurring: offer.cspmb__Recurring_Charge__c,
+							negotiatedRecurring: _offers[offer.Id]._product.recurring,
+							authLevel: offer.cspmb__Authorization_Level__c || null,
+							Name: offer.Name
+						});
+					}
+				});
+
 				validation = bulkValidation;
+				validationOffersInfo = bulkValidationOffers;
 			} else {
 				validation = {
 					...state.validation,
@@ -486,13 +548,20 @@ const rootReducer = (state = initialState, action) => {
 				};
 			}
 
-			var approvalNeeded = getApprovalNeeded(validation, validationAddons);
+			var approvalNeeded = getApprovalNeeded(
+				validation,
+				validationAddons,
+				validationOffersInfo
+			);
 			var validationProduct = getProductValidation(validation);
+			var validationOffers = getOfferValidation(validationOffersInfo);
 
 			return {
 				...state,
 				validation,
+				validationOffersInfo,
 				validationProduct,
+				validationOffers,
 				validationAddons: { ...state.validationAddons, [faId]: validationAddons },
 				frameAgreements: {
 					...state.frameAgreements,
@@ -519,7 +588,7 @@ const rootReducer = (state = initialState, action) => {
 						...state.frameAgreements[faId],
 						_ui: {
 							...state.frameAgreements[faId]._ui,
-							approvalNeeded: getApprovalNeeded(validation, validationAddons)
+							approvalNeeded: getAddOnApprovalNeeded(validation)
 						}
 					}
 				}
@@ -553,14 +622,28 @@ const rootReducer = (state = initialState, action) => {
 					}
 				};
 			} else if (action.payload.type === null) {
-				var validation = { ...state.validation, ...action.payload.priceItemId };
-				var approvalNeeded = validationAddons && getApprovalNeeded(validation);
+				var validation = {
+					...state.validation,
+					...action.payload.priceItemId,
+				};
 				var validationProduct = getProductValidation(validation);
+				var validationOffersInfo = {
+					...state.validationOffersInfo,
+					...action.payload.priceItemId,
+				};
+				var validationOffers = getOfferValidation(validationOffersInfo);
+				var approvalNeeded = getApprovalNeeded(
+					validation,
+					validationAddons,
+					validationOffersInfo
+				);
 
 				return {
 					...state,
 					validation,
+					validationOffersInfo,
 					validationProduct,
+					validationOffers,
 					frameAgreements: {
 						...state.frameAgreements,
 						[faId]: {
@@ -570,22 +653,48 @@ const rootReducer = (state = initialState, action) => {
 					}
 				};
 			} else {
-				var validation = {
-					...state.validation,
-					[action.payload.priceItemId]: {
-						...state.validation[action.payload.priceItemId],
-						[action.payload.type]: {
-							...state.validation[action.payload.priceItemId][action.payload.type],
-							...action.payload.data
+				var validation = { ...state.validation }
+				var validationOffersInfo = { ...state.validationOffersInfo }
+
+				if (state.validation[action.payload.priceItemId]) {
+					validation = {
+						...state.validation,
+						[action.payload.priceItemId]: {
+							...state.validation[action.payload.priceItemId],
+							[action.payload.type]: {
+								...state.validation[action.payload.priceItemId][action.payload.type],
+								...action.payload.data
+							}
 						}
-					}
-				};
-				var approvalNeeded = validationAddons && getApprovalNeeded(validation);
+					};
+				}
+
+				if (state.validationOffersInfo[action.payload.priceItemId]) {
+					validationOffersInfo = {
+						...state.validationOffersInfo,
+						[action.payload.priceItemId]: {
+							...state.validationOffersInfo[action.payload.priceItemId],
+							[action.payload.type]: {
+								...state.validationOffersInfo[action.payload.priceItemId][action.payload.type],
+								...action.payload.data
+							}
+						}
+					};
+				}
+				var approvalNeeded = getApprovalNeeded(
+					validation,
+					validationAddons,
+					validationOffersInfo
+				);
 				var validationProduct = getProductValidation(validation);
+				var validationOffers = getOfferValidation(validationOffersInfo);
+
 				return {
 					...state,
 					validation,
+					validationOffersInfo,
 					validationProduct,
+					validationOffers,
 					frameAgreements: {
 						...state.frameAgreements,
 						[faId]: {
@@ -999,11 +1108,15 @@ const rootReducer = (state = initialState, action) => {
 						...state.frameAgreements[faId],
 						_ui: {
 							...state.frameAgreements[faId]._ui,
-							approvalNeeded: getApprovalNeeded(state.validation, validationAddons),
-							attachment: _attachment
+							approvalNeeded: getApprovalNeeded(
+								state.validation,
+								validationAddons,
+								state.validationOffersInfo
+							),
+							attachment: _attachment,
 						},
-					}
-				}
+					},
+				},
 			};
 
 		case 'NEGOTIATE_BULK_ADDONS':
@@ -1094,85 +1207,10 @@ const rootReducer = (state = initialState, action) => {
 			var _fa = state.frameAgreements[faId];
 			var _products = _fa._ui.attachment.products;
 
-			function negotiateData(dataObject) {
-				let cp = _fa._ui.commercialProducts.find(_cp => _cp.Id === dataObject.priceItemId);
-
-				if (!cp) {
-					console.error(
-						'Cannot find commercial product with Id ' +
-							dataObject.priceItemId +
-							' in active Frame Agreement!'
-					);
-					return;
-				}
-				if (!dataObject.hasOwnProperty('value')) {
-					console.error('No value provided for negotiation!');
-					return;
-				}
-				// ********************************** Addons
-				if (dataObject.hasOwnProperty('cpAddon')) {
-					if (dataObject.value.hasOwnProperty('oneOff')) {
-						_products[dataObject.priceItemId]._addons[dataObject.cpAddon].oneOff =
-							dataObject.value.oneOff;
-					}
-					if (dataObject.value.hasOwnProperty('recurring')) {
-						_products[dataObject.priceItemId]._addons[dataObject.cpAddon].recurring =
-							dataObject.value.recurring;
-					}
-				}
-				// ********************************* Charge
-				else if (dataObject.hasOwnProperty('charge')) {
-					// Charge validation
-					let charge = cp._charges.find(_ch => _ch.Id === dataObject.charge);
-					let type;
-					if (charge.chargeType === 'One-off Charge') {
-						type = 'oneOff';
-					}
-					if (charge.chargeType === 'Recurring Charge') {
-						type = 'recurring';
-					}
-					if (!dataObject.value.hasOwnProperty(type)) {
-						console.error('Pricing element ' + charge.Id + ' has invalid charge type!');
-						return;
-					}
-
-					_products[dataObject.priceItemId]._charges[dataObject.charge][type] =
-						dataObject.value[type];
-				}
-				// *********************************
-				else if (dataObject.hasOwnProperty('rateCard')) {
-					// RCL
-					if (!dataObject.hasOwnProperty('rateCardLine')) {
-						console.error('No rate card line Id provided!');
-						return;
-					}
-
-					dataObject.value = +dataObject.value;
-
-					if (typeof dataObject.value !== 'number' && !Number.isNaN(dataObject.value)) {
-						console.error('Value for RCL not integer!');
-						return;
-					}
-
-					_products[dataObject.priceItemId]._rateCards[dataObject.rateCard][
-						dataObject.rateCardLine
-					] = dataObject.value;
-				}
-				// *********************************
-				else {
-					// Product negotiation
-					_products[dataObject.priceItemId]._product = {
-						..._products[dataObject.priceItemId]._product,
-						...dataObject.value
-					};
-				}
-				// *********************************
-			}
-
 			if (Array.isArray(data)) {
-				data.forEach(negotiateData);
+				data.forEach(dataObject => negotiateData(dataObject, _.fa._ui.commercialProducts, _products));
 			} else {
-				negotiateData(data);
+				negotiateData(data, _.fa._ui.commercialProducts, _products);
 			}
 
 			return {
@@ -1189,7 +1227,6 @@ const rootReducer = (state = initialState, action) => {
 					}
 				}
 			};
-		// *************************************
 
 		case 'RECIEVE_PICKLIST_OPTIONS':
 			var options = action.payload;
@@ -1420,7 +1457,10 @@ const rootReducer = (state = initialState, action) => {
 				'AddAddons',
 				'DeleteAddons',
 				'AddFrameAgreement',
-				'NewVersion'
+				'NewVersion',
+				'AddOffers',
+				'DeleteOffers',
+				'BulkNegotiateOffers'
 			];
 
 			const fullStatusSet = new Set(Object.values(action.payload.FACSettings.statuses));
@@ -1779,7 +1819,6 @@ const rootReducer = (state = initialState, action) => {
 				...{ commercialProducts: state.commercialProducts }
 			};
 
-		// **********************************************
 		case 'ADD_PRODUCTS':
 			var faId = action.payload.faId;
 			var productIds = new Set(action.payload.products);
@@ -1818,7 +1857,6 @@ const rootReducer = (state = initialState, action) => {
 				}
 			};
 
-		// **********************************************
 		case 'ADD_ADDONS':
 			var faId = action.payload.faId;
 			var addonIds = new Set(action.payload.addons);
@@ -2045,7 +2083,7 @@ const rootReducer = (state = initialState, action) => {
 					}
 				}
 			};
-		// **********************************************
+
 		case 'REMOVE_ADDONS':
 			var faId = action.payload.faId;
 			var addonIds = action.payload.addons;
@@ -2082,12 +2120,17 @@ const rootReducer = (state = initialState, action) => {
 			var faId = action.payload.faId;
 			var attachment = action.payload.data || {};
 
+			if (!attachment.offers) {
+				attachment.offers = {};
+			}
+
 			if (!attachment.hasOwnProperty('addons')) {
 				attachment.addons = {};
 			}
 
 			var _commercialProducts = state.commercialProducts.filter(cp => attachment.products[cp.Id]);
 			var _standaloneAddons = state.standaloneAddons.filter(add => attachment.addons[add.Id]);
+			var _offers = state.offers.filter(offer => attachment.offers[offer.Id])
 
 			return {
 				...state,
@@ -2099,7 +2142,8 @@ const rootReducer = (state = initialState, action) => {
 							...state.frameAgreements[faId]._ui,
 							attachment,
 							commercialProducts: _commercialProducts,
-							standaloneAddons: _standaloneAddons
+							standaloneAddons: _standaloneAddons,
+							offers: _offers
 						}
 					}
 				}
@@ -2157,6 +2201,453 @@ const rootReducer = (state = initialState, action) => {
 					[frameAgreementId]: { ...attachmentClearedFrameAgreement }
 				}
 			}
+
+		case 'ADD_OFFERS':
+			var faId = action.payload.faId;
+			var offerIds = new Set(action.payload.offers);
+
+			var _attachment = { ...state.frameAgreements[faId]._ui.attachment } || {
+				custom: '',
+				offers: {}
+			};
+
+			var newOffers = [];
+
+			state.offers.forEach(offer => {
+				if (offerIds.has(offer.Id)) {
+					if (!_attachment.offers.hasOwnProperty(offer.Id)) {
+						_attachment.offers[offer.Id] = enrichAttachment(offer);
+					}
+					newOffers.push(offer);
+				}
+			});
+
+			newOffers = new Set([...state.frameAgreements[faId]._ui.offers, ...newOffers]);
+			newOffers = Array.from(newOffers);
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: _attachment,
+							offers: newOffers
+						}
+					}
+				}
+			};
+
+		case 'REMOVE_OFFERS':
+			var faId = action.payload.faId;
+			var offerIds = action.payload.offers;
+
+			var _offersAttachment = state.frameAgreements[faId]._ui.attachment.offers;
+
+			var _offers = state.frameAgreements[faId]._ui.offers;
+			_offers = _offers.filter(offer => !offerIds.includes(offer.Id));
+
+			offerIds.forEach(cpId => {
+				delete _offersAttachment[cpId];
+			});
+
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+			var _attachment = { ..._attachment, offers: _offersAttachment };
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							offers: _offers,
+							attachment: _attachment
+						}
+					}
+				}
+			};
+
+		case 'RECEIVE_OFFERS':
+			var offers = action.payload;
+
+			// validate
+			offers.forEach(offer => {
+				if (!offer.hasOwnProperty('cspmb__Is_One_Off_Discount_Allowed__c')) {
+					offer.cspmb__Is_One_Off_Discount_Allowed__c = false;
+				}
+
+				if (!offer.hasOwnProperty('cspmb__Is_Recurring_Discount_Allowed__c')) {
+					offer.cspmb__Is_Recurring_Discount_Allowed__c = false;
+				}
+			});
+
+			return {
+				...state,
+				...{ offers },
+				...{ initialised: { ...state.initialised, ...{ of_loaded: true } } }
+			};
+
+		case 'RECIEVE_OFFER_DATA':
+			const offerVsDiscount = {};
+
+			var _DiscLevels = [
+				...(state.settings.DiscLevels || []),
+				...formatDiscLevels(action.payload.discLevels)
+			];
+
+			// Remove duplicates
+			_DiscLevels = [...new Set(_DiscLevels.map(dc => JSON.stringify(dc)))].map(dc =>
+				JSON.parse(dc)
+			);
+
+			var _AuthLevels = {
+				...state.settings.AuthLevels,
+				...formatDiscThresh(action.payload.discThresh)
+			};
+
+			_DiscLevels.forEach(lv => {
+				if (lv.priceItemId) {
+					offerVsDiscount[lv.priceItemId] = offerVsDiscount[lv.priceItemId] || [];
+					offerVsDiscount[lv.priceItemId].push(lv);
+				}
+			});
+
+			var offerData = action.payload.cpData;
+			for (var key in offerData) {
+				var offerIndex = state.offers.findIndex(pi => {
+					return pi.Id === key;
+				});
+
+				if (offerIndex === -1) {
+					console.error(
+						'Cannot find offer ' +
+							key +
+							' in:' +
+							state.offers.map(cp => cp.Id).slice(0, 20) +
+							'...'
+					);
+					continue;
+				}
+
+				if (offerVsDiscount[key]) {
+					state.offers[offerIndex]._discountLvIds = offerVsDiscount[key];
+				}
+
+				const offerAddonVsDiscount = {};
+
+				_DiscLevels.forEach(lv => {
+					if (lv.addonId) {
+						offerAddonVsDiscount[lv.addonId] = offerAddonVsDiscount[lv.addonId] || [];
+						offerAddonVsDiscount[lv.addonId].push(lv);
+					}
+				});
+
+				function formatAddons(addon) {
+					let _addon = { ...addon };
+
+					_addon.cspmb__One_Off_Charge__c = _addon.hasOwnProperty('cspmb__One_Off_Charge__c')
+						? addon.cspmb__One_Off_Charge__c
+						: null;
+					_addon.cspmb__Recurring_Charge__c = _addon.hasOwnProperty('cspmb__Recurring_Charge__c')
+						? addon.cspmb__Recurring_Charge__c
+						: null;
+
+					_addon.cspmb__Authorization_Level__c =
+						_addon.cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c;
+					_addon.Name = _addon.cspmb__Add_On_Price_Item__r.Name;
+
+					if (offerAddonVsDiscount[addon.cspmb__Add_On_Price_Item__c]) {
+						_addon._discountLvIds = offerAddonVsDiscount[addon.cspmb__Add_On_Price_Item__c];
+					}
+
+					// Keep allow fileds
+					_addon.cspmb__Is_One_Off_Discount_Allowed__c = _addon.cspmb__Add_On_Price_Item__r.cspmb__Is_One_Off_Discount_Allowed__c;
+					_addon.cspmb__Is_Recurring_Discount_Allowed__c = _addon.cspmb__Add_On_Price_Item__r.cspmb__Is_Recurring_Discount_Allowed__c;
+
+					delete _addon.cspmb__Add_On_Price_Item__r;
+					delete _addon.cspmb__Price_Item__r;
+
+					return _addon;
+				}
+
+				state.offers[offerIndex]._addons = offerData[key].addons.map(addon =>
+					formatAddons(addon)
+				);
+
+				state.offers[offerIndex]._charges = offerData[key].charges.map(
+					charge => {
+						let retCharge = { ...charge };
+						if (
+							charge.chargeType
+								.toLowerCase()
+								.replace(/\s+/g, '')
+								.replace(/\W/g, '') === 'oneoffcharge'
+						) {
+							delete retCharge.recurring;
+							retCharge._type = 'oneOff';
+						} else if (
+							charge.chargeType
+								.toLowerCase()
+								.replace(/\s+/g, '')
+								.replace(/\W/g, '') === 'recurringcharge'
+						) {
+							delete retCharge.oneOff;
+							retCharge._type = 'recurring';
+						} else {
+							retCharge = null;
+						}
+						return retCharge;
+					}
+				);
+
+				state.offers[offerIndex]._charges = state.offers[
+					offerIndex
+				]._charges.filter(charge => {
+					return charge != null;
+				});
+
+				state.offers[offerIndex]._rateCards = offerData[key].rateCards.map(
+					rc => {
+						rc.rateCardLines.forEach(rcl => {
+							rcl.usageTypeName = rcl.hasOwnProperty('cspmb__usage_type__r')
+								? rcl.cspmb__usage_type__r.Name
+								: null;
+						});
+						return rc;
+					}
+				);
+
+				offerData[key].allowances = offerData[key].allowances || [];
+
+				offerData[key].allowances.forEach(all => {
+					if (all.hasOwnProperty('cspmb__usage_type__r')) {
+						all.mainUsageType = JSON.parse(JSON.stringify(all.cspmb__usage_type__r));
+						delete all.cspmb__usage_type__r;
+						delete all.mainUsageType.attributes;
+
+						// Associate child UT
+						if (
+							action.payload.childUsageTypes &&
+							action.payload.childUsageTypes.hasOwnProperty(all.mainUsageType.Id)
+						) {
+							all.mainUsageType.childUsageTypes =
+								action.payload.childUsageTypes[all.mainUsageType.Id];
+						} else {
+							all.mainUsageType.childUsageTypes = [];
+						}
+					}
+				});
+
+				state.offers[offerIndex]._allowances = offerData[key].allowances || [];
+				state.offers[offerIndex]._metadata = offerData[key].commercialProductMetadata || {};
+
+				state.offers[offerIndex]._dataLoaded = true;
+			}
+
+			return {
+				...state,
+				settings: {
+					...state.settings,
+					DiscLevels: _DiscLevels,
+					AuthLevels: _AuthLevels
+				},
+				...{ offers: state.offers }
+			};
+
+		case 'NEGOTIATE_OFFERS':
+			var faId = action.payload.faId;
+			var priceItemId = action.payload.priceItemId;
+			var type = action.payload.type;
+			var data = action.payload.data;
+
+			var _attachment = state.frameAgreements[faId]._ui.attachment;
+
+			if (!_attachment) {
+				log.bg.red('Negotiation failed; attachment not loaded for FA:' + faId);
+				return { ...state };
+			}
+
+			_attachment.offers = {
+				..._attachment.offers,
+				[priceItemId]: { ..._attachment.offers[priceItemId], [type]: data }
+			};
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: _attachment
+					}
+				}
+			};
+
+		case 'NEGOTIATE_API_OFFER':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			if (!state.frameAgreements[faId]._ui.attachment) {
+				log.bg.red('Negotiation failed; attachment not loaded for FA:' + faId);
+				return { ...state };
+			}
+
+			var _fa = state.frameAgreements[faId];
+			var offers = _fa._ui.attachment.offers;
+
+			if (Array.isArray(data)) {
+				data.forEach(dataObject => negotiateData(dataObject, _fa._ui.offers, offers));
+			} else {
+				negotiateOfferData(data, _fa._ui.offers, offers);
+			}
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: {
+							...state.frameAgreements[faId]._ui.attachment,
+							offers
+						}
+					}
+				}
+			};
+
+		case 'NEGOTIATE_BULK_OFFERS':
+			var faId = action.payload.faId;
+			var data = action.payload.data;
+
+			var _offers = state.frameAgreements[faId]._ui.attachment.offers;
+
+			for (var key in _offers) {
+				if (data[key]._addons) {
+					_offers[key]._addons = _offers[key]._addons || {};
+					_offers[key]._addons = {
+						..._offers[key]._addons,
+						...data[key]._addons
+					};
+				}
+				if (data[key]._charges) {
+					_offers[key]._charges = _offers[key]._charges || {};
+					_offers[key]._charges = {
+						..._offers[key]._charges,
+						...data[key]._charges
+					};
+				}
+				if (data[key]._rateCards) {
+					_offers[key]._rateCards = _offers[key]._rateCards || {};
+					for (var rcId in data[key]._rateCards) {
+						_offers[key]._rateCards[rcId] = data[key]._rateCards[rcId];
+					}
+				}
+				if (data[key]._product) {
+					_offers[key]._product = _offers[key]._product || {};
+					_offers[key]._product = {
+						..._offers[key]._product,
+						...data[key]._product,
+					};
+				}
+			}
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: state.frameAgreements[faId]._ui,
+						attachment: {
+							...state.frameAgreements[faId]._ui.attachment,
+							offers: _offers
+						}
+					}
+				}
+			};
+
+		case 'SET_OFFER_FILTER':
+			var _faId = action.payload.faId;
+			var _filterSet = action.payload.offerIdSet;
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[_faId]: {
+						...state.frameAgreements[_faId],
+						_ui: { ...state.frameAgreements[_faId]._ui, _offerFilter: _filterSet }
+					}
+				}
+			};
+
+		case 'REPLACE_OFFER_CHARGES':
+			const offerReplacementData = action.payload.replacementData;
+
+			var faId = action.payload.faId;
+			var _attachment = { ...state.frameAgreements[faId]._ui.attachment };
+
+			for (var key in offerReplacementData) {
+				// key -> old offer Id
+				let new_cp = state.offers.find(offer => offer.Id === offerReplacementData[key].new_cp.Id);
+
+				if (!new_cp) {
+					continue;
+				}
+
+				let old_addons = copy(_attachment.offers[key]._addons);
+				let new_addons = {};
+
+				// since attachment is indexed by addon assoc id, we need to traverse the offer data to find addon -> addon assoc correlation
+				new_cp._addons.forEach(add => {
+					if (
+						offerReplacementData[key].addon_vs_addon_assoc.hasOwnProperty(
+							add.cspmb__Add_On_Price_Item__c
+						)
+					) {
+						// This addon is shared by both old and new offers
+						new_addons[add.Id] = copy(
+							old_addons[offerReplacementData[key].addon_vs_addon_assoc[add.cspmb__Add_On_Price_Item__c]]
+						);
+					}
+				});
+
+				_attachment.offers[new_cp.Id]._addons = {
+					..._attachment.offers[new_cp.Id]._addons,
+					...new_addons
+				};
+
+				let rcIdSet = new Set(offerReplacementData[key].rc || []);
+
+				let old_rc = copy(_attachment.offers[key]._rateCards);
+
+				offerReplacementData[key].rc.forEach(rc => {
+					if (_attachment.offers[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)) {
+						_attachment.offers[new_cp.Id]._rateCards[rc.Id] = {
+							..._attachment.offers[new_cp.Id]._rateCards[rc.Id],
+							...old_rc[rc.Id]
+						};
+					}
+				});
+
+				_attachment.offers[new_cp.Id]._rateCards = {
+					..._attachment.offers[new_cp.Id]._rateCards,
+					...old_rc
+				};
+				// remove old offer from attachment
+				delete _attachment.offers[key];
+			}
+
+			return {
+				...state,
+				attachment: _attachment
+			};
 
 		default:
 			// SAVE_ATTACHMENT, RECIEVE_GET_ATTACHMENT, FILTER_COMMERCIAL_PRODUCTS, GET_APPROVAL_HISTORY

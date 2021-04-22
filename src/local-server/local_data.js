@@ -318,7 +318,8 @@ const FACSettings = {
 		draft_status: 'Draft',
 		requires_approval_status: 'Requires Approval'
 	},
-	truncate_product_fields: true
+	truncate_product_fields: true,
+	dispatcherServiceUrl: 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com'
 };
 
 const relatedLists = [
@@ -1331,7 +1332,7 @@ const productData = {
 };
 
 const attachment =
-	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMUYxdDAwMDAwMDFKQmpFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwM1NibkVBRSI6e319LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2Nn19LCJhMUYxdDAwMDAwMDFKQ0RFQTIiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2M319LCJhMUYxdDAwMDAwMDFKQzhFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjIzOS40MX19LCJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwMmNJTUVBWSI6eyJvbmVPZmYiOjcuNjQsInJlY3VycmluZyI6Ny43NX0sImExQTF0MDAwMDAwM1NjZkVBRSI6eyJvbmVPZmYiOjcuNDksInJlY3VycmluZyI6NzkuNDR9fSwiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6N30sImExSTF0MDAwMDAxV2t6akVBQyI6eyJyZWN1cnJpbmciOjEyfX0sIl9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxUXhyRUFFIjp7ImExTTF0MDAwMDAwQkZyVkVBVyI6MTI0Ljk5fX19fX0=';
+	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMUYxdDAwMDAwMDFKQmpFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwM1NibkVBRSI6e319LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2Nn19LCJhMUYxdDAwMDAwMDFKQ0RFQTIiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2M319LCJhMUYxdDAwMDAwMDFKQzhFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjIzOS40MX19LCJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwMmNJTUVBWSI6eyJvbmVPZmYiOjcuNjQsInJlY3VycmluZyI6Ny43NX0sImExQTF0MDAwMDAwM1NjZkVBRSI6eyJvbmVPZmYiOjcuNDksInJlY3VycmluZyI6NzkuNDR9fSwiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6N30sImExSTF0MDAwMDAxV2t6akVBQyI6eyJyZWN1cnJpbmciOjEyfX0sIl9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxUXhyRUFFIjp7ImExTTF0MDAwMDAwQkZyVkVBVyI6MTI0Ljk5fX19fSwib2ZmZXJzIjp7ImExRjF0MDAwMDAwMUpCakVBTSI6eyJfYWRkb25zIjp7ImExQTF0MDAwMDAwM1NibkVBRSI6e319LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2Nn0sIl92b2x1bWUiOnsibXYiOm51bGwsIm12cCI6bnVsbCwibXVjIjpudWxsLCJtdWNwIjpudWxsfX19fQ==';
 
 const attachmentMaster =
 	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMXQxdDAwMDAwMEEwZ09BQVMiOiJhMXQxdDAwMDAwMEEwZ09BQVMifX0';
@@ -2179,7 +2180,9 @@ const ButtonStandardData = {
 	"BulkNegotiate": "csfam__arb_field_bool__c == true",
 	"BulkNegotiateAddons": ["Draft", "Requires Approval"],
 	"AddProducts": ["Draft", "Requires Approval"],
-	"AddAddons": ["Draft", "Requires Approval"]
+	"AddAddons": ["Draft", "Requires Approval"],
+	"AddOffers": ["Draft", "Requires Approval"],
+	"DeleteOffers": ["Draft", "Requires Approval"]
 };
 
 const commercialProducts = [
@@ -3652,6 +3655,8 @@ window.SF = SF = {
 			'Are you sure you want to delete selected Add Ons?',
 		alert_deleteProducts_title: 'Delete products',
 		alert_deleteAddons_title: 'Delete Add Ons',
+		alert_deleteOffers_title: 'Delete Offers',
+		alert_deleteOffers_message: 'Are you sure you want to delete selected offers?',
 		allowances_amount: 'Amount',
 		allowances_name: 'Name',
 		allowances_priority: 'Priority',
@@ -3672,6 +3677,7 @@ window.SF = SF = {
 		btn_AddFa: 'Add Frame Agreements',
 		btn_AddNewAgreement: 'Add new Agreement',
 		btn_AddProducts: 'Add Products',
+		btn_AddOffers: 'Add Offers',
 		btn_AddAddons: 'Add Add Ons',
 		btn_BulkNegotiate: 'Negotiate Products',
 		btn_BulkNegotiateAddons: 'Negotiate Add ons',
@@ -3680,6 +3686,7 @@ window.SF = SF = {
 		btn_DeleteAgreements: 'Delete Agreements',
 		btn_DeleteProducts: 'Delete Products',
 		btn_DeleteAddons: 'Delete Add Ons',
+		btn_DeleteOffers: 'Delete Offers',
 		btn_Delta: 'Compare Agreements',
 		btn_Done: 'Done',
 		btn_NewVersion: 'Create New Version',
@@ -3694,6 +3701,10 @@ window.SF = SF = {
 		charges_header_recc: 'Recurring Adjustment',
 		charges_header_recc_neg: 'Negotiated Recurring',
 		charges_header_type: 'Charge Type',
+		cp_meta_header_attribute_name: 'Attribute Name',
+		cp_meta_header_values: 'Values',
+		cp_meta_header_read_only: 'Read Only',
+		cp_meta_header_required: 'Required',
 		delta_fa_fields: 'Frame Agreement Fields',
 		delta_status_added: 'Added',
 		delta_status_changed: 'Changed',
@@ -3754,6 +3765,7 @@ window.SF = SF = {
 		modal_addProduct_input_search_placeholder: 'Filter products',
 		modal_addAddons_input_search_placeholder: 'Filter addons',
 		modal_addProduct_title: 'Add Product to Frame Agreement',
+		modal_addOffers_title: 'Add Offers to Frame Agreement',
 		modal_addAddons_title: 'Add stand-alone Addons',
 		modal_bluk_rateFilter_dropdownPlaceholder: '-- select a property ---',
 		modal_bluk_rateFilter_propertyTitle: 'Select rate card line property:',
@@ -3789,6 +3801,10 @@ window.SF = SF = {
 			'You have unsaved changes, are you sure you want to leave?',
 		no_fa_message: 'There are no Frame Agreements in here.',
 		no_fa_message_2: 'Create at least one frame agreements.',
+		offer_metadata_header: 'Metadata',
+		offers_tab_title: 'Offers',
+		offers_title: 'Offers',
+		offers_title_empty: 'Offer Negotiation',
 		product_charge_header_name: 'Charge Name',
 		product_charge_header_oneOff: 'One Off Adjustment',
 		product_charge_header_oneOff_neg: 'Negotiated One Off',
@@ -3836,15 +3852,18 @@ window.SF = SF = {
 		toast_submitForApproval_failed: 'Unable to start approval process.',
 		toast_submitForApproval_success: 'Successfuly submitted for approval!',
 		toast_success_title: 'Submitted!',
-		toast_success_title: 'Submitted!',
-		toast_success_title: 'Submitted!',
+		toast_invalid_product_title: 'Invalid product found!',
+		toast_search_replacement_product_title: 'Searching for replacement product!',
+		toast_invalid_offer_title: 'Invalid offer found!',
+		toast_search_replacement_offer_title: 'Searching for replacement offer!',
 		usage_type_name_field: 'Name',
 		usage_type_undefined: 'No usage type',
 		util_datepicker_today: 'Today',
 		util_input_formula_placehoder: '--not calculated',
 		util_input_lookup_placehoder: 'No record selected',
 		util_input_text_enter: 'Enter',
-		util_negotiation_input_diff_label: 'negotiated'
+		util_negotiation_input_diff_label: 'negotiated',
+		warning_no_offers_linked: 'Link at least one offer to the default catalogue'
 	},
 	fieldLabels: {},
 	apiSession: '{!$Api.Session_ID}',
@@ -3857,6 +3876,9 @@ window.SF = SF = {
 			case 'getCommercialProducts':
 				return createPromise(commercialProducts, 500);
 			// return createPromise(commercialProducts_large);
+
+			case 'getOffers':
+				return createPromise(commercialProducts, 500);
 
 			case 'cloneFrameAgreement':
 				var faArr = frameAgreements.filter(fa => {
@@ -3885,7 +3907,10 @@ window.SF = SF = {
 					},
 					// DiscLevels: DiscLevels,
 					// AuthLevels: AuthLevels,
-					FACSettings: FACSettings
+					FACSettings: FACSettings,
+					hiddenTabs: {
+						addons: true
+					}
 				};
 				return createPromise(data, 500);
 
@@ -3954,9 +3979,6 @@ window.SF = SF = {
 			case 'undoDecomposition':
 				return createPromise('Success', 2000);
 
-			case 'filterCommercialProducts':
-				return createPromise(filterProducts(parametersArr[0]));
-
 			case 'setFrameAgreementState':
 				return createPromise(getRandomFromArr(['Success']));
 
@@ -3983,9 +4005,10 @@ window.SF = SF = {
 			case 'deleteFrameAgreement':
 				return createPromise('Success');
 
+			case 'getOfferData':
 			case 'getCommercialProductData':
 				var responseData = {
-					cpData: [],
+					cpData: {},
 					discLevels: DiscLevels,
 					childUsageTypes: childUsageTypes,
 					discThresh: AuthLevels
@@ -4390,6 +4413,16 @@ window.SF = SF = {
 					}
 				};
 				return createPromise(newAssociation);
+				case 'getDispatcherAuthToken':
+					const dispatcherToken = {
+						// change the generated auth token here to make requests locally.
+						token: '00D4K000003rDxS:8dfff001-7b73-4bc8-9b72-c0a5aea47f3b',
+						orgId: "00D4K000003rDxS",
+						userAgent: navigator.userAgent
+					}
+
+				case 'getDefaultCatalogueId':
+				return createPromise('test-catalogue-id');
 
 			default:
 				return createPromise('Success');

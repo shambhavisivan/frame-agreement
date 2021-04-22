@@ -29,7 +29,12 @@ const eventList = new Set([
 	'onBeforeSubmit',
 	'onAfterSubmit',
 	'onBeforeActivation',
-	'onIframeClose'
+	'onIframeClose',
+	'onLoadOffers',
+	'onBeforeAddOffers',
+	'onBeforeDeleteOffers',
+	'onAfterAddOffers',
+	'onAfterDeleteOffers'
 ]);
 
 const dgEventPrefix = 'DGE_';
@@ -224,3 +229,12 @@ export function submitForApproval(faId) {
 		});
 	});
 }
+
+export const getDefaultCatalogueId = async (_) => {
+	try {
+		const catalogueId = await window.SF.invokeAction('getDefaultCatalogueId',[]);
+		return catalogueId;
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};

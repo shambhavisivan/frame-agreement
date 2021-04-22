@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>dispatcher_service_url__c</fullName>
+    <description>Url endpoint of dispatcher service.</description>
+    <externalId>false</externalId>
+    <label>Dispatcher Service Url</label>
+    <type>TextArea</type>
+    <unique>false</unique>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+</CustomField>

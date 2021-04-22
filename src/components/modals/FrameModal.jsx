@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 
 import Modal from 'react-responsive-modal';
 
-import { filterCommercialProducts } from '~/src/actions';
-
 import Icon from '../utillity/Icon';
 import Checkbox from '../utillity/inputs/Checkbox';
 import InputSearch from '../utillity/inputs/InputSearch';
@@ -237,9 +235,5 @@ const mapStateToProps = state => {
 		settings: state.settings
 	};
 };
-
-// const mapDispatchToProps = {
-// 	filterCommercialProducts
-// };
 
 export default connect(mapStateToProps, null)(FrameModal);

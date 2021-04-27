@@ -60,7 +60,7 @@ export class CommercialProduct extends React.Component {
 	}
 
 	async onNegotiate(type, data) {
-		let initialFrameAgreementProducts = this.props.currentFrameAgreement._ui.attachment?.products;
+		let initialFrameAgreementProducts = this.props.currentFrameAgreement._ui.attachment?.products ?? {};
 		if (type === '_addons') {
 			this.props.setValidation(
 				this.props.faId,

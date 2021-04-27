@@ -60,12 +60,21 @@ export class Offer extends React.Component {
 	}
 
 	async onNegotiate(type, data) {
+		let initialFrameAgreementOffers = this.props.currentFrameAgreement._ui.attachment?.offers ?? {};
 		if (type === '_addons') {
 			this.props.setValidation(
 				this.props.faId,
 				this.offerId,
 				'addons',
-				validateAddons(this.props.offer._addons, data)
+				validateAddons(
+					this.props.offer._addons,
+					data,
+					initialFrameAgreementOffers[this.offerId]?._addons || {},
+					{
+						frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+						facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
+					}
+				)
 			);
 		}
 
@@ -77,7 +86,12 @@ export class Offer extends React.Component {
 				validateCharges(
 					this.props.offer._charges,
 					this.props.offer.cspmb__Authorization_Level__c,
-					data
+					data,
+					initialFrameAgreementOffers[this.offerId]?._charges || {},
+					{
+						frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+						facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
+					}
 				)
 			);
 		}
@@ -87,7 +101,15 @@ export class Offer extends React.Component {
 				this.props.faId,
 				this.offerId,
 				'rated',
-				validateRateCardLines(this.props.offer._rateCards, data)
+				validateRateCardLines(
+					this.props.offer._rateCards,
+					data,
+					initialFrameAgreementOffers[this.offerId]?._rateCards || {},
+					{
+						frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+						facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
+					}
+				)
 			);
 		}
 
@@ -103,6 +125,12 @@ export class Offer extends React.Component {
 					negotiatedRecurring: data.recurring,
 					authLevel: this.props.offer.cspmb__Authorization_Level__c || null,
 					Name: this.props.offer.Name
+				}, {
+					negotiatedOneOff: initialFrameAgreementOffers[this.offerId]?._product?.oneOff,
+					negotiatedRecurring: initialFrameAgreementOffers[this.offerId]?._product?.recurring,
+				}, {
+					frameAgreementStatus: this.props.frameAgreements[this.props.faId].csconta__Status__c,
+					facApprovedStatus: this.props.settings.FACSettings.statuses.approved_status
 				})
 			);
 		}
@@ -322,6 +350,7 @@ export class Offer extends React.Component {
 const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
+		currentFrameAgreement: state.currentFrameAgreement,
 		validationOffers: state.validationOffers,
 		validationOffersInfo: state.validationOffersInfo,
 		productFields: state.productFields,

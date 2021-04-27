@@ -288,7 +288,10 @@ class FaHeader extends React.Component {
 										]._ui.commercialProducts.length &&
 											!this.props.frameAgreements[
 												this.props.faId
-											]._ui.standaloneAddons.length) ||
+											]._ui.standaloneAddons.length &&
+											!this.props.frameAgreements[
+												this.props.faId
+											]._ui.offers.length) ||
 										this.props
 											.disableFrameAgreementOperations
 									}

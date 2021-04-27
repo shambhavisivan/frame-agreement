@@ -455,8 +455,7 @@ const rootReducer = (state = initialState, action) => {
 						facApprovedStatus: state.settings.FACSettings.statuses.approved_status
 					}
 				);
-				var _initialFrameAgreementProducts = state.currentFrameAgreement._ui.attachment?.products;
-				var bulkValidationOffers = {};
+				var _initialFrameAgreementProducts = state.currentFrameAgreement._ui.attachment?.products ?? {};
 
 				_fa._ui.commercialProducts.forEach(cp => {
 					bulkValidation[cp.Id] = {
@@ -509,16 +508,42 @@ const rootReducer = (state = initialState, action) => {
 					}
 				});
 
+				var _initialFrameAgreementOffers = state.currentFrameAgreement._ui.attachment?.offers ?? {};
+				var bulkValidationOffers = {};
 
 				_fa._ui.offers.forEach(offer => {
 					bulkValidationOffers[offer.Id] = {
-						addons: validateAddons(offer._addons, _offers[offer.Id]._addons || {}),
-						rated: validateRateCardLines(offer._rateCards, _offers[offer.Id]._rateCards || {}),
+						addons: validateAddons(
+							offer._addons,
+							_offers[offer.Id]._addons || {},
+							_initialFrameAgreementOffers[offer.Id]?._addons ||
+								{},
+							{
+								frameAgreementStatus: _fa.csconta__Status__c,
+								facApprovedStatus:
+									state.settings.FACSettings.statuses
+										.approved_status,
+							}
+						),
+						rated: validateRateCardLines(
+							offer._rateCards,
+							_offers[offer.Id]._rateCards || {},
+							_initialFrameAgreementOffers[offer.Id]?._rateCards || {},
+							{
+								frameAgreementStatus: _fa.csconta__Status__c,
+								facApprovedStatus: state.settings.FACSettings.statuses.approved_status
+							}
+						),
 						charges: validateCharges(
 							offer._charges,
 							offer.cspmb__Authorization_Level__c,
-							_offers[offer.Id]._charges || {}
-						)
+							_offers[offer.Id]._charges || {},
+							_initialFrameAgreementOffers[offer.Id]?._charges || {},
+							{
+								frameAgreementStatus: _fa.csconta__Status__c,
+								facApprovedStatus: state.settings.FACSettings.statuses.approved_status
+							}
+						),
 					};
 
 					if (_offers[offer.Id]._product) {
@@ -529,6 +554,13 @@ const rootReducer = (state = initialState, action) => {
 							negotiatedRecurring: _offers[offer.Id]._product.recurring,
 							authLevel: offer.cspmb__Authorization_Level__c || null,
 							Name: offer.Name
+						}, {
+							negotiatedOneOff: _initialFrameAgreementOffers[offer.Id]?._product?.oneOff,
+							negotiatedRecurring: _initialFrameAgreementOffers[offer.Id]?._product?.recurring,
+						},
+						{
+							frameAgreementStatus: _fa.csconta__Status__c,
+							facApprovedStatus: state.settings.FACSettings.statuses.approved_status
 						});
 					}
 				});
@@ -536,16 +568,31 @@ const rootReducer = (state = initialState, action) => {
 				validation = bulkValidation;
 				validationOffersInfo = bulkValidationOffers;
 			} else {
-				validation = {
-					...state.validation,
-					[priceItemId]: {
-						...state.validation[priceItemId],
-						[type]: {
-							...state.validation[priceItemId][type],
-							...data
+				if (state.validation[priceItemId]) {
+					validation = {
+						...state.validation,
+						[priceItemId]: {
+							...state.validation[priceItemId],
+							[type]: {
+								...state.validation[priceItemId][type],
+								...data
+							}
 						}
-					}
-				};
+					};
+				}
+
+				if (state.validationOffersInfo[priceItemId]) {
+					validationOffersInfo = {
+						...state.validationOffersInfo,
+						[priceItemId]: {
+							...state.validationOffersInfo[priceItemId],
+							[type]: {
+								...state.validationOffersInfo[priceItemId][type],
+								...data
+							}
+						}
+					};
+				}
 			}
 
 			var approvalNeeded = getApprovalNeeded(

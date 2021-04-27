@@ -2331,40 +2331,10 @@ global with sharing class FrameRateManagerController {
 	*/
 	@RemoteAction
 	public static Id createPricingRuleGroup(Id faId) {
-		Integer prg_count = database.countQuery('select count() from cspmb__Pricing_Rule_Group__c');
-		String rgc = 'FAM ' + String.valueOfGmt(datetime.now()) + '___' + prg_count;
-		csconta__Frame_Agreement__c fa = [
-			select id, name, csconta__effective_start_date__c,
-				csconta__effective_end_date__c, csconta__frame_agreement_number__c
-			from csconta__Frame_Agreement__c
-			where id = :faId
-			limit 1
-		];
 
-		cspmb__Pricing_Rule_Group__c prg = new cspmb__Pricing_Rule_Group__c(
-			cspmb__description__c = 'Auto generated from FA decomposition.',
-			cspmb__pricing_rule_group_code__c = rgc,
-			csconta__frame_agreement__c = faId,
-			cspmb__effective_start_date__c = fa.csconta__effective_start_date__c,
-			cspmb__effective_end_date__c = fa.csconta__effective_end_date__c
-		);
-		insert prg;
+		Map<String, Id> cprg = FrameAgreementActivation.createPricingRuleGroup(faId);
+		return cprg.get('prId');
 
-		cspmb__pricing_rule__c pr = new cspmb__pricing_rule__c(
-			cspmb__description__c = 'Auto generated from FA decomposition.',
-			cspmb__pricing_rule_code__c = rgc,
-			cspmb__effective_end_date__c = fa.csconta__effective_end_date__c,
-			cspmb__effective_start_date__c = fa.csconta__effective_start_date__c
-		);
-		insert pr;
-
-		cspmb__Pricing_Rule_Group_Rule_Association__c prgra = new cspmb__Pricing_Rule_Group_Rule_Association__c(
-			cspmb__pricing_rule__c = pr.Id,
-			cspmb__pricing_rule_group__c = prg.Id
-		);
-		insert prgra;
-
-		return pr.Id;
 	}
 
 	/**
@@ -2377,111 +2347,13 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static String decomposeAttachment(String data, Id prId, Id faId) {
 
-		String retString = 'Success';
+		String returnStatus = FrameAgreementActivation.decomposeAttachment(data, prId);
 
-		List<Object> categorizationData;
-		List <cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = new List <cspmb__Price_Item_Pricing_Rule_Association__c>();
-
-		categorizationData = (List<Object>) JSON.deserializeUntyped(data);
-		System.debug('***********data**************');
-		System.debug(categorizationData);
-
-		for (Object item : categorizationData) {
-			try {
-				Map<String, Object> categoryMap = (Map<String, Object>) item;
-
-				String cpId = (String) categoryMap.get('cpId');
-				String cpaoaId = (String) categoryMap.get('cpaoaId');
-				String peId = (String) categoryMap.get('peId');
-				String addonId = (String) categoryMap.get('addonId');
-
-				Decimal recurring = (Decimal) categoryMap.get('recurring');
-				Decimal oneOff = (Decimal) categoryMap.get('oneOff');
-
-				cspmb__Price_Item_Pricing_Rule_Association__c pipra = new cspmb__Price_Item_Pricing_Rule_Association__c(cspmb__target_price__c = 'Sales', cspmb__recurring_adjustment_type__c = 'Price Override', cspmb__one_off_adjustment_type__c = 'Price Override', cspmb__pricing_rule__c = prId);
-
-				if (cpId != null) {
-					pipra.cspmb__price_item__c = cpId;
-				}
-
-				if (cpaoaId != null) {
-					pipra.cspmb__price_item_add_on_association__c = cpaoaId;
-				}
-
-				if (peId != null) {
-					pipra.cspmb__pricing_element__c = peId;
-				}
-
-				if (addonId != null) {
-					pipra.cspmb__add_on__c = addonId;
-				}
-
-				if (recurring != null) {
-					pipra.cspmb__recurring_adjustment__c = recurring;
-				}
-
-				if (oneOff != null) {
-					pipra.cspmb__one_off_adjustment__c = oneOff;
-				}
-				System.debug(pipra);
-				pipraList.add(pipra);
-				System.debug('pipraList *** ' + pipraList);
-
-			} catch (Exception e) {
-				retString = e.getMessage();
-			}
+		if(returnStatus == 'Success'){
+			returnStatus = FrameAgreementActivation.updateFAStatus(faId);
 		}
 
-		if (retString == 'Success') {
-			try {
-				insert pipraList;
-				Fac_Settings__c facSettings = getFacSetting();
-				// Set active status to FA, and if its replacing another fa, set its effective start date
-				csconta__Frame_Agreement__c fa = [
-					select id, csconta__status__c, csconta__replaced_frame_agreement__c
-					from csconta__Frame_Agreement__c
-					where id = :faId
-					limit 1
-				];
-				fa.csconta__status__c = (String) facSettings.get('active_status__c');
-				update fa;
-
-				// If this was a version of another fa we need to set the original to replaced/closed
-				if (fa.csconta__replaced_frame_agreement__c != null) {
-					fa.csconta__effective_start_date__c = datetime.now();
-					csconta__Frame_Agreement__c original = [
-						select id, csconta__status__c, csconta__effective_end_date__c
-						from csconta__Frame_Agreement__c
-						where id = :fa.csconta__replaced_frame_agreement__c
-						limit 1
-					];
-					if (original != null) {
-						original.csconta__status__c = (String) facSettings.get('closed_status__c');
-						original.csconta__replaced_by__c = faId;
-
-						// if the original does not have an end date or
-						// the end date is in the future, we need to end it now
-						// leave the end date intact if it is already ended
-						if (
-							original.csconta__effective_end_date__c == null ||
-							original.csconta__effective_end_date__c > datetime.now()
-						) {
-							original.csconta__effective_end_date__c = datetime.now();
-						}
-
-						update original;
-					}
-				}
-
-				update fa;
-			} catch (Exception e) {
-				retString = e.getMessage();
-			}
-		}
-
-
-		return retString;
-
+		return returnStatus;
 	}
 
 	/**

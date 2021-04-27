@@ -17,12 +17,12 @@ const queryCache = new QueryCache({
 
 export function App(): ReactElement {
 	return (
-		<>
+		<div className="cs-app-wrapper">
 			<RemoteActionsProvider queryCache={queryCache} remoteActions={remoteActions}>
 				<Header />
 				<Pages />
 				<ReactQueryDevtools initialIsOpen={false} />
 			</RemoteActionsProvider>
-		</>
+		</div>
 	);
 }

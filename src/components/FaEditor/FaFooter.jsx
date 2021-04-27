@@ -262,6 +262,7 @@ class FaFooter extends React.Component {
 					<button
 						className="fa-button fa-button--default"
 						onClick={this.onOpenOffersModal}
+						disabled={this.props.disableFrameAgreementOperations}
 					>
 						<Icon name="add" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">{window.SF.labels.btn_AddOffers}</span>
@@ -270,7 +271,10 @@ class FaFooter extends React.Component {
 
 				{buttonVisibillityMap.bulkNegotiateOffers && (
 					<button
-						disabled={_disabled_offer}
+						disabled={
+							_disabled_offer ||
+							this.props.disableFrameAgreementOperations
+						}
 						className="fa-button fa-button--default"
 						onClick={() => this.onOpenOfferNegotiationModal()}
 					>
@@ -281,7 +285,10 @@ class FaFooter extends React.Component {
 
 				{buttonVisibillityMap.deleteOffer && (
 					<button
-						disabled={_disabled_offer}
+						disabled={
+							_disabled_offer ||
+							this.props.disableFrameAgreementOperations
+						}
 						className="fa-button fa-button--default"
 						onClick={this.props.onRemoveOffers}
 					>

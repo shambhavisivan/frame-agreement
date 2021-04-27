@@ -1208,9 +1208,9 @@ const rootReducer = (state = initialState, action) => {
 			var _products = _fa._ui.attachment.products;
 
 			if (Array.isArray(data)) {
-				data.forEach(dataObject => negotiateData(dataObject, _.fa._ui.commercialProducts, _products));
+				data.forEach(dataObject => negotiateData(dataObject, _fa._ui.commercialProducts, _products));
 			} else {
-				negotiateData(data, _.fa._ui.commercialProducts, _products);
+				negotiateData(data, _fa._ui.commercialProducts, _products);
 			}
 
 			return {

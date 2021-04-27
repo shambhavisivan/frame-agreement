@@ -1610,4 +1610,11 @@
         <shortDescription>Delete Offers</shortDescription>
         <value>Delete Offers</value>
     </labels>
+    <labels>
+        <fullName>offers_no_metaData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>There are no offer Meta Data</shortDescription>
+        <value>There are no Meta Data in here for this offer</value>
+    </labels>
 </CustomLabels>

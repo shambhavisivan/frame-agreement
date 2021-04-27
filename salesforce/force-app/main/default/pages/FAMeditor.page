@@ -328,6 +328,7 @@
 			  "offers_tab_title": "{!$Label.offers_tab_title}",
 			  "products_title": "{!$Label.products_title}",
 			  "offers_title": "{!$Label.offers_title}",
+			  "offers_no_metaData": "{!$Label.offers_no_metaData}",
 			  "products_title_empty": "{!$Label.products_title_empty}",
 			  "products_volume_minUsageComm": "{!$Label.products_volume_minUsageComm}",
 			  "products_volume_minUsageCommPeriod": "{!$Label.products_volume_minUsageCommPeriod}",

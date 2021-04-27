@@ -291,7 +291,7 @@ export class Offer extends React.Component {
 									<Allowances data={this.props.offer._allowances} />
 								</Tab>
 								<Tab label={window.SF.labels.offer_metadata_header} disabled={!this.props.offer._metadata}>
-										<OffersMetadata data={this.props.offer._metadata.attributeMetadata} />
+									<OffersMetadata data={this.props.offer._metadata.attributeMetadata} />
 								</Tab>
 							</Tabs>
 						</div>

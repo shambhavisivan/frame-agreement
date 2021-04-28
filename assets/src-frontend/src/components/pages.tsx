@@ -4,6 +4,7 @@ import { FrameAgreementDetails } from './fa-details';
 import { FrameAgreementList } from './fa-list';
 import { NotFound } from './not-found';
 
+// eslint-disable-next-line prettier/prettier
 type ParseRouteParameters<Route> = Route extends `${string}/:${infer Param}/${infer Rest}`
 	? { [Entry in Param | keyof ParseRouteParameters<`/${Rest}`>]: string }
 	: Route extends `${string}/:${infer Param}`

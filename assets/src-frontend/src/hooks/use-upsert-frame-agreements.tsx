@@ -3,19 +3,19 @@ import { FrameAgreement, remoteActions } from '../datasources';
 
 export { QueryStatus } from 'react-query';
 
-interface UpsertProps {
-	faId: string;
-	fieldData: Partial<FrameAgreement>;
+export interface UpsertProps {
+	faId: string | null;
+	fieldData: Partial<FrameAgreement | SfGlobal.FrameAgreement>;
 }
 
 export function useUpsertFrameAgreements(
 	upsertFrameAgreements: (
-		faId: string,
-		fieldData: Partial<FrameAgreement>
+		faId: string | null,
+		fieldData: Partial<FrameAgreement | SfGlobal.FrameAgreement>
 	) => Promise<FrameAgreement> = remoteActions.upsertFrameAgreements
 ): {
 	status: QueryStatus;
-	mutate: (opts: UpsertProps) => Promise<FrameAgreement | undefined>;
+	mutate: (opts: UpsertProps) => Promise<FrameAgreement | unknown>;
 } {
 	const [mutate, { status }] = useMutation<FrameAgreement, Error, UpsertProps>(
 		({ fieldData, faId }: UpsertProps) => upsertFrameAgreements(faId, fieldData)

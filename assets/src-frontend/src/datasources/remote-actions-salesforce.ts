@@ -18,15 +18,16 @@ export interface RemoteActions {
 	getCommercialProducts(cpIds: string[] | null): Promise<CommercialProductStandalone[]>;
 	upsertFrameAgreements(
 		faId: string | null,
-		fieldData: Partial<FrameAgreement>
+		fieldData: Partial<FrameAgreement | SfGlobal.FrameAgreement>
 	): Promise<FrameAgreement>;
 	saveAttachment(faId: string, attachment: Attachment): Promise<string>;
 }
 
-const toFrameAgreement = (a: SfGlobal.FrameAgreement): FrameAgreement => ({
-	id: a.Id,
-	name: a.Name,
-	lastModifiedDate: a.LastModifiedDate
+const toFrameAgreement = (sfFa: SfGlobal.FrameAgreement): FrameAgreement => ({
+	id: sfFa.Id,
+	name: sfFa.Name,
+	lastModifiedDate: sfFa.LastModifiedDate,
+	agreementLevel: sfFa.csconta__agreement_level__c
 });
 
 export const remoteActions: RemoteActions = {

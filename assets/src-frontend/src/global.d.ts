@@ -67,6 +67,9 @@ namespace SfGlobal {
 		Id: string;
 		LastModifiedDate: number;
 		Name: string;
+		csconta__agreement_level__c: string;
+		csconta__Status__c: string;
+		csconta__Account__c: string;
 		/* eslint-enable @typescript-eslint/naming-convention */
 	}
 

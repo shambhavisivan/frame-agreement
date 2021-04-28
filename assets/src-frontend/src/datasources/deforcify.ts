@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
+// eslint-disable-next-line prettier/prettier
 type ToPascalCase<S extends string> = S extends `${infer Head}_${infer Tail}`
 	? `${Capitalize<Head>}${Capitalize<ToPascalCase<Tail>>}`
 	: S;

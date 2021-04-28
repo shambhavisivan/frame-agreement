@@ -54,6 +54,7 @@ export interface FrameAgreement {
 	id: string;
 	lastModifiedDate?: number;
 	name: string;
+	agreementLevel?: string;
 }
 
 export interface CommercialProduct {

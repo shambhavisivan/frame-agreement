@@ -6,7 +6,14 @@ import { RemoteActionsProvider } from '../providers/app-settings-provider';
 import { Header } from './header';
 import { Pages } from './pages';
 
-const queryCache = new QueryCache();
+const queryCache = new QueryCache({
+	defaultConfig: {
+		queries: {
+			refetchOnWindowFocus: false,
+			retry: 2
+		}
+	}
+});
 
 export function App(): ReactElement {
 	return (

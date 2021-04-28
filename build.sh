@@ -2,6 +2,8 @@
 
 echo "reactapp: build and test"
 
+echo "TS check"
+
 cd assets/src-frontend
 
 set +ex                     # immediate script fail off, echo off
@@ -23,6 +25,21 @@ if [ $EXITCODE -ne 0 ]; then
 fi
 
 cd ../..
+
+echo "JS check"
+
+cd src
+
+npm ci
+npm run build
+
+EXITCODE=$?
+
+if [ $EXITCODE -ne 0 ]; then
+	exit $EXITCODE;
+fi
+
+cd ..
 
 function changedFiles() {
 	git diff --name-only HEAD~1

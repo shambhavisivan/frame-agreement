@@ -3,5 +3,5 @@
     "@babel/preset-env",
     "@babel/preset-react"
   ],
-  "plugins": ["@babel/plugin-proposal-object-rest-spread", "@babel/plugin-transform-runtime", "babel-plugin-root-import", "@babel/plugin-proposal-optional-chaining"]
+  "plugins": ["@babel/plugin-proposal-object-rest-spread", "@babel/plugin-transform-runtime", "babel-plugin-root-import", "@babel/plugin-proposal-optional-chaining", "@babel/plugin-proposal-nullish-coalescing-operator"]
 }

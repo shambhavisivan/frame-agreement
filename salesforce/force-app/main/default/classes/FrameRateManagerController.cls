@@ -635,9 +635,9 @@ global with sharing class FrameRateManagerController {
 		// ***************************************************
 		// Get all cspmb__Pricing_Rule_Group_Rule_Association__c associated with standard price book
 		List <cspmb__Pricing_Rule_Group_Rule_Association__c> priceBookAssociations = [
-			select id, cspmb__pricing_rule__c
+			select id, cspmb__pricing_rule_group__c, cspmb__pricing_rule__c
 			from cspmb__Pricing_Rule_Group_Rule_Association__c
-			where Id = :standardPricebook.csutil__value__c
+			where cspmb__pricing_rule_group__c = :standardPricebook.csutil__value__c
 		];
 
 		if (priceBookAssociations == null) {

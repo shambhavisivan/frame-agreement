@@ -376,7 +376,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		System.assertNotEquals(null, picMap);
+		System.assertNotEquals(0, picMap.keySet().size());
 		System.assertEquals(0, picMapEmpty.keySet().size());
 
 	}

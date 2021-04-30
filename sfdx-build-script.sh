@@ -12,8 +12,8 @@ function finish() {
 
 trap finish EXIT
 
-echo "Installing CSUtil v1.30"
-sfdx force:package:install --package 04t1n000001YVX7 -u $orgAlias -w 20
+echo "Installing CSUtil v33.0"
+sfdx force:package:install --package 04t1n000001YWKJ  -u $orgAlias -w 20
 
 echo "Installing ObjectGraph v1.37"
 sfdx force:package:install --package 04t0X000000YVGe -u $orgAlias -w 20

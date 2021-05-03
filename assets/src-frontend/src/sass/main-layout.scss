@@ -1,0 +1,36 @@
+.tabs-wrapper {
+    @include sbg(--tabs-wrapper-bg);
+    @include css4 {
+        border: 1px solid cvar(--tabs-wrapper-br);
+        border-left: none;
+        border-right: none;
+    }
+
+    .cs-tab-group {
+        margin: 0 auto;
+        max-width: 1200px;
+        border: none;
+
+        nav {
+            @include sbg(--tabs-nav-bg);
+        }
+
+        .cs-chip {
+            margin-left: 0.5rem;
+        }
+
+        .cs-tab-name {
+            &-active > .cs-tab {
+                font-weight: 700;
+            }
+        }
+
+        .cs-icon {
+            display: none;
+        }
+    }
+}
+
+.cs-main-header.cs-main-header-neutral {
+    box-shadow: none;
+}

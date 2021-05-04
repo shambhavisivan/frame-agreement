@@ -127,7 +127,7 @@ class FaFooter extends React.Component {
 
 		let _disabled_prod = !Object.keys(this.props.selectedProducts).length;
 		let _disabled_add = !Object.keys(this.props.selectedAddons || {}).length;
-		let _disabled_offer = !Object.keys(this.props.selectedOffers).length;
+		let _disabled_offer = !Object.keys(this.props.selectedOffers || {}).length;
 		const { hiddenTabs } = this.props.settings
 
 		let buttonVisibillityMap = {

@@ -855,6 +855,13 @@
         <value>Add Product to Frame Agreement</value>
     </labels>
     <labels>
+        <fullName>modal_addOffers_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_addOffers_title</shortDescription>
+        <value>Add Offers to Frame Agreement</value>
+    </labels>
+    <labels>
         <fullName>modal_bluk_rateFilter_dropdownPlaceholder</fullName>
         <language>en_US</language>
         <protected>true</protected>

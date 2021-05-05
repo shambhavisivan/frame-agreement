@@ -277,6 +277,7 @@
 			  "modal_addAddons_input_search_placeholder": "{!$Label.modal_addAddons_input_search_placeholder}",
 			  "modal_addProduct_title": "{!$Label.modal_addProduct_title}",
 			  "modal_addAddons_title": "{!$Label.modal_addAddons_title}",
+			  "modal_addOffers_title": "{!$Label.modal_addOffers_title}",
 			  "modal_bluk_rateFilter_dropdownPlaceholder": "{!$Label.modal_bluk_rateFilter_dropdownPlaceholder}",
 			  "modal_bluk_rateFilter_propertyTitle": "{!$Label.modal_bluk_rateFilter_propertyTitle}",
 			  "modal_bluk_rateFilter_propertyValueTitle": "{!$Label.modal_bluk_rateFilter_propertyValueTitle}",

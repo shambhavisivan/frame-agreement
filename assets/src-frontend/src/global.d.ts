@@ -40,6 +40,7 @@ namespace SfGlobal {
 		getCommercialProducts(cpIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
 		upsertFrameAgreements(paramsArray: [string | null, string]): Promise<FrameAgreement>;
 		saveAttachment(paramsArray: [string, string]): Promise<string>;
+		getDispatcherAuthToken(userAgent: [string]): Promise<DispatcherToken>;
 	}
 
 	// TODO define the unknowns

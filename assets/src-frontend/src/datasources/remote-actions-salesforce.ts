@@ -6,6 +6,7 @@ import {
 	CommercialProductStandalone,
 	FrameAgreement
 } from './interfaces';
+import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
 /* eslint-disable deprecation/deprecation */
 const SF = window.SF;
@@ -21,6 +22,7 @@ export interface RemoteActions {
 		fieldData: Partial<FrameAgreement | SfGlobal.FrameAgreement>
 	): Promise<FrameAgreement>;
 	saveAttachment(faId: string, attachment: Attachment): Promise<string>;
+	getDispatcherAuthToken(navigatorToken: string): Promise<DispatcherToken>;
 }
 
 const toFrameAgreement = (sfFa: SfGlobal.FrameAgreement): FrameAgreement => ({
@@ -88,5 +90,11 @@ export const remoteActions: RemoteActions = {
 
 	async saveAttachment(faId: string, attachment: Attachment): Promise<string> {
 		return await SF.invokeAction('saveAttachment', [faId, JSON.stringify(attachment)]);
+	},
+
+	async getDispatcherAuthToken(
+		userAgent: string = navigator.userAgent
+	): Promise<DispatcherToken> {
+		return await SF.invokeAction('getDispatcherAuthToken', [userAgent]);
 	}
 };

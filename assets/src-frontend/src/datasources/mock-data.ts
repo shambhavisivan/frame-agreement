@@ -6,6 +6,7 @@ import {
 	CommercialProductStandalone,
 	FrameAgreement
 } from './interfaces';
+import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
 export const mockAppSettings: AppSettings = {
 	account: {
@@ -35,3 +36,10 @@ export const mockCommercialProductData: CommercialProductData = {
 export const mockCommercialProducts: CommercialProductStandalone[] = commercialProducts.map(
 	deforcify
 );
+
+export const mockDispatcherAuthToken: DispatcherToken = {
+	orgId: 'some-org-id',
+	expires: new Date(new Date().getTime() + 10 * 60000).getTime(),
+	userAgent: navigator.userAgent,
+	token: 'testToken'
+};

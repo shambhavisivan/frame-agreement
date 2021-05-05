@@ -9,9 +9,11 @@ import {
 	mockCommercialProductData,
 	mockCommercialProducts,
 	mockAppSettings,
-	mockFrameAgreements
+	mockFrameAgreements,
+	mockDispatcherAuthToken
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
+import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
 const FAKE_DELAY_MS = 500;
 
@@ -72,5 +74,9 @@ export const remoteActions: RemoteActions = {
 		return new Promise((resolve) => {
 			setTimeout(() => resolve(JSON.stringify(attachment)), FAKE_DELAY_MS);
 		});
+	},
+
+	async getDispatcherAuthToken(): Promise<DispatcherToken> {
+		return Promise.resolve(mockDispatcherAuthToken);
 	}
 };

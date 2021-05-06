@@ -761,7 +761,7 @@ export class FaEditor extends Component {
 				faId={this.faId}
 				selectedOffers={this.state.selectedOffers}
 				onSelectOffer={this.onSelectOffer}
-				onSelectAllOffers={this.onSelectOffer}
+				onSelectAllOffers={this.onSelectAllOffers}
 			/>
 		);
 

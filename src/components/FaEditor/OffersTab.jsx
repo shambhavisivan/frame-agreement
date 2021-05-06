@@ -42,9 +42,9 @@ class OffersTab extends React.Component {
 		};
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		if (!this.props.offersLoaded) {
-			this.props.getOffers();
+			await this.props.getOffers();
 		}
 	}
 
@@ -177,17 +177,17 @@ class OffersTab extends React.Component {
 					{_offers
 						.filter(this._offerFilter)
 						.paginate(this.state.page, this.state.pageSize)
-						.map(cp => {
+						.map(offer => {
 							return (
 								<Offer
-									key={"of-" + cp.Id}
-									offer={cp}
+									key={"of-" + offer.Id}
+									offer={offer}
 									faId={this.props.faId}
-									onSelect={product =>
-										this.props.onSelectOffer(product)
+									onSelect={offer =>
+										this.props.onSelectOffer(offer)
 									}
 									selected={
-										!!this.props.selectedOffers[cp.Id]
+										!!this.props.selectedOffers[offer.Id]
 									}
 								/>
 							);

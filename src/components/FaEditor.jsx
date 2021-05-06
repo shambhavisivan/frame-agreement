@@ -496,7 +496,7 @@ export class FaEditor extends Component {
 						onConfirm={() => {
 							this._removeProducts();
 						}}
-						confirmText={window.SF.labels.alert_deleteProducts_title}
+						confirmText={window.SF.labels.btn_DeleteProducts}
 					/>
 				);
 			}
@@ -730,7 +730,7 @@ export class FaEditor extends Component {
 						onConfirm={() => {
 							this._removeOffers();
 						}}
-						confirmText={window.SF.labels.alert_deleteOffers_title}
+						confirmText={window.SF.labels.btn_DeleteOffers}
 					/>
 				);
 			}

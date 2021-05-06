@@ -18,7 +18,7 @@ global class PostInstallScript implements InstallHandler {
 	}
 
 	private static csutil__JSON_Data__c populateStandardButtonSetting() {
-		String value = '{"Save":["Draft","Requires Approval"],"SubmitForApproval":["Requires Approval"],"Approve":["Pending"],"Reject":["Pending"],"Recall":["Pending"],"Submit":["Approved","Draft"],"DeleteProducts":["Draft","Requires Approval"],"BulkNegotiate":["Draft","Requires Approval"],"AddProducts":["Draft","Requires Approval"],"NewVersion":["Active"],"Delta":["*"]}';
+		String value = '{"Save":["Draft","Requires Approval"],"SubmitForApproval":["Requires Approval"],"Approve":["Pending"],"Reject":["Pending"],"Recall":["Pending"],"Submit":["Approved","Draft"],"DeleteProducts":["Draft","Requires Approval"],"BulkNegotiate":["Draft","Requires Approval"],"AddProducts":["Draft","Requires Approval"],"DeleteOffers":["Draft","Requires Approval"],"BulkNegotiateOffers":["Draft","Requires Approval"],"AddOffers":["Draft","Requires Approval"],"NewVersion":["Active"],"Delta":["*"]}';
 		return PostInstallScript.populateJsonSetting(PostInstallScript.FA_STANDARD_BUTTON_KEY, value);
 	}
 

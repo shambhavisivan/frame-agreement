@@ -167,7 +167,7 @@
 			  "alert_deleteProducts_btn_action": "{!$Label.alert_deleteProducts_btn_action}",
 			  "alert_deleteProducts_message": "{!$Label.alert_deleteProducts_message}",
 			  "alert_deleteProducts_title": "{!$Label.alert_deleteProducts_title}",
-			  "alert_deleteOffers_title": "{!$Label.alert_deleteProducts_title}",
+			  "alert_deleteOffers_title": "{!$Label.alert_deleteOffers_title}",
 			  "alert_deleteOffers_message": "{!$Label.alert_deleteOffers_message}",
 			  "allowances_amount": "{!$Label.allowances_amount}",
 			  "allowances_name": "{!$Label.allowances_name}",
@@ -375,7 +375,8 @@
 			  "util_input_formula_placehoder": "{!$Label.util_input_formula_placehoder}",
 			  "util_input_lookup_placehoder": "{!$Label.util_input_lookup_placehoder}",
 			  "util_input_text_enter": "{!$Label.util_input_text_enter}",
-			  "util_negotiation_input_diff_label": "{!$Label.util_negotiation_input_diff_label}"
+			  "util_negotiation_input_diff_label": "{!$Label.util_negotiation_input_diff_label}",
+			  "warning_no_offers_linked": "{!$Label.warning_no_offers_linked}"
 			},
 			fieldLabels: {}
 		};

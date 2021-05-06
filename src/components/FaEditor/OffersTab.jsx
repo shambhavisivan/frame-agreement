@@ -79,12 +79,13 @@ class OffersTab extends React.Component {
 		let _isMaster = isMaster(this.props.frameAgreements[this.props.faId]);
 		let standardData = this.props.settings.ButtonStandardData;
 
-		let _isAddProductsEnabled =
+		let _isAddOffersEnabled =
 			!_isMaster &&
 			evaluateExpressionOnAgreement(
-				standardData.AddProducts,
+				standardData.AddOffers,
 				this.props.frameAgreements[this.props.faId]
-			);
+			) &&
+			this.props.offersLoaded;
 
 		if (_offers.length) {
 			offers = (
@@ -203,7 +204,7 @@ class OffersTab extends React.Component {
 							!this.props.frameAgreements[this.props.faId]._ui
 								.offers.length
 						}
-						disabled={!_editable || !_isAddProductsEnabled}
+						disabled={!_editable || !_isAddOffersEnabled}
 					/>
 				</div>
 			);

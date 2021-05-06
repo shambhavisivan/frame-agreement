@@ -1530,8 +1530,8 @@
         <fullName>alert_deleteAddons_title</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Delete products</shortDescription>
-        <value>Delete products</value>
+        <shortDescription>Delete Add Ons</shortDescription>
+        <value>Delete Add Ons</value>
     </labels>
     <labels>
         <fullName>btn_AddAddons</fullName>
@@ -1623,5 +1623,12 @@
         <protected>true</protected>
         <shortDescription>There are no offer Meta Data</shortDescription>
         <value>There are no Meta Data in here for this offer</value>
+    </labels>
+    <labels>
+        <fullName>warning_no_offers_linked</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Link at least one offer to the default catalogue</shortDescription>
+        <value>Link at least one offer to the default catalogue</value>
     </labels>
 </CustomLabels>

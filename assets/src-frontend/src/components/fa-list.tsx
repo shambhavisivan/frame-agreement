@@ -1,87 +1,250 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useFrameAgreements } from '../hooks/use-frame-agreements';
 import { LoadingFallback } from './loading-fallback';
-import { CSTab, CSTabGroup, CSChip } from '@cloudsense/cs-ui-components';
-import { CSButton, CSDropdown } from '@cloudsense/cs-ui-components';
-import { useAppSettings } from '../hooks/use-app-settings';
-import { useUpsertFrameAgreements } from '../hooks/use-upsert-frame-agreements';
-import { FrameAgreement } from '../datasources';
+
+import {
+	CSTab,
+	CSTabGroup,
+	CSChip,
+	CSTable,
+	CSTableHeader,
+	CSTableCell,
+	CSTableBody,
+	CSTableRow,
+	CSDropdown,
+	CSButton,
+	CSInputSearch,
+	CSTooltip
+} from '@cloudsense/cs-ui-components';
 
 export function FrameAgreementList(): ReactElement {
 	const { url } = useRouteMatch();
 	const { agreements = [], status } = useFrameAgreements();
-	const [faList, addFa] = useState(agreements);
-	const { settings } = useAppSettings();
-	const { mutate } = useUpsertFrameAgreements();
 
-	useEffect(() => {
-		if (status === 'success') {
-			addFa(agreements);
-		}
-	}, [status, agreements]);
-
-	const linkList = faList.map((agreement) => {
+	const linkList = agreements.map((agreement) => {
 		return (
-			<li key={agreement.id}>
+			<span key={agreement.id}>
 				<Link to={`${url}/${agreement.id}`}>{agreement.name}</Link>
-				<p>{agreement.agreementLevel === 'Master Agreement' ? 'Master' : ''}</p>
-			</li>
+				{agreement.agreementLevel === 'Master Agreement' ? (
+					<CSTooltip
+						iconColor="#c23934"
+						position="right-bottom"
+						variant="basic"
+						maxWidth="25rem"
+						padding="0"
+						stickyOnClick
+						content={
+							<CSTable>
+								<CSTableHeader>
+									<CSTableCell text="Member FAs" />
+									<CSTableCell text="Effective Start Date" />
+									<CSTableCell text="Effective End Date" />
+								</CSTableHeader>
+								<CSTableBody>
+									<CSTableRow>
+										<CSTableCell>
+											<a href="#">FA1231531351</a>
+										</CSTableCell>
+										<CSTableCell text="23.09.2020" />
+										<CSTableCell text="22.09.2021" />
+									</CSTableRow>
+									<CSTableRow>
+										<CSTableCell>
+											<a href="#">FA1231531351</a>
+										</CSTableCell>
+										<CSTableCell text="23.09.2020" />
+										<CSTableCell text="22.09.2021" />
+									</CSTableRow>
+									<CSTableRow>
+										<CSTableCell>
+											<a href="#">FA1231531351</a>
+										</CSTableCell>
+										<CSTableCell text="23.09.2020" />
+										<CSTableCell text="22.09.2021" />
+									</CSTableRow>
+									<CSTableRow>
+										<CSTableCell>
+											<a href="#">FA1231531351</a>
+										</CSTableCell>
+										<CSTableCell text="23.09.2020" />
+										<CSTableCell text="22.09.2021" />
+									</CSTableRow>
+								</CSTableBody>
+							</CSTable>
+						}
+					/>
+				) : (
+					''
+				)}
+			</span>
 		);
 	});
 
-	const createFa = async (isMaster: boolean): Promise<FrameAgreement> => {
-		const newFa: Partial<SfGlobal.FrameAgreement> = {
-			/* eslint-disable @typescript-eslint/naming-convention */
-			csconta__agreement_level__c: isMaster ? 'Master Agreement' : 'Frame Agreement',
-			csconta__Status__c: settings?.facSettings.statuses.draft_status as string,
-			csconta__Account__c: settings?.account.id
-			/* eslint-enable @typescript-eslint/naming-convention */
-		};
-
-		const upsertedFa = await mutate({
-			faId: null,
-			fieldData: newFa
-		});
-
-		if (upsertedFa) {
-			addFa((prevState) => [...prevState, upsertedFa as FrameAgreement]);
-			return upsertedFa as FrameAgreement;
-		}
-
-		return upsertedFa as FrameAgreement;
-	};
 	//TODO: Should load labels from SF
 	return (
 		<LoadingFallback status={status}>
-			<div className="tabs-wrapper">
-				<CSTabGroup variant="large">
-					<CSTab name="Active" className="cs-tab-name-active" active>
-						<CSChip text="79" variant="brand" />
-					</CSTab>
-					<CSTab name="Pending">
-						<CSChip text="44" variant="neutral" />
-					</CSTab>
-				</CSTabGroup>
+			<div className="tabs-section-wrapper">
+				<div className="tabs-search-wrapper">
+					<CSTabGroup variant="large">
+						<CSTab name="Pending" className="tab-active" active width="11rem">
+							<CSChip text="79" variant="brand" />
+						</CSTab>
+						<CSTab name="Active" width="11rem">
+							<CSChip text="12" variant="neutral" />
+						</CSTab>
+						<CSTab name="Associated" width="11rem">
+							<CSChip text="44" variant="neutral" />
+						</CSTab>
+						<CSTab name="Cancelled" width="11rem">
+							<CSChip text="7" variant="neutral" />
+						</CSTab>
+					</CSTabGroup>
+					<CSInputSearch label="Type here" labelHidden placeholder="Quick search" />
+				</div>
 			</div>
-			<div>
-				<h2>Frame Agreements</h2>
-				<CSDropdown label={'Add Agreements'} data-testid="cs-drop-down-test-id">
-					<CSButton
-						label="Master FA"
-						onClick={(): Promise<
-							FrameAgreement | SfGlobal.FrameAgreement | undefined
-						> => createFa(true)}
-					/>
-					<CSButton
-						label="FA"
-						onClick={(): Promise<
-							FrameAgreement | SfGlobal.FrameAgreement | undefined
-						> => createFa(false)}
-					/>
-				</CSDropdown>
-				<ul data-testid="fa-list-test-id">{linkList}</ul>
+			<div className="table-wrapper">
+				<CSTable>
+					<CSTableHeader>
+						<CSTableCell text="" maxWidth="4rem" />
+						<CSTableCell text="FA Name" />
+						<CSTableCell text="Effective Start Date" />
+						<CSTableCell text="Effective End Date" />
+						<CSTableCell text="Description" />
+						<CSTableCell text="" />
+					</CSTableHeader>
+					<CSTableBody>
+						<CSTableRow>
+							<CSTableCell maxWidth="4rem">
+								<CSDropdown
+									iconName="threedots_vertical"
+									btnType="transparent"
+									btnStyle="brand"
+								>
+									<CSButton label="Edit" iconName="edit" />
+									<CSButton label="Clone" iconName="copy" />
+									<CSButton label="Delete" iconName="delete" />
+									<CSButton label="Accounts" iconName="people" />
+								</CSDropdown>
+							</CSTableCell>
+							<CSTableCell>{linkList[0]}</CSTableCell>
+							<CSTableCell text="23.09.2020" />
+							<CSTableCell text="22.09.2021" />
+							<CSTableCell text="Text" />
+							<CSTableCell text="" />
+						</CSTableRow>
+						<CSTableRow>
+							<CSTableCell maxWidth="4rem">
+								<CSDropdown
+									iconName="threedots_vertical"
+									btnType="transparent"
+									btnStyle="brand"
+								>
+									<CSButton label="Edit" iconName="edit" />
+									<CSButton label="Clone" iconName="copy" />
+									<CSButton label="Delete" iconName="delete" />
+									<CSButton label="Accounts" iconName="people" />
+								</CSDropdown>
+							</CSTableCell>
+							<CSTableCell>{linkList[1]}</CSTableCell>
+							<CSTableCell text="23.09.2020" />
+							<CSTableCell text="22.09.2021" />
+							<CSTableCell text="Text" />
+							<CSTableCell>
+								<CSDropdown
+									position="top"
+									iconName="change_record_type"
+									padding="0"
+								>
+									<CSTable>
+										<CSTableHeader>
+											<CSTableCell text="Previous Versions" />
+											<CSTableCell text="Date" />
+											<CSTableCell text="Action" />
+										</CSTableHeader>
+										<CSTableBody>
+											<CSTableRow>
+												<CSTableCell>
+													<a href="#">FA1231531351</a>
+												</CSTableCell>
+												<CSTableCell text="23.09.2020" />
+												<CSTableCell>
+													<CSButton label="Show delta" size="small" />
+												</CSTableCell>
+											</CSTableRow>
+											<CSTableRow>
+												<CSTableCell>
+													<a href="#">FA1231531351</a>
+												</CSTableCell>
+												<CSTableCell text="23.09.2020" />
+												<CSTableCell>
+													<CSButton label="Show delta" size="small" />
+												</CSTableCell>
+											</CSTableRow>
+											<CSTableRow>
+												<CSTableCell>
+													<a href="#">FA1231531351</a>
+												</CSTableCell>
+												<CSTableCell text="23.09.2020" />
+												<CSTableCell>
+													<CSButton label="Show delta" size="small" />
+												</CSTableCell>
+											</CSTableRow>
+											<CSTableRow>
+												<CSTableCell>
+													<a href="#">FA1231531351</a>
+												</CSTableCell>
+												<CSTableCell text="23.09.2020" />
+												<CSTableCell>
+													<CSButton label="Show delta" size="small" />
+												</CSTableCell>
+											</CSTableRow>
+										</CSTableBody>
+									</CSTable>
+								</CSDropdown>
+							</CSTableCell>
+						</CSTableRow>
+						<CSTableRow>
+							<CSTableCell maxWidth="4rem">
+								<CSDropdown
+									iconName="threedots_vertical"
+									btnType="transparent"
+									btnStyle="brand"
+								>
+									<CSButton label="Edit" iconName="edit" />
+									<CSButton label="Clone" iconName="copy" />
+									<CSButton label="Delete" iconName="delete" />
+									<CSButton label="Accounts" iconName="people" />
+								</CSDropdown>
+							</CSTableCell>
+							<CSTableCell>{linkList[2]}</CSTableCell>
+							<CSTableCell text="23.09.2020" />
+							<CSTableCell text="22.09.2021" />
+							<CSTableCell text="Text" />
+							<CSTableCell text="" />
+						</CSTableRow>
+						<CSTableRow>
+							<CSTableCell maxWidth="4rem">
+								<CSDropdown
+									iconName="threedots_vertical"
+									btnType="transparent"
+									btnStyle="brand"
+								>
+									<CSButton label="Edit" iconName="edit" />
+									<CSButton label="Clone" iconName="copy" />
+									<CSButton label="Delete" iconName="delete" />
+									<CSButton label="Accounts" iconName="people" />
+								</CSDropdown>
+							</CSTableCell>
+							<CSTableCell>{linkList[3]}</CSTableCell>
+							<CSTableCell text="23.09.2020" />
+							<CSTableCell text="22.09.2021" />
+							<CSTableCell text="Text" />
+							<CSTableCell text="" />
+						</CSTableRow>
+					</CSTableBody>
+				</CSTable>
 			</div>
 		</LoadingFallback>
 	);

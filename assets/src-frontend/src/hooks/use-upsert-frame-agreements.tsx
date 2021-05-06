@@ -1,4 +1,4 @@
-import { QueryStatus, useMutation } from 'react-query';
+import { QueryStatus, useMutation, useQueryCache } from 'react-query';
 import { FrameAgreement, remoteActions } from '../datasources';
 
 export { QueryStatus } from 'react-query';
@@ -17,8 +17,23 @@ export function useUpsertFrameAgreements(
 	status: QueryStatus;
 	mutate: (opts: UpsertProps) => Promise<FrameAgreement | unknown>;
 } {
+	const queryCache = useQueryCache();
 	const [mutate, { status }] = useMutation<FrameAgreement, Error, UpsertProps>(
-		({ fieldData, faId }: UpsertProps) => upsertFrameAgreements(faId, fieldData)
+		({ fieldData, faId }: UpsertProps) => upsertFrameAgreements(faId, fieldData),
+		{
+			onSuccess: (data) => {
+				queryCache.setQueryData(
+					'frameAgreements',
+					(oldData: FrameAgreement[] | undefined) => {
+						if (oldData && oldData.length) {
+							return [...oldData, data] as FrameAgreement[];
+						} else {
+							return [data];
+						}
+					}
+				);
+			}
+		}
 	);
 
 	return {

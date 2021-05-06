@@ -1,4 +1,11 @@
-.tabs-wrapper {
+
+.cs-app-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.tabs-section-wrapper {
     @include sbg(--tabs-wrapper-bg);
     @include css4 {
         border: 1px solid cvar(--tabs-wrapper-br);
@@ -6,9 +13,14 @@
         border-right: none;
     }
 
+	.tabs-search-wrapper {
+		display: flex;
+        align-items: center;
+		margin: 0 auto;
+		max-width: 1200px;
+	}
+
     .cs-tab-group {
-        margin: 0 auto;
-        max-width: 1200px;
         border: none;
 
         nav {
@@ -19,18 +31,155 @@
             margin-left: 0.5rem;
         }
 
-        .cs-tab-name {
-            &-active > .cs-tab {
-                font-weight: 700;
-            }
+        .cs-tab-active .cs-tab {
+            font-weight: $font-weight-bold;
         }
 
-        .cs-icon {
-            display: none;
+        .cs-tab {
+            justify-content: space-between;
+
+            .cs-icon {
+                display: none;
+            }
         }
     }
 }
 
-.cs-main-header.cs-main-header-neutral {
+.cs-app-wrapper .cs-main-header {
     box-shadow: none;
+}
+
+.table-wrapper {
+    flex: 1 1 0;
+    overflow-y: auto;
+    @include sbg(--table-bg);
+
+    .cs-table {
+        border: none;
+        margin: 0 auto;
+        max-width: 1200px;
+
+        .cs-table-cell {
+            border: none;
+			padding: 1.25rem 0.5rem;
+
+            span {
+                display: flex;
+            }
+        }
+
+        .cs-table-header {
+            .cs-table-cell {
+                display: flex;
+                @include sbg(--table-header-bg);
+
+                .cs-table-cell-text {
+                    font-weight: $font-weight-normal;
+                    @include sc(--table-header-c);
+                }
+            }
+        }
+    }
+
+    .cs-table-row {
+        margin: 0.2175rem 0;
+        box-shadow: 0 1px 2px var(--table-row-shadow);
+
+        .cs-table-cell:first-child {
+            border-top-left-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .cs-table-cell:last-child {
+            border-top-right-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+            justify-content: flex-end;
+        }
+    }
+
+    .cs-table-cell a {
+        text-decoration: none;
+        font-weight: $font-weight-normal;
+        @include sc(--table-cell-c);
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+			outline: 0;
+		}
+    }
+}
+
+.cs-tooltip-wrapper .cs-tooltip-icon {
+    margin-left: 0.5rem;
+}
+
+.cs-tooltip .cs-tooltip-body:only-child,
+.cs-dropdown-item-wrapper {
+    .cs-table {
+        width: 25rem;
+        border-radius: 0.25rem;
+        @include css4 {
+            border: 1px solid cvar(--tooltip-table-body-br);
+        }
+
+        .cs-table-header {
+            .cs-table-cell {
+                @include sbg(--tooltip-table-header-bg);
+            }
+
+            .cs-table-cell-text {
+                font-weight: $font-weight-normal;
+                @include sc(--tooltip-table-header-c);
+            }
+        }
+
+        .cs-table-body {
+            @include sbg(--tooltip-table-body-bg);
+
+            .cs-table-row .cs-table-cell {
+                padding-top: 0.375rem;
+                padding-bottom: 0.375rem;
+                border: none;
+                font-weight: $font-weight-normal;
+                @include sbg(--tooltip-table-cell-bg);
+                @include sc(--tooltip-table-cell-c);
+
+                &:first-child a {
+                    font-size: 0.8125rem;
+                    text-decoration: none;
+                    font-weight: $font-weight-normal;
+                    @include sc(--table-cell-c);
+
+                    &:hover,
+                    &:focus {
+                        text-decoration: underline;
+                        outline: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.cs-dropdown-outer-item-wrapper {
+    .cs-dropdown-item-wrapper {
+        border: none;
+        box-shadow: 0 1px 2px var(--dropdown-wrapper-shadow);
+
+        .cs-table-body .cs-table-row .cs-table-cell  {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            @include sc(--dropdown-cell-c);
+
+            .cs-btn {
+                justify-content: center;
+                border-radius: 0.25rem;
+
+                @include css4 {
+                    border: 1px solid cvar(--dropdown-table-button-br);
+                }
+            }
+        }
+    }
 }

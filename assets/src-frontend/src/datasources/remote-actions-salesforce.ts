@@ -46,7 +46,7 @@ export const remoteActions: RemoteActions = {
 			relatedListsData: settings.RelatedListsData,
 			addonCategorizationData: settings.AddonCategorizationData,
 			categorizationData: settings.CategorizationData,
-			facSettings: settings.FACSettings
+			facSettings: { ...settings.FACSettings, draftStatus: settings.FACSettings.draft_status }
 		};
 	},
 

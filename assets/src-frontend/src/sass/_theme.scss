@@ -62,8 +62,22 @@ $css4: true;
 // It is necessary to define the variables in sass map instead of :root, for compatibility reasons.
 $variables: (
 	--tabs-wrapper-bg: $cs-gray-light-7,
-    --tabs-wrapper-br: $cs-gray-light-2,
-    --tabs-nav-bg: $cs-white
+	--tabs-wrapper-br: $cs-gray-light-2,
+    --tabs-nav-bg: $cs-white,
+	--table-bg: $cs-gray-light-4,
+	--table-header-bg: $cs-gray-light-4,
+	--table-header-c: $cs-gray-dark-5,
+	--table-row-shadow: rgba(0, 0, 0, 0.33),
+	--table-cell-c: $cs-blue-sf,
+	--tooltip-table-header-bg: $cs-white,
+	--tooltip-table-header-c: $cs-gray-dark-5,
+	--tooltip-table-cell-c: $cs-gray-dark-5,
+	--tooltip-table-body-bg: $cs-gray-light-7,
+	--tooltip-table-body-br: $cs-gray-light-3,
+	--tooltip-table-cell-bg: $cs-gray-light-7,
+	--dropdown-cell-c: $cs-black,
+	--dropdown-table-button-br: $cs-gray-light-2,
+	--dropdown-wrapper-shadow: rgba(0, 0, 0, 0.33)
 );
 
 // Every variable that uses main color needs to be set in #root as well

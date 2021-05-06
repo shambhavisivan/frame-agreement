@@ -3,14 +3,14 @@
   "version": "0.2.0",
   "private": true,
   "dependencies": {
-    "@cloudsense/cs-ui-components": "^1.1.13",
+    "@cloudsense/cs-ui-components": "^1.1.19",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-query": "2.26.4",
     "react-router-dom": "^5.2.0"
   },
   "scripts": {
-    "test": "jest --coverage --passWithNoTests",
+    "test": "jest --coverage --passWithNoTests --silent",
     "test:watch": "jest --coverage --watch",
     "test:debug": "node --inspect node_modules/.bin/jest --runInBand",
     "start": "NODE_ENV=development webpack-dev-server",

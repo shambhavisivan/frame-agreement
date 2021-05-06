@@ -86,7 +86,7 @@ let config = {
 		new webpack.HotModuleReplacementPlugin(),
 		new CleanWebpackPlugin(),
 		new ZipPlugin({
-			path: '../../../../salesforce/src/staticresources',
+			path: '../../../../salesforce/force-app/main/default/staticresources/',
 			filename: 'FrameAgreementResource',
 			extension: 'resource'
 		})

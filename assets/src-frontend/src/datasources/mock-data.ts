@@ -19,7 +19,11 @@ export const mockAppSettings: AppSettings = {
 	relatedListsData: {},
 	addonCategorizationData: {},
 	categorizationData: {},
-	facSettings: {}
+	facSettings: {
+		statuses: {
+			draftStatus: 'Draft'
+		}
+	}
 };
 
 export const mockFrameAgreements: FrameAgreement[] = frameAgreements.map(deforcify);

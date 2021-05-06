@@ -11,6 +11,8 @@ import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
 import { queryCategoriesInCatalogue, queryOffersInCategory } from '~/src/graphql-actions';
 
+import ProductRow from '../utillity/ProductRow';
+
 class OffersModal extends Component {
 	constructor(props) {
 		super(props);
@@ -205,7 +207,7 @@ class OffersModal extends Component {
 												</div>
 											);
 										}) : (<div>
-											<p>window.SF.labels.warning_no_offers_linked</p>
+											<p>{window.SF.labels.warning_no_offers_linked}</p>
 										</div>)
 										}
 									</ul>
@@ -231,7 +233,7 @@ class OffersModal extends Component {
 
 							<div className="search-container">
 								<InputSearch
-									placeholder={window.SF.labels.modal_addProduct_input_search_placeholder}
+									placeholder={window.SF.labels.modal_addOffer_input_search_placeholder}
 									value={this.state.searchValue}
 									onChange={val => {
 										this.setState({ offerFilter: val });
@@ -255,44 +257,29 @@ class OffersModal extends Component {
 							</div>
 							<div className="fa-modal-product-list">
 								{this.state.offers
-									.filter(cp => {
+									.filter(offer => {
 										if (this.state.offerFilter && this.state.offerFilter.length >= 2) {
-											return cp.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
+											return offer.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
 										} else {
 											return true;
 										}
 									})
 									.paginate(this.state.pagination.page, this.state.pagination.pageSize)
-									.map(cp => {
+									.map(offer => {
 										return (
 											<div
-												key={cp.Id}
-												className={'product-row' + (this.state.selected[cp.Id] ? ' selected' : '')}
-												onClick={() => this.selectOffer(cp)}
+												key={offer.Id}
+												className={'product-row' + (this.state.selected[offer.Id] ? ' selected' : '')}
+												onClick={() => this.selectOffer(offer)}
 											>
-												<span>{cp.Name}</span>
-												{this.offerFields.map(f => {
+												<span>{offer.Name}</span>
+												{this.offerFields.map(field => {
 													return (
-														<span key={cp.Id + '-' + f.name}>
-															{(() => {
-																if (cp.hasOwnProperty(f.name)) {
-																	if (typeof cp[f.name] === 'boolean') {
-																		let _val = cp[f.name];
-																		return (
-																			<Icon
-																				name={_val ? 'success' : 'clear'}
-																				height="14"
-																				width="14"
-																				color={_val ? '#4bca81' : '#d9675d'}
-																			/>
-																		);
-																	} else {
-																		return cp[f.name].toString();
-																	}
-																} else {
-																	return '-';
-																}
-															})()}
+														<span key={offer.Id + '-' + field.name}>
+															<ProductRow
+																product={offer}
+																fieldName={field.name}
+															/>
 														</span>
 													);
 												})}

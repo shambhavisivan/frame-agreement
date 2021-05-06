@@ -275,6 +275,7 @@
 			  "modal_addFa_title": "{!$Label.modal_addFa_title}",
 			  "modal_addProduct_input_search_placeholder": "{!$Label.modal_addProduct_input_search_placeholder}",
 			  "modal_addAddons_input_search_placeholder": "{!$Label.modal_addAddons_input_search_placeholder}",
+			  "modal_addOffer_input_search_placeholder": "{!$Label.modal_addOffer_input_search_placeholder}",
 			  "modal_addProduct_title": "{!$Label.modal_addProduct_title}",
 			  "modal_addAddons_title": "{!$Label.modal_addAddons_title}",
 			  "modal_addOffers_title": "{!$Label.modal_addOffers_title}",
@@ -376,6 +377,7 @@
 			  "util_input_lookup_placehoder": "{!$Label.util_input_lookup_placehoder}",
 			  "util_input_text_enter": "{!$Label.util_input_text_enter}",
 			  "util_negotiation_input_diff_label": "{!$Label.util_negotiation_input_diff_label}",
+			  "warning_no_commercial_products_linked": "{!$Label.warning_no_commercial_products_linked}",
 			  "warning_no_offers_linked": "{!$Label.warning_no_offers_linked}"
 			},
 			fieldLabels: {}

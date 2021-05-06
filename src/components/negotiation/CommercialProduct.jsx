@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Icon from '../utillity/Icon';
 import ExpandableArticle from '../utillity/ExpandableArticle';
 
 import Tabs from '../utillity/tabs/Tabs';
@@ -30,6 +29,7 @@ import SettingsContext from '~/src/utils/settings-context.js';
 import { publish } from '~/src/api';
 
 import { setValidation, setFrameAgreementState, negotiate } from '~/src/actions';
+import ProductRow from '../utillity/ProductRow';
 
 export class CommercialProduct extends React.Component {
 	constructor(props) {
@@ -182,20 +182,20 @@ export class CommercialProduct extends React.Component {
 							</div>
 							{this.props.productFields
 								.filter(f => f.visible)
-								.map((f, i) => {
+								.map((productField, index) => {
 									let _field;
-									if (f.volume && _attachment) {
+									if (productField.volume && _attachment) {
 										_field = (
 											<div
 												className="fields__item volume-fields"
-												key={'facp-' + this.props.product.Id + '-' + f + i}
+												key={'facp-' + this.props.product.Id + '-' + productField + index}
 											>
 												<InputVolume
 													readOnly={!_editable}
 													disabled={this.props.disableFrameAgreementOperations}
-													value={_attachment._volume[f.volume]}
+													value={_attachment._volume[productField.volume]}
 													onChange={val => {
-														this.updateVolume(f.volume, val);
+														this.updateVolume(productField.volume, val);
 													}}
 												/>
 											</div>
@@ -205,27 +205,13 @@ export class CommercialProduct extends React.Component {
 											<div
 												className="fields__item"
 												onClick={this.onExpandProduct}
-												key={'facp-' + this.props.product.Id + '-' + f + i}
+												key={'facp-' + this.props.product.Id + '-' + productField + index}
 											>
-												{(() => {
-													if (this.props.product.hasOwnProperty(f.name)) {
-														if (typeof this.props.product[f.name] === 'boolean') {
-															let _val = this.props.product[f.name];
-															return (
-																<Icon
-																	name={_val ? 'success' : 'clear'}
-																	height="18"
-																	width="18"
-																	color={_val ? '#4bca81' : '#d9675d'}
-																/>
-															);
-														} else {
-															return this.props.product[f.name].toString();
-														}
-													} else {
-														return '-';
-													}
-												})()}
+												<ProductRow
+													product={this.props.product}
+													fieldName={productField.name}
+													iconSize={18}
+												/>
 											</div>
 										);
 									}

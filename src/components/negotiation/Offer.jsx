@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Icon from '../utillity/Icon';
 import ExpandableArticle from '../utillity/ExpandableArticle';
 
 import Tabs from '../utillity/tabs/Tabs';
@@ -31,6 +30,7 @@ import { publish } from '~/src/api';
 
 import { setValidation, setFrameAgreementState, negotiateOffers } from '~/src/actions';
 import { OffersMetadata } from './offers-metadata';
+import ProductRow from '../utillity/ProductRow';
 
 export class Offer extends React.Component {
 	constructor(props) {
@@ -182,20 +182,20 @@ export class Offer extends React.Component {
 							</div>
 							{this.props.productFields
 								.filter(f => f.visible)
-								.map((f, i) => {
+								.map((offerField, index) => {
 									let _field;
-									if (f.volume && _attachment) {
+									if (offerField.volume && _attachment) {
 										_field = (
 											<div
 												className="fields__item volume-fields"
-												key={'facp-' + this.props.offer.Id + '-' + f + i}
+												key={'facp-' + this.props.offer.Id + '-' + offerField + index}
 											>
 												<InputVolume
 													readOnly={!_editable}
 													disabled={this.props.disableFrameAgreementOperations}
-													value={_attachment._volume[f.volume]}
+													value={_attachment._volume[offerField.volume]}
 													onChange={val => {
-														this.updateVolume(f.volume, val);
+														this.updateVolume(offerField.volume, val);
 													}}
 												/>
 											</div>
@@ -205,27 +205,13 @@ export class Offer extends React.Component {
 											<div
 												className="fields__item"
 												onClick={this.onExpandOffer}
-												key={'facp-' + this.props.offer.Id + '-' + f + i}
+												key={'facp-' + this.props.offer.Id + '-' + offerField + index}
 											>
-												{(() => {
-													if (this.props.offer.hasOwnProperty(f.name)) {
-														if (typeof this.props.offer[f.name] === 'boolean') {
-															let _val = this.props.offer[f.name];
-															return (
-																<Icon
-																	name={_val ? 'success' : 'clear'}
-																	height="18"
-																	width="18"
-																	color={_val ? '#4bca81' : '#d9675d'}
-																/>
-															);
-														} else {
-															return this.props.offer[f.name].toString();
-														}
-													} else {
-														return '-';
-													}
-												})()}
+												<ProductRow
+													product={this.props.offer}
+													fieldName={offerField.name}
+													iconSize={18}
+												/>
 											</div>
 										);
 									}

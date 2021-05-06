@@ -848,6 +848,13 @@
         <value>Filter products</value>
     </labels>
     <labels>
+        <fullName>modal_addOffer_input_search_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_addOffer_input_search_placeholder</shortDescription>
+        <value>Filter offers</value>
+    </labels>
+    <labels>
         <fullName>modal_addProduct_title</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1630,5 +1637,12 @@
         <protected>true</protected>
         <shortDescription>Link at least one offer to the default catalogue</shortDescription>
         <value>Link at least one offer to the default catalogue</value>
+    </labels>
+    <labels>
+        <fullName>warning_no_commercial_products_linked</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Link at least one commercial product to the default catalogue</shortDescription>
+        <value>Link at least one commercial product to the default catalogue</value>
     </labels>
 </CustomLabels>

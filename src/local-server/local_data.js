@@ -3764,6 +3764,7 @@ window.SF = SF = {
 		modal_addFa_title: 'Add Frame Agreements',
 		modal_addProduct_input_search_placeholder: 'Filter products',
 		modal_addAddons_input_search_placeholder: 'Filter addons',
+		modal_addOffer_input_search_placeholder: 'Filter offers',
 		modal_addProduct_title: 'Add Product to Frame Agreement',
 		modal_addOffers_title: 'Add Offers to Frame Agreement',
 		modal_addAddons_title: 'Add stand-alone Addons',
@@ -3863,7 +3864,8 @@ window.SF = SF = {
 		util_input_lookup_placehoder: 'No record selected',
 		util_input_text_enter: 'Enter',
 		util_negotiation_input_diff_label: 'negotiated',
-		warning_no_offers_linked: 'Link at least one offer to the default catalogue'
+		warning_no_offers_linked: 'Link at least one offer to the default catalogue',
+		warning_no_commercial_products_linked: 'Link at least one commercial product to the default catalogue'
 	},
 	fieldLabels: {},
 	apiSession: '{!$Api.Session_ID}',
@@ -4413,15 +4415,15 @@ window.SF = SF = {
 					}
 				};
 				return createPromise(newAssociation);
-				case 'getDispatcherAuthToken':
-					const dispatcherToken = {
-						// change the generated auth token here to make requests locally.
-						token: '00D4K000003rDxS:8dfff001-7b73-4bc8-9b72-c0a5aea47f3b',
-						orgId: "00D4K000003rDxS",
-						userAgent: navigator.userAgent
-					}
-
-				case 'getDefaultCatalogueId':
+			case 'getDispatcherAuthToken':
+				const dispatcherToken = {
+					// change the generated auth token here to make requests locally.
+					token: '00D4K000003rDxS:8dfff001-7b73-4bc8-9b72-c0a5aea47f3b',
+					orgId: "00D4K000003rDxS",
+					userAgent: navigator.userAgent
+				}
+				return createPromise(dispatcherToken);
+			case 'getDefaultCatalogueId':
 				return createPromise('test-catalogue-id');
 
 			default:

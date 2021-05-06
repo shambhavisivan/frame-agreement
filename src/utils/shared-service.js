@@ -546,4 +546,9 @@ export const sortDynamicGroupsBySequence = (aDynamicGroup, bDynamicGroup) => {
 	return aDynamicGroup.csfamext__sequence__c - bDynamicGroup.csfamext__sequence__c;
 }
 
+//no numeric props can have such high values, so assuming this to be date starting from 01/01/2000
+export const convertMillisToLocaleDateString = (timeInMillis) => {
+	return new Date(timeInMillis).toLocaleDateString('en-GB');
+}
+
 export default sharedService;

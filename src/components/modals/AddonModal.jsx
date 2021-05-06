@@ -11,6 +11,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
+import ProductRow from '../utillity/ProductRow';
 
 class AddonModal extends Component {
 	constructor(props) {
@@ -218,7 +219,6 @@ class AddonModal extends Component {
 	}
 
 	renderAddonRow(add) {
-		const fields = Object.keys(add);
 		return (
 			<div
 				key={add.Id}
@@ -230,34 +230,12 @@ class AddonModal extends Component {
 			>
 				<span>{add.Name}</span>
 				{this.addonFields.map((field) => {
-					const f = fields.find(
-						(fieldName) => fieldName.toLowerCase() === field.toLowerCase()
-					);
 					return (
-						<span key={add.Id + "-" + f}>
-							{(() => {
-								if (add.hasOwnProperty(f)) {
-									if (typeof add[f] === "boolean") {
-										let _val = add[f];
-										return (
-											<Icon
-												name={
-													_val ? "success" : "clear"
-												}
-												height="14"
-												width="14"
-												color={
-													_val ? "#4bca81" : "#d9675d"
-												}
-											/>
-										);
-									} else {
-										return add[f].toString();
-									}
-								} else {
-									return "-";
-								}
-							})()}
+						<span key={add.Id + "-" + field}>
+							<ProductRow
+								product={add}
+								fieldName={field}
+							/>
 						</span>
 					);
 				})}

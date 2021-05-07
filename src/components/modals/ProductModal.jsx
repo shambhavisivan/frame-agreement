@@ -88,7 +88,7 @@ class ProductModal extends Component {
 			let notAddedCommercialProducts = commercialProducts.filter(
 				cp => !this.addedProductsIds.includes(cp.Id)
 			);
-			this.setState({ notAddedCommercialProducts });
+			this.setState({ commercialProducts: notAddedCommercialProducts });
 		}
 	}
 

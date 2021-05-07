@@ -69,7 +69,7 @@ class OffersModal extends Component {
 			const notAddedOffers = offers.filter(
 				offer => !this.addedOfferIds.includes(offer.Id)
 			);
-			this.setState({ notAddedOffers });
+			this.setState({ offers: notAddedOffers });
 		}
 	}
 

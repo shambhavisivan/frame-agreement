@@ -217,6 +217,54 @@ class AddonModal extends Component {
 		});
 	}
 
+	renderAddonRow(add) {
+		const fields = Object.keys(add);
+		return (
+			<div
+				key={add.Id}
+				className={
+					"product-row" +
+					(this.state.selected[add.Id] ? " selected" : "")
+				}
+				onClick={() => this.selectAddon(add)}
+			>
+				<span>{add.Name}</span>
+				{this.addonFields.map((field) => {
+					const f = fields.find(
+						(fieldName) => fieldName.toLowerCase() === field.toLowerCase()
+					);
+					return (
+						<span key={add.Id + "-" + f}>
+							{(() => {
+								if (add.hasOwnProperty(f)) {
+									if (typeof add[f] === "boolean") {
+										let _val = add[f];
+										return (
+											<Icon
+												name={
+													_val ? "success" : "clear"
+												}
+												height="14"
+												width="14"
+												color={
+													_val ? "#4bca81" : "#d9675d"
+												}
+											/>
+										);
+									} else {
+										return add[f].toString();
+									}
+								} else {
+									return "-";
+								}
+							})()}
+						</span>
+					);
+				})}
+			</div>
+		);
+	}
+
 	render() {
 		return (
 			<Modal
@@ -384,42 +432,7 @@ class AddonModal extends Component {
 										}
 									})
 									.paginate(this.state.pagination.page, this.state.pagination.pageSize)
-									.map(add => {
-										return (
-											<div
-												key={add.Id}
-												className={'product-row' + (this.state.selected[add.Id] ? ' selected' : '')}
-												onClick={() => this.selectAddon(add)}
-											>
-												<span>{add.Name}</span>
-												{this.addonFields.map(f => {
-													return (
-														<span key={add.Id + '-' + f}>
-															{(() => {
-																if (add.hasOwnProperty(f)) {
-																	if (typeof add[f] === 'boolean') {
-																		let _val = add[f];
-																		return (
-																			<Icon
-																				name={_val ? 'success' : 'clear'}
-																				height="14"
-																				width="14"
-																				color={_val ? '#4bca81' : '#d9675d'}
-																			/>
-																		);
-																	} else {
-																		return add[f].toString();
-																	}
-																} else {
-																	return '-';
-																}
-															})()}
-														</span>
-													);
-												})}
-											</div>
-										);
-									})}
+									.map(add => this.renderAddonRow(add))}
 							</div>
 						</div>
 

@@ -1,5 +1,26 @@
 public with sharing class FrameAgreementActivation {
 
+	public static Object[] sliceList(Object[] inputList, Integer firstIndex, Integer lastIndex) {
+
+		Object[] outputList = inputList.clone();
+		Integer size = inputList.size();
+
+		firstIndex = firstIndex < 0 ? 0 : firstIndex;
+		lastIndex = lastIndex - firstIndex > size ? size-1 : lastIndex-1;
+		if (lastIndex < 0 || firstIndex > size) {
+			return new Object[0];
+		}
+
+		Object[] temp = new Object[Math.max(-1, lastIndex-firstIndex)+1];
+		for (Integer h = 0, i = firstIndex, j = lastIndex; i <= j; ) {
+			temp[h++] = inputList[i++];
+		}
+		outputList.clear();
+		outputList.addAll(temp);
+
+		return outputList;
+	}
+
 	public static Map<String, Id> createPricingRuleGroup(Id faId) {
 
 		Map<String, Id> returnMap = new Map<String, Id>();
@@ -50,7 +71,7 @@ public with sharing class FrameAgreementActivation {
 		]?.body;
 
 		if (body == null) {
-			throw new NullAttachmentException('Framework attachment does not exist.');
+			throw new CustomExceptions.NoAttachmentException('Framework attachment does not exist.');
 		}
 
 		String attachmentBody = body.toString();

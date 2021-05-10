@@ -5,6 +5,20 @@ private class API_1Test {
 		Account test_account = new Account(name = 'TestAcc');
 		insert test_account;
 
+		Fac_Settings__c facSettings = new Fac_Settings__c();
+		facSettings.active_status__c = 'Active';
+		facSettings.approved_status__c = 'Approved';
+		facSettings.closed_status__c = 'Replaced';
+		facSettings.draft_status__c = 'Draft';
+		facSettings.price_item_fields__c = 'cspmb__Contract_Term__c, cspmb__One_Off_Charge__c, cspmb__ONE_OFF_CHARGE__c';
+		facSettings.rcl_fields__c = 'cspmb__Currency_Code__c, cspmb__rate_card_line_code__c';
+		facSettings.requires_approval_status__c = 'Requires Approval';
+		facSettings.standalone_addon_fields__c = 'cspmb__Add_On_Price_Item_Code__c, cspmb__One_Off_Charge__c, cspmb__ONE_OFF_CHARGE__c';
+		facSettings.certificate_name__c = 'selfcert';
+		facSettings.dispatcher_service_url__c = 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com';
+		facSettings.decomposition_chunk_size__c = 5;
+		insert facSettings;
+
 		// commercial products
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
 			name = 'cp_1',
@@ -102,7 +116,7 @@ private class API_1Test {
 	}
 
 	@isTest
-	public static void activateFrameAgreementTest(){
+	public static void activateFrameAgreementTest() {
 		setupData();
 
 		csconta__Frame_Agreement__c fa_null_attachment = [
@@ -133,5 +147,47 @@ private class API_1Test {
 			from cspmb__Price_Item_Pricing_Rule_Association__c
 		];
 		System.assertEquals(4, cppras.size(), cppras);
+	}
+
+	@isTest
+	public static void activateFrameAgreementAsyncTest() {
+		setupData();
+
+		csconta__Frame_Agreement__c fa = [
+			select id, csconta__status__c, async_job__c
+			from csconta__Frame_Agreement__c
+			where csconta__agreement_name__c = 'FA2'
+		];
+
+		Map<String, Id> cprg = FrameAgreementActivation.createPricingRuleGroup(fa.id);
+		String data = FrameAgreementActivation.structureFAData(fa.id);
+		DecomposeAttachmentQueueable decompose = new DecomposeAttachmentQueueable(
+			data,
+			5,
+			cprg.get('prId'),
+			fa.id
+		);
+
+		Test.startTest();
+
+		// Max depth limit walkaround
+		decompose.execute(null);
+
+		String msg1 = API_1.getAsyncActivationStatus(fa.id);
+
+		Test.stopTest();
+
+		String msg2 = API_1.getAsyncActivationStatus(fa.id);
+		List<cspmb__Price_Item_Pricing_Rule_Association__c> cppras = [
+			select id, cspmb__one_off_adjustment__c, cspmb__recurring_adjustment__c
+			from cspmb__Price_Item_Pricing_Rule_Association__c
+		];
+
+		Map<String, Object> inProgressMsg = (Map<String, Object>) JSON.deserializeUntyped(msg1);
+		Map<String, Object> completedMsg = (Map<String, Object>) JSON.deserializeUntyped(msg2);
+
+		System.assertEquals(4, cppras.size(), cppras);
+		System.assertEquals('In Progress', inProgressMsg.get('status'));
+		System.assertEquals('Completed', completedMsg.get('status'));
 	}
 }

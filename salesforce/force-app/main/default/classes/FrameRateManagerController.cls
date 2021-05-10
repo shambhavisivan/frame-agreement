@@ -2108,6 +2108,7 @@ global with sharing class FrameRateManagerController {
 		Fac_Settings__c facSettings = getFacSetting();
 		clonedFa.csconta__Status__c = (String) facSettings.get('draft_status__c');
 		clonedFa.csconta__replaced_frame_agreement__c = faId;
+		clonedFa.async_job__c = null;
 
 		// String attachmentBody = getAttachmentBody(faId);
 		// saveAttachment(clonedFa.Id, attachmentBody);

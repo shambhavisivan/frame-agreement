@@ -2550,7 +2550,7 @@ const rootReducer = (state = initialState, action) => {
 			if (Array.isArray(data)) {
 				data.forEach(dataObject => negotiateData(dataObject, _fa._ui.offers, offers));
 			} else {
-				negotiateOfferData(data, _fa._ui.offers, offers);
+				negotiateData(data, _fa._ui.offers, offers);
 			}
 
 			return {

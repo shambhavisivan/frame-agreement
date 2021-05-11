@@ -143,25 +143,27 @@ async function negotiateData(data, active_fa, removed_group) {
 	);
 
 	// Generate map of original charges for product
-	let _originalProductValues = active_fa._ui.commercialProducts.reduce((acc, iter) => {
-		let _data = {};
+	let _originalProductValues = active_fa._ui.commercialProducts
+		.concat(active_fa._ui.offers)
+		.reduce((acc, iter) => {
+			let _data = {};
 
-		if (iter._charges.length) {
-			iter._charges.forEach(c => {
-				_data[c._type] = c[c._type];
-			});
-		} else {
-			if (iter.hasOwnProperty('cspmb__Recurring_Charge__c')) {
-				_data.recurring = +iter.cspmb__Recurring_Charge__c;
+			if (iter._charges.length) {
+				iter._charges.forEach((c) => {
+					_data[c._type] = c[c._type];
+				});
+			} else {
+				if (iter.hasOwnProperty("cspmb__Recurring_Charge__c")) {
+					_data.recurring = +iter.cspmb__Recurring_Charge__c;
+				}
+
+				if (iter.hasOwnProperty("cspmb__One_Off_Charge__c")) {
+					_data.oneOff = +iter.cspmb__One_Off_Charge__c;
+				}
 			}
 
-			if (iter.hasOwnProperty('cspmb__One_Off_Charge__c')) {
-				_data.oneOff = +iter.cspmb__One_Off_Charge__c;
-			}
-		}
-
-		return { ...acc, [iter.Id]: _data };
-	}, {});
+			return { ...acc, [iter.Id]: _data };
+		}, {});
 
 	data.forEach(cp => {
 		if (rcl_codes.length && cp._rateCards?.length) {
@@ -323,7 +325,7 @@ const negotiateDiscountCodesForItems = async (data, removed_group, type = COMMER
 	}
 
 	// Will hold negotiation API compliant structure
-	const _negoArray = negotiateData(data || cpsOrOffers, active_fa, removed_group);
+	const _negoArray = await negotiateData(data || cpsOrOffers, active_fa, removed_group);
 	if (type === COMMERCIAL_PRODUCT) {
 		await window.FAM.api.negotiate(active_fa.Id, _negoArray);
 	} else if (type === OFFER) {

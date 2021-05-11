@@ -531,13 +531,15 @@ export const sortDynamicGroupsBySequence = (aDynamicGroup, bDynamicGroup) => {
 	) {
 		return 0;
 	} else if (
-		!aDynamicGroup.csfamext__sequence__c ||
-		isNaN(aDynamicGroup.csfamext__sequence__c)
+		isNaN(aDynamicGroup.csfamext__sequence__c) ||
+		(aDynamicGroup.csfamext__sequence__c !== 0 &&
+			!aDynamicGroup.csfamext__sequence__c)
 	) {
 		return 1;
 	} else if (
-		!bDynamicGroup.csfamext__sequence__c ||
-		isNaN(bDynamicGroup.csfamext__sequence__c)
+		isNaN(bDynamicGroup.csfamext__sequence__c) ||
+		(bDynamicGroup.csfamext__sequence__c !== 0 &&
+			!bDynamicGroup.csfamext__sequence__c)
 	) {
 		return -1;
 	}

@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useFrameAgreements } from '../hooks/use-frame-agreements';
@@ -16,12 +16,17 @@ import {
 	CSDropdown,
 	CSButton,
 	CSInputSearch,
-	CSTooltip
+	CSTooltip,
+	CSModal,
+	CSModalHeader,
+	CSModalBody,
+	CSModalFooter
 } from '@cloudsense/cs-ui-components';
 
 export function FrameAgreementList(): ReactElement {
 	const { url } = useRouteMatch();
 	const { agreements = [], status } = useFrameAgreements();
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	const linkList = agreements.map((agreement) => {
 		return (
@@ -125,8 +130,61 @@ export function FrameAgreementList(): ReactElement {
 									<CSButton label="Edit" iconName="edit" />
 									<CSButton label="Clone" iconName="copy" />
 									<CSButton label="Delete" iconName="delete" />
-									<CSButton label="Accounts" iconName="people" />
+									<CSButton
+										label="Accounts"
+										onClick={(): void => setModalOpen(true)}
+										iconName="people"
+									/>
 								</CSDropdown>
+								<CSModal
+									visible={modalOpen}
+									onClose={(): void => setModalOpen(false)}
+									outerClickClose
+									size="xlarge"
+								>
+									<CSModalHeader title="Account Associations">
+										<div className="account-details-wrapper">
+											<span>FA-178923</span>
+											<span>Test accout</span>
+										</div>
+									</CSModalHeader>
+									<CSModalBody padding="2rem 1rem 0.75rem 1rem">
+										<div className="accounts-wrapper">
+											<CSInputSearch
+												label="Accounts"
+												placeholder="Accounts"
+											/>
+										</div>
+										<div className="buttons-wrapper">
+											<CSButton
+												label="hidden"
+												labelHidden
+												iconName="right"
+												btnType="transparent"
+												btnStyle="brand"
+												size="small"
+											/>
+											<CSButton
+												label="hidden"
+												labelHidden
+												iconName="left"
+												btnType="transparent"
+												btnStyle="brand"
+												size="small"
+											/>
+										</div>
+										<div className="account-associations-wrapper">
+											<CSInputSearch label="Account Associations" />
+										</div>
+									</CSModalBody>
+									<CSModalFooter>
+										<CSButton
+											label="Cancel"
+											onClick={(): void => setModalOpen(false)}
+										/>
+										<CSButton label="Save" btnStyle="brand" />
+									</CSModalFooter>
+								</CSModal>
 							</CSTableCell>
 							<CSTableCell>{linkList[0]}</CSTableCell>
 							<CSTableCell text="23.09.2020" />

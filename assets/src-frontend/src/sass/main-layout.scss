@@ -183,3 +183,57 @@
         }
     }
 }
+
+.cs-modal-wrapper {
+    .account-details-wrapper {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        top: 0.75rem;
+
+        span {
+            font-size: 1rem;
+
+            + span {
+                font-size: 0.6875rem;
+            }
+        }
+    }
+
+    .cs-modal .cs-modal-body {
+        display: flex;
+    }
+
+    .buttons-wrapper {
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem 0.25rem;
+
+        .cs-btn:first-child  {
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    .accounts-wrapper,
+    .account-associations-wrapper {
+        flex: 1;
+        height: 65vh;
+        box-shadow: 0 2px 4px var(--modal-accounts-wrapper);
+        border-radius: 0.25rem;
+        @include css4 {
+            border: 1px solid cvar(--modal-search-wrapper-br);
+        }
+
+        .cs-input-search-wrapper {
+            padding: 0 1rem 1rem 1rem;
+            @include sbg(--modal-search-bg);
+
+            .cs-label-wrapper {
+                position: relative;
+                bottom: 1.5rem;
+                right: 0.875rem;
+            }
+        }
+    }
+}

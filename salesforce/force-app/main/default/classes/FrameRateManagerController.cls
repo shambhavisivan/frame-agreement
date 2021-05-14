@@ -2364,50 +2364,7 @@ global with sharing class FrameRateManagerController {
 	*/
 	@RemoteAction
 	public static String undoDecomposition(Id prId) {
-
-		String retString = 'Success';
-
-		// delete 10000 pipras with prId from parameter (ment do be done recursively)
-		List <cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = [
-			select Id
-			from cspmb__Price_Item_Pricing_Rule_Association__c
-			where cspmb__pricing_rule__c = :prId
-			limit 10000
-		];
-
-		if (!pipraList.isEmpty()) {
-			delete pipraList;
-		}
-
-		// Delete pricing rule and pricing rule group with their association
-		cspmb__Pricing_Rule_Group_Rule_Association__c prgra = [
-			select Id, cspmb__pricing_rule_group__c, cspmb__pricing_rule__c
-			from cspmb__Pricing_Rule_Group_Rule_Association__c
-			where cspmb__pricing_rule__c = :prId
-			limit 1
-		];
-
-		if (prgra != null) {
-			cspmb__Pricing_Rule_Group__c prg = [
-				select Id
-				from cspmb__Pricing_Rule_Group__c
-				where Id = :prgra.cspmb__pricing_rule_group__c
-				limit 1
-			];
-			cspmb__pricing_rule__c pr = [
-				select Id
-				from cspmb__pricing_rule__c
-				where Id = :prgra.cspmb__pricing_rule__c
-				limit 1
-			];
-
-			delete prgra;
-			delete prg;
-			delete pr;
-		}
-
-
-		return retString;
+		return API_1.undoActivation(prId);
 	}
 
 	@RemoteAction

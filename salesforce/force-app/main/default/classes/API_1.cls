@@ -3,7 +3,7 @@ global with sharing class API_1 {
 		return FAMDelta.getDelta(fa1, fa2);
 	}
 
-	global static String activateFrameAgreement(String faId, Boolean isAsync) {
+	global static String activateFrameAgreement(Id faId, Boolean isAsync) {
 		Map<String, String> responseMessage = new Map<String, String>();
 		responseMessage.put('status', 'Success');
 
@@ -30,6 +30,7 @@ global with sharing class API_1 {
 			} catch (Exception e) {
 				responseMessage.put('status', 'Error');
 				responseMessage.put('errorMessage', e.getMessage());
+				API_1.undoActivation(cprg.get('prId'));
 				return Json.serialize(responseMessage);
 			}
 
@@ -43,6 +44,7 @@ global with sharing class API_1 {
 			if (responseMessage.get('status') != 'Success') {
 				responseMessage.put('errorMessage', responseMessage.get('status'));
 				responseMessage.put('status', 'Error');
+				API_1.undoActivation(cprg.get('prId'));
 			}
 		} else {
 			Decimal chunkSize = [
@@ -66,28 +68,28 @@ global with sharing class API_1 {
 			} catch (Exception e) {
 				responseMessage.put('errorMessage', e.getTypeName() + ': ' + e.getMessage());
 				responseMessage.put('status', 'Error');
+				API_1.undoActivation(cprg.get('prId'));
 			}
 		}
 		return Json.serialize(responseMessage);
 	}
 
 	// returns In Progres, Error or Completed
-	global static String getAsyncActivationStatus(String faId) {
-		Map<String, String> responseMessage = new Map<String, String>();
-		responseMessage.put('status', 'In Progress');
-		responseMessage.put('message', 'FA activation is in progress.');
+	global static String getAsyncActivationStatus(Id faId) {
+		Map<String, Object> responseMessage = new Map<String, Object>();
 
-		csconta__Frame_Agreement__c fa = [
+		List<csconta__Frame_Agreement__c> fAgreements = [
 			select csconta__status__c, async_job__c
 			from csconta__Frame_Agreement__c
 			where id = :faId
 		];
 
-		if (fa == null) {
+		if (fAgreements?.isEmpty()) {
 			responseMessage.put('status', 'Error');
 			responseMessage.put('message', 'No Frame Agreement.');
 			return Json.serialize(responseMessage);
 		}
+		csconta__Frame_Agreement__c fa = fAgreements.get(0);
 
 		if (fa.csconta__status__c == 'Active') {
 			responseMessage.put('status', 'Completed');
@@ -102,34 +104,83 @@ global with sharing class API_1 {
 			return Json.serialize(responseMessage);
 		}
 
-		AsyncapexJob aJob = [
-			select id, apexClassId, status, extendedStatus
-			from AsyncapexJob
-			where id = :jobId
+		String jobMsg = FrameAgreementActivation.checkAsyncJob(jobID, 'DecomposeAttachmentQueueable');
+		responseMessage = (Map<String, Object>) JSON.deserializeUntyped(jobMsg);
+		if (responseMessage.get('status') == 'In Progress') {
+			responseMessage.put('message', 'FA activation is in progress.');
+		} else if (responseMessage.get('status') == 'Error') {
+			cspmb__Pricing_Rule_Group_Rule_Association__c prgra = [
+				select cspmb__pricing_rule__c
+				from cspmb__Pricing_Rule_Group_Rule_Association__c
+				where cspmb__pricing_rule_group__c in (
+					select id
+					from cspmb__Pricing_Rule_Group__c
+					where csconta__Frame_Agreement__c = :faId)
+			];
+			API_1.undoActivation(prgra.cspmb__pricing_rule__c);
+		}
+		return Json.serialize(responseMessage);
+	}
+
+	global static String undoActivation(Id prId) {
+		List<cspmb__Pricing_Rule_Group__c> prgList = [
+			select id, csconta__Frame_Agreement__c
+			from cspmb__Pricing_Rule_Group__c
+			where id in (
+				select cspmb__pricing_rule_group__c
+				from cspmb__Pricing_Rule_Group_Rule_Association__c
+				where cspmb__pricing_rule__c = :prId
+			)
+		];
+		if (prgList == null || prgList.isEmpty()) {
+			return 'Error: Pricing Rule Group not defined.';
+		}
+		Id faId = prgList.get(0).csconta__Frame_Agreement__c;
+
+		List<cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = [
+			select id
+			from cspmb__Price_Item_Pricing_Rule_Association__c
+			where cspmb__pricing_rule__c = :prId
+			limit 1001
+		];
+		if (pipraList.size() > 1000) {
+			UndoActivationQueueable undo = new UndoActivationQueueable(prId, faId);
+			System.enqueueJob(undo);
+			return 'In progress';
+		} else {
+			FrameAgreementActivation.pipraRemoval(prId);
+			return FrameAgreementActivation.prRemoval(prId);
+		}
+	}
+
+	global static String getAsyncUndoActivationStatus(Id faId) {
+		Map<String, Object> responseMessage = new Map<String, String>();
+
+		List<csconta__Frame_Agreement__c> fAgreements = [
+			select csconta__status__c, async_job__c
+			from csconta__Frame_Agreement__c
+			where id = :faId
 		];
 
-		// if async activation was invoked more than 7 days, job is no longer in DB
-		if (aJob == null) {
+		if (fAgreements?.isEmpty()) {
+			responseMessage.put('status', 'Error');
+			responseMessage.put('message', 'No Frame Agreement.');
+			return Json.serialize(responseMessage);
+		}
+
+		Id jobId = fAgreements.get(0).async_job__c;
+		if (jobId == null) {
 			responseMessage.put('status', 'Error');
 			responseMessage.put('message', 'Job id not defined.');
 			return Json.serialize(responseMessage);
 		}
-		ApexClass aClass = [
-			select id, name
-			from ApexClass
-			where id = :aJob.apexClassId
-		];
-		system.debug(aClass);
 
-		if (aClass.name == 'DecomposeAttachmentQueueable') {
-			if (aJob.status == 'Failed' || aJob.status == 'Aborted') {
-				responseMessage.put('status', 'Error');
-				responseMessage.put('message', aJob.extendedStatus);
-			}
-		} else {
-			responseMessage.put('status', 'Error');
-			responseMessage.put('message', 'Wrong job id');
+		String jobMsg = FrameAgreementActivation.checkAsyncJob(jobID, 'UndoActivationQueueable');
+		responseMessage = (Map<String, Object>) JSON.deserializeUntyped(jobMsg);
+		if (responseMessage.get('status') == 'In Progress') {
+			responseMessage.put('message', 'Activation undo is in progress.');
 		}
+
 		return Json.serialize(responseMessage);
 	}
 }

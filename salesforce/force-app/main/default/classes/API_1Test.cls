@@ -190,4 +190,44 @@ private class API_1Test {
 		System.assertEquals('In Progress', inProgressMsg.get('status'));
 		System.assertEquals('Completed', completedMsg.get('status'));
 	}
+
+	@isTest
+	public static void undoFAActivationTest() {
+		setupData();
+
+		csconta__Frame_Agreement__c fa = [
+			select id
+			from csconta__Frame_Agreement__c
+			where csconta__agreement_name__c = 'FA2'
+		];
+		API_1.activateFrameAgreement(fa.id, false);
+
+		cspmb__Pricing_Rule_Group_Rule_Association__c prgra = [
+			select cspmb__pricing_rule__c
+			from cspmb__Pricing_Rule_Group_Rule_Association__c
+			where cspmb__pricing_rule_group__c in (
+				select id
+				from cspmb__Pricing_Rule_Group__c
+				where csconta__Frame_Agreement__c = :fa.id
+			)
+		];
+
+		Test.startTest();
+
+		String msg = API_1.undoActivation(prgra.cspmb__pricing_rule__c);
+		String activationStatusMsg = API_1.getAsyncActivationStatus(fa.id);
+
+		Test.stopTest();
+
+		Map<String, Object> activationStatus = (Map<String, Object>)JSON.deserializeUntyped(activationStatusMsg);
+
+		List<cspmb__Price_Item_Pricing_Rule_Association__c> cppras = [
+			select id, cspmb__one_off_adjustment__c, cspmb__recurring_adjustment__c
+			from cspmb__Price_Item_Pricing_Rule_Association__c
+		];
+
+		System.assertEquals(0, cppras.size());
+		System.assertEquals('Success', msg);
+		System.assertEquals('Completed', activationStatus.get('status'));
+	}
 }

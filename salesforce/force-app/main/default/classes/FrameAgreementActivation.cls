@@ -62,7 +62,7 @@ public with sharing class FrameAgreementActivation {
 		return returnMap;
 	}
 
-	public static String structureFAData(Id faId){
+	public static String structureFAData(Id faId) {
 
 		Blob body = [
 			select id, parentId, body
@@ -242,7 +242,6 @@ public with sharing class FrameAgreementActivation {
 	}
 
 	public static String updateFAStatus(Id faId) {
-
 		String retString = 'Success';
 
 		try {
@@ -288,5 +287,96 @@ public with sharing class FrameAgreementActivation {
 		}
 
 		return retString;
+	}
+
+	public static void pipraRemoval(Id prId) {
+		List <cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = [
+			select id
+			from cspmb__Price_Item_Pricing_Rule_Association__c
+			where cspmb__pricing_rule__c = :prId
+			limit 1000
+		];
+		if (!pipraList.isEmpty()) {
+			delete pipraList;
+		}
+	}
+
+	public static String prRemoval(Id prId) {
+		List<cspmb__Pricing_Rule_Group_Rule_Association__c> prgraList = [
+				select id, cspmb__pricing_rule_group__c, cspmb__pricing_rule__c
+				from cspmb__Pricing_Rule_Group_Rule_Association__c
+				where cspmb__pricing_rule__c = :prId
+		];
+
+		Id faId;
+		if (prgraList == null || prgraList.isEmpty()) {
+			return 'Error: No Pricing Rule Group Rule Associtation';
+		} else {
+			cspmb__Pricing_Rule_Group__c prg = [
+				select id, csconta__frame_agreement__c
+				from cspmb__Pricing_Rule_Group__c
+				where id = :prgraList.get(0).cspmb__pricing_rule_group__c
+			];
+			cspmb__pricing_rule__c pr = [
+				select id
+				from cspmb__pricing_rule__c
+				where id = :prgraList.get(0).cspmb__pricing_rule__c
+			];
+
+			faId = prg.csconta__frame_agreement__c;
+			delete prgraList;
+			delete prg;
+			delete pr;
+		}
+
+		csconta__Frame_Agreement__c fa = [
+			select id, async_job__c, csconta__pricing_rule_group__c, csconta__status__c
+			from csconta__Frame_Agreement__c
+			where id = :faId
+		];
+		fa.async_job__c = null;
+		update fa;
+
+		return 'Success';
+	}
+
+	public static String checkAsyncJob(Id jobID, String className) {
+		Map<String, String> responseMessage = new Map<String, String>();
+		responseMessage.put('status', 'In Progress');
+
+		List<AsyncapexJob> aJobs = [
+			select id, apexClassId, status, extendedStatus
+			from AsyncapexJob
+			where id = :jobId
+		];
+		// if async activation was invoked more than 7 days, job is no longer in DB
+		if (aJobs == null || aJobs.isEmpty()) {
+			responseMessage.put('status', 'Error');
+			responseMessage.put('message', 'Job id not defined.');
+			return Json.serialize(responseMessage);
+		}
+		AsyncapexJob aJob = aJobs.get(0);
+
+		List<ApexClass> aClasses = [
+			select id, name
+			from ApexClass
+			where id = :aJob.apexClassId
+		];
+		if (aClasses == null || aClasses.isEmpty()) {
+			responseMessage.put('status', 'Error');
+			responseMessage.put('message', 'Apex Class not defined');
+			return Json.serialize(responseMessage);
+		}
+
+		if (aClasses.get(0).name == className) {
+			if (aJob.status == 'Failed' || aJob.status == 'Aborted') {
+				responseMessage.put('status', 'Error');
+				responseMessage.put('message', aJob.extendedStatus);
+			}
+		} else {
+			responseMessage.put('status', 'Error');
+			responseMessage.put('message', 'Wrong job id');
+		}
+		return Json.serialize(responseMessage);
 	}
 }

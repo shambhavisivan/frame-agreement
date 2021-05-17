@@ -19,20 +19,20 @@ class OffersModal extends Component {
 		this.togglePanel = this.togglePanel.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.addOffers = this.addOffers.bind(this);
-
+		this.resetFilter = this.resetFilter.bind(this);
 
 		let _offers = this.props.offers;
 
 		if (this.props.offerFilter) {
-			_offers = this.props.offers.filter(cp =>
-				this.props.offerFilter.has(cp.Id)
+			_offers = this.props.offers.filter(offer =>
+				this.props.offerFilter.has(offer.Id)
 			);
 		}
 
-		this.addedOfferIds = this.props.addedOffers.map(cp => cp.Id);
+		this.addedOfferIds = this.props.addedOffers.map(offer => offer.Id);
 
 		this.notAddedOffers = _offers.filter(
-			cp => !this.addedOfferIds.includes(cp.Id)
+			offer => !this.addedOfferIds.includes(offer.Id)
 		);
 
 		this.state = {
@@ -60,7 +60,7 @@ class OffersModal extends Component {
 	}
 
 	async loadOffers(categoryId) {
-		if (this.categoryId !== categoryId) {
+		if (categoryId && this.categoryId !== categoryId) {
 			this.categoryId = categoryId;
 			const linkedOffers = await queryOffersInCategory(categoryId);
 			const linkedOfferIds = linkedOffers.map(offer => offer.id);
@@ -90,18 +90,18 @@ class OffersModal extends Component {
 	}
 
 	getOffersCount() {
-		let cpSize = this.state.offers.length;
+		let offerSize = this.state.offers.length;
 
 		if (this.state.offerFilter) {
-			cpSize = this.state.offers.filter(cp => {
+			offerSize = this.state.offers.filter(offer => {
 				if (this.state.offerFilter && this.state.offerFilter.length >= 2) {
-					return cp.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
+					return offer.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
 				} else {
 					return true;
 				}
 			}).length;
 		}
-		return cpSize;
+		return offerSize;
 	}
 
 	toggleExpanded() {
@@ -136,6 +136,10 @@ class OffersModal extends Component {
 			actionTaken: false,
 			selected: {}
 		});
+	}
+
+	resetFilter() {
+		this.setState({ offers: this.notAddedOffers });
 	}
 
 	render() {
@@ -213,6 +217,14 @@ class OffersModal extends Component {
 									</ul>
 								</div>
 							</div>
+						</div>
+						<div className="fa-modal-button-group">
+							<button
+								onClick={this.resetFilter}
+								className="fa-button fa-button--default"
+							>
+								{window.SF.labels.modal_categorization_btn_clear}
+							</button>
 						</div>
 					</div>
 

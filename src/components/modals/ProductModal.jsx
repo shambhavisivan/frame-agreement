@@ -17,6 +17,7 @@ class ProductModal extends Component {
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.addProducts = this.addProducts.bind(this);
 		this.loadCommercialProducts = this.loadCommercialProducts.bind(this);
+		this.resetFilter = this.resetFilter.bind(this);
 
 		this.categoryId = null;
 
@@ -74,7 +75,7 @@ class ProductModal extends Component {
 
 	async loadCommercialProducts(categoryId) {
 		// filter cps for category
-		if (this.categoryId !== categoryId) {
+		if (categoryId && this.categoryId !== categoryId) {
 			this.categoryId = categoryId;
 			const linkedProducts = await queryProductsInCategory(categoryId);
 			const linkedProductIds = linkedProducts.map(cp => cp.id);
@@ -82,7 +83,7 @@ class ProductModal extends Component {
 			const commercialProducts = await window.SF.invokeAction("getCommercialProducts", [
 				linkedProductIds,
 			]);
-			let notAddedCommercialProducts = commercialProducts.filter(
+			const notAddedCommercialProducts = commercialProducts.filter(
 				cp => !this.addedProductsIds.includes(cp.Id)
 			);
 			this.setState({ commercialProducts: notAddedCommercialProducts });
@@ -138,6 +139,10 @@ class ProductModal extends Component {
 			actionTaken: false,
 			selected: {}
 		});
+	}
+
+	resetFilter() {
+		this.setState({ commercialProducts: this.notAddedCommercialProducts });
 	}
 
 	render() {
@@ -215,6 +220,14 @@ class ProductModal extends Component {
 									</ul>
 								</div>
 							</div>
+						</div>
+						<div className="fa-modal-button-group">
+							<button
+								onClick={this.resetFilter}
+								className="fa-button fa-button--default"
+							>
+								{window.SF.labels.modal_categorization_btn_clear}
+							</button>
 						</div>
 					</div>
 

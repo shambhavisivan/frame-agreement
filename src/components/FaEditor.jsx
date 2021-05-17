@@ -706,7 +706,7 @@ export class FaEditor extends Component {
 
 			this._setState(
 				{
-					selectedProducts: {}
+					selectedOffers: {}
 				},
 				() => {
 					publish(

@@ -117,8 +117,7 @@ async function negotiateData(data, active_fa, removed_group) {
 
 	if (!discountCodes.length) {
 		// WE'RE DONE HERE
-		Promise.resolve(data);
-		return;
+		return _negoArray;
 	}
 
 	discountCodes.sort(sortDynamicGroupsBySequence);
@@ -321,11 +320,13 @@ const negotiateDiscountCodesForItems = async (data, removed_group, type = COMMER
 				? active_fa._ui.commercialProducts.filter((cp) =>
 						data.includes(cp.Id)
 				  )
-				: active_fa._ui.offers;
+				: active_fa._ui.offers.filter((offer) =>
+						data.includes(offer.Id)
+				);
 	}
 
 	// Will hold negotiation API compliant structure
-	const _negoArray = await negotiateData(data || cpsOrOffers, active_fa, removed_group);
+	const _negoArray = await negotiateData(cpsOrOffers, active_fa, removed_group);
 	if (type === COMMERCIAL_PRODUCT) {
 		await window.FAM.api.negotiate(active_fa.Id, _negoArray);
 	} else if (type === OFFER) {

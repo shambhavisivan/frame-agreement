@@ -491,8 +491,7 @@ global with sharing class FrameRateManagerController {
 
 	}
 
-	@TestVisible private static List<String> getFieldsFromJSONData() {
-
+	public static List<String> getFieldsFromJSONData() {
 		csutil__JSON_Data__c json_data = getHeaderData();
 		String data;
 

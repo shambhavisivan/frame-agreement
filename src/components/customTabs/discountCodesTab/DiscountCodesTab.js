@@ -11,6 +11,7 @@ import {
 	truncateCPField,
 	isDiscountAllowed,
 	sortDynamicGroupsBySequence,
+	hasValidExpression,
 } from '../../../utils/shared-service';
 
 import Icon from '../../utillity/Icon';
@@ -442,7 +443,12 @@ class DiscountCodesTab extends React.Component {
 				}
 
 				if (!errorFlag) {
-					response = response.filter(g => g.csfamext__group_type__c === 'Discount Code');
+					response = response.filter(g => {
+						return (
+							g.csfamext__group_type__c === "Discount Code" &&
+							hasValidExpression(g)
+						);
+					});
 
 					let _legacyCheck = false;
 

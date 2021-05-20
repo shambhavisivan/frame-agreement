@@ -551,4 +551,18 @@ export const convertMillisToLocaleDateString = (timeInMillis) => {
 	return new Date(timeInMillis).toLocaleDateString('en-GB');
 }
 
+export const hasValidExpression = (data) => {
+	if (!data.csfamext__expression__c)  {
+		return false;
+	}
+
+	if (isJson(data.csfamext__expression__c)) {
+		const parsedExpression = JSON.parse(data.csfamext__expression__c);
+
+		return Object.keys(parsedExpression).some(
+			(key) => parsedExpression[key]
+		);
+	}
+}
+
 export default sharedService;

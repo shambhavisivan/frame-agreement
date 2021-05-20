@@ -11,6 +11,7 @@ import {
 	makeId,
 	truncateCPField,
 	sortDynamicGroupsBySequence,
+	hasValidExpression,
 } from '../../../utils/shared-service';
 import LogicForm from '../utility/LogicForm';
 import Icon from '../../utillity/Icon';
@@ -67,7 +68,11 @@ class DynamicGroupTab extends React.Component {
 				}
 
 				if (!errorFlag) {
-					response = response.filter(g => g.csfamext__group_type__c === 'Dynamic Group');
+					response = response.filter(
+						(g) =>
+							g.csfamext__group_type__c === "Dynamic Group" &&
+							hasValidExpression(g)
+					);
 					response = response.map(g => this.processGroup_old(g));
 					return response;
 				}

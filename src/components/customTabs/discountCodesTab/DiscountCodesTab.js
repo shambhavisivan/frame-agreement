@@ -749,6 +749,7 @@ class DiscountCodesTab extends React.Component {
 				this.updateSelectListGroups();
 				this.updateCustomData().then(response => {
 					negotiateDiscountCodesForItems(null, removed_group);
+					negotiateDiscountCodesForItems(null, removed_group, OFFER);
 				});
 			}
 		);

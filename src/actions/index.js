@@ -175,8 +175,29 @@ export function refreshFrameAgreement(faId) {
 		return new Promise((resolve, reject) => {
 			window.SF.invokeAction('getFrameAgreement', [faId]).then(response => {
 				dispatch(_refreshFrameAgreement(response));
-				resolve(response);
-				return response;
+
+				return window.SF.invokeAction('getAttachmentBody', [faId]).then(response => {
+					try {
+						response = JSON.parse(atob(response));
+						// In case of manual malicious modifications
+						response = response || {};
+					} catch (e) {
+						// No attachment
+						response = {};
+					}
+
+					if (!response.hasOwnProperty('custom')) {
+						let _attachment = {};
+						_attachment.products = JSON.parse(JSON.stringify(response));
+						_attachment.custom = '';
+						response = _attachment;
+					}
+
+					dispatch(recieveGetAttachment(faId, response));
+					dispatch(validateFrameAgreement(faId));
+					resolve(response);
+					return response;
+				});
 			});
 		});
 	};

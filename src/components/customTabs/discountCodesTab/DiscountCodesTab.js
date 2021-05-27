@@ -713,7 +713,10 @@ class DiscountCodesTab extends React.Component {
 		);
 	}
 	async onApplyCodes() {
-		let res = await window.FAM.publish('DCE_onBeforeApplyCodes', Object.values(this.state.added));
+		let res = await window.FAM.publish(
+			"DCE_onBeforeApplyCodes",
+			Object.values(this.state.added)
+		);
 
 		if (res === null) {
 			return;
@@ -721,15 +724,24 @@ class DiscountCodesTab extends React.Component {
 
 		await this.updateCustomData();
 
-		Promise.all([
-			negotiateDiscountCodesForItems(),
-			negotiateDiscountCodesForItems(null, null, OFFER)
-		]).then(negotiatedResults => {
-			if (negotiatedResults.some(result => result)) {
-				window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
-				window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
-			}
-		});
+		const cpResult = await negotiateDiscountCodesForItems();
+		const offerResult = await negotiateDiscountCodesForItems(
+			null,
+			null,
+			OFFER
+		);
+
+		if (cpResult || offerResult) {
+			window.FAM.api.toast(
+				"info",
+				window.SF.labels.famext_toast_dc_applied,
+				""
+			);
+			window.FAM.publish(
+				"DCE_onApplyCodes",
+				Object.values(this.state.added)
+			);
+		}
 	}
 
 	async onRemoveGroup(removed_group) {

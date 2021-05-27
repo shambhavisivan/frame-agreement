@@ -192,8 +192,8 @@ class FaList extends Component {
 					customUI: ({ onClose }) => {
 						return (
 							<ConfirmationModal
-								title={window.SF.labels.alert_deleteProducts_title}
-								message={window.SF.labels.alert_deleteProducts_message}
+								title={window.SF.labels.alert_deleteAgreements_title}
+								message={window.SF.labels.alert_deleteAgreements_message}
 								onCancel={onClose}
 								onConfirm={() => {
 									this.props.deleteFrameAgreement(faId);

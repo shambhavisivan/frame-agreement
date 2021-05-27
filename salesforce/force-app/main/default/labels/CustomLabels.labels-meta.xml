@@ -103,14 +103,14 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>alert_deleteAgreements_message</shortDescription>
-        <value>Are you sure you want to delete selected agreements?</value>
+        <value>Are you sure you want to delete selected agreement(s)?</value>
     </labels>
     <labels>
         <fullName>alert_deleteAgreements_title</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>alert_deleteAgreements_title</shortDescription>
-        <value>Delete agreements</value>
+        <value>Delete agreement(s)</value>
     </labels>
     <labels>
         <fullName>alert_deleteProducts_btn_action</fullName>

@@ -106,7 +106,12 @@ export function FrameAgreementList(): ReactElement {
 							<CSChip text="7" variant="neutral" />
 						</CSTab>
 					</CSTabGroup>
-					<CSInputSearch label="Type here" labelHidden placeholder="Quick search" />
+					<CSInputSearch
+						label="Type here"
+						labelHidden
+						placeholder="Quick search"
+						width="13rem"
+					/>
 				</div>
 			</div>
 			<div className="table-wrapper">
@@ -211,6 +216,8 @@ export function FrameAgreementList(): ReactElement {
 							<CSTableCell text="Text" />
 							<CSTableCell>
 								<CSDropdown
+									align="right"
+									mode="custom"
 									position="top"
 									iconName="change_record_type"
 									padding="0"

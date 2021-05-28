@@ -1,239 +1,289 @@
 
 .cs-app-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
 }
 
 .tabs-section-wrapper {
-    @include sbg(--tabs-wrapper-bg);
-    @include css4 {
-        border: 1px solid cvar(--tabs-wrapper-br);
-        border-left: none;
-        border-right: none;
-    }
+	@include sbg(--tabs-wrapper-bg);
+	@include css4 {
+		border: 1px solid cvar(--tabs-wrapper-br);
+		border-left: none;
+		border-right: none;
+	}
 
 	.tabs-search-wrapper {
 		display: flex;
-        align-items: center;
+		align-items: center;
 		margin: 0 auto;
 		max-width: 1200px;
+
+		.cs-input-search-wrapper {
+			margin-right: 0.75rem;
+		}
 	}
 
-    .cs-tab-group {
-        border: none;
+	.cs-tab-group {
+		border: none;
+		padding: 0 0.75rem;
 
-        nav {
-            @include sbg(--tabs-nav-bg);
-        }
+		nav {
+			@include sbg(--tabs-nav-bg);
+		}
 
-        .cs-chip {
-            margin-left: 0.5rem;
-        }
+		.cs-chip {
+			margin-left: 0.5rem;
+		}
 
-        .cs-tab-active .cs-tab {
-            font-weight: $font-weight-bold;
-        }
+		.cs-tab-active .cs-tab {
+			font-weight: $font-weight-bold;
+		}
 
-        .cs-tab {
-            justify-content: space-between;
+		.cs-tab {
+			justify-content: space-between;
 
-            .cs-icon {
-                display: none;
-            }
-        }
-    }
+			.cs-icon {
+				display: none;
+			}
+		}
+	}
 }
 
 .cs-app-wrapper .cs-main-header {
-    box-shadow: none;
+	box-shadow: none;
 }
 
 .table-wrapper {
-    flex: 1 1 0;
-    overflow-y: auto;
-    @include sbg(--table-bg);
+	overflow-y: auto;
+	flex: 1 1 0;
+	@include sbg(--table-bg);
 
-    .cs-table {
-        border: none;
-        margin: 0 auto;
-        max-width: 1200px;
+	.cs-table {
+		padding: 0 0.75rem;
+		border: none;
+		margin: 0 auto;
+		max-width: 1200px;
+		overflow-y: visible;
 
-        .cs-table-cell {
-            border: none;
-			padding: 1.25rem 0.5rem;
+		.cs-table-cell {
+			border: none;
+			padding: 1rem 0.5rem;
 
-            span {
-                display: flex;
-            }
-        }
+			span {
+				display: flex;
+				align-items: center;
+			}
+		}
 
-        .cs-table-header {
-            .cs-table-cell {
-                display: flex;
-                @include sbg(--table-header-bg);
+		.cs-table-header {
+			top: 0;
+			position: sticky;
+			margin: 0 -2px;
+			.cs-table-cell {
+				display: flex;
+				@include sbg(--table-header-bg);
 
-                .cs-table-cell-text {
-                    font-weight: $font-weight-normal;
-                    @include sc(--table-header-c);
-                }
-            }
-        }
-    }
+				.cs-table-cell-text {
+					font-weight: $font-weight-normal;
+					@include sc(--table-header-c);
+				}
+			}
+		}
+	}
 
-    .cs-table-row {
-        margin: 0.2175rem 0;
-        box-shadow: 0 1px 2px var(--table-row-shadow);
+	.cs-table-row {
+		margin: 0.2175rem 0;
+		box-shadow: 0 1px 2px var(--table-row-shadow);
 
-        .cs-table-cell:first-child {
-            border-top-left-radius: 0.25rem;
-            border-bottom-left-radius: 0.25rem;
-        }
+		.cs-table-cell:first-child {
+			border-top-left-radius: 0.25rem;
+			border-bottom-left-radius: 0.25rem;
+		}
 
-        .cs-table-cell:last-child {
-            border-top-right-radius: 0.25rem;
-            border-bottom-right-radius: 0.25rem;
-            justify-content: flex-end;
-        }
-    }
+		.cs-table-cell:last-child {
+			border-top-right-radius: 0.25rem;
+			border-bottom-right-radius: 0.25rem;
+			justify-content: flex-end;
+		}
+	}
 
-    .cs-table-cell a {
-        text-decoration: none;
-        font-weight: $font-weight-normal;
-        @include sc(--table-cell-c);
+	.cs-table-cell a {
+		text-decoration: none;
+		font-weight: $font-weight-normal;
+		@include sc(--table-cell-c);
 
 		&:hover,
 		&:focus {
 			text-decoration: underline;
 			outline: 0;
 		}
-    }
+	}
 }
 
 .cs-tooltip-wrapper .cs-tooltip-icon {
-    margin-left: 0.5rem;
+	margin-left: 0.5rem;
 }
 
-.cs-tooltip .cs-tooltip-body:only-child,
-.cs-dropdown-item-wrapper {
-    .cs-table {
-        width: 25rem;
-        border-radius: 0.25rem;
-        @include css4 {
-            border: 1px solid cvar(--tooltip-table-body-br);
-        }
+.cs-tooltip .cs-tooltip-body:only-child {
+	.cs-table {
+		width: 25rem;
+		border-radius: 0.25rem;
+		@include css4 {
+			border: 1px solid cvar(--tooltip-table-body-br);
+		}
 
-        .cs-table-header {
-            .cs-table-cell {
-                @include sbg(--tooltip-table-header-bg);
-            }
+		.cs-table-header {
+			.cs-table-cell {
+				@include sbg(--tooltip-table-header-bg);
+			}
 
-            .cs-table-cell-text {
-                font-weight: $font-weight-normal;
-                @include sc(--tooltip-table-header-c);
-            }
-        }
+			.cs-table-cell-text {
+				font-weight: $font-weight-normal;
+				@include sc(--tooltip-table-header-c);
+			}
+		}
 
-        .cs-table-body {
-            @include sbg(--tooltip-table-body-bg);
+		.cs-table-body {
+			padding: 0.25rem 0;
+			@include sbg(--tooltip-table-body-bg);
 
-            .cs-table-row .cs-table-cell {
-                padding-top: 0.375rem;
-                padding-bottom: 0.375rem;
-                border: none;
-                font-weight: $font-weight-normal;
-                @include sbg(--tooltip-table-cell-bg);
-                @include sc(--tooltip-table-cell-c);
+			.cs-table-row .cs-table-cell {
+				padding-top: 0.375rem;
+				padding-bottom: 0.375rem;
+				border: none;
+				font-weight: $font-weight-normal;
+				@include sbg(--tooltip-table-cell-bg);
+				@include sc(--tooltip-table-cell-c);
 
-                &:first-child a {
-                    font-size: 0.8125rem;
-                    text-decoration: none;
-                    font-weight: $font-weight-normal;
-                    @include sc(--table-cell-c);
+				&:first-child a {
+					font-size: 0.8125rem;
+					text-decoration: none;
+					font-weight: $font-weight-normal;
+					@include sc(--tooltip-table-cell-link-c);
 
-                    &:hover,
-                    &:focus {
-                        text-decoration: underline;
-                        outline: 0;
-                    }
-                }
-            }
-        }
-    }
+					&:hover,
+					&:focus {
+						text-decoration: underline;
+						outline: 0;
+					}
+				}
+			}
+		}
+	}
 }
 
 .cs-dropdown-outer-item-wrapper {
-    .cs-dropdown-item-wrapper {
-        border: none;
-        box-shadow: 0 1px 2px var(--dropdown-wrapper-shadow);
+	.cs-dropdown-item-wrapper {
+		border: none;
+		box-shadow: 0 1px 2px var(--dropdown-wrapper-shadow);
 
-        .cs-table-body .cs-table-row .cs-table-cell  {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            @include sc(--dropdown-cell-c);
+		.cs-table {
+			width: 25rem;
+			border-radius: 0.25rem;
+			@include css4 {
+				border: 1px solid cvar(--dropdown-table-body-br);
+			}
 
-            .cs-btn {
-                justify-content: center;
-                border-radius: 0.25rem;
+			.cs-table-header {
+				.cs-table-cell {
+					@include sbg(--dropdown-table-header-bg);
+				}
 
-                @include css4 {
-                    border: 1px solid cvar(--dropdown-table-button-br);
-                }
-            }
-        }
-    }
+				.cs-table-cell-text {
+					font-weight: $font-weight-normal;
+					@include sc(--dropdown-table-header-c);
+				}
+			}
+
+			.cs-table-body {
+				padding: 0.25rem 0;
+                @include sbg(--dropdown-table-body-bg);
+
+				.cs-table-row .cs-table-cell {
+					padding-top: 0.25rem;
+					padding-bottom: 0.25rem;
+					border: none;
+					font-weight: $font-weight-normal;
+					@include sbg(--dropdown-table-cell-bg);
+					@include sc(--dropdown-table-cell-c);
+
+					.cs-btn {
+						justify-content: center;
+						border-radius: 0.25rem;
+						@include css4 {
+							border: 1px solid cvar(--dropdown-table-button-br);
+						}
+					}
+
+					&:first-child a {
+						font-size: 0.8125rem;
+						text-decoration: none;
+						font-weight: $font-weight-normal;
+						@include sc(--dropdown-table-cell-link-c);
+
+						&:hover,
+						&:focus {
+							text-decoration: underline;
+							outline: 0;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 .cs-modal-wrapper {
-    .account-details-wrapper {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        top: 0.75rem;
+	.account-details-wrapper {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		top: 0.75rem;
 
-        span {
-            font-size: 1rem;
+		span {
+			font-size: 1rem;
 
-            + span {
-                font-size: 0.6875rem;
-            }
-        }
-    }
+			+ span {
+				font-size: 0.6875rem;
+			}
+		}
+	}
 
-    .cs-modal .cs-modal-body {
-        display: flex;
-    }
+	.cs-modal .cs-modal-body {
+		display: flex;
+	}
 
-    .buttons-wrapper {
-        display: flex;
-        flex-direction: column;
-        padding: 0.5rem 0.25rem;
+	.buttons-wrapper {
+		display: flex;
+		flex-direction: column;
+		padding: 0.5rem 0.25rem;
 
-        .cs-btn:first-child  {
-            margin-bottom: 0.5rem;
-        }
-    }
+		.cs-btn:first-child  {
+			margin-bottom: 0.5rem;
+		}
+	}
 
-    .accounts-wrapper,
-    .account-associations-wrapper {
-        flex: 1;
-        height: 65vh;
-        box-shadow: 0 2px 4px var(--modal-accounts-wrapper);
-        border-radius: 0.25rem;
-        @include css4 {
-            border: 1px solid cvar(--modal-search-wrapper-br);
-        }
+	.accounts-wrapper,
+	.account-associations-wrapper {
+		flex: 1;
+		height: 65vh;
+		box-shadow: 0 2px 4px var(--modal-accounts-wrapper);
+		border-radius: 0.25rem;
+		@include css4 {
+			border: 1px solid cvar(--modal-search-wrapper-br);
+		}
 
-        .cs-input-search-wrapper {
-            padding: 0 1rem 1rem 1rem;
-            @include sbg(--modal-search-bg);
+		.cs-input-search-wrapper {
+			padding: 0 1rem 1rem 1rem;
+			@include sbg(--modal-search-bg);
 
-            .cs-label-wrapper {
-                position: relative;
-                bottom: 1.5rem;
-                right: 0.875rem;
-            }
-        }
-    }
+			.cs-label-wrapper {
+				position: relative;
+				bottom: 1.5rem;
+				right: 0.875rem;
+			}
+		}
+	}
 }

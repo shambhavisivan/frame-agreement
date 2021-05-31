@@ -244,3 +244,5 @@ const cpMetadata = [
 ];
 
 export const queryCpMetadataByIds = () => Promise.resolve(cpMetadata);
+
+export const queryCpDataByIds = () => Promise.resolve([])

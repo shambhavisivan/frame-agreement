@@ -87,7 +87,10 @@ $variables: (
 	--dropdown-table-button-br: $cs-gray-light-2,
 	--modal-search-bg: $cs-gray-light-7,
 	--modal-search-wrapper-br: $cs-gray-light-7,
-	--modal-accounts-wrapper: rgba($cs-black, 0.2)
+	--modal-accounts-wrapper: rgba($cs-black, 0.2),
+	--details-app-wrapper-bg: $cs-gray-light-4,
+	--details-description-wrapper-bg: $cs-white,
+	--details-description-wrapper-shadow: rgba($cs-black, 0.2)
 );
 
 // Every variable that uses main color needs to be set in #root as well

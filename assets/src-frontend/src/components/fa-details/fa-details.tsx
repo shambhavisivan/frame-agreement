@@ -12,11 +12,12 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 	const agreement = agreements.find((a) => a.id === agreementId);
 
 	return (
-		<LoadingFallback status={faStatus}>
-			<div>
+		<div className="details-wrapper">
+			<LoadingFallback status={faStatus}>
+				<div className="field-wrapper"> </div>
 				Agreement ID: {agreementId}, name: {agreement?.name}
-			</div>
-			<FaEditor agreement={agreement} />
-		</LoadingFallback>
+				<FaEditor agreement={agreement} />
+			</LoadingFallback>
+		</div>
 	);
 }

@@ -1,0 +1,16 @@
+.cs-app-wrapper {
+    @include sbg(--details-app-wrapper-bg)
+}
+
+.details-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 2px 4px var(--details-description-wrapper-shadow);
+
+    .field-wrapper {
+        margin-bottom: 1rem;
+        border-radius: 0 0 0.25rem 0.25rem;
+        min-height: 20rem;
+        @include sbg(--details-description-wrapper-bg);
+    }
+}

@@ -13,6 +13,7 @@ import { setFrameAgreementState, negotiate } from '~/src/actions';
 
 import NumberFormat from '~/src/components/negotiation/NumberFormat';
 import { isOneOff, isRecurring } from '~/src/utils/shared-service';
+import ProductRow from '../utillity/ProductRow';
 
 export class StandaloneAddon extends React.Component {
 	constructor(props) {
@@ -177,32 +178,18 @@ export class StandaloneAddon extends React.Component {
 						<div className="fields__item fields__item--title" onClick={this.onExpandProduct}>
 							{this.props.addon.Name}
 						</div>
-						{this.props.settings.FACSettings.standalone_addon_fields.map((f, i) => {
+						{this.props.settings.FACSettings.standalone_addon_fields.map((field, i) => {
 							return (
 								<div
 									className={'fields__item'}
 									key={'fadd' + 'id' + i}
 									onClick={this.onExpandProduct}
 								>
-									{(() => {
-										if (this.props.addon.hasOwnProperty(f)) {
-											if (typeof this.props.addon[f] === 'boolean') {
-												let _val = this.props.addon[f];
-												return (
-													<Icon
-														name={_val ? 'success' : 'clear'}
-														height="18"
-														width="18"
-														color={_val ? '#4bca81' : '#d9675d'}
-													/>
-												);
-											} else {
-												return this.props.addon[f].toString();
-											}
-										} else {
-											return '-';
-										}
-									})()}
+									<ProductRow
+										product={this.props.addon}
+										fieldName={field}
+										iconSize={18}
+									/>
 								</div>
 							);
 						})}

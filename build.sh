@@ -45,7 +45,7 @@ function changedFiles() {
 	git diff --name-only HEAD~1
 }
 
-if changedFiles | grep -q force-app; then
+if changedFiles | grep -q salesforce/force-app; then
 	echo "sfdx: build and test"
 	bash ./sfdx-build-script.sh
 	EXITCODE=$?

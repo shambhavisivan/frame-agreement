@@ -11,6 +11,7 @@ import Checkbox from '../utillity/inputs/Checkbox';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
+import ProductRow from '../utillity/ProductRow';
 
 class AddonModal extends Component {
 	constructor(props) {
@@ -217,6 +218,31 @@ class AddonModal extends Component {
 		});
 	}
 
+	renderAddonRow(add) {
+		return (
+			<div
+				key={add.Id}
+				className={
+					"product-row" +
+					(this.state.selected[add.Id] ? " selected" : "")
+				}
+				onClick={() => this.selectAddon(add)}
+			>
+				<span>{add.Name}</span>
+				{this.addonFields.map((field) => {
+					return (
+						<span key={add.Id + "-" + field}>
+							<ProductRow
+								product={add}
+								fieldName={field}
+							/>
+						</span>
+					);
+				})}
+			</div>
+		);
+	}
+
 	render() {
 		return (
 			<Modal
@@ -384,42 +410,7 @@ class AddonModal extends Component {
 										}
 									})
 									.paginate(this.state.pagination.page, this.state.pagination.pageSize)
-									.map(add => {
-										return (
-											<div
-												key={add.Id}
-												className={'product-row' + (this.state.selected[add.Id] ? ' selected' : '')}
-												onClick={() => this.selectAddon(add)}
-											>
-												<span>{add.Name}</span>
-												{this.addonFields.map(f => {
-													return (
-														<span key={add.Id + '-' + f}>
-															{(() => {
-																if (add.hasOwnProperty(f)) {
-																	if (typeof add[f] === 'boolean') {
-																		let _val = add[f];
-																		return (
-																			<Icon
-																				name={_val ? 'success' : 'clear'}
-																				height="14"
-																				width="14"
-																				color={_val ? '#4bca81' : '#d9675d'}
-																			/>
-																		);
-																	} else {
-																		return add[f].toString();
-																	}
-																} else {
-																	return '-';
-																}
-															})()}
-														</span>
-													);
-												})}
-											</div>
-										);
-									})}
+									.map(add => this.renderAddonRow(add))}
 							</div>
 						</div>
 

@@ -36,7 +36,7 @@ const createConnection = async () => {
 
 	return axios.create({
 		baseURL: appSettingsCache.FACSettings.dispatcherServiceUrl,
-		timeout: 5000,
+		timeout: 12000,
 	});
 };
 

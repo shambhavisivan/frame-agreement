@@ -167,7 +167,7 @@
 			  "alert_deleteProducts_btn_action": "{!$Label.alert_deleteProducts_btn_action}",
 			  "alert_deleteProducts_message": "{!$Label.alert_deleteProducts_message}",
 			  "alert_deleteProducts_title": "{!$Label.alert_deleteProducts_title}",
-			  "alert_deleteOffers_title": "{!$Label.alert_deleteProducts_title}",
+			  "alert_deleteOffers_title": "{!$Label.alert_deleteOffers_title}",
 			  "alert_deleteOffers_message": "{!$Label.alert_deleteOffers_message}",
 			  "allowances_amount": "{!$Label.allowances_amount}",
 			  "allowances_name": "{!$Label.allowances_name}",
@@ -275,8 +275,10 @@
 			  "modal_addFa_title": "{!$Label.modal_addFa_title}",
 			  "modal_addProduct_input_search_placeholder": "{!$Label.modal_addProduct_input_search_placeholder}",
 			  "modal_addAddons_input_search_placeholder": "{!$Label.modal_addAddons_input_search_placeholder}",
+			  "modal_addOffer_input_search_placeholder": "{!$Label.modal_addOffer_input_search_placeholder}",
 			  "modal_addProduct_title": "{!$Label.modal_addProduct_title}",
 			  "modal_addAddons_title": "{!$Label.modal_addAddons_title}",
+			  "modal_addOffers_title": "{!$Label.modal_addOffers_title}",
 			  "modal_bluk_rateFilter_dropdownPlaceholder": "{!$Label.modal_bluk_rateFilter_dropdownPlaceholder}",
 			  "modal_bluk_rateFilter_propertyTitle": "{!$Label.modal_bluk_rateFilter_propertyTitle}",
 			  "modal_bluk_rateFilter_propertyValueTitle": "{!$Label.modal_bluk_rateFilter_propertyValueTitle}",
@@ -374,7 +376,9 @@
 			  "util_input_formula_placehoder": "{!$Label.util_input_formula_placehoder}",
 			  "util_input_lookup_placehoder": "{!$Label.util_input_lookup_placehoder}",
 			  "util_input_text_enter": "{!$Label.util_input_text_enter}",
-			  "util_negotiation_input_diff_label": "{!$Label.util_negotiation_input_diff_label}"
+			  "util_negotiation_input_diff_label": "{!$Label.util_negotiation_input_diff_label}",
+			  "warning_no_commercial_products_linked": "{!$Label.warning_no_commercial_products_linked}",
+			  "warning_no_offers_linked": "{!$Label.warning_no_offers_linked}"
 			},
 			fieldLabels: {}
 		};

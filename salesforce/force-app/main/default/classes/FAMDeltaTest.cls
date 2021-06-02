@@ -55,8 +55,8 @@ private class FAMDeltaTest {
 		return addons;
 
 	}
-
 	public static testMethod void testCompareVolume() {
+
 
 		// Basic
 		Map<String, Integer> volume1 = setupVolumeParams(120, 2140, 10500, 330);
@@ -489,9 +489,8 @@ private class FAMDeltaTest {
 		Map<String, Object> diff = FAMDelta.getDelta(fa1.Id, fa2.Id);
 
 		Test.stopTest();
-		system.debug(JSON.serialize(diff));
-		system.assertEquals(expected_diff, JSON.serialize(diff));
 
+		System.assertEquals(expected_diff, JSON.serialize(diff));
 	}
 
 	public static testMethod void testGetDiffNoCharges() {
@@ -645,4 +644,34 @@ private class FAMDeltaTest {
 		System.assertEquals('changed', changedAddon.status);
 	}
 
+	public static testMethod void testOfferDiff() {
+		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Frame Agreement',
+			csconta__Status__c = 'Draft'
+		);
+		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Master Agreement',
+			csconta__Status__c = 'Active'
+		);
+
+		insert fa1;
+		insert fa2;
+
+		String att1 = '{"custom":"","offers":{"a1F1t0000001JBoEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{}},"a1F1t0000001JBZEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}},"a1F1t0000001JBUEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SXxEAM":{"oneOff":5,"recurring":19.79},"a1A1t0000003SgeEAE":{"oneOff":10.99,"recurring":31.99}},"_product":{"oneOff":67,"recurring":267},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":120.99},"a1N1t0000001X2dEAE":{"a1M1t000000peXUEAY":50.98,"a1M1t000000peXZEAY":65.43,"a1M1t000000peXeEAI":12.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":50.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14},"a1x1t00000049NCAAY":{"Name":"ALL2","value":14}}},"a1F1t0000001JCDEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{}}}}';
+		String att2 = '{"custom":"","offers":{"a1F1t0000001JBoEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{}},"a1F1t0000001JBZEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}},"a1F1t0000001JBUEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SXxEAM":{"oneOff":10,"recurring":21.79},"a1A1t0000003SgeEAE":{"oneOff":10.99,"recurring":31.99}},"_product":{"oneOff":69,"recurring":269},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t0000001X2dEAE":{"a1M1t000000peXUEAY":55.98,"a1M1t000000peXZEAY":65.43,"a1M1t000000peXeEAI":12.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14},"a1x1t00000049NCAAY":{"Name":"ALL2","value":14}}},"a1F1t0000001JBjEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SbnEAE":{"oneOff":10,"recurring":12}},"_product":{"recurring":269},"_allowances":{}}}}';
+
+		String expected_diff = '{"_offers":{"a1F1t0000001JBUEA2":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"changed","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"changed","old_value":50.43,"new_value":55.43}}},"a1N1t0000001X2dEAE":{"status":"changed","rcl":{"a1M1t000000peXeEAI":{"status":"unchanged","old_value":12.99,"new_value":12.99},"a1M1t000000peXZEAY":{"status":"unchanged","old_value":65.43,"new_value":65.43},"a1M1t000000peXUEAY":{"status":"changed","old_value":50.98,"new_value":55.98}}},"a1N1t0000001QxrEAE":{"status":"changed","rcl":{"a1M1t000000BFrVEAW":{"status":"changed","old_value":120.99,"new_value":124.99}}}},"product":{"recurring":{"status":"changed","old_value":267,"new_value":269},"oneOff":{"status":"changed","old_value":67,"new_value":69}},"charges":{},"addons":{"a1A1t0000003SgeEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":31.99,"new_value":31.99},"oneOff":{"status":"unchanged","old_value":10.99,"new_value":10.99}},"a1A1t0000003SXxEAM":{"status":"changed","recurring":{"status":"changed","old_value":19.79,"new_value":21.79},"oneOff":{"status":"changed","old_value":5,"new_value":10}}}},"a1F1t0000001JBZEA2":{"volume":{},"rateCard":{"a1N1t0000001QxrEAE":{"status":"removed","rcl":{"a1M1t000000BFrVEAW":{"status":"removed","old_value":124.99,"new_value":null}}}},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JBoEAM":{"volume":{},"rateCard":{},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JBjEAM":"added","a1F1t0000001JCDEA2":"removed"},"_products":{},"csconta__agreement_level__c":{"status":"changed","old_value":"Frame Agreement","new_value":"Master Agreement"},"csconta__effective_end_date__c":{"status":"unchanged","old_value":"2019-12-17T13:06:06.000Z","new_value":"2019-12-17T13:06:06.000Z"},"csconta__Status__c":{"status":"changed","old_value":"Draft","new_value":"Active"},"csconta__Agreement_Name__c":{"status":"unchanged","old_value":"FA SAME","new_value":"FA SAME"}}';
+		FrameRateManagerController.saveAttachment(fa1.Id, att1);
+		FrameRateManagerController.saveAttachment(fa2.Id, att2);
+
+		Test.startTest();
+		Map<String, Object> diff = FAMDelta.getDelta(fa1.Id, fa2.Id);
+		Test.stopTest();
+
+		System.assertEquals(expected_diff, Json.serialize(diff));
+	}
 }

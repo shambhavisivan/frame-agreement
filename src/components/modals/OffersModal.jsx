@@ -11,26 +11,28 @@ import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
 import { queryCategoriesInCatalogue, queryOffersInCategory } from '~/src/graphql-actions';
 
+import ProductRow from '../utillity/ProductRow';
+
 class OffersModal extends Component {
 	constructor(props) {
 		super(props);
 		this.togglePanel = this.togglePanel.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.addOffers = this.addOffers.bind(this);
-
+		this.resetFilter = this.resetFilter.bind(this);
 
 		let _offers = this.props.offers;
 
 		if (this.props.offerFilter) {
-			_offers = this.props.offers.filter(cp =>
-				this.props.offerFilter.has(cp.Id)
+			_offers = this.props.offers.filter(offer =>
+				this.props.offerFilter.has(offer.Id)
 			);
 		}
 
-		this.addedOfferIds = this.props.addedOffers.map(cp => cp.Id);
+		this.addedOfferIds = this.props.addedOffers.map(offer => offer.Id);
 
 		this.notAddedOffers = _offers.filter(
-			cp => !this.addedOfferIds.includes(cp.Id)
+			offer => !this.addedOfferIds.includes(offer.Id)
 		);
 
 		this.state = {
@@ -58,7 +60,7 @@ class OffersModal extends Component {
 	}
 
 	async loadOffers(categoryId) {
-		if (this.categoryId !== categoryId) {
+		if (categoryId && this.categoryId !== categoryId) {
 			this.categoryId = categoryId;
 			const linkedOffers = await queryOffersInCategory(categoryId);
 			const linkedOfferIds = linkedOffers.map(offer => offer.id);
@@ -69,7 +71,7 @@ class OffersModal extends Component {
 			const notAddedOffers = offers.filter(
 				offer => !this.addedOfferIds.includes(offer.Id)
 			);
-			this.setState({ notAddedOffers });
+			this.setState({ offers: notAddedOffers });
 		}
 	}
 
@@ -88,18 +90,18 @@ class OffersModal extends Component {
 	}
 
 	getOffersCount() {
-		let cpSize = this.state.offers.length;
+		let offerSize = this.state.offers.length;
 
 		if (this.state.offerFilter) {
-			cpSize = this.state.offers.filter(cp => {
+			offerSize = this.state.offers.filter(offer => {
 				if (this.state.offerFilter && this.state.offerFilter.length >= 2) {
-					return cp.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
+					return offer.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
 				} else {
 					return true;
 				}
 			}).length;
 		}
-		return cpSize;
+		return offerSize;
 	}
 
 	toggleExpanded() {
@@ -134,6 +136,10 @@ class OffersModal extends Component {
 			actionTaken: false,
 			selected: {}
 		});
+	}
+
+	resetFilter() {
+		this.setState({ offers: this.notAddedOffers });
 	}
 
 	render() {
@@ -205,12 +211,20 @@ class OffersModal extends Component {
 												</div>
 											);
 										}) : (<div>
-											<p>window.SF.labels.warning_no_offers_linked</p>
+											<p>{window.SF.labels.warning_no_offers_linked}</p>
 										</div>)
 										}
 									</ul>
 								</div>
 							</div>
+						</div>
+						<div className="fa-modal-button-group">
+							<button
+								onClick={this.resetFilter}
+								className="fa-button fa-button--default"
+							>
+								{window.SF.labels.modal_categorization_btn_clear}
+							</button>
 						</div>
 					</div>
 
@@ -231,7 +245,7 @@ class OffersModal extends Component {
 
 							<div className="search-container">
 								<InputSearch
-									placeholder={window.SF.labels.modal_addProduct_input_search_placeholder}
+									placeholder={window.SF.labels.modal_addOffer_input_search_placeholder}
 									value={this.state.searchValue}
 									onChange={val => {
 										this.setState({ offerFilter: val });
@@ -255,44 +269,29 @@ class OffersModal extends Component {
 							</div>
 							<div className="fa-modal-product-list">
 								{this.state.offers
-									.filter(cp => {
+									.filter(offer => {
 										if (this.state.offerFilter && this.state.offerFilter.length >= 2) {
-											return cp.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
+											return offer.Name.toLowerCase().includes(this.state.offerFilter.toLowerCase());
 										} else {
 											return true;
 										}
 									})
 									.paginate(this.state.pagination.page, this.state.pagination.pageSize)
-									.map(cp => {
+									.map(offer => {
 										return (
 											<div
-												key={cp.Id}
-												className={'product-row' + (this.state.selected[cp.Id] ? ' selected' : '')}
-												onClick={() => this.selectOffer(cp)}
+												key={offer.Id}
+												className={'product-row' + (this.state.selected[offer.Id] ? ' selected' : '')}
+												onClick={() => this.selectOffer(offer)}
 											>
-												<span>{cp.Name}</span>
-												{this.offerFields.map(f => {
+												<span>{offer.Name}</span>
+												{this.offerFields.map(field => {
 													return (
-														<span key={cp.Id + '-' + f.name}>
-															{(() => {
-																if (cp.hasOwnProperty(f.name)) {
-																	if (typeof cp[f.name] === 'boolean') {
-																		let _val = cp[f.name];
-																		return (
-																			<Icon
-																				name={_val ? 'success' : 'clear'}
-																				height="14"
-																				width="14"
-																				color={_val ? '#4bca81' : '#d9675d'}
-																			/>
-																		);
-																	} else {
-																		return cp[f.name].toString();
-																	}
-																} else {
-																	return '-';
-																}
-															})()}
+														<span key={offer.Id + '-' + field.name}>
+															<ProductRow
+																product={offer}
+																fieldName={field.name}
+															/>
 														</span>
 													);
 												})}

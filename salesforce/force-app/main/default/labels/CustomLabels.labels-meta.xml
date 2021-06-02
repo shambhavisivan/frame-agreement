@@ -848,11 +848,25 @@
         <value>Filter products</value>
     </labels>
     <labels>
+        <fullName>modal_addOffer_input_search_placeholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_addOffer_input_search_placeholder</shortDescription>
+        <value>Filter offers</value>
+    </labels>
+    <labels>
         <fullName>modal_addProduct_title</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>modal_addProduct_title</shortDescription>
         <value>Add Product to Frame Agreement</value>
+    </labels>
+    <labels>
+        <fullName>modal_addOffers_title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>modal_addOffers_title</shortDescription>
+        <value>Add Offers to Frame Agreement</value>
     </labels>
     <labels>
         <fullName>modal_bluk_rateFilter_dropdownPlaceholder</fullName>
@@ -1523,8 +1537,8 @@
         <fullName>alert_deleteAddons_title</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Delete products</shortDescription>
-        <value>Delete products</value>
+        <shortDescription>Delete Add Ons</shortDescription>
+        <value>Delete Add Ons</value>
     </labels>
     <labels>
         <fullName>btn_AddAddons</fullName>
@@ -1616,5 +1630,19 @@
         <protected>true</protected>
         <shortDescription>There are no offer Meta Data</shortDescription>
         <value>There are no Meta Data in here for this offer</value>
+    </labels>
+    <labels>
+        <fullName>warning_no_offers_linked</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Link at least one offer to the default catalogue</shortDescription>
+        <value>Link at least one offer to the default catalogue</value>
+    </labels>
+    <labels>
+        <fullName>warning_no_commercial_products_linked</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Link at least one commercial product to the default catalogue</shortDescription>
+        <value>Link at least one commercial product to the default catalogue</value>
     </labels>
 </CustomLabels>

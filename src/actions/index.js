@@ -770,6 +770,16 @@ export function saveFrameAgreement(frameAgreement) {
 				});
 			});
 
+			frameAgreement._ui.offers.forEach(offer => {
+				_attachment.offers[offer.Id]._allowances = {};
+				offer._allowances.forEach(all => {
+					_attachment.offers[offer.Id]._allowances[all.Id] = {
+						Name: all.Name,
+						value: all.cspmb__amount__c || null
+					};
+				});
+			});
+
 			promiseArray.push(
 				window.SF.invokeAction('saveAttachment', [frameAgreement.Id, JSON.stringify(_attachment)])
 			);
@@ -990,10 +1000,11 @@ export const negotiateOffers = (faId, priceItemId, type, data) => ({
 
 export const bulkNegotiateOffers = (faId, data) => ({
 	type: 'NEGOTIATE_BULK_OFFERS',
+	payload: { faId, data }
 });
 
 export const apiNegotiateOffer = (faId, data) => ({
-	 type: 'NEGOTIATE_API_OFFER',
+	type: 'NEGOTIATE_API_OFFER',
 	payload: { faId, data }
 });
 

@@ -127,7 +127,7 @@ class FaFooter extends React.Component {
 
 		let _disabled_prod = !Object.keys(this.props.selectedProducts).length;
 		let _disabled_add = !Object.keys(this.props.selectedAddons || {}).length;
-		let _disabled_offer = !Object.keys(this.props.selectedOffers).length;
+		let _disabled_offer = !Object.keys(this.props.selectedOffers || {}).length;
 		const { hiddenTabs } = this.props.settings
 
 		let buttonVisibillityMap = {
@@ -262,7 +262,7 @@ class FaFooter extends React.Component {
 					<button
 						className="fa-button fa-button--default"
 						onClick={this.onOpenOffersModal}
-						disabled={this.props.disableFrameAgreementOperations}
+						disabled={this.props.disableFrameAgreementOperations || !this.props.offersLoaded}
 					>
 						<Icon name="add" width="16" height="16" color="#0070d2" />
 						<span className="fa-button-icon">{window.SF.labels.btn_AddOffers}</span>
@@ -336,7 +336,8 @@ const mapStateToProps = state => {
 		commercialProducts: state.commercialProducts,
 		settings: state.settings,
 		handlers: state.handlers,
-		disableFrameAgreementOperations: state.disableFrameAgreementOperations
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations,
+		offersLoaded: state.initialised.of_loaded
 	};
 };
 

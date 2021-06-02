@@ -300,6 +300,7 @@ class DeltaStructure extends Component {
 		this.cm = this.props.chargesLabels;
 
 		this.getLabel = this.getLabel.bind(this);
+		this.renderProductDetails = this.renderProductDetails.bind(this);
 
 		this.state = {
 			open: {}
@@ -329,51 +330,8 @@ class DeltaStructure extends Component {
 		return typeof num === 'number' && num.toString().length === 13;
 	}
 
-	render() {
-		if (!this.props.data) {
-			console.warn('No delta found!');
-			return null;
-		}
-
-		let _products = this.props.data._products;
-
-		let _faFields = copy(this.props.data);
-		delete _faFields._products;
-		delete _faFields._addons;
-
-		return (
-			<div className="delta-container">
-				<div className="delta-fields">
-					<h3 className="delta-section-title">{window.SF.labels.delta_fa_fields}</h3>
-
-					<div className="delta-diff-collection">
-						{Object.keys(_faFields).map(field => {
-							let _old = _faFields[field].old_value;
-							let _new = _faFields[field].new_value;
-
-							if (this.isTimestamp(_old)) {
-								_old = moment(_old).format('L');
-							}
-							if (this.isTimestamp(_new)) {
-								_new = moment(_new).format('L');
-							}
-
-							return (
-								<div key={field} className="charge-container">
-									<span className="charge-label">
-										{getFieldLabel('csconta__Frame_Agreement__c', field) ||
-											truncateCPField(field, true) + ': '}
-									</span>
-
-									<Diff old={_old} new={_new} status={_faFields[field].status} />
-								</div>
-							);
-						})}
-					</div>
-				</div>
-				<div className="delta-products-container">
-					<h3 className="delta-section-title">{window.SF.labels.products_tab_title}</h3>
-					<div className="delta-diff-collection">
+	renderProductDetails(_products) {
+		return (<div className="delta-diff-collection">
 						{Object.keys(_products).map(Id => {
 							if (typeof _products[Id] === 'string') {
 								return (
@@ -421,7 +379,57 @@ class DeltaStructure extends Component {
 								</div>
 							);
 						})}
+					</div>)
+	}
+	render() {
+		if (!this.props.data) {
+			console.warn('No delta found!');
+			return null;
+		}
+
+		let _products = this.props.data._products;
+		let _offers = this.props.data._offers;
+
+		let _faFields = copy(this.props.data);
+		delete _faFields._products;
+		delete _faFields._addons;
+		delete _faFields._offers;
+
+		return (
+			<div className="delta-container">
+				<div className="delta-fields">
+					<h3 className="delta-section-title">{window.SF.labels.delta_fa_fields}</h3>
+
+					<div className="delta-diff-collection">
+						{Object.keys(_faFields).map(field => {
+							let _old = _faFields[field].old_value;
+							let _new = _faFields[field].new_value;
+
+							if (this.isTimestamp(_old)) {
+								_old = moment(_old).format('L');
+							}
+							if (this.isTimestamp(_new)) {
+								_new = moment(_new).format('L');
+							}
+
+							return (
+								<div key={field} className="charge-container">
+									<span className="charge-label">
+										{getFieldLabel('csconta__Frame_Agreement__c', field) ||
+											truncateCPField(field, true) + ': '}
+									</span>
+
+									<Diff old={_old} new={_new} status={_faFields[field].status} />
+								</div>
+							);
+						})}
 					</div>
+				</div>
+				<div className="delta-products-container">
+					{_products && <><h3 className="delta-section-title">{window.SF.labels.products_tab_title}</h3>
+						{this.renderProductDetails(_products)}</>}
+					{_offers && <><h3 className="delta-section-title">{window.SF.labels.offers_tab_title}</h3>
+						{this.renderProductDetails(_offers)}</>}
 				</div>
 			</div>
 		);

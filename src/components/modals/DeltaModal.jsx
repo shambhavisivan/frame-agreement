@@ -11,7 +11,7 @@ import {
 	truncateCPField,
 	copy
 } from '~/src/utils/shared-service';
-import { getAttachment, getCommercialProductData } from '~/src/actions';
+import { getAttachment, getCommercialProductData, getOfferData, getOffers } from '~/src/actions';
 
 import Loading from '../utillity/Loading';
 import Icon from '../utillity/Icon';
@@ -44,8 +44,7 @@ class DeltaModal extends Component {
 		}, {});
 	}
 
-	componentDidMount() {
-		// this.props.faIdOriginal
+	async componentDidMount() {
 		if (
 			this.props.frameAgreements[this.props.faIdOriginal].hasOwnProperty(
 				'csconta__replaced_frame_agreement__c'
@@ -59,16 +58,18 @@ class DeltaModal extends Component {
 				loaded: true
 			});
 		}
+
+		// to load the offer list as it was not already available.
+		if (!this.props.offersLoaded) {
+			await this.props.getOffers();
+		}
+
+		const offerLabel = this.props.offers?.reduce((acc, iter) => {
+			return { ...acc, [iter.Id]: iter.Name };
+		}, {});
+
+		this.productLabelMap = { ...this.productLabelMap, ...offerLabel };
 	}
-
-	// componentWillUnmount() {
-	// 	this.mounted = false;
-
-	// 	delete window.FAM.api.getActiveFrameAgreement;
-	// 	for (var key in SUBSCRIPTIONS) {
-	// 		SUBSCRIPTIONS[key].unsubscribe();
-	// 	}
-	// }
 
 	async onPrimaryIdChange(value) {
 		if (!value) {
@@ -122,7 +123,17 @@ class DeltaModal extends Component {
 			this.props.frameAgreements[this.state.secondaryId]._ui.attachment.products
 		).filter(cpId => !primProdSet.has(cpId));
 
+		const primaryOfferIdSet = new Set(
+			Object.keys(this.props.frameAgreements[this.state.primaryId]._ui.attachment.offers)
+		);
+		const offerDiff = Object.keys(
+			this.props.frameAgreements[this.state.secondaryId]._ui.attachment.offers
+		).filter(offerId => !primaryOfferIdSet.has(offerId));
+
 		let _promiseArray = [];
+		if (offerDiff.length) {
+			_promiseArray.push(this.props.getOfferData(offerDiff));
+		}
 
 		if (_products_diff.length) {
 			_promiseArray.push(this.props.getCommercialProductData(_products_diff));
@@ -141,46 +152,58 @@ class DeltaModal extends Component {
 
 				let mergedIdSet = new Set([...primProdSet, ..._products_diff]);
 
-				let _this_cp_list = this.props.commercialProducts.filter(cp => mergedIdSet.has(cp.Id));
+				let cpList = this.props.commercialProducts.filter(cp => mergedIdSet.has(cp.Id));
 
-				this.chargesInfoMap.addons = _this_cp_list.reduce((acc, iter) => {
-					if (iter.hasOwnProperty('_addons')) {
-						let _addonMap = iter._addons.reduce((acc2, iter2) => {
-							return { ...acc2, [iter2.Id]: iter2.Name };
-						}, {});
+				const populateCharges = (commercialProducts) => {
+					let chargesInfoMap = {};
+					chargesInfoMap.addons = commercialProducts.reduce((acc, iter) => {
+						if (iter.hasOwnProperty('_addons')) {
+							let _addonMap = iter._addons.reduce((acc2, iter2) => {
+								return { ...acc2, [iter2.Id]: iter2.Name };
+							}, {});
 
-						return { ...acc, ..._addonMap };
-					} else return acc;
-				}, {});
+							return { ...acc, ..._addonMap };
+						} else return acc;
+					}, {});
 
-				this.chargesInfoMap.charges = _this_cp_list.reduce((acc, iter) => {
-					if (iter.hasOwnProperty('_charges')) {
-						let _charges = iter._charges.reduce((acc2, iter2) => {
-							return { ...acc2, [iter2.Id]: iter2.Name };
-						}, {});
+					chargesInfoMap.charges = commercialProducts.reduce((acc, iter) => {
+						if (iter.hasOwnProperty('_charges')) {
+							let _charges = iter._charges.reduce((acc2, iter2) => {
+								return { ...acc2, [iter2.Id]: iter2.Name };
+							}, {});
 
-						return { ...acc, ..._charges };
-					} else return acc;
-				}, {});
+							return { ...acc, ..._charges };
+						} else return acc;
+					}, {});
 
-				this.chargesInfoMap.rateCards = _this_cp_list.reduce((acc, iter) => {
-					if (iter.hasOwnProperty('_rateCards')) {
-						let _rateCards = iter._rateCards.reduce((acc2, iter2) => {
-							return {
-								...acc2,
-								[iter2.Id]: {
-									Name: iter2.Name,
-									rcl: iter2.rateCardLines.reduce(
-										(acc3, iter3) => ({ ...acc3, [iter3.Id]: iter3.Name }),
-										{}
-									)
-								}
-							};
-						}, {});
+					chargesInfoMap.rateCards = commercialProducts.reduce((acc, iter) => {
+						if (iter.hasOwnProperty('_rateCards')) {
+							let _rateCards = iter._rateCards.reduce((acc2, iter2) => {
+								return {
+									...acc2,
+									[iter2.Id]: {
+										Name: iter2.Name,
+										rcl: iter2.rateCardLines.reduce(
+											(acc3, iter3) => ({ ...acc3, [iter3.Id]: iter3.Name }),
+											{}
+										)
+									}
+								};
+							}, {});
 
-						return { ...acc, ..._rateCards };
-					} else return acc;
-				}, {});
+							return { ...acc, ..._rateCards };
+						} else return acc;
+					}, {});
+
+					return chargesInfoMap;
+				}
+
+				this.chargesInfoMap.products = populateCharges(cpList);
+
+				mergedIdSet = new Set([...primaryOfferIdSet, ...offerDiff]);
+				let offerList = this.props.offers.filter(offer=> mergedIdSet.has(offer.Id));
+
+				this.chargesInfoMap.offers = populateCharges(offerList);
 
 				this.setState({ loaded: true, delta: _delta, deltaView: true });
 			},
@@ -190,14 +213,18 @@ class DeltaModal extends Component {
 
 	formatFrameAgreement(fa) {
 		let _faLite = copy(fa || {});
+		const deleteAllowance = (data) => {
+			for (const key in data) {
+				delete data[key]._allowances;
+			}
+			return data;
+		}
 
 		try {
 			delete _faLite._ui;
 			delete _faLite.csconta__Account__r;
-			_faLite.products = fa._ui.attachment.products;
-			for (var key in _faLite.products) {
-				delete _faLite.products[key]._allowances;
-			}
+			_faLite.products = deleteAllowance(fa._ui.attachment.products || []);
+			_faLite.offers = deleteAllowance(fa._ui.attachment.offers || []);
 		} catch (err) {}
 		return _faLite;
 	}
@@ -400,13 +427,17 @@ class DeltaModal extends Component {
 const mapStateToProps = state => {
 	return {
 		frameAgreements: state.frameAgreements,
-		commercialProducts: state.commercialProducts
+		commercialProducts: state.commercialProducts,
+		offers: state.offers,
+		offersLoaded: state.initialised.of_loaded
 	};
 };
 
 const mapDispatchToProps = {
 	getCommercialProductData,
-	getAttachment
+	getAttachment,
+	getOfferData,
+	getOffers
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeltaModal);

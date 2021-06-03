@@ -531,17 +531,38 @@ export const sortDynamicGroupsBySequence = (aDynamicGroup, bDynamicGroup) => {
 	) {
 		return 0;
 	} else if (
-		!aDynamicGroup.csfamext__sequence__c ||
-		isNaN(aDynamicGroup.csfamext__sequence__c)
+		isNaN(aDynamicGroup.csfamext__sequence__c) ||
+		(aDynamicGroup.csfamext__sequence__c !== 0 &&
+			!aDynamicGroup.csfamext__sequence__c)
 	) {
 		return 1;
 	} else if (
-		!bDynamicGroup.csfamext__sequence__c ||
-		isNaN(bDynamicGroup.csfamext__sequence__c)
+		isNaN(bDynamicGroup.csfamext__sequence__c) ||
+		(bDynamicGroup.csfamext__sequence__c !== 0 &&
+			!bDynamicGroup.csfamext__sequence__c)
 	) {
 		return -1;
 	}
 	return aDynamicGroup.csfamext__sequence__c - bDynamicGroup.csfamext__sequence__c;
+}
+
+//no numeric props can have such high values, so assuming this to be date starting from 01/01/2000
+export const convertMillisToLocaleDateString = (timeInMillis) => {
+	return new Date(timeInMillis).toLocaleDateString('en-GB');
+}
+
+export const hasValidExpression = (data) => {
+	if (!data.csfamext__expression__c)  {
+		return false;
+	}
+
+	if (isJson(data.csfamext__expression__c)) {
+		const parsedExpression = JSON.parse(data.csfamext__expression__c);
+
+		return Object.keys(parsedExpression).some(
+			(key) => parsedExpression[key]
+		);
+	}
 }
 
 export default sharedService;

@@ -11,6 +11,7 @@ import {
 	truncateCPField,
 	isDiscountAllowed,
 	sortDynamicGroupsBySequence,
+	hasValidExpression,
 } from '../../../utils/shared-service';
 
 import Icon from '../../utillity/Icon';
@@ -117,8 +118,7 @@ async function negotiateData(data, active_fa, removed_group) {
 
 	if (!discountCodes.length) {
 		// WE'RE DONE HERE
-		Promise.resolve(data);
-		return;
+		return _negoArray;
 	}
 
 	discountCodes.sort(sortDynamicGroupsBySequence);
@@ -143,25 +143,27 @@ async function negotiateData(data, active_fa, removed_group) {
 	);
 
 	// Generate map of original charges for product
-	let _originalProductValues = active_fa._ui.commercialProducts.reduce((acc, iter) => {
-		let _data = {};
+	let _originalProductValues = active_fa._ui.commercialProducts
+		.concat(active_fa._ui.offers)
+		.reduce((acc, iter) => {
+			let _data = {};
 
-		if (iter._charges.length) {
-			iter._charges.forEach(c => {
-				_data[c._type] = c[c._type];
-			});
-		} else {
-			if (iter.hasOwnProperty('cspmb__Recurring_Charge__c')) {
-				_data.recurring = +iter.cspmb__Recurring_Charge__c;
+			if (iter._charges.length) {
+				iter._charges.forEach((c) => {
+					_data[c._type] = c[c._type];
+				});
+			} else {
+				if (iter.hasOwnProperty("cspmb__Recurring_Charge__c")) {
+					_data.recurring = +iter.cspmb__Recurring_Charge__c;
+				}
+
+				if (iter.hasOwnProperty("cspmb__One_Off_Charge__c")) {
+					_data.oneOff = +iter.cspmb__One_Off_Charge__c;
+				}
 			}
 
-			if (iter.hasOwnProperty('cspmb__One_Off_Charge__c')) {
-				_data.oneOff = +iter.cspmb__One_Off_Charge__c;
-			}
-		}
-
-		return { ...acc, [iter.Id]: _data };
-	}, {});
+			return { ...acc, [iter.Id]: _data };
+		}, {});
 
 	data.forEach(cp => {
 		if (rcl_codes.length && cp._rateCards?.length) {
@@ -319,11 +321,13 @@ const negotiateDiscountCodesForItems = async (data, removed_group, type = COMMER
 				? active_fa._ui.commercialProducts.filter((cp) =>
 						data.includes(cp.Id)
 				  )
-				: active_fa._ui.offers;
+				: active_fa._ui.offers.filter((offer) =>
+						data.includes(offer.Id)
+				);
 	}
 
 	// Will hold negotiation API compliant structure
-	const _negoArray = negotiateData(data || cpsOrOffers, active_fa, removed_group);
+	const _negoArray = await negotiateData(cpsOrOffers, active_fa, removed_group);
 	if (type === COMMERCIAL_PRODUCT) {
 		await window.FAM.api.negotiate(active_fa.Id, _negoArray);
 	} else if (type === OFFER) {
@@ -439,7 +443,12 @@ class DiscountCodesTab extends React.Component {
 				}
 
 				if (!errorFlag) {
-					response = response.filter(g => g.csfamext__group_type__c === 'Discount Code');
+					response = response.filter(g => {
+						return (
+							g.csfamext__group_type__c === "Discount Code" &&
+							hasValidExpression(g)
+						);
+					});
 
 					let _legacyCheck = false;
 
@@ -704,7 +713,10 @@ class DiscountCodesTab extends React.Component {
 		);
 	}
 	async onApplyCodes() {
-		let res = await window.FAM.publish('DCE_onBeforeApplyCodes', Object.values(this.state.added));
+		let res = await window.FAM.publish(
+			"DCE_onBeforeApplyCodes",
+			Object.values(this.state.added)
+		);
 
 		if (res === null) {
 			return;
@@ -712,15 +724,24 @@ class DiscountCodesTab extends React.Component {
 
 		await this.updateCustomData();
 
-		Promise.all([
-			negotiateDiscountCodesForItems(),
-			negotiateDiscountCodesForItems(null, null, OFFER)
-		]).then(negotiatedResults => {
-			if (negotiatedResults.some(result => result)) {
-				window.FAM.api.toast('info', window.SF.labels.famext_toast_dc_applied, '');
-				window.FAM.publish('DCE_onApplyCodes', Object.values(this.state.added));
-			}
-		});
+		const cpResult = await negotiateDiscountCodesForItems();
+		const offerResult = await negotiateDiscountCodesForItems(
+			null,
+			null,
+			OFFER
+		);
+
+		if (cpResult || offerResult) {
+			window.FAM.api.toast(
+				"info",
+				window.SF.labels.famext_toast_dc_applied,
+				""
+			);
+			window.FAM.publish(
+				"DCE_onApplyCodes",
+				Object.values(this.state.added)
+			);
+		}
 	}
 
 	async onRemoveGroup(removed_group) {
@@ -740,6 +761,7 @@ class DiscountCodesTab extends React.Component {
 				this.updateSelectListGroups();
 				this.updateCustomData().then(response => {
 					negotiateDiscountCodesForItems(null, removed_group);
+					negotiateDiscountCodesForItems(null, removed_group, OFFER);
 				});
 			}
 		);

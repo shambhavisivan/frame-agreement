@@ -496,7 +496,7 @@ export class FaEditor extends Component {
 						onConfirm={() => {
 							this._removeProducts();
 						}}
-						confirmText={window.SF.labels.alert_deleteProducts_title}
+						confirmText={window.SF.labels.btn_DeleteProducts}
 					/>
 				);
 			}
@@ -706,7 +706,7 @@ export class FaEditor extends Component {
 
 			this._setState(
 				{
-					selectedProducts: {}
+					selectedOffers: {}
 				},
 				() => {
 					publish(
@@ -730,7 +730,7 @@ export class FaEditor extends Component {
 						onConfirm={() => {
 							this._removeOffers();
 						}}
-						confirmText={window.SF.labels.alert_deleteOffers_title}
+						confirmText={window.SF.labels.btn_DeleteOffers}
 					/>
 				);
 			}
@@ -761,7 +761,7 @@ export class FaEditor extends Component {
 				faId={this.faId}
 				selectedOffers={this.state.selectedOffers}
 				onSelectOffer={this.onSelectOffer}
-				onSelectAllOffers={this.onSelectOffer}
+				onSelectAllOffers={this.onSelectAllOffers}
 			/>
 		);
 

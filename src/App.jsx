@@ -627,7 +627,7 @@ export class App extends Component {
 			return (this.props.frameAgreements[faId]._ui.attachment);
 		};
 
-		window.FAM.api.negotiateOffers = async (faId, data = window.mandatory('negotiate()')) => {
+		window.FAM.api.negotiateOffers = async (faId, data = window.mandatory('negotiateOffers()')) => {
 			data = await publish('onBeforeOfferNegotiate', data);
 			this.props.apiNegotiateOffer(faId, data);
 			publish('onAfterOfferNegotiate', this.props.frameAgreements[faId]._ui.attachment);

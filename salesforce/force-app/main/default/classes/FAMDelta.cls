@@ -1,22 +1,4 @@
 global with sharing class FAMDelta {
-
-	public static final List<String> CP_FIELDS = new List<String>{
-		'Id',
-		'Name',
-		'cspmb__Effective_Start_Date__c',
-		'cspmb__Effective_End_Date__c',
-		'cspmb__Is_One_Off_Discount_Allowed__c',
-		'cspmb__Is_Recurring_Discount_Allowed__c',
-		'cspmb__Recurring_Charge__c',
-		'cspmb__One_Off_Charge__c',
-		'cspmb__Authorization_Level__c',
-		'cspmb__Is_Authorization_Required__c',
-		'cspmb__Price_Item_Description__c'
-	};
-
-	public class NoAttachmentException extends Exception {
-	}
-
 	@RemoteAction
 	public static Map<String, Object> getDelta(Id fa1, Id fa2) {
 		// Will compare fa1 (original) to fa2
@@ -29,8 +11,8 @@ global with sharing class FAMDelta {
 		String encoded_att_1 = FrameRateManagerController.getAttachmentBody(fa1);
 		String encoded_att_2 = FrameRateManagerController.getAttachmentBody(fa2);
 
-		if (encoded_att_1 == null || encoded_att_2 == null) {
-			throw new NoAttachmentException('Attachment not present in one of the frame agreements!');
+		if (String.isBlank(encoded_att_1) || String.isBlank(encoded_att_2)) {
+			throw new NullAttachmentException('Attachment not present in one of the frame agreements!');
 		}
 
 		String att_1 = EncodingUtil.base64Decode(encoded_att_1).toString();
@@ -40,188 +22,34 @@ global with sharing class FAMDelta {
 		Map<String, Object> targetProducts = null;
 		Map<String, Object> sourceAddons = null;
 		Map<String, Object> targetAddons = null;
+		Map<String, Object> sourceOffers = null;
+		Map<String, Object> targetOffers = null;
 
-		if (att_1 != null) {
-			Map<String, Object> desAtt = (Map<String, Object>) JSON.deserializeUntyped(att_1);
-			sourceProducts = (Map<String, Object>) desAtt.get('products');
-			sourceAddons = (Map<String, Object>) desAtt.get('addons');
-		}
+		Map<String, Object> desAtt = (Map<String, Object>) JSON.deserializeUntyped(att_1);
+		sourceProducts = (Map<String, Object>) desAtt.get('products');
+		sourceAddons = (Map<String, Object>) desAtt.get('addons');
+		sourceOffers = (Map<String, Object>) desAtt.get('offers');
 
-		if (att_2 != null) {
-			Map<String, Object> desAtt2 = (Map<String, Object>) JSON.deserializeUntyped(att_2);
-			targetProducts = (Map<String, Object>) desAtt2.get('products');
-			targetAddons = (Map<String, Object>) desAtt2.get('addons');
-		}
-
-		// Compare attachment
-
-		// 1) Products added/removed
-		Set<String> productIds_1;
-		Set<String> productIds_2;
-
-		// This will contain attachment diff for products
-		Map<Id, Object> fa_products = new Map<Id, Object>();
-
-		if (sourceProducts != null && targetProducts != null) {
-			// .clone() because apex will remove key from map if removed from Set created from keySet
-			productIds_1 = sourceProducts.keySet().clone();
-			productIds_2 = targetProducts.keySet().clone();
-
-		}
-
-		List<Id> unchangedProductIds = new List<Id> ();
-		for (String cpId : productIds_1) {
-			if (productIds_2.contains(cpId)) {
-				// Unchanged
-				unchangedProductIds.add(cpId);
-			} else {
-				// Removed
-				fa_products.put(cpId, 'removed');
-			}
-			// Delete this cpId from productIds_2 so that we are left with added
-			productIds_2.remove(cpId);
-		}
-
-		for (String cpId : productIds_2) {
-			fa_products.put(cpId, 'added');
-		}
-
-
-		// Loop through unchanged and perform deeper analysis
-
-		// Compare product charges
-		// Append compareProductCharges result to main structure
-
-		// Compare volumes
-		// Cast volume to compareVolume format
-		// Append compareVolume result to main structure
-
-		// Compare Addons
-		// Append compareAddons result to main structure
+		Map<String, Object> desAtt2 = (Map<String, Object>) JSON.deserializeUntyped(att_2);
+		targetProducts = (Map<String, Object>) desAtt2.get('products');
+		targetAddons = (Map<String, Object>) desAtt2.get('addons');
+		targetOffers = (Map<String, Object>) desAtt2.get('offers');
 
 		Map<String, Object> diff_structure = compareFrameAgreements(fa1, fa2);
 
-		for (String productId : unchangedProductIds) {
+		// Compare attachment
+		Map<Id, Object> comparedProducts = new Map<Id, Object>();
+		if (sourceProducts != null && targetProducts != null) {
+			comparedProducts = compareProducts(sourceProducts, targetProducts);
+		}
 
-			Map<String, Object> original_cp = (Map<String, Object>) sourceProducts.get(productId);
-			Map<String, Object> secondary_cp = (Map<String, Object>) targetProducts.get(productId);
-
-			// ********************** ADDONS
-			Map<String, addonWrap> addon_compare = new Map<String, addonWrap>();
-
-			Map<String, Object> addons1 = (Map<String, Object>) original_cp.get('_addons');
-			Map<String, Object> addons2 = (Map<String, Object>) secondary_cp.get('_addons');
-
-			if (addons1 != null || addons2 != null) {
-
-				if (addons1 == null) {
-					addons1 = new Map<String, Object>();
-				}
-
-				if (addons2 == null) {
-					addons2 = new Map<String, Object>();
-				}
-
-				addon_compare = compareAddons(addons1, addons2);
-			}
-
-			// ********************** CHARGES
-
-			Map<String, Map<String, diffWrap>> charges_compare = new Map<String, Map<String, diffWrap>>();
-
-			Map<String, Object> charges1 = (Map<String, Object>) original_cp.get('_charges');
-			Map<String, Object> charges2 = (Map<String, Object>) secondary_cp.get('_charges');
-
-			if (charges1 != null || charges2 != null) {
-
-				if (charges1 == null) {
-					charges1 = new Map<String, Object>();
-				}
-
-				if (charges2 == null) {
-					charges2 = new Map<String, Object>();
-				}
-
-				charges_compare = compareCharges(charges1, charges2);
-			}
-
-			// ********************** PRODUCTS
-
-			Map<String, diffWrap> products_compare = new Map<String, diffWrap>();
-
-			Map<String, Object> product1 = (Map<String, Object>) original_cp.get('_product');
-			Map<String, Object> product2 = (Map<String, Object>) secondary_cp.get('_product');
-
-			if (product1 != null || product2 != null) {
-
-				if (product1 == null) {
-					product1 = new Map<String, Object>();
-				}
-
-				if (product2 == null) {
-					product2 = new Map<String, Object>();
-				}
-
-				products_compare = compareProductCharges(product1, product2);
-			}
-
-			// ********************** RATE CARD
-
-			Map<String, rcWrap> rateCards_compare = new Map<String, rcWrap>();
-
-			system.debug(productId + '-' + JSON.serialize(original_cp));
-			system.debug(productId + '-' + JSON.serialize(secondary_cp));
-
-			Map<String, Object> rcList1 = (Map<String, Object>) original_cp.get('_rateCards');
-			Map<String, Object> rcList2 = (Map<String, Object>) secondary_cp.get('_rateCards');
-
-			if (rcList1 != null || rcList2 != null) {
-
-				if (rcList1 == null) {
-					rcList1 = new Map<String, Object>();
-				}
-
-				if (rcList2 == null) {
-					rcList2 = new Map<String, Object>();
-				}
-
-				rateCards_compare = compareRateCards(rcList1, rcList2);
-			}
-
-			// ********************** VOLUMES
-
-			Map<String, Object> volumes1 = (Map<String, Object>) original_cp.get('_volume');
-			Map<String, Object> volumes2 = (Map<String, Object>) secondary_cp.get('_volume');
-
-			system.debug(volumes1);
-			system.debug(volumes2);
-
-			Boolean isAllNull1 = new Set<Object>(volumes1.values()).equals(new Set<Object>{
-				null
-			});
-			Boolean isAllNull2 = new Set<Object>(volumes2.values()).equals(new Set<Object>{
-				null
-			});
-			system.debug(isAllNull1);
-			system.debug(isAllNull2);
-
-			Map<String, diffWrap> volume_compare = new Map<String, diffWrap>();
-
-			if (!isAllNull1 || !isAllNull2) {
-				volume_compare = compareVolume(volumes1, volumes2);
-			}
-
-			// ********************** DONE COMPARING
-			fa_products.put(productId,
-				new attachmentWrap(
-					addon_compare, charges_compare, products_compare, rateCards_compare, volume_compare
-				)
-			);
-
+		Map<Id, Object> comparedOffers = new Map<Id, Object>();
+		if (sourceOffers != null && targetOffers != null) {
+			comparedOffers = compareProducts(sourceOffers, targetOffers);
 		}
 
 		// Compare standalone Addons
-		if (sourceAddons != null || targetAddons != null) {
+		if (sourceAddons != null | targetAddons != null) {
 			if(sourceAddons == null) {
 				sourceAddons = new Map<String, Object>();
 			}
@@ -233,12 +61,12 @@ global with sharing class FAMDelta {
 			diff_structure.put('_addons', compareAddons(sourceAddons, targetAddons));
 		}
 
-
 		// Put attachment diff into the main structure
-		diff_structure.put('_products', fa_products);
-
+		diff_structure.put('_products', comparedProducts);
+		if (comparedOffers != null && comparedOffers.size() > 0) {
+			diff_structure.put('_offers', comparedOffers);
+		}
 		// unchangedProductIds.
-
 		return diff_structure;
 	}
 
@@ -265,13 +93,10 @@ global with sharing class FAMDelta {
 	}
 
 	public static Map<String, addonWrap> compareAddons(Map<String, Object> addons1, Map<String, Object> addons2) {
-
 		Map<String, addonWrap> result = new Map<String, addonWrap>();
-
 		Set<String> secondaryAddonsIds = addons2.keySet();
 
 		for (String addonId : addons1.keySet()) {
-
 			Map<String, Object> addon1 = (Map<String, Object>) addons1.get(addonId);
 			Map<String, Object> addon2 = (Map<String, Object>) addons2.get(addonId);
 
@@ -341,12 +166,9 @@ global with sharing class FAMDelta {
 				// Remove this add on Id from the list
 				secondaryAddonsIds.remove(addonId);
 			}
-
-
 		}
 
 		// secondaryAddonsIds now contains added
-
 		for (String addedAddonId : secondaryAddonsIds) {
 			// added
 			Map<String, Object> addon2 = (Map<String, Object>) addons2.get(addedAddonId);
@@ -369,10 +191,9 @@ global with sharing class FAMDelta {
 		Map<String, Object> p_charge1,
 		Map<String, Object> p_charge2
 	) {
-
 		Map<String, diffWrap> result = new Map<String, diffWrap>();
-
 		String oneOffStatus = 'unchanged';
+
 		if (p_charge1.get('oneOff') != p_charge2.get('oneOff')) {
 			oneOffStatus = 'changed';
 		}
@@ -393,27 +214,19 @@ global with sharing class FAMDelta {
 		Map<String, Object> charges1,
 		Map<String, Object> charges2
 	) {
-
 		Map<String, Map<String, diffWrap>> result = new Map<String, Map<String, diffWrap>>();
-
 		Set<String> secondaryChargesIds = charges2.keySet();
 
-
 		for (String chargeId : charges1.keySet()) {
-
 			Map<String, diffWrap> this_diff = new Map<String, diffWrap>();
-
 			String chargeStatus = 'unchanged';
-
 			Map<String, Object> this_charge = (Map<String, Object>) charges1.get(chargeId);
 
 			if (charges2.containsKey(chargeId)) {
 				// Existing
-
 				Map<String, Object> secondary_charge = (Map<String, Object>) charges2.get(chargeId);
 
 				if (this_charge.containsKey('oneOff')) {
-
 					String oneOffStatus = 'unchanged';
 					if (this_charge.get('oneOff') != secondary_charge.get('oneOff')) {
 						oneOffStatus = 'changed';
@@ -591,6 +404,149 @@ global with sharing class FAMDelta {
 
 		return result;
 
+	}
+
+	private static Map<Id, Object> compareProducts(
+		Map<String, Object> sourceProducts, Map<String, Object> targetProducts
+	) {
+		Map<Id, Object> comparisonMap = new Map<Id, Object>();
+		List<Id> unchangedProductIds = new List<Id>();
+
+		// .clone() because apex will remove key from map if removed from Set created from keySet
+		Set<String>  sourceProductIds = sourceProducts.keySet().clone();
+		Set<String>  targetProductIds = targetProducts.keySet().clone();
+
+		for (String cpId : sourceProductIds) {
+			if (targetProductIds.contains(cpId)) {
+				// Unchanged
+				unchangedProductIds.add(cpId);
+			} else {
+				// Removed
+				comparisonMap.put(cpId, 'removed');
+			}
+			// Delete this cpId from productIds_2 so that we are left with added
+			targetProductIds.remove(cpId);
+		}
+
+		for (String cpId : targetProductIds) {
+			comparisonMap.put(cpId, 'added');
+		}
+
+		for (String productId : unchangedProductIds) {
+			Map<String, Object> original_cp = (Map<String, Object>) sourceProducts.get(productId);
+			Map<String, Object> secondary_cp = (Map<String, Object>) targetProducts.get(productId);
+
+			Map<String, addonWrap> addon_compare = new Map<String, addonWrap>();
+
+			Map<String, Object> addons1 = (Map<String, Object>) original_cp.get('_addons');
+			Map<String, Object> addons2 = (Map<String, Object>) secondary_cp.get('_addons');
+
+			if (addons1 != null || addons2 != null) {
+				if (addons1 == null) {
+					addons1 = new Map<String, Object>();
+				}
+				if (addons2 == null) {
+					addons2 = new Map<String, Object>();
+				}
+
+				addon_compare = compareAddons(addons1, addons2);
+			}
+
+			// ********************** CHARGES
+
+			Map<String, Map<String, diffWrap>> charges_compare = new Map<String, Map<String, diffWrap>>();
+
+			Map<String, Object> charges1 = (Map<String, Object>) original_cp.get('_charges');
+			Map<String, Object> charges2 = (Map<String, Object>) secondary_cp.get('_charges');
+
+			if (charges1 != null || charges2 != null) {
+
+				if (charges1 == null) {
+					charges1 = new Map<String, Object>();
+				}
+
+				if (charges2 == null) {
+					charges2 = new Map<String, Object>();
+				}
+
+				charges_compare = compareCharges(charges1, charges2);
+			}
+
+			// ********************** PRODUCTS
+
+			Map<String, diffWrap> products_compare = new Map<String, diffWrap>();
+
+			Map<String, Object> product1 = (Map<String, Object>) original_cp.get('_product');
+			Map<String, Object> product2 = (Map<String, Object>) secondary_cp.get('_product');
+
+			if (product1 != null || product2 != null) {
+
+				if (product1 == null) {
+					product1 = new Map<String, Object>();
+				}
+
+				if (product2 == null) {
+					product2 = new Map<String, Object>();
+				}
+
+				products_compare = compareProductCharges(product1, product2);
+			}
+
+			// ********************** RATE CARD
+
+			Map<String, rcWrap> rateCards_compare = new Map<String, rcWrap>();
+
+			system.debug(productId + '-' + JSON.serialize(original_cp));
+			system.debug(productId + '-' + JSON.serialize(secondary_cp));
+
+			Map<String, Object> rcList1 = (Map<String, Object>) original_cp.get('_rateCards');
+			Map<String, Object> rcList2 = (Map<String, Object>) secondary_cp.get('_rateCards');
+
+			if (rcList1 != null || rcList2 != null) {
+
+				if (rcList1 == null) {
+					rcList1 = new Map<String, Object>();
+				}
+
+				if (rcList2 == null) {
+					rcList2 = new Map<String, Object>();
+				}
+
+				rateCards_compare = compareRateCards(rcList1, rcList2);
+			}
+
+			// ********************** VOLUMES
+
+			Map<String, Object> volumes1 = (Map<String, Object>) original_cp.get('_volume');
+			Map<String, Object> volumes2 = (Map<String, Object>) secondary_cp.get('_volume');
+
+			system.debug(volumes1);
+			system.debug(volumes2);
+
+			Boolean isAllNull1 = new Set<Object>(volumes1.values()).equals(new Set<Object>{
+				null
+			});
+			Boolean isAllNull2 = new Set<Object>(volumes2.values()).equals(new Set<Object>{
+				null
+			});
+			system.debug(isAllNull1);
+			system.debug(isAllNull2);
+
+			Map<String, diffWrap> volume_compare = new Map<String, diffWrap>();
+
+			if (!isAllNull1 || !isAllNull2) {
+				volume_compare = compareVolume(volumes1, volumes2);
+			}
+
+			// ********************** DONE COMPARING
+			comparisonMap.put(productId,
+				new attachmentWrap(
+					addon_compare, charges_compare, products_compare, rateCards_compare, volume_compare
+				)
+			);
+		}
+
+		return comparisonMap;
 	}
 
 	public class diffWrap {

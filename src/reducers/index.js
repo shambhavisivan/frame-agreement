@@ -2034,55 +2034,96 @@ const rootReducer = (state = initialState, action) => {
 					// Save volume fields on override
 					_attachment.products[cp.Id] = {
 						...enrichAttachment(cp),
-						_volume: _attachment.products[cp.Id]._volume
+						_volume: _attachment.products[cp.Id]._volume,
+					};
+				});
+
+				state.frameAgreements[faId]._ui.offers.forEach(offer => {
+					// Save volume fields on override
+					_attachment.offers[offer.Id] = {
+						...enrichAttachment(offer),
+						_volume: _attachment.offers[offer.Id]._volume
 					};
 				});
 			} else {
-				let _cpCache = {};
+				let itemCache = {};
 
-				function getDefaultAttachmentForProductId(cpId) {
-					if (!_cpCache.hasOwnProperty(cpId)) {
-						let _cp = state.frameAgreements[faId]._ui.commercialProducts.find(cp => cp.Id === cpId);
-						_cpCache[cpId] = enrichAttachment(_cp);
-					}
+				function getDefaultAttachmentForItemId(itemId) {
+					if (!itemCache.hasOwnProperty(itemId)) {
+						let _item = state.frameAgreements[
+							faId
+						]._ui.commercialProducts.find((cp) => cp.Id === itemId);
 
-					return _cpCache[cpId];
-				}
-
-				if (entitiyMap.hasOwnProperty('product') && _attachment.hasOwnProperty('products')) {
-					for (var key in _attachment.products) {
-						let _defaultAttachment = getDefaultAttachmentForProductId(key);
-
-						if (entitiyMap.product.hasOwnProperty(key)) {
-							// This entity is preset in attachment
-							// reset its charges and productCharges
-							if (_defaultAttachment._product) {
-								_attachment.products[key]._product = _defaultAttachment._product;
-							}
-
-							if (_defaultAttachment._charges) {
-								_attachment.products[key]._charges = _defaultAttachment._charges;
-							}
+						// if it is null, then it has to be offer
+						if (!_item) {
+							_item = state.frameAgreements[faId]._ui.offers.find(
+								(offer) => offer.Id === itemId
+							);
 						}
+						itemCache[itemId] = enrichAttachment(_item);
 					}
+
+					return itemCache[itemId];
 				}
 
-				if (entitiyMap.hasOwnProperty('rcl')) {
-					for (var key in _attachment.products) {
-						if (_attachment.products[key].hasOwnProperty('_rateCards')) {
-							let _defaultAttachment = getDefaultAttachmentForProductId(key);
+				if (entitiyMap.product) {
 
-							for (var rcId in _attachment.products[key]._rateCards) {
-								for (var rclId in _attachment.products[key]._rateCards[rcId]) {
-									if (entitiyMap.rcl.hasOwnProperty(rclId)) {
-										// match; reset
-										_attachment.products[key]._rateCards[rcId][rclId] =
-											_defaultAttachment._rateCards[rcId][rclId];
+					function resetChargesNegotiations(itemAttachement) {
+						//itemAttachement = _attachment.products or _attachment.offers
+						if (itemAttachement) {
+							for (var key in itemAttachement) {
+								let _defaultAttachment = getDefaultAttachmentForItemId(key);
+
+								if (entitiyMap.product[key]) {
+									// This entity is preset in attachment
+									// reset its charges and productCharges
+									if (_defaultAttachment._product) {
+										itemAttachement[key]._product = _defaultAttachment._product;
+									}
+
+									if (_defaultAttachment._charges) {
+										itemAttachement[key]._charges = _defaultAttachment._charges;
 									}
 								}
 							}
 						}
 					}
+
+					resetChargesNegotiations(_attachment.products);
+					resetChargesNegotiations(_attachment.offers);
+				}
+
+				if (entitiyMap.rcl) {
+
+					function resetRateCardNegotiations(itemAttachement) {
+						//itemAttachement = _attachment.products or _attachment.offers
+						for (var key in itemAttachement) {
+
+							if (itemAttachement[key]._rateCards) {
+								let _defaultAttachment = getDefaultAttachmentForItemId(key);
+
+								for (var rateCardId in
+									itemAttachement[key]._rateCards) {
+
+									for (var rateCardLineId in
+										itemAttachement[key]._rateCards[rateCardId]) {
+
+										if (entitiyMap.rcl[rateCardLineId]) {
+											// reset matching rate card line charges
+											itemAttachement[key]._rateCards[
+												rateCardId
+											][rateCardLineId] =
+												_defaultAttachment._rateCards[
+													rateCardId
+												][rateCardLineId];
+										}
+									}
+								}
+							}
+						}
+					}
+					resetRateCardNegotiations(_attachment.products);
+					resetRateCardNegotiations(_attachment.offers);
 				}
 			}
 
@@ -2099,7 +2140,7 @@ const rootReducer = (state = initialState, action) => {
 					}
 				}
 			};
-		// **********************************************
+
 		case 'REMOVE_PRODUCTS':
 			var faId = action.payload.faId;
 			var productIds = action.payload.products;
@@ -2550,7 +2591,7 @@ const rootReducer = (state = initialState, action) => {
 			if (Array.isArray(data)) {
 				data.forEach(dataObject => negotiateData(dataObject, _fa._ui.offers, offers));
 			} else {
-				negotiateOfferData(data, _fa._ui.offers, offers);
+				negotiateData(data, _fa._ui.offers, offers);
 			}
 
 			return {

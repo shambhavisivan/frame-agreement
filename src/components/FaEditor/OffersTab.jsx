@@ -42,9 +42,9 @@ class OffersTab extends React.Component {
 		};
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		if (!this.props.offersLoaded) {
-			this.props.getOffers();
+			await this.props.getOffers();
 		}
 	}
 
@@ -54,7 +54,7 @@ class OffersTab extends React.Component {
 		if (this.state.offerFilter) {
 			offersSize = this.props.frameAgreements[
 				this.props.faId
-			]._ui.commercialProducts.filter(cp => {
+			]._ui.offers.filter(cp => {
 				if (
 					this.state.offerFilter &&
 					this.state.offerFilter.length >= 2
@@ -71,7 +71,7 @@ class OffersTab extends React.Component {
 	}
 
 	render() {
-		let commercialProducts;
+		let offers;
 
 		let _offers = this.props.frameAgreements[this.props.faId]._ui.offers;
 		let _editable = window.FAM.api.isAgreementEditable(this.props.faId);
@@ -79,15 +79,16 @@ class OffersTab extends React.Component {
 		let _isMaster = isMaster(this.props.frameAgreements[this.props.faId]);
 		let standardData = this.props.settings.ButtonStandardData;
 
-		let _isAddProductsEnabled =
+		let _isAddOffersEnabled =
 			!_isMaster &&
 			evaluateExpressionOnAgreement(
-				standardData.AddProducts,
+				standardData.AddOffers,
 				this.props.frameAgreements[this.props.faId]
-			);
+			) &&
+			this.props.offersLoaded;
 
 		if (_offers.length) {
-			commercialProducts = (
+			offers = (
 				<div className="products-card__inner">
 					<div className="products-card__header">
 						<span className="products__title">
@@ -103,7 +104,7 @@ class OffersTab extends React.Component {
 								value={this.state.offerFilter}
 								bordered={true}
 								onChange={val => {
-									this.setState({ productFilter: val });
+									this.setState({ offerFilter: val });
 								}}
 								placeholder={
 									window.SF.labels
@@ -177,17 +178,17 @@ class OffersTab extends React.Component {
 					{_offers
 						.filter(this._offerFilter)
 						.paginate(this.state.page, this.state.pageSize)
-						.map(cp => {
+						.map(offer => {
 							return (
 								<Offer
-									key={"of-" + cp.Id}
-									offer={cp}
+									key={"of-" + offer.Id}
+									offer={offer}
 									faId={this.props.faId}
-									onSelect={product =>
-										this.props.onSelectOffer(product)
+									onSelect={offer =>
+										this.props.onSelectOffer(offer)
 									}
 									selected={
-										!!this.props.selectedOffers[cp.Id]
+										!!this.props.selectedOffers[offer.Id]
 									}
 								/>
 							);
@@ -196,14 +197,14 @@ class OffersTab extends React.Component {
 				</div>
 			);
 		} else {
-			commercialProducts = (
+			offers = (
 				<div>
 					<AddOfferCTA
 						render={
 							!this.props.frameAgreements[this.props.faId]._ui
 								.offers.length
 						}
-						disabled={!_editable || !_isAddProductsEnabled}
+						disabled={!_editable || !_isAddOffersEnabled}
 					/>
 				</div>
 			);
@@ -211,7 +212,7 @@ class OffersTab extends React.Component {
 
 		return (
 			<div className="card products-card">
-				{commercialProducts}
+				{offers}
 
 				<Pagination
 					totalSize={this.getOffersCount()}

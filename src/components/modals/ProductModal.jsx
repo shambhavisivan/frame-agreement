@@ -3,15 +3,12 @@ import { connect } from 'react-redux';
 
 import Modal from 'react-responsive-modal';
 
-import { publish } from '../../api';
-
 import Icon from '../utillity/Icon';
 import InputSearch from '../utillity/inputs/InputSearch';
 import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
 import { queryCategoriesInCatalogue, queryProductsInCategory } from '~/src/graphql-actions';
-
-import * as Constants from '~/src/utils/constants'
+import ProductRow from '../utillity/ProductRow';
 
 class ProductModal extends Component {
 	constructor(props) {
@@ -20,6 +17,7 @@ class ProductModal extends Component {
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.addProducts = this.addProducts.bind(this);
 		this.loadCommercialProducts = this.loadCommercialProducts.bind(this);
+		this.resetFilter = this.resetFilter.bind(this);
 
 		this.categoryId = null;
 
@@ -77,7 +75,7 @@ class ProductModal extends Component {
 
 	async loadCommercialProducts(categoryId) {
 		// filter cps for category
-		if (this.categoryId !== categoryId) {
+		if (categoryId && this.categoryId !== categoryId) {
 			this.categoryId = categoryId;
 			const linkedProducts = await queryProductsInCategory(categoryId);
 			const linkedProductIds = linkedProducts.map(cp => cp.id);
@@ -85,10 +83,10 @@ class ProductModal extends Component {
 			const commercialProducts = await window.SF.invokeAction("getCommercialProducts", [
 				linkedProductIds,
 			]);
-			let notAddedCommercialProducts = commercialProducts.filter(
+			const notAddedCommercialProducts = commercialProducts.filter(
 				cp => !this.addedProductsIds.includes(cp.Id)
 			);
-			this.setState({ notAddedCommercialProducts });
+			this.setState({ commercialProducts: notAddedCommercialProducts });
 		}
 	}
 
@@ -141,6 +139,10 @@ class ProductModal extends Component {
 			actionTaken: false,
 			selected: {}
 		});
+	}
+
+	resetFilter() {
+		this.setState({ commercialProducts: this.notAddedCommercialProducts });
 	}
 
 	render() {
@@ -212,12 +214,20 @@ class ProductModal extends Component {
 												</div>
 											);
 										}) : (<div>
-											<p>Link atleast one category to the default catalogue to enable filter</p>
+											<p>{window.SF.labels.warning_no_commercial_products_linked}</p>
 										</div>)
 										}
 									</ul>
 								</div>
 							</div>
+						</div>
+						<div className="fa-modal-button-group">
+							<button
+								onClick={this.resetFilter}
+								className="fa-button fa-button--default"
+							>
+								{window.SF.labels.modal_categorization_btn_clear}
+							</button>
 						</div>
 					</div>
 
@@ -278,28 +288,13 @@ class ProductModal extends Component {
 												onClick={() => this.selectProduct(cp)}
 											>
 												<span>{cp.Name}</span>
-												{this.priceItemFields.map(f => {
+												{this.priceItemFields.map(field => {
 													return (
-														<span key={cp.Id + '-' + f.name}>
-															{(() => {
-																if (cp.hasOwnProperty(f.name)) {
-																	if (typeof cp[f.name] === 'boolean') {
-																		let _val = cp[f.name];
-																		return (
-																			<Icon
-																				name={_val ? 'success' : 'clear'}
-																				height="14"
-																				width="14"
-																				color={_val ? '#4bca81' : '#d9675d'}
-																			/>
-																		);
-																	} else {
-																		return cp[f.name].toString();
-																	}
-																} else {
-																	return '-';
-																}
-															})()}
+														<span key={cp.Id + '-' + field.name}>
+															<ProductRow
+																product={cp}
+																fieldName={field.name}
+															/>
 														</span>
 													);
 												})}

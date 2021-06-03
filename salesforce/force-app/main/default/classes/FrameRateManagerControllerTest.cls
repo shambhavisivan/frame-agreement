@@ -187,10 +187,63 @@ private class FrameRateManagerControllerTest {
 		cspmb__Rate_Card__c rc = new cspmb__Rate_Card__c(cspmb__Is_Active__c = true);
 		insert rc;
 		cspmb__Rate_Card_Line__c rcl = new cspmb__Rate_Card_Line__c(
-			cspmb__Rate_Card__c = rc.Id, Name = 'testRCL', cspmb__Is_Active__c = true, cspmb__rate_value__c = 124.99, cspmb__Rate_Card_Line_Unit__c = 'Sample Unit'
+			cspmb__rate_card__c = rc.id,
+			name = 'testrcl',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit'
 		);
 		insert rcl;
-		cspmb__Price_Item_Rate_Card_Association__c pirc = new cspmb__Price_Item_Rate_Card_Association__c(cspmb__Rate_Card__c = rc.Id, cspmb__Price_Item__c = cp_1.Id);
+		cspmb__Rate_Card_Line__c rcl2 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc.id,
+			name = 'testrcl2',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit',
+			cspmb__effective_end_date__c = Date.today().addDays(5)
+		);
+		insert rcl2;
+		cspmb__Rate_Card_Line__c rcl3 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc.id,
+			name = 'testrcl3',
+			cspmb__is_active__c = false,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit'
+		);
+		insert rcl3;
+		cspmb__Rate_Card_Line__c rcl4 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc.id,
+			name = 'testrcl2',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit',
+			cspmb__effective_start_date__c = Date.today().addDays(5)
+		);
+		insert rcl4;
+		cspmb__Rate_Card_Line__c rcl5 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc.id,
+			name = 'testrcl5',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit',
+			cspmb__effective_start_date__c = Date.today().addDays(-5),
+			cspmb__effective_end_date__c = Date.today().addDays(5)
+		);
+		insert rcl5;
+		cspmb__Rate_Card_Line__c rcl6 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc.id,
+			name = 'testrcl6',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit',
+			cspmb__effective_start_date__c = Date.today().addDays(-5),
+			cspmb__effective_end_date__c = Date.today().addDays(-3)
+		);
+		insert rcl6;
+		cspmb__Price_Item_Rate_Card_Association__c pirc = new cspmb__Price_Item_Rate_Card_Association__c(
+			cspmb__rate_card__c = rc.id,
+			cspmb__price_item__c = cp_1.id
+		);
 		insert pirc;
 
 		// ADDONS
@@ -289,7 +342,7 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@TestSetup
-	static void makeData(){
+	static void makeData() {
 		Fac_Settings__c facSettings = new Fac_Settings__c();
 		facSettings.active_status__c = 'Active';
 		facSettings.approved_status__c = 'Approved';
@@ -478,7 +531,9 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		Map <String, Map<String, Object>> result = FrameRateManagerController.findReplacementCommercialProduct(new List<String>{cp_replace_1.Id});
+		Map <String, Map<String, Object>> result = FrameRateManagerController.findReplacementCommercialProduct(new List<String>{
+			cp_replace_1.Id
+		});
 
 		Test.stopTest();
 
@@ -575,7 +630,9 @@ private class FrameRateManagerControllerTest {
 		Boolean isUserAdmin = FrameRateManagerController.isUserAdmin();
 		Set <Id> isUserDelegate = FrameRateManagerController.isUserDelegate(userId);
 
-		List<String> uniqueList = FrameRateManagerController.getUniqueListElements(new List<String>{'a1', 'a1', 'a2'});
+		List<String> uniqueList = FrameRateManagerController.getUniqueListElements(new List<String>{
+			'a1', 'a1', 'a2'
+		});
 
 		Map<String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(
 			cpIdList,
@@ -790,7 +847,9 @@ private class FrameRateManagerControllerTest {
 		);
 		insert cp;
 
-		List<Id> cpIdList = new List<Id> {cp.Id};
+		List<Id> cpIdList = new List<Id>{
+			cp.Id
+		};
 
 		List<cspmb__pricing_rule__c> pr = [select id, cspmb__description__c from cspmb__pricing_rule__c];
 
@@ -830,7 +889,7 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@IsTest
-	static void testCPAdvancedPricing(){
+	static void testCPAdvancedPricing() {
 		setupPricingModel();
 		setupSettings();
 
@@ -843,7 +902,9 @@ private class FrameRateManagerControllerTest {
 		);
 		insert cp;
 
-		List<Id> cpIdList = new List<Id> {cp.Id};
+		List<Id> cpIdList = new List<Id>{
+			cp.Id
+		};
 
 		List<cspmb__pricing_rule__c> pr = [select id, cspmb__description__c from cspmb__pricing_rule__c];
 
@@ -885,7 +946,7 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@IsTest
-	static void testCPAdvancedAndLegacyPricing(){
+	static void testCPAdvancedAndLegacyPricing() {
 		setupPricingModel();
 		setupSettings();
 
@@ -900,7 +961,9 @@ private class FrameRateManagerControllerTest {
 		);
 		insert cp;
 
-		List<Id> cpIdList = new List<Id> {cp.Id};
+		List<Id> cpIdList = new List<Id>{
+			cp.Id
+		};
 
 		List<cspmb__pricing_rule__c> pr = [select id, cspmb__description__c from cspmb__pricing_rule__c];
 
@@ -929,7 +992,7 @@ private class FrameRateManagerControllerTest {
 			select cspmb__one_off_adjustment__c, cspmb__recurring_adjustment__c
 			from cspmb__Price_Item_Pricing_Rule_Association__c
 			where cspmb__price_item__c = :cp.id
-			];
+		];
 
 		System.assertEquals(1, cp.cspmb__One_Off_Charge__c);
 		System.assertEquals(2, cp.cspmb__Recurring_Charge__c);
@@ -1157,22 +1220,43 @@ private class FrameRateManagerControllerTest {
 	public static void testPriceItemDataEdgeCases() {
 		FrameRateManagerControllerTest.setupSettings();
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
-			cspmb__Price_Item_Code__c = 'cp_1',
-			cspmb__Type__c = 'Commercial Product',
-			cspmb__Role__c = 'Basic'
+			cspmb__price_item_code__c = 'cp_1',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__role__c = 'Basic'
 		);
 		insert cp_1;
 
 		Test.startTest();
-
-		Map <Id, List <FrameRateManagerController.RateCard>> emptyList = FrameRateManagerController.getRateCards(new List <Id>{
-			'01p1t00000M4Gqp'
-		});
-
+		Map<Id, List<FrameRateManagerController.RateCard>> emptyList = FrameRateManagerController.getRateCards(
+			new List<Id>{ '01p1t00000M4Gqp' }
+		);
 		Test.stopTest();
 
 		System.assertEquals(0, emptyList.keySet().size());
+	}
 
+	@isTest
+	public static void testGetRateCardLines() {
+		FrameRateManagerControllerTest.setupSettings();
+		setupPricingModel();
+		cspmb__Price_Item__c cp_1 = [
+			select id
+			from cspmb__Price_Item__c
+			where name = 'cp_1'
+			limit 1
+		];
+
+		Test.startTest();
+		Map<Id, List<FrameRateManagerController.RateCard>> cpRcMap = FrameRateManagerController.getRateCards(
+			new List<Id>{ cp_1.id }
+		);
+		Test.stopTest();
+
+		System.assertEquals(1, cpRcMap.keySet().size(), 'one cp should equal to one item in the return list');
+		for (List<FrameRateManagerController.RateCard> rcList : cpRcMap.values()) {
+			System.assertEquals(1, rcList.size(), 'should be one rate card only');
+			System.assertEquals(3, rcList[0].rateCardLines.size(), 'Only 3 out of 6 RCLs are returned');
+		}
 	}
 
 	@isTest
@@ -1268,7 +1352,8 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c original = [
 			select Id, csconta__master_frame_agreement__c, csconta__frame_agreement_number__c
 			from csconta__Frame_Agreement__c
-			where Id = :newFa.Id limit 1
+			where Id = :newFa.Id
+			limit 1
 		];
 
 		Test.startTest();
@@ -1280,7 +1365,8 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c cloned = [
 			select Id, csconta__master_frame_agreement__c, csconta__frame_agreement_number__c
 			from csconta__Frame_Agreement__c
-			where Id = :result.Id limit 1
+			where Id = :result.Id
+			limit 1
 		];
 
 		System.assertEquals(original.csconta__master_frame_agreement__c, cloned.csconta__master_frame_agreement__c);
@@ -1292,7 +1378,7 @@ private class FrameRateManagerControllerTest {
 		Account test_account = new Account(name = 'TestAcc');
 		insert test_account;
 
-		Datetime futureDate =  Datetime.now().addDays(1);
+		Datetime futureDate = Datetime.now().addDays(1);
 
 		csconta__Frame_Agreement__c originalFa = new csconta__Frame_Agreement__c(
 			csconta__status__c = 'Draft',
@@ -1397,7 +1483,7 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@IsTest
-	private static void testGetUserLocale(){
+	private static void testGetUserLocale() {
 		User u = createMockUserForProfile('System Administrator');
 
 		System.runAs(u) {
@@ -1412,12 +1498,12 @@ private class FrameRateManagerControllerTest {
 	}
 
 	private static User createMockUser(Id profileId) {
-		User u = new User(alias = 'TestUser', email='test@email.com',
-		emailencodingkey='UTF-8', lastname='Testing',
-		languagelocalekey='en_US', localesidkey='en_US', profileid = profileId,
-		timezonesidkey='America/Los_Angeles', username= System.now().millisecond() + 'p***n.m****l@***.com');
+		User u = new User(alias = 'TestUser', email = 'test@email.com',
+			emailencodingkey = 'UTF-8', lastname = 'Testing',
+			languagelocalekey = 'en_US', localesidkey = 'en_US', profileid = profileId,
+			timezonesidkey = 'America/Los_Angeles', username = System.now().millisecond() + 'p***n.m****l@***.com');
 		insert u;
-		return  u;
+		return u;
 	}
 
 	private static User createMockUserForProfile(String profileName) {
@@ -1426,7 +1512,7 @@ private class FrameRateManagerControllerTest {
 		return createMockUser(p.id);
 	}
 
-	private static Fac_Settings__c loadFacSettings(){
+	private static Fac_Settings__c loadFacSettings() {
 		return Fac_Settings__c.getInstance(UserInfo.getUserID());
 	}
 

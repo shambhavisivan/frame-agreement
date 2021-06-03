@@ -25,8 +25,8 @@ global with sharing class FrameRateManagerController {
 		'csconta__agreement_level__c'
 	};
 	public static final String NO_CATALOGUE_ID_MSG = System.Label.msg_no_catalogue_id;
-	public static final List<String> TAB_NAME_CONFIG_LIST = new List<String> {
-		 'product', 'addon'
+	public static final List<String> TAB_NAME_CONFIG_LIST = new List<String>{
+		'product', 'addon'
 	};
 
 	global FrameRateManagerController() {
@@ -569,7 +569,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public static String parseNumberFromName(String faName) {
-		return  faName.split('-')[1];
+		return faName.split('-')[1];
 	}
 
 	@RemoteAction
@@ -922,7 +922,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public static List <cspmb__Add_On_Price_Item__c> getStandaloneAddons_p(List<Id> addonIds) {
-		List<String> addonMandatoryFields = new List<String> {
+		List<String> addonMandatoryFields = new List<String>{
 			'Id',
 			'Name',
 			'cspmb__One_Off_Charge__c',
@@ -938,7 +938,7 @@ global with sharing class FrameRateManagerController {
 		List<String> addFieldsArr = new List<String>();
 
 		if (!String.isBlank(addFields)) {
-			addFieldsArr = addFields.replaceAll('\\s+','').split(',');
+			addFieldsArr = addFields.replaceAll('\\s+', '').split(',');
 		}
 
 		addFieldsArr.addAll(addonMandatoryFields);
@@ -974,7 +974,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	private static List<cspmb__Price_Item__c> getCommercialProducts_p(List<Id> priceItemIds) {
-		List<String> standardFields = new List<String> {
+		List<String> standardFields = new List<String>{
 			'Id',
 			'Name',
 			'cspmb__Effective_Start_Date__c',
@@ -993,7 +993,7 @@ global with sharing class FrameRateManagerController {
 		List<String> csFieldsArr = new List<String>();
 
 		if (!String.isBlank(csFields)) {
-			csFieldsArr = csFields.replaceAll('\\s+','').split(',');
+			csFieldsArr = csFields.replaceAll('\\s+', '').split(',');
 		}
 
 		List<String> fieldsArr = new List<String>();
@@ -1034,9 +1034,11 @@ global with sharing class FrameRateManagerController {
 			pricingRuleList.add(prgra.cspmb__pricing_rule__c);
 		}
 
-		List<String> adjustmentTypeList = new List<String> {'Initial Price', 'Price Override'};
+		List<String> adjustmentTypeList = new List<String>{
+			'Initial Price', 'Price Override'
+		};
 		List<cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = new List<cspmb__Price_Item_Pricing_Rule_Association__c>();
-		if (!prgs.isEmpty()){
+		if (!prgs.isEmpty()) {
 			pipraList = [
 				select id, cspmb__recurring_adjustment__c, cspmb__one_off_adjustment__c, cspmb__price_item__c,
 					cspmb__pricing_rule__c, cspmb__one_off_adjustment_type__c, cspmb__recurring_adjustment_type__c
@@ -1044,7 +1046,7 @@ global with sharing class FrameRateManagerController {
 				where cspmb__price_item__c in :cpList.values()
 				and cspmb__pricing_rule__c in :pricingRuleList
 				and (cspmb__one_off_adjustment_type__c in :adjustmentTypeList
-					or cspmb__one_off_adjustment_type__c in :adjustmentTypeList)
+				or cspmb__one_off_adjustment_type__c in :adjustmentTypeList)
 			];
 		}
 
@@ -1060,7 +1062,7 @@ global with sharing class FrameRateManagerController {
 		return cpList.values();
 	}
 
-	private static csutil__JSON_Data__c getJsonData(String jsonSettingKey){
+	private static csutil__JSON_Data__c getJsonData(String jsonSettingKey) {
 		List<csutil__JSON_Data__c> result = [
 			select csutil__value__c
 			from csutil__JSON_Data__c
@@ -1380,7 +1382,6 @@ global with sharing class FrameRateManagerController {
 	}
 
 
-
 	@RemoteAction
 	public static List<Map<String, Object>> getRelatedLists(Id faId) {
 		List<Map<String, Object>> resultList = new List<Map<String, Object>>();
@@ -1490,15 +1491,12 @@ global with sharing class FrameRateManagerController {
 		List<Id> rateCardIdList = new List<Id>();
 
 		List<cspmb__Price_Item_Rate_Card_Association__c> rateCardAssocList = [
-			select Id, cspmb__Rate_Card__r.Id, cspmb__Price_Item__c
+			select id, cspmb__rate_card__r.id, cspmb__price_item__c
 			from cspmb__Price_Item_Rate_Card_Association__c
-			where cspmb__Price_Item__c in :priceItemIdList
+			where cspmb__price_item__c in :priceItemIdList
 		];
 
 		for (cspmb__Price_Item_Rate_Card_Association__c pirca : rateCardAssocList) {
-
-			// rateCard_priceItemMap.put(pirca.cspmb__Rate_Card__r.Id, pirca.cspmb__Price_Item__c);
-
 			if (rateCard_priceItemMap.containsKey(pirca.cspmb__Rate_Card__r.Id)) {
 				List<Id> tempCpIdList = rateCard_priceItemMap.get(pirca.cspmb__Rate_Card__r.Id);
 				tempCpIdList.add(pirca.cspmb__Price_Item__c);
@@ -1511,45 +1509,41 @@ global with sharing class FrameRateManagerController {
 
 			rateCardIdList.add(pirca.cspmb__Rate_Card__r.Id);
 		}
-		// ***************************************************
-		// contains information about which rate card has which rate card lines (rateCardId: rateCardLineList)
+
 		Map<Id, List<cspmb__Rate_Card_Line__c>> rcId_rateCardLineList = new Map<Id, List<cspmb__Rate_Card_Line__c>>();
 		// list of loaded/relevant rate card lines
 		List<cspmb__Rate_Card_Line__c> rateCardLines = getRateCardLines(rateCardIdList);
 
 		for (cspmb__Rate_Card_Line__c rcl : rateCardLines) {
-
 			// mechanism populating list inside map, handles first occurence
-			if (rcId_rateCardLineList.containsKey(rcl.cspmb__Rate_Card__c)) {
+			if (rcId_rateCardLineList.containsKey(rcl.cspmb__rate_card__c)) {
 				// get rate card lines for this rate card
-				List<cspmb__Rate_Card_Line__c> tempRclList = rcId_rateCardLineList.get(rcl.cspmb__Rate_Card__c);
+				List<cspmb__Rate_Card_Line__c> tempRclList = rcId_rateCardLineList.get(rcl.cspmb__rate_card__c);
 				tempRclList.add(rcl);
-				rcId_rateCardLineList.put(rcl.cspmb__Rate_Card__c, tempRclList);
+				rcId_rateCardLineList.put(rcl.cspmb__rate_card__c, tempRclList);
 			} else {
-				rcId_rateCardLineList.put(rcl.cspmb__Rate_Card__c, new List<cspmb__Rate_Card_Line__c>{
+				rcId_rateCardLineList.put(rcl.cspmb__rate_card__c, new List<cspmb__Rate_Card_Line__c>{
 					rcl
 				});
 			}
-
 		}
-		// ***************************************************
 		// list of loaded/relevant rate cards
 		List<cspmb__Rate_Card__c> rateCardList = new List<cspmb__Rate_Card__c>();
 		rateCardList = [
-			select Id, Name, cspmb__Is_Active__c, cspmb__Effective_Start_Date__c,
-			cspmb__Effective_End_Date__c, cspmb__Rate_Card_Code__c, cspmb__Authorization_Level__c,
-			cspmb__Is_Authorization_Required__c
+			select id, name, cspmb__is_active__c, cspmb__effective_start_date__c,
+				cspmb__effective_end_date__c, cspmb__rate_card_code__c, cspmb__authorization_level__c,
+				cspmb__is_authorization_required__c
 			from cspmb__Rate_Card__c
-			where cspmb__Is_Active__c = true
-			and Id IN:rateCardIdList
+			where cspmb__is_active__c = true
+			and id in :rateCardIdList
 		];
 
-		// ***************************************************
 		List<RateCard> rateCardModelList = new List<RateCard>();
 		for (cspmb__Rate_Card__c rc : rateCardList) {
-
-			Boolean start_invalid = rc.cspmb__Effective_Start_Date__c != null && date.today() < rc.cspmb__Effective_Start_Date__c;
-			Boolean end_invalid = rc.cspmb__Effective_End_Date__c != null && date.today() > rc.cspmb__Effective_End_Date__c;
+			Boolean start_invalid =
+				rc.cspmb__effective_start_date__c != null && date.today() < rc.cspmb__effective_start_date__c;
+			Boolean end_invalid =
+				rc.cspmb__effective_end_date__c != null && date.today() > rc.cspmb__effective_end_date__c;
 
 			if (!(start_invalid || end_invalid)) {
 				List<cspmb__Rate_Card_Line__c> rclList = new List<cspmb__Rate_Card_Line__c>();
@@ -1562,9 +1556,7 @@ global with sharing class FrameRateManagerController {
 				rateCardModelList.add(new RateCard(rc, rclList));
 			}
 		}
-		// ***************************************************
 		for (RateCard rc : rateCardModelList) {
-
 			List<Id> corespondingPriceItemIds = rateCard_priceItemMap.get(rc.Id);
 
 			for (Id cpId : corespondingPriceItemIds) {
@@ -1581,7 +1573,6 @@ global with sharing class FrameRateManagerController {
 
 
 		}
-		// ***************************************************
 		return prId_RateCards;
 	}
 
@@ -1657,11 +1648,13 @@ global with sharing class FrameRateManagerController {
 			// mapChildParentUt.put(utg.cspmb__child_usage_type__c, utg.cspmb__parent_usage_type__c);
 
 			if (mapChildParentSet.containsKey(utg.cspmb__child_usage_type__c)) {
-			 Set<Id> tempSet = mapChildParentSet.get(utg.cspmb__child_usage_type__c);
-			 tempSet.add(utg.cspmb__parent_usage_type__c);
-			 mapChildParentSet.put(utg.cspmb__child_usage_type__c, tempSet);
+				Set<Id> tempSet = mapChildParentSet.get(utg.cspmb__child_usage_type__c);
+				tempSet.add(utg.cspmb__parent_usage_type__c);
+				mapChildParentSet.put(utg.cspmb__child_usage_type__c, tempSet);
 			} else {
-			 mapChildParentSet.put(utg.cspmb__child_usage_type__c, new Set<Id>{utg.cspmb__parent_usage_type__c});
+				mapChildParentSet.put(utg.cspmb__child_usage_type__c, new Set<Id>{
+					utg.cspmb__parent_usage_type__c
+				});
 			}
 
 		}
@@ -1669,11 +1662,6 @@ global with sharing class FrameRateManagerController {
 		// Get all child ut mapped by Id
 
 		Map<Id, List<cspmb__Usage_Type__c>> childUtMap = new Map<Id, List<cspmb__Usage_Type__c>>();
-		// [
-		//         select Id, Name, cspmb__unit_of_measure__c
-		//         from cspmb__Usage_Type__c
-		//         where Id in :childUtIdList
-		// ]);
 
 		String ut_query = 'select ' + String.join(uniqueUtFieldList, ',') + ' from cspmb__Usage_Type__c where Id in :childUtIdList';
 
@@ -1687,7 +1675,9 @@ global with sharing class FrameRateManagerController {
 					tempSet.add(ut);
 					childUtMap.put(parentId, tempSet);
 				} else {
-					childUtMap.put(parentId, new List<cspmb__Usage_Type__c>{ut});
+					childUtMap.put(parentId, new List<cspmb__Usage_Type__c>{
+						ut
+					});
 				}
 			}
 
@@ -1721,10 +1711,12 @@ global with sharing class FrameRateManagerController {
 		List<String> standardFields = new List<String>{
 			'Id',
 			'Name',
-			'cspmb__Cap_Unit__c',
+			'cspmb__cap_unit__c',
 			'cspmb__rate_value__c',
-			'cspmb__usage_type__r.Name',
-			'cspmb__Rate_Card__c'
+			'cspmb__usage_type__r.name',
+			'cspmb__rate_card__c',
+			'cspmb__effective_end_date__c',
+			'cspmb__effective_start_date__c'
 		};
 
 		Fac_Settings__c facSettings = getFacSetting();
@@ -1742,30 +1734,45 @@ global with sharing class FrameRateManagerController {
 		// Remove duplicates
 		List<String> uniqueList = getUniqueListElements(fieldsArr);
 
-
-		String query = 'select ' + String.join(uniqueList, ',') + ' from cspmb__Rate_Card_Line__c where cspmb__Rate_Card__c in :rateCardLinesIdList and cspmb__Is_Active__c = true';
+		Date today = Date.today();
+		String query = 'select ' +
+			String.join(uniqueList, ',') +
+			' from cspmb__Rate_Card_Line__c ' +
+			' where cspmb__Rate_Card__c in :rateCardLinesIdList ' +
+			' and cspmb__is_active__c = true ' +
+			' and (cspmb__effective_start_date__c = null or cspmb__effective_start_date__c <= :today) ' +
+			'and (cspmb__effective_end_date__c = null or cspmb__effective_end_date__c > today)';
 		List<cspmb__Rate_Card_Line__c> rateCardLines = new List<cspmb__Rate_Card_Line__c>();
 		rateCardLines = database.query(query);
 
 		return rateCardLines;
 	}
 
-	public static Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> getAddons(List<Id> priceItemIdList) {
+	public static Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> getAddons(
+		List<Id> priceItemIdList
+	) {
 		// contains end result, mapping price item ids to their addons
-		Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> prId_addons = new Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>>();
+		Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> prId_addons =
+			new Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>>();
 
 		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> priceItemAddonAssociations = [
-					select Id, cspmb__Price_Item__c, cspmb__Overrides_Add_On_Charges__c, cspmb__effective_end_date__c,
-					cspmb__effective_start_date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c,
-					cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c, cspmb__One_Off_Charge__c, cspmb__Recurring_Charge__c,
-					cspmb__Add_On_Price_Item__c, cspmb__Add_On_Price_Item__r.Name, cspmb__Add_On_Price_Item__r.cspmb__Authorization_Level__c,
-					cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c, cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c,
-					cspmb__Add_On_Price_Item__r.cspmb__Is_One_Off_Discount_Allowed__c, cspmb__Add_On_Price_Item__r.cspmb__Is_Recurring_Discount_Allowed__c
-					from cspmb__Price_Item_Add_On_Price_Item_Association__c
-					where cspmb__Price_Item__c in: priceItemIdList and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
-				];
+			select id, cspmb__price_item__c, cspmb__overrides_add_on_charges__c, cspmb__effective_end_date__c,
+				cspmb__effective_start_date__c, cspmb__add_on_price_item__r.cspmb__effective_end_date__c,
+				cspmb__add_on_price_item__r.cspmb__effective_start_date__c,
+				cspmb__one_off_charge__c, cspmb__recurring_charge__c,
+				cspmb__add_on_price_item__c, cspmb__add_on_price_item__r.name,
+				cspmb__add_on_price_item__r.cspmb__authorization_level__c,
+				cspmb__add_on_price_item__r.cspmb__one_off_charge__c,
+				cspmb__add_on_price_item__r.cspmb__recurring_charge__c,
+				cspmb__add_on_price_item__r.cspmb__is_one_off_discount_allowed__c,
+				cspmb__add_on_price_item__r.cspmb__is_recurring_discount_allowed__c
+			from cspmb__Price_Item_Add_On_Price_Item_Association__c
+			where cspmb__price_item__c in :priceItemIdList
+				and cspmb__add_on_price_item__r.cspmb__is_active__c = true
+		];
 
-		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> filteredPriceItemAddonAssociations = new List<cspmb__Price_Item_Add_On_Price_Item_Association__c>();
+		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> filteredPriceItemAddonAssociations =
+			new List<cspmb__Price_Item_Add_On_Price_Item_Association__c>();
 
 		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson : priceItemAddonAssociations) {
 
@@ -1775,12 +1782,17 @@ global with sharing class FrameRateManagerController {
 			Boolean start_invalid = effectiveStartDate != null && Date.today() < effectiveStartDate;
 			Boolean end_invalid = effectiveEndDate != null && Date.today() > effectiveEndDate;
 
-			Boolean start_invalid_assoc = addonAsson.cspmb__effective_start_date__c != null && date.today() < addonAsson.cspmb__effective_start_date__c;
-			Boolean end_invalid_assoc = addonAsson.cspmb__effective_end_date__c != null && date.today() > addonAsson.cspmb__effective_end_date__c;
+			Boolean start_invalid_assoc =
+				addonAsson.cspmb__effective_start_date__c != null &&
+					date.today() < addonAsson.cspmb__effective_start_date__c;
+			Boolean end_invalid_assoc =
+				addonAsson.cspmb__effective_end_date__c != null &&
+					date.today() > addonAsson.cspmb__effective_end_date__c;
 
-			if (addonAsson.cspmb__Overrides_Add_On_Charges__c == false) {
-				addonAsson.cspmb__One_Off_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__One_Off_Charge__c;
-				addonAsson.cspmb__Recurring_Charge__c = addonAsson.cspmb__Add_On_Price_Item__r.cspmb__Recurring_Charge__c;
+			if (addonAsson.cspmb__overrides_add_on_charges__c == false) {
+				addonAsson.cspmb__one_off_charge__c = addonAsson.cspmb__add_on_price_item__r.cspmb__one_off_charge__c;
+				addonAsson.cspmb__recurring_charge__c =
+					addonAsson.cspmb__add_on_price_item__r.cspmb__recurring_charge__c;
 			}
 
 			if (!(start_invalid || end_invalid) && !(start_invalid_assoc || end_invalid_assoc)) {
@@ -1788,16 +1800,18 @@ global with sharing class FrameRateManagerController {
 			}
 		}
 
-		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson: filteredPriceItemAddonAssociations) {
-			if (prId_addons.containsKey(addonAsson.cspmb__Price_Item__c)) {
+		for (cspmb__Price_Item_Add_On_Price_Item_Association__c addonAsson : filteredPriceItemAddonAssociations) {
+			if (prId_addons.containsKey(addonAsson.cspmb__price_item__c)) {
 				// get addons lines for this price item
-				List<cspmb__Price_Item_Add_On_Price_Item_Association__c> tempAddList = prId_addons.get(addonAsson.cspmb__Price_Item__c);
+				List<cspmb__Price_Item_Add_On_Price_Item_Association__c> tempAddList =
+					prId_addons.get(addonAsson.cspmb__price_item__c);
 				tempAddList.add(addonAsson);
-				prId_addons.put(addonAsson.cspmb__Price_Item__c, tempAddList);
+				prId_addons.put(addonAsson.cspmb__price_item__c, tempAddList);
 			} else {
-				prId_addons.put(addonAsson.cspmb__Price_Item__c, new List<cspmb__Price_Item_Add_On_Price_Item_Association__c> {
-					addonAsson
-				});
+				prId_addons.put(
+					addonAsson.cspmb__price_item__c,
+					new List<cspmb__Price_Item_Add_On_Price_Item_Association__c>{ addonAsson }
+				);
 			}
 		}
 
@@ -1988,12 +2002,12 @@ global with sharing class FrameRateManagerController {
 
 		List<String> fieldsToAdd = new List<String>();
 
-		if(cloneFieldsSetting == null || cloneFieldsSetting.csutil__value__c == null) {
+		if (cloneFieldsSetting == null || cloneFieldsSetting.csutil__value__c == null) {
 			fieldsToAdd.addAll(allFAFields);
 		} else {
 			List<String> cloneFields = (List<String>) JSON.deserialize(cloneFieldsSetting.csutil__value__c, List<String>.class);
 
-			if(cloneFields.size() > 0) {
+			if (cloneFields.size() > 0) {
 				fieldsToAdd.addAll(cloneFields);
 			} else {
 				fieldsToAdd.addAll(allFAFields);
@@ -2001,14 +2015,14 @@ global with sharing class FrameRateManagerController {
 		}
 
 		Boolean found;
-		for(String field: fieldsToAdd) {
+		for (String field : fieldsToAdd) {
 			found = false;
-			for(String existingField: conjoined_fields) {
-				if(existingField.toLowerCase().equals(field.toLowerCase())) {
+			for (String existingField : conjoined_fields) {
+				if (existingField.toLowerCase().equals(field.toLowerCase())) {
 					found = true;
 				}
 			}
-			if(!found) {
+			if (!found) {
 				conjoined_fields.add(field);
 			}
 		}
@@ -2349,7 +2363,7 @@ global with sharing class FrameRateManagerController {
 
 		String returnStatus = FrameAgreementActivation.decomposeAttachment(data, prId);
 
-		if(returnStatus == 'Success'){
+		if (returnStatus == 'Success') {
 			returnStatus = FrameAgreementActivation.updateFAStatus(faId);
 		}
 
@@ -2373,15 +2387,15 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static Map<String, String> getUserLocale() {
-		Map<String, String> userLocaleMap = new Map<String,String>();
+		Map<String, String> userLocaleMap = new Map<String, String>();
 		String[] userLocale = UserInfo.getLocale().split('_');
 		userLocaleMap.put('userLocaleLang', userLocale[0]);
 		userLocaleMap.put('userLocaleCountry', userLocale[1]);
 		// hack to get decimal separator for apps using vfpages.
 		Decimal value = 1000.10;
 		String formattedValue = value.format();
-		String thousandSep = formattedValue.substring(1,2);
-		String decimalSep = formattedValue.substring(5,6);
+		String thousandSep = formattedValue.substring(1, 2);
+		String decimalSep = formattedValue.substring(5, 6);
 		userLocaleMap.put('decimalSeparator', decimalSep);
 
 		return userLocaleMap;
@@ -2450,13 +2464,13 @@ global with sharing class FrameRateManagerController {
 			FrameRateManagerController.getJsonData('FA-hiddentabs')
 		);
 
-		String hiddenTabs  = tabVisibilityData?.csutil__value__c;
+		String hiddenTabs = tabVisibilityData?.csutil__value__c;
 		Map<String, Boolean> hiddenTabMap = new Map<String, Boolean>();
 		if (String.isNotBlank(hiddenTabs)) {
 			List<String> hiddenTabList = (List<String>) Json.deserialize(hiddenTabs, List<String>.class);
 
 			for (String tabName : hiddenTabList) {
-				if(TAB_NAME_CONFIG_LIST.contains(tabName)) {
+				if (TAB_NAME_CONFIG_LIST.contains(tabName)) {
 					hiddenTabMap.put(tabName, true);
 				}
 			}

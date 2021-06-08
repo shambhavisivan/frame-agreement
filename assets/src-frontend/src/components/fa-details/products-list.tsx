@@ -21,13 +21,6 @@ export function ProductsList({
 	return (
 		<table>
 			<tbody>
-				<tr>
-					<td> </td>
-					<th>Name</th>
-					<th>Recurring</th>
-					<th>OneOff</th>
-					<th>RateCards</th>
-				</tr>
 				{selectedProducts.map((p) => (
 					<ProductDetails key={p.id} product={p} actions={createProductActions(p.id)} />
 				))}

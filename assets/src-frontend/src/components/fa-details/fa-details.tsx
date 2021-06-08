@@ -14,7 +14,9 @@ import {
 	CSTableBody,
 	CSTableCell,
 	CSTableHeader,
-	CSTableRow
+	CSTableRow,
+	CSDropdown,
+	CSInputSearch
 } from '@cloudsense/cs-ui-components';
 
 interface FrameAgreementDetailsProps {
@@ -32,7 +34,16 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 			<LoadingFallback status={faStatus}>
 				<div className="field-wrapper"> </div>
 				<CSCard className="approval-history-wrapper">
-					<CSCardHeader title="Approval history" collapsible defaultClosed />
+					<CSCardHeader title="Approval history" collapsible defaultClosed>
+						<CSButton
+							label="Refresh button"
+							labelHidden
+							btnType="transparent"
+							btnStyle="brand"
+							iconName="refresh"
+							size="small"
+						/>
+					</CSCardHeader>
 					<CSCardBody padding="0.75rem 0 0">
 						<CSTextarea
 							label="Comment"
@@ -83,7 +94,43 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 					</CSCardBody>
 				</CSCard>
 				Agreement ID: {agreementId}, name: {agreement?.name}
-				<FaEditor agreement={agreement} />
+				<CSCard className="products-search-wrapper">
+					<CSCardHeader>
+						<h2>Products</h2>
+						<div className="products-search">
+							<CSInputSearch
+								label="Quick search"
+								labelHidden
+								placeholder="Quick search"
+							/>
+							<CSDropdown align="right" iconName="table">
+								<CSButton label="Button 1" />
+								<CSButton label="Button 2 with more content" />
+							</CSDropdown>
+						</div>
+						<div className="info-items">
+							<span className="item">
+								<span className="value">7</span>
+								<span className="label">items</span>
+							</span>
+							<span className="item">
+								<span className="value">3</span>
+								<span className="label">Apple</span>
+							</span>
+							<span className="item">
+								<span className="value">1</span>
+								<span className="label">Huawei</span>
+							</span>
+							<span className="item">
+								<span className="value">1</span>
+								<span className="label">Samsung</span>
+							</span>
+						</div>
+					</CSCardHeader>
+					<CSCardBody>
+						<FaEditor agreement={agreement} />
+					</CSCardBody>
+				</CSCard>
 			</LoadingFallback>
 		</div>
 	);

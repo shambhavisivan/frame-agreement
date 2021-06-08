@@ -1,5 +1,5 @@
 .cs-app-wrapper {
-    @include sbg(--details-app-wrapper-bg)
+    @include sbg(--details-app-wrapper-bg);
 }
 
 .details-wrapper {
@@ -11,24 +11,77 @@
         margin-bottom: 1rem;
         border-radius: 0 0 0.25rem 0.25rem;
         min-height: 20rem;
-        @include sbg(--details-description-wrapper-bg);
+        @include sbg(--details-wrapper-bg);
     }
 
     .approval-history-wrapper {
         margin-bottom: 1rem;
+        border: none;
 
-        .cs-card {
-            border: none;
+        .cs-card-header-title ~ .cs-btn {
+            margin-left: auto;
         }
 
         .cs-textarea-wrapper {
-            margin-bottom: 0.5rem;
             padding: 0 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .cs-button-group {
-            margin-bottom: 1rem;
             padding: 0 0.75rem;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .products-search-wrapper {
+        border-radius: 0.25rem;
+        margin: 1rem 0;
+
+        .products-search {
+            display: flex;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-right: 1rem;
+
+            .cs-dropdown-wrapper {
+                margin-left: 0.5rem;
+            }
+        }
+
+        .cs-card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: baseline;
+            position: relative;
+        }
+
+        .info-items {
+            position: relative;
+            white-space: break-spaces;
+
+            .item {
+                font-size: 0.75rem;
+                position: relative;
+
+                &:not(:first-child) {
+                    .value {
+                        margin-left: 0.75rem;
+                    }
+
+                    &:before {
+                        content: "\2022";
+                        position: absolute;
+                        font-size: 1.125rem;
+                        left: 0.1875rem;
+                    }
+                }
+
+                .value {
+                    margin-right: 0.125rem;
+                }
+            }
         }
     }
 }

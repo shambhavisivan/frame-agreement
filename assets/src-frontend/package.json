@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "dependencies": {
-    "@cloudsense/cs-ui-components": "^1.1.19",
+    "@cloudsense/cs-ui-components": "^1.1.24",
     "axios": "^0.21.1",
     "crypto": "^1.0.1",
     "react": "^17.0.1",

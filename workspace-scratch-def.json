@@ -1,7 +1,6 @@
 {
   "country": "GB",
   "edition": "Enterprise",
-  "release": "preview",
   "settings": {
     "quoteSettings": {
       "enableQuote": true

@@ -4,7 +4,8 @@ import {
 	AppSettings,
 	CommercialProductData,
 	CommercialProductStandalone,
-	FrameAgreement
+	FrameAgreement,
+	UserLocaleInfo
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
@@ -42,4 +43,10 @@ export const mockDispatcherAuthToken: DispatcherToken = {
 	expires: new Date(new Date().getTime() + 10 * 60000).getTime(),
 	userAgent: navigator.userAgent,
 	token: 'testToken'
+};
+
+export const mockUserLocale: UserLocaleInfo = {
+	userLocaleLang: 'en',
+	userLocaleCountry: 'GB',
+	decimalSeparator: '.'
 };

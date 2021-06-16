@@ -41,6 +41,7 @@ namespace SfGlobal {
 		upsertFrameAgreements(paramsArray: [string | null, string]): Promise<FrameAgreement>;
 		saveAttachment(paramsArray: [string, string]): Promise<string>;
 		getDispatcherAuthToken(userAgent: [string]): Promise<DispatcherToken>;
+		getUserLocale(): Promise<UserLocaleInfo>;
 	}
 
 	// TODO define the unknowns

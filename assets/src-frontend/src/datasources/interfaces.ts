@@ -101,3 +101,9 @@ export interface CommercialProductStandalone {
 	oneOffCharge?: number;
 	recurringCharge?: number;
 }
+
+export interface UserLocaleInfo {
+	userLocaleLang: string;
+	userLocaleCountry: string;
+	decimalSeparator: string;
+}

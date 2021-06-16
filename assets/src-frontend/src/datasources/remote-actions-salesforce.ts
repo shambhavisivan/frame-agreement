@@ -4,7 +4,8 @@ import {
 	Attachment,
 	CommercialProductData,
 	CommercialProductStandalone,
-	FrameAgreement
+	FrameAgreement,
+	UserLocaleInfo
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
@@ -23,6 +24,7 @@ export interface RemoteActions {
 	): Promise<FrameAgreement>;
 	saveAttachment(faId: string, attachment: Attachment): Promise<string>;
 	getDispatcherAuthToken(navigatorToken: string): Promise<DispatcherToken>;
+	getUserLocale(): Promise<UserLocaleInfo>;
 }
 
 const toFrameAgreement = (sfFa: SfGlobal.FrameAgreement): FrameAgreement => ({
@@ -96,5 +98,14 @@ export const remoteActions: RemoteActions = {
 		userAgent: string = navigator.userAgent
 	): Promise<DispatcherToken> {
 		return await SF.invokeAction('getDispatcherAuthToken', [userAgent]);
+	},
+
+	async getUserLocale(): Promise<UserLocaleInfo> {
+		const localeInfo = await SF.invokeAction('getUserLocale');
+		return {
+			userLocaleLang: localeInfo.userLocaleLang,
+			userLocaleCountry: localeInfo.userLocaleCountry,
+			decimalSeparator: localeInfo.decimalSeparator
+		};
 	}
 };

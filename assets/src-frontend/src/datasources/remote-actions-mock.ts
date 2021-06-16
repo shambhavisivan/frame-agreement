@@ -3,14 +3,16 @@ import {
 	Attachment,
 	CommercialProductData,
 	CommercialProductStandalone,
-	FrameAgreement
+	FrameAgreement,
+	UserLocaleInfo
 } from './interfaces';
 import {
 	mockCommercialProductData,
 	mockCommercialProducts,
 	mockAppSettings,
 	mockFrameAgreements,
-	mockDispatcherAuthToken
+	mockDispatcherAuthToken,
+	mockUserLocale
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
@@ -78,5 +80,11 @@ export const remoteActions: RemoteActions = {
 
 	async getDispatcherAuthToken(): Promise<DispatcherToken> {
 		return Promise.resolve(mockDispatcherAuthToken);
+	},
+
+	async getUserLocale(): Promise<UserLocaleInfo> {
+		return new Promise((resolve) => {
+			setTimeout(() => resolve(mockUserLocale), FAKE_DELAY_MS);
+		});
 	}
 };

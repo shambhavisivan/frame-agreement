@@ -280,3 +280,7 @@ export interface DiscLevelWrapper {
 	discountLevel: DiscountLevel;
 	priceItemId?: string;
 }
+
+export interface Subscriber {
+	unsubscribe: () => void;
+}

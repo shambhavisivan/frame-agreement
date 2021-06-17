@@ -11,9 +11,6 @@ let config = {
 	entry: {
 		bundle: ['./src/index.tsx']
 	},
-	resolve: {
-		extensions: ['.ts', '.tsx', '.js', '.jsx']
-	},
 	module: {
 		rules: [
 			{

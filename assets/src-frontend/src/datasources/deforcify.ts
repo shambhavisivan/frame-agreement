@@ -40,7 +40,7 @@ function toCamel(val: string): string {
 		.join('');
 }
 
-function deforcifyKeyName<T extends string>(keyName: T): DeforcifiedKeyName<T> {
+export function deforcifyKeyName<T extends string>(keyName: T): DeforcifiedKeyName<T> {
 	const body = keyName.replace(/^[a-zA-Z0-9]*__|__[a-zA-Z0-9]$/g, '');
 
 	return toCamel(body) as DeforcifiedKeyName<T>;

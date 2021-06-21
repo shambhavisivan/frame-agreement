@@ -1,11 +1,12 @@
-import { deforcify } from './deforcify';
+import { deforcify, deforcifyKeyName } from './deforcify';
 import {
 	AppSettings,
 	Attachment,
 	CommercialProductData,
 	CommercialProductStandalone,
 	FrameAgreement,
-	UserLocaleInfo
+	UserLocaleInfo,
+	FieldMetadata
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
@@ -25,6 +26,7 @@ export interface RemoteActions {
 	saveAttachment(faId: string, attachment: Attachment): Promise<string>;
 	getDispatcherAuthToken(navigatorToken: string): Promise<DispatcherToken>;
 	getUserLocale(): Promise<UserLocaleInfo>;
+	getFieldMetadata(sObjectName: string): Promise<FieldMetadata[]>;
 }
 
 const toFrameAgreement = (sfFa: SfGlobal.FrameAgreement): FrameAgreement => ({
@@ -108,5 +110,17 @@ export const remoteActions: RemoteActions = {
 			userLocaleCountry: localeInfo.userLocaleCountry,
 			decimalSeparator: localeInfo.decimalSeparator
 		};
+	},
+
+	async getFieldMetadata(sObjectName: string): Promise<FieldMetadata[]> {
+		const fieldMetadata: FieldMetadata[] = await SF.invokeAction('getFieldMetadata', [
+			sObjectName
+		]);
+		return fieldMetadata.map((metaInf) => {
+			if (metaInf.isCustom) {
+				metaInf.apiName = deforcifyKeyName(metaInf.apiName);
+			}
+			return metaInf;
+		});
 	}
 };

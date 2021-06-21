@@ -42,6 +42,7 @@ namespace SfGlobal {
 		saveAttachment(paramsArray: [string, string]): Promise<string>;
 		getDispatcherAuthToken(userAgent: [string]): Promise<DispatcherToken>;
 		getUserLocale(): Promise<UserLocaleInfo>;
+		getFieldMetadata(sObjectName: [string]): Promise<FieldMetadata[]>;
 	}
 
 	// TODO define the unknowns

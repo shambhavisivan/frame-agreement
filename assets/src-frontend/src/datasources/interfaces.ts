@@ -108,3 +108,12 @@ export interface UserLocaleInfo {
 	userLocaleCountry: string;
 	decimalSeparator: string;
 }
+
+export interface FieldMetadata {
+	fieldLabel: string;
+	apiName: string;
+	isUpdatable: boolean;
+	isCustom: boolean;
+	scale: number;
+	precision: number;
+}

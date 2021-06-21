@@ -142,7 +142,8 @@
 				getDispatcherAuthToken: "{!$RemoteAction.FrameRateManagerController.getDispatcherAuthToken}",
 				getDefaultCatalogueId: "{!$RemoteAction.FrameRateManagerController.getDefaultCatalogueId}",
 				getOffers: "{!$RemoteAction.FrameRateManagerController.getOffers}",
-				getOfferData: "{!$RemoteAction.FrameRateManagerController.getOfferData}"
+				getOfferData: "{!$RemoteAction.FrameRateManagerController.getOfferData}",
+				getFieldMetadata: "{!$RemoteAction.FrameRateManagerController.getFieldMetadata}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

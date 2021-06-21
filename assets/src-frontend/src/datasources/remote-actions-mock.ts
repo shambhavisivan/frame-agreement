@@ -4,7 +4,8 @@ import {
 	CommercialProductData,
 	CommercialProductStandalone,
 	FrameAgreement,
-	UserLocaleInfo
+	UserLocaleInfo,
+	FieldMetadata
 } from './interfaces';
 import {
 	mockCommercialProductData,
@@ -12,10 +13,12 @@ import {
 	mockAppSettings,
 	mockFrameAgreements,
 	mockDispatcherAuthToken,
-	mockUserLocale
+	mockUserLocale,
+	faFieldMetadataMock
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
+import { deforcifyKeyName } from './deforcify';
 
 const FAKE_DELAY_MS = 500;
 
@@ -86,5 +89,13 @@ export const remoteActions: RemoteActions = {
 		return new Promise((resolve) => {
 			setTimeout(() => resolve(mockUserLocale), FAKE_DELAY_MS);
 		});
+	},
+
+	async getFieldMetadata(sObjectName): Promise<FieldMetadata[]> {
+		const value: FieldMetadata[] = faFieldMetadataMock.map((metaInf) => {
+			metaInf.apiName = deforcifyKeyName(metaInf.apiName);
+			return metaInf;
+		});
+		return Promise.resolve(value);
 	}
 };

@@ -2179,22 +2179,7 @@ global with sharing class FrameRateManagerController {
 			} else if (dataType == 'Datetime') {
 				DateTime a = DateTime.newInstance((Long) dataMap.get(key));
 				fa.put(key, a);
-			}
-			//else if (dataType == 'String') {
-			//     fa.put(key, dataMap.get(key));
-			// } else if (dataType == 'Long') {
-			//     fa.put(key, dataMap.get(key));
-			// } else if (dataType == 'Decimal') {
-			//     fa.put(key, dataMap.get(key));
-			// } else if (dataType == 'Boolean') {
-			//     fa.put(key, dataMap.get(key));
-			// } else if (dataType == 'Picklist') {
-			//     fa.put(key, dataMap.get(key));
-			// } else if (dataType == 'Double') {
-			//     fa.put(key, dataMap.get(key));
-			// } else if (dataType == 'Textarea') {
-			//     fa.put(key, dataMap.get(key));
-			else {
+			} else {
 				fa.put(key, dataMap.get(key));
 			}
 		}
@@ -2482,6 +2467,13 @@ global with sharing class FrameRateManagerController {
 		return hiddenTabMap;
 	}
 
+	/**
+	 * @param sObjectName api name of the sObject.
+	 */
+	@RemoteAction
+	public static List<FieldMetadata> getFieldMetadata(String sObjectName) {
+		return AppUtilService.getFieldMetadata(sObjectName);
+	}
 
 	//******************************************* DECOMPOSITION END ***************************************
 

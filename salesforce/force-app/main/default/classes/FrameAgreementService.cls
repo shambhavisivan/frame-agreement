@@ -11,7 +11,10 @@ public class FrameAgreementService {
 	 * @return filtered list of Frame agreements
 	 */
 	public static List<csconta__Frame_Agreement__c> getFrameAgreements(
-		Id accountId, String filterFields, Id lastRecordId, Integer queryLimit
+		Id accountId,
+		String filterFields,
+		Id lastRecordId,
+		Integer queryLimit
 	) {
 		Map<String, Object> filterFieldsMap =  new Map<String, Object>();
 

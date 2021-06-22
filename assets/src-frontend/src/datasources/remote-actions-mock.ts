@@ -29,7 +29,7 @@ export const remoteActions: RemoteActions = {
 		});
 	},
 
-	async getFrameAgreements(): Promise<FrameAgreement[]> {
+	async queryFrameAgreements(): Promise<FrameAgreement[]> {
 		return new Promise((resolve) => {
 			setTimeout(() => resolve(mockFrameAgreements), FAKE_DELAY_MS);
 		});

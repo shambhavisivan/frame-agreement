@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { FrameAgreement } from '../../datasources';
 import { useFrameAgreements } from '../../hooks/use-frame-agreements';
 import { LoadingFallback } from '../loading-fallback';
 import { FaEditor } from './fa-editor';
@@ -21,8 +22,10 @@ interface FrameAgreementDetailsProps {
 }
 
 export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProps): ReactElement {
-	const { agreements = [], status: faStatus } = useFrameAgreements();
-	const agreement = agreements.find((a) => a.id === agreementId);
+	const { agreements = {}, status: faStatus } = useFrameAgreements();
+	const agreement: FrameAgreement | undefined = Object.values(agreements)
+		.flat()
+		.find((fa: FrameAgreement) => fa.id === agreementId);
 
 	return (
 		<div className="details-wrapper">

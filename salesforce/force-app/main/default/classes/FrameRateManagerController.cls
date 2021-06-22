@@ -2468,6 +2468,13 @@ global with sharing class FrameRateManagerController {
 		return hiddenTabMap;
 	}
 
+	@RemoteAction
+	public static List<csconta__Frame_Agreement__c> queryFrameAgreements(
+		Id accountId, String filterFields, Id lastRecordId, Integer queryLimit
+	) {
+		return FrameAgreementService.getFrameAgreements(accountId, filterFields, lastRecordId, queryLimit);
+	}
+
 	/**
 	 * @param sObjectName api name of the sObject.
 	 */

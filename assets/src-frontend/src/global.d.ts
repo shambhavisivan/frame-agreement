@@ -35,7 +35,9 @@ namespace SfGlobal {
 	interface RemoteActions {
 		getAppSettings(paramsArray: [string]): Promise<AppSettings>;
 		// TODO: define all actions
-		getFrameAgreements(paramsArray: [string]): Promise<FrameAgreement[]>;
+		queryFrameAgreements(
+			paramsArray: [string, string | null, string | null, number | null]
+		): Promise<FrameAgreement[]>;
 		getCommercialProductData(paramsArray: [string[]]): Promise<CommercialProductData>;
 		getCommercialProducts(cpIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
 		upsertFrameAgreements(paramsArray: [string | null, string]): Promise<FrameAgreement>;

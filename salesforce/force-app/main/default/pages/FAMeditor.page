@@ -143,6 +143,7 @@
 				getDefaultCatalogueId: "{!$RemoteAction.FrameRateManagerController.getDefaultCatalogueId}",
 				getOffers: "{!$RemoteAction.FrameRateManagerController.getOffers}",
 				getOfferData: "{!$RemoteAction.FrameRateManagerController.getOfferData}",
+				queryFrameAgreements: "{!$RemoteAction.FrameRateManagerController.queryFrameAgreements}",
 				getFieldMetadata: "{!$RemoteAction.FrameRateManagerController.getFieldMetadata}"
 			},
 			labels: {

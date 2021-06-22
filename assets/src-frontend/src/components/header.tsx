@@ -20,7 +20,7 @@ export function Header(): ReactElement {
 		const newFa: Partial<SfGlobal.FrameAgreement> = {
 			/* eslint-disable @typescript-eslint/naming-convention */
 			csconta__agreement_level__c: isMaster ? 'Master Agreement' : 'Frame Agreement',
-			csconta__Status__c: settings?.facSettings.statuses.draft_status as string,
+			csconta__Status__c: settings?.facSettings.statuses.draftStatus,
 			csconta__Account__c: settings?.account.id
 			/* eslint-enable @typescript-eslint/naming-convention */
 		};

@@ -3,6 +3,16 @@ export interface Account {
 	name: string;
 }
 
+type FacSetting = {
+	statuses: {
+		draftStatus: string;
+		activeStatus: string;
+		closedStatus: string;
+		approvedStatus: string;
+		requiresApprovalStatus: string;
+	};
+};
+
 export interface AppSettings {
 	account: Account;
 	defaultCatalogueId: string;
@@ -13,7 +23,7 @@ export interface AppSettings {
 	relatedListsData: Record<string, unknown>;
 	addonCategorizationData: Record<string, unknown>;
 	categorizationData: Record<string, unknown>;
-	facSettings: Record<string, Record<string, unknown>>;
+	facSettings: FacSetting;
 }
 
 export interface Attachment {
@@ -56,6 +66,7 @@ export interface FrameAgreement {
 	lastModifiedDate?: number;
 	name: string;
 	agreementLevel?: string;
+	status?: string;
 }
 
 export interface CommercialProduct {
@@ -116,4 +127,13 @@ export interface FieldMetadata {
 	isCustom: boolean;
 	scale: number;
 	precision: number;
+	fieldType:
+		| 'REFERENCE'
+		| 'NUMBER'
+		| 'DATE'
+		| 'DATETIME'
+		| 'STRING'
+		| 'BOOLEAN'
+		| 'ID'
+		| 'PICKLIST';
 }

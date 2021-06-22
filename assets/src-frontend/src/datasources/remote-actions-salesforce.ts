@@ -16,7 +16,7 @@ const SF = window.SF;
 
 export interface RemoteActions {
 	getAppSettings(): Promise<AppSettings>;
-	getFrameAgreements(): Promise<FrameAgreement[]>;
+	queryFrameAgreements(): Promise<FrameAgreement[]>;
 	getCommercialProductData(ids: string[]): Promise<CommercialProductData>;
 	getCommercialProducts(cpIds: string[] | null): Promise<CommercialProductStandalone[]>;
 	upsertFrameAgreements(
@@ -28,13 +28,6 @@ export interface RemoteActions {
 	getUserLocale(): Promise<UserLocaleInfo>;
 	getFieldMetadata(sObjectName: string): Promise<FieldMetadata[]>;
 }
-
-const toFrameAgreement = (sfFa: SfGlobal.FrameAgreement): FrameAgreement => ({
-	id: sfFa.Id,
-	name: sfFa.Name,
-	lastModifiedDate: sfFa.LastModifiedDate,
-	agreementLevel: sfFa.csconta__agreement_level__c
-});
 
 export const remoteActions: RemoteActions = {
 	async getAppSettings(): Promise<AppSettings> {
@@ -53,14 +46,28 @@ export const remoteActions: RemoteActions = {
 			relatedListsData: settings.RelatedListsData,
 			addonCategorizationData: settings.AddonCategorizationData,
 			categorizationData: settings.CategorizationData,
-			facSettings: { ...settings.FACSettings, draftStatus: settings.FACSettings.draft_status }
+			facSettings: {
+				statuses: {
+					draftStatus: settings.FACSettings.statuses.draft_status as string,
+					activeStatus: settings.FACSettings.statuses.active_status as string,
+					closedStatus: settings.FACSettings.statuses.closed_status as string,
+					approvedStatus: settings.FACSettings.statuses.approved_status as string,
+					requiresApprovalStatus: settings.FACSettings.statuses
+						.requires_approval_status as string
+				}
+			}
 		};
 	},
 
-	async getFrameAgreements(): Promise<FrameAgreement[]> {
-		const agreements = await SF.invokeAction('getFrameAgreements', [SF.param.account]);
+	async queryFrameAgreements(): Promise<FrameAgreement[]> {
+		const agreements = await SF.invokeAction('queryFrameAgreements', [
+			SF.param.account,
+			null,
+			null,
+			null
+		]);
 
-		return agreements.map(toFrameAgreement);
+		return agreements.map(deforcify);
 	},
 
 	async getCommercialProductData(ids: string[]): Promise<CommercialProductData> {

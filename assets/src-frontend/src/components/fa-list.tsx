@@ -1,91 +1,136 @@
-import React, { ReactElement, useState } from 'react';
-import { useRouteMatch } from 'react-router';
-import { Link } from 'react-router-dom';
-import { useFrameAgreements } from '../hooks/use-frame-agreements';
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
+import { GroupedFrameAgreements, useFrameAgreements } from '../hooks/use-frame-agreements';
 import { LoadingFallback } from './loading-fallback';
 
 import {
 	CSTab,
 	CSTabGroup,
 	CSChip,
-	CSTable,
-	CSTableHeader,
-	CSTableCell,
-	CSTableBody,
-	CSTableRow,
-	CSDropdown,
 	CSButton,
 	CSInputSearch,
-	CSTooltip,
 	CSModal,
 	CSModalHeader,
 	CSModalBody,
-	CSModalFooter
+	CSModalFooter,
+	CSTable,
+	CSTableBody,
+	CSTableCell,
+	CSTableHeader,
+	CSTableRow,
+	CSTooltip
 } from '@cloudsense/cs-ui-components';
+import { useAppSettings } from '../hooks/use-app-settings';
+import { FieldMetadata, FrameAgreement } from '../datasources';
+import { CsTableWrapper } from './cs-table-wrapper';
+import { useFieldMetadata } from '../hooks/use-field-metadata';
+import { useHistory } from 'react-router';
+import { QueryStatus } from 'react-query';
+
+const frameAgreementApiName = 'csconta__Frame_Agreement__c';
 
 export function FrameAgreementList(): ReactElement {
-	const { url } = useRouteMatch();
-	const { agreements = [], status } = useFrameAgreements();
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
+	const { settings, status: settingStatus } = useAppSettings();
+	const [activeTab, setActiveTab] = useState('');
+	const { agreements: groupedAgreements = {}, status } = useFrameAgreements();
+	const { metadata, metadataStatus } = useFieldMetadata(frameAgreementApiName);
+	const history = useHistory();
 
-	const linkList = agreements.map((agreement) => {
-		return (
-			<span key={agreement.id}>
-				<Link to={`${url}/${agreement.id}`}>{agreement.name}</Link>
-				{agreement.agreementLevel === 'Master Agreement' ? (
-					<CSTooltip
-						iconColor="#c23934"
-						position="right-bottom"
-						variant="basic"
-						maxWidth="25rem"
-						padding="0"
-						stickyOnClick
-						content={
-							<CSTable>
-								<CSTableHeader>
-									<CSTableCell text="Member FAs" />
-									<CSTableCell text="Effective Start Date" />
-									<CSTableCell text="Effective End Date" />
-								</CSTableHeader>
-								<CSTableBody>
-									<CSTableRow>
-										<CSTableCell>
-											<a href="#">FA1231531351</a>
-										</CSTableCell>
-										<CSTableCell text="23.09.2020" />
-										<CSTableCell text="22.09.2021" />
-									</CSTableRow>
-									<CSTableRow>
-										<CSTableCell>
-											<a href="#">FA1231531351</a>
-										</CSTableCell>
-										<CSTableCell text="23.09.2020" />
-										<CSTableCell text="22.09.2021" />
-									</CSTableRow>
-									<CSTableRow>
-										<CSTableCell>
-											<a href="#">FA1231531351</a>
-										</CSTableCell>
-										<CSTableCell text="23.09.2020" />
-										<CSTableCell text="22.09.2021" />
-									</CSTableRow>
-									<CSTableRow>
-										<CSTableCell>
-											<a href="#">FA1231531351</a>
-										</CSTableCell>
-										<CSTableCell text="23.09.2020" />
-										<CSTableCell text="22.09.2021" />
-									</CSTableRow>
-								</CSTableBody>
-							</CSTable>
-						}
-					/>
-				) : (
-					''
-				)}
-			</span>
-		);
-	});
+	useEffect(() => {
+		if (status === QueryStatus.Success && settingStatus === QueryStatus.Success) {
+			setActiveTab(settings?.facSettings.statuses.draftStatus || '');
+		}
+	}, [status, settingStatus, metadataStatus, settings?.facSettings.statuses.draftStatus]);
+
+	const renderCustomRow = (data: FrameAgreement[], columns: FieldMetadata[]): ReactNode => {
+		const isMaster = (agreementLevel: string): ReactNode =>
+			agreementLevel === 'Master Agreement' ? (
+				<CSTooltip
+					iconColor="#c23934"
+					position="right-bottom"
+					variant="basic"
+					maxWidth="25rem"
+					padding="0"
+					stickyOnClick
+					content={
+						// TODO: should reuse cstable to render dynamic child FAs.
+						<CSTable>
+							<CSTableHeader>
+								<CSTableCell text="Member FAs" />
+								<CSTableCell text="Effective Start Date" />
+								<CSTableCell text="Effective End Date" />
+							</CSTableHeader>
+							<CSTableBody>
+								<CSTableRow>
+									<CSTableCell>
+										<a href="#">FA1231531351</a>
+									</CSTableCell>
+									<CSTableCell text="23.09.2020" />
+									<CSTableCell text="22.09.2021" />
+								</CSTableRow>
+								<CSTableRow>
+									<CSTableCell>
+										<a href="#">FA1231531351</a>
+									</CSTableCell>
+									<CSTableCell text="23.09.2020" />
+									<CSTableCell text="22.09.2021" />
+								</CSTableRow>
+								<CSTableRow>
+									<CSTableCell>
+										<a href="#">FA1231531351</a>
+									</CSTableCell>
+									<CSTableCell text="23.09.2020" />
+									<CSTableCell text="22.09.2021" />
+								</CSTableRow>
+								<CSTableRow>
+									<CSTableCell>
+										<a href="#">FA1231531351</a>
+									</CSTableCell>
+									<CSTableCell text="23.09.2020" />
+									<CSTableCell text="22.09.2021" />
+								</CSTableRow>
+							</CSTableBody>
+						</CSTable>
+					}
+				/>
+			) : (
+				''
+			);
+
+		return data?.map((fa: FrameAgreement) => {
+			return (
+				<div key={fa.id}>
+					<CSTableRow
+						rowId={fa.id}
+						onClick={(): void => history.push(`${history.location.pathname}/${fa.id}`)}
+					>
+						{columns.map((col, index) => {
+							const apiName: keyof FrameAgreement = (col.apiName as unknown) as keyof FrameAgreement;
+							// should render only to the first cell
+							const childFaPanel =
+								index === 0 && fa.agreementLevel && isMaster(fa.agreementLevel);
+							if (Object.keys(fa).includes(col.apiName)) {
+								return (
+									<CSTableCell
+										maxWidth={'50'}
+										text={fa[apiName] ? String(fa[apiName]) : '-'}
+									>
+										{childFaPanel}
+									</CSTableCell>
+								);
+							} else {
+								return (
+									<CSTableCell maxWidth={'50'} text={'-'}>
+										{childFaPanel}
+									</CSTableCell>
+								);
+							}
+						})}
+					</CSTableRow>
+				</div>
+			);
+		});
+	};
 
 	//TODO: Should load labels from SF
 	return (
@@ -93,18 +138,36 @@ export function FrameAgreementList(): ReactElement {
 			<div className="tabs-section-wrapper">
 				<div className="tabs-search-wrapper">
 					<CSTabGroup variant="large">
-						<CSTab name="Pending" className="tab-active" active width="11rem">
-							<CSChip text="79" variant="brand" />
-						</CSTab>
-						<CSTab name="Active" width="11rem">
-							<CSChip text="12" variant="neutral" />
-						</CSTab>
-						<CSTab name="Associated" width="11rem">
-							<CSChip text="44" variant="neutral" />
-						</CSTab>
-						<CSTab name="Cancelled" width="11rem">
-							<CSChip text="7" variant="neutral" />
-						</CSTab>
+						{settings?.facSettings?.statuses &&
+							Object.values(settings.facSettings.statuses).map((status) => {
+								const renderChip = (status: string): ReactElement | null => {
+									const agreements = ((groupedAgreements as unknown) as GroupedFrameAgreements)[
+										`${status}`
+									];
+									return (
+										<CSChip
+											text={String(
+												agreements?.length ? agreements.length : 0
+											)}
+											variant="brand"
+										/>
+									);
+								};
+								return (
+									status && (
+										<CSTab
+											key={status}
+											name={status}
+											className={status === activeTab ? 'tab-active' : ''}
+											active={status === activeTab}
+											width="11rem"
+											onClick={(): void => setActiveTab(status)}
+										>
+											{renderChip(status)}
+										</CSTab>
+									)
+								);
+							})}
 					</CSTabGroup>
 					<CSInputSearch
 						label="Type here"
@@ -115,201 +178,60 @@ export function FrameAgreementList(): ReactElement {
 				</div>
 			</div>
 			<div className="table-wrapper">
-				<CSTable>
-					<CSTableHeader>
-						<CSTableCell text="" maxWidth="4rem" />
-						<CSTableCell text="FA Name" />
-						<CSTableCell text="Effective Start Date" />
-						<CSTableCell text="Effective End Date" />
-						<CSTableCell text="Description" />
-						<CSTableCell text="" />
-					</CSTableHeader>
-					<CSTableBody>
-						<CSTableRow>
-							<CSTableCell maxWidth="4rem">
-								<CSDropdown
-									iconName="threedots_vertical"
-									btnType="transparent"
-									btnStyle="brand"
-								>
-									<CSButton label="Edit" iconName="edit" />
-									<CSButton label="Clone" iconName="copy" />
-									<CSButton label="Delete" iconName="delete" />
-									<CSButton
-										label="Accounts"
-										onClick={(): void => setModalOpen(true)}
-										iconName="people"
-									/>
-								</CSDropdown>
-								<CSModal
-									visible={modalOpen}
-									onClose={(): void => setModalOpen(false)}
-									outerClickClose
-									size="xlarge"
-								>
-									<CSModalHeader title="Account Associations">
-										<div className="account-details-wrapper">
-											<span>FA-178923</span>
-											<span>Test accout</span>
-										</div>
-									</CSModalHeader>
-									<CSModalBody padding="2rem 1rem 0.75rem 1rem">
-										<div className="accounts-wrapper">
-											<CSInputSearch
-												label="Accounts"
-												placeholder="Accounts"
-											/>
-										</div>
-										<div className="buttons-wrapper">
-											<CSButton
-												label="hidden"
-												labelHidden
-												iconName="right"
-												btnType="transparent"
-												btnStyle="brand"
-												size="small"
-											/>
-											<CSButton
-												label="hidden"
-												labelHidden
-												iconName="left"
-												btnType="transparent"
-												btnStyle="brand"
-												size="small"
-											/>
-										</div>
-										<div className="account-associations-wrapper">
-											<CSInputSearch label="Account Associations" />
-										</div>
-									</CSModalBody>
-									<CSModalFooter>
-										<CSButton
-											label="Cancel"
-											onClick={(): void => setModalOpen(false)}
-										/>
-										<CSButton label="Save" btnStyle="brand" />
-									</CSModalFooter>
-								</CSModal>
-							</CSTableCell>
-							<CSTableCell>{linkList[0]}</CSTableCell>
-							<CSTableCell text="23.09.2020" />
-							<CSTableCell text="22.09.2021" />
-							<CSTableCell text="Text" />
-							<CSTableCell text="" />
-						</CSTableRow>
-						<CSTableRow>
-							<CSTableCell maxWidth="4rem">
-								<CSDropdown
-									iconName="threedots_vertical"
-									btnType="transparent"
-									btnStyle="brand"
-								>
-									<CSButton label="Edit" iconName="edit" />
-									<CSButton label="Clone" iconName="copy" />
-									<CSButton label="Delete" iconName="delete" />
-									<CSButton label="Accounts" iconName="people" />
-								</CSDropdown>
-							</CSTableCell>
-							<CSTableCell>{linkList[1]}</CSTableCell>
-							<CSTableCell text="23.09.2020" />
-							<CSTableCell text="22.09.2021" />
-							<CSTableCell text="Text" />
-							<CSTableCell>
-								<CSDropdown
-									align="right"
-									mode="custom"
-									position="top"
-									iconName="change_record_type"
-									padding="0"
-								>
-									<CSTable>
-										<CSTableHeader>
-											<CSTableCell text="Previous Versions" />
-											<CSTableCell text="Date" />
-											<CSTableCell text="Action" />
-										</CSTableHeader>
-										<CSTableBody>
-											<CSTableRow>
-												<CSTableCell>
-													<a href="#">FA1231531351</a>
-												</CSTableCell>
-												<CSTableCell text="23.09.2020" />
-												<CSTableCell>
-													<CSButton label="Show delta" size="small" />
-												</CSTableCell>
-											</CSTableRow>
-											<CSTableRow>
-												<CSTableCell>
-													<a href="#">FA1231531351</a>
-												</CSTableCell>
-												<CSTableCell text="23.09.2020" />
-												<CSTableCell>
-													<CSButton label="Show delta" size="small" />
-												</CSTableCell>
-											</CSTableRow>
-											<CSTableRow>
-												<CSTableCell>
-													<a href="#">FA1231531351</a>
-												</CSTableCell>
-												<CSTableCell text="23.09.2020" />
-												<CSTableCell>
-													<CSButton label="Show delta" size="small" />
-												</CSTableCell>
-											</CSTableRow>
-											<CSTableRow>
-												<CSTableCell>
-													<a href="#">FA1231531351</a>
-												</CSTableCell>
-												<CSTableCell text="23.09.2020" />
-												<CSTableCell>
-													<CSButton label="Show delta" size="small" />
-												</CSTableCell>
-											</CSTableRow>
-										</CSTableBody>
-									</CSTable>
-								</CSDropdown>
-							</CSTableCell>
-						</CSTableRow>
-						<CSTableRow>
-							<CSTableCell maxWidth="4rem">
-								<CSDropdown
-									iconName="threedots_vertical"
-									btnType="transparent"
-									btnStyle="brand"
-								>
-									<CSButton label="Edit" iconName="edit" />
-									<CSButton label="Clone" iconName="copy" />
-									<CSButton label="Delete" iconName="delete" />
-									<CSButton label="Accounts" iconName="people" />
-								</CSDropdown>
-							</CSTableCell>
-							<CSTableCell>{linkList[2]}</CSTableCell>
-							<CSTableCell text="23.09.2020" />
-							<CSTableCell text="22.09.2021" />
-							<CSTableCell text="Text" />
-							<CSTableCell text="" />
-						</CSTableRow>
-						<CSTableRow>
-							<CSTableCell maxWidth="4rem">
-								<CSDropdown
-									iconName="threedots_vertical"
-									btnType="transparent"
-									btnStyle="brand"
-								>
-									<CSButton label="Edit" iconName="edit" />
-									<CSButton label="Clone" iconName="copy" />
-									<CSButton label="Delete" iconName="delete" />
-									<CSButton label="Accounts" iconName="people" />
-								</CSDropdown>
-							</CSTableCell>
-							<CSTableCell>{linkList[3]}</CSTableCell>
-							<CSTableCell text="23.09.2020" />
-							<CSTableCell text="22.09.2021" />
-							<CSTableCell text="Text" />
-							<CSTableCell text="" />
-						</CSTableRow>
-					</CSTableBody>
-				</CSTable>
+				{activeTab.length && (
+					<CsTableWrapper
+						data={
+							((groupedAgreements as unknown) as GroupedFrameAgreements)[
+								`${activeTab}`
+							]
+						}
+						columnMetadata={metadata as FieldMetadata[]}
+						rowRenderer={renderCustomRow}
+					/>
+				)}
+				<CSModal
+					visible={modalOpen}
+					onClose={(): void => setModalOpen(false)}
+					outerClickClose
+					size="xlarge"
+				>
+					<CSModalHeader title="Account Associations">
+						<div className="account-details-wrapper">
+							<span>FA-178923</span>
+							<span>Test accout</span>
+						</div>
+					</CSModalHeader>
+					<CSModalBody padding="2rem 1rem 0.75rem 1rem">
+						<div className="accounts-wrapper">
+							<CSInputSearch label="Accounts" placeholder="Accounts" />
+						</div>
+						<div className="buttons-wrapper">
+							<CSButton
+								label="hidden"
+								labelHidden
+								iconName="right"
+								btnType="transparent"
+								btnStyle="brand"
+								size="small"
+							/>
+							<CSButton
+								label="hidden"
+								labelHidden
+								iconName="left"
+								btnType="transparent"
+								btnStyle="brand"
+								size="small"
+							/>
+						</div>
+						<div className="account-associations-wrapper">
+							<CSInputSearch label="Account Associations" />
+						</div>
+					</CSModalBody>
+					<CSModalFooter>
+						<CSButton label="Cancel" onClick={(): void => setModalOpen(false)} />
+						<CSButton label="Save" btnStyle="brand" />
+					</CSModalFooter>
+				</CSModal>
 			</div>
 		</LoadingFallback>
 	);

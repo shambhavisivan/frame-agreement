@@ -7,9 +7,8 @@ export function useFieldMetadata(
 	metadataStatus: QueryStatus;
 	metadata: FieldMetadata[] | undefined;
 } {
-	const { data, status } = useQuery(
-		['getFieldMetadata', sObjectName],
-		remoteActions.getFieldMetadata
+	const { data, status } = useQuery(['getFieldMetadata', sObjectName], () =>
+		remoteActions.getFieldMetadata(sObjectName)
 	);
 
 	return {

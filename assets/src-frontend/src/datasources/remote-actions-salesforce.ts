@@ -44,6 +44,7 @@ export const remoteActions: RemoteActions = {
 				name: settings.account.Name
 			},
 			headerData: settings.HeaderData,
+			defaultCatalogueId: settings.DefaultCatalogueId,
 			customTabsData: settings.CustomTabsData,
 			buttonCustomData: settings.ButtonCustomData,
 			buttonStandardData: settings.ButtonStandardData,

@@ -358,12 +358,14 @@ private class FrameRateManagerControllerTest {
 	}
 
 	public static void setupSettings() {
+		csutil__JSON_Data__c defaultCatalogueId = new csutil__JSON_Data__c(Name = 'FA-defaultcatalogue', csutil__value__c = 'testCatalogueId000');
 		csutil__JSON_Data__c headerData = new csutil__JSON_Data__c(Name = 'FA-Header', csutil__value__c = '[{"field":"csconta__Agreement_Name__c","readOnly":false,"label":"Agreement Name","type":"text","grid":2}]');
 		csutil__JSON_Data__c categorizationData = new csutil__JSON_Data__c(Name = 'FA-Categorization', csutil__value__c = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]');
 		csutil__JSON_Data__c customButtonData = new csutil__JSON_Data__c(Name = 'FA-Custom-Buttons', csutil__value__c = '[{"type":"action","label":"Action button","id":"bta1","method":"ActionFunction","hidden":["Active"]},{"type":"iframe","label":"iFrame button","id":"bta2","method":"iFrameFunction","hidden":["Active"]},{"type":"redirect","label":"Redirect button","id":"bta3","method":"RedirectFunction","hidden":["Active"]}]');
 		csutil__JSON_Data__c standardButtonData = new csutil__JSON_Data__c(Name = 'FA-Standard-Buttons', csutil__value__c = '{"Save":["Draft","Requires Approval"],"SubmitForApproval":["Requires Approval"],"Submit":["Approved"],"DeleteProducts":["Draft","Requires Approval"],"BulkNegotiate":["Draft","Requires Approval"],"AddProducts":["Draft","Requires Approval"]}');
 		csutil__JSON_Data__c customTabsData = new csutil__JSON_Data__c(Name = 'FA-Custom-Tabs', csutil__value__c = '[{"label":"Custom tab","container_id":"customTab1","onEnter":"customTabEnter"}]');
 
+		insert defaultCatalogueId;
 		insert headerData;
 		insert customButtonData;
 		insert standardButtonData;

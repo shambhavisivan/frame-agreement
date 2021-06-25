@@ -5,6 +5,7 @@ export interface Account {
 
 export interface AppSettings {
 	account: Account;
+	defaultCatalogueId: string;
 	headerData: Record<string, unknown>;
 	customTabsData: Record<string, unknown>;
 	buttonCustomData: Record<string, unknown>;

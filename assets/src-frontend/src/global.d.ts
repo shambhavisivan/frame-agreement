@@ -54,6 +54,7 @@ namespace SfGlobal {
 		};
 		/* eslint-disable @typescript-eslint/naming-convention */
 		HeaderData: Record<string, unknown>;
+		DefaultCatalogueId: string;
 		CustomTabsData: Record<string, unknown>;
 		ButtonCustomData: Record<string, unknown>;
 		ButtonStandardData: Record<string, unknown>;

@@ -865,7 +865,8 @@ global with sharing class FrameRateManagerController {
 		List<Object> categorizationData = new List<Object>();
 		List<Object> relatedData = new List<Object>();
 		List<Object> customTabs = new List<Object>();
-
+		
+		String defaultCatalogueId = getDefaultCatalogueId();
 		csutil__JSON_Data__c header_data = getHeaderData();
 		csutil__JSON_Data__c button_custom = getCustomButtonData();
 		csutil__JSON_Data__c button_standard = getStandardButtonData();
@@ -904,6 +905,7 @@ global with sharing class FrameRateManagerController {
 
 		appSettings.put('account', acc);
 		appSettings.put('HeaderData', headerData);
+		appSettings.put('DefaultCatalogueId', defaultCatalogueId);
 		appSettings.put('CustomTabsData', customTabs);
 		appSettings.put('ButtonCustomData', buttonCustom);
 		appSettings.put('ButtonStandardData', buttonStandard);
@@ -2401,6 +2403,7 @@ global with sharing class FrameRateManagerController {
 		return userLocaleMap;
 	}
 
+	// TODO: Remove the remote action and make it private / test visible similar to other settings
 	@RemoteAction
 	public static String getDefaultCatalogueId() {
 		csutil__JSON_Data__c defaultCatalogueData = (

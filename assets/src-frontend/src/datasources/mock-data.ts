@@ -15,6 +15,7 @@ export const mockAppSettings: AppSettings = {
 		name: 'mockName'
 	},
 	headerData: {},
+	defaultCatalogueId: 'testCatalogueId000',
 	customTabsData: {},
 	buttonCustomData: {},
 	buttonStandardData: {},

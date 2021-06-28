@@ -354,6 +354,7 @@ private class FrameRateManagerControllerTest {
 		facSettings.standalone_addon_fields__c = 'cspmb__Add_On_Price_Item_Code__c, cspmb__One_Off_Charge__c, cspmb__ONE_OFF_CHARGE__c';
 		facSettings.certificate_name__c = 'selfcert';
 		facSettings.dispatcher_service_url__c = 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com';
+		facSettings.is_ps_enabled__c = true;
 		insert facSettings;
 	}
 
@@ -411,7 +412,7 @@ private class FrameRateManagerControllerTest {
 			'cspmb__Add_On_Price_Item_Code__c, cspmb__One_Off_Charge__c, cspmb__ONE_OFF_CHARGE__c');
 		System.assertEquals(csettings.get('dispatcherServiceUrl'),
 			'https://cs-messaging-dispatcher-eu-dev.herokuapp.com');
-
+		System.assertEquals(csettings.get('isPsEnabled'), true);
 	}
 
 	@isTest

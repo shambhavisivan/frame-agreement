@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>is_ps_enabled__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Property enables the usage of pricing service in the application</description>
+    <externalId>false</externalId>
+    <label>Enable Pricing Service</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -813,7 +813,32 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@isTest
-	public static void testGetCommercialProducts() {
+	public static void testGetCommercialProductsIfPrsEnabledFalse() {
+		setupPricingModel();
+		setupSettings();
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		List<cspmb__Price_Item__c> results = [select Id from cspmb__Price_Item__c];
+		List<Id> cpIdList = new List<Id>();
+
+		for (cspmb__Price_Item__c cp : results) {
+			cpIdList.add(cp.Id);
+		}
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
+
+		Test.stopTest();
+
+		System.assertEquals(5, cpIdList.size());
+		System.assertEquals(4, getCommercialProducts.size());
+	}
+
+	@isTest
+	public static void testGetCommercialProductsIfPrsEnabledTrue() {
 		setupPricingModel();
 		setupSettings();
 
@@ -1060,19 +1085,31 @@ private class FrameRateManagerControllerTest {
 
 
 	@isTest
-	public static void testGetCommercialProductsNull() {
+	public static void testGetCommercialProductsNullIsPrsEnabledFalse() {
 		setupPricingModel();
+		setupSettings();
 
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		Test.startTest();
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(new List<Id>());
+		Test.stopTest();
+
+		System.assertEquals(4, getCommercialProducts.size());
+	}
+
+	@isTest
+	public static void testGetCommercialProductsNullIsPrsEnabledTrue() {
+		setupPricingModel();
 		setupSettings();
 
 		Test.startTest();
-
 		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(new List<Id>());
-
 		Test.stopTest();
 
 		System.assertEquals(0, getCommercialProducts.size());
-
 	}
 
 

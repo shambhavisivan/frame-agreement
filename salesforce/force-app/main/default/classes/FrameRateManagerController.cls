@@ -969,8 +969,13 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static List<cspmb__Price_Item__c> getCommercialProducts(List<String> priceItemIds) {
+		Fac_Settings__c facSetting = getFacSetting();
 		if (priceItemIds == null || priceItemIds.isEmpty()) {
-			return new List<cspmb__Price_Item__c>();
+			if (facSetting.is_ps_enabled__c) {
+				return new List<cspmb__Price_Item__c>();
+			} else {
+				priceItemIds = new List<String>();
+			}
 		}
 
 		return getCommercialProducts_p(priceItemIds);
@@ -998,6 +1003,7 @@ global with sharing class FrameRateManagerController {
 		if (!String.isBlank(csFields)) {
 			csFieldsArr = csFields.replaceAll('\\s+', '').split(',');
 		}
+		Fac_Settings__c facSetting = getFacSetting();
 
 		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
@@ -1008,22 +1014,39 @@ global with sharing class FrameRateManagerController {
 
 		String query = 'select  ' + String.join(uniqueList, ',');
 		query += ' from cspmb__Price_Item__c ';
-		query += 'where Id in :priceItemIds ';
+
+		if (!facSetting.is_ps_enabled__c) {
+			query += 'where cspmb__Account__c = null ';
+			query += 'and cspmb__Is_Active__c = true ';
+			query += 'and (cspmb__Effective_Start_Date__c = null ';
+			query += 'OR (cspmb__Effective_Start_Date__c != null ';
+			query += 'and cspmb__Effective_Start_Date__c < TODAY)) ';
+			query += 'and (cspmb__Effective_End_Date__c = null ';
+			query += 'OR (cspmb__Effective_End_Date__c != null ';
+			query += 'and cspmb__Effective_End_Date__c > TODAY)) ';
+		}
+
+		if (facSetting.is_ps_enabled__c) {
+			query += 'where Id in :priceItemIds ';
+		} else if (!facSetting.is_ps_enabled__c && !priceItemIds.isEmpty()) {
+			query += 'and Id in :priceItemIds ';
+		}
 
 		query += 'limit 20000';
 
-		Map<Id, cspmb__Price_Item__c> cpList = new Map<Id, cspmb__Price_Item__c>(
+		Map<Id, cspmb__Price_Item__c> cpIdMap = new Map<Id, cspmb__Price_Item__c>(
 			(List<cspmb__Price_Item__c>) database.query(query)
 		);
 
+		return overrideCharges(cpIdMap);
+	}
 
+	private static List<cspmb__Price_Item__c> overrideCharges(Map<Id, cspmb__Price_Item__c> cpIdMap) {
 		// modification of cpList is added because of PLM advanced pricing regulation
 		// fetching recurring and one-off adjustment, then showing them in one-off and recurring charge of CP
-
 		csutil__JSON_Data__c standardPricebook = getStandardPricebook();
-
 		if (String.isEmpty(standardPricebook?.csutil__value__c)) {
-			return cpList.values();
+			return cpIdMap.values();
 		}
 
 		List<cspmb__Pricing_Rule_Group_Rule_Association__c> prgs = [
@@ -1046,7 +1069,7 @@ global with sharing class FrameRateManagerController {
 				select id, cspmb__recurring_adjustment__c, cspmb__one_off_adjustment__c, cspmb__price_item__c,
 					cspmb__pricing_rule__c, cspmb__one_off_adjustment_type__c, cspmb__recurring_adjustment_type__c
 				from cspmb__Price_Item_Pricing_Rule_Association__c
-				where cspmb__price_item__c in :cpList.values()
+				where cspmb__price_item__c in :cpIdMap.values()
 				and cspmb__pricing_rule__c in :pricingRuleList
 				and (cspmb__one_off_adjustment_type__c in :adjustmentTypeList
 				or cspmb__one_off_adjustment_type__c in :adjustmentTypeList)
@@ -1055,14 +1078,12 @@ global with sharing class FrameRateManagerController {
 
 		// update one-off and recurring charge of CP
 		for (cspmb__Price_Item_Pricing_Rule_Association__c cppra : pipraList) {
-			if (cpList.get(cppra.cspmb__price_item__c) != null) {
-				cspmb__Price_Item__c pi = cpList.get(cppra.cspmb__price_item__c);
-				pi.cspmb__one_off_charge__c = cppra.cspmb__one_off_adjustment__c;
-				pi.cspmb__recurring_charge__c = cppra.cspmb__recurring_adjustment__c;
-			}
+			cspmb__Price_Item__c pi = cpIdMap.get(cppra.cspmb__price_item__c);
+			pi.cspmb__one_off_charge__c = cppra.cspmb__one_off_adjustment__c;
+			pi.cspmb__recurring_charge__c = cppra.cspmb__recurring_adjustment__c;
 		}
 
-		return cpList.values();
+		return cpIdMap.values();
 	}
 
 	private static csutil__JSON_Data__c getJsonData(String jsonSettingKey) {

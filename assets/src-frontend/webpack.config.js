@@ -7,7 +7,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 let config = {
 	mode: process.env.NODE_ENV,
-	devtool : "inline-source-map",
+	devtool: 'inline-source-map',
 	entry: {
 		bundle: ['./src/index.tsx']
 	},
@@ -103,19 +103,24 @@ if (process.env.NODE_ENV === 'production') {
 if (process.env.NODE_ENV === 'development') {
 	config.plugins.push(new HtmlWebpackPlugin({ template: 'src/local-server/index.html' }));
 
-	// Replace the -salesforce implementations with -mock implementations
+	// Replace the -salesforce or -graphql implementations with -mock implementations
 	config.plugins.push(
-		new webpack.NormalModuleReplacementPlugin(/(.*)-salesforce(\.*)/, function (resource) {
-			const resourceToBeBundled = resource.request.replace(/-salesforce/, `-mock`);
+		new webpack.NormalModuleReplacementPlugin(
+			/(.*)-salesforce(\.*)|(.*)-graphql(\.*)/,
+			function (resource) {
+				const resourceToBeBundled = resource.request
+					.replace(/-salesforce/, `-mock`)
+					.replace(/-graphql/, `-mock`);
 
-			if (resourceToBeBundled !== resource.request) {
-				console.warn(
-					`Using ${resourceToBeBundled} instead of ${resource.request} in environment: ${process.env.NODE_ENV}`
-				);
+				if (resourceToBeBundled !== resource.request) {
+					console.warn(
+						`Using ${resourceToBeBundled} instead of ${resource.request} in environment: ${process.env.NODE_ENV}`
+					);
+				}
+
+				resource.request = resourceToBeBundled;
 			}
-
-			resource.request = resourceToBeBundled;
-		})
+		)
 	);
 
 	config.devtool = 'source-map';

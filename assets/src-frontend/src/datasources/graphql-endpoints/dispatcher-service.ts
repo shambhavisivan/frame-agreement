@@ -1,5 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
 import { remoteActions } from '../remote-actions-salesforce';
+import {
+	CategoriesInCatalogueResponse,
+	ProductsByIdsResponse,
+	ProductsInCatalogueResponse,
+	ProductsInCategoryResponse
+} from './interface';
 
 export interface DispatcherToken {
 	token: string;
@@ -8,11 +14,30 @@ export interface DispatcherToken {
 	orgId: string;
 }
 
-interface GraphQLResponse {
-	data?: unknown;
+export type GraphQLData =
+	| ProductsInCatalogueResponse
+	| CategoriesInCatalogueResponse
+	| ProductsInCategoryResponse
+	| ProductsByIdsResponse
+	| undefined;
+
+export interface GraphQLResponse {
+	data?: GraphQLData;
 	errorMessage?: string[];
 	isSuccess: boolean;
 }
+
+interface RequestParams {
+	method: 'post' | 'get';
+	url: string;
+	headers?: Record<string, unknown>;
+	data?: Record<string, unknown>;
+}
+
+export const graphQlEndpoint: RequestParams = {
+	method: 'post',
+	url: `/pre/graphql`
+};
 
 export class DispatcherService {
 	private _connection: AxiosInstance;
@@ -42,12 +67,7 @@ export class DispatcherService {
 	async queryData(
 		query: string,
 		variables: Record<string, unknown>,
-		requestParams: {
-			method: 'post' | 'get';
-			url: string;
-			headers: Record<string, unknown>;
-			data?: Record<string, unknown>;
-		}
+		requestParams: RequestParams = graphQlEndpoint
 	): Promise<GraphQLResponse> {
 		if (!query) {
 			throw new Error('query cannot be empty!');

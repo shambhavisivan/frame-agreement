@@ -165,6 +165,9 @@ class FaFooter extends React.Component {
 				evaluateExpressionOnAgreement(standardData.DeleteOffers, _fa) && this.props.activeTab === 2
 		};
 
+		// if isPsEnabled is true show offer related functionalies
+		const isPsEnabled = this.props.settings.FACSettings.isPsEnabled;
+
 		footer = (
 			<div className="fa-main-footer">
 				{buttonVisibillityMap.addFa && (
@@ -258,7 +261,7 @@ class FaFooter extends React.Component {
 					</button>
 				)}
 
-				{buttonVisibillityMap.addOffer && (
+				{(buttonVisibillityMap.addOffer && isPsEnabled) && (
 					<button
 						className="fa-button fa-button--default"
 						onClick={this.onOpenOffersModal}
@@ -269,7 +272,7 @@ class FaFooter extends React.Component {
 					</button>
 				)}
 
-				{buttonVisibillityMap.bulkNegotiateOffers && (
+				{(buttonVisibillityMap.bulkNegotiateOffers && isPsEnabled) && (
 					<button
 						disabled={
 							_disabled_offer ||
@@ -283,7 +286,7 @@ class FaFooter extends React.Component {
 					</button>
 				)}
 
-				{buttonVisibillityMap.deleteOffer && (
+				{(buttonVisibillityMap.deleteOffer && isPsEnabled) && (
 					<button
 						disabled={
 							_disabled_offer ||

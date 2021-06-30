@@ -33,7 +33,7 @@ export class FaTabs extends React.Component {
 			}
 			return true;
 		});
-		const { hiddenTabs } = this.props.settings;
+		const { hiddenTabs, FACSettings } = this.props.settings;
 		customTabsComponent = (
 			<Tabs
 				initial={this.props.activeTabIndex}
@@ -65,15 +65,17 @@ export class FaTabs extends React.Component {
 				) : (
 					<div></div>
 				)}
-				<Tab label={window.SF.labels.offers_tab_title}>
-					{this.props.loading ? (
-						<CommercialProductSkeleton count={5} />
-					) : (
-						<React.Fragment>
-							{this.props.defaultTabs.offers}
-						</React.Fragment>
-					)}
-				</Tab>
+				{FACSettings.isPsEnabled ? (
+					<Tab label={window.SF.labels.offers_tab_title}>
+						{this.props.loading ? (
+							<CommercialProductSkeleton count={5} />
+						) : (
+							<React.Fragment>
+								{this.props.defaultTabs?.offers}
+							</React.Fragment>
+						)}
+					</Tab>
+				) : <div></div>}
 
 				{_tabs.map((tab) => {
 					return (

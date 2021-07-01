@@ -1,5 +1,6 @@
 <apex:page controller="FrameRateManagerController" showHeader="true" showChat="false" showQuickActionVfHeader="false"
 		   sidebar="false" standardStylesheets="false" title="Frame Agreement Manager">
+	<apex:includeLightning></apex:includeLightning>
 	<div id="fam" class="fam"></div>
 	<script type='text/javascript'>
 		Visualforce.remoting.timeout = 120000;
@@ -454,7 +455,6 @@
 
 			}
 		});
-
 	</script>
 	<csutil:CustomResources resources="{!commonContainerPageResources }"/>
 </apex:page>

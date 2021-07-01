@@ -36,6 +36,9 @@ sfdx force:package:install --package 04t0J0000002VDL -u $orgAlias -w 20
 echo "Installing CloudSense Advanced Pricing Integration"
 sfdx force:package:install --package 04t3g0000008xa6 -u $orgAlias -w 20
 
+echo "Installing CloudSense Product Lifecyle Management(PLM)"
+sfdx force:package:install --package 04t4J000001pODo -u $orgAlias -w 20
+
 echo "Deploying source code"
 sfdx force:source:push --targetusername $orgAlias -w 20
 

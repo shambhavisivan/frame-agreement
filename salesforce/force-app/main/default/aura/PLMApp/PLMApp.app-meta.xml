@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>51.0</apiVersion>
+    <description>A Lightning Application to display the PLM offer UI</description>
+    <packageVersions>
+        <majorNumber>34</majorNumber>
+        <minorNumber>12</minorNumber>
+        <namespace>csplm</namespace>
+    </packageVersions>
+</AuraDefinitionBundle>

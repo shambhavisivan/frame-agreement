@@ -29,6 +29,7 @@ import {
 import OffersModal from '../modals/OffersModal';
 
 import * as Constants from '~/src/utils/constants'
+import CreateOffersModal from '../modals/CreateOffersModal';
 
 class FaModals extends React.Component {
 	constructor(props) {
@@ -164,6 +165,7 @@ class FaModals extends React.Component {
 	}
 
 	onCloseModal() {
+		this.props.onCloseFaOffer();
 		this.props.toggleModals();
 	}
 
@@ -284,6 +286,21 @@ class FaModals extends React.Component {
 			);
 		}
 
+		let createOffersModal = null;
+		if (this.props.modals.createOffersModal) {
+			createOffersModal = (
+				<CreateOffersModal
+					cpFilter={_fa._ui._filter}
+					open={this.props.modals.createOffersModal}
+					faId={this.props.faId}
+					attachment={this.props.frameAgreements[this.props.faId]._ui.attachment}
+					onAddProducts={this.onAddProducts}
+					onCloseModal={this.onCloseModal}
+					faOfferId={this.props.editFaOffer}
+				/>
+			);
+		}
+
 		return (
 			<React.Fragment>
 				{actionModal}
@@ -294,6 +311,7 @@ class FaModals extends React.Component {
 				{negotiateModal}
 				{negotiateStandaloneModal}
 				{negotiateOffersModal}
+				{createOffersModal}
 			</React.Fragment>
 		);
 	}

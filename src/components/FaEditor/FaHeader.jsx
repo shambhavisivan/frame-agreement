@@ -314,7 +314,7 @@ class FaHeader extends React.Component {
 							!master && (
 								<button
 									className="fa-button fa-button--transparent"
-									disabled={this.props.disableFrameAgreementOperations}
+									disabled={this.props.disableFrameAgreementOperations || this.props.validationFaOffers.size}
 									onClick={this.onDecompose}
 								>
 									{window.SF.labels.btn_Submit}
@@ -354,7 +354,8 @@ const mapStateToProps = state => {
 		frameAgreements: state.frameAgreements,
 		settings: state.settings,
 		handlers: state.handlers,
-		disableFrameAgreementOperations: state.disableFrameAgreementOperations
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations,
+		validationFaOffers: state.validationFaOffers
 		// approvalNeeded: state.approvalNeeded
 	};
 };
@@ -366,7 +367,7 @@ const mapDispatchToProps = {
 	refreshFrameAgreement,
 	getApprovalHistory,
 	createNewVersionOfFrameAgreement,
-	toggleFrameAgreementOperations
+	toggleFrameAgreementOperations,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaHeader));

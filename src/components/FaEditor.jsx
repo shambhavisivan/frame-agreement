@@ -25,7 +25,9 @@ import {
 	getOfferData,
 	addOffersToFa,
 	replaceOfferEntities,
-	setFrameAgreementOfferFilter
+	setFrameAgreementOfferFilter,
+	addFaOffersToFa,
+	deleteFaOffers
 } from '../actions';
 
 import { publish, findReplacementCommercialProduct } from '../api';
@@ -106,9 +108,11 @@ export class FaEditor extends Component {
 		this.state = {
 			actionTaken: false,
 			activeTabIndex: 0,
+			activeOfferTabIndex: 0,
 			selectedProducts: {},
 			selectedAddons: {},
 			selectedOffers: {},
+			editFaOffer: '',
 			loading: {
 				attachment: true
 			},
@@ -443,6 +447,10 @@ export class FaEditor extends Component {
 						}
 					}
 
+					const faOfferIdsToLoad = Object.keys(resp_attachment.faOffers.offerIdsCharges || {});
+
+					await this.props.addFaOffersToFa(this.faId, faOfferIdsToLoad);
+
 					return;
 				})
 			);
@@ -693,30 +701,45 @@ export class FaEditor extends Component {
 	}
 
 	async _removeOffers() {
-		return new Promise(async resolve => {
-			const offersToDelete = await publish(
-				'onBeforeDeleteOffers',
-				Object.keys(this.state.selectedOffers)
-			);
+		if (this.state.activeOfferTabIndex == 0) {
+			return new Promise(async resolve => {
+				const offersToDelete = await publish(
+					'onBeforeDeleteOffers',
+					Object.keys(this.state.selectedOffers)
+				);
 
-			await this.props.removeOffersFromFa(this.faId, offersToDelete);
+				await this.props.removeOffersFromFa(this.faId, offersToDelete);
 
-			this.props.validateFrameAgreement(this.faId);
-			window.FAM.api.validateStatusConsistency(this.faId);
+				this.props.validateFrameAgreement(this.faId);
+				window.FAM.api.validateStatusConsistency(this.faId);
 
-			this._setState(
-				{
-					selectedOffers: {}
-				},
-				() => {
-					publish(
-						'onAfterDeleteOffers',
-						this.props.frameAgreements[this.faId]._ui.offers.map(cp => cp.Id)
-					);
-					resolve(this.props.frameAgreements[this.faId]._ui.attachment);
-				}
-			);
-		});
+				this._setState(
+					{
+						selectedOffers: {}
+					},
+					() => {
+						publish(
+							'onAfterDeleteOffers',
+							this.props.frameAgreements[this.faId]._ui.offers.map(cp => cp.Id)
+						);
+						resolve(this.props.frameAgreements[this.faId]._ui.attachment);
+					}
+				);
+			});
+		} else {
+			return new Promise(async resolve => {
+				let frameAgreement = this.props.frameAgreements[this.faId];
+				await this.props.deleteFaOffers(frameAgreement, new Set(Object.keys(this.state.selectedOffers)));
+				this._setState(
+					{
+						selectedOffers: {}
+					},
+					() => {
+						resolve(frameAgreement._ui.attachment);
+					}
+				);
+			});
+		}
 	}
 
 	onRemoveOffers() {
@@ -762,6 +785,13 @@ export class FaEditor extends Component {
 				selectedOffers={this.state.selectedOffers}
 				onSelectOffer={this.onSelectOffer}
 				onSelectAllOffers={this.onSelectAllOffers}
+				onOfferTabChange={i => {
+					this.setState({ activeOfferTabIndex: i});
+				}}
+				onEditFaOffer={faOffer => {
+					this.setState({ editFaOffer: faOffer});
+				}}
+				activeOfferTabIndex ={this.state.activeOfferTabIndex}
 			/>
 		);
 
@@ -819,6 +849,7 @@ export class FaEditor extends Component {
 					<FaFooter
 						faId={this.faId}
 						activeTab={this.state.activeTabIndex}
+						activeOfferTabIndex={this.state.activeOfferTabIndex}
 						selectedProducts={this.state.selectedProducts}
 						selectedAddons={this.state.selectedAddons}
 						selectedOffers={this.state.selectedOffers}
@@ -833,6 +864,10 @@ export class FaEditor extends Component {
 					selectedProducts={this.state.selectedProducts}
 					selectedAddons={this.state.selectedAddons}
 					selectedOffers={this.state.selectedOffers}
+					editFaOffer={this.state.editFaOffer}
+					onCloseFaOffer={() => {
+						this.setState({ editFaOffer: ''});
+					}}
 				/>
 			</div>
 		);
@@ -872,7 +907,9 @@ const mapDispatchToProps = {
 	getOfferData,
 	addOffersToFa,
 	replaceOfferEntities,
-	setFrameAgreementOfferFilter
+	setFrameAgreementOfferFilter,
+	addFaOffersToFa,
+	deleteFaOffers
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FaEditor));

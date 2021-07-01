@@ -103,6 +103,10 @@ class FaFooter extends React.Component {
 		this.props.toggleModals({ negotiateOffersModal: true });
 	}
 
+	onOpenCreateOffersModal() {
+		this.props.toggleModals({ createOffersModal: true });
+	}
+
 	render() {
 		let _fa = this.props.frameAgreements[this.props.faId];
 		let master = isMaster(_fa);
@@ -111,7 +115,8 @@ class FaFooter extends React.Component {
 			!master &&
 			!_fa._ui.commercialProducts.length &&
 			!_fa._ui.standaloneAddons.length &&
-			!_fa._ui.offers.length
+			!_fa._ui.offers.length &&
+			!_fa._ui.faOffers.size
 		) {
 			return null;
 		}
@@ -155,12 +160,16 @@ class FaFooter extends React.Component {
 				!hiddenTabs?.addon && evaluateExpressionOnAgreement(standardData.DeleteAddons, _fa) && this.props.activeTab === 1,
 			addOffer:
 				evaluateExpressionOnAgreement(standardData.AddOffers, _fa) &&
-				this.props.activeTab === 2 &&
+				this.props.activeTab === 2 && this.props.activeOfferTabIndex == 0 &&
 				!master,
 			bulkNegotiateOffers:
 				evaluateExpressionOnAgreement(standardData.BulkNegotiateOffers, _fa) &&
-				this.props.activeTab === 2 &&
+				this.props.activeTab === 2 && this.props.activeOfferTabIndex == 0 &&
 				!master,
+			createOffer:
+				evaluateExpressionOnAgreement(standardData.CreateOffers, _fa) &&
+					this.props.activeTab === 2 && this.props.activeOfferTabIndex == 1 &&
+					!master,
 			deleteOffer:
 				evaluateExpressionOnAgreement(standardData.DeleteOffers, _fa) && this.props.activeTab === 2
 		};
@@ -272,6 +281,21 @@ class FaFooter extends React.Component {
 					</button>
 				)}
 
+				{(buttonVisibillityMap.createOffer && isPsEnabled) && (
+					<button
+						disabled={
+							this.props.disableFrameAgreementOperations
+						}
+						className="fa-button fa-button--default"
+						onClick={() => this.onOpenCreateOffersModal()}
+					>
+						<Icon name="add" width="16" height="16" color="#0070d2" />
+						<span className="fa-button-icon">
+							{window.SF.labels.btn_CreateOffers}
+						</span>
+					</button>
+				)}
+
 				{(buttonVisibillityMap.bulkNegotiateOffers && isPsEnabled) && (
 					<button
 						disabled={
@@ -301,7 +325,6 @@ class FaFooter extends React.Component {
 						</span>
 					</button>
 				)}
-
 
 				{customButtonsFooter.map((btnObj, i) => {
 					return (

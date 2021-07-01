@@ -1564,7 +1564,7 @@ private class FrameRateManagerControllerTest {
 		insert catalogue;
 
 		insert new csutil__JSON_Data__c (
-			Name = 'FA-defaultcatalogue', csutil__value__c = catalogue.id
+			name = 'FA-defaultcatalogue', csutil__value__c = catalogue.id
 		);
 
 		Test.startTest();
@@ -1582,7 +1582,7 @@ private class FrameRateManagerControllerTest {
 		insert catalogue;
 
 		insert new csutil__JSON_Data__c (
-			Name = 'FA-defaultcatalogue', csutil__value__c = ''
+			name = 'FA-defaultcatalogue', csutil__value__c = ''
 		);
 
 		String exceptionMessage = '';
@@ -1625,7 +1625,7 @@ private class FrameRateManagerControllerTest {
 	@IsTest
 	public static void testGetHiddenTabConfig() {
 		insert new csutil__JSON_Data__c(
-			Name = 'FA-hiddentabs', csutil__value__c = '["product"]'
+			name = 'FA-hiddentabs', csutil__value__c = '["product"]'
 		);
 
 		Test.startTest();
@@ -1643,5 +1643,141 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		System.assertEquals(responseMap.size(), 0);
+	}
+
+	@isTest
+	public static void getCommercialProductsWithInitialCategorizationFilter() {
+		setupPricingModel();
+		setupSettings();
+		insert new csutil__JSON_Data__c(
+			name = 'FA-Initial-Categorization',
+			csutil__value__c = '[{"name": "Alpha","field": "cspmb__Role__c","values": ["Master"]}]'
+		);
+
+		List<cspmb__Price_Item__c> results = [
+			select Id
+			from cspmb__Price_Item__c
+		];
+		List<Id> cpIdList = new List<Id>();
+
+		for (cspmb__Price_Item__c cp : results) {
+			cpIdList.add(cp.Id);
+		}
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(cpIdList);
+
+		Test.stopTest();
+
+		System.assertEquals(5, cpIdList.size());
+		System.assertEquals(4, getCommercialProducts.size());
+	}
+
+	public static testMethod void testFilterCommercialProductsReturnsEmpty() {
+		setupPricingModel();
+		setupSettings();
+		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]';
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
+
+		Test.stopTest();
+
+		System.assertEquals(0, filteredCp.size(), 'should return 0 cps because there is no discount type in test data');
+
+	}
+
+	@isTest
+	public static void testFilterCommercialProducts() {
+		setupPricingModel();
+		setupSettings();
+		String data = '[{"name":"Alpha","field":"name","values":["cp_1"]}]';
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
+
+		Test.stopTest();
+
+		System.assertEquals(1, filteredCp.size());
+		System.assertEquals('cp_1', filteredCp[0].name);
+	}
+
+	@isTest
+	public static void testFilterCommercialProductsThrowsException() {
+		setupPricingModel();
+		setupSettings();
+		String malformedData= '[{"name":"Alpha""field":"name","values":["cp_1"]}]';
+
+		Test.startTest();
+		try {
+			FrameRateManagerController.filterCommercialProducts(malformedData);
+			System.assert(false, 'Should always throw exception on malformed json.');
+		} catch (Exception e) {
+			System.assertEquals(true, e.getMessage().startsWith('JSON value is malformed'));
+		}
+		Test.stopTest();
+	}
+
+	public static testMethod void testFilterWithMultipleConditions() {
+		cspmb__Price_Item__c mobileL = new cspmb__Price_Item__c(
+			name = 'Mobile L',
+			cspmb__contract_term__c = '36 Months',
+			cspmb__discount_type__c = 'Amount',
+			cspmb__is_active__c = true,
+			cspmb__role__c = 'Basic',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__price_item_code__c = 'cp_1'
+		);
+
+		cspmb__Price_Item__c mobileXL = new cspmb__Price_Item__c(
+			name = 'Mobile XL',
+			cspmb__contract_term__c = '48 Months',
+			cspmb__discount_type__c = 'Percentage',
+			cspmb__is_active__c = true,
+			cspmb__role__c = 'Basic',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__price_item_code__c = 'cp_2'
+		);
+
+		cspmb__Price_Item__c mobileXXL = new cspmb__Price_Item__c(
+			name = 'Mobile XXL',
+			cspmb__contract_term__c = '60 Months',
+			cspmb__discount_type__c = 'Negative Line Item',
+			cspmb__is_active__c = true,
+			cspmb__role__c = 'Basic',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__price_item_code__c = 'cp_3'
+		);
+
+		insert mobileL;
+		insert mobileXL;
+		insert mobileXXL;
+
+		String data = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage"]},{"name":"Beta","field":"cspmb__contract_term__c","values":["36 Months"]}]';
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> filteredCp = FrameRateManagerController.filterCommercialProducts(data);
+
+		Test.stopTest();
+
+		Set<Id> filteredIds = new Set<Id>();
+
+		for (cspmb__Price_Item__c cp: filteredCp) {
+			filteredIds.add(cp.id);
+		}
+
+		System.assertEquals(2, filteredCp.size());
+		System.assertEquals(true, filteredIds.contains(mobileL.id), 'Contains MobileL');
+		System.assertEquals(true, filteredIds.contains(mobileXL.id), 'Contains MobileXL');
+		System.assertEquals(false, filteredIds.contains(mobileXXL.id), 'Does not contain MobileXXL');
+
 	}
 }

@@ -28,6 +28,7 @@ global with sharing class FrameRateManagerController {
 	public static final List<String> TAB_NAME_CONFIG_LIST = new List<String>{
 		'product', 'addon'
 	};
+	private static final String MALFORMED_JSON_EXCEPTION = 'JSON value is malformed';
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -975,10 +976,81 @@ global with sharing class FrameRateManagerController {
 				return new List<cspmb__Price_Item__c>();
 			} else {
 				priceItemIds = new List<String>();
+
+				// get initial categorization filter
+				String filterJsonValue = getInitialFilters();
+				if (filterJsonValue != null) {
+					return filterCommercialProducts(filterJsonValue);
+				}
 			}
 		}
 
 		return getCommercialProducts_p(priceItemIds);
+	}
+
+	private static String getInitialFilters() {
+		csutil__JSON_Data__c faInitialCategorization = getJsonData('FA-Initial-Categorization');
+		if (faInitialCategorization != null && String.isNotBlank(faInitialCategorization.csutil__value__c)) {
+			return faInitialCategorization.csutil__value__c;
+		}
+		return null;
+	}
+
+	@RemoteAction
+	public static List<cspmb__Price_Item__c> filterCommercialProducts(String filterData) {
+		String selectClause = 'id';
+		String whereClause = '';
+
+		List<Object> categorizationData;
+		try {
+			categorizationData = (List<Object>) JSON.deserializeUntyped(filterData);
+		} catch (Exception e) {
+			throw new ApplicationException(FrameRateManagerController.MALFORMED_JSON_EXCEPTION + e.getMessage());
+		}
+
+		Map<String, List<String>> categoryQueryMap = new Map<String, List<String>>();
+
+		for (Object category : categorizationData) {
+			Map<String, Object> categoryMap = (Map<String, Object>) category;
+			String fieldName = (String) categoryMap.get('field');
+
+			List<String> valuesList = new List<String>();
+
+			List<Object> valuesObjArr = (List<Object>) categoryMap.get('values');
+
+			for (Object valueObj : valuesObjArr) {
+				valuesList.add((String) valueObj);
+			}
+
+			categoryQueryMap.put(fieldName, valuesList);
+
+			if (!valuesList.isEmpty()) {
+				selectClause += ',' + fieldName;
+
+				String operator = '';
+
+				if (String.isEmpty(whereClause)) {
+					operator = ' where ';
+				} else {
+					operator = ' or ';
+				}
+
+				whereClause +=
+					operator + fieldName + ' in (\'' + String.join(valuesList, '\',\'') + '\')';
+			}
+		}
+
+		String query = 'select ' + selectClause + ' from cspmb__Price_Item__c ' + whereClause + ' limit 50000';
+
+		List<SObject> results = Database.query(query);
+
+		if (results.size() == 0) {
+			return new List<SObject>();
+		}
+
+		Set<Id> resultIds = (new Map <Id, SObject> (results)).keySet();
+
+		return getCommercialProducts_p(new List<Id> (resultIds));
 	}
 
 	private static List<cspmb__Price_Item__c> getCommercialProducts_p(List<Id> priceItemIds) {
@@ -1004,10 +1076,16 @@ global with sharing class FrameRateManagerController {
 			csFieldsArr = csFields.replaceAll('\\s+', '').split(',');
 		}
 		Fac_Settings__c facSetting = getFacSetting();
+		Boolean isPsEnabled = facSetting.is_ps_enabled__c;
 
 		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
 		fieldsArr.addAll(csFieldsArr);
+
+		if (isPsEnabled) {
+			List<String> categorizationFields = getCategorizationDataFields();
+			fieldsArr.addAll(categorizationFields);
+		}
 
 		// Remove duplicates
 		List<String> uniqueList = getUniqueListElements(fieldsArr);
@@ -1015,7 +1093,7 @@ global with sharing class FrameRateManagerController {
 		String query = 'select  ' + String.join(uniqueList, ',');
 		query += ' from cspmb__Price_Item__c ';
 
-		if (!facSetting.is_ps_enabled__c) {
+		if (!isPsEnabled) {
 			query += 'where cspmb__Account__c = null ';
 			query += 'and cspmb__Is_Active__c = true ';
 			query += 'and (cspmb__Effective_Start_Date__c = null ';
@@ -1026,7 +1104,7 @@ global with sharing class FrameRateManagerController {
 			query += 'and cspmb__Effective_End_Date__c > TODAY)) ';
 		}
 
-		if (facSetting.is_ps_enabled__c) {
+		if (isPsEnabled) {
 			query += 'where Id in :priceItemIds ';
 		} else if (!facSetting.is_ps_enabled__c && !priceItemIds.isEmpty()) {
 			query += 'and Id in :priceItemIds ';

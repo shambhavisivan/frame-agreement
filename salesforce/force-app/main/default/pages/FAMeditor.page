@@ -145,7 +145,10 @@
 				getOffers: "{!$RemoteAction.FrameRateManagerController.getOffers}",
 				getOfferData: "{!$RemoteAction.FrameRateManagerController.getOfferData}",
 				queryFrameAgreements: "{!$RemoteAction.FrameRateManagerController.queryFrameAgreements}",
-				getFieldMetadata: "{!$RemoteAction.FrameRateManagerController.getFieldMetadata}"
+				getFieldMetadata: "{!$RemoteAction.FrameRateManagerController.getFieldMetadata}",
+				createFaOfferCategory: "{!$RemoteAction.FrameRateManagerController.createFaOfferCategory}",
+				createFaOffer: "{!$RemoteAction.FrameRateManagerController.createFaOffer}",
+				deleteFaOffers: "{!$RemoteAction.FrameRateManagerController.deleteFaOffers}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",
@@ -199,6 +202,7 @@
 			  "btn_BulkNegotiateOffers": "{!$Label.btn_BulkNegotiateOffers}",
 			  "btn_CalcDelta": "{!$Label.btn_CalcDelta}",
 			  "btn_Close": "{!$Label.btn_Close}",
+			  "btn_CreateOffers": "{!$Label.btn_CreateOffers}",
 			  "btn_DeleteAgreements": "{!$Label.btn_DeleteAgreements}",
 			  "btn_DeleteProducts": "{!$Label.btn_DeleteProducts}",
 			  "btn_DeleteAddons": "{!$Label.btn_DeleteAddons}",
@@ -282,6 +286,7 @@
 			  "modal_addProduct_title": "{!$Label.modal_addProduct_title}",
 			  "modal_addAddons_title": "{!$Label.modal_addAddons_title}",
 			  "modal_addOffers_title": "{!$Label.modal_addOffers_title}",
+			  "modal_createOffers_title": "{!$Label.modal_createOffers_title}",
 			  "modal_bluk_rateFilter_dropdownPlaceholder": "{!$Label.modal_bluk_rateFilter_dropdownPlaceholder}",
 			  "modal_bluk_rateFilter_propertyTitle": "{!$Label.modal_bluk_rateFilter_propertyTitle}",
 			  "modal_bluk_rateFilter_propertyValueTitle": "{!$Label.modal_bluk_rateFilter_propertyValueTitle}",
@@ -333,7 +338,9 @@
 			  "offers_tab_title": "{!$Label.offers_tab_title}",
 			  "products_title": "{!$Label.products_title}",
 			  "offers_title": "{!$Label.offers_title}",
+			  "fa_offers_title": "{!$Label.fa_offers_title}",
 			  "offers_no_metaData": "{!$Label.offers_no_metaData}",
+			  "offers_creation_error": "{!$Label.offers_creation_error}",
 			  "products_title_empty": "{!$Label.products_title_empty}",
 			  "products_volume_minUsageComm": "{!$Label.products_volume_minUsageComm}",
 			  "products_volume_minUsageCommPeriod": "{!$Label.products_volume_minUsageCommPeriod}",

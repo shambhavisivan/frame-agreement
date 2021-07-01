@@ -7,6 +7,8 @@ private class FrameRateManagerControllerTest {
 		'Id', 'Name', 'csconta__Account__r.Name', 'csconta__Agreement_Name__c', 'csconta__Pricing_Rule_Group__c', 'csconta__Status__c', 'csconta__Valid_From__c', 'csconta__Valid_To__c'
 	};
 
+	public static final String SAMPLE_CP_NAME = 'cp_1';
+
 	public static String generateRandomString(Integer len) {
 		final String chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
 		String randStr = '';
@@ -26,7 +28,7 @@ private class FrameRateManagerControllerTest {
 		System.currentPageReference().getParameters().put('account', test_account.Id);
 		// commercial products
 		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
-			Name = 'cp_1',
+			Name = SAMPLE_CP_NAME,
 			cspmb__One_Off_Charge__c = 10.00,
 			cspmb__Is_Active__c = true,
 			cspmb__Recurring_Charge__c = 15 - 00,
@@ -341,6 +343,56 @@ private class FrameRateManagerControllerTest {
 		return decomposeData;
 	}
 
+	static void setupStdCategory() {
+		Id catalogue = Id.valueOf(FrameRateManagerController.getDefaultCatalogueId());
+
+		List<cspmb__Product_Category__c> categoryList = new List<cspmb__Product_Category__c>();
+
+		cspmb__Product_Category__c category = new cspmb__Product_Category__c(
+			cspmb__description__c = 'test-category-1'
+		);
+		categoryList.add(category);
+		category = new cspmb__Product_Category__c(
+			cspmb__description__c = 'test-category-2'
+		);
+		categoryList.add(category);
+
+		FaPlmService.associateCategoryCatalogue(categoryList, catalogue);
+	}
+
+	static List<PRECategory> setUpPRECategory() {
+		setupStdCategory();
+		Id stdCatalog = FrameRateManagerController.getDefaultCatalogueId();
+
+		List<cspmb__Catalogue_Category_Association__c> stdCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :stdCatalog
+		];
+
+		List<Id> categoryIdList = new List<Id>();
+
+		for (cspmb__Catalogue_Category_Association__c association : stdCatalogueCategory) {
+			categoryIdList.add(association.cspmb__product_category__c);
+		}
+
+		List<cspmb__product_category__c> stdCategoryList = [
+			select id, Name, cspmb__Description__c, cspmb__Subcategory_Sequence__c
+			from cspmb__product_category__c where Id in :categoryIdList
+		];
+
+		List<PRECategory> stdPreCategoryList = new List<PRECategory>();
+		for (cspmb__product_category__c stdCategory : stdCategoryList) {
+			PRECategory preCategory = new PRECategory();
+			preCategory.id = String.valueOf(stdCategory.Id);
+			preCategory.name = stdCategory.Name;
+			preCategory.description = stdCategory.cspmb__Description__c;
+			preCategory.subcategorySequence = Integer.valueOf(stdCategory.cspmb__Subcategory_Sequence__c);
+
+			stdPreCategoryList.add(preCategory);
+		}
+		return stdPreCategoryList;
+	}
+
 	@TestSetup
 	static void makeData() {
 		Fac_Settings__c facSettings = new Fac_Settings__c();
@@ -359,7 +411,11 @@ private class FrameRateManagerControllerTest {
 	}
 
 	public static void setupSettings() {
-		csutil__JSON_Data__c defaultCatalogueId = new csutil__JSON_Data__c(Name = 'FA-defaultcatalogue', csutil__value__c = 'testCatalogueId000');
+		cspmb__Catalogue__c catalogue = new cspmb__Catalogue__c (
+			name = 'catalogue-test'
+		);
+		insert catalogue;
+		csutil__JSON_Data__c defaultCatalogueId = new csutil__JSON_Data__c(Name = 'FA-defaultcatalogue', csutil__value__c = catalogue.Id);
 		csutil__JSON_Data__c headerData = new csutil__JSON_Data__c(Name = 'FA-Header', csutil__value__c = '[{"field":"csconta__Agreement_Name__c","readOnly":false,"label":"Agreement Name","type":"text","grid":2}]');
 		csutil__JSON_Data__c categorizationData = new csutil__JSON_Data__c(Name = 'FA-Categorization', csutil__value__c = '[{"name":"Alpha","field":"cspmb__Discount_Type__c","values":["Percentage","Amount","Negative Line Item"]}]');
 		csutil__JSON_Data__c customButtonData = new csutil__JSON_Data__c(Name = 'FA-Custom-Buttons', csutil__value__c = '[{"type":"action","label":"Action button","id":"bta1","method":"ActionFunction","hidden":["Active"]},{"type":"iframe","label":"iFrame button","id":"bta2","method":"iFrameFunction","hidden":["Active"]},{"type":"redirect","label":"Redirect button","id":"bta3","method":"RedirectFunction","hidden":["Active"]}]');
@@ -764,19 +820,37 @@ private class FrameRateManagerControllerTest {
 	public static void testUpsertFrameAgreement() {
 		setupPricingModel();
 		setupSettings();
+
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c, csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
 		csconta__Frame_Agreement__c fa_2 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA2' limit 1];
+		List<PRECategory> stdPreCategoryList = setUpPRECategory();
 
 		Test.startTest();
 
-		FrameRateManagerController.upsertFrameAgreements(fa_1.Id, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}');
+		FrameRateManagerController.upsertFrameAgreements(fa_1.id, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', null);
 		// New
-		FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}');
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
 
 		Test.stopTest(); /**********/
 
-		fa_1 = [select Id, csconta__Status__c, csconta__Agreement_Name__c from csconta__Frame_Agreement__c where Id = :fa_1.Id limit 1];
+		fa_1 = [select id, csconta__status__c, csconta__agreement_Name__c from csconta__Frame_Agreement__c where id = :fa_1.id limit 1];
 		System.assertEquals('FA1_CHANGED', fa_1.csconta__Agreement_Name__c);
+
+		Id faCatalog = newFa.csconta__catalogue__c;
+		System.assertNotEquals(faCatalog, null);
+
+		Id stdCatalog = FrameRateManagerController.getDefaultCatalogueId();
+
+		List<cspmb__Catalogue_Category_Association__c> stdCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :stdCatalog
+		];
+
+		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
+			select id from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :faCatalog
+		];
+
+		System.assertEquals(faCatalogueCategory.size(), stdCatalogueCategory.size());
 	}
 
 	@isTest
@@ -1779,5 +1853,113 @@ private class FrameRateManagerControllerTest {
 		System.assertEquals(true, filteredIds.contains(mobileXL.id), 'Contains MobileXL');
 		System.assertEquals(false, filteredIds.contains(mobileXXL.id), 'Does not contain MobileXXL');
 
+	}
+
+	@IsTest
+	public static void testFaOfferCategoryCreation() {
+		setupPricingModel();
+		setupSettings();
+
+		List<PRECategory> stdPreCategoryList = setUpPRECategory();
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
+
+		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :newFa.csconta__catalogue__c
+		];
+
+		Test.startTest();
+
+		FrameRateManagerController.createFaOfferCategory(newFa.id);
+
+		Test.stopTest();
+
+		List<cspmb__Catalogue_Category_Association__c> updatedFaCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :newFa.csconta__catalogue__c
+		];
+
+		System.assertEquals(faCatalogueCategory.size() + 1, updatedFaCatalogueCategory.size());
+	}
+
+	@IsTest
+	public static void testFaOfferCreation() {
+		setupPricingModel();
+		setupSettings();
+		FaPlmServiceTest.setupPLMPricingRule();
+
+		List<PRECategory> stdPreCategoryList = setUpPRECategory();
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
+
+		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :newFa.csconta__catalogue__c
+		];
+
+		cspmb__Product_Category__c offerCategory = FrameRateManagerController.createFaOfferCategory(newFa.id);
+
+		cspmb__Price_Item__c cp = [
+			select id from cspmb__Price_Item__c
+			where name = :SAMPLE_CP_NAME
+		];
+
+		Test.startTest();
+
+		cspmb__Price_Item__c createdOffer = FrameRateManagerController.createFaOffer(newFa.id, cp.id, offerCategory.id);
+
+		Test.stopTest();
+
+		System.assertNotEquals(offerCategory.id, null);
+
+		List<cspmb__Commercial_Product_Category_Association__c> offerCategoryAssociation = [
+			select id
+			from cspmb__Commercial_Product_Category_Association__c
+			where cspmb__commercial_product__c = :createdOffer.id and cspmb__product_category__c = :offerCategory.id
+		];
+
+		System.assertEquals(createdOffer.cspmb__master_price_item__c, cp.id);
+		System.assertNotEquals(offerCategoryAssociation.size(), 0);
+	}
+
+	@IsTest
+	public static void testFaOfferDeletion() {
+		setupPricingModel();
+		setupSettings();
+		FaPlmServiceTest.setupPLMPricingRule();
+
+		List<PRECategory> stdPreCategoryList = setUpPRECategory();
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
+
+		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :newFa.csconta__catalogue__c
+		];
+
+		cspmb__Product_Category__c offerCategory = FrameRateManagerController.createFaOfferCategory(newFa.id);
+
+		cspmb__Price_Item__c cp = [
+			select id from cspmb__price_item__c
+			where name = :SAMPLE_CP_NAME
+		];
+
+		cspmb__Price_Item__c createdOffer = FrameRateManagerController.createFaOffer(
+			newFa.id, cp.id, offerCategory.id
+		);
+
+		Test.startTest();
+
+		FrameRateManagerController.deleteFaOffers(new List<Id>{ createdOffer.id });
+
+		Test.stopTest();
+
+		System.assertNotEquals(offerCategory.id, null);
+
+		List<cspmb__Price_Item__c> offer = [
+			select id
+			from cspmb__Price_Item__c
+			where id = :createdOffer.id
+		];
+
+		System.assertEquals(offer.size(), 0);
 	}
 }

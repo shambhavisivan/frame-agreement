@@ -22,7 +22,8 @@ global with sharing class FrameRateManagerController {
 		'csconta__effective_end_date__c',
 		'csconta__effective_start_date__c',
 		'csconta__frame_agreement_number__c',
-		'csconta__agreement_level__c'
+		'csconta__agreement_level__c',
+		'csconta__catalogue__c'
 	};
 	public static final String NO_CATALOGUE_ID_MSG = System.Label.msg_no_catalogue_id;
 	public static final List<String> TAB_NAME_CONFIG_LIST = new List<String>{
@@ -867,7 +868,7 @@ global with sharing class FrameRateManagerController {
 		List<Object> categorizationData = new List<Object>();
 		List<Object> relatedData = new List<Object>();
 		List<Object> customTabs = new List<Object>();
-		
+
 		String defaultCatalogueId = getDefaultCatalogueId();
 		csutil__JSON_Data__c header_data = getHeaderData();
 		csutil__JSON_Data__c button_custom = getCustomButtonData();
@@ -1059,6 +1060,7 @@ global with sharing class FrameRateManagerController {
 			'Name',
 			'cspmb__Effective_Start_Date__c',
 			'cspmb__Effective_End_Date__c',
+			'cspmb__Price_Item_Code__c',
 			'cspmb__Is_One_Off_Discount_Allowed__c',
 			'cspmb__Is_Recurring_Discount_Allowed__c',
 			'cspmb__Recurring_Charge__c',
@@ -2240,7 +2242,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static csconta__Frame_Agreement__c upsertFrameAgreements(Id faId, String fieldData) {
+	public static csconta__Frame_Agreement__c upsertFrameAgreements(Id faId, String fieldData, List<PRECategory> stdCategories) {
 		// String fieldData = '{"csconta__Status__c": "Active", "csconta__Agreement_Name__c": "test"}';
 
 		Map<String, Object> dataMap = (Map<String, Object>) JSON.deserializeUntyped(fieldData);
@@ -2250,8 +2252,10 @@ global with sharing class FrameRateManagerController {
 		Map <String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
 
 		csconta__Frame_Agreement__c fa;
+		boolean isNewFa = false;
 		if (faId == null) {
 			fa = new csconta__Frame_Agreement__c();
+			isNewFa = true;
 		} else {
 			fa = new csconta__Frame_Agreement__c(
 				Id = faId
@@ -2287,13 +2291,37 @@ global with sharing class FrameRateManagerController {
 		upsert fa;
 
 		fa = getFrameAgreement(fa.Id);
+		cspmb__Catalogue__c faCatalogue = null;
 		if (fa.csconta__replaced_frame_agreement__c == null) {
 
 			//ac_settings__c facSettings = Fac_Settings__c.getInstance(UserInfo.getUserId());
 			String prefix = getFaPrefix();
 
-			fa.csconta__frame_agreement_number__c = prefix + parseNumberFromName(fa.Name);
+			fa.csconta__frame_agreement_number__c = prefix + parseNumberFromName(fa.name);
+
+			if (isNewFa) {
+				faCatalogue = createFaCatalogue(fa);
+				fa.csconta__catalogue__c = faCatalogue.id;
+			}
+
 			update fa;
+		}
+
+		if (isNewFa) {
+			List<cspmb__Product_Category__c> existingCategoryList = new List<cspmb__Product_Category__c>();
+
+			for (PRECategory category: stdCategories) {
+				if (category.parentCategory == null) {
+					cspmb__Product_Category__c existingCategory = new cspmb__Product_Category__c(
+						id = Id.valueOf(category.id),
+						name = category.name,
+						cspmb__description__c = category.description,
+						cspmb__subcategory_sequence__c = category.subcategorySequence
+					);
+					existingCategoryList.add(existingCategory);
+				}
+			}
+			FaPlmService.associateCategoryCatalogue(existingCategoryList, faCatalogue.id);
 		}
 
 		return fa;
@@ -2581,6 +2609,56 @@ global with sharing class FrameRateManagerController {
 	public static List<FieldMetadata> getFieldMetadata(String sObjectName) {
 		return AppUtilService.getFieldMetadata(sObjectName);
 	}
+
+	@RemoteAction
+	public static cspmb__Product_Category__c createFaOfferCategory(Id faId) {
+		csconta__Frame_Agreement__c frameAgreement = getFrameAgreement(faId);
+		cspmb__Product_Category__c offerCategory = new cspmb__Product_Category__c(
+			cspmb__description__c = 'Auto generated from FA creation for ' + frameAgreement.csconta__frame_agreement_number__c
+		);
+		cspmb__Product_Category__c newCategory = FaPlmService.associateCategoryCatalogue(
+			new List<cspmb__Product_Category__c>{ offerCategory }, frameAgreement.csconta__catalogue__c
+		).get(0);
+
+		return newCategory;
+	}
+
+	@RemoteAction
+	public static cspmb__Price_Item__c createFaOffer(Id faId, Id cpId, Id offerCategoryId) {
+		csconta__Frame_Agreement__c frameAgreement = getFrameAgreement(faId);
+		List<Id> cpList = new List<Id>{ cpId };
+		cspmb__Price_Item__c cp = getCommercialProducts_p(cpList).get(0);
+		cspmb__Price_Item__c offerRequest = new cspmb__Price_Item__c(
+			cspmb__master_price_item__c = cp.id,
+			cspmb__offer_code__c = frameAgreement.csconta__frame_agreement_number__c + '-' +
+				cp.cspmb__price_item_code__c,
+			cspmb__price_item_description__c = 'Created for FA - ' +
+				frameAgreement.csconta__frame_agreement_number__c
+		);
+		cspmb__Price_Item__c newOffer = FaPlmService.createOffer(
+			new List<cspmb__Price_Item__c>{ offerRequest }
+		).get(0);
+		FaPlmService.associateOfferCategory(newOffer.id, offerCategoryId);
+
+		return newOffer;
+	}
+
+	@RemoteAction
+	public static List<cspmb__Price_Item__c> deleteFaOffers(List<Id> faOfferIdList) {
+
+		return FaPlmService.deleteOffers(faOfferIdList);
+	}
+
+	private static cspmb__Catalogue__c createFaCatalogue(csconta__Frame_Agreement__c frameAgreement) {
+		cspmb__Catalogue__c faCatalogue = new cspmb__Catalogue__c(
+			cspmb__description__c = 'Auto generated from FA creation for ' +
+				frameAgreement.csconta__frame_agreement_number__c
+		);
+		faCatalogue = FaPlmService.createCatalogue(faCatalogue);
+
+		return faCatalogue;
+	}
+
 
 	//******************************************* DECOMPOSITION END ***************************************
 

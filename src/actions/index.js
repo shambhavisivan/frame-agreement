@@ -1086,14 +1086,14 @@ const _deleteFaOffers = (faId, deletedFaOffers) => ({
 });
 
 export function deleteFaOffers(frameAgreement, faOfferIdList) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise(async (resolve, reject) => {
 			let promiseArray = [];
 
 			promiseArray.push(
-				window.SF.invokeAction('deleteFaOffers', [
-					Array.from(faOfferIdList)
+				window.SF.invokeAction("deleteFaOffers", [
+					Array.from(faOfferIdList),
 				])
 			);
 			const faId = frameAgreement.Id;
@@ -1105,7 +1105,10 @@ export function deleteFaOffers(frameAgreement, faOfferIdList) {
 				}
 			}
 			promiseArray.push(
-				window.SF.invokeAction('saveAttachment', [faId, JSON.stringify(attachment)])
+				window.SF.invokeAction("saveAttachment", [
+					faId,
+					JSON.stringify(attachment),
+				])
 			);
 			const result = await Promise.all(promiseArray);
 			dispatch(syncFaOffersAttachment(faId, JSON.parse(result[1])));
@@ -1113,6 +1116,25 @@ export function deleteFaOffers(frameAgreement, faOfferIdList) {
 			resolve();
 		}).finally(() => {
 			dispatch(toggleFrameAgreementOperations(false));
+		});
+	};
+}
+
+export const _filterCommercialProducts = (result) => ({
+	type: "FILTER_COMMERCIAL_PRODUCTS",
+	payload: result,
+});
+
+export function filterCommercialProducts(filterData) {
+	return function (dispatch) {
+		return new Promise((resolve) => {
+			window.SF.invokeAction("filterCommercialProducts", [
+				JSON.stringify(filterData),
+			]).then((response) => {
+				dispatch(_filterCommercialProducts(response));
+				resolve(response);
+				return response;
+			});
 		});
 	};
 }

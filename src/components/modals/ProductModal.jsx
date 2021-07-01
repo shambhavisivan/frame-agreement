@@ -9,6 +9,9 @@ import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
 import { queryCategoriesInCatalogue, queryProductsInCategory } from '~/src/graphql-actions';
 import ProductRow from '../utillity/ProductRow';
+import { filterCommercialProducts } from '../../actions/index';
+import Checkbox from '../utillity/inputs/Checkbox';
+import { publish } from '../../api';
 
 class ProductModal extends Component {
 	constructor(props) {
@@ -18,8 +21,14 @@ class ProductModal extends Component {
 		this.addProducts = this.addProducts.bind(this);
 		this.loadCommercialProducts = this.loadCommercialProducts.bind(this);
 		this.resetFilter = this.resetFilter.bind(this);
+		this.renderCategorizationFilter = this.renderCategorizationFilter.bind(this);
+		this.toggleFilter = this.toggleFilter.bind(this);
+		this.applyFilter = this.applyFilter.bind(this);
+		this.toggleCategoryCollapse = this.toggleCategoryCollapse.bind(this);
+		this.initFilterData = this.initFilterData.bind(this);
 
 		this.categoryId = null;
+		this.isPsEnabled = props.settings.FACSettings.isPsEnabled;
 
 		let _commercialProducts = this.props.commercialProducts;
 
@@ -55,8 +64,27 @@ class ProductModal extends Component {
 	}
 
 	async componentDidMount() {
-		const categoriesInCatalogue = await queryCategoriesInCatalogue();
-		this.setState({ filter: [...categoriesInCatalogue] })
+		if (this.isPsEnabled) {
+			const categoriesInCatalogue = await queryCategoriesInCatalogue();
+			this.setState({ filter: [...categoriesInCatalogue] })
+		} else {
+			this.setState({ filter: this.initFilterData() })
+		}
+	}
+
+	initFilterData() {
+		let categoryMap = {};
+		this.props.settings.CategorizationData.forEach(cat => {
+			categoryMap[cat.field] = {};
+			categoryMap[cat.field].label = cat.name;
+			categoryMap[cat.field].open = false;
+			categoryMap[cat.field].values = {};
+
+			cat.values.forEach(value => {
+				categoryMap[cat.field].values[value] = false;
+			});
+		});
+		return categoryMap;
 	}
 
 	onCloseModal() {
@@ -145,6 +173,142 @@ class ProductModal extends Component {
 		this.setState({ commercialProducts: this.notAddedCommercialProducts });
 	}
 
+	toggleFilter(name, value) {
+		this.setState({
+			filter: {
+				...this.state.filter,
+				[name]: {
+					...this.state.filter[name],
+					values: {
+						...this.state.filter[name].values,
+						[value]: !this.state.filter[name].values[value]
+					}
+				}
+			}
+		});
+	}
+
+	resetFilter() {
+		this.setState({
+			filter: this.isPsEnabled ? this.state.filter : this.initFilterData(),
+			commercialProducts: this.notAddedCommercialProducts
+		});
+	}
+
+	async applyFilter() {
+		// Prepare data
+		let filterData = [];
+
+		for (var field in this.state.filter) {
+			let cat = {
+				field: field,
+				values: []
+			};
+
+			for (var key in this.state.filter[field].values) {
+				if (this.state.filter[field].values[key]) {
+					cat.values.push(key);
+				}
+			}
+
+			if (cat.values.length) {
+				filterData.push(cat);
+			}
+		}
+
+		let result = await this.props.filterCommercialProducts(filterData);
+
+		let perFaCpFilterList = await publish('onLoadCommercialProducts', result);
+
+		this.setState({
+			commercialProducts: perFaCpFilterList.filter(cp => !this.addedProductsIds.includes(cp.Id))
+		});
+	}
+
+	toggleCategoryCollapse(name) {
+		console.log('Toggling ', name);
+		this.setState(
+			{
+				filter: {
+					...this.state.filter,
+					[name]: {
+						...this.state.filter[name],
+						open: !this.state.filter[name].open
+					}
+				}
+			},
+			() => {
+				console.log(this.state.filter[name]);
+			}
+		);
+	}
+
+	renderCategorizationFilter() {
+		if (this.isPsEnabled) {
+			return (<ul>
+				{this.state.filter.length ? this.state.filter.map(category => {
+					return (
+						<div className="fa-modal-product-list-categories">
+							<li
+								key={category.id}
+								onClick={async () =>
+									await this.loadCommercialProducts(category.id)
+								}
+							>
+								<span>{category.name}</span>
+							</li>
+						</div>
+					);
+				}) : (<div>
+					<p>{window.SF.labels.warning_no_commercial_products_linked}</p>
+				</div>)
+				}
+			</ul>)
+		} else {
+			return Object.keys(this.state.filter).map(key => {
+				let category = this.state.filter[key];
+
+				return (
+					<div className="fa-modal-product-list-categories" key={key}>
+						<div
+							onClick={() => {
+								this.toggleCategoryCollapse(key);
+							}}
+						>
+							<Icon
+								name={category.open ? 'chevrondown' : 'chevronright'}
+								width="12"
+								height="12"
+								color="#747474"
+							/>
+							<span className="fa-modal-product-list-categories-item">
+								{category.label}
+							</span>
+						</div>
+
+						{category.open && (
+							<ul>
+								{Object.keys(category.values).map(val => {
+									return (
+										<li
+											key={val}
+											onClick={() => {
+												this.toggleFilter(key, val);
+											}}
+										>
+											<Checkbox small={true} readOnly={category.values[val]} />
+											<span>{val}</span>
+										</li>
+									);
+								})}
+							</ul>
+						)}
+					</div>
+				);
+			})
+		}
+	}
+
 	render() {
 		return (
 			<Modal
@@ -199,25 +363,7 @@ class ProductModal extends Component {
 									</div>
 								</div>
 								<div className="fa-modal-product-list">
-									<ul>
-										{this.state.filter.length ? this.state.filter.map(category => {
-											return (
-												<div className="fa-modal-product-list-categories">
-													<li
-														key={category.id}
-														onClick={async () =>
-															await this.loadCommercialProducts(category.id)
-														}
-													>
-														<span>{category.name}</span>
-													</li>
-												</div>
-											);
-										}) : (<div>
-											<p>{window.SF.labels.warning_no_commercial_products_linked}</p>
-										</div>)
-										}
-									</ul>
+									{this.renderCategorizationFilter()}
 								</div>
 							</div>
 						</div>
@@ -228,6 +374,13 @@ class ProductModal extends Component {
 							>
 								{window.SF.labels.modal_categorization_btn_clear}
 							</button>
+							{!this.isPsEnabled && <button
+								onClick={this.applyFilter}
+								className="fa-button fa-button--default"
+								disabled={false}
+							>
+								{window.SF.labels.modal_categorization_btn_apply}
+							</button>}
 						</div>
 					</div>
 
@@ -350,4 +503,8 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(mapStateToProps)(ProductModal);
+const mapDispatchToProps = {
+	filterCommercialProducts
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductModal);

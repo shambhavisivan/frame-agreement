@@ -148,7 +148,8 @@
 				getFieldMetadata: "{!$RemoteAction.FrameRateManagerController.getFieldMetadata}",
 				createFaOfferCategory: "{!$RemoteAction.FrameRateManagerController.createFaOfferCategory}",
 				createFaOffer: "{!$RemoteAction.FrameRateManagerController.createFaOffer}",
-				deleteFaOffers: "{!$RemoteAction.FrameRateManagerController.deleteFaOffers}"
+				deleteFaOffers: "{!$RemoteAction.FrameRateManagerController.deleteFaOffers}",
+				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

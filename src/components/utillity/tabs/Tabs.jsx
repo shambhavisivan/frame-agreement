@@ -41,16 +41,20 @@ class Tabs extends React.Component {
 		const { children } = this.props;
 		const { activeTabIndex } = this.state;
 
-		let _children = children.reduce((acc, iter) => {
-			if (Array.isArray(iter)) {
-				return [...acc, ...iter];
-			} else {
-				return [...acc, ...[iter]];
-			}
-		}, []);
+		if (children.reduce) {
+			let _children = children.reduce((acc, iter) => {
+				if (Array.isArray(iter)) {
+					return [...acc, ...iter];
+				} else {
+					return [...acc, ...[iter]];
+				}
+			}, []);
 
-		if (_children[activeTabIndex]) {
-			return _children[activeTabIndex].props.children;
+			if (_children[activeTabIndex]) {
+				return _children[activeTabIndex].props.children;
+			}
+		} else {
+			return children.props.children;
 		}
 	}
 

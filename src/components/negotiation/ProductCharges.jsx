@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-// import Checkbox from '../utillity/inputs/Checkbox';
 import Icon from '../utillity/Icon';
 import InputNegotiate from '../utillity/inputs/InputNegotiate';
 import DropdownNegotiate from '../utillity/inputs/DropdownNegotiate';
@@ -182,16 +181,10 @@ export class ProductCharges extends React.Component {
 	}
 }
 
-// export default ProductCharges
-
 const mapStateToProps = state => {
 	return {
 		settings: state.settings
 	};
 };
-
-// const mapDispatchToProps = {
-//     setValidation
-// };
 
 export default connect(mapStateToProps, null)(ProductCharges);

@@ -2,7 +2,8 @@ import * as actions from "./frameAgreementActions";
 import {
 	queryCpIdsInCatalogue,
 	queryCpDataByIds,
-	queryOfferIdsInCatalogue
+	queryOfferIdsInCatalogue,
+	queryCategoriesInCatalogue
 } from '../graphql-actions/api-actions-graphql';
 import { decodeEntities, getFieldLabel, restructureProductData } from '../utils/shared-service';
 
@@ -753,7 +754,8 @@ export function saveFrameAgreement(frameAgreement) {
 		promiseArray.push(
 			window.SF.invokeAction('upsertFrameAgreements', [
 				frameAgreement.Id || null,
-				JSON.stringify(SF_data)
+				JSON.stringify(SF_data),
+				null
 			])
 		);
 
@@ -830,11 +832,17 @@ const _createFrameAgreement = result => ({
 export function createFrameAgreement(faData) {
 	return function(dispatch) {
 		return new Promise(async (resolve, reject) => {
+			const stdCatalogueCategories = await queryCategoriesInCatalogue();
 			let newFa = await window.SF.invokeAction('upsertFrameAgreements', [
 				null,
-				JSON.stringify(faData)
+				JSON.stringify(faData),
+				stdCatalogueCategories
 			]);
 			// Needs to be done in series
+			const offerCategory = await window.SF.invokeAction('createFaOfferCategory', [
+				newFa.Id
+			]);
+			faData._ui.attachment.faOffers.categoryId = offerCategory.Id;
 			await window.SF.invokeAction('saveAttachment', [
 				newFa.Id,
 				JSON.stringify(faData._ui.attachment)

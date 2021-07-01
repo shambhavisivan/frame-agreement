@@ -56,11 +56,16 @@ class FrameAgreement {
 			commercialProducts: [],
 			standaloneAddons: [],
 			offers: [],
+			faOffers: new Map(),
 			attachment: {
 				custom: {},
 				products: {},
 				addons: {},
 				offers: {},
+				faOffers: {
+					categoryId: '',
+					offerIdsCharges: {}
+				},
 			}
 		};
 	}

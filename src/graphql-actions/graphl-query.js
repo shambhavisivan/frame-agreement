@@ -19,6 +19,11 @@ export const CATEGORIES_IN_CATALOGUE = `query categories($catalogueId: ID!) {
 		data {
 			id
 			name
+			description
+			subcategorySequence
+			parentCategory {
+				id
+			}
 		}
 		hasMore
 		nextPage {

@@ -41,6 +41,7 @@ const initialState = {
 	validationAddons: {},
 	validationProduct: {},
 	validationOffers: {},
+	validationFaOffers: new Set(),
 	// approvalNeeded: false, // true -> needs validation
 	handlers: {},
 	modals: {
@@ -52,7 +53,8 @@ const initialState = {
 		negotiateModal: false,
 		negotiateStandaloneModal: false,
 		offersModal: false,
-		negotiateOffersModal: false
+		negotiateOffersModal: false,
+		createOffersModal: false
 	},
 	toasts: [],
 	disableFrameAgreementOperations: false
@@ -306,6 +308,7 @@ function getNewAttachment(headerData, fa) {
 		commercialProducts: [],
 		offers: [],
 		standaloneAddons: [],
+		faOffers: new Map(),
 		approvalNeeded: false,
 		headerRows: organizeHeaderFields(headerData, fa),
 		attachment: null
@@ -1507,7 +1510,8 @@ const rootReducer = (state = initialState, action) => {
 				'NewVersion',
 				'AddOffers',
 				'DeleteOffers',
-				'BulkNegotiateOffers'
+				'BulkNegotiateOffers',
+				'CreateOffers'
 			];
 
 			const fullStatusSet = new Set(Object.values(action.payload.FACSettings.statuses));
@@ -2218,7 +2222,7 @@ const rootReducer = (state = initialState, action) => {
 
 			var _commercialProducts = state.commercialProducts.filter(cp => attachment.products[cp.Id]);
 			var _standaloneAddons = state.standaloneAddons.filter(add => attachment.addons[add.Id]);
-			var _offers = state.offers.filter(offer => attachment.offers[offer.Id])
+			var _offers = state.offers.filter(offer => attachment.offers[offer.Id]);
 
 			return {
 				...state,
@@ -2231,7 +2235,8 @@ const rootReducer = (state = initialState, action) => {
 							attachment,
 							commercialProducts: _commercialProducts,
 							standaloneAddons: _standaloneAddons,
-							offers: _offers
+							offers: _offers,
+							faOffers: new Map()
 						}
 					}
 				}
@@ -2735,6 +2740,109 @@ const rootReducer = (state = initialState, action) => {
 			return {
 				...state,
 				attachment: _attachment
+			};
+
+		case 'SYNC_FA_OFFER_ATTACHMENT':
+
+			var faId = action.payload.faId;
+			var faOfferSavedAttachment = action.payload.attachment;
+
+			var _initialAttachment = { ...state.currentFrameAgreement._ui.attachment };
+
+			_initialAttachment.faOffers = faOfferSavedAttachment.faOffers;
+
+			var _attachment = { ...state.frameAgreements[faId]._ui.attachment };
+
+			_attachment.faOffers = JSON.parse(JSON.stringify(_initialAttachment.faOffers));
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							attachment: { ..._attachment }
+						}
+					}
+				},
+				currentFrameAgreement: {
+					...state.currentFrameAgreement,
+					_ui: {
+						...state.currentFrameAgreement._ui,
+						attachment: { ..._initialAttachment },
+					}
+				}
+			};
+
+		case 'ADD_FA_OFFER':
+
+			var faId = action.payload.faId;
+			var addedFaOffers = action.payload.addedFaOffers;
+
+			var faOffersList = new Map(state.frameAgreements[faId]._ui.faOffers);
+
+			var invalidFaOffers = new Set(state.validationFaOffers);
+			if (!faOffersList.size) {
+				invalidFaOffers = new Set();
+			}
+			addedFaOffers.forEach(faOffer => {
+				faOffersList.set(faOffer.Id, faOffer);
+				if (
+					(!faOffer.cspmb__One_Off_Charge__c && faOffer.cspmb__One_Off_Charge__c != 0) &&
+						(!faOffer.cspmb__Recurring_Charge__c && faOffer.cspmb__Recurring_Charge__c != 0)
+				) {
+					invalidFaOffers.add(faOffer.Id);
+				} else {
+					invalidFaOffers.delete(faOffer.Id);
+				}
+			});
+
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							faOffers: faOffersList
+						}
+					}
+				},
+				validationFaOffers: invalidFaOffers
+			};
+
+		case 'DELETE_FA_OFFER':
+
+			var faId = action.payload.faId;
+			let deletedFaOffers = action.payload.deletedFaOffers;
+
+			var faOffersList = new Map(state.frameAgreements[faId]._ui.faOffers);
+			var invalidFaOffers = new Set(state.validationFaOffers);
+
+			deletedFaOffers.forEach(faOffer => {
+				faOffersList.delete(faOffer.Id);
+				if (invalidFaOffers.has(faOffer.Id)) {
+					invalidFaOffers.delete(faOffer.Id);
+				}
+			});
+
+			return {
+				...state,
+				frameAgreements: {
+					...state.frameAgreements,
+					[faId]: {
+						...state.frameAgreements[faId],
+						_ui: {
+							...state.frameAgreements[faId]._ui,
+							faOffers: faOffersList
+						}
+					}
+				},
+				validationFaOffers: invalidFaOffers
 			};
 
 		default:

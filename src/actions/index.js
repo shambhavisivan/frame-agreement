@@ -19,6 +19,7 @@ const _defaultModals = {
 	negotiateModal: false,
 	offersModal: false,
 	negotiateOffersModal: false,
+	createOffersModal: false,
 };
 
 // ***********************************************************************
@@ -1031,6 +1032,87 @@ export function replaceOfferEntities(faId, replacementData) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_replaceOfferEntities(faId, replacementData));
 			resolve();
+		});
+	};
+}
+
+const syncFaOffersAttachment = (faId, attachment) => ({
+	type: 'SYNC_FA_OFFER_ATTACHMENT',
+	payload: { faId, attachment }
+});
+
+export function createFaOffer(frameAgreement, cpId) {
+	return function(dispatch) {
+		dispatch(toggleFrameAgreementOperations(true));
+		return new Promise(async (resolve, reject) => {
+			const faId = frameAgreement.Id;
+			let attachment = { ...frameAgreement._ui.attachment };
+			const newFaOffer = await window.SF.invokeAction("createFaOffer", [
+				faId,
+				cpId,
+				attachment.faOffers.categoryId
+			]);
+			attachment.faOffers.offerIdsCharges[newFaOffer.Id] = {
+				oneOffCharge: newFaOffer.cspmb__One_Off_Charge__c,
+				recurringCharge: newFaOffer.cspmb__Recurring_Charge__c,
+			};
+			await window.SF.invokeAction('saveAttachment', [faId, JSON.stringify(attachment)]);
+			dispatch(syncFaOffersAttachment(faId, attachment));
+			resolve(newFaOffer);
+		}).finally(() => {
+			dispatch(toggleFrameAgreementOperations(false));
+		});
+	};
+}
+
+const _addFaOfferToFa = (faId, addedFaOffers) => ({
+	type: 'ADD_FA_OFFER',
+	payload: { faId, addedFaOffers }
+});
+
+export function addFaOffersToFa(faId, newFaOfferIds) {
+	return function (dispatch) {
+		return new Promise(async (resolve, reject) => {
+			const faOffer = await window.SF.invokeAction("getOffers", [Array.from(newFaOfferIds)]);
+			dispatch(_addFaOfferToFa(faId, faOffer));
+			resolve(faOffer);
+		});
+	};
+};
+
+const _deleteFaOffers = (faId, deletedFaOffers) => ({
+	type: 'DELETE_FA_OFFER',
+	payload: { faId, deletedFaOffers }
+});
+
+export function deleteFaOffers(frameAgreement, faOfferIdList) {
+	return function(dispatch) {
+		dispatch(toggleFrameAgreementOperations(true));
+		return new Promise(async (resolve, reject) => {
+			let promiseArray = [];
+
+			promiseArray.push(
+				window.SF.invokeAction('deleteFaOffers', [
+					Array.from(faOfferIdList)
+				])
+			);
+			const faId = frameAgreement.Id;
+			let attachment = { ...frameAgreement._ui.attachment };
+
+			for (var key in attachment.faOffers.offerIdsCharges) {
+				if (faOfferIdList.has(key)) {
+					delete attachment.faOffers.offerIdsCharges[key];
+				}
+			}
+			promiseArray.push(
+				window.SF.invokeAction('saveAttachment', [faId, JSON.stringify(attachment)])
+			);
+			const result = await Promise.all(promiseArray);
+			dispatch(syncFaOffersAttachment(faId, JSON.parse(result[1])));
+			dispatch(_deleteFaOffers(faId, result[0]));
+			resolve();
+		}).finally(() => {
+			dispatch(toggleFrameAgreementOperations(false));
 		});
 	};
 }

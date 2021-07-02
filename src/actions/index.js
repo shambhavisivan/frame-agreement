@@ -21,7 +21,8 @@ const _defaultModals = {
 	negotiateOffersModal: false,
 	createOffersModal: false,
 };
-
+// appsettings will be cached when the app loads
+let appSettingsCache;
 // ***********************************************************************
 export const _registerMethod = (name, method) => ({
 	type: 'REGISTER_METHOD',
@@ -340,6 +341,7 @@ export function getAppSettings() {
 				setTimeout(() => {
 					dispatch(recieveAppSettings(response));
 					resolve(response);
+					appSettingsCache = response;
 					return response;
 				});
 			});
@@ -894,7 +896,16 @@ export const recieveCommercialProducts = result => ({
 
 export function getCommercialProducts() {
 	return async function (dispatch) {
-		const cpIdsInCatalogue = await queryCpIdsInCatalogue();
+		let isPsEnabled;
+		if (appSettingsCache) {
+			const {FACSettings} = appSettingsCache;
+			isPsEnabled = FACSettings.isPsEnabled;
+		} else {
+			appSettingsCache =  await getAppSettings();
+			const {FACSettings} = appSettingsCache;
+			isPsEnabled = FACSettings.isPsEnabled;
+		}
+		const cpIdsInCatalogue = isPsEnabled ? await queryCpIdsInCatalogue() : null;
 		const response = await window.SF.invokeAction("getCommercialProducts", [
 			cpIdsInCatalogue,
 		]);

@@ -14,7 +14,9 @@ import {
 	mockFrameAgreements,
 	mockDispatcherAuthToken,
 	mockUserLocale,
-	faFieldMetadataMock
+	faFieldMetadataMock,
+	mockOffers,
+	mockOfferData
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
@@ -52,6 +54,24 @@ export const remoteActions: RemoteActions = {
 	async getCommercialProducts(): Promise<CommercialProductStandalone[]> {
 		return new Promise((resolve) => {
 			setTimeout(() => resolve(mockCommercialProducts), FAKE_DELAY_MS);
+		});
+	},
+
+	async getOffers(): Promise<CommercialProductStandalone[]> {
+		return new Promise((resolve) => {
+			setTimeout(() => resolve(mockOffers), FAKE_DELAY_MS);
+		});
+	},
+
+	async getOfferData(ids: string[]): Promise<CommercialProductData> {
+		const dataForIds = {
+			cpData: Object.fromEntries(
+				Object.entries(mockOfferData.cpData).filter(([key]) => ids.includes(key))
+			)
+		};
+
+		return new Promise((resolve) => {
+			setTimeout(() => resolve(dataForIds), FAKE_DELAY_MS);
 		});
 	},
 

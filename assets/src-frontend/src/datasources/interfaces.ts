@@ -11,6 +11,7 @@ type FacSetting = {
 		approvedStatus: string;
 		requiresApprovalStatus: string;
 	};
+	dispatcherServiceUrl: string;
 };
 
 export interface AppSettings {

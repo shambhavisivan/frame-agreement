@@ -19,6 +19,8 @@ export interface RemoteActions {
 	queryFrameAgreements(): Promise<FrameAgreement[]>;
 	getCommercialProductData(ids: string[]): Promise<CommercialProductData>;
 	getCommercialProducts(cpIds: string[] | null): Promise<CommercialProductStandalone[]>;
+	getOffers(offerIds: string[] | null): Promise<CommercialProductStandalone[]>;
+	getOfferData(ids: string[], addonIds: string[] | null): Promise<CommercialProductData>;
 	upsertFrameAgreements(
 		faId: string | null,
 		fieldData: Partial<FrameAgreement | SfGlobal.FrameAgreement>
@@ -54,7 +56,8 @@ export const remoteActions: RemoteActions = {
 					approvedStatus: settings.FACSettings.statuses.approved_status as string,
 					requiresApprovalStatus: settings.FACSettings.statuses
 						.requires_approval_status as string
-				}
+				},
+				dispatcherServiceUrl: settings.FACSettings.dispatcherServiceUrl
 			}
 		};
 	},
@@ -86,6 +89,24 @@ export const remoteActions: RemoteActions = {
 		);
 
 		return commercialProducts.map(deforcify);
+	},
+
+	async getOffers(offerIds: string[]): Promise<CommercialProductStandalone[]> {
+		const offers: SfGlobal.CommercialProductStandalone[] = await SF.invokeAction(
+			'getCommercialProducts',
+			[offerIds]
+		);
+
+		return offers.map(deforcify);
+	},
+
+	async getOfferData(ids: string[], addonIds: string[]): Promise<CommercialProductData> {
+		const offerData: SfGlobal.CommercialProductData = await SF.invokeAction('getOfferData', [
+			ids,
+			addonIds
+		]);
+
+		return deforcify(offerData);
 	},
 
 	async upsertFrameAgreements(

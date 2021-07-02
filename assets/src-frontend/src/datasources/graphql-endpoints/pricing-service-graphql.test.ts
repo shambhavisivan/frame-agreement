@@ -27,10 +27,9 @@ describe('PricingServiceGraphQL', () => {
 
 	beforeEach(() => {
 		/*
-		 * We will mock the dispatcher service in the tests. Hence passing empty
-		 * string to dispatcher service as url will not harm.
+		 * We will mock the dispatcher service in the tests.
 		 */
-		pricingServiceAPI = new PricingServiceGraphQL(new DispatcherService(''));
+		pricingServiceAPI = new PricingServiceGraphQL(new DispatcherService('fakeUrl'));
 	});
 
 	afterEach(() => {

@@ -40,7 +40,8 @@ export const mockAppSettings: AppSettings = {
 			closedStatus: 'Closed',
 			approvedStatus: 'Approved',
 			requiresApprovalStatus: 'Requires Approval'
-		}
+		},
+		dispatcherServiceUrl: 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com'
 	}
 };
 
@@ -53,6 +54,12 @@ export const mockCommercialProductData: CommercialProductData = {
 export const mockCommercialProducts: CommercialProductStandalone[] = commercialProducts.map(
 	deforcify
 );
+
+export const mockOfferData: CommercialProductData = {
+	cpData: deforcify(productData)
+};
+
+export const mockOffers: CommercialProductStandalone[] = commercialProducts.map(deforcify);
 
 export const mockDispatcherAuthToken: DispatcherToken = {
 	orgId: 'some-org-id',

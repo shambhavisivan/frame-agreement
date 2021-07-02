@@ -7,19 +7,18 @@ import {
 } from '../datasources/graphql-endpoints/interface';
 import { useProductIdsInDefaultCatalogue } from './use-productIds-in-default-catalogue';
 
-export function useCommercialProducts(): {
+export function useOffers(): {
 	status: QueryStatus;
 	data?: CommercialProductStandalone[];
 } {
 	const filter: ProductFilter = {
-		role: CommercialProductRole.basic,
+		role: CommercialProductRole.offer,
 		type: CommercialProductType.commercialProduct
 	};
 
 	const { productIds } = useProductIdsInDefaultCatalogue(filter);
-
-	const { status, data } = useQuery(['commercialProducts', productIds], () =>
-		remoteActions.getCommercialProducts(productIds)
+	const { status, data } = useQuery(['offers', productIds], () =>
+		remoteActions.getOffers(productIds)
 	);
 
 	return {

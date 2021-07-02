@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { ERROR_DISPATCHER_URL_MISSING } from '../../constants/errors';
 import { remoteActions } from '../remote-actions-salesforce';
 import {
 	CategoriesInCatalogueResponse,
@@ -43,7 +44,10 @@ export class DispatcherService {
 	private _connection: AxiosInstance;
 	private _authToken: DispatcherToken | undefined = undefined;
 
-	constructor(dispatcherServiceUrl: string) {
+	constructor(dispatcherServiceUrl: string | undefined) {
+		if (!dispatcherServiceUrl) {
+			throw Error(ERROR_DISPATCHER_URL_MISSING);
+		}
 		this._connection = axios.create({
 			baseURL: dispatcherServiceUrl,
 			timeout: 10000

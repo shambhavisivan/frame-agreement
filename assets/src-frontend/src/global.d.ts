@@ -40,6 +40,8 @@ namespace SfGlobal {
 		): Promise<FrameAgreement[]>;
 		getCommercialProductData(paramsArray: [string[]]): Promise<CommercialProductData>;
 		getCommercialProducts(cpIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
+		getOffers(offerIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
+		getOfferData(paramsArray: [string[], string[]]): Promise<CommercialProductData>;
 		upsertFrameAgreements(paramsArray: [string | null, string]): Promise<FrameAgreement>;
 		saveAttachment(paramsArray: [string, string]): Promise<string>;
 		getDispatcherAuthToken(userAgent: [string]): Promise<DispatcherToken>;
@@ -64,7 +66,7 @@ namespace SfGlobal {
 		RelatedListsData: Record<string, unknown>;
 		AddonCategorizationData: Record<string, unknown>;
 		CategorizationData: Record<string, unknown>;
-		FACSettings: Record<string, Record<string, unknown>>;
+		FACSettings: Record<string, FacSetting>;
 		/* eslint-enable @typescript-eslint/naming-convention */
 	}
 

@@ -1,6 +1,7 @@
 import {
-	CSButton,
-	CSCheckbox,
+	CSDropdown,
+	CSList,
+	CSListItem,
 	CSTable,
 	CSTableBody,
 	CSTableCell,
@@ -39,22 +40,20 @@ export function CsTableWrapper(props: CSTableProps): ReactElement {
 		};
 
 		return (
-			<ul style={{ position: 'absolute', float: 'right', right: '0px' }}>
+			<CSList variant="check-list">
 				{props.columnMetadata.map((metadata) => {
 					const isColumnVisible = new Set(apiNames).has(metadata.apiName);
 					return (
-						<li>
-							<CSCheckbox
-								checked={isColumnVisible}
-								label={metadata.fieldLabel}
-								onChange={(): void =>
-									modifyColumnMetadata(metadata, isColumnVisible)
-								}
-							/>
-						</li>
+						<CSListItem
+							text={metadata.fieldLabel}
+							onSelectChange={(): void =>
+								modifyColumnMetadata(metadata, isColumnVisible)
+							}
+							selected={isColumnVisible}
+						/>
 					);
 				})}
-			</ul>
+			</CSList>
 		);
 	};
 
@@ -62,17 +61,26 @@ export function CsTableWrapper(props: CSTableProps): ReactElement {
 		<div>
 			<CSTable data-testid={'cs-table'}>
 				<CSTableHeader>
+					<CSTableCell className="row-editor-placeholder" maxWidth="2.625rem" />
 					{columnMetadata.map((column) => {
 						return <CSTableCell key={column.fieldLabel} text={column.fieldLabel} />;
 					})}
-					{!props.disableColumnChooser && (
-						<CSButton
-							label={'column chooser'}
-							origin={'cs'}
-							onClick={(): void => setShowColumnChooser((prevState) => !prevState)}
-							style={{ position: 'absolute', float: 'right', right: '-126px' }}
-						/>
-					)}
+					<CSTableCell className="column-chooser" maxWidth="2.625rem">
+						<>
+							{!props.disableColumnChooser && (
+								<CSDropdown
+									mode="list"
+									iconName="table"
+									position="top"
+									onClick={(): void =>
+										setShowColumnChooser((prevState) => !prevState)
+									}
+								>
+									{renderColumnChooser()}
+								</CSDropdown>
+							)}
+						</>
+					</CSTableCell>
 				</CSTableHeader>
 				{showColumnChooser && renderColumnChooser()}
 				<CSTableBody>{props.rowRenderer(props.data, columnMetadata)}</CSTableBody>

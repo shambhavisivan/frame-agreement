@@ -86,9 +86,10 @@ body {
 		}
 
 		.cs-table-header {
-			top: 0;
+			top: 4.5625rem; /* Change back to 0 when overflow issue is fixed on table wrapper */
 			position: sticky;
 			margin: 0 -2px;
+
 			.cs-table-cell {
 				display: flex;
 				@include sbg(--table-header-bg);
@@ -98,22 +99,53 @@ body {
 					@include sc(--table-header-c);
 				}
 			}
+
+			.row-editor-placeholder {
+				padding: 0;
+			}
+
+			.column-chooser {
+				align-items: center;
+				justify-content: flex-end;
+				padding: 0;
+
+				.cs-btn {
+					margin-right: 0.0625rem;
+				}
+			}
 		}
 	}
 
-	.cs-table-row {
-		margin: 0.2175rem 0;
-		box-shadow: 0 1px 2px var(--table-row-shadow);
+	.cs-table-body {
+		.cs-table-row {
+			margin: 0.2175rem 0;
+			box-shadow: 0 1px 2px var(--table-row-shadow);
 
-		.cs-table-cell:first-child {
-			border-top-left-radius: 0.25rem;
-			border-bottom-left-radius: 0.25rem;
-		}
+			&:hover {
+				cursor: pointer;
+			}
 
-		.cs-table-cell:last-child {
-			border-top-right-radius: 0.25rem;
-			border-bottom-right-radius: 0.25rem;
-			justify-content: flex-end;
+			.cs-table-cell:first-child {
+				border-top-left-radius: 0.25rem;
+				border-bottom-left-radius: 0.25rem;
+			}
+
+			.cs-table-cell:last-child {
+				border-top-right-radius: 0.25rem;
+				border-bottom-right-radius: 0.25rem;
+			}
+
+			.cs-table-cell.row-editor {
+				padding: 0;
+
+				.cs-btn {
+					margin-left: 0.5rem;
+				}
+			}
+
+			.cs-table-cell.column-chooser-placeholder {
+				padding: 0;
+			}
 		}
 	}
 
@@ -186,6 +218,7 @@ body {
 	.cs-dropdown-item-wrapper {
 		border: none;
 		box-shadow: 0 1px 2px var(--dropdown-wrapper-shadow);
+		max-height: 20rem;
 
 		.cs-table {
 			width: 25rem;

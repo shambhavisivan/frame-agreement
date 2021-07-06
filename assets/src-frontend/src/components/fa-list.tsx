@@ -153,7 +153,9 @@ export function FrameAgreementList(): ReactElement {
 			return (
 				<div key={fa.id}>
 					<CSTableRow rowId={fa.id}>
-						{dropDown(fa.id)}
+						<CSTableCell className="row-editor" maxWidth="2.625rem">
+							{dropDown(fa.id)}
+						</CSTableCell>
 						{columns.map((col, index) => {
 							const apiName: keyof FrameAgreement = (col.apiName as unknown) as keyof FrameAgreement;
 							// should render only to the first cell
@@ -181,6 +183,7 @@ export function FrameAgreementList(): ReactElement {
 								);
 							}
 						})}
+						<CSTableCell className="column-chooser-placeholder" maxWidth="2.625rem" />
 					</CSTableRow>
 				</div>
 			);

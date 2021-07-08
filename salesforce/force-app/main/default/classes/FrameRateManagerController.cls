@@ -2282,11 +2282,16 @@ global with sharing class FrameRateManagerController {
 		Schema.SObjectType leadSchema = schemaMap.get('csconta__Frame_Agreement__c');
 		Map <String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
 
+		Boolean isPsEnabled = getPsSwitchStatus();
 		csconta__Frame_Agreement__c fa;
-		boolean isNewFa = false;
+		Boolean isNewFa = false;
+
 		if (faId == null) {
 			fa = new csconta__Frame_Agreement__c();
-			isNewFa = true;
+
+			if (isPsEnabled) {
+				isNewFa = true;
+			}
 		} else {
 			fa = new csconta__Frame_Agreement__c(
 				Id = faId

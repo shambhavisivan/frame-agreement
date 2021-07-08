@@ -341,6 +341,7 @@
 			  "offers_title": "{!$Label.offers_title}",
 			  "fa_offers_title": "{!$Label.fa_offers_title}",
 			  "offers_no_metaData": "{!$Label.offers_no_metaData}",
+			  "offers_no_faCatalogue": "{!$Label.offers_no_faCatalogue}",
 			  "offers_creation_error": "{!$Label.offers_creation_error}",
 			  "products_title_empty": "{!$Label.products_title_empty}",
 			  "products_volume_minUsageComm": "{!$Label.products_volume_minUsageComm}",

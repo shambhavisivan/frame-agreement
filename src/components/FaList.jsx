@@ -311,6 +311,7 @@ class FaList extends Component {
 										onAction={btnObj => {
 											this.createFrameAgreement(btnObj.type);
 										}}
+										disabled={this.props.disableFrameAgreementOperations}
 									/>
 								) : (
 									''

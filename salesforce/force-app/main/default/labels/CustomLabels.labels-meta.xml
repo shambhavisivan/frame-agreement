@@ -1653,6 +1653,13 @@
         <value>There are no Meta Data in here for this offer</value>
     </labels>
     <labels>
+        <fullName>offers_no_faCatalogue</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>FA not linked to catalogue</shortDescription>
+        <value>This Frame Agreement is currently not linked with any catalogue. Kindly check the user guide on how to migrate this Frame Agreement</value>
+    </labels>
+    <labels>
         <fullName>offers_creation_error</fullName>
         <language>en_US</language>
         <protected>true</protected>

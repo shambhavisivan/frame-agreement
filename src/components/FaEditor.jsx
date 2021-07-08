@@ -447,7 +447,7 @@ export class FaEditor extends Component {
 						}
 					}
 
-					const faOfferIdsToLoad = Object.keys(resp_attachment.faOffers.offerIdsCharges || {});
+					const faOfferIdsToLoad = Object.keys(resp_attachment.faOffers?.offerIdsCharges || {});
 
 					await this.props.addFaOffersToFa(this.faId, faOfferIdsToLoad);
 

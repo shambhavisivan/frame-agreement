@@ -849,6 +849,7 @@ const _createFrameAgreement = result => ({
 
 export function createFrameAgreement(faData) {
 	return function(dispatch) {
+		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise(async (resolve, reject) => {
 			const isPsEnabled = await getPsSwitch();
 			const stdCatalogueCategories = isPsEnabled ? await queryCategoriesInCatalogue() : null;
@@ -878,6 +879,8 @@ export function createFrameAgreement(faData) {
 			dispatch(_createFrameAgreement(newFa));
 			resolve(newFa);
 			return newFa;
+		}).finally(() => {
+			dispatch(toggleFrameAgreementOperations(false));
 		});
 	};
 }

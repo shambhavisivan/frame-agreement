@@ -70,6 +70,7 @@ class FaOffersTab extends Component {
 
 		const _isMaster = isMaster(this.props.frameAgreements[this.props.faId]);
 		const standardData = this.props.settings.ButtonStandardData;
+		const isFaCatalogueLinked = this.props.frameAgreements[this.props.faId]._ui.attachment?.faOffers?.categoryId;
 
 		const _isCreateOffersEnabled =
 			!_isMaster &&
@@ -79,7 +80,16 @@ class FaOffersTab extends Component {
 			) &&
 			this.props.cpsLoaded;
 
-		if (_faOffers?.length) {
+		if (!isFaCatalogueLinked) {
+			faOffers = (
+				<div>
+					<div className="add-product-box">
+						<span className="box-header-1">
+							{window.SF.labels.offers_no_faCatalogue}
+						</span>
+					</div>
+				</div>);
+		} else if (_faOffers?.length) {
 			faOffers = (
 				<div className="products-card__inner">
 					<div className="products-card__header">

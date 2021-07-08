@@ -912,6 +912,28 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@isTest
+	public static void testPsDisabledUpsertFrameAgreement() {
+		setupPricingModel();
+		setupSettings();
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		Test.startTest();
+
+		// New
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', null);
+
+		Test.stopTest();
+
+		Id faCatalog = newFa.csconta__catalogue__c;
+
+		System.assertNotEquals(newFa.id, null);
+		System.assertEquals(faCatalog, null);
+	}
+
+	@isTest
 	public static void testGetAppSettings() {
 		setupPricingModel();
 

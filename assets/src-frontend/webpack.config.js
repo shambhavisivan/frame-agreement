@@ -7,7 +7,6 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 let config = {
 	mode: process.env.NODE_ENV,
-	devtool: 'inline-source-map',
 	entry: {
 		bundle: ['./src/index.tsx']
 	},

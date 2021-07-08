@@ -95,7 +95,7 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 				</CSCard>
 				Agreement ID: {agreementId}, name: {agreement?.name}
 				<CSCard className="products-search-wrapper">
-					<CSCardHeader>
+					<CSCardHeader title="">
 						<h2>Products</h2>
 						<div className="products-search">
 							<CSInputSearch

@@ -117,5 +117,9 @@ export const remoteActions: RemoteActions = {
 			return metaInf;
 		});
 		return Promise.resolve(value);
+	},
+
+	async cloneFrameAgreement(faId) {
+		return Promise.resolve(mockFrameAgreements[0]);
 	}
 };

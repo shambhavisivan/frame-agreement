@@ -47,6 +47,7 @@ namespace SfGlobal {
 		getDispatcherAuthToken(userAgent: [string]): Promise<DispatcherToken>;
 		getUserLocale(): Promise<UserLocaleInfo>;
 		getFieldMetadata(sObjectName: [string]): Promise<FieldMetadata[]>;
+		cloneFrameAgreement(faId: [string]): Promise<FrameAgreement>;
 	}
 
 	// TODO define the unknowns

@@ -29,6 +29,7 @@ export interface RemoteActions {
 	getDispatcherAuthToken(navigatorToken: string): Promise<DispatcherToken>;
 	getUserLocale(): Promise<UserLocaleInfo>;
 	getFieldMetadata(sObjectName: string): Promise<FieldMetadata[]>;
+	cloneFrameAgreement(faId: string): Promise<FrameAgreement>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -150,5 +151,13 @@ export const remoteActions: RemoteActions = {
 			}
 			return metaInf;
 		});
+	},
+
+	async cloneFrameAgreement(faId: string): Promise<FrameAgreement> {
+		const clonedFrameAgreement: SfGlobal.FrameAgreement = await SF.invokeAction(
+			'cloneFrameAgreement',
+			[faId]
+		);
+		return deforcify(clonedFrameAgreement);
 	}
 };

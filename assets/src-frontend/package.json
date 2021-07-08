@@ -5,7 +5,6 @@
   "dependencies": {
     "@cloudsense/cs-ui-components": "^1.1.24",
     "axios": "^0.21.1",
-    "crypto": "^1.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-query": "2.26.4",

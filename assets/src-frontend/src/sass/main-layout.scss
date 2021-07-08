@@ -63,7 +63,8 @@ body {
 }
 
 .table-wrapper {
-	overflow-y: auto;
+	// cs-table component is not visible need ui support for now changed property.
+	overflow-y: visible;
 	flex: 1 1 0;
 	@include sbg(--table-bg);
 

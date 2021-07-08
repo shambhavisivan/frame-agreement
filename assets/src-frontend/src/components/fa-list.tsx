@@ -17,7 +17,8 @@ import {
 	CSTableCell,
 	CSTableHeader,
 	CSTableRow,
-	CSTooltip
+	CSTooltip,
+	CSDropdown
 } from '@cloudsense/cs-ui-components';
 import { useAppSettings } from '../hooks/use-app-settings';
 import { FieldMetadata, FrameAgreement } from '../datasources';
@@ -25,6 +26,9 @@ import { CsTableWrapper } from './cs-table-wrapper';
 import { useFieldMetadata } from '../hooks/use-field-metadata';
 import { useHistory } from 'react-router';
 import { QueryStatus } from 'react-query';
+import { useCloneFrameAgreement } from '../hooks/use-clone-frame-agreement';
+import { ConfirmationModal } from './dialogs/confirmation-modal';
+import { CLONE_FA_MODAL } from '../app-constants';
 
 const frameAgreementApiName = 'csconta__Frame_Agreement__c';
 
@@ -32,8 +36,13 @@ export function FrameAgreementList(): ReactElement {
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const { settings, status: settingStatus } = useAppSettings();
 	const [activeTab, setActiveTab] = useState('');
-	const { agreements: groupedAgreements = {}, status } = useFrameAgreements();
+	const [openCloneFaInfoDialog, setOpenCloneFaInfoDialog] = useState(false);
+	const [selectedFrameAgreementId, setSelectedFrameAgreementId] = useState<FrameAgreement['id']>(
+		''
+	);
+	const { agreements: groupedAgreements = [], status } = useFrameAgreements();
 	const { metadata, metadataStatus } = useFieldMetadata(frameAgreementApiName);
+	const { cloneFrameAgreement } = useCloneFrameAgreement();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -97,13 +106,33 @@ export function FrameAgreementList(): ReactElement {
 				''
 			);
 
+		const redirectToDetails = (faId: string): void => {
+			history.push(`${history.location.pathname}/${faId}`);
+		};
+
+		const dropDown = (faId: string): ReactNode => (
+			<CSDropdown iconName="threedots_vertical" btnType="transparent" btnStyle="brand">
+				<CSButton
+					label="Edit"
+					iconName="edit"
+					onClick={(): void => redirectToDetails(faId)}
+				/>
+				<CSButton
+					label="Clone"
+					iconName="copy"
+					onClick={(): void => {
+						setSelectedFrameAgreementId(faId);
+						setOpenCloneFaInfoDialog(true);
+					}}
+				/>
+			</CSDropdown>
+		);
+
 		return data?.map((fa: FrameAgreement) => {
 			return (
 				<div key={fa.id}>
-					<CSTableRow
-						rowId={fa.id}
-						onClick={(): void => history.push(`${history.location.pathname}/${fa.id}`)}
-					>
+					<CSTableRow rowId={fa.id}>
+						{dropDown(fa.id)}
 						{columns.map((col, index) => {
 							const apiName: keyof FrameAgreement = (col.apiName as unknown) as keyof FrameAgreement;
 							// should render only to the first cell
@@ -114,13 +143,18 @@ export function FrameAgreementList(): ReactElement {
 									<CSTableCell
 										maxWidth={'50'}
 										text={fa[apiName] ? String(fa[apiName]) : '-'}
+										onClick={(): void => redirectToDetails(fa.id)}
 									>
 										{childFaPanel}
 									</CSTableCell>
 								);
 							} else {
 								return (
-									<CSTableCell maxWidth={'50'} text={'-'}>
+									<CSTableCell
+										maxWidth={'50'}
+										text={'-'}
+										onClick={(): void => redirectToDetails(fa.id)}
+									>
 										{childFaPanel}
 									</CSTableCell>
 								);
@@ -131,6 +165,21 @@ export function FrameAgreementList(): ReactElement {
 			);
 		});
 	};
+
+	const cloneFaInfoModal = (
+		<ConfirmationModal
+			title={CLONE_FA_MODAL.title}
+			message={CLONE_FA_MODAL.message}
+			open={openCloneFaInfoDialog}
+			onClose={(): void => setOpenCloneFaInfoDialog(false)}
+			onConfirm={async (): Promise<void> => {
+				selectedFrameAgreementId.length &&
+					(await cloneFrameAgreement(selectedFrameAgreementId));
+				setOpenCloneFaInfoDialog(false);
+			}}
+			confirmText={CLONE_FA_MODAL.confirmText}
+		/>
+	);
 
 	//TODO: Should load labels from SF
 	return (
@@ -177,6 +226,7 @@ export function FrameAgreementList(): ReactElement {
 					/>
 				</div>
 			</div>
+			{cloneFaInfoModal}
 			<div className="table-wrapper">
 				{activeTab.length && (
 					<CsTableWrapper

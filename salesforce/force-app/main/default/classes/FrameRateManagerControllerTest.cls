@@ -337,9 +337,8 @@ private class FrameRateManagerControllerTest {
 		insert fA_account;
 		insert fa_master;
 
-		/*********/
 		String decomposeData = '[{"cpId":"' + cp_1.Id + '","recurring":266,"oneOff":null},{"cpId":"' + cp_1.Id + '","recurring":263,"oneOff":null},{"peId":"' + pricingElement_1.Id + '","recurring":12,"oneOff":null},{"peId":"' + pricingElement_1.Id + '","recurring":null,"oneOff":12},{"cpaoaId":"' + add1assoc.Id + '","recurring":null,"oneOff":12},{"cpaoaId":"' + add1assoc.Id + '","recurring":12,"oneOff":null}]';
-		/*********/
+
 		return decomposeData;
 	}
 
@@ -668,7 +667,7 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@isTest
-	public static void testMinorFunctions() {
+	public static void testCpAddonAssociations() {
 		setupPricingModel();
 
 		Id userId = UserInfo.getUserId();
@@ -727,6 +726,65 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@isTest
+	public static void testCpAddonAssociationsWithoutPS() {
+		setupPricingModel();
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		Id userId = UserInfo.getUserId();
+
+		List<cspmb__Price_Item__c> cpList = [select Id from cspmb__Price_Item__c];
+		cspmb__Price_Item__c cp_addon_inv = [select Id from cspmb__Price_Item__c where Name = 'cp_addon_inv'];
+		cspmb__Price_Item__c cp_1 = [select Id from cspmb__Price_Item__c where Name = 'cp_1'];
+		cspmb__Price_Item__c cp_addon_assoc_inv = [select Id from cspmb__Price_Item__c where Name = 'cp_addon_assoc_inv'];
+
+		List<Id> cpIdList = new List<Id>();
+
+		for (cspmb__Price_Item__c cp : cpList) {
+			cpIdList.add(cp.Id);
+		}
+
+		Test.startTest();
+
+		Boolean isUserAdmin = FrameRateManagerController.isUserAdmin();
+		Set <Id> isUserDelegate = FrameRateManagerController.isUserDelegate(userId);
+
+		List<String> uniqueList = FrameRateManagerController.getUniqueListElements(new List<String>{'a1', 'a1', 'a2'});
+
+		Map<String, Object> commercialProductData = FrameRateManagerController.getCommercialProductData(
+			cpIdList,
+			new List<Id>()
+		);
+
+		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> addonsInvalid = FrameRateManagerController.getAddons(new List <Id>{
+			cp_addon_inv.Id
+		});
+		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> addonsValid = FrameRateManagerController.getAddons(new List <Id>{
+			cp_1.Id
+		});
+		Map <Id, List <cspmb__Price_Item_Add_On_Price_Item_Association__c>> addons2InvalidAssoc1Valid = FrameRateManagerController.getAddons(new List <Id>{
+			cp_addon_assoc_inv.Id
+		});
+
+		List <cspmb__Price_Item_Add_On_Price_Item_Association__c> addonAssoc_cp_addon_inv = [
+			select Id, cspmb__Price_Item__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_End_Date__c, cspmb__Add_On_Price_Item__r.cspmb__Effective_Start_Date__c
+			from cspmb__Price_Item_Add_On_Price_Item_Association__c
+			where cspmb__Price_Item__c = :cp_addon_inv.Id and cspmb__Add_On_Price_Item__r.cspmb__Is_Active__c = true
+		];
+
+		Test.stopTest();
+
+		system.assertEquals(uniqueList.size(), 2);
+		system.assertEquals(addonAssoc_cp_addon_inv.size(), 2);
+		system.assertEquals(addonsInvalid.keySet().size(), 0);
+		system.assertEquals(addonsValid.keySet().size(), 1);
+		system.assertEquals(addons2InvalidAssoc1Valid.keySet().size(), 1);
+
+	}
+
+	@isTest
 	public static void testFrameAgreements() {
 		setupPricingModel();
 		setupSettings();
@@ -764,7 +822,7 @@ private class FrameRateManagerControllerTest {
 			expectedExceptionThrown = true;
 		}
 
-		Test.stopTest(); /**********/
+		Test.stopTest();
 
 		System.assertEquals(2, faList.size());
 		System.assertEquals(fa_1.Id, fa.Id);
@@ -831,7 +889,7 @@ private class FrameRateManagerControllerTest {
 		// New
 		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
 
-		Test.stopTest(); /**********/
+		Test.stopTest();
 
 		fa_1 = [select id, csconta__status__c, csconta__agreement_Name__c from csconta__Frame_Agreement__c where id = :fa_1.id limit 1];
 		System.assertEquals('FA1_CHANGED', fa_1.csconta__Agreement_Name__c);

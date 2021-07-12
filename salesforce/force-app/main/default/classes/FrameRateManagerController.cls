@@ -218,11 +218,17 @@ global with sharing class FrameRateManagerController {
 	}
 
 	public static Fac_Settings__c getFacSetting() {
-		return Fac_Settings__c.getInstance(UserInfo.getUserId());
+		Fac_Settings__c facSettings = Fac_Settings__c.getInstance(UserInfo.getUserId());
+
+		if (facSettings == null) {
+			throw new ApplicationException('FAC Settings not configured. Kindly configure the FAC settings in the custom settings');
+		}
+
+		return facSettings;
 	}
 
 	@RemoteAction
-	@TestVisible public static Map<String, Object> getAccountsInformation(String faId, String whereClause) {
+	public static Map<String, Object> getAccountsInformation(String faId, String whereClause) {
 		// NEED
 		// count
 		// initial labels for associations
@@ -869,7 +875,13 @@ global with sharing class FrameRateManagerController {
 		List<Object> relatedData = new List<Object>();
 		List<Object> customTabs = new List<Object>();
 
-		String defaultCatalogueId = getDefaultCatalogueId();
+		Boolean isPsEnabled = getPsSwitchStatus();
+
+		String defaultCatalogueId = '';
+
+		if (isPsEnabled) {
+			defaultCatalogueId = getDefaultCatalogueId();
+		}
 		csutil__JSON_Data__c header_data = getHeaderData();
 		csutil__JSON_Data__c button_custom = getCustomButtonData();
 		csutil__JSON_Data__c button_standard = getStandardButtonData();
@@ -1056,18 +1068,20 @@ global with sharing class FrameRateManagerController {
 
 	private static List<cspmb__Price_Item__c> getCommercialProducts_p(List<Id> priceItemIds) {
 		List<String> standardFields = new List<String>{
-			'Id',
-			'Name',
-			'cspmb__Effective_Start_Date__c',
-			'cspmb__Effective_End_Date__c',
-			'cspmb__Price_Item_Code__c',
-			'cspmb__Is_One_Off_Discount_Allowed__c',
-			'cspmb__Is_Recurring_Discount_Allowed__c',
-			'cspmb__Recurring_Charge__c',
-			'cspmb__One_Off_Charge__c',
-			'cspmb__Authorization_Level__c',
-			'cspmb__Is_Authorization_Required__c',
-			'cspmb__Price_Item_Description__c'
+			'id',
+			'name',
+			'cspmb__effective_start_date__c',
+			'cspmb__effective_end_date__c',
+			'cspmb__price_Item_Code__c',
+			'cspmb__is_one_off_discount_allowed__c',
+			'cspmb__is_recurring_discount_allowed__c',
+			'cspmb__recurring_charge__c',
+			'cspmb__one_off_charge__c',
+			'cspmb__authorization_level__c',
+			'cspmb__is_authorization_required__c',
+			'cspmb__price_item_description__c',
+			'cspmb__type__c',
+			'cspmb__role__c'
 		};
 
 		Fac_Settings__c facSettings = getFacSetting();
@@ -1077,8 +1091,7 @@ global with sharing class FrameRateManagerController {
 		if (!String.isBlank(csFields)) {
 			csFieldsArr = csFields.replaceAll('\\s+', '').split(',');
 		}
-		Fac_Settings__c facSetting = getFacSetting();
-		Boolean isPsEnabled = facSetting.is_ps_enabled__c;
+		Boolean isPsEnabled = getPsSwitchStatus();
 
 		List<String> fieldsArr = new List<String>();
 		fieldsArr.addAll(standardFields);
@@ -1096,20 +1109,24 @@ global with sharing class FrameRateManagerController {
 		query += ' from cspmb__Price_Item__c ';
 
 		if (!isPsEnabled) {
-			query += 'where cspmb__Account__c = null ';
-			query += 'and cspmb__Is_Active__c = true ';
-			query += 'and (cspmb__Effective_Start_Date__c = null ';
-			query += 'OR (cspmb__Effective_Start_Date__c != null ';
-			query += 'and cspmb__Effective_Start_Date__c < TODAY)) ';
-			query += 'and (cspmb__Effective_End_Date__c = null ';
-			query += 'OR (cspmb__Effective_End_Date__c != null ';
-			query += 'and cspmb__Effective_End_Date__c > TODAY)) ';
+			query += 'where cspmb__account__c = null ' +
+				'and cspmb__is_active__c = true ' +
+				'and (cspmb__effective_start_date__c = null ' +
+				'OR (cspmb__effective_start_date__c != null ' +
+				'and cspmb__effective_start_date__c < TODAY)) ' +
+				'and (cspmb__effective_end_date__c = null ' +
+				'OR (cspmb__effective_end_date__c != null ' +
+				'and cspmb__effective_end_date__c > TODAY)) ' +
+				// If user turns off PS after a successful synchronisation
+				'and (cspmb__type__c = null ' +
+				'OR (cspmb__type__c = \'Commercial Product\' ' +
+				'AND cspmb__role__c = \'Basic\')) ';
 		}
 
 		if (isPsEnabled) {
-			query += 'where Id in :priceItemIds ';
-		} else if (!facSetting.is_ps_enabled__c && !priceItemIds.isEmpty()) {
-			query += 'and Id in :priceItemIds ';
+			query += 'where id in :priceItemIds ';
+		} else if (!isPsEnabled && !priceItemIds.isEmpty()) {
+			query += 'and id in :priceItemIds ';
 		}
 
 		query += 'limit 20000';
@@ -1530,14 +1547,19 @@ global with sharing class FrameRateManagerController {
 		List<String> priceItemIdList,
 		List<Id> addonIdList
 	) {
-		Map<Id, cpData> cpDataMap = new Map<Id, cpData>();
+		Boolean isPsEnabled = getPsSwitchStatus();
+		Map<Id, CpData> cpDataMap = new Map<Id, CpData>();
 
 		Map<Id, List<RateCard>> rateCards = getRateCards(priceItemIdList);
 		// got ratecards, load auth lv for them
 		List<Id> rcIdList = getRateCardIdsForCp(priceItemIdList);
 		List<DiscountLevelWrapper> discountLevels = getDiscountevels(addonIdList, priceItemIdList);
+		Map<Id, List<cspmb__Price_Item_Add_On_Price_Item_Association__c>> addons;
 
-
+		if (!isPsEnabled) {
+			addons = getAddons(priceItemIdList);
+			addonIdList = getAddonIdsForCp(priceItemIdList);
+		}
 		List<cspmb__Discount_Threshold__c> discountThresholds = getDiscountThresholds(
 			addonIdList,
 			priceItemIdList,
@@ -1569,7 +1591,16 @@ global with sharing class FrameRateManagerController {
 				this_allowances = new List<cspmb__Allowance__c>();
 			}
 
-			cpDataMap.put(priceItemId, new cpData(this_charges, this_rateCards, this_allowances));
+			if (isPsEnabled) {
+				cpDataMap.put(priceItemId, new CpData(this_charges, this_rateCards, this_allowances));
+			} else {
+				List<cspmb__Price_Item_Add_On_Price_Item_Association__c> this_addons = addons.get(priceItemId);
+
+				if (this_addons == null) {
+					this_addons = new List<cspmb__Price_Item_Add_On_Price_Item_Association__c>();
+				}
+				cpDataMap.put(priceItemId, new CpData(this_addons, this_charges, this_rateCards, this_allowances));
+			}
 		}
 
 		Map<String, Object> collectiveCpData = new Map<String, Object>();
@@ -2523,6 +2554,10 @@ global with sharing class FrameRateManagerController {
 			FrameRateManagerController.getJsonData('FA-defaultcatalogue')
 		);
 
+		if (defaultCatalogueData == null) {
+			throw new ApplicationException(FrameRateManagerController.NO_CATALOGUE_ID_MSG);
+		}
+
 		String catalogueId = defaultCatalogueData.csutil__value__c;
 
 		if (String.isBlank(catalogueId)) {
@@ -2659,6 +2694,11 @@ global with sharing class FrameRateManagerController {
 		return faCatalogue;
 	}
 
+	private static Boolean getPsSwitchStatus() {
+		Fac_Settings__c facSettings = getFacSetting();
+
+		return facSettings.is_ps_enabled__c;
+	}
 
 	//******************************************* DECOMPOSITION END ***************************************
 
@@ -2689,7 +2729,11 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	public class cpData {
+	public class CpData {
+		public List<cspmb__Price_Item_Add_On_Price_Item_Association__c> addons {
+			get;
+			set;
+		}
 		public List <PricingElementWrapper> charges {
 			get;
 			set;
@@ -2703,11 +2747,23 @@ global with sharing class FrameRateManagerController {
 			set;
 		}
 
-		public cpData(
+		public CpData(
 			List <PricingElementWrapper> charges,
 			List<RateCard> rateCardList,
 			List<cspmb__Allowance__c> allowances
 		) {
+			this.charges = charges;
+			this.rateCards = rateCardList;
+			this.allowances = allowances;
+		}
+
+		public CpData(
+			List<cspmb__Price_Item_Add_On_Price_Item_Association__c> addons,
+			List <PricingElementWrapper> charges,
+			List<RateCard> rateCardList,
+			List<cspmb__Allowance__c> allowances
+		) {
+			this.addons = addons;
 			this.charges = charges;
 			this.rateCards = rateCardList;
 			this.allowances = allowances;

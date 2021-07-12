@@ -438,22 +438,34 @@ const _recievePriceItemData = result => ({
 const _getCommercialProductData = priceItemIdList => {
 	return new Promise(async (resolve, reject) => {
 		let priceItemChunks = priceItemIdList.chunk(window.SF.product_chunk_size || 100);
-		let addonData = await queryCpDataByIds(priceItemIdList);
-		let cpData = restructureProductData(addonData);
+		const isPsEnabled = await getPsSwitch();
+		let promiseArray = [];
+		let cpData;
 
-		let promiseArray = priceItemChunks.map(cpChunk => {
-			let addonIdList = cpChunk.flatMap((productId) =>
-				cpData[productId]
-					? cpData[productId].addons.map(
-							(addon) => addon.cspmb__Add_On_Price_Item__c
-					  )
-					: []
-			);
-			return window.SF.invokeAction("getCommercialProductData", [
-				cpChunk,
-				addonIdList,
-			]);
-		});
+		if (isPsEnabled) {
+			const addonData = await queryCpDataByIds(priceItemIdList);
+			cpData = restructureProductData(addonData);
+			promiseArray = priceItemChunks.map((cpChunk) => {
+				let addonIdList = cpChunk.flatMap((productId) =>
+					cpData[productId]
+						? cpData[productId].addons.map(
+								(addon) => addon.cspmb__Add_On_Price_Item__c
+						  )
+						: []
+				);
+				return window.SF.invokeAction("getCommercialProductData", [
+					cpChunk,
+					addonIdList,
+				]);
+			});
+		} else {
+			promiseArray = priceItemChunks.map((cpChunk) => {
+				return window.SF.invokeAction("getCommercialProductData", [
+					cpChunk,
+					null,
+				]);
+			});
+		}
 
 		let results = await Promise.all(promiseArray);
 
@@ -461,9 +473,12 @@ const _getCommercialProductData = priceItemIdList => {
 			return { ...acc, ...val };
 		}, {});
 
-		for (let id in cpData) {
-			if (merged_result.cpData[id]) {
-				merged_result.cpData[id].addons = cpData[id].addons;
+		if (isPsEnabled) {
+
+			for (let id in cpData) {
+				if (merged_result.cpData[id]) {
+					merged_result.cpData[id].addons = cpData[id].addons;
+				}
 			}
 		}
 
@@ -835,17 +850,21 @@ const _createFrameAgreement = result => ({
 export function createFrameAgreement(faData) {
 	return function(dispatch) {
 		return new Promise(async (resolve, reject) => {
-			const stdCatalogueCategories = await queryCategoriesInCatalogue();
+			const isPsEnabled = await getPsSwitch();
+			const stdCatalogueCategories = isPsEnabled ? await queryCategoriesInCatalogue() : null;
 			let newFa = await window.SF.invokeAction('upsertFrameAgreements', [
 				null,
 				JSON.stringify(faData),
 				stdCatalogueCategories
 			]);
-			// Needs to be done in series
-			const offerCategory = await window.SF.invokeAction('createFaOfferCategory', [
-				newFa.Id
-			]);
-			faData._ui.attachment.faOffers.categoryId = offerCategory.Id;
+
+			if (isPsEnabled) {
+				// Needs to be done in series
+				const offerCategory = await window.SF.invokeAction('createFaOfferCategory', [
+					newFa.Id
+				]);
+				faData._ui.attachment.faOffers.categoryId = offerCategory.Id;
+			}
 			await window.SF.invokeAction('saveAttachment', [
 				newFa.Id,
 				JSON.stringify(faData._ui.attachment)
@@ -896,15 +915,7 @@ export const recieveCommercialProducts = result => ({
 
 export function getCommercialProducts() {
 	return async function (dispatch) {
-		let isPsEnabled;
-		if (appSettingsCache) {
-			const {FACSettings} = appSettingsCache;
-			isPsEnabled = FACSettings.isPsEnabled;
-		} else {
-			appSettingsCache =  await getAppSettings();
-			const {FACSettings} = appSettingsCache;
-			isPsEnabled = FACSettings.isPsEnabled;
-		}
+		const isPsEnabled = await getPsSwitch();
 		const cpIdsInCatalogue = isPsEnabled ? await queryCpIdsInCatalogue() : null;
 		const response = await window.SF.invokeAction("getCommercialProducts", [
 			cpIdsInCatalogue,
@@ -1148,4 +1159,16 @@ export function filterCommercialProducts(filterData) {
 			});
 		});
 	};
+}
+
+const getPsSwitch = () => {
+	return new Promise((resolve, reject) => {
+
+		if (!appSettingsCache) {
+			appSettingsCache =  getAppSettings();
+		}
+		const { FACSettings } = appSettingsCache;
+		resolve(FACSettings.isPsEnabled);
+	});
+
 }

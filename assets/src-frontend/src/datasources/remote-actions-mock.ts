@@ -121,5 +121,9 @@ export const remoteActions: RemoteActions = {
 
 	async cloneFrameAgreement(faId) {
 		return Promise.resolve(mockFrameAgreements[0]);
+	},
+
+	async deleteFrameAgreement(faId) {
+		return Promise.resolve('Success');
 	}
 };

@@ -48,6 +48,7 @@ namespace SfGlobal {
 		getUserLocale(): Promise<UserLocaleInfo>;
 		getFieldMetadata(sObjectName: [string]): Promise<FieldMetadata[]>;
 		cloneFrameAgreement(faId: [string]): Promise<FrameAgreement>;
+		deleteFrameAgreement(faId: [string]): Promise<string>;
 	}
 
 	// TODO define the unknowns

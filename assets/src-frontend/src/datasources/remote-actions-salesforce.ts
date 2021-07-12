@@ -30,6 +30,7 @@ export interface RemoteActions {
 	getUserLocale(): Promise<UserLocaleInfo>;
 	getFieldMetadata(sObjectName: string): Promise<FieldMetadata[]>;
 	cloneFrameAgreement(faId: string): Promise<FrameAgreement>;
+	deleteFrameAgreement(faId: string): Promise<string>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -159,5 +160,9 @@ export const remoteActions: RemoteActions = {
 			[faId]
 		);
 		return deforcify(clonedFrameAgreement);
+	},
+
+	async deleteFrameAgreement(faId: string): Promise<string> {
+		return await SF.invokeAction('deleteFrameAgreement', [faId]);
 	}
 };

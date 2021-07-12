@@ -28,7 +28,8 @@ import { useHistory } from 'react-router';
 import { QueryStatus } from 'react-query';
 import { useCloneFrameAgreement } from '../hooks/use-clone-frame-agreement';
 import { ConfirmationModal } from './dialogs/confirmation-modal';
-import { CLONE_FA_MODAL } from '../app-constants';
+import { CLONE_FA_MODAL, DELETE_FA_MODAL } from '../app-constants';
+import { useDeleteFrameAgreement } from '../hooks/use-delete-frame-agreement';
 
 const frameAgreementApiName = 'csconta__Frame_Agreement__c';
 
@@ -40,9 +41,11 @@ export function FrameAgreementList(): ReactElement {
 	const [selectedFrameAgreementId, setSelectedFrameAgreementId] = useState<FrameAgreement['id']>(
 		''
 	);
+	const [openDeleteFaDialog, setOpenDeleteFaDialog] = useState<boolean>(false);
 	const { agreements: groupedAgreements = [], status } = useFrameAgreements();
 	const { metadata, metadataStatus } = useFieldMetadata(frameAgreementApiName);
 	const { cloneFrameAgreement } = useCloneFrameAgreement();
+	const { deleteFrameAgreement } = useDeleteFrameAgreement();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -125,6 +128,14 @@ export function FrameAgreementList(): ReactElement {
 						setOpenCloneFaInfoDialog(true);
 					}}
 				/>
+				<CSButton
+					label="Delete"
+					iconName="delete"
+					onClick={(): void => {
+						setSelectedFrameAgreementId(faId);
+						setOpenDeleteFaDialog(true);
+					}}
+				/>
 			</CSDropdown>
 		);
 
@@ -181,6 +192,21 @@ export function FrameAgreementList(): ReactElement {
 		/>
 	);
 
+	const deleteFaInfoModal = (
+		<ConfirmationModal
+			title={DELETE_FA_MODAL.title}
+			message={DELETE_FA_MODAL.message}
+			open={openDeleteFaDialog}
+			onClose={(): void => setOpenDeleteFaDialog(false)}
+			onConfirm={async (): Promise<void> => {
+				selectedFrameAgreementId.length &&
+					(await deleteFrameAgreement(selectedFrameAgreementId));
+				setOpenDeleteFaDialog(false);
+			}}
+			confirmText={DELETE_FA_MODAL.confirmText}
+		/>
+	);
+
 	//TODO: Should load labels from SF
 	return (
 		<LoadingFallback status={status}>
@@ -227,6 +253,7 @@ export function FrameAgreementList(): ReactElement {
 				</div>
 			</div>
 			{cloneFaInfoModal}
+			{deleteFaInfoModal}
 			<div className="table-wrapper">
 				{activeTab.length && (
 					<CsTableWrapper

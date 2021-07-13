@@ -5,7 +5,8 @@ import {
 	CommercialProductStandalone,
 	FrameAgreement,
 	UserLocaleInfo,
-	FieldMetadata
+	FieldMetadata,
+	ApprovalHistory
 } from './interfaces';
 import {
 	mockCommercialProductData,
@@ -20,7 +21,8 @@ import {
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
-import { deforcifyKeyName } from './deforcify';
+import { deforcify, deforcifyKeyName } from './deforcify';
+import { approval } from '../local-server/local_data';
 
 const FAKE_DELAY_MS = 500;
 
@@ -125,5 +127,11 @@ export const remoteActions: RemoteActions = {
 
 	async deleteFrameAgreement(faId) {
 		return Promise.resolve('Success');
+	},
+
+	async getApprovalHistory(faId: string): Promise<ApprovalHistory> {
+		return new Promise((resolve) => {
+			setTimeout(() => resolve(deforcify(approval)), FAKE_DELAY_MS);
+		});
 	}
 };

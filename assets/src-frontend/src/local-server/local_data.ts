@@ -12,6 +12,7 @@ function makeId(n = 15): string {
 export const approval = {
 	isApprover: true,
 	isAdmin: true,
+	isPending: true,
 	currentUser: '0051t0000025wM9AAI',
 	listProcess: [
 		{
@@ -233,6 +234,7 @@ export const approval = {
 export const approval2 = {
 	isApprover: false,
 	isAdmin: false,
+	isPending: false,
 	currentUser: '0051t0000025wM9AAI',
 	listProcess: []
 };

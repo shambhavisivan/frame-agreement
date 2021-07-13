@@ -138,3 +138,44 @@ export interface FieldMetadata {
 		| 'ID'
 		| 'PICKLIST';
 }
+
+export interface ProcessInstanceHistory {
+	processInstanceId: string;
+	id: string;
+	processNodeId?: string;
+	targetObjectId: string;
+	actorId: string;
+	createdById: string;
+	remindersSent: number;
+	isDeleted: boolean;
+	isPending: boolean;
+	stepStatus: string;
+	originalActorId: string;
+	comments?: string;
+	createdDate: number;
+	processNode?: {
+		name: string;
+		id: string;
+	};
+	actor: {
+		name: string;
+		id: string;
+	};
+	originalActor: {
+		name: string;
+		id: string;
+	};
+}
+
+export interface ProcessInstance {
+	id: string;
+	stepsAndWorkitems: ProcessInstanceHistory[];
+}
+
+export interface ApprovalHistory {
+	isPending: boolean;
+	isApprover: boolean;
+	isAdmin: boolean;
+	currentUser: string;
+	listProcess: ProcessInstance[];
+}

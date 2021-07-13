@@ -6,7 +6,8 @@ import {
 	CommercialProductStandalone,
 	FrameAgreement,
 	UserLocaleInfo,
-	FieldMetadata
+	FieldMetadata,
+	ApprovalHistory
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
@@ -31,6 +32,7 @@ export interface RemoteActions {
 	getFieldMetadata(sObjectName: string): Promise<FieldMetadata[]>;
 	cloneFrameAgreement(faId: string): Promise<FrameAgreement>;
 	deleteFrameAgreement(faId: string): Promise<string>;
+	getApprovalHistory(faId: string): Promise<ApprovalHistory>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -164,5 +166,10 @@ export const remoteActions: RemoteActions = {
 
 	async deleteFrameAgreement(faId: string): Promise<string> {
 		return await SF.invokeAction('deleteFrameAgreement', [faId]);
+	},
+
+	async getApprovalHistory(faId: string): Promise<ApprovalHistory> {
+		const approvalHistory = await SF.invokeAction('getApprovalHistory', [faId]);
+		return deforcify(approvalHistory);
 	}
 };

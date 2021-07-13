@@ -49,6 +49,7 @@ namespace SfGlobal {
 		getFieldMetadata(sObjectName: [string]): Promise<FieldMetadata[]>;
 		cloneFrameAgreement(faId: [string]): Promise<FrameAgreement>;
 		deleteFrameAgreement(faId: [string]): Promise<string>;
+		getApprovalHistory(faId: [string]): Promise<SfdcApprovalHistory>;
 	}
 
 	// TODO define the unknowns
@@ -211,6 +212,46 @@ namespace SfGlobal {
 		alert_deleteAgreements_message: string;
 		alert_deleteAgreements_title: string;
 		btn_DeleteAgreements: string;
+	}
+	export interface SfdcProcessInstanceHistory {
+		ProcessInstanceId: string;
+		Id: string;
+		ProcessNodeId?: string;
+		TargetObjectId: string;
+		ActorId: string;
+		CreatedById: string;
+		RemindersSent: number;
+		IsDeleted: boolean;
+		IsPending: boolean;
+		StepStatus: string;
+		OriginalActorId: string;
+		Comments?: string;
+		CreatedDate: number;
+		ProcessNode?: {
+			Name: string;
+			Id: string;
+		};
+		Actor: {
+			Name: string;
+			Id: string;
+		};
+		OriginalActor: {
+			Name: string;
+			Id: string;
+		};
+	}
+
+	export interface SfdcProcessInstance {
+		Id: string;
+		StepsAndWorkitems: SfdcProcessInstanceHistory[];
+	}
+
+	export interface SfdcApprovalHistory {
+		isPending: boolean;
+		isApprover: boolean;
+		isAdmin: boolean;
+		currentUser: string;
+		listProcess: SfdcProcessInstance[];
 	}
 
 	/* eslint-enable @typescript-eslint/naming-convention */

@@ -28,7 +28,7 @@ namespace SfGlobal {
 		};
 		apiSession: string;
 		actions: RemoteActions;
-		labels: Record<string, string>;
+		labels: CustomLabelsSf;
 		fieldLabels: Record<string, unknown>;
 	}
 
@@ -202,6 +202,15 @@ namespace SfGlobal {
 		cspmb__Is_Active__c: boolean;
 		cspmb__Recurring_Charge__c: number | undefined;
 		cspmb__One_Off_Charge__c: number | undefined;
+	}
+
+	interface CustomLabelsSf {
+		alert_cloneFa_btn_action: string;
+		alert_cloneFa_message: string;
+		alert_cloneFa_title: string;
+		alert_deleteAgreements_message: string;
+		alert_deleteAgreements_title: string;
+		btn_DeleteAgreements: string;
 	}
 
 	/* eslint-enable @typescript-eslint/naming-convention */

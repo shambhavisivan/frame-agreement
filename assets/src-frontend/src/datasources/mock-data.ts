@@ -658,3 +658,14 @@ export const mockProductsByIdsResponse: GraphQLResponse = {
 		productsByIds: mockProductsByIds
 	}
 };
+
+/* eslint-disable */
+export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
+	alert_cloneFa_btn_action: 'Clone',
+	alert_cloneFa_message: 'Are you sure you want to clone this frame agreement?',
+	alert_cloneFa_title: 'Clone Frame Agreement',
+	alert_deleteAgreements_message: 'Are you sure you want to delete selected agreement(s)?',
+	alert_deleteAgreements_title: 'Delete agreement(s)',
+	btn_DeleteAgreements: 'Delete'
+};
+/* eslint-enable */

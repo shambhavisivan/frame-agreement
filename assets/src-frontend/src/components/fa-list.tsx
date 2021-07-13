@@ -28,8 +28,8 @@ import { useHistory } from 'react-router';
 import { QueryStatus } from 'react-query';
 import { useCloneFrameAgreement } from '../hooks/use-clone-frame-agreement';
 import { ConfirmationModal } from './dialogs/confirmation-modal';
-import { CLONE_FA_MODAL, DELETE_FA_MODAL } from '../app-constants';
 import { useDeleteFrameAgreement } from '../hooks/use-delete-frame-agreement';
+import { useCustomLabels } from '../hooks/use-custom-labels';
 
 const frameAgreementApiName = 'csconta__Frame_Agreement__c';
 
@@ -47,6 +47,7 @@ export function FrameAgreementList(): ReactElement {
 	const { cloneFrameAgreement } = useCloneFrameAgreement();
 	const { deleteFrameAgreement } = useDeleteFrameAgreement();
 	const history = useHistory();
+	const labels = useCustomLabels();
 
 	useEffect(() => {
 		if (status === QueryStatus.Success && settingStatus === QueryStatus.Success) {
@@ -179,8 +180,8 @@ export function FrameAgreementList(): ReactElement {
 
 	const cloneFaInfoModal = (
 		<ConfirmationModal
-			title={CLONE_FA_MODAL.title}
-			message={CLONE_FA_MODAL.message}
+			title={labels.alertCloneFaTitle}
+			message={labels.alertCloneFaMessage}
 			open={openCloneFaInfoDialog}
 			onClose={(): void => setOpenCloneFaInfoDialog(false)}
 			onConfirm={async (): Promise<void> => {
@@ -188,14 +189,14 @@ export function FrameAgreementList(): ReactElement {
 					(await cloneFrameAgreement(selectedFrameAgreementId));
 				setOpenCloneFaInfoDialog(false);
 			}}
-			confirmText={CLONE_FA_MODAL.confirmText}
+			confirmText={labels.alertCloneFaBtnAction}
 		/>
 	);
 
 	const deleteFaInfoModal = (
 		<ConfirmationModal
-			title={DELETE_FA_MODAL.title}
-			message={DELETE_FA_MODAL.message}
+			title={labels.alertDeleteAgreementsTitle}
+			message={labels.alertDeleteAgreementsMessage}
 			open={openDeleteFaDialog}
 			onClose={(): void => setOpenDeleteFaDialog(false)}
 			onConfirm={async (): Promise<void> => {
@@ -203,11 +204,10 @@ export function FrameAgreementList(): ReactElement {
 					(await deleteFrameAgreement(selectedFrameAgreementId));
 				setOpenDeleteFaDialog(false);
 			}}
-			confirmText={DELETE_FA_MODAL.confirmText}
+			confirmText={labels.btnDeleteAgreements}
 		/>
 	);
 
-	//TODO: Should load labels from SF
 	return (
 		<LoadingFallback status={status}>
 			<div className="tabs-section-wrapper">

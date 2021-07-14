@@ -6,7 +6,8 @@ import {
 	FrameAgreement,
 	UserLocaleInfo,
 	FieldMetadata,
-	ApprovalHistory
+	ApprovalHistory,
+	ApprovalActionType
 } from './interfaces';
 import {
 	mockCommercialProductData,
@@ -133,5 +134,17 @@ export const remoteActions: RemoteActions = {
 		return new Promise((resolve) => {
 			setTimeout(() => resolve(deforcify(approval)), FAKE_DELAY_MS);
 		});
+	},
+
+	async approveRejectRecallRecord(
+		faId: string,
+		actionType: ApprovalActionType,
+		comment: string
+	): Promise<boolean> {
+		return Promise.resolve(true);
+	},
+
+	async reassignApproval(faId: string, newApproverId: string): Promise<void> {
+		return Promise.resolve();
 	}
 };

@@ -7,7 +7,8 @@ import {
 	FrameAgreement,
 	UserLocaleInfo,
 	FieldMetadata,
-	ApprovalHistory
+	ApprovalHistory,
+	ApprovalActionType
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
@@ -33,6 +34,12 @@ export interface RemoteActions {
 	cloneFrameAgreement(faId: string): Promise<FrameAgreement>;
 	deleteFrameAgreement(faId: string): Promise<string>;
 	getApprovalHistory(faId: string): Promise<ApprovalHistory>;
+	approveRejectRecallRecord(
+		faId: string,
+		actionType: ApprovalActionType,
+		comment: string
+	): Promise<boolean>;
+	reassignApproval(faId: string, newApproverId: string): Promise<void>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -171,5 +178,17 @@ export const remoteActions: RemoteActions = {
 	async getApprovalHistory(faId: string): Promise<ApprovalHistory> {
 		const approvalHistory = await SF.invokeAction('getApprovalHistory', [faId]);
 		return deforcify(approvalHistory);
+	},
+
+	async approveRejectRecallRecord(
+		faId: string,
+		actionType: ApprovalActionType,
+		comment = ''
+	): Promise<boolean> {
+		return await SF.invokeAction('approveRejectRecallRecord', [faId, comment, actionType]);
+	},
+
+	async reassignApproval(faId: string, newApproverId: string): Promise<void> {
+		return await SF.invokeAction('reassignApproval', [faId, newApproverId]);
 	}
 };

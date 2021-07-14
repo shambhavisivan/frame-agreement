@@ -50,6 +50,8 @@ namespace SfGlobal {
 		cloneFrameAgreement(faId: [string]): Promise<FrameAgreement>;
 		deleteFrameAgreement(faId: [string]): Promise<string>;
 		getApprovalHistory(faId: [string]): Promise<SfdcApprovalHistory>;
+		approveRejectRecallRecord(paramsArray: [string, string, string]): Promise<boolean>;
+		reassignApproval(paramsArray: [string, string]): Promise<void>;
 	}
 
 	// TODO define the unknowns

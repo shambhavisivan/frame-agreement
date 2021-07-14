@@ -179,3 +179,10 @@ export interface ApprovalHistory {
 	currentUser: string;
 	listProcess: ProcessInstance[];
 }
+
+export enum ApprovalActionType {
+	approve = 'Approve',
+	reject = 'Reject',
+	recall = 'Removed',
+	reassign = 'Reassign'
+}

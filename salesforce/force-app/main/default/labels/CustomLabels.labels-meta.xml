@@ -1625,6 +1625,27 @@
         <value>Configure a default catalogue ID to proceed</value>
     </labels>
     <labels>
+        <fullName>msg_ps_flag</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>msg_ps_flag</shortDescription>
+        <value>Kindly enable Pricing Service flag in the FAC Settings</value>
+    </labels>
+    <labels>
+        <fullName>msg_fa_migrated</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>msg_fa_migrated</shortDescription>
+        <value>Framework Agreement already migrated</value>
+    </labels>
+    <labels>
+        <fullName>msg_fa_migrated_statusError</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>msg_fa_migrated_statusError</shortDescription>
+        <value>Framework Agreement under {0} status cannot be migrated</value>
+    </labels>
+    <labels>
         <fullName>offers_tab_title</fullName>
         <language>en_US</language>
         <protected>true</protected>

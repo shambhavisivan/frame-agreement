@@ -28,6 +28,8 @@ import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsModal from './modals/AccountsModal';
 import ActionIframe from '~/src/components/modals/ActionIframe';
 
+import * as Constants from '~/src/utils/constants';
+
 const faSort = (ob1, ob2) => {
 	if (ob1.LastModifiedDate < ob2.LastModifiedDate) {
 		return 1;
@@ -62,10 +64,7 @@ class FrameAgreement {
 				products: {},
 				addons: {},
 				offers: {},
-				faOffers: {
-					categoryId: '',
-					offerIdsCharges: {}
-				},
+				faOffers: Constants.FA_OFFERS,
 			}
 		};
 	}

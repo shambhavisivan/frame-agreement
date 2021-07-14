@@ -8,8 +8,6 @@ import ActionIframe from '~/src/components/modals/ActionIframe';
 
 import { createToast, toggleModals, validateFrameAgreement } from '~/src/actions';
 
-import * as Constants from '~/src/utils/constants';
-
 class FaFooter extends React.Component {
 	constructor(props) {
 		super(props);

@@ -32,7 +32,8 @@ import {
 	getOfferData,
 	addOffersToFa,
 	removeOffersFromFa,
-	apiNegotiateOffer
+	apiNegotiateOffer,
+	migrateFrameAgreement
 } from './actions';
 // import { editModalWidth } from "./actions";
 import FaList from './components/FaList';
@@ -761,6 +762,16 @@ export class App extends Component {
 			});
 		};
 
+		window.FAM.api.migrateFrameAgreement = (faId = window.mandatory('frameAgreementId')) => {
+			return new Promise(async resolve => {
+				try {
+					const migratedFa = this.props.migrateFrameAgreement(this.props.frameAgreements[faId])
+					resolve(migratedFa);
+				} catch (error) {
+					console.error(error);
+				}
+			});
+		}
 
 		Promise.all([
 			this.props.getAppSettings(),
@@ -863,7 +874,8 @@ const mapDispatchToProps = {
 	getOfferData,
 	addOffersToFa,
 	removeOffersFromFa,
-	apiNegotiateOffer
+	apiNegotiateOffer,
+	migrateFrameAgreement
 };
 
 const mapStateToProps = state => {

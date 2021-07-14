@@ -30,6 +30,12 @@ global with sharing class FrameRateManagerController {
 		'product', 'addon'
 	};
 	private static final String MALFORMED_JSON_EXCEPTION = 'JSON value is malformed';
+	@TestVisible
+	private static final String PRICING_SERVICE_EXCEPTION = System.Label.msg_ps_flag;
+	@TestVisible
+	private static final String FRAME_AGREEMENT_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated;
+	@TestVisible
+	private static final String FRAME_AGREEMENT_STATUS_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated_statusError;
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -2250,7 +2256,6 @@ global with sharing class FrameRateManagerController {
 	*/
 	@RemoteAction
 	public static csconta__Frame_Agreement__c createNewVersionOfFrameAgreement(Id faId) {
-		System.debug('createNewVersionOfFrameAgreement ' + faId);
 		csconta__Frame_Agreement__c original = getFrameAgreement(faId);
 
 		if (original == null) {
@@ -2716,7 +2721,57 @@ global with sharing class FrameRateManagerController {
 		return FrameAgreementService.getChildFrameAgreements(masterFaId);
 	}
 
-	//******************************************* DECOMPOSITION END ***************************************
+	@RemoteAction
+	public static csconta__Frame_Agreement__c migrateFrameAgreements(Id faId, List<PRECategory> stdCategories) {
+		Boolean isPsEnabled = getPsSwitchStatus();
+
+		if (!isPsEnabled) {
+			throw new ApplicationException(PRICING_SERVICE_EXCEPTION);
+		}
+
+		if (stdCategories == null) {
+			stdCategories = new List<PRECategory>();
+		}
+
+		Fac_Settings__c facSettings = getFacSetting();
+		Set<String> migrationEligibleStatus = new Set<String> {
+			facSettings.draft_status__c,
+			facSettings.requires_approval_status__c,
+			facSettings.approved_status__c
+		};
+		csconta__Frame_Agreement__c fa = getFrameAgreement(faId);
+
+		if (fa.csconta__catalogue__c != null) {
+			throw new ApplicationException(FRAME_AGREEMENT_MIGRATION_EXCEPTION);
+		}
+
+		if (!migrationEligibleStatus.contains(fa.csconta__Status__c)) {
+			throw new ApplicationException(
+				String.format(FRAME_AGREEMENT_STATUS_MIGRATION_EXCEPTION, new List<Object> { fa.csconta__Status__c })
+			);
+		}
+		cspmb__Catalogue__c faCatalogue = createFaCatalogue(fa);
+		fa.csconta__catalogue__c = faCatalogue.id;
+
+		update fa;
+
+		List<cspmb__Product_Category__c> existingCategoryList = new List<cspmb__Product_Category__c>();
+
+		for (PRECategory category: stdCategories) {
+			if (category.parentCategory == null) {
+				cspmb__Product_Category__c existingCategory = new cspmb__Product_Category__c(
+					id = Id.valueOf(category.id),
+					name = category.name,
+					cspmb__description__c = category.description,
+					cspmb__subcategory_sequence__c = category.subcategorySequence
+				);
+				existingCategoryList.add(existingCategory);
+			}
+		}
+		FaPlmService.associateCategoryCatalogue(existingCategoryList, faCatalogue.id);
+
+		return fa;
+	}
 
 	// WRAPPERS
 	public class RateCard {

@@ -369,7 +369,7 @@ private class FrameRateManagerControllerTest {
 		FaPlmService.associateCategoryCatalogue(categoryList, catalogue);
 	}
 
-	static List<PRECategory> setUpPRECategory() {
+	static List<PRECategory> setupPRECategory() {
 		setupStdCategory();
 		Id stdCatalog = FrameRateManagerController.getDefaultCatalogueId();
 
@@ -891,7 +891,7 @@ private class FrameRateManagerControllerTest {
 
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__Status__c, csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
 		csconta__Frame_Agreement__c fa_2 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA2' limit 1];
-		List<PRECategory> stdPreCategoryList = setUpPRECategory();
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
 
 		Test.startTest();
 
@@ -1950,7 +1950,7 @@ private class FrameRateManagerControllerTest {
 		setupPricingModel();
 		setupSettings();
 
-		List<PRECategory> stdPreCategoryList = setUpPRECategory();
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
 		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
 
 		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
@@ -1978,7 +1978,7 @@ private class FrameRateManagerControllerTest {
 		setupSettings();
 		FaPlmServiceTest.setupPLMPricingRule();
 
-		List<PRECategory> stdPreCategoryList = setUpPRECategory();
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
 		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
 
 		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
@@ -2017,7 +2017,7 @@ private class FrameRateManagerControllerTest {
 		setupSettings();
 		FaPlmServiceTest.setupPLMPricingRule();
 
-		List<PRECategory> stdPreCategoryList = setUpPRECategory();
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
 		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
 
 		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
@@ -2083,5 +2083,139 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		System.assertEquals(3, childFas.size());
+	}
+
+	@isTest
+	public static void testFaMigration() {
+		setupPricingModel();
+		setupSettings();
+		FaPlmServiceTest.setupPLMPricingRule();
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
+
+		facSettings.is_ps_enabled__c = true;
+		update facSettings;
+
+		Test.startTest();
+
+		newFa = FrameRateManagerController.migrateFrameAgreements(newFa.id, stdPreCategoryList);
+
+		Test.stopTest();
+
+		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :newFa.csconta__catalogue__c
+		];
+
+		System.assertNotEquals(newFa.csconta__catalogue__c, null);
+		System.assertEquals(faCatalogueCategory.size(), stdPreCategoryList.size());
+	}
+
+	@isTest
+	public static void testFaMigrationPsFlag() {
+		setupPricingModel();
+		setupSettings();
+		FaPlmServiceTest.setupPLMPricingRule();
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
+
+		String errorMsg = '';
+
+		Test.startTest();
+
+		try {
+			newFa = FrameRateManagerController.migrateFrameAgreements(newFa.id, stdPreCategoryList);
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+		}
+
+		Test.stopTest();
+
+		System.assertEquals(errorMsg, FrameRateManagerController.PRICING_SERVICE_EXCEPTION);
+	}
+
+	@isTest
+	public static void testFaMigrationFaStatus() {
+		setupPricingModel();
+		setupSettings();
+		FaPlmServiceTest.setupPLMPricingRule();
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
+		newFa.csconta__Status__c = facSettings.active_status__c;
+		update newFa;
+
+		facSettings.is_ps_enabled__c = true;
+		update facSettings;
+
+		String migrationPreventedActiveStatusError = '';
+		String migrationPreventedClosedStatusError = '';
+
+		Test.startTest();
+
+		try {
+			FrameRateManagerController.migrateFrameAgreements(newFa.id, stdPreCategoryList);
+		} catch (Exception e) {
+			migrationPreventedActiveStatusError = e.getMessage();
+		}
+
+		newFa.csconta__Status__c = facSettings.closed_status__c;
+		update newFa;
+
+		try {
+			FrameRateManagerController.migrateFrameAgreements(newFa.id, stdPreCategoryList);
+		} catch (Exception e) {
+			migrationPreventedClosedStatusError = e.getMessage();
+		}
+
+		Test.stopTest();
+
+		System.assertEquals(migrationPreventedActiveStatusError,
+			String.format(FrameRateManagerController.FRAME_AGREEMENT_STATUS_MIGRATION_EXCEPTION, new List<String> { facSettings.active_status__c })
+		);
+		System.assertEquals(migrationPreventedClosedStatusError,
+			String.format(FrameRateManagerController.FRAME_AGREEMENT_STATUS_MIGRATION_EXCEPTION, new List<String> { facSettings.closed_status__c })
+		);
+	}
+
+	@isTest
+	public static void testFaMigrationAlreadyMigrated() {
+		setupPricingModel();
+		setupSettings();
+		FaPlmServiceTest.setupPLMPricingRule();
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		insert facSettings;
+
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
+
+		String migrationErrorMsg = '';
+
+		Test.startTest();
+
+		try {
+			FrameRateManagerController.migrateFrameAgreements(newFa.id, stdPreCategoryList);
+		} catch (Exception e) {
+			migrationErrorMsg = e.getMessage();
+		}
+
+		Test.stopTest();
+
+		System.assertEquals(migrationErrorMsg, FrameRateManagerController.FRAME_AGREEMENT_MIGRATION_EXCEPTION);
 	}
 }

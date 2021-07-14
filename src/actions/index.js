@@ -6,6 +6,7 @@ import {
 	queryCategoriesInCatalogue
 } from '../graphql-actions/api-actions-graphql';
 import { decodeEntities, getFieldLabel, restructureProductData } from '../utils/shared-service';
+import * as Constants from '~/src/utils/constants';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
 const _defaultModals = {
@@ -841,7 +842,7 @@ export function updateIgnoreSettings(newIgnoreSettings) {
 		dispatch(_updateIgnoreSettings(newIgnoreSettings));
 	};
 }
-// ***********************************************************************
+
 const _createFrameAgreement = result => ({
 	type: 'CREATE_FA',
 	payload: result
@@ -852,24 +853,19 @@ export function createFrameAgreement(faData) {
 		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise(async (resolve, reject) => {
 			const isPsEnabled = await getPsSwitch();
-			const stdCatalogueCategories = isPsEnabled ? await queryCategoriesInCatalogue() : null;
-			let newFa = await window.SF.invokeAction('upsertFrameAgreements', [
-				null,
-				JSON.stringify(faData),
-				stdCatalogueCategories
-			]);
+			let newFa = {};
 
 			if (isPsEnabled) {
-				// Needs to be done in series
-				const offerCategory = await window.SF.invokeAction('createFaOfferCategory', [
-					newFa.Id
+				const linkedFa = await linkFrameAgreementCatalogue(faData, actions.CREATE_FA);
+				newFa = linkedFa.frameAgreement;
+				faData._ui.attachment = { ...linkedFa.faAttachment };
+			} else {
+				newFa = await executeSaveFrameAgreementAction(faData, actions.CREATE_FA);
+				await window.SF.invokeAction('saveAttachment', [
+					newFa.Id,
+					JSON.stringify(faData._ui.attachment)
 				]);
-				faData._ui.attachment.faOffers.categoryId = offerCategory.Id;
 			}
-			await window.SF.invokeAction('saveAttachment', [
-				newFa.Id,
-				JSON.stringify(faData._ui.attachment)
-			]);
 
 			newFa = {
 				...newFa,
@@ -884,8 +880,6 @@ export function createFrameAgreement(faData) {
 		});
 	};
 }
-
-// ***********************************************************************
 
 export const recieveStandaloneAddons = (addons, alInfo) => ({
 	type: 'LOAD_STANDALONE_ADDONS',
@@ -1174,4 +1168,86 @@ const getPsSwitch = () => {
 		resolve(FACSettings.isPsEnabled);
 	});
 
+}
+
+export function migrateFrameAgreement(faData) {
+	return function(dispatch) {
+		return new Promise(async (resolve, reject) => {
+			const linkedFa = await linkFrameAgreementCatalogue(faData, actions.MIGRATE, true);
+			faData._ui.attachment = { ...linkedFa.faAttachment };
+			const migratedFa = {
+				...linkedFa.frameAgreement,
+				_ui: faData._ui
+			};
+
+			dispatch(_createFrameAgreement(migratedFa));
+
+			resolve(migratedFa);
+			return migratedFa;
+		});
+	};
+}
+
+const linkFrameAgreementCatalogue = (faData, actionType) => {
+	return new Promise(async (resolve, reject) => {
+		let response = {};
+		const isPsEnabled = await getPsSwitch();
+		const newFa = await executeSaveFrameAgreementAction(faData, actionType);
+		let attachment = { ...faData._ui.attachment };
+
+		if (isPsEnabled) {
+			const offerCategory = await window.SF.invokeAction('createFaOfferCategory', [
+				newFa.Id
+			]);
+
+			if (!attachment) {
+				attachment = await dispatch(getAttachment(faData.Id));
+			}
+
+			if (!attachment.faOffers) {
+				attachment.faOffers = Constants.FA_OFFERS;
+			}
+			attachment.faOffers.categoryId = offerCategory.Id;
+			await window.SF.invokeAction('saveAttachment', [
+				newFa.Id,
+				JSON.stringify(attachment)
+			]);
+		}
+		response.frameAgreement = newFa;
+		response.faAttachment = attachment;
+
+		resolve(response);
+	}).catch((error) => {
+		reject(error)
+	});
+}
+
+const executeSaveFrameAgreementAction = (faData, actionType) => {
+	return new Promise(async (resolve, reject) => {
+		let newFa = null;
+		const isPsEnabled = await getPsSwitch();
+		const stdCatalogueCategories = isPsEnabled ? await queryCategoriesInCatalogue() : null;
+
+		switch(actionType) {
+
+			case actions.CREATE_FA:
+				newFa = await window.SF.invokeAction('upsertFrameAgreements', [
+					null,
+					JSON.stringify(faData),
+					stdCatalogueCategories
+				]);
+				break;
+
+			case actions.MIGRATE:
+				newFa = await window.SF.invokeAction('migrateFrameAgreements', [
+					faData.Id,
+					stdCatalogueCategories
+				]);
+				break;
+		}
+
+		resolve(newFa);
+	}).catch((error) => {
+		reject(error)
+	});
 }

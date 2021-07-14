@@ -92,9 +92,13 @@
 
 				return new Promise(function (resolve, reject) {
 					Visualforce.remoting.Manager.invokeAction(...invokeActionArgs, function (result, event) {
-						result = typeof result === 'string' ? self.decodeEntities(result) : self.decodeObject(result);
-						resolve(result);
-						return result;
+						if (event.statusCode >= 200 && event.statusCode < 300) {
+							result = typeof result === 'string' ? self.decodeEntities(result) : self.decodeObject(result);
+							resolve(result);
+							return result;
+						} else if (event.statusCode >= 400) {
+							reject(event.message);
+						}
 					}), remotingSettings
 				})
 			},
@@ -150,7 +154,8 @@
 				createFaOffer: "{!$RemoteAction.FrameRateManagerController.createFaOffer}",
 				deleteFaOffers: "{!$RemoteAction.FrameRateManagerController.deleteFaOffers}",
 				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
-				getChildFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getChildFrameAgreements}"
+				getChildFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getChildFrameAgreements}",
+				migrateFrameAgreements: "{!$RemoteAction.FrameRateManagerController.migrateFrameAgreements}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

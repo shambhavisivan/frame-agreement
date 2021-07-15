@@ -390,7 +390,8 @@
 			  "util_input_text_enter": "{!$Label.util_input_text_enter}",
 			  "util_negotiation_input_diff_label": "{!$Label.util_negotiation_input_diff_label}",
 			  "warning_no_commercial_products_linked": "{!$Label.warning_no_commercial_products_linked}",
-			  "warning_no_offers_linked": "{!$Label.warning_no_offers_linked}"
+			  "warning_no_offers_linked": "{!$Label.warning_no_offers_linked}",
+			  "filter_text_warning_message": "{!$Label.filter_text_warning_message}"
 			},
 			fieldLabels: {}
 		};

@@ -68,14 +68,14 @@ private class FrameAgreementServiceTest {
 	@isTest
 	static void shouldFilterFAsWithMultipleFilters() {
 		Account account = [select id from account limit 1];
-		String filterFields = '{\"csconta__Status__c\":\"Active\",\"csconta__Agreement_Name__c\":\"FA-Draft\"}';
+		String filterFields = '{\"csconta__Status__c\":\"Active\",\"csconta__Agreement_Name__c\":\"FA-Active\"}';
 		Test.startTest();
 		List<csconta__Frame_Agreement__c> faList = FrameAgreementService.getFrameAgreements(
 			account.Id, filterFields, null, null
 		);
 		Test.stopTest();
 
-		System.assertEquals(falist.size(), 10, 'should contain agreements with status and name in the filter');
+		System.assertEquals(falist.size(), 5, 'should contain agreements with status and name in the filter');
 	}
 
 	@isTest

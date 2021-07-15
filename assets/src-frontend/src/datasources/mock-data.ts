@@ -666,6 +666,7 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	alert_cloneFa_title: 'Clone Frame Agreement',
 	alert_deleteAgreements_message: 'Are you sure you want to delete selected agreement(s)?',
 	alert_deleteAgreements_title: 'Delete agreement(s)',
-	btn_DeleteAgreements: 'Delete'
+	btn_DeleteAgreements: 'Delete',
+	filter_text_warning_message: 'Enter atleast 3 or more characters to begin search.'
 };
 /* eslint-enable */

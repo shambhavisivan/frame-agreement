@@ -16,6 +16,11 @@ jest.mock('../datasources/remote-actions-salesforce', () => ({
 
 describe('test useFrameAgremments hook', () => {
 	const queryCache = new QueryCache();
+	const wrapper = ({ children }: { children: ReactElement }): ReactElement => (
+		<RemoteActionsProvider queryCache={queryCache} remoteActions={remoteActionsWithSpy}>
+			{children}
+		</RemoteActionsProvider>
+	);
 
 	const queryFrameAgreements = mockFunction(remoteActions.queryFrameAgreements);
 
@@ -26,14 +31,13 @@ describe('test useFrameAgremments hook', () => {
 
 	const spyOnQueryFrameAgreements = jest.spyOn(remoteActions, 'queryFrameAgreements');
 
+	beforeEach(() => {
+		spyOnQueryFrameAgreements.mockClear();
+	});
+
 	test('should call queryFrameAgreements remote action and group data with status', async () => {
 		expect(spyOnQueryFrameAgreements).toHaveBeenCalledTimes(0);
 		queryFrameAgreements.mockResolvedValueOnce(mockFrameAgreements.splice(0, 3));
-		const wrapper = ({ children }: { children: ReactElement }): ReactElement => (
-			<RemoteActionsProvider queryCache={queryCache} remoteActions={remoteActionsWithSpy}>
-				{children}
-			</RemoteActionsProvider>
-		);
 
 		const { result, waitFor } = renderHook(() => useFrameAgreements(), {
 			wrapper
@@ -108,5 +112,32 @@ describe('test useFrameAgremments hook', () => {
 
 		expect(result.current.agreements).toEqual(expected);
 		expect(spyOnQueryFrameAgreements).toHaveBeenCalledTimes(1);
+	});
+
+	test('should call queryframeagreements with filter params', async () => {
+		const { result, waitFor } = renderHook(
+			() =>
+				useFrameAgreements({
+					name: 'sampleFa',
+					activeTab: 'Active'
+				}),
+			{
+				wrapper
+			}
+		);
+
+		await waitFor(() => {
+			return result.current.status === QueryStatus.Success;
+		});
+
+		/* eslint-disable @typescript-eslint/naming-convention */
+		const transformedfilterString = JSON.stringify({
+			csconta__Agreement_Name__c: 'sampleFa',
+			csconta__Status__c: 'Active'
+		});
+		/* eslint-enable @typescript-eslint/naming-convention */
+
+		expect(spyOnQueryFrameAgreements).toHaveBeenCalledTimes(1);
+		expect(spyOnQueryFrameAgreements).toHaveBeenCalledWith(transformedfilterString);
 	});
 });

@@ -1680,4 +1680,11 @@
         <shortDescription>Link at least one commercial product to the default catalogue</shortDescription>
         <value>Link at least one commercial product to the default catalogue</value>
     </labels>
+	 <labels>
+        <fullName>filter_text_warning_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Enter atleast 3 or more characters to begin search</shortDescription>
+        <value>Enter atleast 3 or more characters to begin search.</value>
+    </labels>
 </CustomLabels>

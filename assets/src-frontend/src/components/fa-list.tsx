@@ -18,7 +18,8 @@ import {
 	CSTableHeader,
 	CSTableRow,
 	CSTooltip,
-	CSDropdown
+	CSDropdown,
+	CSToastApi
 } from '@cloudsense/cs-ui-components';
 import { useAppSettings } from '../hooks/use-app-settings';
 import { FieldMetadata, FrameAgreement } from '../datasources';
@@ -42,7 +43,15 @@ export function FrameAgreementList(): ReactElement {
 		''
 	);
 	const [openDeleteFaDialog, setOpenDeleteFaDialog] = useState<boolean>(false);
-	const { agreements: groupedAgreements = [], status } = useFrameAgreements();
+	const [filterString, setFilterString] = useState('');
+	const { agreements: groupedAgreements = [], status } = useFrameAgreements(
+		filterString.length
+			? {
+					name: filterString,
+					activeTab: activeTab
+			  }
+			: null
+	);
 	const { metadata, metadataStatus } = useFieldMetadata(frameAgreementApiName);
 	const { cloneFrameAgreement } = useCloneFrameAgreement();
 	const { deleteFrameAgreement } = useDeleteFrameAgreement();
@@ -215,9 +224,9 @@ export function FrameAgreementList(): ReactElement {
 					<CSTabGroup variant="large">
 						{settings?.facSettings?.statuses &&
 							Object.values(settings.facSettings.statuses).map((status) => {
-								const renderChip = (status: string): ReactElement | null => {
+								const renderChip = (): ReactElement | null => {
 									const agreements = ((groupedAgreements as unknown) as GroupedFrameAgreements)[
-										`${status}`
+										status
 									];
 									return (
 										<CSChip
@@ -238,7 +247,7 @@ export function FrameAgreementList(): ReactElement {
 											width="11rem"
 											onClick={(): void => setActiveTab(status)}
 										>
-											{renderChip(status)}
+											{renderChip()}
 										</CSTab>
 									)
 								);
@@ -246,9 +255,31 @@ export function FrameAgreementList(): ReactElement {
 					</CSTabGroup>
 					<CSInputSearch
 						label="Type here"
+						value={filterString}
+						autoFocus={true}
 						labelHidden
-						placeholder="Quick search"
+						placeholder="Search agreements"
 						width="13rem"
+						onClearSearch={(): void => setFilterString('')}
+						onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>): void => {
+							if (event.key === 'Enter') {
+								if (event.currentTarget?.value.length === 0) {
+									setFilterString('');
+								} else if (event.currentTarget?.value.length >= 3) {
+									setFilterString(event.currentTarget?.value);
+								} else {
+									CSToastApi.renderCSToast(
+										{
+											variant: 'error',
+											text: labels.filterTextWarningMessage,
+											closeButton: true
+										},
+										'top-center',
+										3
+									);
+								}
+							}
+						}}
 					/>
 				</div>
 			</div>

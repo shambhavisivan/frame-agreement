@@ -32,7 +32,7 @@ public class FrameAgreementService {
 			if (index == filterFieldsMap.keySet().size()) {
 				whereClause += key + ' like \'' + filterFieldsMap.get(key) + '%\'';
 			} else {
-				whereClause += key + ' like \'' + filterFieldsMap.get(key) + '%\' or ';
+				whereClause += key + ' like \'' + filterFieldsMap.get(key) + '%\' and ';
 			}
 			index++;
 		}

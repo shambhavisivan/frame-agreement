@@ -1,4 +1,5 @@
 import { QueryStatus, useMutation, useQueryCache } from 'react-query';
+import { QueryKeys } from '../app-constants';
 import { FrameAgreement, remoteActions } from '../datasources';
 
 export { QueryStatus } from 'react-query';
@@ -23,7 +24,7 @@ export function useUpsertFrameAgreements(
 		{
 			onSuccess: (data) => {
 				queryCache.setQueryData(
-					'frameAgreements',
+					[QueryKeys.frameagreement],
 					(oldData: FrameAgreement[] | undefined) => {
 						if (oldData && oldData.length) {
 							return [...oldData, data] as FrameAgreement[];

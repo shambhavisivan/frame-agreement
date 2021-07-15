@@ -1,4 +1,5 @@
 import { QueryStatus, useMutation, useQueryCache } from 'react-query';
+import { QueryKeys } from '../app-constants';
 import { FrameAgreement, remoteActions } from '../datasources';
 
 export function useCloneFrameAgreement(): {
@@ -9,7 +10,7 @@ export function useCloneFrameAgreement(): {
 	const [mutateAsync, { status }] = useMutation<FrameAgreement, Error, string>(
 		(faId) => remoteActions.cloneFrameAgreement(faId),
 		{
-			onSuccess: () => queryCache.invalidateQueries('frameAgreements')
+			onSuccess: () => queryCache.invalidateQueries(QueryKeys.frameagreement)
 		}
 	);
 

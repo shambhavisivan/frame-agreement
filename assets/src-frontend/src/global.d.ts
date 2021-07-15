@@ -214,6 +214,7 @@ namespace SfGlobal {
 		alert_deleteAgreements_message: string;
 		alert_deleteAgreements_title: string;
 		btn_DeleteAgreements: string;
+		filter_text_warning_message: string;
 	}
 	export interface SfdcProcessInstanceHistory {
 		ProcessInstanceId: string;

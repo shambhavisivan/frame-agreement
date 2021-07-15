@@ -18,7 +18,7 @@ const SF = window.SF;
 
 export interface RemoteActions {
 	getAppSettings(): Promise<AppSettings>;
-	queryFrameAgreements(): Promise<FrameAgreement[]>;
+	queryFrameAgreements(filterString: string): Promise<FrameAgreement[]>;
 	getCommercialProductData(ids: string[]): Promise<CommercialProductData>;
 	getCommercialProducts(cpIds: string[] | null): Promise<CommercialProductStandalone[]>;
 	getOffers(offerIds: string[] | null): Promise<CommercialProductStandalone[]>;
@@ -73,15 +73,15 @@ export const remoteActions: RemoteActions = {
 		};
 	},
 
-	async queryFrameAgreements(): Promise<FrameAgreement[]> {
+	async queryFrameAgreements(filter: string | null = null): Promise<FrameAgreement[]> {
 		const agreements = await SF.invokeAction('queryFrameAgreements', [
 			SF.param.account,
-			null,
+			filter,
 			null,
 			null
 		]);
 
-		return agreements.map(deforcify);
+		return agreements?.map(deforcify);
 	},
 
 	async getCommercialProductData(ids: string[]): Promise<CommercialProductData> {

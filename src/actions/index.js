@@ -378,8 +378,19 @@ export function cloneFrameAgreement(faId) {
 	return function(dispatch) {
 		// dispatch(requestAppSettings());
 		dispatch(toggleFrameAgreementOperations(true));
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('cloneFrameAgreement', [faId]).then(response => {
+		return new Promise(async (resolve, reject) => {
+			const isPsEnabled = await getPsSwitch();
+			let clonePromise = null;
+
+			if (isPsEnabled) {
+				clonePromise = new Promise(async (resolve, reject) => {
+					const linkedFa = await dispatch(linkFrameAgreementCatalogue({Id: faId}, actions.CLONE));
+					resolve(linkedFa.frameAgreement);
+				});
+			} else {
+				clonePromise = cloneFrameAgreementAction(faId, actions.CLONE);
+			}
+			clonePromise.then(response => {
 				dispatch(recieveCloneFrameAgreement(response));
 				resolve(response);
 				return response;
@@ -856,7 +867,7 @@ export function createFrameAgreement(faData) {
 			let newFa = {};
 
 			if (isPsEnabled) {
-				const linkedFa = await linkFrameAgreementCatalogue(faData, actions.CREATE_FA);
+				const linkedFa = await dispatch(linkFrameAgreementCatalogue(faData, actions.CREATE_FA));
 				newFa = linkedFa.frameAgreement;
 				faData._ui.attachment = { ...linkedFa.faAttachment };
 			} else {
@@ -1173,7 +1184,7 @@ const getPsSwitch = () => {
 export function migrateFrameAgreement(faData) {
 	return function(dispatch) {
 		return new Promise(async (resolve, reject) => {
-			const linkedFa = await linkFrameAgreementCatalogue(faData, actions.MIGRATE, true);
+			const linkedFa = await dispatch(linkFrameAgreementCatalogue(faData, actions.MIGRATE, true));
 			faData._ui.attachment = { ...linkedFa.faAttachment };
 			const migratedFa = {
 				...linkedFa.frameAgreement,
@@ -1188,25 +1199,23 @@ export function migrateFrameAgreement(faData) {
 	};
 }
 
-const linkFrameAgreementCatalogue = (faData, actionType) => {
+const linkFrameAgreementCatalogue = (faData, actionType) => async (dispatch) => {
 	return new Promise(async (resolve, reject) => {
 		let response = {};
 		const isPsEnabled = await getPsSwitch();
 		const newFa = await executeSaveFrameAgreementAction(faData, actionType);
-		let attachment = { ...faData._ui.attachment };
+		let attachment = { ...faData._ui?.attachment };
 
 		if (isPsEnabled) {
 			const offerCategory = await window.SF.invokeAction('createFaOfferCategory', [
 				newFa.Id
 			]);
 
-			if (!attachment) {
+			if (!attachment || !Object.keys(attachment).length) {
 				attachment = await dispatch(getAttachment(faData.Id));
 			}
 
-			if (!attachment.faOffers) {
-				attachment.faOffers = Constants.FA_OFFERS;
-			}
+			attachment.faOffers = Constants.FA_OFFERS;
 			attachment.faOffers.categoryId = offerCategory.Id;
 			await window.SF.invokeAction('saveAttachment', [
 				newFa.Id,
@@ -1225,8 +1234,7 @@ const linkFrameAgreementCatalogue = (faData, actionType) => {
 const executeSaveFrameAgreementAction = (faData, actionType) => {
 	return new Promise(async (resolve, reject) => {
 		let newFa = null;
-		const isPsEnabled = await getPsSwitch();
-		const stdCatalogueCategories = isPsEnabled ? await queryCategoriesInCatalogue() : null;
+		const stdCatalogueCategories = await getStdCatalogueCategories();
 
 		switch(actionType) {
 
@@ -1244,10 +1252,39 @@ const executeSaveFrameAgreementAction = (faData, actionType) => {
 					stdCatalogueCategories
 				]);
 				break;
+
+			case actions.CLONE:
+				newFa = await cloneFrameAgreementAction(faData.Id);
+				break;
 		}
 
 		resolve(newFa);
 	}).catch((error) => {
 		reject(error)
 	});
+}
+
+const cloneFrameAgreementAction = async (faId) => {
+
+	const stdCatalogueCategories = await getStdCatalogueCategories();
+
+	return new Promise(async (resolve, reject) => {
+		const newFa = await window.SF.invokeAction('cloneFrameAgreement', [
+			faId,
+			stdCatalogueCategories
+		]);
+		resolve(newFa);
+	}).catch((error) => {
+		reject(error)
+	});
+}
+
+const getStdCatalogueCategories = () => {
+	return new Promise(async(resolve, reject) => {
+		const isPsEnabled = await getPsSwitch();
+		const stdCatalogueCategories = isPsEnabled ? await queryCategoriesInCatalogue() : null;
+
+		resolve(stdCatalogueCategories);
+	})
+
 }

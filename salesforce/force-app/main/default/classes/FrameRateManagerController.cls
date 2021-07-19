@@ -2133,20 +2133,16 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static csconta__Frame_Agreement__c cloneFrameAgreement(Id faId) {
-
-
+	public static csconta__Frame_Agreement__c cloneFrameAgreement(Id faId, List<PRECategory> stdCategories) {
+		Boolean isPsEnabled = getPsSwitchStatus();
 		List<String> conjoined_fields = new List<String>();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
-
 		List<String> allFAFields =
 			new List<String>(
 				Schema.getGlobalDescribe().get('csconta__Frame_Agreement__c').getDescribe().fields.getMap().keySet()
 			);
-
 		csutil__JSON_Data__c cloneFieldsSetting = getJsonData('FA-Clone');
-
 		List<String> fieldsToAdd = new List<String>();
 
 		if (cloneFieldsSetting == null || cloneFieldsSetting.csutil__value__c == null) {
@@ -2160,8 +2156,8 @@ global with sharing class FrameRateManagerController {
 				fieldsToAdd.addAll(allFAFields);
 			}
 		}
-
 		Boolean found;
+
 		for (String field : fieldsToAdd) {
 			found = false;
 			for (String existingField : conjoined_fields) {
@@ -2173,16 +2169,14 @@ global with sharing class FrameRateManagerController {
 				conjoined_fields.add(field);
 			}
 		}
-
 		String query = 'select ' + String.join(conjoined_fields, ', ') + ' from csconta__Frame_Agreement__c  where Id = :faId';
-
 		csconta__Frame_Agreement__c original;
+
 		try {
 			original = database.query(query);
 		} catch (QueryException e) {
 			return null;
 		}
-
 		csconta__Frame_Agreement__c cloned = original.clone(false, false, false, false);
 		cloned.csconta__Status__c = 'Draft';
 		cloned.csconta__replaced_frame_agreement__c = null;
@@ -2191,9 +2185,7 @@ global with sharing class FrameRateManagerController {
 
 		Fac_Settings__c facSettings = getFacSetting();
 		String prefix = getFaPrefix();
-
 		Attachment originalAttachment = getAttachment(faId);
-
 
 		if (originalAttachment != null) {
 			// pCreateAttachment(Id parentId, String name, String description, Blob body, String content)
@@ -2204,17 +2196,14 @@ global with sharing class FrameRateManagerController {
 		// csconta__Account_Frame_Agreement_Association__c
 
 		Map<String, Schema.SObjectField> objectFields = Schema.getGlobalDescribe().get('csconta__Account_Frame_Agreement_Association__c').getDescribe().fields.getMap();
-
 		List<String> assocFieldList = new List<String>();
 
 		for (String s : objectFields.keySet()) {
 			assocFieldList.add(s);
 		}
-
 		String query_assoc = 'Select ' + String.join(assocFieldList, ',');
 		query_assoc += ' from csconta__Account_Frame_Agreement_Association__c';
 		query_assoc += ' where csconta__Frame_Agreement__c = :faId';
-
 		List<csconta__Account_Frame_Agreement_Association__c> clonedList = new List<csconta__Account_Frame_Agreement_Association__c>();
 
 		for (csconta__Account_Frame_Agreement_Association__c oas : database.query(query_assoc)) {
@@ -2226,12 +2215,12 @@ global with sharing class FrameRateManagerController {
 
 		insert clonedList;
 
-
 		List<csutil__JSON_Data__c> jsonData = [
 			select id, name, csutil__value__c
 			from csutil__JSON_Data__c
 			where name = 'FA-Clone-Observer'
 		];
+
 		if (!jsonData.isEmpty()) {
 			Map<String, String> cloneObserverPayload = new Map<String, String>();
 			cloneObserverPayload.put('sourceId', faId);
@@ -2241,10 +2230,21 @@ global with sharing class FrameRateManagerController {
 				return null;
 			}
 		}
-
 		cloned = getFrameAgreement(cloned.Id);
 		cloned.csconta__frame_agreement_number__c = prefix + parseNumberFromName(cloned.Name);
+		cspmb__Catalogue__c faCatalogue = null;
+
+		if (isPsEnabled) {
+			faCatalogue = createFaCatalogue(cloned);
+			cloned.csconta__catalogue__c = faCatalogue.id;
+		} else {
+			cloned.csconta__catalogue__c = null;
+		}
 		update cloned;
+
+		if (isPsEnabled) {
+			associateFaCatalogueCategories(faCatalogue.id, stdCategories);
+		}
 
 		return cloned;
 	}
@@ -2262,7 +2262,7 @@ global with sharing class FrameRateManagerController {
 			throw new InvalidParamException('Cannot find frame agreement with Id:' + faId);
 		}
 
-		csconta__Frame_Agreement__c clonedFa = cloneFrameAgreement(faId);
+		csconta__Frame_Agreement__c clonedFa = cloneFrameAgreement(faId, null);
 
 		Fac_Settings__c facSettings = getFacSetting();
 		clonedFa.csconta__Status__c = (String) facSettings.get('draft_status__c');
@@ -2355,20 +2355,7 @@ global with sharing class FrameRateManagerController {
 		}
 
 		if (isNewFa) {
-			List<cspmb__Product_Category__c> existingCategoryList = new List<cspmb__Product_Category__c>();
-
-			for (PRECategory category: stdCategories) {
-				if (category.parentCategory == null) {
-					cspmb__Product_Category__c existingCategory = new cspmb__Product_Category__c(
-						id = Id.valueOf(category.id),
-						name = category.name,
-						cspmb__description__c = category.description,
-						cspmb__subcategory_sequence__c = category.subcategorySequence
-					);
-					existingCategoryList.add(existingCategory);
-				}
-			}
-			FaPlmService.associateCategoryCatalogue(existingCategoryList, faCatalogue.id);
+			associateFaCatalogueCategories(faCatalogue.id, stdCategories);
 		}
 
 		return fa;
@@ -2708,6 +2695,25 @@ global with sharing class FrameRateManagerController {
 		faCatalogue = FaPlmService.createCatalogue(faCatalogue);
 
 		return faCatalogue;
+	}
+
+	private static void associateFaCatalogueCategories(Id catalogueId, List<PRECategory> stdCategories) {
+		List<cspmb__Product_Category__c> existingCategoryList = new List<cspmb__Product_Category__c>();
+
+		if (stdCategories != null) {
+			for (PRECategory category: stdCategories) {
+				if (category.parentCategory == null) {
+					cspmb__Product_Category__c existingCategory = new cspmb__Product_Category__c(
+						id = Id.valueOf(category.id),
+						name = category.name,
+						cspmb__description__c = category.description,
+						cspmb__subcategory_sequence__c = category.subcategorySequence
+					);
+					existingCategoryList.add(existingCategory);
+				}
+			}
+			FaPlmService.associateCategoryCatalogue(existingCategoryList, catalogueId);
+		}
 	}
 
 	private static Boolean getPsSwitchStatus() {

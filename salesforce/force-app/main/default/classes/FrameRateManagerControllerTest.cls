@@ -816,10 +816,10 @@ private class FrameRateManagerControllerTest {
 		FrameRateManagerController.deleteFrameAgreement(fa_2.Id);
 		FrameRateManagerController.deleteFrameAgreement(fa_2.Id);
 
-		csconta__Frame_Agreement__c cloned_1_fa_1 = FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
+		csconta__Frame_Agreement__c cloned_1_fa_1 = FrameRateManagerController.cloneFrameAgreement(fa_1.Id, null);
 		FrameRateManagerController.saveAttachment(fa_1.Id, 'TestBody_3');
-		csconta__Frame_Agreement__c cloned_2_fa_1 = FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
-		csconta__Frame_Agreement__c cloned_invalid = FrameRateManagerController.cloneFrameAgreement('a0x1t000000yZF3'); // Invalid
+		csconta__Frame_Agreement__c cloned_2_fa_1 = FrameRateManagerController.cloneFrameAgreement(fa_1.Id, null);
+		csconta__Frame_Agreement__c cloned_invalid = FrameRateManagerController.cloneFrameAgreement('a0x1t000000yZF3', null); // Invalid
 
 		csconta__Frame_Agreement__c new_version_fa_1 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1.Id);
 
@@ -875,13 +875,58 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		csconta__Frame_Agreement__c cloned_1_fa_1 = FrameRateManagerController.cloneFrameAgreement(fa_3.Id);
+		csconta__Frame_Agreement__c cloned_1_fa_1 = FrameRateManagerController.cloneFrameAgreement(fa_3.Id, null);
 		List <csconta__Account_Frame_Agreement_Association__c> cloned_assoc_list = [select Id from csconta__Account_Frame_Agreement_Association__c where csconta__Frame_Agreement__c = :cloned_1_fa_1.Id];
 
 		Test.stopTest();
 
 		System.assertEquals(1, cloned_assoc_list.size());
 
+	}
+
+	@isTest
+	public static void testCloneFrameAgreementWithPs() {
+		setupPricingModel();
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
+
+		csconta__Frame_Agreement__c newFa = FrameRateManagerController.upsertFrameAgreements(null, '{"csconta__Agreement_Name__c":"FA1_CHANGED","csconta__Status__c":"Draft","csconta__effective_end_date__c":1547510400000,"csconta__Valid_From__c":1547510400000}', stdPreCategoryList);
+
+		Test.startTest();
+
+		csconta__Frame_Agreement__c cloned_1_fa_1 = FrameRateManagerController.cloneFrameAgreement(newFa.Id, stdPreCategoryList);
+
+		facSettings.is_ps_enabled__c = true;
+		update facSettings;
+		csconta__Frame_Agreement__c cloned_1_fa_2 = FrameRateManagerController.cloneFrameAgreement(newFa.Id, stdPreCategoryList);
+
+		facSettings.is_ps_enabled__c = false;
+		update facSettings;
+		csconta__Frame_Agreement__c cloned_1_fa_3 = FrameRateManagerController.cloneFrameAgreement(cloned_1_fa_2.Id, stdPreCategoryList);
+
+		Test.stopTest();
+
+		System.assertEquals(cloned_1_fa_1.csconta__catalogue__c, null);
+		System.assertNotEquals(cloned_1_fa_2.csconta__catalogue__c, null);
+
+		Id stdCatalog = FrameRateManagerController.getDefaultCatalogueId();
+
+		List<cspmb__Catalogue_Category_Association__c> stdCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :stdCatalog
+		];
+
+		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
+			select id from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :cloned_1_fa_2.csconta__catalogue__c
+		];
+
+		System.assertEquals(faCatalogueCategory.size(), stdCatalogueCategory.size());
+
+		System.assertEquals(cloned_1_fa_3.csconta__catalogue__c, null);
 	}
 
 	@isTest
@@ -1474,7 +1519,7 @@ private class FrameRateManagerControllerTest {
 
 		csconta__Frame_Agreement__c faGet = FrameRateManagerController.getFrameAgreement(fa_1.Id);
 		String setStatusResult = FrameRateManagerController.setFrameAgreementState(fa_1.Id, 'Active');
-		csconta__Frame_Agreement__c clonedFa = FrameRateManagerController.cloneFrameAgreement(fa_1.Id);
+		csconta__Frame_Agreement__c clonedFa = FrameRateManagerController.cloneFrameAgreement(fa_1.Id, null);
 		String deleteResult = FrameRateManagerController.deleteFrameAgreement(fa_1.Id);
 		Test.stopTest();
 		System.assertNotEquals(null, faGet);
@@ -1562,7 +1607,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		csconta__Frame_Agreement__c result = FrameRateManagerController.cloneFrameAgreement(newFa.Id);
+		csconta__Frame_Agreement__c result = FrameRateManagerController.cloneFrameAgreement(newFa.Id, null);
 
 		Test.stopTest();
 

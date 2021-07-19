@@ -149,7 +149,8 @@
 				createFaOfferCategory: "{!$RemoteAction.FrameRateManagerController.createFaOfferCategory}",
 				createFaOffer: "{!$RemoteAction.FrameRateManagerController.createFaOffer}",
 				deleteFaOffers: "{!$RemoteAction.FrameRateManagerController.deleteFaOffers}",
-				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}"
+				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
+				getChildFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getChildFrameAgreements}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

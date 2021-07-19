@@ -2706,6 +2706,11 @@ global with sharing class FrameRateManagerController {
 		return facSettings.is_ps_enabled__c;
 	}
 
+	@RemoteAction
+	public static List<csconta__Frame_Agreement__c> getChildFrameAgreements(Id masterFaId) {
+		return FrameAgreementService.getChildFrameAgreements(masterFaId);
+	}
+
 	//******************************************* DECOMPOSITION END ***************************************
 
 	// WRAPPERS

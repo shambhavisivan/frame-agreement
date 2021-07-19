@@ -2042,4 +2042,36 @@ private class FrameRateManagerControllerTest {
 
 		System.assertEquals(offer.size(), 0);
 	}
+
+	@isTest
+	public static void testGetChildFrameAgreements() {
+		csconta__Frame_Agreement__c faMaster = new csconta__Frame_Agreement__c(
+			csconta__agreement_name__c = 'FA-Master',
+			csconta__agreement_level__c = 'Master Agreement'
+		);
+		insert faMaster;
+
+		insert new csconta__Frame_Agreement__c(
+			csconta__agreement_name__c = 'FA-child-one',
+			csconta__master_frame_agreement__c = faMaster.Id
+		);
+
+		insert new csconta__Frame_Agreement__c(
+			csconta__Agreement_Name__c = 'FA-child-two',
+			csconta__master_frame_agreement__c = faMaster.Id
+		);
+
+		insert new csconta__Frame_Agreement__c(
+		  	csconta__Agreement_Name__c = 'FA-child-three',
+			csconta__master_frame_agreement__c = faMaster.Id
+		);
+
+		Test.startTest();
+		List<csconta__Frame_Agreement__c> childFas = FrameRateManagerController.getChildFrameAgreements(
+			faMaster.Id
+		);
+		Test.stopTest();
+
+		System.assertEquals(3, childFas.size());
+	}
 }

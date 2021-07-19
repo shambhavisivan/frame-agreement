@@ -65,4 +65,25 @@ public class FrameAgreementService {
 
 		return faList;
 	}
+
+	/**
+	 * @param masterFaId master frame agreement id
+	 * @return list of child FAs
+	 */
+	public static List<csconta__Frame_Agreement__c> getChildFrameAgreements(Id masterFaId) {
+		String query = 'SELECT ' + String.join(FrameRateManagerController.FA_FIELDS, ',')
+			+ ' FROM csconta__Frame_Agreement__c '
+			+ ' where csconta__master_frame_agreement__c = :masterFaId';
+
+		List<csconta__Frame_Agreement__c> childFrameAgreements = null;
+		try {
+			childFrameAgreements = (List<csconta__Frame_Agreement__c>) Database.query(
+				String.escapeSingleQuotes(query)
+			);
+		} catch (QueryException e) {
+			throw new CustomExceptions.ApplicationException(e.getMessage());
+		}
+
+		return childFrameAgreements;
+	}
 }

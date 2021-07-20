@@ -2255,14 +2255,14 @@ global with sharing class FrameRateManagerController {
 	* @return cloned FA
 	*/
 	@RemoteAction
-	public static csconta__Frame_Agreement__c createNewVersionOfFrameAgreement(Id faId) {
+	public static csconta__Frame_Agreement__c createNewVersionOfFrameAgreement(Id faId, List<PRECategory> stdCategories) {
 		csconta__Frame_Agreement__c original = getFrameAgreement(faId);
 
 		if (original == null) {
 			throw new InvalidParamException('Cannot find frame agreement with Id:' + faId);
 		}
 
-		csconta__Frame_Agreement__c clonedFa = cloneFrameAgreement(faId, null);
+		csconta__Frame_Agreement__c clonedFa = cloneFrameAgreement(faId, stdCategories);
 
 		Fac_Settings__c facSettings = getFacSetting();
 		clonedFa.csconta__Status__c = (String) facSettings.get('draft_status__c');

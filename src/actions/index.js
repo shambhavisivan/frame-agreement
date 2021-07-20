@@ -227,8 +227,24 @@ const _createNewVersionOfFrameAgreement = newFa => ({
 export function createNewVersionOfFrameAgreement(faId) {
 	return function(dispatch) {
 		dispatch(toggleFrameAgreementOperations(true));
-		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('createNewVersionOfFrameAgreement', [faId]).then(response => {
+		return new Promise(async (resolve, reject) => {
+			const isPsEnabled = await getPsSwitch();
+			let createNewVersionPromise = null;
+
+			if (isPsEnabled) {
+				createNewVersionPromise = new Promise(async (resolve, reject) => {
+					const linkedFa = await dispatch(
+						linkFrameAgreementCatalogue({Id: faId}, actions.CREATE_FA_NEW_VERSION)
+					);
+					resolve(linkedFa.frameAgreement);
+				});
+			} else {
+				createNewVersionPromise = executeSaveFrameAgreementAction(
+					{Id: faId},
+					actions.CREATE_FA_NEW_VERSION
+				);
+			}
+			createNewVersionPromise.then(response => {
 				dispatch(_createNewVersionOfFrameAgreement(response));
 				resolve(response);
 				return response;
@@ -1255,6 +1271,13 @@ const executeSaveFrameAgreementAction = (faData, actionType) => {
 
 			case actions.CLONE:
 				newFa = await cloneFrameAgreementAction(faData.Id);
+				break;
+
+			case actions.CREATE_FA_NEW_VERSION:
+				newFa = window.SF.invokeAction('createNewVersionOfFrameAgreement', [
+					faData.Id,
+					stdCatalogueCategories
+				]);
 				break;
 		}
 

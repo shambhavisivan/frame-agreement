@@ -821,13 +821,13 @@ private class FrameRateManagerControllerTest {
 		csconta__Frame_Agreement__c cloned_2_fa_1 = FrameRateManagerController.cloneFrameAgreement(fa_1.Id, null);
 		csconta__Frame_Agreement__c cloned_invalid = FrameRateManagerController.cloneFrameAgreement('a0x1t000000yZF3', null); // Invalid
 
-		csconta__Frame_Agreement__c new_version_fa_1 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1.Id);
+		csconta__Frame_Agreement__c new_version_fa_1 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1.Id, null);
 
 		// Invalids
 		Boolean expectedExceptionThrown = false;
 		try {
 			FrameRateManagerController.getFrameAgreement('a0x1t000000yZF3');
-			csconta__Frame_Agreement__c new_version_fa_2 = FrameRateManagerController.createNewVersionOfFrameAgreement('a0x1t000000yZF3');
+			csconta__Frame_Agreement__c new_version_fa_2 = FrameRateManagerController.createNewVersionOfFrameAgreement('a0x1t000000yZF3', null);
 		} catch (Exception e) {
 			expectedExceptionThrown = true;
 		}
@@ -852,16 +852,50 @@ private class FrameRateManagerControllerTest {
 	public static void testCreateNewFrameAgreement() {
 		setupPricingModel();
 		setupSettings();
+
+		Fac_Settings__c facSettings = loadFacSettings();
+		facSettings.is_ps_enabled__c = false;
+		insert facSettings;
+
+		List<PRECategory> stdPreCategoryList = setupPRECategory();
+
 		csconta__Frame_Agreement__c fa_1 = [select Id, csconta__frame_agreement_number__c, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
 
 		Test.startTest();
 
-		csconta__Frame_Agreement__c fa_1_clone_1 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1.Id);
-		csconta__Frame_Agreement__c fa_1_clone_2 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1_clone_1.Id);
+		csconta__Frame_Agreement__c fa_1_clone_1 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1.Id, null);
+		csconta__Frame_Agreement__c fa_1_clone_2 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1_clone_1.Id, null);
+
+		facSettings.is_ps_enabled__c = true;
+		update facSettings;
+		csconta__Frame_Agreement__c fa_1_clone_3 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1_clone_2.Id, stdPreCategoryList);
+
+		facSettings.is_ps_enabled__c = false;
+		update facSettings;
+		csconta__Frame_Agreement__c fa_1_clone_4 = FrameRateManagerController.createNewVersionOfFrameAgreement(fa_1_clone_3.Id, stdPreCategoryList);
 
 		Test.stopTest();
 
 		System.assertEquals(fa_1_clone_2.csconta__frame_agreement_number__c, fa_1.csconta__frame_agreement_number__c);
+		System.assertEquals(fa_1_clone_2.csconta__catalogue__c, null);
+
+		Id faCatalog = fa_1_clone_3.csconta__catalogue__c;
+		System.assertNotEquals(faCatalog, null);
+
+		Id stdCatalog = FrameRateManagerController.getDefaultCatalogueId();
+
+		List<cspmb__Catalogue_Category_Association__c> stdCatalogueCategory = [
+			select id, cspmb__product_category__c
+			from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :stdCatalog
+		];
+
+		List<cspmb__Catalogue_Category_Association__c> faCatalogueCategory = [
+			select id from cspmb__Catalogue_Category_Association__c where cspmb__catalogue__c = :faCatalog
+		];
+
+		System.assertEquals(faCatalogueCategory.size(), stdCatalogueCategory.size());
+
+		System.assertEquals(fa_1_clone_4.csconta__catalogue__c, null);
 	}
 
 	@isTest
@@ -1638,7 +1672,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		csconta__Frame_Agreement__c result = FrameRateManagerController.createNewVersionOfFrameAgreement(originalFa.Id);
+		csconta__Frame_Agreement__c result = FrameRateManagerController.createNewVersionOfFrameAgreement(originalFa.Id, null);
 
 		Test.stopTest();
 
@@ -1683,15 +1717,15 @@ private class FrameRateManagerControllerTest {
 		);
 		insert expiredOriginalFa;
 
-		csconta__Frame_Agreement__c result = FrameRateManagerController.createNewVersionOfFrameAgreement(originalFa.id);
+		csconta__Frame_Agreement__c result = FrameRateManagerController.createNewVersionOfFrameAgreement(originalFa.id, null);
 		Id prId = FrameRateManagerController.createPricingRuleGroup(result.id);
 
 		csconta__Frame_Agreement__c resultFa2 =
-			FrameRateManagerController.createNewVersionOfFrameAgreement(originalFaWithNoEndDate.id);
+			FrameRateManagerController.createNewVersionOfFrameAgreement(originalFaWithNoEndDate.id, null);
 		Id prIdFa2 = FrameRateManagerController.createPricingRuleGroup(resultFa2.id);
 
 		csconta__Frame_Agreement__c resultFa3 =
-			FrameRateManagerController.createNewVersionOfFrameAgreement(expiredOriginalFa.id);
+			FrameRateManagerController.createNewVersionOfFrameAgreement(expiredOriginalFa.id, null);
 		Id prIdFa3 = FrameRateManagerController.createPricingRuleGroup(resultFa3.id);
 
 		Test.startTest();

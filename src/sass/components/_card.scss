@@ -120,10 +120,6 @@
 							border: none;
 							cursor: pointer;
 
-							&.disabled {
-								cursor: default;
-							}
-
 							@include css4 {
 								border-bottom: 1px solid cvar(--main-br);
 							}
@@ -150,6 +146,17 @@
 								outline: none;
 								border: none;
 								box-shadow: none;
+							}
+
+							&.disabled {
+								cursor: default;
+								&:hover {
+									svg {
+										@include css4 {
+											fill: cvar(--card-icon-bg);
+										}
+									}
+								};
 							}
 						}
 					}

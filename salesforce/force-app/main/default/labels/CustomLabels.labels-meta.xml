@@ -1715,7 +1715,7 @@
         <shortDescription>Link at least one commercial product to the default catalogue</shortDescription>
         <value>Link at least one commercial product to the default catalogue</value>
     </labels>
-	 <labels>
+	<labels>
         <fullName>filter_text_warning_message</fullName>
         <language>en_US</language>
         <protected>true</protected>

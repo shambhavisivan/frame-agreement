@@ -643,6 +643,29 @@ export const frameAgreements = [
 			Name: 'Test Account',
 			Id: '0011t00000DSEtnAAH'
 		}
+	},
+	{
+		Id: 'a1t1t000000A0gOAAS',
+		Name: 'AGR-000002',
+		csconta__Account__c: '0011t00000DSEtnAAH',
+		csconta__Agreement_Name__c: 'Child 1',
+		csconta__Status__c: 'Draft',
+		csconta__Valid_From__c: 1547424000000,
+		csconta__Valid_To__c: 1568419200000,
+		csfam__Disable_Levels__c: true,
+		csfam__Disable_Custom_Tabs__c: false,
+		csfam__Arb_Field_Integer__c: 22,
+		csfam__Arb_Field_Text__c: 'Arb Text',
+		csfam__Arb_Field_Date__c: 1547424000000,
+		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 1dsfsdf',
+		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
+		csfam__Arb_Field_Textarea__c:
+			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
+		csconta__Account__r: {
+			Name: 'Test Account',
+			Id: '0011t00000DSEtnAAH'
+		},
+		csconta__master_frame_agreement__c: 'a1t1t0000009wpQAAQ'
 	}
 ];
 

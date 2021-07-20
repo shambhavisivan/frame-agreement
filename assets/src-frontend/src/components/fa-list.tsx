@@ -12,14 +12,14 @@ import {
 	CSModalHeader,
 	CSModalBody,
 	CSModalFooter,
-	CSTable,
-	CSTableBody,
 	CSTableCell,
-	CSTableHeader,
 	CSTableRow,
 	CSTooltip,
 	CSDropdown,
-	CSToastApi
+	CSToastApi,
+	CSTable,
+	CSTableBody,
+	CSTableHeader
 } from '@cloudsense/cs-ui-components';
 import { useAppSettings } from '../hooks/use-app-settings';
 import { FieldMetadata, FrameAgreement } from '../datasources';
@@ -31,6 +31,8 @@ import { useCloneFrameAgreement } from '../hooks/use-clone-frame-agreement';
 import { ConfirmationModal } from './dialogs/confirmation-modal';
 import { useDeleteFrameAgreement } from '../hooks/use-delete-frame-agreement';
 import { useCustomLabels } from '../hooks/use-custom-labels';
+import { formatCellValue } from './cs-table-wrapper/cell-formatter';
+import { FIELD_METADATA_CHILD_FA } from '../app-constants';
 
 const frameAgreementApiName = 'csconta__Frame_Agreement__c';
 
@@ -64,60 +66,63 @@ export function FrameAgreementList(): ReactElement {
 		}
 	}, [status, settingStatus, metadataStatus, settings?.facSettings.statuses.draftStatus]);
 
-	const renderCustomRow = (data: FrameAgreement[], columns: FieldMetadata[]): ReactNode => {
-		const isMaster = (agreementLevel: string): ReactNode =>
-			agreementLevel === 'Master Agreement' ? (
-				<CSTooltip
-					iconColor="#c23934"
-					position="right-bottom"
-					variant="basic"
-					maxWidth="25rem"
-					padding="0"
-					stickyOnClick
-					content={
-						// TODO: should reuse cstable to render dynamic child FAs.
-						<CSTable>
-							<CSTableHeader>
-								<CSTableCell text="Member FAs" />
-								<CSTableCell text="Effective Start Date" />
-								<CSTableCell text="Effective End Date" />
-							</CSTableHeader>
-							<CSTableBody>
-								<CSTableRow>
-									<CSTableCell>
-										<a href="#">FA1231531351</a>
-									</CSTableCell>
-									<CSTableCell text="23.09.2020" />
-									<CSTableCell text="22.09.2021" />
-								</CSTableRow>
-								<CSTableRow>
-									<CSTableCell>
-										<a href="#">FA1231531351</a>
-									</CSTableCell>
-									<CSTableCell text="23.09.2020" />
-									<CSTableCell text="22.09.2021" />
-								</CSTableRow>
-								<CSTableRow>
-									<CSTableCell>
-										<a href="#">FA1231531351</a>
-									</CSTableCell>
-									<CSTableCell text="23.09.2020" />
-									<CSTableCell text="22.09.2021" />
-								</CSTableRow>
-								<CSTableRow>
-									<CSTableCell>
-										<a href="#">FA1231531351</a>
-									</CSTableCell>
-									<CSTableCell text="23.09.2020" />
-									<CSTableCell text="22.09.2021" />
-								</CSTableRow>
-							</CSTableBody>
-						</CSTable>
-					}
-				/>
-			) : (
-				''
+	const renderChildFaRows = (
+		data: FrameAgreement[],
+		fieldMetadata: FieldMetadata[]
+	): ReactNode => {
+		return data?.map((fa: FrameAgreement) => {
+			return (
+				<CSTableRow>
+					{fieldMetadata.map((col) => {
+						const apiName: keyof FrameAgreement = (col.apiName as unknown) as keyof FrameAgreement;
+						if (Object.keys(fa).includes(col.apiName)) {
+							return (
+								<CSTableCell
+									maxWidth={'50'}
+									text={
+										fa[apiName]
+											? String(formatCellValue(fa[apiName], col.fieldType))
+											: '-'
+									}
+								></CSTableCell>
+							);
+						} else {
+							return <CSTableCell maxWidth={'50'} text={'-'}></CSTableCell>;
+						}
+					})}
+				</CSTableRow>
 			);
+		});
+	};
+
+	const renderCustomRow = (data: FrameAgreement[], columns: FieldMetadata[]): ReactNode => {
+		const isMaster = (fa: FrameAgreement): ReactNode => {
+			if (fa.agreementLevel === 'Master Agreement') {
+				const childAgreements = Object.values(groupedAgreements)
+					.flat()
+					.filter((agreement) => agreement.masterFrameAgreement === fa.id);
+				return (
+					<div onMouseEnter={(): void => setSelectedFrameAgreementId(fa.id)}>
+						<CSTooltip
+							iconColor="#c23934"
+							position="right-bottom"
+							variant="basic"
+							maxWidth="25rem"
+							padding="5"
+							stickyOnClick
+							content={
+								<CsTableWrapper
+									columnMetadata={FIELD_METADATA_CHILD_FA}
+									data={childAgreements}
+									disableColumnChooser={true}
+									rowRenderer={renderChildFaRows}
+								/>
+							}
+						/>
+					</div>
+				);
+			}
+		};
 
 		const redirectToDetails = (faId: string): void => {
 			history.push(`${history.location.pathname}/${faId}`);
@@ -159,13 +164,18 @@ export function FrameAgreementList(): ReactElement {
 						{columns.map((col, index) => {
 							const apiName: keyof FrameAgreement = (col.apiName as unknown) as keyof FrameAgreement;
 							// should render only to the first cell
-							const childFaPanel =
-								index === 0 && fa.agreementLevel && isMaster(fa.agreementLevel);
+							const childFaPanel = index === 0 && fa.agreementLevel && isMaster(fa);
 							if (Object.keys(fa).includes(col.apiName)) {
 								return (
 									<CSTableCell
 										maxWidth={'50'}
-										text={fa[apiName] ? String(fa[apiName]) : '-'}
+										text={
+											fa[apiName]
+												? String(
+														formatCellValue(fa[apiName], col.fieldType)
+												  )
+												: '-'
+										}
 										onClick={(): void => redirectToDetails(fa.id)}
 									>
 										{childFaPanel}
@@ -301,7 +311,7 @@ export function FrameAgreementList(): ReactElement {
 							})}
 					</CSTabGroup>
 					<CSInputSearch
-						label="Type here"
+						label="search-input"
 						value={filterString}
 						autoFocus={true}
 						labelHidden

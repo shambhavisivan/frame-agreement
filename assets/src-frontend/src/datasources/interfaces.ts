@@ -71,6 +71,7 @@ export interface FrameAgreement {
 	replacedFrameAgreement?: string;
 	agreementName?: string;
 	effectiveStartDate?: number;
+	masterFrameAgreement?: string;
 }
 
 export interface CommercialProduct {

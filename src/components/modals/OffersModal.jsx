@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import Modal from 'react-responsive-modal';
 
-import { publish } from '../../api';
+import { toggleFrameAgreementOperations } from '../../actions/index';
 
 import Icon from '../utillity/Icon';
 import InputSearch from '../utillity/inputs/InputSearch';
@@ -12,6 +12,7 @@ import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
 import { queryCategoriesInCatalogue, queryOffersInCategory } from '~/src/graphql-actions';
 
 import ProductRow from '../utillity/ProductRow';
+import Checkbox from '../utillity/inputs/Checkbox';
 
 class OffersModal extends Component {
 	constructor(props) {
@@ -65,13 +66,16 @@ class OffersModal extends Component {
 			const linkedOffers = await queryOffersInCategory(categoryId);
 			const linkedOfferIds = linkedOffers.map(offer => offer.id);
 			// refetch cps from apex for the linked products.
+			this.props.toggleFrameAgreementOperations(true);
 			const offers = await window.SF.invokeAction("getOffers", [
 				linkedOfferIds,
 			]);
 			const notAddedOffers = offers.filter(
 				offer => !this.addedOfferIds.includes(offer.Id)
 			);
-			this.setState({ offers: notAddedOffers });
+			this.setState({ offers: notAddedOffers }, () => {
+				this.props.toggleFrameAgreementOperations(false);
+			});
 		}
 	}
 
@@ -125,7 +129,6 @@ class OffersModal extends Component {
 				this.setState({
 					actionTaken: true
 				});
-				console.log(this.state.selected);
 			}
 		);
 	}
@@ -140,6 +143,7 @@ class OffersModal extends Component {
 
 	resetFilter() {
 		this.setState({ offers: this.notAddedOffers });
+		this.categoryId = '';
 	}
 
 	render() {
@@ -199,7 +203,14 @@ class OffersModal extends Component {
 									<ul>
 										{this.state.filter.length ? this.state.filter.map(category => {
 											return (
-												<div className="fa-modal-product-list-categories">
+												<div
+													className={
+														"fa-modal-product-list-categories" +
+														(this.categoryId === category.id
+															? " selected"
+															: "")
+													}
+												>
 													<li
 														key={category.id}
 														onClick={async () =>
@@ -329,7 +340,10 @@ class OffersModal extends Component {
 					<button
 						onClick={this.addOffers}
 						className="fa-button fa-button--brand"
-						disabled={!this.state.actionTaken}
+						disabled={
+							!this.state.actionTaken ||
+							this.props.disableFrameAgreementOperations
+						}
 					>
 						{window.SF.labels.modal_categorization_btn_add}
 					</button>
@@ -343,8 +357,13 @@ const mapStateToProps = state => {
 	return {
 		offers: state.offers,
 		productFields: state.productFields,
-		settings: state.settings
+		settings: state.settings,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 	};
 };
 
-export default connect(mapStateToProps)(OffersModal);
+const mapDispatchToProps = {
+	toggleFrameAgreementOperations
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OffersModal);

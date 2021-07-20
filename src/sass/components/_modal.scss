@@ -306,7 +306,7 @@
 
 .fa-modal-product-list-categories {
 	font-size: 0.875rem;
-	padding-bottom: 0.5rem;
+	padding: 0.5rem;
 
 	&-item {
 		padding-left: 0.5rem;
@@ -314,6 +314,12 @@
 
 	ul {
 		padding-top: 0.5rem;
+	}
+
+	&.selected {
+		font-weight: 700;
+		background: var(--list-row-selected-bg);
+		border-left: 3px var(--list-row-primary-c) solid;
 	}
 
 	li {

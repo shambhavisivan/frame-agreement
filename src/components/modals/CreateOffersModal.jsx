@@ -16,7 +16,9 @@ import {
 	createFaOffer,
 	saveFrameAgreement,
 	addFaOffersToFa,
+	toggleFrameAgreementOperations
 } from "~/src/actions";
+import Checkbox from "../utillity/inputs/Checkbox";
 
 class CreateOffersModal extends Component {
 	constructor(props) {
@@ -59,7 +61,6 @@ class CreateOffersModal extends Component {
 		this.priceItemFields = this.props.productFields.filter(
 			(f) => !f.volume
 		);
-		console.warn(this.priceItemFields);
 	}
 
 	async componentDidMount() {
@@ -103,11 +104,14 @@ class CreateOffersModal extends Component {
 			const linkedProducts = await queryProductsInCategory(categoryId);
 			const linkedProductIds = linkedProducts.map((cp) => cp.id);
 			// refetch cps from apex for the linked products.
+			this.props.toggleFrameAgreementOperations(true);
 			const commercialProducts = await window.SF.invokeAction(
 				"getCommercialProducts",
 				[linkedProductIds]
 			);
-			this.setState({ commercialProducts: commercialProducts });
+			this.setState({ commercialProducts: commercialProducts }, () => {
+				this.props.toggleFrameAgreementOperations(false);
+			});
 		}
 	}
 
@@ -168,6 +172,7 @@ class CreateOffersModal extends Component {
 
 	resetFilter() {
 		this.setState({ commercialProducts: this._commercialProducts });
+		this.categoryId = '';
 	}
 
 	initiatePLM(offerId) {
@@ -308,7 +313,14 @@ class CreateOffersModal extends Component {
 													this.state.filter.map(
 														(category) => {
 															return (
-																<div className="fa-modal-product-list-categories">
+																<div
+																	className={
+																		"fa-modal-product-list-categories" +
+																		(this.categoryId === category.id
+																			? " selected"
+																			: "")
+																	}
+																>
 																	<li
 																		key={
 																			category.id
@@ -551,6 +563,7 @@ const mapDispatchToProps = {
 	createFaOffer,
 	saveFrameAgreement,
 	addFaOffersToFa,
+	toggleFrameAgreementOperations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateOffersModal);

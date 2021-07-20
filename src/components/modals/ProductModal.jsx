@@ -9,7 +9,7 @@ import Pagination from '../utillity/Pagination';
 import { truncateCPField, getFieldLabel } from '../../utils/shared-service';
 import { queryCategoriesInCatalogue, queryProductsInCategory } from '~/src/graphql-actions';
 import ProductRow from '../utillity/ProductRow';
-import { filterCommercialProducts } from '../../actions/index';
+import { filterCommercialProducts, toggleFrameAgreementOperations } from '../../actions/index';
 import Checkbox from '../utillity/inputs/Checkbox';
 import { publish } from '../../api';
 
@@ -60,7 +60,6 @@ class ProductModal extends Component {
 		};
 
 		this.priceItemFields = this.props.productFields.filter(f => !f.volume);
-		console.warn(this.priceItemFields);
 	}
 
 	async componentDidMount() {
@@ -108,13 +107,16 @@ class ProductModal extends Component {
 			const linkedProducts = await queryProductsInCategory(categoryId);
 			const linkedProductIds = linkedProducts.map(cp => cp.id);
 			// refetch cps from apex for the linked products.
+			this.props.toggleFrameAgreementOperations(true);
 			const commercialProducts = await window.SF.invokeAction("getCommercialProducts", [
 				linkedProductIds,
 			]);
 			const notAddedCommercialProducts = commercialProducts.filter(
 				cp => !this.addedProductsIds.includes(cp.Id)
 			);
-			this.setState({ commercialProducts: notAddedCommercialProducts });
+			this.setState({ commercialProducts: notAddedCommercialProducts }, () => {
+				this.props.toggleFrameAgreementOperations(false);
+			});
 		}
 	}
 
@@ -134,9 +136,7 @@ class ProductModal extends Component {
 	}
 
 	toggleExpanded() {
-		this.setState({ expanded: !this.state.expanded }, () => {
-			console.log('Expand:', this.state.expanded);
-		});
+		this.setState({ expanded: !this.state.expanded });
 	}
 
 	selectProduct(product) {
@@ -156,7 +156,6 @@ class ProductModal extends Component {
 				this.setState({
 					actionTaken: true
 				});
-				console.log(this.state.selected);
 			}
 		);
 	}
@@ -193,6 +192,7 @@ class ProductModal extends Component {
 			filter: this.isPsEnabled ? this.state.filter : this.initFilterData(),
 			commercialProducts: this.notAddedCommercialProducts
 		});
+		this.categoryId = '';
 	}
 
 	async applyFilter() {
@@ -226,7 +226,6 @@ class ProductModal extends Component {
 	}
 
 	toggleCategoryCollapse(name) {
-		console.log('Toggling ', name);
 		this.setState(
 			{
 				filter: {
@@ -236,9 +235,6 @@ class ProductModal extends Component {
 						open: !this.state.filter[name].open
 					}
 				}
-			},
-			() => {
-				console.log(this.state.filter[name]);
 			}
 		);
 	}
@@ -248,7 +244,14 @@ class ProductModal extends Component {
 			return (<ul>
 				{this.state.filter.length ? this.state.filter.map(category => {
 					return (
-						<div className="fa-modal-product-list-categories">
+						<div
+							className={
+								"fa-modal-product-list-categories" +
+								(this.categoryId === category.id
+									? " selected"
+									: "")
+							}
+						>
 							<li
 								key={category.id}
 								onClick={async () =>
@@ -485,7 +488,10 @@ class ProductModal extends Component {
 					<button
 						onClick={this.addProducts}
 						className="fa-button fa-button--brand"
-						disabled={!this.state.actionTaken}
+						disabled={
+							!this.state.actionTaken ||
+							this.props.disableFrameAgreementOperations
+						}
 					>
 						{window.SF.labels.modal_categorization_btn_add}
 					</button>
@@ -499,12 +505,14 @@ const mapStateToProps = state => {
 	return {
 		productFields: state.productFields,
 		settings: state.settings,
-		commercialProducts: state.commercialProducts
+		commercialProducts: state.commercialProducts,
+		disableFrameAgreementOperations: state.disableFrameAgreementOperations
 	};
 };
 
 const mapDispatchToProps = {
-	filterCommercialProducts
+	filterCommercialProducts,
+	toggleFrameAgreementOperations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductModal);

@@ -43,6 +43,7 @@ class FaModals extends React.Component {
 		this.onBulkNegotiateAddons = this.onBulkNegotiateAddons.bind(this);
 		this.onAddOffers = this.onAddOffers.bind(this);
 		this.onBulkNegotiateOffers = this.onBulkNegotiateOffers.bind(this);
+		this.onCloseCreateOfferModal = this.onCloseCreateOfferModal.bind(this);
 	}
 
 	componentWillUnmount() {
@@ -165,8 +166,12 @@ class FaModals extends React.Component {
 	}
 
 	onCloseModal() {
-		this.props.onCloseFaOffer();
 		this.props.toggleModals();
+	}
+
+	onCloseCreateOfferModal() {
+		this.props.onCloseFaOffer();
+		this.onCloseModal();
 	}
 
 	render() {
@@ -295,7 +300,7 @@ class FaModals extends React.Component {
 					faId={this.props.faId}
 					attachment={this.props.frameAgreements[this.props.faId]._ui.attachment}
 					onAddProducts={this.onAddProducts}
-					onCloseModal={this.onCloseModal}
+					onCloseModal={this.onCloseCreateOfferModal}
 					faOfferId={this.props.editFaOffer}
 				/>
 			);

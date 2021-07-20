@@ -28,6 +28,7 @@ class DeltaModal extends Component {
 		this.switchAgreements = this.switchAgreements.bind(this);
 		this.calculateDelta = this.calculateDelta.bind(this);
 
+		this.isPsEnabled = props.settings.FACSettings.isPsEnabled;
 		this.state = {
 			deltaView: false,
 			loaded: false,
@@ -224,7 +225,10 @@ class DeltaModal extends Component {
 			delete _faLite._ui;
 			delete _faLite.csconta__Account__r;
 			_faLite.products = deleteAllowance(fa._ui.attachment.products || []);
-			_faLite.offers = deleteAllowance(fa._ui.attachment.offers || []);
+
+			if (this.isPsEnabled) {
+				_faLite.offers = deleteAllowance(fa._ui.attachment.offers || []);
+			}
 		} catch (err) {}
 		return _faLite;
 	}
@@ -429,7 +433,8 @@ const mapStateToProps = state => {
 		frameAgreements: state.frameAgreements,
 		commercialProducts: state.commercialProducts,
 		offers: state.offers,
-		offersLoaded: state.initialised.of_loaded
+		offersLoaded: state.initialised.of_loaded,
+		settings: state.settings
 	};
 };
 

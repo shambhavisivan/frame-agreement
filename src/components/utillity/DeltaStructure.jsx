@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Collapse } from 'react-collapse';
 import moment from 'moment';
-
+import { connect } from 'react-redux';
 import { truncateCPField, isNumber, getFieldLabel, copy } from '~/src/utils/shared-service';
 import NumberFormat from '~/src/components/negotiation/NumberFormat';
 import Icon from './Icon';
@@ -301,6 +301,7 @@ class DeltaStructure extends Component {
 
 		this.getLabel = this.getLabel.bind(this);
 		this.renderProductDetails = this.renderProductDetails.bind(this);
+		this.isPsEnabled = props.settings.FACSettings.isPsEnabled;
 
 		this.state = {
 			open: {}
@@ -388,8 +389,11 @@ class DeltaStructure extends Component {
 		}
 
 		let _products = this.props.data._products;
-		let _offers = this.props.data._offers;
+		let _offers;
 
+		if (this.isPsEnabled) {
+			_offers = this.props.data._offers;
+		}
 		let _faFields = copy(this.props.data);
 		delete _faFields._products;
 		delete _faFields._addons;
@@ -436,4 +440,10 @@ class DeltaStructure extends Component {
 	}
 }
 
-export default DeltaStructure;
+const mapStateToProps = state => {
+	return {
+		settings: state.settings
+	};
+};
+
+export default connect(mapStateToProps)(DeltaStructure);

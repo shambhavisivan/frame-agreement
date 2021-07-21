@@ -12,7 +12,8 @@ import {
 	validateAddons,
 	validateProduct,
 	validateCharges,
-	validateRateCardLines
+	validateRateCardLines,
+	CP_VALIDATION
 } from '../utils/validation-service';
 
 const initialState = {
@@ -508,6 +509,9 @@ const rootReducer = (state = initialState, action) => {
 							frameAgreementStatus: _fa.csconta__Status__c,
 							facApprovedStatus: state.settings.FACSettings.statuses.approved_status
 						});
+					} else {
+						// In case the prgId in standard price rule book is removed or modfied, this would ensure legacy charges are loaded
+						bulkValidation[cp.Id].product = CP_VALIDATION;
 					}
 				});
 
@@ -565,6 +569,9 @@ const rootReducer = (state = initialState, action) => {
 							frameAgreementStatus: _fa.csconta__Status__c,
 							facApprovedStatus: state.settings.FACSettings.statuses.approved_status
 						});
+					} else {
+						// In case the prgId in standard price rule book is removed or modfied, this would ensure legacy charges are loaded
+						bulkValidationOffers[offer.Id].product = CP_VALIDATION;
 					}
 				});
 

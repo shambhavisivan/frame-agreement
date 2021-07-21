@@ -2,6 +2,11 @@
 import { log } from './shared-service';
 // FALSE means valid
 
+export const CP_VALIDATION = {
+	oneOff: false,
+	recurring: false
+};
+
 const getMinValue = (value, discount, type) => {
 	let returnValue = 0;
 	if (type === 'Percentage') {
@@ -155,10 +160,7 @@ export const validateProduct = (data, initialFrameAgreementData, status) => {
     */
 	let validation = window.SF.getAuthLevels();
 
-	let errataMap = {
-		oneOff: false,
-		recurring: false
-	};
+	let errataMap = CP_VALIDATION;
 
 	if (!data.authLevel) {
 		return errataMap;

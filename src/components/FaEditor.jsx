@@ -83,6 +83,7 @@ export class FaEditor extends Component {
 		this.onSelectAllOffers = this.onSelectAllOffers.bind(this);
 		this.onRemoveOffers = this.onRemoveOffers.bind(this);
 		this.setActiveTabIndex = this.setActiveTabIndex.bind(this);
+		this.isPsEnabled = props.settings.FACSettings.isPsEnabled;
 
 		// ****************************************** API ******************************************
 		window.FAM.api.getActiveFrameAgreement = () =>
@@ -372,84 +373,86 @@ export class FaEditor extends Component {
 						}
 					}
 
-					let offerIdsToLoad = Object.keys(resp_attachment.offers || {});
+					if (this.isPsEnabled) {
+						let offerIdsToLoad = Object.keys(resp_attachment.offers || {});
 
-					for (var key in resp_attachment.offers) {
-						resp_attachment.offers[key] = resp_attachment.offers[key] || {};
-					}
-
-					if (offerIdsToLoad.length) {
-						// Check if any offers have been deleted
-						let _offerIdsToLoadSet = new Set(offerIdsToLoad);
-						let _filteredOfferIdList = [];
-
-						if (!this.props.offersLoaded) {
-							await this.props.getOffers();
+						for (var key in resp_attachment.offers) {
+							resp_attachment.offers[key] = resp_attachment.offers[key] || {};
 						}
 
-						this.props.offers.forEach(offer => {
-							if (_offerIdsToLoadSet.has(offer.Id)) {
-								_offerIdsToLoadSet.delete(offer.Id);
-								_filteredOfferIdList.push(offer.Id);
+						if (offerIdsToLoad.length) {
+							// Check if any offers have been deleted
+							let _offerIdsToLoadSet = new Set(offerIdsToLoad);
+							let _filteredOfferIdList = [];
+
+							if (!this.props.offersLoaded) {
+								await this.props.getOffers();
 							}
-						});
 
-						let offerReplacementData = {};
-						if (
-							_offerIdsToLoadSet.size &&
-							!isMaster(this.props.frameAgreements[this.faId]) &&
-							this.props.frameAgreements[this.faId].csconta__Status__c !==
-								this.props.settings.FACSettings.statuses.active_status
-						) {
-							this.props.createToast(
-								'warning',
-								window.SF.labels.toast_invalid_offer_title,
-								window.SF.labels.toast_invalid_offer,
-								3000
-							);
+							this.props.offers.forEach(offer => {
+								if (_offerIdsToLoadSet.has(offer.Id)) {
+									_offerIdsToLoadSet.delete(offer.Id);
+									_filteredOfferIdList.push(offer.Id);
+								}
+							});
 
-							log.orange(
-								'These offers cannot be found in getOffers response:',
-								Array.from(_offerIdsToLoadSet)
-							);
-							this.props.createToast(
-								'info',
-								window.SF.labels.toast_search_replacement_offer_title,
-								window.SF.labels.toast_search_replacement_offer,
-								5000
-							);
+							let offerReplacementData = {};
+							if (
+								_offerIdsToLoadSet.size &&
+								!isMaster(this.props.frameAgreements[this.faId]) &&
+								this.props.frameAgreements[this.faId].csconta__Status__c !==
+									this.props.settings.FACSettings.statuses.active_status
+							) {
+								this.props.createToast(
+									'warning',
+									window.SF.labels.toast_invalid_offer_title,
+									window.SF.labels.toast_invalid_offer,
+									3000
+								);
 
-							offerReplacementData = await findReplacementCommercialProduct([..._offerIdsToLoadSet]);
+								log.orange(
+									'These offers cannot be found in getOffers response:',
+									Array.from(_offerIdsToLoadSet)
+								);
+								this.props.createToast(
+									'info',
+									window.SF.labels.toast_search_replacement_offer_title,
+									window.SF.labels.toast_search_replacement_offer,
+									5000
+								);
+
+								offerReplacementData = await findReplacementCommercialProduct([..._offerIdsToLoadSet]);
+							}
+
+							if (Object.keys(offerReplacementData).length) {
+								// get replacement data as well
+								_filteredOfferIdList = [
+									...new Set([
+										..._filteredOfferIdList,
+										...Object.values(offerReplacementData).map(offer => offer.new_cp.Id)
+									])
+								];
+							}
+
+							// Get data for offer products
+							await this.props.getOfferData(_filteredOfferIdList);
+							await this.props.addOffersToFa(this.faId, _filteredOfferIdList);
+
+							if (Object.keys(offerReplacementData).length) {
+								// offerReplacementData contains info about which addons and rc old offer was attached to
+								await this.props.replaceOfferEntities(this.faId, offerReplacementData);
+
+								await window.SF.invokeAction('saveAttachment', [
+									this.faId,
+									JSON.stringify(this.props.frameAgreements[this.faId]._ui.attachment)
+								]);
+							}
 						}
 
-						if (Object.keys(offerReplacementData).length) {
-							// get replacement data as well
-							_filteredOfferIdList = [
-								...new Set([
-									..._filteredOfferIdList,
-									...Object.values(offerReplacementData).map(offer => offer.new_cp.Id)
-								])
-							];
-						}
+						const faOfferIdsToLoad = Object.keys(resp_attachment.faOffers?.offerIdsCharges || {});
 
-						// Get data for offer products
-						await this.props.getOfferData(_filteredOfferIdList);
-						await this.props.addOffersToFa(this.faId, _filteredOfferIdList);
-
-						if (Object.keys(offerReplacementData).length) {
-							// offerReplacementData contains info about which addons and rc old offer was attached to
-							await this.props.replaceOfferEntities(this.faId, offerReplacementData);
-
-							await window.SF.invokeAction('saveAttachment', [
-								this.faId,
-								JSON.stringify(this.props.frameAgreements[this.faId]._ui.attachment)
-							]);
-						}
+						await this.props.addFaOffersToFa(this.faId, faOfferIdsToLoad);
 					}
-
-					const faOfferIdsToLoad = Object.keys(resp_attachment.faOffers?.offerIdsCharges || {});
-
-					await this.props.addFaOffersToFa(this.faId, faOfferIdsToLoad);
 
 					return;
 				})

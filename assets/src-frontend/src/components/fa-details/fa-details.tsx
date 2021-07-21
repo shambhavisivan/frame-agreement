@@ -7,17 +7,11 @@ import {
 	CSCard,
 	CSCardHeader,
 	CSCardBody,
-	CSTextarea,
 	CSButton,
-	CSButtonGroup,
-	CSTable,
-	CSTableBody,
-	CSTableCell,
-	CSTableHeader,
-	CSTableRow,
 	CSDropdown,
 	CSInputSearch
 } from '@cloudsense/cs-ui-components';
+import { ApprovalProcess } from './approval';
 
 interface FrameAgreementDetailsProps {
 	agreementId: string;
@@ -33,66 +27,7 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 		<div className="details-wrapper">
 			<LoadingFallback status={faStatus}>
 				<div className="field-wrapper"> </div>
-				<CSCard className="approval-history-wrapper">
-					<CSCardHeader title="Approval history" collapsible defaultClosed>
-						<CSButton
-							label="Refresh button"
-							labelHidden
-							btnType="transparent"
-							btnStyle="brand"
-							iconName="refresh"
-							size="small"
-						/>
-					</CSCardHeader>
-					<CSCardBody padding="0.75rem 0 0">
-						<CSTextarea
-							label="Comment"
-							placeholder="Enter comment..."
-							borderRadius="0.25rem"
-						/>
-						<CSButtonGroup ariaDescription="approval actions">
-							<CSButton label="Recall" iconName="undo" />
-							<CSButton label="Approve" iconName="like" />
-							<CSButton label="Reject" iconName="dislike" />
-						</CSButtonGroup>
-						<CSTable selectableRows>
-							<CSTableHeader>
-								<CSTableCell text="Action" grow={2} />
-								<CSTableCell text="Date" grow={1} />
-								<CSTableCell text="Status" grow={1} />
-								<CSTableCell text="Assigned to" grow={1} />
-								<CSTableCell text="Actual Approver" grow={1} />
-								<CSTableCell text="Comments" grow={1} />
-							</CSTableHeader>
-							<CSTableBody>
-								<CSTableRow>
-									<CSTableCell text="Step1" grow={2} />
-									<CSTableCell text="03/05/2019 12:20" grow={1} />
-									<CSTableCell text="Pending" grow={1} />
-									<CSTableCell text="International - Platinum/Gold" grow={1} />
-									<CSTableCell text="International - Platinum/Gold" grow={1} />
-									<CSTableCell text="Submitted frame agreement" grow={1} />
-								</CSTableRow>
-								<CSTableRow>
-									<CSTableCell text="Step1" grow={2} />
-									<CSTableCell text="03/05/2019 12:20" grow={1} />
-									<CSTableCell text="Pending" grow={1} />
-									<CSTableCell text="International - Platinum/Gold" grow={1} />
-									<CSTableCell text="International - Platinum/Gold" grow={1} />
-									<CSTableCell text="Submitted frame agreement" grow={1} />
-								</CSTableRow>
-								<CSTableRow>
-									<CSTableCell text="Step1" grow={2} />
-									<CSTableCell text="03/05/2019 12:20" grow={1} />
-									<CSTableCell text="Pending" grow={1} />
-									<CSTableCell text="International - Platinum/Gold" grow={1} />
-									<CSTableCell text="International - Platinum/Gold" grow={1} />
-									<CSTableCell text="Submitted frame agreement" grow={1} />
-								</CSTableRow>
-							</CSTableBody>
-						</CSTable>
-					</CSCardBody>
-				</CSCard>
+				<ApprovalProcess faId={agreementId} />
 				Agreement ID: {agreementId}, name: {agreement?.name}
 				<CSCard className="products-search-wrapper">
 					<CSCardHeader title="">

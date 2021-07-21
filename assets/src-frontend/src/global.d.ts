@@ -215,6 +215,19 @@ namespace SfGlobal {
 		alert_deleteAgreements_title: string;
 		btn_DeleteAgreements: string;
 		filter_text_warning_message: string;
+		approval_action_approve: string;
+		approval_action_reassign: string;
+		approval_action_recall: string;
+		approval_action_reject: string;
+		approval_message_placeholder: string;
+		approval_message_title: string;
+		approval_table_header_action: string;
+		approval_table_header_actualApprover: string;
+		approval_table_header_assignedTo: string;
+		approval_table_header_comments: string;
+		approval_table_header_date: string;
+		approval_table_header_status: string;
+		approval_title: string;
 	}
 	export interface SfdcProcessInstanceHistory {
 		ProcessInstanceId: string;

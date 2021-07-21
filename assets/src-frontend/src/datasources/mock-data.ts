@@ -667,6 +667,19 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	alert_deleteAgreements_message: 'Are you sure you want to delete selected agreement(s)?',
 	alert_deleteAgreements_title: 'Delete agreement(s)',
 	btn_DeleteAgreements: 'Delete',
-	filter_text_warning_message: 'Enter atleast 3 or more characters to begin search.'
+	filter_text_warning_message: 'Enter atleast 3 or more characters to begin search.',
+	approval_action_approve: 'Approve',
+	approval_action_reassign: 'Reassign',
+	approval_action_recall: 'Recall',
+	approval_action_reject: 'Reject',
+	approval_message_placeholder: 'Enter comment...',
+	approval_message_title: 'Comment',
+	approval_table_header_action: 'Action',
+	approval_table_header_actualApprover: 'Actual Approver',
+	approval_table_header_assignedTo: 'Assigned to',
+	approval_table_header_comments: 'Comments',
+	approval_table_header_date: 'Date',
+	approval_table_header_status: 'Status',
+	approval_title: 'Approval history'
 };
 /* eslint-enable */

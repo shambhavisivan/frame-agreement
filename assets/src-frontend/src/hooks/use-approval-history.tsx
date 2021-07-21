@@ -1,4 +1,5 @@
 import { QueryStatus, useQuery } from 'react-query';
+import { RefetchOptions } from 'react-query/types/core/query';
 import { ApprovalHistory, remoteActions } from '../datasources';
 
 export function useApprovalHistory(
@@ -6,13 +7,17 @@ export function useApprovalHistory(
 ): {
 	status: QueryStatus;
 	approvals: ApprovalHistory | undefined;
+	refetchApprovalHistory: (
+		options?: RefetchOptions | undefined
+	) => Promise<ApprovalHistory | undefined>;
 } {
-	const { status, data } = useQuery(['approvalHistory', faId], () =>
+	const { status, data, refetch } = useQuery(['approvalHistory', faId], () =>
 		remoteActions.getApprovalHistory(faId)
 	);
 
 	return {
 		status,
-		approvals: data
+		approvals: data,
+		refetchApprovalHistory: refetch
 	};
 }

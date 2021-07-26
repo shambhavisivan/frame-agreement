@@ -1680,8 +1680,11 @@ global with sharing class FrameRateManagerController {
 				rc.cspmb__effective_start_date__c != null && date.today() < rc.cspmb__effective_start_date__c;
 			Boolean end_invalid =
 				rc.cspmb__effective_end_date__c != null && date.today() > rc.cspmb__effective_end_date__c;
+			Boolean invalid_range = (rc.cspmb__effective_start_date__c != null &&
+				rc.cspmb__effective_end_date__c != null &&
+				rc.cspmb__effective_start_date__c == rc.cspmb__effective_end_date__c);
 
-			if (!(start_invalid || end_invalid)) {
+			if (!(start_invalid || end_invalid || invalid_range)) {
 				List<cspmb__Rate_Card_Line__c> rclList = new List<cspmb__Rate_Card_Line__c>();
 
 				if (rcId_rateCardLineList.containsKey(rc.Id)) {
@@ -1701,9 +1704,11 @@ global with sharing class FrameRateManagerController {
 					prId_RateCards.put(cpId, new List<RateCard>());
 				}
 
-				List<RateCard> tempRcList = prId_RateCards.get(cpId);
-				tempRcList.add(rc);
-				prId_RateCards.put(cpId, tempRcList);
+				if (rc.rateCardLines != null && !rc.rateCardLines.isEmpty()) {
+					List<RateCard> tempRcList = prId_RateCards.get(cpId);
+					tempRcList.add(rc);
+					prId_RateCards.put(cpId, tempRcList);
+				}
 
 			}
 

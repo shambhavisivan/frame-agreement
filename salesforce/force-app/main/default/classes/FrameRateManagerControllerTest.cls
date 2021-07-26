@@ -242,6 +242,16 @@ private class FrameRateManagerControllerTest {
 			cspmb__effective_end_date__c = Date.today().addDays(-3)
 		);
 		insert rcl6;
+		cspmb__Rate_Card_Line__c rcl7 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc.id,
+			name = 'testrcl7',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit',
+			cspmb__effective_start_date__c = Date.today(),
+			cspmb__effective_end_date__c = Date.today()
+		);
+		insert rcl7;
 		cspmb__Price_Item_Rate_Card_Association__c pirc = new cspmb__Price_Item_Rate_Card_Association__c(
 			cspmb__rate_card__c = rc.id,
 			cspmb__price_item__c = cp_1.id

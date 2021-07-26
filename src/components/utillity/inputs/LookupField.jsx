@@ -250,7 +250,12 @@ class LookupField extends React.Component {
 	// **************************************************************
 
 	selectRecord(record) {
-		this._setState({ selected: record });
+		let updatedRecord = record;
+
+		if (this.state.selected.Id === record.Id) {
+			updatedRecord = {};
+		}
+		this._setState({ selected: updatedRecord });
 	}
 
 	pagesToLoad(newPage) {

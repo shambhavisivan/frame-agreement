@@ -67,15 +67,13 @@ export class FaTabs extends React.Component {
 				)}
 				{FACSettings.isPsEnabled ? (
 					<Tab label={window.SF.labels.offers_tab_title}>
-						{this.props.loading ? (
-							<CommercialProductSkeleton count={5} />
-						) : (
-							<React.Fragment>
-								{this.props.defaultTabs?.offers}
-							</React.Fragment>
-						)}
+						<React.Fragment>
+							{this.props.defaultTabs?.offers}
+						</React.Fragment>
 					</Tab>
-				) : <div></div>}
+				) : (
+					<div></div>
+				)}
 
 				{_tabs.map((tab) => {
 					return (

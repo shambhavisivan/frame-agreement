@@ -80,7 +80,9 @@ class FaOffersTab extends Component {
 			) &&
 			this.props.cpsLoaded;
 
-		if (!isFaCatalogueLinked) {
+		if (!this.props.cpsLoaded) {
+			faOffers = <CommercialProductSkeleton count={5} />
+		} else if (!isFaCatalogueLinked) {
 			faOffers = (
 				<div>
 					<div className="add-product-box">

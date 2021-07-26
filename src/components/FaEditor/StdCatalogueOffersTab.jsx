@@ -16,6 +16,7 @@ import {
 import { toggleFieldVisibility, getOffers } from "~/src/actions";
 
 import AddOfferCTA from "./AddOfferCTA";
+import CommercialProductSkeleton from "../skeletons/CommercialProductSkeleton";
 
 class StdCatalogueOffersTab extends React.Component {
 	constructor(props) {
@@ -85,7 +86,9 @@ class StdCatalogueOffersTab extends React.Component {
 			) &&
 			this.props.offersLoaded;
 
-		if (_offers.length) {
+		if (!this.props.offersLoaded) {
+			offers = <CommercialProductSkeleton count={5} />
+		} else if (_offers.length) {
 			offers = (
 				<div className="products-card__inner">
 					<div className="products-card__header">

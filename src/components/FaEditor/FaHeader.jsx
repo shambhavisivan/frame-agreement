@@ -69,6 +69,15 @@ class FaHeader extends React.Component {
 	}
 
 	async onSubmitForApproval() {
+
+		if (!this.props.settings.FACSettings.approvalProcessName) {
+			this.props.createToast(
+				"error",
+				window.SF.labels.toast_submitForApproval_config_error,
+				window.SF.labels.toast_submitForApproval_config_errorMsg
+			);
+			return;
+		}
 		await this.upsertFrameAgreements(true);
 		await publish('onBeforeSubmit');
 

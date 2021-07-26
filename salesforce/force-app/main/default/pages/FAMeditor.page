@@ -371,6 +371,8 @@
 			  "toast_invalid_handler": "{!$Label.toast_invalid_handler}",
 			  "toast_invalid_handler_title": "{!$Label.toast_invalid_handler_title}",
 			  "toast_saved_fa": "{!$Label.toast_saved_fa}",
+			  "toast_submitForApproval_config_error": "{!$Label.toast_submitForApproval_config_error}",
+			  "toast_submitForApproval_config_errorMsg": "{!$Label.toast_submitForApproval_config_errorMsg}",
 			  "toast_submitForApproval_failed": "{!$Label.toast_submitForApproval_failed}",
 			  "toast_submitForApproval_success": "{!$Label.toast_submitForApproval_success}",
 			  "toast_success_title": "{!$Label.toast_success_title}",

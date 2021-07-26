@@ -552,6 +552,7 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('fa_editable_statuses', facSettings.get('fa_editable_statuses__c'));
 		settingMap.put('dispatcherServiceUrl', facSettings.dispatcher_service_url__c);
 		settingMap.put('isPsEnabled', facSettings.is_ps_enabled__c);
+		settingMap.put('approvalProcessName', facSettings.approval_process_name__c);
 
 		Map<String, Object> statuses = new Map<String, Object>();
 		statuses.put('active_status', facSettings.get('active_status__c'));

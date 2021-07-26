@@ -1415,6 +1415,20 @@
         <value>Unable to start approval process.</value>
     </labels>
     <labels>
+        <fullName>toast_submitForApproval_config_error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_submitForApproval_config_error</shortDescription>
+        <value>Approval Process not configured</value>
+    </labels>
+    <labels>
+        <fullName>toast_submitForApproval_config_errorMsg</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>toast_submitForApproval_config_errorMsg</shortDescription>
+        <value>Kindly configure in FAC Settings</value>
+    </labels>
+    <labels>
         <fullName>toast_submitForApproval_success</fullName>
         <language>en_US</language>
         <protected>true</protected>

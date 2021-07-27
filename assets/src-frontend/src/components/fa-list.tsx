@@ -183,7 +183,7 @@ export function FrameAgreementList(): ReactElement {
 								);
 							}
 						})}
-						<CSTableCell className="column-chooser-placeholder" maxWidth="2.625rem" />
+						<CSTableCell className="column-chooser-placeholder" maxWidth="2.5rem" />
 					</CSTableRow>
 				</div>
 			);

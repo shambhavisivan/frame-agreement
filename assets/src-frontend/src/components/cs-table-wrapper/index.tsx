@@ -61,7 +61,7 @@ export function CsTableWrapper(props: CSTableProps): ReactElement {
 		<div>
 			<CSTable data-testid={'cs-table'}>
 				<CSTableHeader>
-					<CSTableCell className="row-editor-placeholder" maxWidth="2.625rem" />
+					<CSTableCell className="row-editor-placeholder" maxWidth="2.75rem" />
 					{columnMetadata.map((column) => {
 						return <CSTableCell key={column.fieldLabel} text={column.fieldLabel} />;
 					})}

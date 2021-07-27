@@ -60,11 +60,15 @@ body {
 
 .cs-app-wrapper .cs-main-header {
 	box-shadow: none;
+	padding: 1rem 0;
+
+	.cs-main-header-inner {
+		padding: 0 0.75rem;
+	}
 }
 
 .table-wrapper {
-	// cs-table component is not visible need ui support for now changed property.
-	overflow-y: visible;
+	overflow-y: auto;
 	flex: 1 1 0;
 	@include sbg(--table-bg);
 
@@ -86,8 +90,8 @@ body {
 		}
 
 		.cs-table-header {
-			top: 4.5625rem; /* Change back to 0 when overflow issue is fixed on table wrapper */
 			position: sticky;
+			top: 0;
 			margin: 0 -2px;
 
 			.cs-table-cell {

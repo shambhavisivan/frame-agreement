@@ -2138,10 +2138,7 @@ global with sharing class FrameRateManagerController {
 		List<String> conjoined_fields = new List<String>();
 		conjoined_fields.addAll(FA_FIELDS);
 		conjoined_fields.addAll(getFieldsFromJSONData());
-		List<String> allFAFields =
-			new List<String>(
-				Schema.getGlobalDescribe().get('csconta__Frame_Agreement__c').getDescribe().fields.getMap().keySet()
-			);
+		List<String> allFAFields = AppUtilService.getFAFieldList();
 		csutil__JSON_Data__c cloneFieldsSetting = getJsonData('FA-Clone');
 		List<String> fieldsToAdd = new List<String>();
 

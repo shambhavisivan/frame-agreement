@@ -97,4 +97,27 @@ private class FrameAgreementServiceTest {
 			System.assertNotEquals(faInDb.get(2).Id, fa.Id);
 		}
 	}
+
+	@isTest
+	static void shouldQueryAllFieldsOfAgreements() {
+		Account account = [select id from account limit 1];
+		List<csconta__Frame_Agreement__c> faInDb = [
+			select id
+			from csconta__Frame_Agreement__c
+		];
+
+		Test.startTest();
+		List<csconta__Frame_Agreement__c> faList = FrameAgreementService.getFrameAgreements(
+			account.Id, null, null, null
+		);
+		Test.stopTest();
+
+		System.assertEquals(faInDb.size(), faList.size());
+
+		System.assertEquals(
+			faList.get(0).OwnerId,
+			UserInfo.getUserId(),
+			'OwnerId and other standard fields will be queried as we use SObject describe in SOQL'
+			);
+	}
 }

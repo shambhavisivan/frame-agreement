@@ -228,6 +228,7 @@ namespace SfGlobal {
 		approval_table_header_date: string;
 		approval_table_header_status: string;
 		approval_title: string;
+		btn_Delta: string;
 	}
 	export interface SfdcProcessInstanceHistory {
 		ProcessInstanceId: string;

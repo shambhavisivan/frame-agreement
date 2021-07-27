@@ -680,6 +680,7 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	approval_table_header_comments: 'Comments',
 	approval_table_header_date: 'Date',
 	approval_table_header_status: 'Status',
-	approval_title: 'Approval history'
+	approval_title: 'Approval history',
+	btn_Delta: 'Show Delta'
 };
 /* eslint-enable */

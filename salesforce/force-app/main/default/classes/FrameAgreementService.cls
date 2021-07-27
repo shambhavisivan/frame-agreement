@@ -37,11 +37,10 @@ public class FrameAgreementService {
 			index++;
 		}
 
-		List<String> faFields = new List<String>();
-		faFields.addAll(FrameRateManagerController.FA_FIELDS);
-		faFields.addAll(FrameRateManagerController.getFieldsFromJSONData());
+		// as we have the column-chooser we let users to select the fields they require.
+		List<String> allFAFields = AppUtilService.getFAFieldList();
 
-		String query = 'select ' + String.join(faFields, ', ');
+		String query = 'select ' + String.join(allFAFields, ', ');
 		query += ' from csconta__Frame_Agreement__c';
 		query += ' where csconta__Account__c = :accountId';
 

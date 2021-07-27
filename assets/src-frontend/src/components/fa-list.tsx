@@ -184,6 +184,50 @@ export function FrameAgreementList(): ReactElement {
 							}
 						})}
 						<CSTableCell className="column-chooser-placeholder" maxWidth="2.5rem" />
+						<CSTableCell className="column-chooser-placeholder" maxWidth="2.625rem" />
+						<CSTableCell className="column-chooser-placeholder" maxWidth="2.625rem">
+							{fa.replacedFrameAgreement && (
+								<CSDropdown
+									align="right"
+									mode="custom"
+									position="top"
+									iconName="change_record_type"
+									padding="0"
+								>
+									<CSTable>
+										<CSTableHeader>
+											<CSTableCell text="Previous Versions" />
+											<CSTableCell text="Effective Start Date" />
+											<CSTableCell text="Action" />
+										</CSTableHeader>
+										<CSTableBody>
+											{Object.values(groupedAgreements)
+												.flat()
+												.filter(
+													(faVal) =>
+														faVal.id === fa.replacedFrameAgreement
+												)
+												.map((agreement) => (
+													<CSTableRow>
+														<CSTableCell>
+															{agreement.agreementName}
+														</CSTableCell>
+														<CSTableCell>
+															{agreement.effectiveStartDate}
+														</CSTableCell>
+														<CSTableCell>
+															<CSButton
+																label={labels.btnDelta}
+																btnStyle={'brand'}
+															/>
+														</CSTableCell>
+													</CSTableRow>
+												))}
+										</CSTableBody>
+									</CSTable>
+								</CSDropdown>
+							)}
+						</CSTableCell>
 					</CSTableRow>
 				</div>
 			);

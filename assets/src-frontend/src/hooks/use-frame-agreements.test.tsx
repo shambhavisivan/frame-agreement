@@ -57,6 +57,7 @@ describe('test useFrameAgremments hook', () => {
 						name: 'Test Account',
 						id: '0011t00000DSEtnAAH'
 					},
+					agreementName: 'Frame Agreement - Test #1',
 					status: 'Draft',
 					validFrom: 1547424000000,
 					validTo: 1568419200000,
@@ -64,47 +65,59 @@ describe('test useFrameAgremments hook', () => {
 					disableCustomTabs: false,
 					arbFieldInteger: 48,
 					arbFieldText: 'Arb Text',
-					agreementName: 'Frame Agreement - Test #1',
 					arbFieldDate: 1547510400000,
 					arbFieldText2: 'Arb Text 2 - change 2',
 					arbFieldText3: 'Arb Text 3 - change 1',
-					replacedFrameAgreement: 'a1t1t000000EOuxAAG',
+					replacedFrameAgreement: 'a1t1t0000009wpQAAP',
+					agreementLevel: 'Master Agreement',
+					arbFieldTextarea:
+						'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
+				}
+			],
+			Active: [
+				{
+					id: 'a1t1t0000009wpQAAP',
+					name: 'AGR-0007',
+					account: {
+						name: 'Test Account',
+						id: '0011t00000DSEtnAAH'
+					},
+					agreementName: 'Frame Agreement - Test #1 replaced',
+					status: 'Active',
+					validFrom: 1547424000000,
+					validTo: 1568419200000,
+					disableLevels: false,
+					disableCustomTabs: false,
+					arbFieldInteger: 48,
+					arbFieldText: 'Arb Text',
+					arbFieldDate: 1547510400000,
+					arbFieldText2: 'Arb Text 2 - change 2',
+					arbFieldText3: 'Arb Text 3 - change 1',
 					agreementLevel: 'Master Agreement',
 					arbFieldTextarea:
 						'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
 				},
 				{
-					id: 'a1t1t000000EyqiAAC',
-					name: 'AGR-010263',
-					lastModifiedDate: 1572279423000,
+					id: 'a1t1t0000009wpQAzx',
+					name: 'AGR-0007',
 					account: {
 						name: 'Test Account',
-						id: '0011t00000Pq1WRAAZ'
+						id: '0011t00000DSEtnAAH'
 					},
-					agreementName: 'Delta Test 1',
-					status: 'Draft',
-					frameAgreementNumber: '010263',
-					agreementLevel: 'Frame Agreement',
+					agreementName: 'Frame Agreement - Test #1',
+					status: 'Active',
+					validFrom: 1547424000000,
+					validTo: 1568419200000,
+					disableLevels: false,
+					disableCustomTabs: false,
+					arbFieldInteger: 48,
 					arbFieldText: 'Arb Text',
-					arbFormula: 'Arb Text TESTING TESTING',
-					arbFieldBool: true
-				}
-			],
-			'Requires Approval': [
-				{
-					id: 'a1t1t000000EyqnAAC',
-					name: 'AGR-010264',
-					lastModifiedDate: 1571917299000,
-					account: {
-						name: 'Test Account',
-						id: '0011t00000Pq1WRAAZ'
-					},
-					agreementName: 'Delta Test 2',
-					status: 'Requires Approval',
-					frameAgreementNumber: '010264',
-					agreementLevel: 'Frame Agreement',
-					arbFormula: 'TESTING TESTING',
-					arbFieldBool: true
+					arbFieldDate: 1547510400000,
+					arbFieldText2: 'Arb Text 2 - change 2',
+					arbFieldText3: 'Arb Text 3 - change 1',
+					agreementLevel: 'Master Agreement',
+					arbFieldTextarea:
+						'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
 				}
 			]
 		};

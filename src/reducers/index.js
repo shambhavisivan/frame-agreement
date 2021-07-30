@@ -1676,7 +1676,7 @@ const rootReducer = (state = initialState, action) => {
 
 				if (replacementData[key].rc) {
 					replacementData[key].rc.forEach((rc) => {
-						if (_attachment.products[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)) {
+						if (_attachment.products[new_cp.Id]._rateCards?.hasOwnProperty(rc.Id)) {
 							_attachment.products[new_cp.Id]._rateCards[rc.Id] = {
 								..._attachment.products[new_cp.Id]._rateCards[rc.Id],
 								...old_rc[rc.Id]
@@ -2728,7 +2728,7 @@ const rootReducer = (state = initialState, action) => {
 				let old_rc = copy(_attachment.offers[key]._rateCards);
 
 				offerReplacementData[key].rc.forEach(rc => {
-					if (_attachment.offers[new_cp.Id]._rateCards.hasOwnProperty(rc.Id)) {
+					if (_attachment.offers[new_cp.Id]._rateCards?.hasOwnProperty(rc.Id)) {
 						_attachment.offers[new_cp.Id]._rateCards[rc.Id] = {
 							..._attachment.offers[new_cp.Id]._rateCards[rc.Id],
 							...old_rc[rc.Id]

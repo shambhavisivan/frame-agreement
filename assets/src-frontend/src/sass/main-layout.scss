@@ -124,6 +124,7 @@ body {
 		.cs-table-row {
 			margin: 0.2175rem 0;
 			box-shadow: 0 1px 2px var(--table-row-shadow);
+			background: var(--table-row-bg);
 
 			&:hover {
 				cursor: pointer;

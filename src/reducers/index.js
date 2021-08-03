@@ -511,7 +511,7 @@ const rootReducer = (state = initialState, action) => {
 						});
 					} else {
 						// In case the prgId in standard price rule book is removed or modfied, this would ensure legacy charges are loaded
-						bulkValidation[cp.Id].product = CP_VALIDATION;
+						bulkValidation[cp.Id].product = { ...CP_VALIDATION };
 					}
 				});
 
@@ -571,7 +571,7 @@ const rootReducer = (state = initialState, action) => {
 						});
 					} else {
 						// In case the prgId in standard price rule book is removed or modfied, this would ensure legacy charges are loaded
-						bulkValidationOffers[offer.Id].product = CP_VALIDATION;
+						bulkValidationOffers[offer.Id].product = { ...CP_VALIDATION };
 					}
 				});
 

@@ -1678,28 +1678,21 @@ global with sharing class FrameRateManagerController {
 			from cspmb__Rate_Card__c
 			where cspmb__is_active__c = true
 			and id in :rateCardIdList
+			and (cspmb__effective_start_date__c = null or cspmb__effective_start_date__c <= :Date.today())
+			and (cspmb__effective_end_date__c = null or cspmb__effective_end_date__c > :Date.today())
 		];
 
 		List<RateCard> rateCardModelList = new List<RateCard>();
 		for (cspmb__Rate_Card__c rc : rateCardList) {
-			Boolean start_invalid =
-				rc.cspmb__effective_start_date__c != null && date.today() < rc.cspmb__effective_start_date__c;
-			Boolean end_invalid =
-				rc.cspmb__effective_end_date__c != null && date.today() > rc.cspmb__effective_end_date__c;
-			Boolean invalid_range = (rc.cspmb__effective_start_date__c != null &&
-				rc.cspmb__effective_end_date__c != null &&
-				rc.cspmb__effective_start_date__c == rc.cspmb__effective_end_date__c);
 
-			if (!(start_invalid || end_invalid || invalid_range)) {
-				List<cspmb__Rate_Card_Line__c> rclList = new List<cspmb__Rate_Card_Line__c>();
+			List<cspmb__Rate_Card_Line__c> rclList = new List<cspmb__Rate_Card_Line__c>();
 
-				if (rcId_rateCardLineList.containsKey(rc.Id)) {
-					// get list of rate card lines for this rate card
-					rclList = rcId_rateCardLineList.get(rc.Id);
-				}
-
-				rateCardModelList.add(new RateCard(rc, rclList));
+			if (rcId_rateCardLineList.containsKey(rc.Id)) {
+				// get list of rate card lines for this rate card
+				rclList = rcId_rateCardLineList.get(rc.Id);
 			}
+
+			rateCardModelList.add(new RateCard(rc, rclList));
 		}
 		for (RateCard rc : rateCardModelList) {
 			List<Id> corespondingPriceItemIds = rateCard_priceItemMap.get(rc.Id);

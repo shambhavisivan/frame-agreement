@@ -242,18 +242,84 @@ private class FrameRateManagerControllerTest {
 			cspmb__effective_end_date__c = Date.today().addDays(-3)
 		);
 		insert rcl6;
-		cspmb__Rate_Card_Line__c rcl7 = new cspmb__Rate_Card_Line__c(
-			cspmb__rate_card__c = rc.id,
-			name = 'testrcl7',
-			cspmb__is_active__c = true,
-			cspmb__rate_value__c = 124.99,
-			cspmb__rate_card_line_unit__c = 'sample unit',
+		cspmb__Rate_Card__c rc_invalid = new cspmb__Rate_Card__c(
+			cspmb__Is_Active__c = true,
 			cspmb__effective_start_date__c = Date.today(),
 			cspmb__effective_end_date__c = Date.today()
 		);
+		insert rc_invalid;
+		cspmb__Rate_Card_Line__c rcl7 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc_invalid.id,
+			name = 'testrcl7',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit'
+		);
 		insert rcl7;
+		cspmb__Rate_Card__c rc_future = new cspmb__Rate_Card__c(
+			cspmb__Is_Active__c = true,
+			cspmb__effective_start_date__c = Date.today().addDays(1),
+			cspmb__effective_end_date__c = Date.today().addDays(5)
+		);
+		insert rc_future;
+		cspmb__Rate_Card_Line__c rcl8 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc_future.id,
+			name = 'testrcl8',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit'
+		);
+		insert rcl8;
+		cspmb__Rate_Card__c rc_expired = new cspmb__Rate_Card__c(
+			cspmb__Is_Active__c = true,
+			cspmb__effective_start_date__c = Date.today().addDays(-1),
+			cspmb__effective_end_date__c = Date.today()
+		);
+		insert rc_expired;
+		cspmb__Rate_Card_Line__c rcl9 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc_expired.id,
+			name = 'testrcl9',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit'
+		);
+		insert rcl9;
+		cspmb__Rate_Card__c rc_expired_1 = new cspmb__Rate_Card__c(
+			cspmb__Is_Active__c = true,
+			cspmb__effective_start_date__c = Date.today().addDays(-10),
+			cspmb__effective_end_date__c = Date.today().addDays(-5)
+		);
+		insert rc_expired_1;
+		cspmb__Rate_Card_Line__c rcl10 = new cspmb__Rate_Card_Line__c(
+			cspmb__rate_card__c = rc_expired_1.id,
+			name = 'testrcl10',
+			cspmb__is_active__c = true,
+			cspmb__rate_value__c = 124.99,
+			cspmb__rate_card_line_unit__c = 'sample unit'
+		);
+		insert rcl10;
 		cspmb__Price_Item_Rate_Card_Association__c pirc = new cspmb__Price_Item_Rate_Card_Association__c(
 			cspmb__rate_card__c = rc.id,
+			cspmb__price_item__c = cp_1.id
+		);
+		insert pirc;
+		pirc = new cspmb__Price_Item_Rate_Card_Association__c(
+			cspmb__rate_card__c = rc_invalid.id,
+			cspmb__price_item__c = cp_1.id
+		);
+		insert pirc;
+		pirc = new cspmb__Price_Item_Rate_Card_Association__c(
+			cspmb__rate_card__c = rc_future.id,
+			cspmb__price_item__c = cp_1.id
+		);
+		insert pirc;
+		pirc = new cspmb__Price_Item_Rate_Card_Association__c(
+			cspmb__rate_card__c = rc_expired.id,
+			cspmb__price_item__c = cp_1.id
+		);
+		insert pirc;
+		pirc = new cspmb__Price_Item_Rate_Card_Association__c(
+			cspmb__rate_card__c = rc_expired_1.id,
 			cspmb__price_item__c = cp_1.id
 		);
 		insert pirc;

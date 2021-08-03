@@ -1,6 +1,8 @@
 @isTest
 private class API_1Test {
 
+	private static final String VALID_FA_NAME = 'FA2';
+
 	static void setupData() {
 		Account test_account = new Account(name = 'TestAcc');
 		insert test_account;
@@ -88,7 +90,7 @@ private class API_1Test {
 		);
 		csconta__Frame_Agreement__c fa_2 = new csconta__Frame_Agreement__c(
 			csconta__status__c = 'Draft',
-			csconta__agreement_name__c = 'FA2',
+			csconta__agreement_name__c = VALID_FA_NAME,
 			csconta__account__c = test_account.Id
 		);
 		insert fa_1;
@@ -127,7 +129,7 @@ private class API_1Test {
 		csconta__Frame_Agreement__c fa = [
 			select id
 			from csconta__Frame_Agreement__c
-			where csconta__agreement_name__c = 'FA2'
+			where csconta__agreement_name__c = :VALID_FA_NAME
 		];
 
 		Test.startTest();
@@ -150,13 +152,77 @@ private class API_1Test {
 	}
 
 	@isTest
+	public static void activateFrameAgreementStatusTest() {
+		setupData();
+
+		Fac_Settings__c facSettings = FrameRateManagerController.getFacSetting();
+
+		csconta__Frame_Agreement__c fa_1 = [
+			select id, csconta__status__c
+			from csconta__Frame_Agreement__c
+			where csconta__agreement_name__c = :VALID_FA_NAME
+		];
+		fa_1.csconta__status__c = facSettings.approved_status__c;
+		update fa_1;
+		csconta__Frame_Agreement__c fa_2 = FrameRateManagerController.cloneFrameAgreement(fa_1.id, null);
+		fa_2.csconta__status__c = facSettings.active_status__c;
+		update fa_2;
+		csconta__Frame_Agreement__c fa_3 = FrameRateManagerController.cloneFrameAgreement(fa_1.id, null);
+		fa_3.csconta__status__c = facSettings.requires_approval_status__c;
+		update fa_3;
+		csconta__Frame_Agreement__c fa_4 = FrameRateManagerController.cloneFrameAgreement(fa_1.id, null);
+		fa_4.csconta__status__c = facSettings.closed_status__c;
+		update fa_4;
+		csconta__Frame_Agreement__c fa_5 = FrameRateManagerController.cloneFrameAgreement(fa_1.id, null);
+		fa_5.csconta__status__c = 'Pending';
+		update fa_5;
+
+		Test.startTest();
+
+		String msg1 = API_1.activateFrameAgreement(fa_1.id, false);
+		String msg2 = API_1.activateFrameAgreement(fa_2.id, false);
+		String msg3 = API_1.activateFrameAgreement(fa_3.id, false);
+		String msg4 = API_1.activateFrameAgreement(fa_4.id, false);
+		String msg5 = API_1.activateFrameAgreement(fa_5.id, false);
+
+		Test.stopTest();
+
+		Map<String, Object> msgMap1 = (Map<String, Object>) JSON.deserializeUntyped(msg1);
+		Map<String, Object> msgMap2 = (Map<String, Object>) JSON.deserializeUntyped(msg2);
+		Map<String, Object> msgMap3 = (Map<String, Object>) JSON.deserializeUntyped(msg3);
+		Map<String, Object> msgMap4 = (Map<String, Object>) JSON.deserializeUntyped(msg4);
+		Map<String, Object> msgMap5 = (Map<String, Object>) JSON.deserializeUntyped(msg5);
+
+
+		System.assertEquals('Success', msgMap1.get('status'));
+		List<cspmb__Price_Item_Pricing_Rule_Association__c> cppras = [
+			select id, cspmb__one_off_adjustment__c, cspmb__recurring_adjustment__c
+			from cspmb__Price_Item_Pricing_Rule_Association__c
+		];
+		System.assertEquals(4, cppras.size(), cppras);
+
+		System.assertEquals(API_1.FA_ALREADY_ACTIVATED_MSG, msgMap2.get('errorMessage'));
+		System.assertEquals(
+			String.format(API_1.FA_CANNOT_ACTIVATE_MSG,
+				new List<String> { facSettings.requires_approval_status__c }
+			),
+			msgMap3.get('errorMessage'));
+		System.assertEquals(API_1.FA_REPLACED_MSG, msgMap4.get('errorMessage'));
+		System.assertEquals(
+			String.format(API_1.FA_CANNOT_ACTIVATE_MSG,
+				new List<String> { 'Pending' }
+			),
+			msgMap5.get('errorMessage'));
+	}
+
+	@isTest
 	public static void activateFrameAgreementAsyncTest() {
 		setupData();
 
 		csconta__Frame_Agreement__c fa = [
 			select id, csconta__status__c, async_job__c
 			from csconta__Frame_Agreement__c
-			where csconta__agreement_name__c = 'FA2'
+			where csconta__agreement_name__c = :VALID_FA_NAME
 		];
 
 		Map<String, Id> cprg = FrameAgreementActivation.createPricingRuleGroup(fa.id);
@@ -198,7 +264,7 @@ private class API_1Test {
 		csconta__Frame_Agreement__c fa = [
 			select id
 			from csconta__Frame_Agreement__c
-			where csconta__agreement_name__c = 'FA2'
+			where csconta__agreement_name__c = :VALID_FA_NAME
 		];
 		API_1.activateFrameAgreement(fa.id, false);
 

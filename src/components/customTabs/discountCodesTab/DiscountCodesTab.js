@@ -749,6 +749,7 @@ class DiscountCodesTab extends React.Component {
 
 		let _added = this.state.added;
 		delete _added[removed_group.Id];
+		const isUnapplied = new Set(this.state.unapplied).has(removed_group.Id);
 
 		this.setState(
 			{
@@ -759,6 +760,13 @@ class DiscountCodesTab extends React.Component {
 			() => {
 				this.blank = '';
 				this.updateSelectListGroups();
+
+				if (!isUnapplied) {
+					this.updateCustomData(false, true).then(response => {
+						negotiateDiscountCodesForItems(null, removed_group);
+						negotiateDiscountCodesForItems(null, removed_group, OFFER);
+					});
+				}
 			}
 		);
 	}
@@ -865,7 +873,7 @@ class DiscountCodesTab extends React.Component {
 		return { min, max };
 	}
 
-	async updateCustomData(enforceSave) {
+	async updateCustomData(enforceSave, excludeUnappliedCodes) {
 		let customData = await window.FAM.api.getCustomData(ACTIVE_FA.Id);
 
 		if (typeof customData === 'string' && isJson(customData)) {
@@ -877,10 +885,21 @@ class DiscountCodesTab extends React.Component {
 			sortDynamicGroupsBySequence
 		);
 
+		let unapplied = [ ...this.state.unapplied];
+
+		if (excludeUnappliedCodes) {
+			const unappliedSet = new Set(unapplied);
+			customData.codes = customData.codes.filter((code) => {
+				return !unappliedSet.has(code.Id);
+			})
+		} else {
+			unapplied = [];
+		}
+
 		let setResponse = await window.FAM.api.setCustomData(ACTIVE_FA.Id, customData);
 
 		this.setState({
-			unapplied: [],
+			unapplied: [ ...unapplied],
 		});
 
 		console.log('Custom data saved:', this.state);
@@ -944,6 +963,9 @@ class DiscountCodesTab extends React.Component {
 									"product-card__container" +
 									(this.state.open === group.Id
 										? " product-open"
+										: "") +
+									(this.state.unapplied.includes(group.Id)
+										? " unsaved"
 										: "")
 								}
 								key={group.Id}
@@ -1311,8 +1333,7 @@ function initialiseDiscountCodesTab(id) {
 	ReactDOM.render(<DiscountCodesTab />, document.getElementById(id));
 }
 
-window.FAM.subscribe('onLoad', data => {
-	return new Promise(resolve => {
+
 		window.FAM.registerMethod('discountCodesTabEnter', id => {
 			return new Promise(async resolve => {
 				ACTIVE_FA = await window.FAM.api.getActiveFrameAgreement();
@@ -1328,9 +1349,6 @@ window.FAM.subscribe('onLoad', data => {
 				resolve();
 			});
 		});
-		resolve(data);
-	});
-});
 
 // window.FAM.subscribe('onFaSelect', data => {
 // 	return new Promise(resolve => {

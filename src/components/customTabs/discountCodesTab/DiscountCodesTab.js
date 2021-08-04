@@ -1333,7 +1333,8 @@ function initialiseDiscountCodesTab(id) {
 	ReactDOM.render(<DiscountCodesTab />, document.getElementById(id));
 }
 
-
+window.FAM.subscribe('onLoad', data => {
+	return new Promise(resolve => {
 		window.FAM.registerMethod('discountCodesTabEnter', id => {
 			return new Promise(async resolve => {
 				ACTIVE_FA = await window.FAM.api.getActiveFrameAgreement();
@@ -1349,6 +1350,9 @@ function initialiseDiscountCodesTab(id) {
 				resolve();
 			});
 		});
+		resolve(data);
+	});
+});
 
 // window.FAM.subscribe('onFaSelect', data => {
 // 	return new Promise(resolve => {

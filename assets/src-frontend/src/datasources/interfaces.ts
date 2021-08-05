@@ -28,18 +28,22 @@ export interface AppSettings {
 }
 
 export interface Attachment {
-	custom: Addons;
-	products: Products;
-	addons: Addons;
+	custom?: Addons;
+	products?: Products;
+	addons?: Addons;
 }
 
-interface Addons {}
+interface Addons {
+	[addonId: string]: { oneOff?: number | null; recurring?: number | null };
+}
 
 export interface AttachmentProductNegotiation {
-	volume: Volume;
-	product: Product;
-	rateCards: RateCards;
-	allowances: Addons;
+	volume?: Volume;
+	product?: Product;
+	rateCards?: RateCards;
+	allowances?: Allowance;
+	addons?: Addons;
+	charges?: { [chargeId: string]: Product };
 }
 
 export interface Products {
@@ -47,12 +51,12 @@ export interface Products {
 }
 
 interface Product {
-	recurring?: number;
-	oneOff?: number;
+	recurring?: number | null;
+	oneOff?: number | null;
 }
 
 export interface RateCards {
-	[rateCartId: string]: { [rateCardLineId: string]: number };
+	[rateCardId: string]: { [rateCardLineId: string]: number };
 }
 
 export interface Volume {
@@ -92,8 +96,7 @@ export interface Addon {
 }
 
 export interface Allowance {
-	id: string;
-	name: string;
+	[allowanceId: string]: { value: number; name: string };
 }
 
 export interface RateCard {

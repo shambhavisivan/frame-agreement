@@ -1,4 +1,4 @@
-import { Attachment } from '../../../datasources';
+import { Attachment, Products } from '../../../datasources';
 
 type RateCardLineId = string;
 type RateCardId = string;
@@ -163,9 +163,9 @@ export default function negotiationReducer(
 			const actions: NegotiationAction[] = [];
 
 			for (const [productId, attachedProductNegotiation] of Object.entries(
-				action.payload.attachment.products
+				action.payload.attachment.products || ({} as Products)
 			)) {
-				if (attachedProductNegotiation.product.recurring) {
+				if (attachedProductNegotiation.product?.recurring) {
 					actions.push({
 						type: 'negotiateRecurring',
 						payload: {
@@ -175,7 +175,7 @@ export default function negotiationReducer(
 					});
 				}
 
-				if (attachedProductNegotiation.product.oneOff) {
+				if (attachedProductNegotiation.product?.oneOff) {
 					actions.push({
 						type: 'negotiateOneOff',
 						payload: {
@@ -186,7 +186,7 @@ export default function negotiationReducer(
 				}
 
 				for (const [rateCardId, rateCardLines] of Object.entries(
-					attachedProductNegotiation.rateCards
+					attachedProductNegotiation.rateCards || {}
 				)) {
 					for (const [rateCardLineId, value] of Object.entries(rateCardLines)) {
 						actions.push({

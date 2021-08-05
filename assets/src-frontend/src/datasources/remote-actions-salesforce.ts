@@ -40,6 +40,7 @@ export interface RemoteActions {
 		comment: string
 	): Promise<boolean>;
 	reassignApproval(faId: string, newApproverId: string): Promise<void>;
+	getAttachment(faId: string): Promise<Attachment>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -188,5 +189,9 @@ export const remoteActions: RemoteActions = {
 
 	async reassignApproval(faId: string, newApproverId: string): Promise<void> {
 		return await SF.invokeAction('reassignApproval', [faId, newApproverId]);
+	},
+
+	async getAttachment(faId: string) {
+		return await SF.invokeAction('getAttachment', [faId]);
 	}
 };

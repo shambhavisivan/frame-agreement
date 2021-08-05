@@ -18,7 +18,8 @@ import {
 	mockUserLocale,
 	faFieldMetadataMock,
 	mockOffers,
-	mockOfferData
+	mockOfferData,
+	attachment
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
@@ -146,5 +147,9 @@ export const remoteActions: RemoteActions = {
 
 	async reassignApproval(faId: string, newApproverId: string): Promise<void> {
 		return Promise.resolve();
+	},
+
+	async getAttachment(faId: string): Promise<Attachment> {
+		return Promise.resolve(attachment);
 	}
 };

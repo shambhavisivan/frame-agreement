@@ -6,7 +6,8 @@ import {
 	CommercialProductStandalone,
 	FrameAgreement,
 	UserLocaleInfo,
-	FieldMetadata
+	FieldMetadata,
+	Attachment
 } from './interfaces';
 import {
 	DispatcherToken,
@@ -689,3 +690,112 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	target_fa: 'Target Agreement'
 };
 /* eslint-enable */
+
+export const attachment: Attachment = {
+	custom: {},
+	products: {
+		a1i4I000003Q4GGQA0: {
+			volume: {
+				mv: null,
+				mvp: null,
+				muc: null,
+				mucp: null
+			},
+			product: {
+				oneOff: 500,
+				recurring: 255
+			},
+			allowances: {}
+		},
+		a1i4I000003Kqe8QAC: {
+			volume: {
+				mv: null,
+				mvp: null,
+				muc: null,
+				mucp: null
+			},
+			addons: {
+				a1d4I000005Vx2RQAS: {
+					oneOff: null,
+					recurring: null
+				}
+			},
+			charges: {
+				a1l4I00000AFilFQAT: {
+					recurring: 5.5,
+					oneOff: 15.5
+				}
+			},
+			allowances: {
+				a1O4I000001Hg1yUAC: {
+					name: 'Roaming Data in TOP Destinations abd rest of the world',
+					value: 1
+				}
+			}
+		},
+		a1i4I000003KqdtQAC: {
+			volume: {
+				mv: null,
+				mvp: null,
+				muc: null,
+				mucp: null
+			},
+			addons: {
+				a1d4I000005VsVYQA0: {
+					oneOff: 20,
+					recurring: 5
+				},
+				a1d4I000005VvmoQAC: {
+					oneOff: 8,
+					recurring: 2
+				},
+				a1d4I000005Vx2bQAC: {
+					oneOff: 15,
+					recurring: 5
+				},
+				a1d4I000005Vx2gQAC: {
+					oneOff: null,
+					recurring: null
+				}
+			},
+			charges: {
+				a1l4I00000Du1O3QAJ: {
+					recurring: 4
+				},
+				a1l4I00000Du1a0QAB: {
+					oneOff: 10
+				}
+			},
+			rateCards: {
+				a1q4I000009tfziQAA: {
+					a1p4I00000Cn44DQAR: 100,
+					a1p4I00000Cn42gQAB: 85.5
+				}
+			},
+			allowances: {
+				a1O4I000001H6FfUAK: {
+					name: 'Mobile Tariff Test Offer',
+					value: 7
+				},
+				a1O4I000001Hg28UAC: {
+					name: 'Roaming Voice calls in TOP Destinations abd rest of the world',
+					value: 2
+				},
+				a1O4I000001Hg1yUAC: {
+					name: 'Roaming Data in TOP Destinations abd rest of the world',
+					value: 1
+				}
+			}
+		}
+	},
+	addons: {
+		a1N4I000002wyh9UAA: {
+			oneOff: 7,
+			recurring: 1.5
+		},
+		a1N4I000002wyg0UAA: {
+			oneOff: 15,
+			recurring: 5
+		}
+	}
+};

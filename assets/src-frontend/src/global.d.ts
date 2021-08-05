@@ -52,6 +52,7 @@ namespace SfGlobal {
 		getApprovalHistory(faId: [string]): Promise<SfdcApprovalHistory>;
 		approveRejectRecallRecord(paramsArray: [string, string, string]): Promise<boolean>;
 		reassignApproval(paramsArray: [string, string]): Promise<void>;
+		getAttachment(paramsArray: [string]): Promise<Attachment>;
 	}
 
 	// TODO define the unknowns

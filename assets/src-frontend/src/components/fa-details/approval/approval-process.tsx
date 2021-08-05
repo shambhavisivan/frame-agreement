@@ -12,13 +12,15 @@ import {
 	CSTextarea
 } from '@cloudsense/cs-ui-components';
 import { format } from 'date-fns';
-import React, { ReactElement, useEffect, useReducer, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useReducer, useState } from 'react';
 import { QueryStatus } from 'react-query';
-import { ApprovalActionType, ApprovalHistory } from '../../../datasources';
+import { ApprovalActionType, ApprovalHistory, FaStatus, FacSetting } from '../../../datasources';
+import { useAppSettings } from '../../../hooks/use-app-settings';
 import { useApprovalAction } from '../../../hooks/use-approval-action';
 import { useApprovalHistory } from '../../../hooks/use-approval-history';
 import { useCustomLabels } from '../../../hooks/use-custom-labels';
 import { useReassignApproval } from '../../../hooks/use-reassign-approval';
+import { faStatusContext } from '../../../providers/fa-status-provider';
 import { createApprovalComponentActions } from './approval-action-creator';
 import approvalReducer from './approval-reducer';
 
@@ -31,7 +33,10 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 	const { updateComment, refreshHistory, reassignTo } = createApprovalComponentActions(dispatch)(
 		faId
 	);
+	const { settings } = useAppSettings();
 	const labels = useCustomLabels();
+	const { setFaStatus } = useContext(faStatusContext);
+	const { statuses } = settings?.facSettings as FacSetting;
 
 	useEffect(() => {
 		if (status === QueryStatus.Success) {
@@ -90,6 +95,7 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 													comment: state.approvals[faId].comment
 												});
 												updateComment('');
+												setFaStatus(statuses[FaStatus.requiresApproval]);
 											}}
 										/>
 									)}
@@ -106,6 +112,7 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 														comment: state.approvals[faId].comment
 													});
 													updateComment('');
+													setFaStatus(statuses[FaStatus.approved]);
 												}}
 											/>
 											<CSButton
@@ -119,6 +126,9 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 														comment: state.approvals[faId].comment
 													});
 													updateComment('');
+													setFaStatus(
+														statuses[FaStatus.requiresApproval]
+													);
 												}}
 											/>
 										</div>

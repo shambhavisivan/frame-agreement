@@ -91,7 +91,7 @@ export const remoteActions: RemoteActions = {
 		/* eslint-enable no-console */
 
 		return new Promise((resolve) => {
-			setTimeout(() => resolve(upsertedFa), FAKE_DELAY_MS);
+			setTimeout(() => resolve(deforcify(upsertedFa)), FAKE_DELAY_MS);
 		});
 	},
 

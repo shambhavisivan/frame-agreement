@@ -22,12 +22,13 @@ export function useUpsertFrameAgreements(
 	const [mutate, { status }] = useMutation<FrameAgreement, Error, UpsertProps>(
 		({ fieldData, faId }: UpsertProps) => upsertFrameAgreements(faId, fieldData),
 		{
-			onSuccess: (data) => {
+			onSuccess: (data, { faId }) => {
 				queryCache.setQueryData(
 					[QueryKeys.frameagreement],
 					(oldData: FrameAgreement[] | undefined) => {
 						if (oldData && oldData.length) {
-							return [...oldData, data] as FrameAgreement[];
+							const agreements = oldData.filter((fa) => fa.id !== faId);
+							return [...agreements, data] as FrameAgreement[];
 						} else {
 							return [data];
 						}

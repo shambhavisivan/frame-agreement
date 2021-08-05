@@ -3,7 +3,7 @@ export interface Account {
 	name: string;
 }
 
-type FacSetting = {
+export type FacSetting = {
 	statuses: {
 		draftStatus: string;
 		activeStatus: string;
@@ -189,4 +189,12 @@ export enum ApprovalActionType {
 	reject = 'Reject',
 	recall = 'Removed',
 	reassign = 'Reassign'
+}
+
+export enum FaStatus {
+	draft = 'draftStatus',
+	active = 'activeStatus',
+	closed = 'closedStatus',
+	approved = 'approvedStatus',
+	requiresApproval = 'requiresApprovalStatus'
 }

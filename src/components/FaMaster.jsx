@@ -72,14 +72,18 @@ class FaMaster extends Component {
 		this.onActionTaken = this.onActionTaken.bind(this);
 		this._setState = this._setState.bind(this);
 
-		this._faFilterMethod = cp => {
-			if (this.state.faFilter && this.state.faFilter.length >= 2) {
-				return cp.csconta__Agreement_Name__c
+		this._faFilterMethod = fa => {
+			if (!this.state.faFilter) {
+				return true;
+			} else if (
+				this.state.faFilter.length >= 2 &&
+				fa.csconta__Agreement_Name__c
+			) {
+				return fa.csconta__Agreement_Name__c
 					.toLowerCase()
 					.includes(this.state.faFilter.toLowerCase());
-			} else {
-				return true;
 			}
+			return false;
 		};
 
 		// ****************************************** API ******************************************
@@ -203,6 +207,25 @@ class FaMaster extends Component {
 		_promiseArray.push(this.props.getAttachment(this.faId));
 
 		Promise.all(_promiseArray).then(response => {
+			const faIdList = new Set(Object.values(this.props.frameAgreements).map((fa) => fa.Id));
+			const obsoleteFaList = Object.keys(
+				this.props.frameAgreements[this.faId]._ui.attachment.products
+			).filter((childFaId) => {
+				return !faIdList.has(childFaId);
+			});
+
+			if (obsoleteFaList.length) {
+				let obsoleteAttachment = { ...this.props.frameAgreements[this.faId]._ui.attachment };
+				obsoleteFaList.forEach((obsoleteFa) => {
+					delete obsoleteAttachment.products[obsoleteFa];
+				});
+				window.SF.invokeAction("saveAttachment", [
+					this.faId,
+					JSON.stringify(obsoleteAttachment),
+				]).then((response) => {
+					this.props.getAttachment(this.faId);
+				});
+			}
 			this._setState(
 				{
 					loading: {
@@ -370,7 +393,7 @@ class FaMaster extends Component {
 					<div className="products-card__inner">
 						<div className="products-card__header">
 							<span className="products__title">
-								{window.SF.labels.frame_agreements_title} ({_addedFaIdSet.size})
+								{window.SF.labels.frame_agreements_title} ({addedFa.length})
 							</span>
 							<div className="header__inputs">
 								<InputSearch

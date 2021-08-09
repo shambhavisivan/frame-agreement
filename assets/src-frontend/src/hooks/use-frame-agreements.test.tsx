@@ -46,84 +46,77 @@ describe('test useFrameAgremments hook', () => {
 		await waitFor(() => {
 			return result.current.status === QueryStatus.Success;
 		});
-
-		/* eslint-disable @typescript-eslint/naming-convention */
-		const expected = {
-			Draft: [
-				{
-					id: 'a1t1t0000009wpQAAQ',
-					name: 'AGR-000000',
-					account: {
-						name: 'Test Account',
-						id: '0011t00000DSEtnAAH'
-					},
-					agreementName: 'Frame Agreement - Test #1',
-					status: 'Draft',
-					validFrom: 1547424000000,
-					validTo: 1568419200000,
-					disableLevels: false,
-					disableCustomTabs: false,
-					arbFieldInteger: 48,
-					arbFieldText: 'Arb Text',
-					arbFieldDate: 1547510400000,
-					arbFieldText2: 'Arb Text 2 - change 2',
-					arbFieldText3: 'Arb Text 3 - change 1',
-					replacedFrameAgreement: 'a1t1t0000009wpQAAP',
-					agreementLevel: 'Master Agreement',
-					arbFieldTextarea:
-						'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
-				}
-			],
-			Active: [
-				{
-					id: 'a1t1t0000009wpQAAP',
-					name: 'AGR-0007',
-					account: {
-						name: 'Test Account',
-						id: '0011t00000DSEtnAAH'
-					},
-					agreementName: 'Frame Agreement - Test #1 replaced',
-					status: 'Active',
-					validFrom: 1547424000000,
-					validTo: 1568419200000,
-					disableLevels: false,
-					disableCustomTabs: false,
-					arbFieldInteger: 48,
-					arbFieldText: 'Arb Text',
-					arbFieldDate: 1547510400000,
-					arbFieldText2: 'Arb Text 2 - change 2',
-					arbFieldText3: 'Arb Text 3 - change 1',
-					agreementLevel: 'Master Agreement',
-					arbFieldTextarea:
-						'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
+		const expected = [
+			{
+				id: 'a1t1t0000009wpQAAQ',
+				name: 'AGR-000000',
+				account: {
+					name: 'Test Account',
+					id: '0011t00000DSEtnAAH'
 				},
-				{
-					id: 'a1t1t0000009wpQAzx',
-					name: 'AGR-0007',
-					account: {
-						name: 'Test Account',
-						id: '0011t00000DSEtnAAH'
-					},
-					agreementName: 'Frame Agreement - Test #1',
-					status: 'Active',
-					validFrom: 1547424000000,
-					validTo: 1568419200000,
-					disableLevels: false,
-					disableCustomTabs: false,
-					arbFieldInteger: 48,
-					arbFieldText: 'Arb Text',
-					arbFieldDate: 1547510400000,
-					arbFieldText2: 'Arb Text 2 - change 2',
-					arbFieldText3: 'Arb Text 3 - change 1',
-					agreementLevel: 'Master Agreement',
-					arbFieldTextarea:
-						'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
-				}
-			]
-		};
-		/* eslint-enable @typescript-eslint/naming-convention */
+				agreementName: 'Frame Agreement - Test #1',
+				status: 'Draft',
+				validFrom: 1547424000000,
+				validTo: 1568419200000,
+				disableLevels: false,
+				disableCustomTabs: false,
+				arbFieldInteger: 48,
+				arbFieldText: 'Arb Text',
+				arbFieldDate: 1547510400000,
+				arbFieldText2: 'Arb Text 2 - change 2',
+				arbFieldText3: 'Arb Text 3 - change 1',
+				replacedFrameAgreement: 'a1t1t0000009wpQAAP',
+				agreementLevel: 'Master Agreement',
+				arbFieldTextarea:
+					'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
+			},
+			{
+				id: 'a1t1t0000009wpQAAP',
+				name: 'AGR-0007',
+				account: {
+					name: 'Test Account',
+					id: '0011t00000DSEtnAAH'
+				},
+				agreementName: 'Frame Agreement - Test #1 replaced',
+				status: 'Active',
+				validFrom: 1547424000000,
+				validTo: 1568419200000,
+				disableLevels: false,
+				disableCustomTabs: false,
+				arbFieldInteger: 48,
+				arbFieldText: 'Arb Text',
+				arbFieldDate: 1547510400000,
+				arbFieldText2: 'Arb Text 2 - change 2',
+				arbFieldText3: 'Arb Text 3 - change 1',
+				agreementLevel: 'Master Agreement',
+				arbFieldTextarea:
+					'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
+			},
+			{
+				id: 'a1t1t0000009wpQAzx',
+				name: 'AGR-0007',
+				account: {
+					name: 'Test Account',
+					id: '0011t00000DSEtnAAH'
+				},
+				agreementName: 'Frame Agreement - Test #1',
+				status: 'Active',
+				validFrom: 1547424000000,
+				validTo: 1568419200000,
+				disableLevels: false,
+				disableCustomTabs: false,
+				arbFieldInteger: 48,
+				arbFieldText: 'Arb Text',
+				arbFieldDate: 1547510400000,
+				arbFieldText2: 'Arb Text 2 - change 2',
+				arbFieldText3: 'Arb Text 3 - change 1',
+				agreementLevel: 'Master Agreement',
+				arbFieldTextarea:
+					'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget'
+			}
+		];
 
-		expect(result.current.agreements).toEqual(expected);
+		expect(result.current.agreementList).toEqual(expected);
 		expect(spyOnQueryFrameAgreements).toHaveBeenCalledTimes(1);
 	});
 

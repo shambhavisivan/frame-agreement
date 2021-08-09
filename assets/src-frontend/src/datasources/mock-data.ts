@@ -681,6 +681,11 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	approval_table_header_date: 'Date',
 	approval_table_header_status: 'Status',
 	approval_title: 'Approval history',
-	btn_Delta: 'Show Delta'
+	btn_Delta: 'Show Delta',
+	delta_title: 'Delta Modal',
+	btn_CalcDelta: 'Calculate Delta',
+	btn_Close: 'Close',
+	source_fa: 'Source Agreement',
+	target_fa: 'Target Agreement'
 };
 /* eslint-enable */

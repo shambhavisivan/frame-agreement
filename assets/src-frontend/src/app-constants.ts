@@ -3,7 +3,7 @@ import { FieldMetadata } from './datasources';
 export enum QueryKeys {
 	frameagreement = 'frameAgreement'
 }
-
+export const FA_API_NAME = 'csconta__Frame_Agreement__c';
 export const SEARCH_INPUT_VALIDATION_MESSAGE = 'Enter atleast 3 or more characters to begin search';
 
 export const FIELD_METADATA_CHILD_FA: FieldMetadata[] = [
@@ -35,3 +35,22 @@ export const FIELD_METADATA_CHILD_FA: FieldMetadata[] = [
 		scale: 0
 	}
 ];
+
+export const THEME_DELTA_MODAL = {
+	base00: '#000',
+	base01: '#fff',
+	base02: '#fff',
+	base03: '#fff',
+	base04: '#fff',
+	base05: '#fff',
+	base06: '#fff',
+	base07: '#fff',
+	base08: '#fff',
+	base09: '#fff',
+	base0A: '#fff',
+	base0B: '#fff',
+	base0C: '#fff',
+	base0D: '#fff',
+	base0E: '#fff',
+	base0F: '#fff'
+};

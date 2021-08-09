@@ -17,7 +17,7 @@ export function useFrameAgreements(
 	filterParam: FilterParam | null = null
 ): {
 	status: QueryStatus;
-	agreements: GroupedFrameAgreements | undefined;
+	agreementList: FrameAgreement[] | undefined;
 } {
 	/* eslint-disable @typescript-eslint/naming-convention */
 	const transformFilter: {
@@ -36,21 +36,9 @@ export function useFrameAgreements(
 	const { status, data } = useQuery(queryKey, () =>
 		remoteActions.queryFrameAgreements(transformFilter ? JSON.stringify(transformFilter) : '')
 	);
-	const groupedResultsByStatus: GroupedFrameAgreements = {};
-
-	data?.forEach((agreement) => {
-		const status = agreement.status;
-		if (status) {
-			if (!groupedResultsByStatus[status]) {
-				groupedResultsByStatus[status] = [agreement];
-			} else {
-				groupedResultsByStatus[status] = [...groupedResultsByStatus[status], agreement];
-			}
-		}
-	});
 
 	return {
 		status,
-		agreements: groupedResultsByStatus
+		agreementList: data
 	};
 }

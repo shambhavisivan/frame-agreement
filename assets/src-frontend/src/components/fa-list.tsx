@@ -33,8 +33,8 @@ import { useDeleteFrameAgreement } from '../hooks/use-delete-frame-agreement';
 import { useCustomLabels } from '../hooks/use-custom-labels';
 import { formatCellValue } from './cs-table-wrapper/cell-formatter';
 import { FIELD_METADATA_CHILD_FA } from '../app-constants';
-
-const frameAgreementApiName = 'csconta__Frame_Agreement__c';
+import { DeltaModal, DeltaModalProps } from './dialogs/delta-modal';
+import { FA_API_NAME } from '../app-constants';
 
 export function FrameAgreementList(): ReactElement {
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -46,7 +46,10 @@ export function FrameAgreementList(): ReactElement {
 	);
 	const [openDeleteFaDialog, setOpenDeleteFaDialog] = useState<boolean>(false);
 	const [filterString, setFilterString] = useState('');
-	const { agreements: groupedAgreements = [], status } = useFrameAgreements(
+	const [deltaModalProps, setDeltaModalProps] = useState<Partial<DeltaModalProps>>({
+		modalOpen: false
+	});
+	const { agreementList = [], status } = useFrameAgreements(
 		filterString.length
 			? {
 					name: filterString,
@@ -54,7 +57,9 @@ export function FrameAgreementList(): ReactElement {
 			  }
 			: null
 	);
-	const { metadata, metadataStatus } = useFieldMetadata(frameAgreementApiName);
+
+	const [groupedAgreements, setGroupedFrameAgreements] = useState<GroupedFrameAgreements>({});
+	const { metadata, metadataStatus } = useFieldMetadata(FA_API_NAME);
 	const { cloneFrameAgreement } = useCloneFrameAgreement();
 	const { deleteFrameAgreement } = useDeleteFrameAgreement();
 	const history = useHistory();
@@ -63,8 +68,31 @@ export function FrameAgreementList(): ReactElement {
 	useEffect(() => {
 		if (status === QueryStatus.Success && settingStatus === QueryStatus.Success) {
 			setActiveTab(settings?.facSettings.statuses.draftStatus || '');
+
+			const groupedResultsByStatus: GroupedFrameAgreements = agreementList
+				?.filter((fa) => fa.status)
+				.reduce((groupedFA, curentFA): GroupedFrameAgreements => {
+					const faStatus = curentFA?.status;
+					if (faStatus) {
+						if (groupedFA[faStatus]) {
+							groupedFA[faStatus].push(curentFA);
+						} else {
+							groupedFA[faStatus] = [curentFA];
+						}
+						return groupedFA;
+					}
+					return {} as GroupedFrameAgreements;
+				}, {} as GroupedFrameAgreements);
+
+			setGroupedFrameAgreements(groupedResultsByStatus);
 		}
-	}, [status, settingStatus, metadataStatus, settings?.facSettings.statuses.draftStatus]);
+	}, [
+		status,
+		settingStatus,
+		metadataStatus,
+		settings?.facSettings.statuses.draftStatus,
+		agreementList
+	]);
 
 	const renderChildFaRows = (
 		data: FrameAgreement[],
@@ -229,6 +257,13 @@ export function FrameAgreementList(): ReactElement {
 															<CSButton
 																label={labels.btnDelta}
 																btnStyle={'brand'}
+																onClick={(): void =>
+																	setDeltaModalProps({
+																		modalOpen: true,
+																		faTargetId: agreement.id,
+																		faSourceId: fa.id
+																	})
+																}
 															/>
 														</CSTableCell>
 													</CSTableRow>
@@ -272,6 +307,14 @@ export function FrameAgreementList(): ReactElement {
 			}}
 			confirmText={labels.btnDeleteAgreements}
 		/>
+	);
+
+	const deltaModal = (
+		<DeltaModal
+			modalOpen={deltaModalProps.modalOpen || false}
+			onClose={(): void => setDeltaModalProps({ modalOpen: false })}
+			{...deltaModalProps}
+		></DeltaModal>
 	);
 
 	return (
@@ -342,6 +385,7 @@ export function FrameAgreementList(): ReactElement {
 			</div>
 			{cloneFaInfoModal}
 			{deleteFaInfoModal}
+			{deltaModal}
 			<div className="table-wrapper">
 				{activeTab.length && (
 					<CsTableWrapper

@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import 'uuid';
+
+// component has to be mocked before rendering the actual component
+jest.mock('./dialogs/delta-modal', () => {
+	return {
+		/* eslint-disable @typescript-eslint/naming-convention */
+		DeltaModal: (): ReactElement => <div></div>
+		/* eslint-enable @typescript-eslint/naming-convention */
+	};
+});
+
 import { FrameAgreementList } from './fa-list';
 
 jest.mock('../datasources/remote-actions-salesforce', () => ({
@@ -8,7 +18,6 @@ jest.mock('../datasources/remote-actions-salesforce', () => ({
 		queryFrameAgreements: jest.fn(),
 		getAppSettings: jest.fn(),
 		getFieldMetadata: jest.fn(),
-		getChildFrameAgreements: jest.fn().mockResolvedValue([]),
 		cloneFrameAgreement: jest.fn(),
 		deleteFrameAgreement: jest.fn()
 	}
@@ -41,7 +50,6 @@ describe('framework agreement list page', () => {
 
 	it('When component is mounted required apis are called', () => {
 		render(<FrameAgreementList />);
-
 		expect(queryFrameAgreementsSpy).toHaveBeenCalledTimes(1);
 		expect(getAppSettingsMock).toHaveBeenCalledTimes(1);
 		expect(getFieldMetadataMock).toHaveBeenCalledTimes(1);
@@ -49,7 +57,6 @@ describe('framework agreement list page', () => {
 
 	test('should call query frameagreements with expected filters on keydown in search filter', async () => {
 		render(<FrameAgreementList />);
-
 		const searchInput = await screen.findByLabelText('search-input');
 		act(() => {
 			fireEvent.keyDown(searchInput, {
@@ -66,10 +73,9 @@ describe('framework agreement list page', () => {
 
 	test('should call query frameagreements with no filter', async () => {
 		render(<FrameAgreementList />);
-
-		const searchInput = await screen.findByLabelText('search-input');
+		const searchInput = await screen.findAllByLabelText('search-input');
 		act(() => {
-			fireEvent.keyDown(searchInput, {
+			fireEvent.keyDown(searchInput[0], {
 				target: { value: '' },
 				key: 'Enter',
 				code: 'Enter'

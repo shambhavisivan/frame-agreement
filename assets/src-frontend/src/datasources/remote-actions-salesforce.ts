@@ -155,12 +155,10 @@ export const remoteActions: RemoteActions = {
 		const fieldMetadata: FieldMetadata[] = await SF.invokeAction('getFieldMetadata', [
 			sObjectName
 		]);
-		return fieldMetadata
-			.filter((val) => val.isCustom)
-			.map((metaInf) => {
-				metaInf.apiName = deforcifyKeyName(metaInf.apiName);
-				return metaInf;
-			});
+		return fieldMetadata.map((metaInf) => {
+			metaInf.apiName = deforcifyKeyName(metaInf.apiName);
+			return metaInf;
+		});
 	},
 
 	async cloneFrameAgreement(faId: string): Promise<FrameAgreement> {

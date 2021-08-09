@@ -18,10 +18,10 @@ interface FrameAgreementDetailsProps {
 }
 
 export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProps): ReactElement {
-	const { agreements = {}, status: faStatus } = useFrameAgreements();
-	const agreement: FrameAgreement | undefined = Object.values(agreements)
-		.flat()
-		.find((fa: FrameAgreement) => fa.id === agreementId);
+	const { agreementList = [], status: faStatus } = useFrameAgreements();
+	const agreement: FrameAgreement | undefined = agreementList.find(
+		(fa: FrameAgreement) => fa.id === agreementId
+	);
 
 	return (
 		<div className="details-wrapper">

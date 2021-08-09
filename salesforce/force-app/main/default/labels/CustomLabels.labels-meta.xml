@@ -1722,4 +1722,18 @@
         <shortDescription>Enter atleast 3 or more characters to begin search</shortDescription>
         <value>Enter atleast 3 or more characters to begin search.</value>
     </labels>
+	<labels>
+        <fullName>source_fa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Source FrameAgreement</shortDescription>
+        <value>Source FrameAgreement</value>
+    </labels>
+	<labels>
+        <fullName>target_fa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Target FrameAgreement</shortDescription>
+        <value>Target FrameAgreement</value>
+    </labels>
 </CustomLabels>

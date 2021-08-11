@@ -1,4 +1,4 @@
-import { Attachment } from '../../datasources';
+import { Attachment } from '../../../datasources';
 
 type RateCardLineId = string;
 type RateCardId = string;

@@ -6,11 +6,11 @@ import { useSaveAttachment } from '../../hooks/use-save-attachment';
 import { useUpsertFrameAgreements } from '../../hooks/use-upsert-frame-agreements';
 import { LoadingFallback } from '../loading-fallback';
 import { FaJsonInput } from './fa-json-input';
+import { createActionsForProduct } from './negotiation/negotiation-action-creator';
 import negotiationReducer, {
-	NegotiationAction,
 	ProductNegotiation,
 	selectAttachment
-} from './negotiation-reducer';
+} from './negotiation/negotiation-reducer';
 import { ProductsList } from './products-list';
 
 interface FaEditorProps {
@@ -30,48 +30,6 @@ function CommercialProductOption({
 		</li>
 	);
 }
-
-interface ProductActions {
-	negotiateRecurring(value: number): void;
-	negotiateOneOff(value: number): void;
-	negotiateRateCardLine(rateCardId: string, rateCardLineId: string, value: number): void;
-}
-
-const createActionsForProduct = (dispatch: React.Dispatch<NegotiationAction>) => (
-	productId: string
-): ProductActions => {
-	return {
-		negotiateRecurring(value: number): void {
-			return dispatch({
-				type: 'negotiateRecurring',
-				payload: {
-					productId,
-					value
-				}
-			});
-		},
-		negotiateOneOff(value: number): void {
-			return dispatch({
-				type: 'negotiateOneOff',
-				payload: {
-					productId,
-					value
-				}
-			});
-		},
-		negotiateRateCardLine(rateCardId: string, rateCardLineId: string, value: number): void {
-			return dispatch({
-				type: 'negotiateRateCardLine',
-				payload: {
-					productId,
-					rateCardId,
-					rateCardLineId,
-					value
-				}
-			});
-		}
-	};
-};
 
 export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	const [faDetails, setFaDetails] = useState<Partial<FrameAgreement>>({});

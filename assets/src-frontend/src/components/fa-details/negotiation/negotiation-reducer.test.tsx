@@ -1,4 +1,4 @@
-import { Attachment } from '../../datasources';
+import { Attachment } from '../../../datasources';
 import negotiationReducer, {
 	Negotiation,
 	NegotiationAction,

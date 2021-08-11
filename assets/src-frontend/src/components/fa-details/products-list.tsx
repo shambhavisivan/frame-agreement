@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
-import { ProductNegotiation } from './negotiation-reducer';
+import { ProductNegotiation } from './negotiation/negotiation-reducer';
 import { ProductDetails } from './product-details';
 
 export interface ProductActions {

@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Negotiation } from './negotiation';
-import { RateCardLines, RateCards as IRateCards } from './negotiation-reducer';
+import { RateCardLines, RateCards as IRateCards } from './negotiation/negotiation-reducer';
 
 interface RateCardsProps {
 	rateCards: IRateCards;

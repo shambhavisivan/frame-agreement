@@ -1,8 +1,8 @@
 import {
+	CSButton,
 	CSModal,
 	CSModalHeader,
 	CSModalBody,
-	CSButton,
 	CSModalFooter
 } from '@cloudsense/cs-ui-components';
 import React, { ReactElement } from 'react';
@@ -23,12 +23,20 @@ export function ConfirmationModal({
 	onConfirm: () => void;
 }): ReactElement {
 	return (
-		<CSModal visible={open} onClose={onClose} outerClickClose size="small">
-			<CSModalHeader title={title}></CSModalHeader>
-			<CSModalBody padding="2rem 1rem 0.75rem 1rem">{message}</CSModalBody>
+		<CSModal
+			visible={open}
+			onClose={onClose}
+			outerClickClose
+			size="xsmall"
+			className="confirmation-modal"
+		>
+			<CSModalHeader title={title} />
+			<CSModalBody padding="1.5rem 1rem">
+				<span>{message}</span>
+			</CSModalBody>
 			<CSModalFooter>
-				<CSButton label={confirmText} btnStyle="initial" onClick={onConfirm} />
-				<CSButton label="Cancel" btnStyle="brand" onClick={onClose} />
+				<CSButton label="Cancel" onClick={onClose} />
+				<CSButton label={confirmText} btnStyle="brand" onClick={onConfirm} />
 			</CSModalFooter>
 		</CSModal>
 	);

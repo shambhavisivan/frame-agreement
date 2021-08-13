@@ -3,16 +3,16 @@
 Custom categories can be created for the Product explore section. This can be used to query a subset of commercial products and add them to a Frame Agreement. In order to set up custom categories, please create one JSON Data record with the following details:
 
 - name = FA-Categorization
-- value - array of JSON entries with the following properties: 
+- value - an array of JSON entries with the following properties:
     - name - text shown in the category explore
-    - field - API field name (e.g. categorization__c) - this needs to be a field on the Commercial Product record. Supported types are Text and Picklist. 
-    - values - Array of values 
+    - field - API field name (e.g. categorization__c) - this needs to be a field on the Commercial Product record. Supported types are Text and Picklist.
+    - values - an array of values
 
-In order to apply categorisation, please click the Product Categorization icon, which will expand the available categories for selection: 
+In order to apply categorization, please click the Product Categorization icon, which will expand the available categories for selection:
 
 ![]({{images}}/ProdCat1.png)
 
-Example: 
+Example:
 ```javascript
 [
   {

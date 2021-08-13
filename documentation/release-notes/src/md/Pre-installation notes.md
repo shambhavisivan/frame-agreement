@@ -1,12 +1,14 @@
 # Pre-installation notes
 
-This FAM version requires CloudSense Pricing Model (cspmb) 1.14
+## Installation dependencies
 
-[Pricing Model - Previous Versions](https://cloudsense.atlassian.net/wiki/spaces/CPP/pages/32170339/Pricing+Model+-+Previous+Versions)
+The following CloudSense packages are required by this version of Framework Agreement Management:
 
-Deprecated labels:
-
-- famext_discount_amount
-- famext_discount_percentage
-
-Both are replaced by picklist translation.
+- Configurator
+- ObjectGraph
+- Product and Pricing Data Model
+- Utilities
+- CRM Extensions
+- Contracts Object Model
+- Advanced Pricing Integration
+- Product Lifecycle Management

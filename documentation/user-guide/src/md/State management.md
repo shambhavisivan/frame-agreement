@@ -1,6 +1,6 @@
 # State management
 
-Frame Agreement Management allows users to define a lifecycle based on business requirements. There are five states which are required in the journey and need to be set up in FAC custom settings: 
+Framework Agreement Management allows users to define a lifecycle based on business requirements. There are five states which are required in the journey and need to be set up in FAC custom settings: 
 
 - Draft Status - this is the initial status of Frame Agreement. Any FA which is cloned or created will end up in this status
 - Requires Approval Status - if any negotiation breaches Discount Thresholds, FAM will set the status of Frame Agreement automatically to this value

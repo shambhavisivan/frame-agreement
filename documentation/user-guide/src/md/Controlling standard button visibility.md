@@ -1,9 +1,9 @@
 # Controlling standard button visibility
 
-It is possible to define the states in which certain custom buttons are available. This can be done by creating one record in the JSON Data object with the following details: 
+It is possible to define the states in which certain custom buttons are available. This can be done by creating one record in the JSON Data object with the following details:
 - name = FA-Standard-Buttons
-- value - JSON with the following format:  
-  `{"key" :  [ array of statuses] }`  
+- value - JSON with the following format:
+  `{"key" :  [ array of statuses] }`
   where key is the name of the standard button and the value is a list of allowed statuses
 
 The value also support expressions if visibility is dependent on FA field.
@@ -12,7 +12,7 @@ The value also support expressions if visibility is dependent on FA field.
 
 (For an example, see "FAM - Showing custom Frame Agreement fields" - "Visible examples")
 
-Available standard buttons are: 
+Available standard buttons are:
 
 - Save
 - SubmitForApproval
@@ -26,7 +26,7 @@ Available standard buttons are:
 - NewVersion
 - Delta
 
-Example: 
+Example:
 ```json
 {
   "Save": [

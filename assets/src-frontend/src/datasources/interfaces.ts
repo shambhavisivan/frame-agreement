@@ -202,15 +202,15 @@ export enum FaStatus {
 	requiresApproval = 'requiresApprovalStatus'
 }
 
-type DeltaStatus = 'changed' | 'unchanged';
+export type DeltaStatus = 'changed' | 'unchanged';
 
-type ValueStatus = {
+export type ValueStatus = {
 	newValue: string | number;
 	oldValue: string | number;
 	status: DeltaStatus;
 };
 
-type ChargeStatus = {
+export type ChargeStatus = {
 	oneOff: ValueStatus;
 	recurring: ValueStatus;
 	status: DeltaStatus;
@@ -234,5 +234,5 @@ export interface DeltaProduct {
 	charges: ChargeDeltaMap;
 	product: ChargeStatus;
 	rateCard: ChargeDeltaMap;
-	volume: Volume;
+	volume: { [key in keyof Volume]: ValueStatus };
 }

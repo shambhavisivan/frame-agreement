@@ -237,6 +237,18 @@ namespace SfGlobal {
 		source_fa: string;
 		target_fa: string;
 		btn_delta_switch_fa: string;
+		delta_fa_fields: string;
+		products_title: string;
+		fa_volume: string;
+		delta_status_added: string;
+		delta_status_changed: string;
+		delta_status_removed: string;
+		delta_status_unchanged: string;
+		addons_header_oneOff: string;
+		addons_header_recc: string;
+		products_charges: string;
+		products_rates: string;
+		addon_label: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

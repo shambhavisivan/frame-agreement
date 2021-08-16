@@ -1736,4 +1736,11 @@
         <shortDescription>Target FrameAgreement</shortDescription>
         <value>Target FrameAgreement</value>
     </labels>
+	<labels>
+        <fullName>addon_label</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Addons</shortDescription>
+        <value>Addons</value>
+    </labels>
 </CustomLabels>

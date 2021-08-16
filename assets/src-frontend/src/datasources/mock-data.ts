@@ -8,7 +8,6 @@ import {
 	UserLocaleInfo,
 	FieldMetadata,
 	Attachment,
-	Volume,
 	DeltaResult
 } from './interfaces';
 import {
@@ -690,7 +689,19 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	btn_Close: 'Close',
 	source_fa: 'Source Agreement',
 	target_fa: 'Target Agreement',
-	btn_delta_switch_fa: 'Switch To FA'
+	btn_delta_switch_fa: 'Switch To FA',
+	delta_fa_fields: 'Frame Agreement Fields',
+	products_title: 'Products',
+	delta_status_added: 'added',
+	delta_status_changed: 'changed',
+	delta_status_removed: 'removed',
+	delta_status_unchanged: 'unchanged',
+	addons_header_oneOff: 'One Off Charge',
+	addons_header_recc: 'Recurring Charge',
+	fa_volume: 'Volume',
+	products_charges: 'Charges',
+	products_rates: 'Rate card',
+	addon_label: 'Addons'
 };
 /* eslint-enable */
 
@@ -887,9 +898,58 @@ export const DELTA_CALC_RESULT_MOCK: DeltaResult = {
 					status: 'changed'
 				}
 			},
-			charges: {},
-			rateCard: {},
-			volume: {} as Volume
+			charges: {
+				'sample-id': {
+					oneOff: {
+						oldValue: 30,
+						newValue: 50,
+						status: 'changed'
+					},
+					recurring: {
+						oldValue: 60,
+						newValue: 60,
+						status: 'unchanged'
+					},
+					status: 'changed'
+				}
+			},
+			rateCard: {
+				'sample-id': {
+					oneOff: {
+						oldValue: 350,
+						newValue: 50,
+						status: 'changed'
+					},
+					recurring: {
+						oldValue: 600,
+						newValue: 600,
+						status: 'unchanged'
+					},
+					status: 'changed'
+				}
+			},
+			volume: {
+				muc: {
+					oldValue: 3,
+					newValue: 8,
+					status: 'changed'
+				},
+				mv: {
+					oldValue: 30,
+					newValue: 18,
+					status: 'changed'
+				},
+				mucp: {
+					oldValue: 30,
+					newValue: 30,
+					status: 'unchanged'
+				},
+				mvp: {
+					oldValue: 50,
+					newValue: 80,
+					status: 'changed'
+				}
+			}
 		}
 	}
 };

@@ -7,13 +7,14 @@ import {
 	CSModalHeader,
 	CSModalFooter
 } from '@cloudsense/cs-ui-components';
-import { QueryStatus, useFrameAgreements } from '../../hooks/use-frame-agreements';
-import { FrameAgreement, Products } from '../../datasources';
-import { useCustomLabels } from '../../hooks/use-custom-labels';
+import { QueryStatus, useFrameAgreements } from '../../../hooks/use-frame-agreements';
+import { FrameAgreement, Products } from '../../../datasources';
+import { useCustomLabels } from '../../../hooks/use-custom-labels';
 import JSONTree from 'react-json-tree';
-import { useFieldMetadata } from '../../hooks/use-field-metadata';
-import { FA_API_NAME, THEME_DELTA_MODAL } from '../../app-constants';
-import { useGetFaAttachment } from '../../hooks/use-get-fa-attachment';
+import { useFieldMetadata } from '../../../hooks/use-field-metadata';
+import { FA_API_NAME, THEME_DELTA_MODAL } from '../../../app-constants';
+import { useGetFaAttachment } from '../../../hooks/use-get-fa-attachment';
+import { DeltaView } from './delta-view';
 
 export interface ModalProps {
 	modalOpen: boolean;
@@ -167,9 +168,27 @@ export function DeltaModal({
 			size="large"
 			className="delta-modal"
 		>
-			<CSModalHeader title={labels.deltaTitle} />
-			<CSModalBody padding="0" minHeight="30rem">
-				{isDeltaView ? <div>delta</div> : faSelectionView}
+			<CSModalHeader title={labels.deltaTitle}></CSModalHeader>
+			<CSModalBody
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					height: 'fit-content',
+					width: 'fit-content'
+				}}
+			>
+				{isDeltaView ? (
+					<div>
+						{sourceAgreement?.id && targetAgreement?.id && (
+							<DeltaView
+								sourceFaId={sourceAgreement?.id}
+								targetFaId={targetAgreement.id}
+							/>
+						)}
+					</div>
+				) : (
+					faSelectionView
+				)}
 			</CSModalBody>
 			<CSModalFooter>
 				<CSButton label={labels.btnClose} onClick={(): void => onClose(false)} />

@@ -201,3 +201,38 @@ export enum FaStatus {
 	approved = 'approvedStatus',
 	requiresApproval = 'requiresApprovalStatus'
 }
+
+type DeltaStatus = 'changed' | 'unchanged';
+
+type ValueStatus = {
+	newValue: string | number;
+	oldValue: string | number;
+	status: DeltaStatus;
+};
+
+type ChargeStatus = {
+	oneOff: ValueStatus;
+	recurring: ValueStatus;
+	status: DeltaStatus;
+};
+
+export interface DeltaResult {
+	account: ValueStatus;
+	agreementName: ValueStatus;
+	status: ValueStatus;
+	agreementLevel: ValueStatus;
+	addons: { [key: string]: ChargeStatus };
+	products: { [key: string]: DeltaProduct | 'removed' | 'added' };
+}
+
+type ChargeDeltaMap = {
+	[sobjectId: string]: ChargeStatus;
+};
+
+export interface DeltaProduct {
+	addons: ChargeDeltaMap;
+	charges: ChargeDeltaMap;
+	product: ChargeStatus;
+	rateCard: ChargeDeltaMap;
+	volume: Volume;
+}

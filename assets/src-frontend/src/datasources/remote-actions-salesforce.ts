@@ -8,7 +8,8 @@ import {
 	UserLocaleInfo,
 	FieldMetadata,
 	ApprovalHistory,
-	ApprovalActionType
+	ApprovalActionType,
+	DeltaResult
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
@@ -41,6 +42,7 @@ export interface RemoteActions {
 	): Promise<boolean>;
 	reassignApproval(faId: string, newApproverId: string): Promise<void>;
 	getAttachment(faId: string): Promise<Attachment>;
+	getDelta(sourceFaId: string, targetFaId: string): Promise<DeltaResult>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -193,5 +195,11 @@ export const remoteActions: RemoteActions = {
 
 	async getAttachment(faId: string) {
 		return await SF.invokeAction('getAttachment', [faId]);
+	},
+
+	async getDelta(sourceFaId: string, targetFaId: string): Promise<DeltaResult> {
+		const deltaResult = await SF.invokeAction('getDelta', [sourceFaId, targetFaId]);
+
+		return deforcify(deltaResult);
 	}
 };

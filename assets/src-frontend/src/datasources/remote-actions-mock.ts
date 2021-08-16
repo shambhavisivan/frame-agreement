@@ -7,7 +7,8 @@ import {
 	UserLocaleInfo,
 	FieldMetadata,
 	ApprovalHistory,
-	ApprovalActionType
+	ApprovalActionType,
+	DeltaResult
 } from './interfaces';
 import {
 	mockCommercialProductData,
@@ -19,7 +20,8 @@ import {
 	faFieldMetadataMock,
 	mockOffers,
 	mockOfferData,
-	attachment
+	attachment,
+	DELTA_CALC_RESULT_MOCK
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
@@ -151,5 +153,9 @@ export const remoteActions: RemoteActions = {
 
 	async getAttachment(faId: string): Promise<Attachment> {
 		return Promise.resolve(attachment);
+	},
+
+	async getDelta(): Promise<DeltaResult> {
+		return Promise.resolve(DELTA_CALC_RESULT_MOCK);
 	}
 };

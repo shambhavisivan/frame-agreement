@@ -7,7 +7,9 @@ import {
 	FrameAgreement,
 	UserLocaleInfo,
 	FieldMetadata,
-	Attachment
+	Attachment,
+	Volume,
+	DeltaResult
 } from './interfaces';
 import {
 	DispatcherToken,
@@ -687,7 +689,8 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	btn_CalcDelta: 'Calculate Delta',
 	btn_Close: 'Close',
 	source_fa: 'Source Agreement',
-	target_fa: 'Target Agreement'
+	target_fa: 'Target Agreement',
+	btn_delta_switch_fa: 'Switch To FA'
 };
 /* eslint-enable */
 
@@ -796,6 +799,97 @@ export const attachment: Attachment = {
 		a1N4I000002wyg0UAA: {
 			oneOff: 15,
 			recurring: 5
+		}
+	}
+};
+
+export const DELTA_CALC_RESULT_MOCK: DeltaResult = {
+	account: {
+		newValue: '0014K000006gUwFQAU',
+		oldValue: '0014K000006gUwFQAU',
+		status: 'unchanged'
+	},
+	agreementName: {
+		newValue: 'FA2',
+		oldValue: 'FA1',
+		status: 'changed'
+	},
+	status: {
+		newValue: 'Draft',
+		oldValue: 'Draft',
+		status: 'unchanged'
+	},
+	agreementLevel: {
+		newValue: 'Frame Agreement',
+		oldValue: 'Frame Agreement',
+		status: 'unchanged'
+	},
+	addons: {
+		a1P4K0000023YXoUAM: {
+			oneOff: {
+				newValue: 20,
+				oldValue: 63,
+				status: 'changed'
+			},
+			recurring: {
+				newValue: 76,
+				oldValue: 45,
+				status: 'changed'
+			},
+			status: 'changed'
+		},
+		a1P4K0000023YXjUAM: {
+			oneOff: {
+				newValue: 250,
+				oldValue: 250,
+				status: 'unchanged'
+			},
+			recurring: {
+				newValue: 500,
+				oldValue: 500,
+				status: 'unchanged'
+			},
+			status: 'unchanged'
+		}
+	},
+	products: {
+		a1q4K000000H6wSQAS: 'removed',
+		a1q4K000000H6wTQAS: 'removed',
+		a1q4K000000H6wLQAS: 'added',
+		a1q4K000000H6wMQAS: 'added',
+		a1q4K000000H6wNQAS: 'added',
+		a1q4K000000H6wNQAZ: {
+			product: {
+				oneOff: {
+					oldValue: 30,
+					newValue: 50,
+					status: 'changed'
+				},
+				recurring: {
+					oldValue: 60,
+					newValue: 60,
+					status: 'unchanged'
+				},
+				status: 'changed'
+			},
+			addons: {
+				'sample-id': {
+					oneOff: {
+						oldValue: 30,
+						newValue: 50,
+						status: 'changed'
+					},
+					recurring: {
+						oldValue: 60,
+						newValue: 60,
+						status: 'unchanged'
+					},
+					status: 'changed'
+				}
+			},
+			charges: {},
+			rateCard: {},
+			volume: {} as Volume
 		}
 	}
 };

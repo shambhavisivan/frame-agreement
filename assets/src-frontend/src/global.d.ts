@@ -53,6 +53,7 @@ namespace SfGlobal {
 		approveRejectRecallRecord(paramsArray: [string, string, string]): Promise<boolean>;
 		reassignApproval(paramsArray: [string, string]): Promise<void>;
 		getAttachment(paramsArray: [string]): Promise<Attachment>;
+		getDelta(paramArray: [string, string]): Promise<DeltaResult>;
 	}
 
 	// TODO define the unknowns
@@ -235,6 +236,7 @@ namespace SfGlobal {
 		btn_Close: string;
 		source_fa: string;
 		target_fa: string;
+		btn_delta_switch_fa: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

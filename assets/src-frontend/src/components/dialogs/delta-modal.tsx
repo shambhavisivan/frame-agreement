@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { ReactElement, ReactNode, useCallback, useEffect, useState } from 'react';
 import {
 	CSButton,
 	CSLookup,
@@ -47,6 +47,7 @@ export function DeltaModal({
 	const { agreementList = [], status } = useFrameAgreements();
 	const [sourceAgreement, setSourceAgreement] = useState<Partial<FaDeltaView> | null>(null);
 	const [targetAgreement, setTargetAgreement] = useState<Partial<FaDeltaView> | null>(null);
+	const [isDeltaView, setDeltaView] = useState(false);
 	const labels = useCustomLabels();
 	const { metadata } = useFieldMetadata(FA_API_NAME);
 	const {
@@ -89,6 +90,74 @@ export function DeltaModal({
 		return metaInfo?.fieldLabel || apiName;
 	};
 
+	const faSelectionView: ReactElement = (
+		<>
+			<div>
+				<CSLookup
+					label={labels.sourceFa}
+					fieldToBeDisplayed={DISPLAYED_FIELD}
+					lookupColumns={AGREEMENT_LOOKUP_OPTIONS}
+					lookupOptions={agreementList}
+					mode="client"
+					onSelectChange={(value): void => setSourceAgreement(value)}
+					{...(sourceAgreement && { value: sourceAgreement })}
+				/>
+				<CSLookup
+					label={labels.targetFa}
+					fieldToBeDisplayed={DISPLAYED_FIELD}
+					lookupColumns={AGREEMENT_LOOKUP_OPTIONS}
+					lookupOptions={agreementList}
+					mode="client"
+					onSelectChange={(value): void => setTargetAgreement(value)}
+					{...(targetAgreement && { value: targetAgreement })}
+				/>
+			</div>
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					flexWrap: 'wrap',
+					flexFlow: 'column'
+				}}
+			>
+				<div>
+					{labels.sourceFa}
+					<div>
+						<JSONTree
+							labelRenderer={([key]): ReactNode => (
+								<strong>{findLabel(String([key]))}</strong>
+							)}
+							valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
+							data={sourceAgreement}
+							theme={THEME_DELTA_MODAL}
+							invertTheme={false}
+							hideRoot={true}
+						/>
+					</div>
+				</div>
+				<div>
+					{labels.targetFa}
+					<div>
+						<JSONTree
+							labelRenderer={([key]): ReactNode => (
+								<strong>{findLabel(String([key]))}</strong>
+							)}
+							valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
+							data={targetAgreement}
+							theme={THEME_DELTA_MODAL}
+							invertTheme={false}
+							hideRoot={true}
+						/>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+
+	const onClickCalculateDelta = useCallback((): void => setDeltaView((prevState) => !prevState), [
+		[setDeltaView]
+	]);
+
 	return (
 		<CSModal
 			visible={modalOpen}
@@ -105,76 +174,13 @@ export function DeltaModal({
 					width: 'fit-content'
 				}}
 			>
-				<div>
-					<CSLookup
-						label={labels.sourceFa}
-						fieldToBeDisplayed={DISPLAYED_FIELD}
-						lookupColumns={AGREEMENT_LOOKUP_OPTIONS}
-						lookupOptions={agreementList}
-						mode="client"
-						onSelectChange={(value): void => setSourceAgreement(value)}
-						{...(sourceAgreement && { value: sourceAgreement })}
-					/>
-					<CSLookup
-						label={labels.targetFa}
-						fieldToBeDisplayed={DISPLAYED_FIELD}
-						lookupColumns={AGREEMENT_LOOKUP_OPTIONS}
-						lookupOptions={agreementList}
-						mode="client"
-						onSelectChange={(value): void => setTargetAgreement(value)}
-						{...(targetAgreement && { value: targetAgreement })}
-					/>
-				</div>
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						flexWrap: 'wrap',
-						flexFlow: 'column'
-					}}
-				>
-					<div>
-						{labels.sourceFa}
-						<div>
-							{sourceAgreement ? (
-								<JSONTree
-									labelRenderer={([key]): ReactNode => (
-										<strong>{findLabel(String([key]))}</strong>
-									)}
-									valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
-									data={sourceAgreement}
-									theme={THEME_DELTA_MODAL}
-									invertTheme={false}
-									hideRoot={true}
-								/>
-							) : (
-								<p>select a source agreement value in the lookup</p>
-							)}
-						</div>
-					</div>
-					<div>
-						{labels.targetFa}
-						<div>
-							{targetAgreement ? (
-								<JSONTree
-									labelRenderer={([key]): ReactNode => (
-										<strong>{findLabel(String([key]))}</strong>
-									)}
-									valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
-									data={targetAgreement}
-									theme={THEME_DELTA_MODAL}
-									invertTheme={false}
-									hideRoot={true}
-								/>
-							) : (
-								<p>select a Target Agreement value in the lookup</p>
-							)}
-						</div>
-					</div>
-				</div>
+				{isDeltaView ? <div>delta</div> : faSelectionView}
 			</CSModalBody>
 			<CSModalHeader>
-				<CSButton label={labels.btnCalcDelta}></CSButton>
+				<CSButton
+					label={isDeltaView ? `< ${labels.btnDeltaSwitchFa}` : labels.btnCalcDelta}
+					onClick={onClickCalculateDelta}
+				></CSButton>
 				<CSButton label={labels.btnClose} onClick={(): void => onClose(false)}></CSButton>
 			</CSModalHeader>
 		</CSModal>

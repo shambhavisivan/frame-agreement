@@ -7,11 +7,12 @@ import {
 	CSModalHeader
 } from '@cloudsense/cs-ui-components';
 import { QueryStatus, useFrameAgreements } from '../../hooks/use-frame-agreements';
-import { FrameAgreement } from '../../datasources';
+import { FrameAgreement, Products } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import JSONTree from 'react-json-tree';
 import { useFieldMetadata } from '../../hooks/use-field-metadata';
 import { FA_API_NAME, THEME_DELTA_MODAL } from '../../app-constants';
+import { useGetFaAttachment } from '../../hooks/use-get-fa-attachment';
 
 export interface ModalProps {
 	modalOpen: boolean;
@@ -33,6 +34,9 @@ const AGREEMENT_LOOKUP_OPTIONS: AgreementLookupOption[] = [
 ];
 
 const DISPLAYED_FIELD: AgreementLookupOption['key'] = 'agreementName';
+interface FaDeltaView extends FrameAgreement {
+	products?: Products;
+}
 
 export function DeltaModal({
 	modalOpen,
@@ -41,24 +45,48 @@ export function DeltaModal({
 	faTargetId
 }: DeltaModalProps): ReactElement {
 	const { agreementList = [], status } = useFrameAgreements();
-	const [sourceAgreement, setSourceAgreement] = useState<FrameAgreement | null>(null);
-	const [targetAgreement, setTargetAgreement] = useState<FrameAgreement | null>(null);
+	const [sourceAgreement, setSourceAgreement] = useState<Partial<FaDeltaView> | null>(null);
+	const [targetAgreement, setTargetAgreement] = useState<Partial<FaDeltaView> | null>(null);
 	const labels = useCustomLabels();
 	const { metadata } = useFieldMetadata(FA_API_NAME);
+	const {
+		attachment: sourceAttachment,
+		attachmentStatus: sourceAttachmentStatus
+	} = useGetFaAttachment(sourceAgreement?.id ? sourceAgreement.id : '');
+
+	const {
+		attachment: targetAttachment,
+		attachmentStatus: targetAttachmentStatus
+	} = useGetFaAttachment(targetAgreement?.id ? targetAgreement.id : '');
 
 	useEffect(() => {
+		const formatFa = (frameAgreement: FrameAgreement | undefined): Partial<FaDeltaView> => {
+			return {
+				...frameAgreement,
+				...{ products: sourceAttachment?.products }
+			};
+		};
 		if (status === QueryStatus.Success) {
 			const sourceFa = agreementList.find((agreement) => agreement.id === faSourceId);
-			setSourceAgreement(sourceFa || ({} as FrameAgreement) || null);
+			setSourceAgreement(formatFa(sourceFa) || null);
 			const targetFa = agreementList.find((agreement) => agreement.id === faTargetId);
-			setTargetAgreement(targetFa || ({} as FrameAgreement) || null);
+			setTargetAgreement(formatFa(targetFa) || null);
 		}
-	}, [agreementList, faSourceId, status, faTargetId]);
+	}, [
+		agreementList,
+		faSourceId,
+		status,
+		faTargetId,
+		targetAttachmentStatus,
+		sourceAttachmentStatus,
+		sourceAttachment?.products,
+		targetAttachment?.products
+	]);
 
 	const findLabel = (apiName: string): string | undefined => {
 		const metaInfo = metadata?.find((faMeta) => faMeta.apiName === apiName);
 
-		return metaInfo?.fieldLabel;
+		return metaInfo?.fieldLabel || apiName;
 	};
 
 	return (
@@ -108,31 +136,39 @@ export function DeltaModal({
 					<div>
 						{labels.sourceFa}
 						<div>
-							<JSONTree
-								labelRenderer={([key]): ReactNode => (
-									<strong>{findLabel(String([key]))}</strong>
-								)}
-								valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
-								data={sourceAgreement}
-								theme={THEME_DELTA_MODAL}
-								invertTheme={false}
-								hideRoot={true}
-							/>
+							{sourceAgreement ? (
+								<JSONTree
+									labelRenderer={([key]): ReactNode => (
+										<strong>{findLabel(String([key]))}</strong>
+									)}
+									valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
+									data={sourceAgreement}
+									theme={THEME_DELTA_MODAL}
+									invertTheme={false}
+									hideRoot={true}
+								/>
+							) : (
+								<p>select a source agreement value in the lookup</p>
+							)}
 						</div>
 					</div>
 					<div>
 						{labels.targetFa}
 						<div>
-							<JSONTree
-								labelRenderer={([key]): ReactNode => (
-									<strong>{findLabel(String([key]))}</strong>
-								)}
-								valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
-								data={targetAgreement}
-								theme={THEME_DELTA_MODAL}
-								invertTheme={false}
-								hideRoot={true}
-							/>
+							{targetAgreement ? (
+								<JSONTree
+									labelRenderer={([key]): ReactNode => (
+										<strong>{findLabel(String([key]))}</strong>
+									)}
+									valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
+									data={targetAgreement}
+									theme={THEME_DELTA_MODAL}
+									invertTheme={false}
+									hideRoot={true}
+								/>
+							) : (
+								<p>select a Target Agreement value in the lookup</p>
+							)}
 						</div>
 					</div>
 				</div>

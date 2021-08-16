@@ -8,8 +8,14 @@ export function useGetFaAttachment(
 	attachment: Attachment | undefined;
 	attachmentStatus: QueryStatus;
 } {
-	const { data, status } = useQuery([QueryKeys.faAttachment, faId], () =>
-		remoteActions.getAttachment(faId)
+	const isEnabled = Boolean(faId);
+
+	const { data, status } = useQuery(
+		[QueryKeys.faAttachment, faId],
+		() => remoteActions.getAttachment(faId),
+		{
+			enabled: isEnabled
+		}
 	);
 
 	return {

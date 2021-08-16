@@ -17,13 +17,16 @@ describe('test usegetFaAttachment', () => {
 	const getAttachmentSpy = jest
 		.spyOn(remoteActions, 'getAttachment')
 		.mockReturnValueOnce(Promise.resolve(attachment));
-	test('should call getAttachment with required param', async () => {
-		const wrapper = ({ children }: { children: ReactElement }): ReactElement => (
-			<RemoteActionsProvider queryCache={queryCache} remoteActions={remoteActions}>
-				{children}
-			</RemoteActionsProvider>
-		);
+	const wrapper = ({ children }: { children: ReactElement }): ReactElement => (
+		<RemoteActionsProvider queryCache={queryCache} remoteActions={remoteActions}>
+			{children}
+		</RemoteActionsProvider>
+	);
 
+	afterEach(() => {
+		getAttachmentSpy.mockClear();
+	});
+	test('should call getAttachment with required param', async () => {
 		const { result, waitFor } = renderHook(() => useGetFaAttachment('some-faid'), {
 			wrapper
 		});
@@ -35,5 +38,17 @@ describe('test usegetFaAttachment', () => {
 		expect(getAttachmentSpy).toHaveBeenCalledTimes(1);
 		expect(getAttachmentSpy).toHaveBeenCalledWith('some-faid');
 		expect(result.current.attachment).toStrictEqual(attachment);
+	});
+
+	test('should not call remoteactions when id is invalid', async () => {
+		const { result, waitFor } = renderHook(() => useGetFaAttachment(''), {
+			wrapper
+		});
+
+		await waitFor(() => {
+			return result.current.attachmentStatus === QueryStatus.Idle;
+		});
+
+		expect(getAttachmentSpy).not.toHaveBeenCalled();
 	});
 });

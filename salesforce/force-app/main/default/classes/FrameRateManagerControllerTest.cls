@@ -2363,4 +2363,16 @@ private class FrameRateManagerControllerTest {
 
 		System.assertEquals(migrationErrorMsg, FrameRateManagerController.FRAME_AGREEMENT_MIGRATION_EXCEPTION);
 	}
+
+	@isTest
+	public static void testNameSpace() {
+
+		Test.startTest();
+
+		String nameSpace = FrameRateManagerController.getNameSpacePrefix();
+
+		Test.stopTest();
+
+		System.assertNotEquals(null, nameSpace, 'either blank string or the namespace should be returned');
+	}
 }

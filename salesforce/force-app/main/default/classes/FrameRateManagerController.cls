@@ -2772,6 +2772,13 @@ global with sharing class FrameRateManagerController {
 		return fa;
 	}
 
+	@RemoteAction
+	public static String getNameSpacePrefix() {
+		String[] parts = String.valueOf(FrameRateManagerController.class).split('\\.', 2);
+		String namespacePrefix = parts.size() == 2 ? parts[0] : '';
+		return namespacePrefix;
+	}
+
 	// WRAPPERS
 	public class RateCard {
 		public Id Id {

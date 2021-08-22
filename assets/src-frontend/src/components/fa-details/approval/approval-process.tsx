@@ -4,17 +4,20 @@ import {
 	CSCard,
 	CSCardBody,
 	CSCardHeader,
-	CSTable,
-	CSTableBody,
-	CSTableCell,
-	CSTableHeader,
-	CSTableRow,
+	CSDataTable,
+	CSDataTableRowInterface,
 	CSTextarea
 } from '@cloudsense/cs-ui-components';
 import { format } from 'date-fns';
 import React, { ReactElement, useContext, useEffect, useReducer, useState } from 'react';
 import { QueryStatus } from 'react-query';
-import { ApprovalActionType, ApprovalHistory, FaStatus, FacSetting } from '../../../datasources';
+import {
+	ApprovalActionType,
+	ApprovalHistory,
+	FaStatus,
+	FacSetting,
+	ProcessInstanceHistory
+} from '../../../datasources';
 import { useAppSettings } from '../../../hooks/use-app-settings';
 import { useApprovalAction } from '../../../hooks/use-approval-action';
 import { useApprovalHistory } from '../../../hooks/use-approval-history';
@@ -45,19 +48,57 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 	}, [status, approvals, approvalStatus, reassignStatus]);
 
 	const tableHeaders = [
-		{ name: labels.approvalTableHeaderAction, size: 1 },
-		{ name: labels.approvalTableHeaderDate, size: 1 },
-		{ name: labels.approvalTableHeaderStatus, size: 1 },
-		{ name: labels.approvalTableHeaderAssignedTo, size: 1 },
-		{ name: labels.approvalTableHeaderActualApprover, size: 1 },
-		{ name: labels.approvalTableHeaderComments, size: 2 }
+		{
+			key: 'processNode',
+			header: labels.approvalTableHeaderAction,
+			grow: 1,
+			render: (row: CSDataTableRowInterface): string =>
+				row.data?.processNode?.name || 'Approval Request Submitted'
+		},
+		{
+			key: 'createdDate',
+			header: labels.approvalTableHeaderDate,
+			grow: 1,
+			render: (row: CSDataTableRowInterface): string =>
+				format(row.data?.createdDate, 'MM/dd/yyyy HH:mm')
+		},
+		{
+			key: 'stepStatus',
+			header: labels.approvalTableHeaderStatus,
+			grow: 1,
+			render: (row: CSDataTableRowInterface): string => `status ${row.data?.stepStatus}`
+		},
+		{
+			key: 'actor',
+			header: labels.approvalTableHeaderAssignedTo,
+			grow: 1,
+			render: (row: CSDataTableRowInterface): string =>
+				row.data?.actor && row.data?.actor.name
+		},
+		{
+			key: 'originalActor',
+			header: labels.approvalTableHeaderActualApprover,
+			grow: 1,
+			render: (row: CSDataTableRowInterface): string =>
+				row.data?.originalActor && row.data?.originalActor.name
+		},
+		{
+			key: 'comments',
+			header: labels.approvalTableHeaderComments,
+			grow: 2,
+			render: (row: CSDataTableRowInterface): string => row.data?.comments || '-/-'
+		}
 	];
 
 	return (
 		<div>
 			{state.approvals[faId]?.approvalHistory?.listProcess?.length ? (
 				<CSCard className="approval-history-wrapper">
-					<CSCardHeader title={labels.approvalTitle} collapsible defaultClosed={isClosed}>
+					<CSCardHeader
+						title={labels.approvalTitle}
+						collapsible
+						defaultClosed={!isClosed}
+					>
 						<CSButton
 							label="Refresh button"
 							labelHidden
@@ -72,7 +113,7 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 					</CSCardHeader>
 					<CSCardBody padding="0.75rem 0 0">
 						{state.approvals[faId]?.approvalHistory?.isPending && (
-							<div>
+							<>
 								<CSTextarea
 									label={labels.approvalMessageTitle}
 									placeholder={labels.approvalMessagePlaceholder}
@@ -100,7 +141,7 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 										/>
 									)}
 									{state.approvals[faId].canApproveReject && (
-										<div>
+										<>
 											<CSButton
 												label={labels.approvalActionApprove}
 												iconName="like"
@@ -131,7 +172,7 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 													);
 												}}
 											/>
-										</div>
+										</>
 									)}
 									{state.approvals[faId].canReassign &&
 										// TODO: Keeping reassign action hidden for now as the functionality is incomplete
@@ -153,65 +194,26 @@ export function ApprovalProcess({ faId }: { faId: string }): ReactElement {
 											/>
 										)}
 								</CSButtonGroup>
-							</div>
+							</>
 						)}
-						<CSTable selectableRows>
-							<CSTableHeader>
-								{tableHeaders.map((header, index) => (
-									<CSTableCell
-										key={`header${index}`}
-										text={header.name}
-										grow={header.size}
-									/>
-								))}
-							</CSTableHeader>
-							<CSTableBody>
-								{state.approvals[faId]?.approvalHistory?.listProcess.map(
-									(process, i) => {
-										return process.stepsAndWorkitems.map((step, j) => {
-											return (
-												<CSTableRow key={`approvalStep${i}${j}`}>
-													<CSTableCell
-														text={
-															(step.processNode &&
-																step.processNode.name) ||
-															'Approval Request Submitted'
-														}
-														grow={1}
-													/>
-													<CSTableCell
-														text={format(
-															step.createdDate,
-															'MM/dd/yyyy HH:mm'
-														)}
-														grow={1}
-													/>
-													<CSTableCell
-														text={`status ${step.stepStatus}`}
-														grow={1}
-													/>
-													<CSTableCell
-														text={step.actor && step.actor.name}
-														grow={1}
-													/>
-													<CSTableCell
-														text={
-															step.originalActor &&
-															step.originalActor.name
-														}
-														grow={1}
-													/>
-													<CSTableCell
-														text={step.comments || '-/-'}
-														grow={2}
-													/>
-												</CSTableRow>
-											);
-										});
-									}
-								)}
-							</CSTableBody>
-						</CSTable>
+
+						{/* TODO: add selectable prop when support in csdatatable is added */}
+						<CSDataTable
+							columns={tableHeaders}
+							rows={state.approvals[faId]?.approvalHistory?.listProcess.flatMap(
+								(process) =>
+									process.stepsAndWorkitems.map(
+										(step: ProcessInstanceHistory) => ({
+											key: step.id,
+											data: step
+										})
+									)
+							)}
+							density="comfortable"
+							disableHover
+							stickyHeader
+							maxHeight="30rem"
+						/>
 					</CSCardBody>
 				</CSCard>
 			) : null}

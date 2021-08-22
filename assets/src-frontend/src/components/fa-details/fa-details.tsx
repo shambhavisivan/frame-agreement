@@ -64,7 +64,7 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 								</span>
 							</div>
 						</CSCardHeader>
-						<CSCardBody>
+						<CSCardBody padding="0">
 							<FaEditor agreement={agreement} />
 						</CSCardBody>
 					</CSCard>

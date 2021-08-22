@@ -25,7 +25,7 @@ export function FaJsonInput({ agreement, setFaDetails }: FaJsonInputProps): Reac
 			type="text"
 			value={input}
 			onChange={onInputUpdate}
-			style={{ width: '100vw', height: '10vh' }}
+			style={{ width: '100%', height: '10vh' }}
 		/>
 	);
 }

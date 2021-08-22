@@ -7,6 +7,16 @@ import { useUpsertFrameAgreements } from '../../hooks/use-upsert-frame-agreement
 import { LoadingFallback } from '../loading-fallback';
 import { FaJsonInput } from './fa-json-input';
 import { createActionsForProduct } from './negotiation/negotiation-action-creator';
+import {
+	CSButton,
+	CSInputSearch,
+	CSModal,
+	CSModalHeader,
+	CSModalBody,
+	CSModalFooter,
+	CSDataTable
+} from '@cloudsense/cs-ui-components';
+
 import negotiationReducer, {
 	ProductNegotiation,
 	selectAttachment
@@ -25,9 +35,7 @@ function CommercialProductOption({
 	onClick: (product: CommercialProductStandalone) => void;
 }): ReactElement {
 	return (
-		<li key={product.id}>
-			<button onClick={(): void => onClick(product)}>{product.name}</button>
-		</li>
+		<CSButton key={product.id} label={product.name} onClick={(): void => onClick(product)} />
 	);
 }
 
@@ -36,6 +44,8 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	const { data: products = [], status: productsStatus } = useCommercialProducts();
 
 	const [productIds, setProductIds] = useState<string[]>([]);
+
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (products.length !== 0) {
@@ -136,13 +146,52 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 		}
 	);
 
-	// TODO: display in a modal
 	const productSelection = (
-		<ul>
-			{products.map((p) => (
-				<CommercialProductOption product={p} onClick={addProductToFa} key={p.id} />
-			))}
-		</ul>
+		<CSModal
+			visible={modalOpen}
+			onClose={(): void => setModalOpen(false)}
+			outerClickClose
+			size="medium"
+			className="product-selection-modal"
+		>
+			<CSModalHeader title="Add Product to Frame Agreement" />
+			<CSModalBody padding="0">
+				{/* TODO: add filter functionality */}
+				<CSInputSearch label="Filter products..." width="20rem" />
+				{/* row render csbutton logic will be moved to row onclick prop once support for table onclick is added */}
+				<CSDataTable
+					columns={[
+						{
+							key: 'name',
+							header: 'Commercial Product Name',
+							grow: 2,
+							render: (row): ReactElement => (
+								<CommercialProductOption
+									product={row.data as CommercialProductStandalone}
+									onClick={addProductToFa}
+									key={row.key}
+								/>
+							)
+						},
+						{
+							key: 'Record ID',
+							header: 'Record ID'
+						},
+						{
+							key: 'Is Recurring Discount Allowed',
+							header: 'Is Recurring Discount Allowed'
+						}
+					]}
+					rows={products.map((p) => ({
+						key: p.id,
+						data: p
+					}))}
+				/>
+			</CSModalBody>
+			<CSModalFooter>
+				<CSButton label="Close" onClick={(): void => setModalOpen(false)} />
+			</CSModalFooter>
+		</CSModal>
 	);
 
 	return (
@@ -150,6 +199,24 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 			<LoadingFallback status={productsStatus}>
 				<LoadingFallback status={productDataStatus}>
 					{productSelection}
+					{/* TODO: add table rows data */}
+					<CSDataTable
+						columns={[
+							{
+								key: 'products',
+								header: 'products'
+							}
+						]}
+						rows={[
+							{
+								key: 0,
+								data: {
+									products: ''
+								}
+							}
+						]}
+						density="comfortable"
+					/>
 					<ProductsList
 						selectedProducts={selectedProducts}
 						createProductActions={createActionsForProduct(dispatch)}
@@ -160,6 +227,14 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 							<button type="submit">Update Agreement</button>
 						</form>
 					</LoadingFallback>
+					{/* TODO: Move this to parent file. It needs to be sibling to header and pages. Add conditional so it is only rendered on details page */}
+					<footer className="action-footer">
+						<CSButton
+							label="Add products"
+							size="large"
+							onClick={(): void => setModalOpen(true)}
+						/>
+					</footer>
 				</LoadingFallback>
 			</LoadingFallback>
 		</LoadingFallback>

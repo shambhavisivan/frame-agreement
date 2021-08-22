@@ -3,12 +3,15 @@ body {
 	flex-direction: column;
 
 	.fam {
+		overflow: auto;
+		display: flex;
+		flex-direction: column;
 		flex: 1;
 
 		.cs-app-wrapper {
 			display: flex;
 			flex-direction: column;
-			height: 100%;
+			flex: 1;
 		}
 	}
 }
@@ -331,4 +334,10 @@ body {
 			}
 		}
 	}
+}
+
+/* TEMPORARY */
+button[aria-label="Open React Query Devtools"] {
+	right: 0 !important;
+	left: auto !important;
 }

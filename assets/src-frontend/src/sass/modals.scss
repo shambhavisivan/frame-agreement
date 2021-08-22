@@ -1,3 +1,4 @@
+/* MODALS */
 .delta-modal {
 	.cs-modal-body {
 		display: flex;
@@ -34,5 +35,15 @@
 	}
 	.source-agreement-wrapper {
 		border-right: 1px solid var(--modal-delta-agreement-br);
+	}
+}
+
+.product-selection-modal {
+	.cs-modal-body {
+		flex-direction: column;
+
+		.cs-input-search-wrapper {
+			margin: 0.75rem 1.5rem;
+		}
 	}
 }

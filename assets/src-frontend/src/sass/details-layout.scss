@@ -35,7 +35,7 @@
 
     .products-search-wrapper {
         border-radius: 0.25rem;
-        margin: 1rem 0;
+        margin: 1rem 0 0 0;
 
         .products-search {
             display: flex;
@@ -84,4 +84,13 @@
             }
         }
     }
+}
+
+footer.action-footer {
+	display: flex;
+	width: 100%;
+	position: sticky;
+	bottom: 0;
+	z-index: var(--z-index-details-action-footer);
+	background: var(--details-action-footer-bg);
 }

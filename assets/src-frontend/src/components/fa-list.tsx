@@ -221,8 +221,6 @@ export function FrameAgreementList(): ReactElement {
 								);
 							}
 						})}
-						<CSTableCell className="column-chooser-placeholder" maxWidth="2.5rem" />
-						<CSTableCell className="column-chooser-placeholder" maxWidth="2.625rem" />
 						<CSTableCell className="column-chooser-placeholder" maxWidth="2.625rem">
 							{fa.replacedFrameAgreement && (
 								<CSDropdown
@@ -231,6 +229,7 @@ export function FrameAgreementList(): ReactElement {
 									position="top"
 									iconName="change_record_type"
 									padding="0"
+									dropdownClassName="delta-dropdown"
 								>
 									<CSTable>
 										<CSTableHeader>

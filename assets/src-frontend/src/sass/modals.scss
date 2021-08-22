@@ -1,0 +1,38 @@
+.delta-modal {
+	.cs-modal-body {
+		display: flex;
+		flex-direction: column;
+	}
+	.lookups-wrapper {
+		display: flex;
+		justify-content: space-between;
+		padding: 1rem;
+		border-bottom: 1px solid var(--modal-delta-agreement-br);
+		.cs-lookup-wrapper {
+			width: calc(50% - 0.5rem);
+		}
+	}
+	.agreements-wrapper {
+		display: flex;
+		flex: 1;
+		> div {
+			flex: 1;
+			padding: 1rem;
+			overflow-y: auto;
+			max-height: 600px;
+		}
+		ul {
+			margin: 0 !important; // Override inline react-json-tree margins
+		}
+		.modal-notice {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+	.source-agreement-wrapper {
+		border-right: 1px solid var(--modal-delta-agreement-br);
+	}
+}

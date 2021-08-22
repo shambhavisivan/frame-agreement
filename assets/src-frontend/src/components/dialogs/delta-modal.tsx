@@ -4,7 +4,8 @@ import {
 	CSLookup,
 	CSModal,
 	CSModalBody,
-	CSModalHeader
+	CSModalHeader,
+	CSModalFooter
 } from '@cloudsense/cs-ui-components';
 import { QueryStatus, useFrameAgreements } from '../../hooks/use-frame-agreements';
 import { FrameAgreement, Products } from '../../datasources';
@@ -92,7 +93,7 @@ export function DeltaModal({
 
 	const faSelectionView: ReactElement = (
 		<>
-			<div>
+			<div className="lookups-wrapper">
 				<CSLookup
 					label={labels.sourceFa}
 					fieldToBeDisplayed={DISPLAYED_FIELD}
@@ -112,43 +113,42 @@ export function DeltaModal({
 					{...(targetAgreement && { value: targetAgreement })}
 				/>
 			</div>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					flexWrap: 'wrap',
-					flexFlow: 'column'
-				}}
-			>
-				<div>
-					{labels.sourceFa}
-					<div>
+			<div className="agreements-wrapper">
+				<div className="source-agreement-wrapper">
+					{sourceAgreement ? (
 						<JSONTree
 							labelRenderer={([key]): ReactNode => (
-								<strong>{findLabel(String([key]))}</strong>
+								<strong>{findLabel(String([key]))}:</strong>
 							)}
-							valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
+							valueRenderer={(raw): ReactNode => <>{raw}</>}
 							data={sourceAgreement}
 							theme={THEME_DELTA_MODAL}
-							invertTheme={false}
+							invertTheme={true}
 							hideRoot={true}
 						/>
-					</div>
+					) : (
+						<p className="modal-notice">
+							Select a source agreement value in the lookup
+						</p>
+					)}
 				</div>
-				<div>
-					{labels.targetFa}
-					<div>
+				<div className="target-agreement-wrapper">
+					{targetAgreement ? (
 						<JSONTree
 							labelRenderer={([key]): ReactNode => (
-								<strong>{findLabel(String([key]))}</strong>
+								<strong>{findLabel(String([key]))}:</strong>
 							)}
-							valueRenderer={(raw): ReactNode => <strong>{raw}</strong>}
+							valueRenderer={(raw): ReactNode => <>{raw}</>}
 							data={targetAgreement}
 							theme={THEME_DELTA_MODAL}
-							invertTheme={false}
+							invertTheme={true}
 							hideRoot={true}
 						/>
-					</div>
+					) : (
+						<p className="modal-notice">
+							Select a Target Agreement value in the lookup
+						</p>
+					)}
 				</div>
 			</div>
 		</>
@@ -163,26 +163,22 @@ export function DeltaModal({
 			visible={modalOpen}
 			onClose={(): void => onClose(false)}
 			outerClickClose
-			size="medium"
+			closeButton
+			size="large"
+			className="delta-modal"
 		>
-			<CSModalHeader title={labels.deltaTitle}></CSModalHeader>
-			<CSModalBody
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					height: 'fit-content',
-					width: 'fit-content'
-				}}
-			>
+			<CSModalHeader title={labels.deltaTitle} />
+			<CSModalBody padding="0" minHeight="30rem">
 				{isDeltaView ? <div>delta</div> : faSelectionView}
 			</CSModalBody>
-			<CSModalHeader>
+			<CSModalFooter>
+				<CSButton label={labels.btnClose} onClick={(): void => onClose(false)} />
 				<CSButton
+					btnStyle="brand"
 					label={isDeltaView ? `< ${labels.btnDeltaSwitchFa}` : labels.btnCalcDelta}
 					onClick={onClickCalculateDelta}
-				></CSButton>
-				<CSButton label={labels.btnClose} onClick={(): void => onClose(false)}></CSButton>
-			</CSModalHeader>
+				/>
+			</CSModalFooter>
 		</CSModal>
 	);
 }

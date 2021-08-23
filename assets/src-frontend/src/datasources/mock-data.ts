@@ -657,7 +657,7 @@ export const mockProductsByIds: ProductsByIdsData[] = [
 export const mockProductsByIdsResponse: GraphQLResponse = {
 	isSuccess: true,
 	data: {
-		productsByIds: mockProductsByIds
+		getProductsByIdentifiers: mockProductsByIds
 	}
 };
 

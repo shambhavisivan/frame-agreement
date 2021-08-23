@@ -53,9 +53,9 @@ query Products($categoryId: ID!) {
 }
 `;
 
-export const PRODUCT_DATA_BY_IDS = `
-query PRODUCT_BY_IDS($productIds: [ID!]!) {
-	productsByIds(productIds: $productIds ) {
+export const PRODUCT_BY_IDENTIFIERS = `
+query PRODUCT_BY_IDENTIFIERS($productIdentifiers: [ProductIdentifier]!) {
+	getProductsByIdentifiers(productIdentifiers: $productIdentifiers ) {
 		id
 		name
 		commercialProductMetadata {

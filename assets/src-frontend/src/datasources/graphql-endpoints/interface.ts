@@ -126,7 +126,7 @@ export interface ProductsByIdsData {
 }
 
 export interface ProductsByIdsResponse {
-	productsByIds: ProductsByIdsData[];
+	getProductsByIdentifiers: ProductsByIdsData[];
 }
 
 export interface PricingServiceApi {

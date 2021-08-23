@@ -17,7 +17,7 @@ import {
 	CATEGORIES_IN_CATALOGUE,
 	PRODUCTS_IN_CATALOGUE,
 	PRODUCTS_IN_CATEGORY,
-	PRODUCT_DATA_BY_IDS
+	PRODUCT_BY_IDENTIFIERS
 } from './pricing-service-queries';
 
 describe('PricingServiceGraphQL', () => {
@@ -225,7 +225,7 @@ describe('PricingServiceGraphQL', () => {
 			const response = await pricingServiceAPI.queryProductsByIds(testProductIds);
 
 			expect(queryDataSpy).toHaveBeenCalledTimes(1);
-			expect(queryDataSpy).toHaveBeenCalledWith(PRODUCT_DATA_BY_IDS, {
+			expect(queryDataSpy).toHaveBeenCalledWith(PRODUCT_BY_IDENTIFIERS, {
 				productIds: testProductIds
 			});
 			expect(response).toEqual(mockProductsByIds);
@@ -244,7 +244,7 @@ describe('PricingServiceGraphQL', () => {
 			);
 
 			expect(queryDataSpy).toHaveBeenCalledTimes(1);
-			expect(queryDataSpy).toHaveBeenCalledWith(PRODUCT_DATA_BY_IDS, {
+			expect(queryDataSpy).toHaveBeenCalledWith(PRODUCT_BY_IDENTIFIERS, {
 				productIds: testProductIds
 			});
 		});

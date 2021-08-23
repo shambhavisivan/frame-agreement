@@ -5,7 +5,7 @@ import {
 	PRODUCTS_IN_CATALOGUE,
 	CATEGORIES_IN_CATALOGUE,
 	PRODUCTS_IN_CATEGORY,
-	PRODUCT_DATA_BY_IDS,
+	PRODUCT_BY_IDENTIFIERS,
 } from "./graphl-query";
 
 export const queryCpIdsInCatalogue = async () => {
@@ -141,21 +141,32 @@ export const queryOfferIdsInCatalogue = async () => {
 };
 
 
-export const queryCpDataByIds = async productIds => {
+export const queryCpDataByIds = productIds => {
+	let productIdentifiers = [];
+	productIds.forEach(productId => {
+		productIdentifiers.push({
+			productId
+		});
+	});
+
+	return queryCpByIdentifiers(productIdentifiers);
+}
+
+export const queryCpByIdentifiers = async (productIdentifiers) => {
 	const variables = {
-		productIds
+		productIdentifiers
 	};
 
 	try {
 		const response = await invokeGraphQLService(
-			PRODUCT_DATA_BY_IDS,
+			PRODUCT_BY_IDENTIFIERS,
 			variables
 		);
 
 		if (!response.isSuccess) {
 			throw new Error(response.error);
 		} else {
-			return response.data.productsByIds;
+			return response.data.getProductsByIdentifiers;
 		}
 	} catch(error) {
 		throw new Error(error.message);

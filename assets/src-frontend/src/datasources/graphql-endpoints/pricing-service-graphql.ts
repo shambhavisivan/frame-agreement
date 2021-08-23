@@ -14,7 +14,7 @@ import {
 	CATEGORIES_IN_CATALOGUE,
 	PRODUCTS_IN_CATALOGUE,
 	PRODUCTS_IN_CATEGORY,
-	PRODUCT_DATA_BY_IDS
+	PRODUCT_BY_IDENTIFIERS
 } from './pricing-service-queries';
 
 export class PricingServiceGraphQL implements PricingServiceApi {
@@ -102,7 +102,7 @@ export class PricingServiceGraphQL implements PricingServiceApi {
 
 		try {
 			const response = await this._dispatcherService.queryData(
-				PRODUCT_DATA_BY_IDS,
+				PRODUCT_BY_IDENTIFIERS,
 				variables
 			);
 
@@ -110,7 +110,7 @@ export class PricingServiceGraphQL implements PricingServiceApi {
 				throw new Error(response.errorMessage?.join(', '));
 			} else {
 				const productsByIdsResponse: ProductsByIdsResponse = response.data as ProductsByIdsResponse;
-				return productsByIdsResponse.productsByIds;
+				return productsByIdsResponse.getProductsByIdentifiers;
 			}
 		} catch (error) {
 			throw new Error(error.message);

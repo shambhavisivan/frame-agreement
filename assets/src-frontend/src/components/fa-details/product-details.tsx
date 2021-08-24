@@ -21,12 +21,12 @@ export function ProductDetails({
 			</th>
 			<td>
 				<Negotiation
-					negotiable={product.recurring}
+					negotiable={product?.recurring}
 					onNegotiatedChanged={negotiateRecurring}
 				/>
 			</td>
 			<td>
-				<Negotiation negotiable={product.oneOff} onNegotiatedChanged={negotiateOneOff} />
+				<Negotiation negotiable={product?.oneOff} onNegotiatedChanged={negotiateOneOff} />
 			</td>
 			<td>
 				<RateCards rateCards={rateCards} negotiateRateCardLine={negotiateRateCardLine} />

@@ -13,7 +13,7 @@ export function useCommercialProductData(
 		['commercialProductData', ids],
 		() => remoteActions.getCommercialProductData(ids),
 		{
-			enabled: ids.length > 0
+			enabled: Boolean(ids?.length)
 		}
 	);
 

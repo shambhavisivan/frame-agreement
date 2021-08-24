@@ -24,13 +24,18 @@ export interface RateCards {
 	[rateCardId: string]: RateCardLines;
 }
 
+export interface AdvancedCharges {
+	[rateCardId: string]: RateCardLines;
+}
+
 export interface ProductNegotiation {
 	rateCards: RateCards;
 	volume: Volume;
-	product: {
+	product?: {
 		recurring: Negotiable;
 		oneOff: Negotiable;
 	};
+	charges?: AdvancedCharges;
 }
 
 export interface Negotiation {
@@ -96,11 +101,11 @@ export default function negotiationReducer(
 						product: {
 							...state.products[action.payload.productId].product,
 							oneOff: {
-								...state.products[action.payload.productId].product.oneOff,
+								...state.products[action.payload.productId].product?.oneOff,
 								negotiated: action.payload.value
 							}
 						}
-					}
+					} as ProductNegotiation
 				}
 			};
 		case 'negotiateRecurring':
@@ -117,11 +122,11 @@ export default function negotiationReducer(
 						product: {
 							...state.products[action.payload.productId].product,
 							recurring: {
-								...state.products[action.payload.productId].product.recurring,
-								negotiated: action.payload.value
+								...state.products[action.payload.productId].product?.recurring,
+								negotiated: action.payload?.value
 							}
 						}
-					}
+					} as ProductNegotiation
 				}
 			};
 		case 'addProducts':
@@ -217,10 +222,10 @@ export function selectAttachment(state: Negotiation): Attachment {
 		Object.entries(state.products).map(([productId, productNegotiation]) => {
 			const attachedProductNegotiation = {
 				product: {
-					...(productNegotiation.product.oneOff.negotiated && {
+					...(productNegotiation?.product?.oneOff.negotiated && {
 						oneOff: productNegotiation.product.oneOff.negotiated
 					}),
-					...(productNegotiation.product.recurring.negotiated && {
+					...(productNegotiation?.product?.recurring.negotiated && {
 						recurring: productNegotiation.product.recurring.negotiated
 					})
 				},

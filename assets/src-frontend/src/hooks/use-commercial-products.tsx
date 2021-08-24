@@ -7,7 +7,9 @@ import {
 } from '../datasources/graphql-endpoints/interface';
 import { useProductIdsInDefaultCatalogue } from './use-productIds-in-default-catalogue';
 
-export function useCommercialProducts(): {
+export function useCommercialProducts(
+	filterIds: Array<string> = []
+): {
 	status: QueryStatus;
 	data?: CommercialProductStandalone[];
 } {
@@ -17,9 +19,11 @@ export function useCommercialProducts(): {
 	};
 
 	const { productIds } = useProductIdsInDefaultCatalogue(filter);
+	// to prevent duplicates if any
+	const productIdsFilter = Array.from(new Set([...filterIds, ...productIds]));
 
-	const { status, data } = useQuery(['commercialProducts', productIds], () =>
-		remoteActions.getCommercialProducts(productIds)
+	const { status, data } = useQuery(['commercialProducts', productIdsFilter], () =>
+		remoteActions.getCommercialProducts(productIdsFilter)
 	);
 
 	return {

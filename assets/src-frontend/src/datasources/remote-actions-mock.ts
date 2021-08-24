@@ -151,7 +151,7 @@ export const remoteActions: RemoteActions = {
 		return Promise.resolve();
 	},
 
-	async getAttachment(faId: string): Promise<Attachment> {
+	async getAttachmentBody(faId: string): Promise<Attachment> {
 		return Promise.resolve(attachment);
 	},
 

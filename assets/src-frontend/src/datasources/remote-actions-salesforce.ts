@@ -41,7 +41,7 @@ export interface RemoteActions {
 		comment: string
 	): Promise<boolean>;
 	reassignApproval(faId: string, newApproverId: string): Promise<void>;
-	getAttachment(faId: string): Promise<Attachment>;
+	getAttachmentBody(faId: string): Promise<Attachment>;
 	getDelta(sourceFaId: string, targetFaId: string): Promise<DeltaResult>;
 }
 
@@ -194,8 +194,15 @@ export const remoteActions: RemoteActions = {
 		return await SF.invokeAction('reassignApproval', [faId, newApproverId]);
 	},
 
-	async getAttachment(faId: string) {
-		return await SF.invokeAction('getAttachment', [faId]);
+	async getAttachmentBody(faId: string) {
+		try {
+			const attachmentBlob = await SF.invokeAction('getAttachmentBody', [faId]);
+			const decodedString = atob(attachmentBlob);
+
+			return JSON.parse(decodedString) as Attachment;
+		} catch (error) {
+			throw new Error(error.message);
+		}
 	},
 
 	async getDelta(sourceFaId: string, targetFaId: string): Promise<DeltaResult> {

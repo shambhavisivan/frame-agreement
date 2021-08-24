@@ -52,7 +52,7 @@ namespace SfGlobal {
 		getApprovalHistory(faId: [string]): Promise<SfdcApprovalHistory>;
 		approveRejectRecallRecord(paramsArray: [string, string, string]): Promise<boolean>;
 		reassignApproval(paramsArray: [string, string]): Promise<void>;
-		getAttachment(paramsArray: [string]): Promise<Attachment>;
+		getAttachmentBody(paramsArray: [string]): Promise<string>;
 		getDelta(paramArray: [string, string]): Promise<DeltaResult>;
 	}
 
@@ -249,6 +249,8 @@ namespace SfGlobal {
 		products_charges: string;
 		products_rates: string;
 		addon_label: string;
+		btn_AddProducts: string;
+		modal_addFa_title: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

@@ -9,13 +9,13 @@ import { attachment } from '../datasources/mock-data';
 jest.mock('../datasources/remote-actions-salesforce', () => ({
 	remoteActions: {
 		getAppSettings: jest.fn(),
-		getAttachment: jest.fn()
+		getAttachmentBody: jest.fn()
 	}
 }));
 
 describe('test usegetFaAttachment', () => {
 	const getAttachmentSpy = jest
-		.spyOn(remoteActions, 'getAttachment')
+		.spyOn(remoteActions, 'getAttachmentBody')
 		.mockReturnValueOnce(Promise.resolve(attachment));
 	const wrapper = ({ children }: { children: ReactElement }): ReactElement => (
 		<RemoteActionsProvider queryCache={queryCache} remoteActions={remoteActions}>

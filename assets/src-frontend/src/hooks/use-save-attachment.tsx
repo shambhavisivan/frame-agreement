@@ -1,4 +1,5 @@
-import { QueryStatus, useMutation } from 'react-query';
+import { QueryStatus, useMutation, useQueryCache } from 'react-query';
+import { QueryKeys } from '../app-constants';
 import { Attachment, remoteActions } from '../datasources';
 
 export { QueryStatus } from 'react-query';
@@ -17,8 +18,19 @@ export function useSaveAttachment(
 	status: QueryStatus;
 	mutate: (opts: SaveAttachmentProps) => Promise<string | undefined>;
 } {
+	const queryCache = useQueryCache();
 	const [mutate, { status }] = useMutation<string, Error, SaveAttachmentProps>(
-		({ attachment, faId }: SaveAttachmentProps) => saveAttachment(faId, attachment)
+		({ attachment, faId }: SaveAttachmentProps) => {
+			return saveAttachment(faId, attachment);
+		},
+		{
+			onSuccess: (attachmentString: string, { faId }) => {
+				queryCache.setQueryData(
+					[QueryKeys.faAttachment, faId],
+					JSON.parse(attachmentString)
+				);
+			}
+		}
 	);
 
 	return {

@@ -4,10 +4,10 @@ export function Negotiation({
 	negotiable,
 	onNegotiatedChanged
 }: {
-	negotiable: { original: number | undefined; negotiated: number | undefined };
+	negotiable: { original: number | undefined; negotiated: number | undefined } | undefined;
 	onNegotiatedChanged: (value: number) => void;
 }): ReactElement {
-	const [input, setInput] = useState(String(negotiable.negotiated || negotiable.original));
+	const [input, setInput] = useState(String(negotiable?.negotiated || negotiable?.original));
 
 	const onInputUpdate = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
 		setInput(value);
@@ -21,7 +21,7 @@ export function Negotiation({
 		<table>
 			<tbody>
 				<tr>
-					<td>{negotiable.original}</td>
+					<td>{negotiable?.original}</td>
 					<td>
 						<input type="number" value={input} onChange={onInputUpdate} />
 					</td>

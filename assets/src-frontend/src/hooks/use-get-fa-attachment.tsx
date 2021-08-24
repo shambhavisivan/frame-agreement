@@ -12,7 +12,7 @@ export function useGetFaAttachment(
 
 	const { data, status } = useQuery(
 		[QueryKeys.faAttachment, faId],
-		() => remoteActions.getAttachment(faId),
+		() => remoteActions.getAttachmentBody(faId),
 		{
 			enabled: isEnabled
 		}

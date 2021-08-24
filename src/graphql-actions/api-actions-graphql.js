@@ -8,7 +8,7 @@ import {
 	PRODUCT_BY_IDENTIFIERS,
 } from "./graphl-query";
 
-export const queryCpIdsInCatalogue = async () => {
+export const queryCpsInCatalogue = async () => {
 	const catalogueId = await getDefaultCatalogueId();
 	const variables = {
 		catalogueId: catalogueId,
@@ -26,8 +26,7 @@ export const queryCpIdsInCatalogue = async () => {
 				.filter(
 					(cp) =>
 						cp.role && cp.role === ROLE_BASIC && cp.type === PRODUCT_TYPE_CP
-				)
-				.map((cp) => cp.id);
+				);
 		}
 	} catch (error) {
 		throw new Error(error.message);
@@ -146,6 +145,28 @@ export const queryCpDataByIds = productIds => {
 	productIds.forEach(productId => {
 		productIdentifiers.push({
 			productId
+		});
+	});
+
+	return queryCpByIdentifiers(productIdentifiers);
+}
+
+export const queryCpDataByOfferCode = commercialProductOfferCodes => {
+	let productIdentifiers = [];
+	commercialProductOfferCodes.forEach(productCode => {
+		productIdentifiers.push({
+			productCode
+		});
+	});
+
+	return queryCpByIdentifiers(productIdentifiers);
+}
+
+export const queryCpDataByProductCode = commercialProductCodes => {
+	let productIdentifiers = [];
+	commercialProductCodes.forEach(productCode => {
+		productIdentifiers.push({
+			productCode
 		});
 	});
 

@@ -1,11 +1,11 @@
 import * as actions from "./frameAgreementActions";
 import {
-	queryCpIdsInCatalogue,
+	queryCpsInCatalogue,
 	queryCpDataByIds,
 	queryOfferIdsInCatalogue,
 	queryCategoriesInCatalogue
 } from '../graphql-actions/api-actions-graphql';
-import { decodeEntities, getFieldLabel, restructureProductData } from '../utils/shared-service';
+import { decodeEntities, mergePrsPpdmProductInfo, getFieldLabel, restructureProductData } from '../utils/shared-service';
 import * as Constants from '~/src/utils/constants';
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
@@ -940,12 +940,33 @@ export const recieveCommercialProducts = result => ({
 export function getCommercialProducts() {
 	return async function (dispatch) {
 		const isPsEnabled = await getPsSwitch();
-		const cpIdsInCatalogue = isPsEnabled ? await queryCpIdsInCatalogue() : null;
-		const response = await window.SF.invokeAction("getCommercialProducts", [
-			cpIdsInCatalogue,
-		]);
-		dispatch(recieveCommercialProducts(response));
-		return response;
+		let commercialProducts;
+		if (isPsEnabled) {
+			const cpsInCatalogue = isPsEnabled
+				? await queryCpsInCatalogue()
+				: null;
+			const cpIdsInCatalogue = cpsInCatalogue.map((cp) => cp.id);
+			const response = await window.SF.invokeAction(
+				"getCommercialProducts",
+				[cpIdsInCatalogue]
+			);
+			commercialProducts = mergePrsPpdmProductInfo(
+				cpsInCatalogue,
+				response
+			);
+			dispatch(recieveCommercialProducts(commercialProducts));
+		} else {
+			commercialProducts = await window.SF.invokeAction(
+				"getCommercialProducts",
+				[null]
+			);
+			commercialProducts.forEach((cp) => {
+				cp.commercialProductCode = cp.cspmb__Price_Item_Code__c;
+			});
+			dispatch(recieveCommercialProducts(commercialProducts));
+		}
+
+		return commercialProducts;
 	};
 }
 

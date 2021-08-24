@@ -325,14 +325,17 @@ function initiateAddonsAttachment(add) {
 
 function enrichAttachment(cp) {
 	let _att = {};
-	// ****************************************
 	_att._volume = {
 		mv: null,
 		mvp: null,
 		muc: null,
 		mucp: null
 	};
-	// ****************************************
+
+	if (cp.commercialProductCode) {
+		_att.commercialProductCode = cp.commercialProductCode;
+	}
+
 	if (cp._addons.length) {
 		_att._addons = {};
 	}
@@ -342,7 +345,7 @@ function enrichAttachment(cp) {
 			recurring: addon.cspmb__Recurring_Charge__c
 		};
 	});
-	// ****************************************
+
 	if (cp._charges.length) {
 		_att._charges = {};
 	} else {

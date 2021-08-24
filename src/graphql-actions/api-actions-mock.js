@@ -1,8 +1,68 @@
-const productIds = ["id-1", "id-2"];
+const products = [
+	{
+		id: "id-1",
+		name: "XL x12 Mobile CP",
+		role: "Basic",
+		type: "CommercialProduct",
+		commercialProductCode: "XL12123",
+		offerCode: null,
+		commercialProductMetadata: null,
+		availableChildProducts: [
+			{
+				product: {
+					id: "addon-1",
+					name: "Call waiting",
+					effectiveStartDate: "2000-03-01T00:00:00.000Z",
+					effectiveEndDate: "2041-03-31T00:00:00.000Z",
+					pricing: {
+						listOneOffPrice: 20,
+						listRecurringPrice: 10,
+					}
+				},
+				externalIds: [
+					{
+						key: "associationSfId",
+						value: "asso-id-1",
+					},
+				],
+				group: null,
+			},
+			{
+				product: {
+					id: "addon-2",
+					name: "Data Pack",
+					effectiveStartDate: "2007-03-01T00:00:00.000Z",
+					effectiveEndDate: "2040-03-28T00:00:00.000Z",
+					pricing: {
+						listOneOffPrice: 40,
+						listRecurringPrice: 20,
+					}
+				},
+				externalIds: [
+					{
+						key: "associationSfId",
+						value: "asso-id-2",
+					},
+				],
+				group: null,
+			},
+		],
+	},
+	{
+		id: "id-2",
+		name: "M x12 Mobile Plan",
+		role: "Offer",
+		type: "CommercialProduct",
+		commercialProductCode: "M12",
+		offerCode: "M12OFF",
+		commercialProductMetadata: null,
+		availableChildProducts: [],
+	},
+];
 
-export const queryCpIdsInCatalogue = async () => {
+export const queryCpsInCatalogue = async () => {
 	return new Promise((resolve) => {
-		resolve(productIds);
+		resolve(products);
 	});
 };
 
@@ -45,11 +105,11 @@ const offersInCategory = {
 	],
 };
 
-export const queryOffersInCategory = async categoryId => {
+export const queryOffersInCategory = async (categoryId) => {
 	return Promise.resolve(offersInCategory[categoryId]);
-}
+};
 
-export const queryOfferIdsInCatalogue = () => Promise.resolve(productIds);
+export const queryOfferIdsInCatalogue = () => Promise.resolve(products);
 
 const cpMetadata = [
 	{
@@ -245,4 +305,4 @@ const cpMetadata = [
 
 export const queryCpMetadataByIds = () => Promise.resolve(cpMetadata);
 
-export const queryCpDataByIds = () => Promise.resolve([])
+export const queryCpDataByIds = () => Promise.resolve([]);

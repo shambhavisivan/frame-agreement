@@ -288,6 +288,13 @@ export class FaEditor extends Component {
 			});
 		};
 
+		const saveAttachment = async () => {
+			await window.SF.invokeAction('saveAttachment', [
+				this.faId,
+				JSON.stringify(this.props.frameAgreements[this.faId]._ui.attachment)
+			]);
+		}
+
 		let _promiseArray = [];
 
 		_promiseArray.push(this.props.getApprovalHistory(this.faId));
@@ -300,22 +307,37 @@ export class FaEditor extends Component {
 			_promiseArray.push(
 				this.props.getAttachment(this.faId).then(async resp_attachment => {
 					// ***********************************************
-					let IdsToLoad = Object.keys(resp_attachment.products || {});
+					let productsInAttachment = resp_attachment.products || {};
+					let IdsToLoad = Object.keys(productsInAttachment);
 					// If attachment is present
 					// Mend null values, its loaded now
-					for (var key in resp_attachment.products) {
-						resp_attachment.products[key] = resp_attachment.products[key] || {};
+					for (var key in productsInAttachment) {
+						productsInAttachment[key] = productsInAttachment[key] || {};
 					}
 
 					if (IdsToLoad.length) {
 						// Check if any CPs have been deleted
 						let _idsToLoadSet = new Set(IdsToLoad);
 						let _filteredCpIdList = [];
+						let syncCommercialProductCode = false;
 
-						this.props.commercialProducts.forEach(cp => {
+						this.props.commercialProducts.forEach((cp) => {
 							if (_idsToLoadSet.has(cp.Id)) {
 								_idsToLoadSet.delete(cp.Id);
 								_filteredCpIdList.push(cp.Id);
+
+								let userAddedProduct =
+									productsInAttachment[cp.Id];
+
+								if (
+									!userAddedProduct.commercialProductCode ||
+									userAddedProduct.commercialProductCode !==
+										cp.commercialProductCode
+								) {
+									userAddedProduct.commercialProductCode =
+										cp.commercialProductCode;
+									syncCommercialProductCode = true;
+								}
 							}
 						});
 
@@ -366,10 +388,9 @@ export class FaEditor extends Component {
 							// cpReplacementData contains info about which addons and rc old cp was attached to
 							await this.props.replaceCpEntities(this.faId, cpReplacementData);
 
-							await window.SF.invokeAction('saveAttachment', [
-								this.faId,
-								JSON.stringify(this.props.frameAgreements[this.faId]._ui.attachment)
-							]);
+							saveAttachment();
+						} else if (syncCommercialProductCode) {
+							saveAttachment();
 						}
 					}
 

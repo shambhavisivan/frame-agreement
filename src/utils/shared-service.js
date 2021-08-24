@@ -565,4 +565,19 @@ export const hasValidExpression = (data) => {
 	}
 }
 
+export const mergePrsPpdmProductInfo = (prsProducts, ppdmProducts) => {
+	let prsMap = prsProducts.reduce((mapAccumulator, product) => {
+		mapAccumulator.set(product.id, product);
+
+		return mapAccumulator;
+	  }, new Map());
+
+	ppdmProducts.forEach(product => {
+		const prsProduct = prsMap.get(product.Id);
+		product.commercialProductCode = prsProduct.commercialProductCode;
+	});
+
+	return ppdmProducts;
+}
+
 export default sharedService;

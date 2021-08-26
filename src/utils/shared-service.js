@@ -580,4 +580,41 @@ export const mergePrsPpdmProductInfo = (prsProducts, ppdmProducts) => {
 	return ppdmProducts;
 }
 
+export const restructureReplacementCp = (cpReplacementPrsData, replacementCpCodes) => {
+	let prsMap = cpReplacementPrsData.reduce((mapAccumulator, product) => {
+		mapAccumulator.set(product.id, product);
+
+		return mapAccumulator;
+	  }, new Map());
+	let restructuredCpData = restructureProductData(cpReplacementPrsData);
+
+	let replacementDataMap = Object.keys(restructuredCpData).reduce((replacementDataMap, productId) => {
+		let replacementData = {};
+		const commercialProduct = prsMap.get(productId);
+		const commercialProductAddOn = restructuredCpData[productId];
+		replacementData.new_cp = {
+			Id: commercialProduct.id,
+			Name: commercialProduct.name,
+			cspmb__Price_Item_Code__c: commercialProduct.commercialProductCode,
+			commercialProductCode: commercialProduct.commercialProductCode,
+		};
+		replacementData.addon_vs_addon_assoc = {};
+
+		if (commercialProductAddOn.addons) {
+			commercialProductAddOn.addons.forEach((addon) => {
+				replacementData.addon_vs_addon_assoc[
+					addon.cspmb__Add_On_Price_Item__r.Id
+				] = addon.Id;
+			});
+		}
+		replacementDataMap[
+			replacementCpCodes.get(commercialProduct.commercialProductCode)
+		] = replacementData;
+
+		return replacementDataMap;
+	}, {});
+
+	return replacementDataMap;
+}
+
 export default sharedService;

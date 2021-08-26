@@ -572,14 +572,14 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@isTest
-	public static void getFindReplacementCommercialProduct() {
+	public static void testFindReplacementCommercialProduct() {
 		setupPricingModel();
 
 		cspmb__Price_Item__c cp_replace_1 = new cspmb__Price_Item__c(
 			Name = 'cp_replace_1',
 			cspmb__Price_Item_Code__c = 'PC333C',
 			cspmb__One_Off_Charge__c = 10.00,
-			cspmb__Is_Active__c = true,
+			cspmb__Is_Active__c = false,
 			cspmb__Recurring_Charge__c = 15 - 00,
 			cspmb__Type__c = 'Commercial Product',
 			cspmb__Role__c = 'Basic'
@@ -599,9 +599,9 @@ private class FrameRateManagerControllerTest {
 
 		Test.startTest();
 
-		Map <String, Map<String, Object>> result = FrameRateManagerController.findReplacementCommercialProduct(new List<String>{
-			cp_replace_1.Id
-		});
+		Map <String, Map<String, Object>> result = FrameRateManagerController.findReplacementCommercialProduct(
+			new List<String>{ cp_replace_1.Id }
+		);
 
 		Test.stopTest();
 

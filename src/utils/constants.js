@@ -8,3 +8,5 @@ export const FA_OFFERS = {
     categoryId: '',
     offerIdsCharges: {}
 }
+
+export const IGNORE_PRS = true;

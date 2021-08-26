@@ -35,6 +35,7 @@ import { publish, findReplacementCommercialProduct } from '../api';
 import {
 	log,
 	isMaster,
+	restructureReplacementCp,
 } from '../utils/shared-service';
 import { confirmAlert } from 'react-confirm-alert';
 
@@ -60,6 +61,8 @@ import FaModals from './FaEditor/FaModals';
 import OffersTab from './FaEditor/OffersTab';
 
 import * as frameAgreementActions from '../actions/frameAgreementActions';
+import { queryCpDataByProductCode } from '../graphql-actions/api-actions-graphql';
+import * as Constants from "~/src/utils/constants";
 
 window.editor = {};
 
@@ -295,6 +298,45 @@ export class FaEditor extends Component {
 			]);
 		}
 
+		const getReplacementProducts = async (productIds, productsInAttachment) => {
+
+			let productReplacementData = {};
+			let missingCommercialCodeCps = [];
+
+			//ignore prs => prs team will be releasing the change in next release, till then FAM will be using ppdm
+			if (!Constants.IGNORE_PRS && this.isPsEnabled) {
+				let replacementCpCodes = new Map();
+
+				productIds.forEach((cpId) => {
+					let userAddedProduct =
+						productsInAttachment[cpId];
+
+					if (userAddedProduct.commercialProductCode) {
+						replacementCpCodes.set(
+							userAddedProduct.commercialProductCode,
+							cpId
+						);
+					} else {
+						missingCommercialCodeCps.push(cpId);
+					}
+				});
+				const cpReplacedPrsData = await queryCpDataByProductCode(Array.from(replacementCpCodes.keys()));
+				productReplacementData = restructureReplacementCp(cpReplacedPrsData, replacementCpCodes);
+
+				if (missingCommercialCodeCps.length) {
+					const ppdmReplacementData = await findReplacementCommercialProduct(missingCommercialCodeCps);
+					productReplacementData = {
+						...productReplacementData,
+						...ppdmReplacementData
+					};
+				}
+			} else {
+				productReplacementData = await findReplacementCommercialProduct([...productIds]);
+			}
+
+			return productReplacementData;
+		}
+
 		let _promiseArray = [];
 
 		_promiseArray.push(this.props.getApprovalHistory(this.faId));
@@ -366,7 +408,8 @@ export class FaEditor extends Component {
 								5000
 							);
 
-							cpReplacementData = await findReplacementCommercialProduct([..._idsToLoadSet]);
+							// ignore prs => pricing service will provide this feature in later release
+							cpReplacementData = await getReplacementProducts(_idsToLoadSet, productsInAttachment);
 						}
 
 						if (Object.keys(cpReplacementData).length) {
@@ -463,10 +506,7 @@ export class FaEditor extends Component {
 								// offerReplacementData contains info about which addons and rc old offer was attached to
 								await this.props.replaceOfferEntities(this.faId, offerReplacementData);
 
-								await window.SF.invokeAction('saveAttachment', [
-									this.faId,
-									JSON.stringify(this.props.frameAgreements[this.faId]._ui.attachment)
-								]);
+								saveAttachment();
 							}
 						}
 

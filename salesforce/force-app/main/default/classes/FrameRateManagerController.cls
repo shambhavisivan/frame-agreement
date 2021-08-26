@@ -1244,17 +1244,20 @@ global with sharing class FrameRateManagerController {
 			return returnMap;
 		}
 
-		String query_new = 'select  ' + String.join(standardFields, ',') + ' from cspmb__Price_Item__c ';
+		String query_new = 'select  ' + String.join(standardFields, ',') + ' from cspmb__price_item__c '
 		// ADD ACTIVE CLAUSE
-		query_new += 'where cspmb__Is_Active__c = true ';
+			+ 'where cspmb__is_active__c = true '
 		// ADD START DATE CHECK CLAUSE
-		query_new += 'and (cspmb__Effective_Start_Date__c = null OR (cspmb__Effective_Start_Date__c != null and cspmb__Effective_Start_Date__c < TODAY)) ';
+			+ 'and (cspmb__effective_start_date__c = null '
+			+ 'OR (cspmb__effective_start_date__c != null '
+			+ 'and cspmb__effective_start_date__c < TODAY)) '
 		// ADD END DATE CHECK CLAUSE
-		query_new += 'and (cspmb__Effective_End_Date__c = null OR (cspmb__Effective_End_Date__c != null and cspmb__Effective_End_Date__c > TODAY)) ';
+			+ 'and (cspmb__effective_end_date__c = null '
+			+ 'OR (cspmb__effective_end_date__c != null '
+			+ 'and cspmb__effective_end_date__c > TODAY)) '
 
-		query_new += 'and cspmb__Price_Item_Code__c in :codeList ';
-
-		query_new += 'limit 50000';
+			+ 'and cspmb__price_item_code__c in :codeList '
+			+ 'limit 50000';
 
 		List<cspmb__Price_Item__c> cpListNew = database.query(query_new);
 
@@ -1263,17 +1266,15 @@ global with sharing class FrameRateManagerController {
 		if (cpListNew.isEmpty()) {
 			return returnMap;
 		}
-		//*******************************************************************
-		String query_addons_assoc = 'select Id, cspmb__Price_Item__c, cspmb__Add_On_Price_Item__c ';
-		query_addons_assoc += 'from cspmb__Price_Item_Add_On_Price_Item_Association__c ';
-		query_addons_assoc += 'where cspmb__Price_Item__c in :priceItemIds ';
-		query_addons_assoc += 'limit 50000';
-		//*******************************************************************
-		String query_rate_card_assoc = 'select Id, cspmb__Price_Item__c, cspmb__Rate_Card__c ';
-		query_rate_card_assoc += 'from cspmb__Price_Item_Rate_Card_Association__c ';
-		query_rate_card_assoc += 'where cspmb__Price_Item__c in :priceItemIds ';
-		query_rate_card_assoc += 'limit 50000';
-		//*******************************************************************
+		String query_addons_assoc = 'select id, cspmb__price_item__c, cspmb__add_on_price_item__c '
+			+ 'from cspmb__price_item_add_on_price_item_association__c '
+			+ 'where cspmb__price_item__c in :priceItemIds '
+			+ 'limit 50000';
+
+		String query_rate_card_assoc = 'select id, cspmb__price_item__c, cspmb__rate_card__c '
+			+ 'from cspmb__price_item_rate_card_association__c '
+			+ 'where cspmb__price_item__c in :priceItemIds '
+			+ 'limit 50000';
 
 		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> expiredCpAdd = database.query(query_addons_assoc);
 		Map <Id, Map<Id, String>> expiredCpAddMap = new Map <Id, Map<Id, String>>();

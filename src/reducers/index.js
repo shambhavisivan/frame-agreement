@@ -1672,27 +1672,21 @@ const rootReducer = (state = initialState, action) => {
 					...new_addons
 				};
 
-				//**************************************************************************
-				let rcIdSet = new Set(replacementData[key].rc || []);
+				let rcIdSet = new Set(Object.keys(_attachment.products[new_cp.Id]._rateCards || {}));
 
 				let old_rc = copy(_attachment.products[key]._rateCards) || {};
 
-				if (replacementData[key].rc) {
-					replacementData[key].rc.forEach((rc) => {
-						if (_attachment.products[new_cp.Id]._rateCards?.hasOwnProperty(rc.Id)) {
-							_attachment.products[new_cp.Id]._rateCards[rc.Id] = {
-								..._attachment.products[new_cp.Id]._rateCards[rc.Id],
-								...old_rc[rc.Id]
+				if (rcIdSet.size) {
+					rcIdSet.forEach((rcId) => {
+						if (old_rc[rcId]) {
+							_attachment.products[new_cp.Id]._rateCards[rcId] = {
+								..._attachment.products[new_cp.Id]._rateCards[rcId],
+								...old_rc[rcId]
 							};
 						}
 					});
 				}
 
-				_attachment.products[new_cp.Id]._rateCards = {
-					..._attachment.products[new_cp.Id]._rateCards,
-					...old_rc
-				};
-				//**************************************************************************
 				// remove old cp from attachment
 				delete _attachment.products[key];
 			}

@@ -43,7 +43,8 @@ export const mockAppSettings: AppSettings = {
 			approvedStatus: 'Approved',
 			requiresApprovalStatus: 'Requires Approval'
 		},
-		dispatcherServiceUrl: 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com'
+		dispatcherServiceUrl: 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com',
+		isPsEnabled: true
 	}
 };
 

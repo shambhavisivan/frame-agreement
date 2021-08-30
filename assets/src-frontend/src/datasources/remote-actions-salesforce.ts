@@ -71,7 +71,8 @@ export const remoteActions: RemoteActions = {
 					requiresApprovalStatus: settings.FACSettings.statuses
 						.requires_approval_status as string
 				},
-				dispatcherServiceUrl: settings.FACSettings.dispatcherServiceUrl
+				dispatcherServiceUrl: settings.FACSettings.dispatcherServiceUrl,
+				isPsEnabled: settings.FACSettings.isPsEnabled
 			}
 		};
 	},

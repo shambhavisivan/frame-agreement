@@ -12,6 +12,7 @@ export type FacSetting = {
 		requiresApprovalStatus: string;
 	};
 	dispatcherServiceUrl: string;
+	isPsEnabled: boolean;
 };
 
 export interface AppSettings {

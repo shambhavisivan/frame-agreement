@@ -16,13 +16,21 @@ export function useProductIdsInDefaultCatalogue(
 	const pricingServiceApi: PricingServiceApi = new PricingServiceGraphQL(
 		new DispatcherService(dispatcherServiceUrl)
 	);
-	const defaultCatalogueId = settings?.defaultCatalogueId;
+
+	const isPsEnabled = Boolean(settings?.facSettings.isPsEnabled);
+	// if isPsEnabled false does not require the defaultCatalogueId error.
+	const defaultCatalogueId = settings?.defaultCatalogueId || !isPsEnabled;
+
 	if (!defaultCatalogueId) {
 		throw Error(ERROR_DEFAULT_CATALOGUE_NOT_DEFINED);
 	}
+
 	const { status, data } = useQuery(
 		['productIds', defaultCatalogueId, filter.role, filter.type],
-		() => pricingServiceApi.queryProductIdsInCatalogue(defaultCatalogueId as string, filter)
+		() => pricingServiceApi.queryProductIdsInCatalogue(defaultCatalogueId as string, filter),
+		{
+			enabled: isPsEnabled
+		}
 	);
 
 	return {

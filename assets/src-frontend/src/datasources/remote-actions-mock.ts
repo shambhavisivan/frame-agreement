@@ -21,12 +21,14 @@ import {
 	mockOffers,
 	mockOfferData,
 	attachment,
-	DELTA_CALC_RESULT_MOCK
+	DELTA_CALC_RESULT_MOCK,
+	CP_FIELD_METADATA
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 import { deforcify, deforcifyKeyName } from './deforcify';
 import { approval } from '../local-server/local_data';
+import { CP_API_NAME } from '../app-constants';
 
 const FAKE_DELAY_MS = 500;
 
@@ -118,7 +120,15 @@ export const remoteActions: RemoteActions = {
 	},
 
 	async getFieldMetadata(sObjectName): Promise<FieldMetadata[]> {
-		const value: FieldMetadata[] = faFieldMetadataMock.map((metaInf) => {
+		let fieldMetadata: FieldMetadata[];
+		switch (sObjectName) {
+			case CP_API_NAME:
+				fieldMetadata = CP_FIELD_METADATA;
+				break;
+			default:
+				fieldMetadata = faFieldMetadataMock;
+		}
+		const value: FieldMetadata[] = fieldMetadata.map((metaInf) => {
 			metaInf.apiName = deforcifyKeyName(metaInf.apiName);
 			return metaInf;
 		});

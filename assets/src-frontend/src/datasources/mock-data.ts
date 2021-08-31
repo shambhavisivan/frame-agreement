@@ -956,3 +956,411 @@ export const DELTA_CALC_RESULT_MOCK: DeltaResult = {
 		}
 	}
 };
+
+export const CP_FIELD_METADATA: FieldMetadata[] = [
+	{
+		apiName: 'Id',
+		fieldLabel: 'Record ID',
+		fieldType: 'ID',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'OwnerId',
+		fieldLabel: 'Owner ID',
+		fieldType: 'REFERENCE',
+		isCustom: false,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'IsDeleted',
+		fieldLabel: 'Deleted',
+		fieldType: 'BOOLEAN',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'Name',
+		fieldLabel: 'Commercial Product Name',
+		fieldType: 'STRING',
+		isCustom: false,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'CreatedDate',
+		fieldLabel: 'Created Date',
+		fieldType: 'DATETIME',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'CreatedById',
+		fieldLabel: 'Created By ID',
+		fieldType: 'REFERENCE',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'LastModifiedDate',
+		fieldLabel: 'Last Modified Date',
+		fieldType: 'DATETIME',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'LastModifiedById',
+		fieldLabel: 'Last Modified By ID',
+		fieldType: 'REFERENCE',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'SystemModstamp',
+		fieldLabel: 'System Modstamp',
+		fieldType: 'DATETIME',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'LastViewedDate',
+		fieldLabel: 'Last Viewed Date',
+		fieldType: 'DATETIME',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'LastReferencedDate',
+		fieldLabel: 'Last Referenced Date',
+		fieldType: 'DATETIME',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Account__c',
+		fieldLabel: 'Account',
+		fieldType: 'REFERENCE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Apply_One_Off_Charge_Account_Discount__c',
+		fieldLabel: 'Apply One-Off Charge Account Discount',
+		fieldType: 'BOOLEAN',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Apply_Recurring_Charge_Account_Discount__c',
+		fieldLabel: 'Apply Recurring Charge Account Discount',
+		fieldType: 'BOOLEAN',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Authorization_Level__c',
+		fieldLabel: 'Authorization Level',
+		fieldType: 'REFERENCE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Billing_Frequency__c',
+		fieldLabel: 'Billing Frequency',
+		fieldType: 'PICKLIST',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Contract_Term__c',
+		fieldLabel: 'Contract Term',
+		fieldType: 'PICKLIST',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Currency_Code__c',
+		fieldLabel: 'Currency Code',
+		fieldType: 'PICKLIST',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Current_Version__c',
+		fieldLabel: 'Current Version',
+		fieldType: 'REFERENCE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Discount_Type__c',
+		fieldLabel: 'Discount Type',
+		fieldType: 'PICKLIST',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Effective_End_Date__c',
+		fieldLabel: 'Effective End Date',
+		fieldType: 'DATE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Effective_Start_Date__c',
+		fieldLabel: 'Effective Start Date',
+		fieldType: 'DATE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Is_Active__c',
+		fieldLabel: 'Is Active',
+		fieldType: 'BOOLEAN',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Is_Authorization_Required__c',
+		fieldLabel: 'Is Authorization Required',
+		fieldType: 'BOOLEAN',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Is_One_Off_Discount_Allowed__c',
+		fieldLabel: 'Is One-Off Discount Allowed',
+		fieldType: 'BOOLEAN',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Is_Recurring_Discount_Allowed__c',
+		fieldLabel: 'Is Recurring Discount Allowed',
+		fieldType: 'BOOLEAN',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Master_Price_item__c',
+		fieldLabel: 'Master Commercial Product',
+		fieldType: 'REFERENCE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__One_Off_Charge_Code__c',
+		fieldLabel: 'One-Off Charge Code',
+		fieldType: 'STRING',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__One_Off_Charge_External_Id__c',
+		fieldLabel: 'One-Off Charge External Id',
+		fieldType: 'STRING',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__One_Off_Charge__c',
+		fieldLabel: 'One-Off Charge',
+		fieldType: 'DOUBLE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 18,
+		scale: 2
+	},
+	{
+		apiName: 'cspmb__One_Off_Cost__c',
+		fieldLabel: 'One-Off Cost',
+		fieldType: 'DOUBLE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 18,
+		scale: 2
+	},
+	{
+		apiName: 'cspmb__Price_Item_Code__c',
+		fieldLabel: 'Commercial Product Code',
+		fieldType: 'STRING',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Price_Item_Description__c',
+		fieldLabel: 'Commercial Product Description',
+		fieldType: 'STRING',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Product_Definition_Name__c',
+		fieldLabel: 'Product Definition Name',
+		fieldType: 'PICKLIST',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Recurring_Charge_Code__c',
+		fieldLabel: 'Recurring Charge Code',
+		fieldType: 'STRING',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Recurring_Charge_External_Id__c',
+		fieldLabel: 'Recurring Charge External Id',
+		fieldType: 'STRING',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Recurring_Charge__c',
+		fieldLabel: 'Recurring Charge',
+		fieldType: 'DOUBLE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 18,
+		scale: 2
+	},
+	{
+		apiName: 'cspmb__Recurring_Cost__c',
+		fieldLabel: 'Recurring Cost',
+		fieldType: 'DOUBLE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 18,
+		scale: 2
+	},
+	{
+		apiName: 'cspmb__Role__c',
+		fieldLabel: 'Role',
+		fieldType: 'PICKLIST',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Version_Number__c',
+		fieldLabel: 'Version Number',
+		fieldType: 'DOUBLE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 18,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__auto_packaging_priority__c',
+		fieldLabel: 'Auto Packaging Priority',
+		fieldType: 'DOUBLE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 5,
+		scale: 0
+	},
+	{
+		apiName: 'rate_card_line__c',
+		fieldLabel: 'Rate Card Line',
+		fieldType: 'REFERENCE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__Type__c',
+		fieldLabel: 'Type',
+		fieldType: 'PICKLIST',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__metadata__c',
+		fieldLabel: 'Metadata',
+		fieldType: 'REFERENCE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'cspmb__offer_code__c',
+		fieldLabel: 'Offer Code',
+		fieldType: 'STRING',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	}
+];

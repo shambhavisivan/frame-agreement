@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useMemo, useReducer, useState } from 'react';
-import { FrameAgreement } from '../../datasources';
+import { CommercialProductStandalone, FrameAgreement } from '../../datasources';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
 import { LoadingFallback } from '../loading-fallback';
 import { createActionsForProduct } from './negotiation/negotiation-action-creator';
@@ -47,16 +47,13 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 			}),
 		[products, state.products]
 	);
+	const onAddProducts = (products: CommercialProductStandalone[]): void =>
+		setProductIds((prevState) => [...prevState, ...products.map((product) => product.id)]);
 
 	const productSelection = (
 		<AddProductsModal
 			isModalOpen={isAddProductModalOpen}
-			onAddProducts={(products): void =>
-				setProductIds((prevState) => [
-					...prevState,
-					...products.map((product) => product.id)
-				])
-			}
+			onAddProducts={onAddProducts}
 			onModalClose={(): void => setAddProductsModalOpen(false)}
 			addedProductIds={productIds}
 		></AddProductsModal>

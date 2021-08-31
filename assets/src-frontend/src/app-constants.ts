@@ -7,6 +7,8 @@ export enum QueryKeys {
 }
 export const FA_API_NAME = 'csconta__Frame_Agreement__c';
 export const SEARCH_INPUT_VALIDATION_MESSAGE = 'Enter atleast 3 or more characters to begin search';
+export const DEFAULT_GRID_VISIBLE_FIELDS = 5;
+export const DEFAULT_SEARCH_TRIGGER_LIMIT = 3;
 
 export const FIELD_METADATA_CHILD_FA: FieldMetadata[] = [
 	{
@@ -56,3 +58,5 @@ export const THEME_DELTA_MODAL = {
 	base0E: '#fff',
 	base0F: '#fff'
 };
+
+export const CP_API_NAME = 'cspmb__Price_Item__c';

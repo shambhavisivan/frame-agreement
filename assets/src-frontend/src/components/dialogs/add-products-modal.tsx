@@ -2,16 +2,14 @@ import {
 	CSModal,
 	CSModalHeader,
 	CSModalBody,
-	CSInputSearch,
-	CSDataTable,
 	CSModalFooter,
-	CSButton,
-	CSDataTableRowInterface
+	CSButton
 } from '@cloudsense/cs-ui-components';
 import React, { ReactElement, useState } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
+import { ProductListGrid, ProductStatus } from '../fa-details/product-list-grid';
 
 interface AddProductsModalProp {
 	isModalOpen: boolean;
@@ -19,6 +17,7 @@ interface AddProductsModalProp {
 	onAddProducts: (products: CommercialProductStandalone[]) => void;
 	addedProductIds: Array<string>;
 }
+type SelectedProducts = { [id: string]: CommercialProductStandalone };
 
 export function AddProductsModal({
 	isModalOpen,
@@ -27,27 +26,26 @@ export function AddProductsModal({
 	addedProductIds
 }: AddProductsModalProp): ReactElement {
 	const { data: products } = useCommercialProducts();
-	const [selectedProducts, setSelectedProducts] = useState<CommercialProductStandalone[]>([]);
+	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
 	const labels = useCustomLabels();
 
-	function CommercialProductOption({
-		product,
-		onClick
-	}: {
-		product: CommercialProductStandalone;
-		onClick: (product: CommercialProductStandalone) => void;
-	}): ReactElement {
-		return (
-			<CSButton
-				key={product.id}
-				label={product.name}
-				onClick={(): void => onClick(product)}
-			/>
+	const updateSelectedProducts = (
+		selectedRows: CommercialProductStandalone[],
+		productStatus: ProductStatus
+	): void => {
+		const selected = selectedRows.reduce(
+			(selectedProd, currentSelected): SelectedProducts => {
+				if (!selectedProd[currentSelected.id] && productStatus === 'add') {
+					selectedProd[currentSelected.id] = currentSelected;
+				} else {
+					selectedProd[currentSelected.id] && delete selectedProd[currentSelected.id];
+				}
+				return selectedProd;
+			},
+			{ ...selectedProducts }
 		);
-	}
-
-	const onSelectProducts = (product: CommercialProductStandalone): void =>
-		setSelectedProducts((prevSelected) => [...prevSelected, product]);
+		setSelectedProducts(selected);
+	};
 
 	return (
 		<CSModal
@@ -58,49 +56,21 @@ export function AddProductsModal({
 		>
 			<CSModalHeader title={labels.modalAddFaTitle} />
 			<CSModalBody padding="0">
-				{/* TODO: add filter functionality */}
-				<CSInputSearch label="Filter products..." width="20rem" />
-				{/* row render csbutton logic will be moved to row onclick prop once support for table onclick is added */}
-				{/* {this grid logic should be moved to a separate file} */}
-				<CSDataTable
-					columns={[
-						{
-							key: 'name',
-							header: 'Commercial Product Name',
-							grow: 2,
-							render: (row): ReactElement => (
-								<CommercialProductOption
-									product={row.data as CommercialProductStandalone}
-									onClick={onSelectProducts}
-									key={row.key}
-								/>
-							)
-						},
-						{
-							key: 'Record ID',
-							header: 'Record ID'
-						},
-						{
-							key: 'Is Recurring Discount Allowed',
-							header: 'Is Recurring Discount Allowed'
-						}
-					]}
-					rows={
-						products
-							?.filter((product) => !addedProductIds.includes(product.id))
-							.map((product) => ({
-								key: product.id,
-								data: product
-							})) || ([] as CSDataTableRowInterface[])
-					}
-				/>
+				{products ? (
+					<ProductListGrid
+						data={products.filter((product) => !addedProductIds.includes(product.id))}
+						selectedProducts={updateSelectedProducts}
+					/>
+				) : (
+					<p>No products to show here</p>
+				)}
 			</CSModalBody>
 			<CSModalFooter>
 				<CSButton
 					label={labels.btnAddProducts}
 					disabled={!selectedProducts?.length}
 					onClick={(): void => {
-						onAddProducts(selectedProducts);
+						onAddProducts(Object.values(selectedProducts));
 						onModalClose();
 					}}
 				/>

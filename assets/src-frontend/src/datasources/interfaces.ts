@@ -144,7 +144,8 @@ export interface FieldMetadata {
 		| 'STRING'
 		| 'BOOLEAN'
 		| 'ID'
-		| 'PICKLIST';
+		| 'PICKLIST'
+		| 'DOUBLE';
 }
 
 export interface ProcessInstanceHistory {

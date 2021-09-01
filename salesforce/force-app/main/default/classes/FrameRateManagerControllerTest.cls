@@ -611,6 +611,167 @@ private class FrameRateManagerControllerTest {
 	}
 
 	@isTest
+	public static void testFindReplacementOffers() {
+		setupPricingModel();
+
+		cspmb__Price_Item__c masterCp1 = new cspmb__Price_Item__c(
+			Name = 'masterCp1',
+			cspmb__Price_Item_Code__c = 'PC333C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = false,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
+		cspmb__Price_Item__c masterCp2 = new cspmb__Price_Item__c(
+			Name = 'masterCp2',
+			cspmb__Price_Item_Code__c = 'PC333C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
+		cspmb__Price_Item__c masterCp3 = new cspmb__Price_Item__c(
+			Name = 'masterCp3',
+			cspmb__Price_Item_Code__c = 'PC334C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = false,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Basic'
+		);
+
+		insert masterCp1;
+		insert masterCp2;
+		insert masterCp3;
+
+		cspmb__Price_Item__c offer1 = new cspmb__Price_Item__c(
+			Name = 'offer1',
+			cspmb__offer_code__c = 'OF333C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = false,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Offer',
+			cspmb__master_price_item__c = masterCp1.id
+		);
+		cspmb__Price_Item__c offer2 = new cspmb__Price_Item__c(
+			Name = 'offer2',
+			cspmb__offer_code__c = 'OF333C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Offer',
+			cspmb__master_price_item__c = masterCp2.id
+		);
+		cspmb__Price_Item__c offer2_1 = new cspmb__Price_Item__c(
+			Name = 'offer2_1',
+			cspmb__offer_code__c = 'OF333C_2',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = false,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Offer',
+			cspmb__master_price_item__c = masterCp2.id
+		);
+		cspmb__Price_Item__c offer2_2 = new cspmb__Price_Item__c(
+			Name = 'offer2_2',
+			cspmb__offer_code__c = 'OF333C_2',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Offer',
+			cspmb__master_price_item__c = masterCp2.id
+		);
+		cspmb__Price_Item__c offer3 = new cspmb__Price_Item__c(
+			Name = 'offer3',
+			cspmb__offer_code__c = 'OF334C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = false,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Offer',
+			cspmb__master_price_item__c = masterCp3.id
+		);
+		cspmb__Price_Item__c offer4 = new cspmb__Price_Item__c(
+			Name = 'offer4',
+			cspmb__offer_code__c = 'OF334C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Offer',
+			cspmb__master_price_item__c = masterCp3.id
+		);
+		cspmb__Price_Item__c offer5 = new cspmb__Price_Item__c(
+			Name = 'offer1',
+			cspmb__offer_code__c = 'OF555C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = false,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Offer',
+			cspmb__master_price_item__c = masterCp1.id
+		);
+		//Active but not associated to std catalogue
+		cspmb__Price_Item__c offer6 = new cspmb__Price_Item__c(
+			Name = 'offer2',
+			cspmb__offer_code__c = 'OF555C',
+			cspmb__One_Off_Charge__c = 10.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 15 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Offer',
+			cspmb__master_price_item__c = masterCp1.id
+		);
+
+		insert offer1;
+		insert offer2;
+		insert offer2_1;
+		insert offer2_2;
+		insert offer3;
+		insert offer4;
+		insert offer5;
+		insert offer6;
+
+		Test.startTest();
+
+		Map <String, Map<String, Object>> result = FrameRateManagerController.findReplacementOffers(
+			new List<String>{ offer1.id }
+		);
+
+		Map <String, Map<String, Object>> result2 = FrameRateManagerController.findReplacementOffers(
+			new List<String>{ offer2_1.id }
+		);
+
+		Map <String, Map<String, Object>> result3 = FrameRateManagerController.findReplacementOffers(
+			new List<String>{ offer3.id }
+		);
+
+		Map <String, Map<String, Object>> result4 = FrameRateManagerController.findReplacementOffers(
+			new List<String>{ offer5.id }
+		);
+
+		Test.stopTest();
+
+		Boolean isOffer2InResponse = JSON.serialize(result).contains(offer2.id);
+		System.assertEquals(isOffer2InResponse, true, 'Replacement offer belonging to some other master cp but having same cp code is eligible for replacement');
+
+		Boolean isOffer2_2InResponse = JSON.serialize(result2).contains(offer2_2.id);
+		System.assertEquals(isOffer2_2InResponse, true, 'Replacement offer belonging to same master cp is eligible for replacement');
+
+		Boolean isOffer4InResponse = JSON.serialize(result3).contains(offer4.id);
+		System.assertEquals(isOffer4InResponse, false, 'Replacement offer belonging to some other master cp but that cp is inactive is not eligible for replacement');
+
+		Boolean isOffer6InResponse = JSON.serialize(result4).contains(offer6.id);
+		System.assertEquals(isOffer6InResponse, false, 'Replacement offer belonging to some other master cp but having same cp code and also inactive is not eligible for replacement');
+
+	}
+
+	@isTest
 	public static void testGetLookupInformation() {
 		setupPricingModel();
 		setupSettings();

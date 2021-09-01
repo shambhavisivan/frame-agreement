@@ -155,7 +155,8 @@
 				deleteFaOffers: "{!$RemoteAction.FrameRateManagerController.deleteFaOffers}",
 				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
 				getChildFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getChildFrameAgreements}",
-				migrateFrameAgreements: "{!$RemoteAction.FrameRateManagerController.migrateFrameAgreements}"
+				migrateFrameAgreements: "{!$RemoteAction.FrameRateManagerController.migrateFrameAgreements}",
+				findReplacementOffers: "{!$RemoteAction.FrameRateManagerController.findReplacementOffers}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

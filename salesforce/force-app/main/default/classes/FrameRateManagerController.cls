@@ -36,6 +36,10 @@ global with sharing class FrameRateManagerController {
 	private static final String FRAME_AGREEMENT_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated;
 	@TestVisible
 	private static final String FRAME_AGREEMENT_STATUS_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated_statusError;
+	@TestVisible
+	private static final String COMMERCIAL_PRODUCT = 'Commercial Product';
+	@TestVisible
+	private static final String OFFER = 'Offer';
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -281,7 +285,7 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, List<Map<String, Object>>> getPicklistOptions(List<String> picklistFields) {
+	@TestVisible public static Map<String, List<Map<String, Object>>> getPicklistOptions(List<String> picklistFields) {
 		List <Schema.PicklistEntry> ple = new List <Schema.PicklistEntry>();
 		String [] types = new String[]{
 			'csconta__Frame_Agreement__c'
@@ -291,7 +295,7 @@ global with sharing class FrameRateManagerController {
 
 		Map<String, Schema.SObjectField> fieldOptions = results[0].fields.getMap();
 
-		Map <String, List<Map<String, Object>>> optionMap = new Map <String, List<Map<String, Object>>>();
+		Map<String, List<Map<String, Object>>> optionMap = new Map<String, List<Map<String, Object>>>();
 
 		for (String field : picklistFields) {
 
@@ -313,12 +317,12 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	@TestVisible public static Map <String, String> getFieldLabels(String target) {
+	@TestVisible public static Map<String, String> getFieldLabels(String target) {
 		Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
 		Schema.SObjectType leadSchema = schemaMap.get(target);
 		Map<String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
 
-		Map <String, String> resultMap = new Map <String, String>();
+		Map<String, String> resultMap = new Map<String, String>();
 
 		for (String fieldName : fieldMap.keySet()) {
 			resultMap.put(fieldName, fieldMap.get(fieldName).getDescribe().getLabel());
@@ -605,9 +609,9 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	@TestVisible public static Map < Id, List <PricingElementWrapper>> getCommercialProductCharges(List<Id> priceItemIdList) {
+	@TestVisible public static Map< Id, List <PricingElementWrapper>> getCommercialProductCharges(List<Id> priceItemIdList) {
 
-		Map <Id, List <PricingElementWrapper>> cpId_peWrapper = new Map <Id, List <PricingElementWrapper>>();
+		Map<Id, List <PricingElementWrapper>> cpId_peWrapper = new Map<Id, List <PricingElementWrapper>>();
 		// Get all pricing elements and their types labels for commercial product
 		// Get all pricing element coorelated to this price item id along with the name of their pricing element type.
 		// These are the charges defined for this price item.
@@ -630,10 +634,10 @@ global with sharing class FrameRateManagerController {
 		Map<Id, Id> peId_cpId = new Map<Id, Id>();
 
 		// Create a map for getting the price element type label from price element id
-		Map <Id, String> pricingElementLabels = new Map <Id, String>();
-		Map <Id, String> pricingElementTypes = new Map <Id, String>();
+		Map<Id, String> pricingElementLabels = new Map<Id, String>();
+		Map<Id, String> pricingElementTypes = new Map<Id, String>();
 
-		Set<Id> pricingElementIds = (new Map <Id, SObject> (priceElements)).keySet();
+		Set<Id> pricingElementIds = (new Map<Id, SObject> (priceElements)).keySet();
 
 		for (cspmb__Pricing_Element__c pricingElement : priceElements) {
 			String label = pricingElement.cspmb__pricing_element_type__r.cspmb__label__c;
@@ -1068,7 +1072,7 @@ global with sharing class FrameRateManagerController {
 			return new List<SObject>();
 		}
 
-		Set<Id> resultIds = (new Map <Id, SObject> (results)).keySet();
+		Set<Id> resultIds = (new Map<Id, SObject> (results)).keySet();
 
 		return getCommercialProducts_p(new List<Id> (resultIds));
 	}
@@ -1201,26 +1205,20 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
-	public static Map <String, Map<String, Object>> findReplacementCommercialProduct(List<Id> priceItemIds) {
+	public static Map<String, Map<String, Object>> findReplacementCommercialProduct(List<Id> priceItemIds) {
 		// Map old cp Id: replacement cp
-		Map <String, Map<String, Object>> returnMap = new Map <String, Map<String, Object>>();
+		Map<String, Map<String, Object>> returnMap = new Map<String, Map<String, Object>>();
 
-		List<String> standardFields = new List<String>{
-			'Id',
-			'Name',
-			'cspmb__Effective_Start_Date__c',
-			'cspmb__Effective_End_Date__c',
-			'cspmb__Price_Item_Code__c',
-			'cspmb__Current_Version__c'
-		};
-
+		if (priceItemIds == null || priceItemIds.size() == 0) {
+			return returnMap;
+		}
 		// Get information on old commercial products (mainly for price item code)
-		String query_old = 'select  ' +
-			String.join(standardFields, ',') +
-			' from cspmb__Price_Item__c' +
-			' where Id in :priceItemIds';
-
-		List<cspmb__Price_Item__c> oldProducts = database.query(query_old);
+		List<cspmb__Price_Item__c> oldProducts = [
+			select id, name, cspmb__effective_start_date__c, cspmb__effective_end_date__c,
+				cspmb__price_item_code__c, cspmb__current_version__c
+			from cspmb__Price_Item__c
+			where id in :priceItemIds
+		];
 
 		// if products are removed, no additional searching is required.
 		// FAM will remove them from the FA
@@ -1228,96 +1226,85 @@ global with sharing class FrameRateManagerController {
 			return returnMap;
 		}
 
-		Map <String, Id> codeMap = new Map <String, Id>();
-		List<String> codeList = new List<String>();
-
-		for (cspmb__Price_Item__c cp : oldProducts) {
-			if (cp.cspmb__Price_Item_Code__c != null) {
-				codeMap.put(cp.cspmb__Price_Item_Code__c, cp.Id);
-				codeList.add(cp.cspmb__Price_Item_Code__c);
-			}
-		}
-
-		// if codeList is empty then none of the old products have price item code
-		// which means they cannot be tracked further
-		if (codeList.isEmpty()) {
-			return returnMap;
-		}
-
-		String query_new = 'select  ' + String.join(standardFields, ',') + ' from cspmb__price_item__c '
-		// ADD ACTIVE CLAUSE
-			+ 'where cspmb__is_active__c = true '
-		// ADD START DATE CHECK CLAUSE
-			+ 'and (cspmb__effective_start_date__c = null '
-			+ 'OR (cspmb__effective_start_date__c != null '
-			+ 'and cspmb__effective_start_date__c < TODAY)) '
-		// ADD END DATE CHECK CLAUSE
-			+ 'and (cspmb__effective_end_date__c = null '
-			+ 'OR (cspmb__effective_end_date__c != null '
-			+ 'and cspmb__effective_end_date__c > TODAY)) '
-
-			+ 'and cspmb__price_item_code__c in :codeList '
-			+ 'limit 50000';
-
-		List<cspmb__Price_Item__c> cpListNew = database.query(query_new);
-
+		Map<String, Id> codeMap = new Map<String, Id>();
+		List<cspmb__Price_Item__c> newProductList = getReplacementCommercialProducts(oldProducts);
 		// If no products have been found using old price item code list
 		// then no (valid) replacement have been made
-		if (cpListNew.isEmpty()) {
+		if (newProductList.isEmpty()) {
 			return returnMap;
 		}
-		String query_addons_assoc = 'select id, cspmb__price_item__c, cspmb__add_on_price_item__c '
-			+ 'from cspmb__price_item_add_on_price_item_association__c '
-			+ 'where cspmb__price_item__c in :priceItemIds '
-			+ 'limit 50000';
 
-		String query_rate_card_assoc = 'select id, cspmb__price_item__c, cspmb__rate_card__c '
-			+ 'from cspmb__price_item_rate_card_association__c '
-			+ 'where cspmb__price_item__c in :priceItemIds '
-			+ 'limit 50000';
-
-		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> expiredCpAdd = database.query(query_addons_assoc);
-		Map <Id, Map<Id, String>> expiredCpAddMap = new Map <Id, Map<Id, String>>();
-
-		List<cspmb__Price_Item_Rate_Card_Association__c> expiredCpRc = database.query(query_rate_card_assoc);
-		Map<Id, List<String>> expiredCpRcMap = new Map<Id, List<String>>();
-
-		for (cspmb__Price_Item_Add_On_Price_Item_Association__c priap : expiredCpAdd) {
-
-			Map<Id, String> tempCpIdAddonMap = new Map<Id, String>();
-			if (expiredCpAddMap.containsKey(priap.cspmb__Price_Item__c)) {
-				tempCpIdAddonMap = expiredCpAddMap.get(priap.cspmb__Price_Item__c);
-			}
-
-			tempCpIdAddonMap.put(priap.cspmb__Add_On_Price_Item__c, priap.Id);
-			expiredCpAddMap.put(priap.cspmb__Price_Item__c, tempCpIdAddonMap);
-
-		}
-
-		for (cspmb__Price_Item_Rate_Card_Association__c pirca : expiredCpRc) {
-			if (expiredCpRcMap.containsKey(pirca.cspmb__Price_Item__c)) {
-				List<Id> tempCpIdList = expiredCpRcMap.get(pirca.cspmb__Price_Item__c);
-				tempCpIdList.add(pirca.cspmb__Rate_Card__c);
-				expiredCpRcMap.put(pirca.cspmb__Price_Item__c, tempCpIdList);
-			} else {
-				expiredCpRcMap.put(pirca.cspmb__Price_Item__c, new List<Id>{
-					pirca.cspmb__Rate_Card__c
-				});
+		for (cspmb__Price_Item__c cp : oldProducts) {
+			if (cp.cspmb__price_item_code__c != null) {
+				codeMap.put(cp.cspmb__price_item_code__c, cp.id);
 			}
 		}
+		Map<Id, Map<Id, String>> expiredProductAddMap = getAddOnAssociations(priceItemIds);
+		Map<Id, List<String>> expiredProductRcMap = getProductRateCardMap(priceItemIds);
 
-		for (cspmb__Price_Item__c cp : cpListNew) {
-			String oldCpId = codeMap.get(cp.cspmb__Price_Item_Code__c);
-			// returnMap.put(codeMap.get(cp.cspmb__Price_Item_Code__c), cp);
-			Map<Id, String> addonsUsedByOldCp = expiredCpAddMap.get(oldCpId);
-			List<String> rcUsedByOldCp = expiredCpRcMap.get(oldCpId);
+		for (cspmb__Price_Item__c product : newProductList) {
+			String oldProductId = codeMap.get(product.cspmb__price_item_code__c);
+			Map<Id, String> addonsUsedByOldProduct = expiredProductAddMap.get(oldProductId);
+			List<String> rcUsedByOldCp = expiredProductRcMap.get(oldProductId);
 
 			Map<String, Object> replacementInfo = new Map<String, Object>();
-			replacementInfo.put('addon_vs_addon_assoc', addonsUsedByOldCp);
+			replacementInfo.put('addon_vs_addon_assoc', addonsUsedByOldProduct);
 			replacementInfo.put('rc', rcUsedByOldCp);
-			replacementInfo.put('new_cp', cp);
+			replacementInfo.put('new_cp', product);
 
-			returnMap.put(oldCpId, replacementInfo);
+			returnMap.put(oldProductId, replacementInfo);
+		}
+
+		return returnMap;
+	}
+
+	@RemoteAction
+	public static Map<String, Map<String, Object>> findReplacementOffers(List<Id> priceItemIds) {
+		Map<String, Map<String, Object>> returnMap = new Map<String, Map<String, Object>>();
+
+		if (priceItemIds == null || priceItemIds.size() == 0) {
+			return returnMap;
+		}
+		List<cspmb__Price_Item__c> oldProducts = [
+			select id, name, cspmb__effective_start_date__c, cspmb__effective_end_date__c,
+				cspmb__price_item_code__c, cspmb__current_version__c, cspmb__master_price_item__c,
+				cspmb__offer_code__c
+			from cspmb__Price_Item__c
+			where id in :priceItemIds
+		];
+
+		// if products are removed, no additional searching is required.
+		// FAM will remove them from the FA
+		if (oldProducts.isEmpty()) {
+			return returnMap;
+		}
+
+		Map<String, Id> codeMap = new Map<String, Id>();
+		List<cspmb__Price_Item__c> newProductList = getReplacementOffers(oldProducts);
+		// If no products have been found using old offer code list
+		// then no (valid) replacement have been made
+		if (newProductList.isEmpty()) {
+			return returnMap;
+		}
+
+		for (cspmb__Price_Item__c offer : oldProducts) {
+			codeMap.put(offer.cspmb__offer_code__c, offer.id);
+		}
+
+		Map<Id, Map<Id, String>> expiredProductAddMap = getAddOnAssociations(priceItemIds);
+		Map<Id, List<String>> expiredProductRcMap = getProductRateCardMap(priceItemIds);
+
+		for (cspmb__Price_Item__c product : newProductList) {
+			String oldProductId = codeMap.get(product.cspmb__offer_code__c);
+			Map<Id, String> addonsUsedByOldProduct = expiredProductAddMap.get(oldProductId);
+			List<String> rcUsedByOldCp = expiredProductRcMap.get(oldProductId);
+
+			Map<String, Object> replacementInfo = new Map<String, Object>();
+			replacementInfo.put('addon_vs_addon_assoc', addonsUsedByOldProduct);
+			replacementInfo.put('rc', rcUsedByOldCp);
+			replacementInfo.put('new_cp', product);
+
+			returnMap.put(oldProductId, replacementInfo);
 		}
 
 		return returnMap;
@@ -1371,7 +1358,7 @@ global with sharing class FrameRateManagerController {
 		String query = 'select ' + selectClause + ' from cspmb__Add_On_Price_Item__c ' + whereClause + ' limit 50000';
 
 		List<SObject> results = Database.query(query);
-		Set<Id> resultIds = (new Map <Id, SObject> (results)).keySet();
+		Set<Id> resultIds = (new Map<Id, SObject> (results)).keySet();
 
 		return getStandaloneAddons_p(new List<Id> (resultIds));
 	}
@@ -1384,7 +1371,7 @@ global with sharing class FrameRateManagerController {
 		List<Id> authlevelList = new List<Id>();
 		List<cspmb__price_item__c> cpList = [
 			Select Id, cspmb__Authorization_Level__c
-			from cspmb__price_item__c
+			from cspmb__Price_Item__c
 			where Id in :cpIdList and cspmb__Authorization_Level__c != null
 		];
 		List<cspmb__Add_On_Price_Item__c> addonList = [
@@ -1574,7 +1561,7 @@ global with sharing class FrameRateManagerController {
 			rcIdList
 		);
 
-		Map <Id, List <PricingElementWrapper>> charges = getCommercialProductCharges(
+		Map<Id, List <PricingElementWrapper>> charges = getCommercialProductCharges(
 			priceItemIdList
 		);
 
@@ -2287,9 +2274,9 @@ global with sharing class FrameRateManagerController {
 
 		Map<String, Object> dataMap = (Map<String, Object>) JSON.deserializeUntyped(fieldData);
 
-		Map <String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
+		Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
 		Schema.SObjectType leadSchema = schemaMap.get('csconta__Frame_Agreement__c');
-		Map <String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
+		Map<String, Schema.SObjectField> fieldMap = leadSchema.getDescribe().fields.getMap();
 
 		Boolean isPsEnabled = getPsSwitchStatus();
 		csconta__Frame_Agreement__c fa;
@@ -2363,7 +2350,7 @@ global with sharing class FrameRateManagerController {
 	public static List <cspmb__Pricing_Element__c> getPricingElements(String priceItemId) {
 
 		List<Id> priceElementIdList = new List<Id>();
-		Map < Id, cspmb__Price_Item_Pricing_Rule_Association__c > pricingElementObj = new Map < Id, cspmb__Price_Item_Pricing_Rule_Association__c >();
+		Map< Id, cspmb__Price_Item_Pricing_Rule_Association__c > pricingElementObj = new Map< Id, cspmb__Price_Item_Pricing_Rule_Association__c >();
 
 		for (cspmb__Price_Item_Pricing_Rule_Association__c pipra : [
 			select Id, cspmb__pricing_element__c
@@ -2775,6 +2762,182 @@ global with sharing class FrameRateManagerController {
 		FaPlmService.associateCategoryCatalogue(existingCategoryList, faCatalogue.id);
 
 		return fa;
+	}
+
+	private static Map<Id, Map<Id, String>> getAddOnAssociations(List<Id> priceItemIds) {
+		List<cspmb__Price_Item_Add_On_Price_Item_Association__c> expiredProductAdd = [
+			select id, cspmb__price_item__c, cspmb__add_on_price_item__c
+			from cspmb__Price_Item_Add_On_Price_Item_Association__c
+			where cspmb__price_item__c in :priceItemIds
+			limit 50000
+		];
+		Map<Id, Map<Id, String>> expiredProductAddMap = new Map<Id, Map<Id, String>>();
+
+		for (cspmb__Price_Item_Add_On_Price_Item_Association__c priap : expiredProductAdd) {
+
+			if (!expiredProductAddMap.containsKey(priap.cspmb__price_item__c)) {
+				expiredProductAddMap.put(priap.cspmb__price_item__c, new Map<Id, String>());
+			}
+			expiredProductAddMap.get(priap.cspmb__price_item__c)
+				.put(priap.cspmb__add_on_price_item__c, priap.id);
+		}
+
+		return expiredProductAddMap;
+	}
+
+	private static Map<Id, List<String>> getProductRateCardMap(List<Id> priceItemIds) {
+		List<cspmb__Price_Item_Rate_Card_Association__c> expiredProductRc = [
+			select id, cspmb__price_item__c, cspmb__rate_card__c
+			from cspmb__Price_Item_Rate_Card_Association__c
+			where cspmb__price_item__c in :priceItemIds
+			limit 50000
+		];
+		Map<Id, List<String>> expiredProductRcMap = new Map<Id, List<String>>();
+
+		for (cspmb__Price_Item_Rate_Card_Association__c pirca : expiredProductRc) {
+			if (expiredProductRcMap.containsKey(pirca.cspmb__price_item__c)) {
+				expiredProductRcMap.get(pirca.cspmb__price_item__c)
+					.add(pirca.cspmb__rate_card__c);
+			} else {
+				expiredProductRcMap.put(pirca.cspmb__price_item__c, new List<Id>{
+					pirca.cspmb__rate_card__c
+				});
+			}
+		}
+
+		return expiredProductRcMap;
+	}
+
+	private static List<cspmb__Price_Item__c> getReplacementCommercialProducts(List<cspmb__Price_Item__c> oldProducts) {
+		List<String> codeList = new List<String>();
+		final Boolean isPsEnabled = getPsSwitchStatus();
+		List<String> standardFields = new List<String>{
+			'id',
+			'name',
+			'cspmb__effective_start_date__c',
+			'cspmb__effective_end_date__c',
+			'cspmb__price_item_code__c',
+			'cspmb__current_version__c'
+		};
+
+		for (cspmb__Price_Item__c cp : oldProducts) {
+			if (cp.cspmb__price_item_code__c != null) {
+				codeList.add(cp.cspmb__price_item_code__c);
+			}
+		}
+
+		// if codeList is empty then none of the old products have price item code
+		// which means they cannot be tracked further
+		if (codeList.isEmpty()) {
+			return new List<cspmb__Price_Item__c>();
+		}
+
+		String query_new = 'select  ' + String.join(standardFields, ',') + ' from cspmb__Price_Item__c '
+		// ADD ACTIVE CLAUSE
+			+ 'where cspmb__is_active__c = true '
+		// ADD START DATE CHECK CLAUSE
+			+ 'and (cspmb__effective_start_date__c = null '
+			+ 'OR (cspmb__effective_start_date__c != null '
+			+ 'and cspmb__effective_start_date__c < TODAY)) '
+		// ADD END DATE CHECK CLAUSE
+			+ 'and (cspmb__effective_end_date__c = null '
+			+ 'OR (cspmb__effective_end_date__c != null '
+			+ 'and cspmb__effective_end_date__c > TODAY)) '
+
+			+ 'and cspmb__price_item_code__c in :codeList '
+			+ 'limit 50000';
+
+		List<cspmb__Price_Item__c> cpListNew = database.query(query_new);
+
+		return cpListNew;
+	}
+
+	private static List<cspmb__Price_Item__c> getReplacementOffers(List<cspmb__Price_Item__c> productList) {
+		List<String> offerCodeList = new List<String>();
+
+		Map<Id, String> masterCpIdOfferCodeMap = new Map<Id, String>();
+
+		List<String> standardFields = new List<String>{
+			'id',
+			'name',
+			'cspmb__effective_start_date__c',
+			'cspmb__effective_end_date__c',
+			'cspmb__price_item_code__c',
+			'cspmb__current_version__c',
+			'cspmb__master_price_item__c',
+			'cspmb__offer_code__c'
+		};
+
+		for (cspmb__Price_Item__c product: productList) {
+			masterCpIdOfferCodeMap.put(product.cspmb__master_price_item__c, product.cspmb__offer_code__c);
+		}
+
+		List<Id> masterCpIdList = new List<Id>(masterCpIdOfferCodeMap.keySet());
+
+		String queryMasterCpList = 'select ' + String.join(standardFields, ',') + ' from cspmb__Price_Item__c '
+			+ 'where id in :masterCpIdList '
+			+ 'limit 50000';
+
+		List<cspmb__Price_Item__c> masterCpList = database.query(queryMasterCpList);
+
+		Map<String, String> offerCodeCpCodeMap = new Map<String, String>();
+
+		for (cspmb__Price_Item__c masterCp: masterCpList) {
+			offerCodeCpCodeMap.put(masterCpIdOfferCodeMap.get(masterCp.id), masterCp.cspmb__price_item_code__c);
+		}
+		List<String> cpCodes = offerCodeCpCodeMap.values();
+		String queryActiveMasterCps = 'select  ' + String.join(standardFields, ',') + ' from cspmb__Price_Item__c '
+		// ADD ACTIVE CLAUSE
+			+ 'where cspmb__is_active__c = true '
+		// ADD START DATE CHECK CLAUSE
+			+ 'and (cspmb__effective_start_date__c = null '
+			+ 'OR (cspmb__effective_start_date__c != null '
+			+ 'and cspmb__effective_start_date__c < TODAY)) '
+		// ADD END DATE CHECK CLAUSE
+			+ 'and (cspmb__effective_end_date__c = null '
+			+ 'OR (cspmb__effective_end_date__c != null '
+			+ 'and cspmb__effective_end_date__c > TODAY)) '
+
+			+ 'and cspmb__price_item_code__c in :cpCodes '
+			+ 'limit 50000';
+		List<cspmb__Price_Item__c> activeMasterCpList = database.query(queryActiveMasterCps);
+		List<Id> activeMasterCpIdList = new List<Id>();
+		Map<Id, String> activeMasterCpIdCpCodeMap = new Map<Id, String>();
+
+		for (cspmb__Price_Item__c product: activeMasterCpList) {
+			activeMasterCpIdCpCodeMap.put(product.id, product.cspmb__price_item_code__c);
+		}
+		List<String> newOfferList = new List<String>(offerCodeCpCodeMap.keySet());
+		List<Id> newMasterIdList = new List<Id>(activeMasterCpIdCpCodeMap.keySet());
+		String queryNewOffers = 'select  ' + String.join(standardFields, ',') + ' from cspmb__Price_Item__c '
+		// ADD ACTIVE CLAUSE
+			+ 'where cspmb__is_active__c = true '
+		// ADD START DATE CHECK CLAUSE
+			+ 'and (cspmb__effective_start_date__c = null '
+			+ 'OR (cspmb__effective_start_date__c != null '
+			+ 'and cspmb__effective_start_date__c < TODAY)) '
+		// ADD END DATE CHECK CLAUSE
+			+ 'and (cspmb__effective_end_date__c = null '
+			+ 'OR (cspmb__effective_end_date__c != null '
+			+ 'and cspmb__effective_end_date__c > TODAY)) '
+
+			+ 'and cspmb__offer_code__c in :newOfferList '
+			+ 'and cspmb__master_price_item__c in :newMasterIdList '
+			+ 'limit 50000';
+
+		List<cspmb__Price_Item__c> activeOfferList = database.query(queryNewOffers);
+		List<cspmb__Price_Item__c> validActiveOfferList = new List<cspmb__Price_Item__c>();
+
+		for (cspmb__Price_Item__c product: activeOfferList) {
+			String cpCode = activeMasterCpIdCpCodeMap.get(product.cspmb__master_price_item__c);
+			String offerCode = product.cspmb__offer_code__c;
+
+			if (cpCode.equals(offerCodeCpCodeMap.get(offerCode))) {
+				validActiveOfferList.add(product);
+			}
+		}
+
+		return validActiveOfferList;
 	}
 
 	// WRAPPERS

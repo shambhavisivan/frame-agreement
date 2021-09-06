@@ -977,10 +977,14 @@ const recieveOffers = result => ({
 
 export function getOffers() {
 	return async function (dispatch) {
-		const offerIdsInCatalogue = await queryOfferIdsInCatalogue();
-		return window.SF.invokeAction("getOffers", [offerIdsInCatalogue]).then((response) => {
-			dispatch(recieveOffers(response));
-		});
+		const offersInCatalogue = await queryOfferIdsInCatalogue();
+		const offerIdsInCatalogue = offersInCatalogue.map((cp) => cp.id);
+		const response = await window.SF.invokeAction("getOffers", [offerIdsInCatalogue]);
+		const offers = mergePrsPpdmProductInfo(
+			offersInCatalogue,
+			response
+		);
+		dispatch(recieveOffers(offers));
 	};
 }
 

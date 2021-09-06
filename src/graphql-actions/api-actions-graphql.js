@@ -131,8 +131,7 @@ export const queryOfferIdsInCatalogue = async () => {
 				.filter(
 					(cp) =>
 						cp.role && cp.role === ROLE_OFFER && cp.type === PRODUCT_TYPE_CP
-				)
-				.map((cp) => cp.id);
+				);
 		}
 	} catch (error) {
 		throw new Error(error.message);

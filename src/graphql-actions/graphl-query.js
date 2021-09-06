@@ -6,6 +6,7 @@ export const PRODUCTS_IN_CATALOGUE = `query Products($catalogueId: ID!) {
 			role(version: "2-0-0")
 			type
 			commercialProductCode
+			offerCode
 		}
 		hasMore
 		nextPage {
@@ -62,6 +63,7 @@ query PRODUCT_BY_IDENTIFIERS($productIdentifiers: [ProductIdentifier]!) {
 		role(version: "2-0-0")
 		type
 		commercialProductCode
+		offerCode
 		commercialProductMetadata {
 			attributeMetadata {
 				version

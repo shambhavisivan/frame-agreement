@@ -575,6 +575,10 @@ export const mergePrsPpdmProductInfo = (prsProducts, ppdmProducts) => {
 	ppdmProducts.forEach(product => {
 		const prsProduct = prsMap.get(product.Id);
 		product.commercialProductCode = prsProduct.commercialProductCode;
+
+		if (prsProduct.offerCode) {
+			product.offerCode = prsProduct.offerCode;
+		}
 	});
 
 	return ppdmProducts;

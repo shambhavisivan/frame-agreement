@@ -336,6 +336,10 @@ function enrichAttachment(cp) {
 		_att.commercialProductCode = cp.commercialProductCode;
 	}
 
+	if (cp.offerCode) {
+		_att.offerCode = cp.offerCode;
+	}
+
 	if (cp._addons.length) {
 		_att._addons = {};
 	}
@@ -2724,19 +2728,17 @@ const rootReducer = (state = initialState, action) => {
 
 				let old_rc = copy(_attachment.offers[key]._rateCards);
 
-				offerReplacementData[key].rc.forEach(rc => {
-					if (_attachment.offers[new_cp.Id]._rateCards?.hasOwnProperty(rc.Id)) {
-						_attachment.offers[new_cp.Id]._rateCards[rc.Id] = {
-							..._attachment.offers[new_cp.Id]._rateCards[rc.Id],
-							...old_rc[rc.Id]
-						};
-					}
-				});
+				if (rcIdSet.size) {
+					rcIdSet.forEach((rcId) => {
+						if (old_rc[rcId]) {
+							_attachment.offers[new_cp.Id]._rateCards[rc.Id] = {
+								..._attachment.offers[new_cp.Id]._rateCards[rc.Id],
+								...old_rc[rc.Id]
+							};
+						}
+					});
+				}
 
-				_attachment.offers[new_cp.Id]._rateCards = {
-					..._attachment.offers[new_cp.Id]._rateCards,
-					...old_rc
-				};
 				// remove old offer from attachment
 				delete _attachment.offers[key];
 			}

@@ -238,3 +238,12 @@ export const getDefaultCatalogueId = async (_) => {
 		throw new Error(error.message);
 	}
 };
+
+export function findReplacementOffers(expiredOfferIds) {
+	return new Promise((resolve, reject) => {
+		window.SF.invokeAction('findReplacementOffers', [expiredOfferIds]).then(response => {
+			resolve(response);
+			return response;
+		});
+	});
+}

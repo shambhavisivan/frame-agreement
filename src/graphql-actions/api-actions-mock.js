@@ -56,7 +56,46 @@ const products = [
 		commercialProductCode: "M12",
 		offerCode: "M12OFF",
 		commercialProductMetadata: null,
-		availableChildProducts: [],
+		availableChildProducts: [
+			{
+				product: {
+					id: "addon-1",
+					name: "Call waiting",
+					effectiveStartDate: "2000-03-01T00:00:00.000Z",
+					effectiveEndDate: "2041-03-31T00:00:00.000Z",
+					pricing: {
+						listOneOffPrice: 20,
+						listRecurringPrice: 10,
+					}
+				},
+				externalIds: [
+					{
+						key: "associationSfId",
+						value: "asso-id-1",
+					},
+				],
+				group: null,
+			},
+			{
+				product: {
+					id: "addon-2",
+					name: "Data Pack",
+					effectiveStartDate: "2007-03-01T00:00:00.000Z",
+					effectiveEndDate: "2040-03-28T00:00:00.000Z",
+					pricing: {
+						listOneOffPrice: 40,
+						listRecurringPrice: 20,
+					}
+				},
+				externalIds: [
+					{
+						key: "associationSfId",
+						value: "asso-id-2",
+					},
+				],
+				group: null,
+			},
+		],
 	},
 ];
 

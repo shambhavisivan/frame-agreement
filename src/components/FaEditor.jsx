@@ -30,7 +30,7 @@ import {
 	deleteFaOffers
 } from '../actions';
 
-import { publish, findReplacementCommercialProduct } from '../api';
+import { publish, findReplacementCommercialProduct, findReplacementOffers } from '../api';
 
 import {
 	log,
@@ -348,7 +348,7 @@ export class FaEditor extends Component {
 		if (this.props.frameAgreements[this.faId]._ui.attachment === null) {
 			_promiseArray.push(
 				this.props.getAttachment(this.faId).then(async resp_attachment => {
-					// ***********************************************
+					let syncAttachment = false;
 					let productsInAttachment = resp_attachment.products || {};
 					let IdsToLoad = Object.keys(productsInAttachment);
 					// If attachment is present
@@ -361,7 +361,6 @@ export class FaEditor extends Component {
 						// Check if any CPs have been deleted
 						let _idsToLoadSet = new Set(IdsToLoad);
 						let _filteredCpIdList = [];
-						let syncCommercialProductCode = false;
 
 						this.props.commercialProducts.forEach((cp) => {
 							if (_idsToLoadSet.has(cp.Id)) {
@@ -378,7 +377,7 @@ export class FaEditor extends Component {
 								) {
 									userAddedProduct.commercialProductCode =
 										cp.commercialProductCode;
-									syncCommercialProductCode = true;
+									syncAttachment = true;
 								}
 							}
 						});
@@ -430,18 +429,17 @@ export class FaEditor extends Component {
 						if (Object.keys(cpReplacementData).length) {
 							// cpReplacementData contains info about which addons and rc old cp was attached to
 							await this.props.replaceCpEntities(this.faId, cpReplacementData);
-
-							saveAttachment();
-						} else if (syncCommercialProductCode) {
-							saveAttachment();
+							syncAttachment = true;
 						}
 					}
 
 					if (this.isPsEnabled) {
-						let offerIdsToLoad = Object.keys(resp_attachment.offers || {});
 
-						for (var key in resp_attachment.offers) {
-							resp_attachment.offers[key] = resp_attachment.offers[key] || {};
+						let offersInAttachment = resp_attachment.offers || {};
+						let offerIdsToLoad = Object.keys(offersInAttachment);
+
+						for (var key in offersInAttachment) {
+							offersInAttachment[key] = offersInAttachment[key] || {};
 						}
 
 						if (offerIdsToLoad.length) {
@@ -452,6 +450,36 @@ export class FaEditor extends Component {
 							if (!this.props.offersLoaded) {
 								await this.props.getOffers();
 							}
+
+							this.props.offers.forEach((offer) => {
+								if (_offerIdsToLoadSet.has(offer.Id)) {
+									_offerIdsToLoadSet.delete(offer.Id);
+									_filteredOfferIdList.push(offer.Id);
+
+									let userAddedOffer =
+										offersInAttachment[offer.Id];
+
+									if (
+										!userAddedOffer.commercialProductCode ||
+										userAddedOffer.commercialProductCode !==
+											offer.commercialProductCode
+									) {
+										userAddedOffer.commercialProductCode =
+											offer.commercialProductCode;
+										syncAttachment = true;
+									}
+
+									if (
+										!userAddedOffer.offerCode ||
+										userAddedOffer.offerCode !==
+											offer.offerCode
+									) {
+										userAddedOffer.offerCode =
+											offer.offerCode;
+										syncAttachment = true;
+									}
+								}
+							});
 
 							this.props.offers.forEach(offer => {
 								if (_offerIdsToLoadSet.has(offer.Id)) {
@@ -485,7 +513,7 @@ export class FaEditor extends Component {
 									5000
 								);
 
-								offerReplacementData = await findReplacementCommercialProduct([..._offerIdsToLoadSet]);
+								offerReplacementData = await findReplacementOffers([..._offerIdsToLoadSet]);
 							}
 
 							if (Object.keys(offerReplacementData).length) {
@@ -506,13 +534,17 @@ export class FaEditor extends Component {
 								// offerReplacementData contains info about which addons and rc old offer was attached to
 								await this.props.replaceOfferEntities(this.faId, offerReplacementData);
 
-								saveAttachment();
+								syncAttachment = true;;
 							}
 						}
 
 						const faOfferIdsToLoad = Object.keys(resp_attachment.faOffers?.offerIdsCharges || {});
 
 						await this.props.addFaOffersToFa(this.faId, faOfferIdsToLoad);
+					}
+
+					if (syncAttachment) {
+						saveAttachment();
 					}
 
 					return;

@@ -56,6 +56,12 @@ namespace SfGlobal {
 		getDelta(paramArray: [string, string]): Promise<DeltaResult>;
 	}
 
+	interface CategorizationData {
+		name: string;
+		field: string;
+		values: string[];
+	}
+
 	// TODO define the unknowns
 	interface AppSettings {
 		account: {
@@ -72,7 +78,7 @@ namespace SfGlobal {
 		ButtonStandardData: Record<string, unknown>;
 		RelatedListsData: Record<string, unknown>;
 		AddonCategorizationData: Record<string, unknown>;
-		CategorizationData: Record<string, unknown>;
+		CategorizationData: CategorizationData[];
 		FACSettings: Record<string, FacSetting>;
 		/* eslint-enable @typescript-eslint/naming-convention */
 	}
@@ -251,6 +257,8 @@ namespace SfGlobal {
 		addon_label: string;
 		btn_AddProducts: string;
 		modal_addFa_title: string;
+		modal_categorization_btn_add: string;
+		modal_categorization_btn_apply: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

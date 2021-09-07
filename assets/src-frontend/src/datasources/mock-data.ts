@@ -34,7 +34,9 @@ export const mockAppSettings: AppSettings = {
 	buttonStandardData: {},
 	relatedListsData: {},
 	addonCategorizationData: {},
-	categorizationData: {},
+	categorizationData: [
+		{ name: 'Role', field: 'cspmb_role__c', values: ['Master', 'Package', 'Group'] }
+	],
 	facSettings: {
 		statuses: {
 			draftStatus: 'Draft',
@@ -704,7 +706,9 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	products_rates: 'Rate card',
 	addon_label: 'Addons',
 	btn_AddProducts: 'Add Products',
-	modal_addFa_title: 'Add Product to Frame Agreement'
+	modal_addFa_title: 'Add Product to Frame Agreement',
+	modal_categorization_btn_add: 'Product Categorization',
+	modal_categorization_btn_apply: 'Apply Filter'
 };
 /* eslint-enable */
 

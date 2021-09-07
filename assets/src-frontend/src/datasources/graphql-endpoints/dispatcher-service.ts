@@ -48,10 +48,18 @@ export class DispatcherService {
 		if (!dispatcherServiceUrl) {
 			throw Error(ERROR_DISPATCHER_URL_MISSING);
 		}
-		this._connection = axios.create({
-			baseURL: dispatcherServiceUrl,
-			timeout: 10000
-		});
+		this._connection = this._getConnection(dispatcherServiceUrl);
+	}
+
+	private _getConnection(dispatcherServiceUrl: string): AxiosInstance {
+		if (!this._connection) {
+			this._connection = axios.create({
+				baseURL: dispatcherServiceUrl,
+				timeout: 10000
+			});
+		}
+
+		return this._connection;
 	}
 
 	private async _getAuthToken(): Promise<DispatcherToken> {

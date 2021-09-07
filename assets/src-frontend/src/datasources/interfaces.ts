@@ -24,7 +24,7 @@ export interface AppSettings {
 	buttonStandardData: Record<string, unknown>;
 	relatedListsData: Record<string, unknown>;
 	addonCategorizationData: Record<string, unknown>;
-	categorizationData: Record<string, unknown>;
+	categorizationData: SfGlobal.CategorizationData[];
 	facSettings: FacSetting;
 }
 

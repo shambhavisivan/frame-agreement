@@ -3,7 +3,9 @@ import { FieldMetadata } from './datasources';
 export enum QueryKeys {
 	frameagreement = 'frameAgreement',
 	faAttachment = 'faAttachment',
-	compareAgreement = 'compareAgreement'
+	compareAgreement = 'compareAgreement',
+	categoriesInCatalogue = 'categoriesInCatalogue',
+	productsInCategory = 'productsInCategory'
 }
 export const FA_API_NAME = 'csconta__Frame_Agreement__c';
 export const SEARCH_INPUT_VALIDATION_MESSAGE = 'Enter atleast 3 or more characters to begin search';

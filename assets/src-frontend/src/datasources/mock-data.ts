@@ -1364,3 +1364,33 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		scale: 0
 	}
 ];
+
+export const productsInCategoryMock: ProductsInCategoryData[] = [
+	{
+		id: 'cpid-1',
+		name: 'Samsung A7',
+		role: CommercialProductRole.basic,
+		type: CommercialProductType.commercialProduct,
+		sequence: 1,
+		primary: true
+	},
+	{
+		id: 'cpid-2',
+		name: 'Samsung A12',
+		role: CommercialProductRole.basic,
+		type: CommercialProductType.commercialProduct,
+		sequence: 1,
+		primary: false
+	}
+];
+
+export const categoriesInCatalogue: CategoriesInCatalogueData[] = [
+	{
+		id: 'cat-1',
+		name: 'Mobile Phones'
+	},
+	{
+		id: 'cat-2',
+		name: 'Laptop'
+	}
+];

@@ -91,6 +91,7 @@ fragment addonFields on AvailableProduct {
 	product {
 		id
 		name
+		commercialProductCode
 		effectiveStartDate
 		effectiveEndDate
 		pricing(prgs: []) {

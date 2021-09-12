@@ -348,6 +348,10 @@ function enrichAttachment(cp) {
 			oneOff: addon.cspmb__One_Off_Charge__c,
 			recurring: addon.cspmb__Recurring_Charge__c
 		};
+
+		if (addon?.cspmb__Add_On_Price_Item_Code__c) {
+			_att._addons[addon.Id].addonCode = addon.cspmb__Add_On_Price_Item_Code__c;
+		}
 	});
 
 	if (cp._charges.length) {
@@ -1654,20 +1658,48 @@ const rootReducer = (state = initialState, action) => {
 				// key -> old cp Id
 				let new_cp = state.commercialProducts.find(cp => cp.Id === replacementData[key].new_cp.Id);
 
+				// Not in std catalogue so remove from attachment
+				if (!new_cp) {
+					delete _attachment.products[replacementData[key].new_cp.Id];
+					continue;
+				}
 				let old_addons = copy(_attachment.products[key]._addons) || {};
 				let new_addons = {};
+				const oldAddonCodeAssociationMap = Object.keys(
+					old_addons
+				).reduce((mapAccumulator, addonAssociationId) => {
+					mapAccumulator.set(
+						old_addons[addonAssociationId].addonCode,
+						addonAssociationId
+					);
+					return mapAccumulator;
+				}, new Map());
 
 				// since attachment is indexed by addon assoc id, we need to traverse the cp data to find addon -> addon assoc correlation
-				new_cp._addons.forEach(add => {
+				new_cp._addons?.forEach(add => {
 					if (
-						replacementData[key].addon_vs_addon_assoc.hasOwnProperty(
-							add.cspmb__Add_On_Price_Item__c
-						)
+						state.settings.FACSettings.isPsEnabled
 					) {
-						// This addon is shared by both old and new products
-						new_addons[add.Id] = copy(
-							old_addons[replacementData[key].addon_vs_addon_assoc[add.cspmb__Add_On_Price_Item__c]]
-						);
+						if (oldAddonCodeAssociationMap.has(add.cspmb__Add_On_Price_Item_Code__c)) {
+							new_addons[add.Id] = copy(
+								old_addons[
+									oldAddonCodeAssociationMap.get(
+										add.cspmb__Add_On_Price_Item_Code__c
+									)
+								]
+							);
+						}
+					} else {
+						if (
+							replacementData[key].addon_vs_addon_assoc.hasOwnProperty(
+								add.cspmb__Add_On_Price_Item__c
+							)
+						) {
+							// This addon is shared by both old and new products
+							new_addons[add.Id] = copy(
+								old_addons[replacementData[key].addon_vs_addon_assoc[add.cspmb__Add_On_Price_Item__c]]
+							);
+						}
 					}
 				});
 
@@ -1778,8 +1810,12 @@ const rootReducer = (state = initialState, action) => {
 					}
 
 					// Keep allow fileds
-					_addon.cspmb__Is_One_Off_Discount_Allowed__c = _addon.cspmb__Add_On_Price_Item__r.cspmb__Is_One_Off_Discount_Allowed__c;
-					_addon.cspmb__Is_Recurring_Discount_Allowed__c = _addon.cspmb__Add_On_Price_Item__r.cspmb__Is_Recurring_Discount_Allowed__c;
+					_addon.cspmb__Is_One_Off_Discount_Allowed__c =
+						_addon.cspmb__Add_On_Price_Item__r.cspmb__Is_One_Off_Discount_Allowed__c;
+					_addon.cspmb__Is_Recurring_Discount_Allowed__c =
+						_addon.cspmb__Add_On_Price_Item__r.cspmb__Is_Recurring_Discount_Allowed__c;
+					_addon.cspmb__Add_On_Price_Item_Code__c =
+						_addon.cspmb__Add_On_Price_Item__r.cspmb__Add_On_Price_Item_Code__c;
 
 					delete _addon.cspmb__Add_On_Price_Item__r;
 					delete _addon.cspmb__Price_Item__r;
@@ -2698,23 +2734,33 @@ const rootReducer = (state = initialState, action) => {
 				// key -> old offer Id
 				let new_cp = state.offers.find(offer => offer.Id === offerReplacementData[key].new_cp.Id);
 
+				// Not in std catalogue so remove from attachment
 				if (!new_cp) {
+					delete _attachment.offers[replacementData[key].new_cp.Id];
 					continue;
 				}
 
-				let old_addons = copy(_attachment.offers[key]._addons);
+				let old_addons = copy(_attachment.offers[key]._addons) || {};
 				let new_addons = {};
+				const oldAddonCodeAssociationMap = Object.keys(
+					old_addons
+				).reduce((mapAccumulator, addonAssociationId) => {
+					mapAccumulator.set(
+						old_addons[addonAssociationId].addonCode,
+						addonAssociationId
+					);
+					return mapAccumulator;
+				}, new Map());
 
 				// since attachment is indexed by addon assoc id, we need to traverse the offer data to find addon -> addon assoc correlation
 				new_cp._addons.forEach(add => {
-					if (
-						offerReplacementData[key].addon_vs_addon_assoc.hasOwnProperty(
-							add.cspmb__Add_On_Price_Item__c
-						)
-					) {
-						// This addon is shared by both old and new offers
+					if (oldAddonCodeAssociationMap.has(add.cspmb__Add_On_Price_Item_Code__c)) {
 						new_addons[add.Id] = copy(
-							old_addons[offerReplacementData[key].addon_vs_addon_assoc[add.cspmb__Add_On_Price_Item__c]]
+							old_addons[
+								oldAddonCodeAssociationMap.get(
+									add.cspmb__Add_On_Price_Item_Code__c
+								)
+							]
 						);
 					}
 				});

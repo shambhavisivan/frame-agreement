@@ -468,6 +468,7 @@ const renameAddonFields = (addonObject, addonAssocId) => {
 			cspmb__Effective_Start_Date__c: addonObject.effectiveStartDate,
 			cspmb__One_Off_Charge__c: addonObject.pricing?.listOneOffPrice,
 			cspmb__Recurring_Charge__c: addonObject.pricing?.listRecurringPrice,
+			cspmb__Add_On_Price_Item_Code__c: addonObject.commercialProductCode
 		},
 	};
 
@@ -602,15 +603,6 @@ export const restructureReplacementCp = (cpReplacementPrsData, replacementCpCode
 			cspmb__Price_Item_Code__c: commercialProduct.commercialProductCode,
 			commercialProductCode: commercialProduct.commercialProductCode,
 		};
-		replacementData.addon_vs_addon_assoc = {};
-
-		if (commercialProductAddOn.addons) {
-			commercialProductAddOn.addons.forEach((addon) => {
-				replacementData.addon_vs_addon_assoc[
-					addon.cspmb__Add_On_Price_Item__r.Id
-				] = addon.Id;
-			});
-		}
 		replacementDataMap[
 			replacementCpCodes.get(commercialProduct.commercialProductCode)
 		] = replacementData;

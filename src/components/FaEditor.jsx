@@ -357,6 +357,50 @@ export class FaEditor extends Component {
 						productsInAttachment[key] = productsInAttachment[key] || {};
 					}
 
+					const syncAddonCodes = (productIdsAdded, product, productsInAttachment) => {
+
+						if (
+							productIdsAdded.has(product.Id) &&
+							productsInAttachment[product.Id]._addons
+						) {
+							const addonAssociationCodeMap =
+								product._addons?.reduce(
+									(mapAccumulator, addon) => {
+										mapAccumulator.set(
+											addon.Id,
+											addon.cspmb__Add_On_Price_Item_Code__c
+										);
+										return mapAccumulator;
+									},
+									new Map()
+								) || new Map();
+
+							let userAddedProduct =
+								productsInAttachment[product.Id];
+							Object.keys(userAddedProduct._addons).forEach(
+								(addonAssociationId) => {
+									const addon =
+										userAddedProduct._addons[
+											addonAssociationId
+										];
+
+									if (
+										!addon.addonCode ||
+										addon.addonCode !==
+											addonAssociationCodeMap.get(
+												addonAssociationId
+											)
+									) {
+										addon.addonCode = addonAssociationCodeMap.get(
+											addonAssociationId
+										);
+										syncAttachment = true;
+									}
+								}
+							);
+						}
+					}
+
 					if (IdsToLoad.length) {
 						// Check if any CPs have been deleted
 						let _idsToLoadSet = new Set(IdsToLoad);
@@ -426,6 +470,11 @@ export class FaEditor extends Component {
 						await this.props.getCommercialProductData(_filteredCpIdList);
 						await this.props.addProductsToFa(this.faId, _filteredCpIdList);
 
+						const cpIdsAdded = new Set(_filteredCpIdList);
+						this.props.commercialProducts.forEach((cp) => {
+							syncAddonCodes(cpIdsAdded, cp, productsInAttachment);
+						});
+
 						if (Object.keys(cpReplacementData).length) {
 							// cpReplacementData contains info about which addons and rc old cp was attached to
 							await this.props.replaceCpEntities(this.faId, cpReplacementData);
@@ -481,13 +530,6 @@ export class FaEditor extends Component {
 								}
 							});
 
-							this.props.offers.forEach(offer => {
-								if (_offerIdsToLoadSet.has(offer.Id)) {
-									_offerIdsToLoadSet.delete(offer.Id);
-									_filteredOfferIdList.push(offer.Id);
-								}
-							});
-
 							let offerReplacementData = {};
 							if (
 								_offerIdsToLoadSet.size &&
@@ -529,6 +571,11 @@ export class FaEditor extends Component {
 							// Get data for offer products
 							await this.props.getOfferData(_filteredOfferIdList);
 							await this.props.addOffersToFa(this.faId, _filteredOfferIdList);
+
+							const offerIdsAdded = new Set(_filteredOfferIdList);
+							this.props.offers.forEach((offer) => {
+								syncAddonCodes(offerIdsAdded, offer, offersInAttachment);
+							});
 
 							if (Object.keys(offerReplacementData).length) {
 								// offerReplacementData contains info about which addons and rc old offer was attached to

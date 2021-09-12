@@ -36,10 +36,6 @@ global with sharing class FrameRateManagerController {
 	private static final String FRAME_AGREEMENT_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated;
 	@TestVisible
 	private static final String FRAME_AGREEMENT_STATUS_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated_statusError;
-	@TestVisible
-	private static final String COMMERCIAL_PRODUCT = 'Commercial Product';
-	@TestVisible
-	private static final String OFFER = 'Offer';
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -957,7 +953,8 @@ global with sharing class FrameRateManagerController {
 			'cspmb__Recurring_Charge__c',
 			'cspmb__Is_One_Off_Discount_Allowed__c',
 			'cspmb__Is_Recurring_Discount_Allowed__c',
-			'cspmb__Authorization_Level__c'
+			'cspmb__Authorization_Level__c',
+			'cspmb__add_on_price_item_code__c'
 		};
 
 		Fac_Settings__c facSettings = FrameRateManagerController.getFacSetting();
@@ -1900,7 +1897,8 @@ global with sharing class FrameRateManagerController {
 				cspmb__add_on_price_item__r.cspmb__one_off_charge__c,
 				cspmb__add_on_price_item__r.cspmb__recurring_charge__c,
 				cspmb__add_on_price_item__r.cspmb__is_one_off_discount_allowed__c,
-				cspmb__add_on_price_item__r.cspmb__is_recurring_discount_allowed__c
+				cspmb__add_on_price_item__r.cspmb__is_recurring_discount_allowed__c,
+				cspmb__add_on_price_item__r.cspmb__add_on_price_item_code__c
 			from cspmb__Price_Item_Add_On_Price_Item_Association__c
 			where cspmb__price_item__c in :priceItemIdList
 				and cspmb__add_on_price_item__r.cspmb__is_active__c = true

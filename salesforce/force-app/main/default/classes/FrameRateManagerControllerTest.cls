@@ -2458,4 +2458,93 @@ private class FrameRateManagerControllerTest {
 
 		System.assertEquals(migrationErrorMsg, FrameRateManagerController.FRAME_AGREEMENT_MIGRATION_EXCEPTION);
 	}
+
+	@isTest
+	public static void testGetFaOffers() {
+		FaPlmServiceTest.setupPLMPricingRule();
+		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
+			name = SAMPLE_CP_NAME,
+			cspmb__one_off_charge__c = 10.00,
+			cspmb__is_active__c = true,
+			cspmb__recurring_charge__c = 15 - 00,
+			cspmb__price_item_code__c = 'cp_1',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__role__c = 'Basic'
+		);
+		insert cp_1;
+
+		cspmb__Price_Item__c offerRequest_1 = new cspmb__Price_Item__c(
+			cspmb__master_price_item__c = cp_1.id,
+			cspmb__offer_code__c = 'newOffers'
+		);
+
+		cspmb__Price_Item__c cp_2 = new cspmb__Price_Item__c(
+			name = SAMPLE_CP_NAME,
+			cspmb__one_off_charge__c = 10.00,
+			cspmb__is_active__c = true,
+			cspmb__recurring_charge__c = 15 - 00,
+			cspmb__price_item_code__c = 'cp_2',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__role__c = 'Basic'
+		);
+		insert cp_2;
+
+		cspmb__Price_Item__c offerRequest_2 = new cspmb__Price_Item__c(
+			cspmb__master_price_item__c = cp_2.id,
+			cspmb__offer_code__c = 'newOffers2'
+		);
+
+		List<cspmb__Price_Item__c> offerRequestList = new List<cspmb__Price_Item__c>{
+			offerRequest_1, offerRequest_2
+		};
+		List<cspmb__Price_Item__c> newOffers = FaPlmService.createOffer(offerRequestList);
+		List<cspmb__Price_Item__c> faOffers = FrameRateManagerController.getOffers(new List<Id>{
+			newOffers.get(0).id, newOffers.get(1).id
+		});
+		cspmb__Price_Item__c createdFaOffer_1 = faOffers.get(0);
+		cspmb__Price_Item__c createdFaOffer_2 = faOffers.get(1);
+
+		Test.startTest();
+
+		List<cspmb__Price_Item__c> activeOffers_1 = FrameRateManagerController.getOffers(new List<Id>{
+			newOffers.get(0).id, newOffers.get(1).id
+		});
+
+		createdFaOffer_1.cspmb__effective_start_date__c = date.today().addDays(1);
+		update createdFaOffer_1;
+		List<cspmb__Price_Item__c> activeOffers_2 = FrameRateManagerController.getFaOffers(new List<Id>{
+			createdFaOffer_1.id, createdFaOffer_2.id
+		});
+
+		createdFaOffer_1.cspmb__effective_start_date__c = null;
+		createdFaOffer_1.cspmb__effective_end_date__c = date.today().addDays(-1);
+		update createdFaOffer_1;
+		List<cspmb__Price_Item__c> activeOffers_3 = FrameRateManagerController.getFaOffers(new List<Id>{
+			createdFaOffer_1.id, createdFaOffer_2.id
+		});
+
+		createdFaOffer_1.cspmb__effective_start_date__c = date.today().addDays(-3);
+		createdFaOffer_1.cspmb__effective_end_date__c = date.today().addDays(3);
+		update createdFaOffer_1;
+		List<cspmb__Price_Item__c> activeOffers_4 = FrameRateManagerController.getFaOffers(new List<Id>{
+			createdFaOffer_1.id, createdFaOffer_2.id
+		});
+
+		createdFaOffer_1.cspmb__is_active__c = false;
+		update createdFaOffer_1;
+		List<cspmb__Price_Item__c> activeOffers_5 = FrameRateManagerController.getFaOffers(new List<Id>{
+			createdFaOffer_1.id, createdFaOffer_2.id
+		});
+
+
+		Test.stopTest();
+
+		System.assertEquals(2, activeOffers_1.size(), 'Both are active offers with no effective dates');
+		System.assertEquals(1, activeOffers_2.size(), 'Offers with effective start date greater than today\'s date should be filtered');
+		System.assertEquals(1, activeOffers_3.size(), 'Offers with effective end date lesser than today\'s date should be filtered');
+		System.assertEquals(2, activeOffers_4.size(), 'Offers with blank effective start date and end date and the offers with '
+			+ 'valid effective start date and end dates shouldn\'t be filtered');
+		System.assertEquals(1, activeOffers_5.size(), 'Offers with valid effective start date and end dates but marked inactive should be filtered');
+
+	}
 }

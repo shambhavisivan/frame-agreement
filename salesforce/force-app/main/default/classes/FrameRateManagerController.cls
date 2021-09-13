@@ -1078,6 +1078,7 @@ global with sharing class FrameRateManagerController {
 		List<String> standardFields = new List<String>{
 			'id',
 			'name',
+			'cspmb__is_active__c',
 			'cspmb__effective_start_date__c',
 			'cspmb__effective_end_date__c',
 			'cspmb__price_Item_Code__c',
@@ -2936,6 +2937,25 @@ global with sharing class FrameRateManagerController {
 		}
 
 		return validActiveOfferList;
+	}
+
+	@RemoteAction
+	public static List<cspmb__Price_Item__c> getFaOffers(List<String> offerIdList) {
+		List<cspmb__Price_Item__c> faOffers = getOffers(offerIdList);
+		List<cspmb__Price_Item__c> validFaOffers = new List<cspmb__Price_Item__c>();
+
+		for (cspmb__Price_Item__c faOffer: faOffers) {
+			Boolean isValidStartDate = faOffer.cspmb__effective_start_date__c == null ||
+				faOffer.cspmb__effective_start_date__c < date.today();
+			Boolean isValidEndDate = faOffer.cspmb__effective_end_date__c == null ||
+				faOffer.cspmb__effective_end_date__c > date.today();
+
+			if (faOffer.cspmb__is_active__c & isValidStartDate && isValidEndDate) {
+				validFaOffers.add(faOffer);
+			}
+		}
+
+		return validFaOffers;
 	}
 
 	// WRAPPERS

@@ -1144,7 +1144,7 @@ const _addFaOfferToFa = (faId, addedFaOffers) => ({
 export function addFaOffersToFa(faId, newFaOfferIds) {
 	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
-			const faOffer = await window.SF.invokeAction("getOffers", [Array.from(newFaOfferIds)]);
+			const faOffer = await window.SF.invokeAction("getFaOffers", [Array.from(newFaOfferIds)]);
 			dispatch(_addFaOfferToFa(faId, faOffer));
 			resolve(faOffer);
 		});

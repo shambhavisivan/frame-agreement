@@ -621,4 +621,8 @@ export const restructureReplacementCp = (cpReplacementPrsData, replacementCpCode
 	return replacementDataMap;
 }
 
+export const isFalsyExceptZero = (value) => {
+	return value || value === 0;
+}
+
 export default sharedService;

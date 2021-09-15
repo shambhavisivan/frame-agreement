@@ -167,5 +167,9 @@ export const remoteActions: RemoteActions = {
 
 	async getDelta(): Promise<DeltaResult> {
 		return Promise.resolve(DELTA_CALC_RESULT_MOCK);
+	},
+
+	async filterCommercialProducts() {
+		return mockCommercialProducts;
 	}
 };

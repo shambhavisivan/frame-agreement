@@ -43,6 +43,7 @@ export interface RemoteActions {
 	reassignApproval(faId: string, newApproverId: string): Promise<void>;
 	getAttachmentBody(faId: string): Promise<Attachment>;
 	getDelta(sourceFaId: string, targetFaId: string): Promise<DeltaResult>;
+	filterCommercialProducts(filterData: string): Promise<CommercialProductStandalone[]>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -209,5 +210,11 @@ export const remoteActions: RemoteActions = {
 		const deltaResult = await SF.invokeAction('getDelta', [sourceFaId, targetFaId]);
 
 		return deforcify(deltaResult);
+	},
+
+	async filterCommercialProducts(filterData: string): Promise<CommercialProductStandalone[]> {
+		const filteredCp = await SF.invokeAction('filterCommercialProducts', [filterData]);
+
+		return filteredCp.map(deforcify);
 	}
 };

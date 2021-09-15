@@ -1743,4 +1743,11 @@
         <shortDescription>Addons</shortDescription>
         <value>Addons</value>
     </labels>
+	<labels>
+        <fullName>no_categories_available</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>no_categories_available</shortDescription>
+        <value>No categories associated with the catalogue</value>
+    </labels>
 </CustomLabels>

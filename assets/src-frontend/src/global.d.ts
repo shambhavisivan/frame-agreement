@@ -54,6 +54,7 @@ namespace SfGlobal {
 		reassignApproval(paramsArray: [string, string]): Promise<void>;
 		getAttachmentBody(paramsArray: [string]): Promise<string>;
 		getDelta(paramArray: [string, string]): Promise<DeltaResult>;
+		filterCommercialProducts(filterData: [string]): Promise<CommercialProductStandalone[]>;
 	}
 
 	interface CategorizationData {
@@ -259,6 +260,9 @@ namespace SfGlobal {
 		modal_addFa_title: string;
 		modal_categorization_btn_add: string;
 		modal_categorization_btn_apply: string;
+		modal_categorization_title: string;
+		modal_categorization_btn_clear: string;
+		no_categories_available: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

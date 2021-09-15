@@ -707,8 +707,11 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	addon_label: 'Addons',
 	btn_AddProducts: 'Add Products',
 	modal_addFa_title: 'Add Product to Frame Agreement',
-	modal_categorization_btn_add: 'Product Categorization',
-	modal_categorization_btn_apply: 'Apply Filter'
+	modal_categorization_btn_add: 'Add Selected',
+	modal_categorization_btn_apply: 'Apply Filter',
+	modal_categorization_title: 'Product Categorization',
+	modal_categorization_btn_clear: 'Clear Filter',
+	no_categories_available: 'No categories associated with the catalogue'
 };
 /* eslint-enable */
 

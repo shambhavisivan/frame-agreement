@@ -19,8 +19,8 @@ export function useCommercialProducts(
 	};
 
 	const { productIds } = useProductIdsInDefaultCatalogue(filter);
-	// to prevent duplicates if any
-	const productIdsFilter = Array.from(new Set([...filterIds, ...productIds]));
+	// to avoid filter and default catalogue filter mixing up
+	const productIdsFilter = filterIds.length ? filterIds : productIds.length ? productIds : [];
 
 	const { status, data } = useQuery(['commercialProducts', productIdsFilter], () =>
 		remoteActions.getCommercialProducts(productIdsFilter)

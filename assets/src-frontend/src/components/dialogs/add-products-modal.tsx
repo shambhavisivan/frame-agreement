@@ -7,7 +7,7 @@ import {
 } from '@cloudsense/cs-ui-components';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { QueryStatus } from 'react-query';
-import { CommercialProductStandalone } from '../../datasources';
+import { AppSettings, CommercialProductStandalone } from '../../datasources';
 import {
 	CommercialProductRole,
 	CommercialProductType,
@@ -15,6 +15,7 @@ import {
 } from '../../datasources/graphql-endpoints/interface';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
+import { useFilterCommercialProduct } from '../../hooks/use-filter-commercial-product';
 import { useProductsInCategory } from '../../hooks/use-products-in-category';
 import { ProductListGrid, ProductStatus } from '../fa-details/product-list-grid';
 import { ProductCategorisation } from './product-categorisation';
@@ -37,7 +38,7 @@ export function AddProductsModal({
 	addedProductIds
 }: AddProductsModalProp): ReactElement {
 	const [productIds, setProductIds] = useState<string[]>([]);
-	const { data: products } = useCommercialProducts(productIds);
+	const { data: products, status } = useCommercialProducts(productIds);
 	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
 	const [showCategorizationPanel, setShowCategorizationPanel] = useState(false);
 	const [categoryId, setCategoryId] = useState('');
@@ -45,7 +46,17 @@ export function AddProductsModal({
 		categoryId,
 		commercialProductFilter
 	);
+	// legacy filter
+	const [filterCp, setFilterCp] = useState<AppSettings['categorizationData']>([]);
+	const { filteredCp, filterCpStatus } = useFilterCommercialProduct(filterCp);
 	const labels = useCustomLabels();
+	const [productList, setProductList] = useState<CommercialProductStandalone[]>([]);
+
+	useEffect(() => {
+		if (status === QueryStatus.Success) {
+			setProductList(products || []);
+		}
+	}, [products, status]);
 
 	useEffect(() => {
 		if (productStatus === QueryStatus.Success) {
@@ -53,6 +64,12 @@ export function AddProductsModal({
 			setProductIds(productsInCategoryIdList || []);
 		}
 	}, [productStatus, productsInCategory]);
+
+	useEffect(() => {
+		if (filterCpStatus === QueryStatus.Success) {
+			setProductList(filteredCp || []);
+		}
+	}, [filterCpStatus, filteredCp]);
 
 	const updateSelectedProducts = (
 		selectedRows: CommercialProductStandalone[],
@@ -75,8 +92,44 @@ export function AddProductsModal({
 	const reloadCps = (value: string | Record<string, string[]>): void => {
 		if (typeof value === 'string') {
 			// if isPsEnabledTrue
+			if (!value) {
+				setProductIds([]);
+			}
 			setCategoryId(value);
+		} else {
+			const transformedFilter: AppSettings['categorizationData'] = [];
+			Object.keys(value).forEach((keys) => {
+				if (value[keys]) {
+					transformedFilter.push(({
+						field: keys,
+						values: value[keys]
+					} as unknown) as SfGlobal.CategorizationData);
+				}
+			});
+
+			setFilterCp(transformedFilter);
 		}
+	};
+
+	const searchHandler = (filterString: string): void => {
+		if (!filterString) {
+			setProductList(products || []);
+			return;
+		}
+
+		const filteredList = products?.filter((product) =>
+			product.name.toLowerCase().includes(filterString.toLowerCase())
+		);
+		if (filteredList?.length) {
+			setProductList(filteredList);
+		}
+	};
+
+	const onClose = (): void => {
+		setFilterCp([]);
+		onModalClose();
+		setProductIds([]);
+		setShowCategorizationPanel(false);
 	};
 
 	return (
@@ -89,15 +142,18 @@ export function AddProductsModal({
 			<CSModalHeader title={labels.modalAddFaTitle} />
 			<CSModalBody padding="0">
 				<CSButton
-					label={labels.modalCategorizationBtnAdd}
+					label={labels.modalCategorizationTitle}
 					onClick={(): void => setShowCategorizationPanel((prevState) => !prevState)}
 				/>
 				{showCategorizationPanel && <ProductCategorisation onApplyFilter={reloadCps} />}
-				{products ? (
+				{productList.length ? (
 					<ProductListGrid
-						data={products.filter((product) => !addedProductIds.includes(product.id))}
+						data={productList.filter(
+							(product: CommercialProductStandalone) =>
+								!addedProductIds.includes(product.id)
+						)}
 						selectedProducts={updateSelectedProducts}
-						filterHandler={reloadCps}
+						filterHandler={searchHandler}
 					/>
 				) : (
 					<p>No products to show here</p>
@@ -112,7 +168,7 @@ export function AddProductsModal({
 						onModalClose();
 					}}
 				/>
-				<CSButton label={labels.btnClose} onClick={onModalClose} />
+				<CSButton label={labels.btnClose} onClick={onClose} />
 			</CSModalFooter>
 		</CSModal>
 	);

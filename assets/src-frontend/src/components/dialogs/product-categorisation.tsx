@@ -32,14 +32,25 @@ export function ProductCategorisation({ onApplyFilter }: Props): ReactElement {
 		setFilterData(filterDataCopy);
 	};
 
+	const onClearFilter = (): void => {
+		setFilterData({});
+		onApplyFilter('');
+	};
+
 	return (
 		<div>
 			{status === QueryStatus.Success && settings?.facSettings.isPsEnabled ? (
-				categoryList?.map((category) => (
-					<li key={category.id} onClick={(): void => onApplyFilter(category.id)}>
-						{category.name}
-					</li>
-				))
+				categoryList?.length ? (
+					<ul>
+						{categoryList?.map((category) => (
+							<li key={category.id} onClick={(): void => onApplyFilter(category.id)}>
+								{category.name}
+							</li>
+						))}
+					</ul>
+				) : (
+					<h2>{labels.noCategoriesAvailable}</h2>
+				)
 			) : (
 				<div>
 					<span>
@@ -68,6 +79,8 @@ export function ProductCategorisation({ onApplyFilter }: Props): ReactElement {
 					/>
 				</div>
 			)}
+
+			<CSButton label={labels.modalCategorizationBtnClear} onClick={onClearFilter} />
 		</div>
 	);
 }

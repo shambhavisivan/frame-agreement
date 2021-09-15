@@ -31,10 +31,11 @@ export interface AppSettings {
 export interface Attachment {
 	custom?: Addons;
 	products?: Products;
+	offers?: Products;
 	addons?: Addons;
 }
 
-interface Addons {
+export interface Addons {
 	[addonId: string]: { oneOff?: number | null; recurring?: number | null };
 }
 
@@ -90,6 +91,7 @@ export interface CommercialProductData {
 	cpData: {
 		[id: string]: CommercialProduct;
 	};
+	discThresh: DiscountThreshold[];
 }
 
 export interface Addon {
@@ -237,4 +239,21 @@ export interface DeltaProduct {
 	product: ChargeStatus;
 	rateCard: ChargeDeltaMap;
 	volume: { [key in keyof Volume]: ValueStatus };
+}
+
+export interface DiscountThreshold {
+	id: string;
+	name: string;
+	discountThresholdCode?: string;
+	discountType: 'Amount' | 'Percentage' | 'Nagative Line Item';
+	discountThreshold: number;
+	authorizationLevel: string;
+	profileName?: string;
+}
+
+export interface Volume {
+	muc: number | null;
+	mucp: number | null;
+	mv: number | null;
+	mvp: number | null;
 }

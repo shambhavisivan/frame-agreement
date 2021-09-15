@@ -15,7 +15,7 @@ export function RateCards({ rateCards, negotiateRateCardLine }: RateCardsProps):
 					return (
 						<RateCard
 							key={rateCardId}
-							rateCardLines={rateCard}
+							rateCardLines={rateCard.rateCardLines}
 							rateCardId={rateCardId}
 							onNegotiatedChanged={negotiateRateCardLine}
 						/>

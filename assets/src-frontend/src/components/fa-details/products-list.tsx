@@ -1,17 +1,15 @@
 import React, { ReactElement } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
-import { ProductNegotiation } from './negotiation/negotiation-reducer';
+import { NegotiateProductActions } from './negotiation/negotiation-action-creator';
+import { NegotiationItemType, ProductNegotiation } from './negotiation/negotiation-reducer';
 import { ProductDetails } from './product-details';
-
-export interface ProductActions {
-	negotiateRecurring(value: number): void;
-	negotiateOneOff(value: number): void;
-	negotiateRateCardLine(rateCardId: string, rateCardLineId: string, value: number): void;
-}
 
 interface ProductsListProps {
 	selectedProducts: (CommercialProductStandalone & ProductNegotiation)[];
-	createProductActions: (productId: string) => ProductActions;
+	createProductActions: (
+		productId: string,
+		itemType: NegotiationItemType
+	) => NegotiateProductActions;
 }
 
 export function ProductsList({
@@ -22,7 +20,11 @@ export function ProductsList({
 		<table>
 			<tbody>
 				{selectedProducts.map((p) => (
-					<ProductDetails key={p.id} product={p} actions={createProductActions(p.id)} />
+					<ProductDetails
+						key={p.id}
+						product={p}
+						actions={createProductActions(p.id, 'products')}
+					/>
 				))}
 			</tbody>
 		</table>

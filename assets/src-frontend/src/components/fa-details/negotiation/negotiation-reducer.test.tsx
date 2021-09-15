@@ -7,8 +7,8 @@ import negotiationReducer, {
 } from './negotiation-reducer';
 
 describe('negotiationReducer', () => {
-	const negotiateRecurring: NegotiationAction['type'] = 'negotiateRecurring';
-	const negotiateOneOff: NegotiationAction['type'] = 'negotiateOneOff';
+	const negotiateRecurring: NegotiationAction['type'] = 'negotiateProductRecurring';
+	const negotiateOneOff: NegotiationAction['type'] = 'negotiateProductOneOff';
 	const addProducts: NegotiationAction['type'] = 'addProducts';
 	const negotiateRateCardLine: NegotiationAction['type'] = 'negotiateRateCardLine';
 	const loadAttachment: NegotiationAction['type'] = 'loadAttachment';
@@ -37,9 +37,12 @@ describe('negotiationReducer', () => {
 							original: 200,
 							negotiated: undefined
 						}
-					}
+					},
+					addons: {}
 				}
-			}
+			},
+			addons: {},
+			offers: {}
 		};
 		test(`returns the state with the product's negotiated recurring charge set`, () => {
 			const negotiatedValue = 42;
@@ -62,15 +65,19 @@ describe('negotiationReducer', () => {
 								original: 200,
 								negotiated: negotiatedValue
 							}
-						}
+						},
+						addons: {}
 					}
-				}
+				},
+				addons: {},
+				offers: {}
 			};
 			expect(
 				negotiationReducer(testState, {
 					type: negotiateRecurring,
 					payload: {
 						productId: testProductId,
+						itemType: 'products',
 						value: negotiatedValue
 					}
 				})
@@ -98,9 +105,12 @@ describe('negotiationReducer', () => {
 							original: 200,
 							negotiated: undefined
 						}
-					}
+					},
+					addons: {}
 				}
-			}
+			},
+			addons: {},
+			offers: {}
 		};
 
 		test(`returns the state with the product's negotiated oneOff charge set`, () => {
@@ -125,9 +135,12 @@ describe('negotiationReducer', () => {
 								original: 200,
 								negotiated: undefined
 							}
-						}
+						},
+						addons: {}
 					}
-				}
+				},
+				addons: {},
+				offers: {}
 			};
 
 			expect(
@@ -135,6 +148,7 @@ describe('negotiationReducer', () => {
 					type: negotiateOneOff,
 					payload: {
 						productId: testProductId,
+						itemType: 'products',
 						value: negotiatedValue
 					}
 				})
@@ -154,9 +168,11 @@ describe('negotiationReducer', () => {
 					},
 					rateCards: {
 						[testRateCartId]: {
-							[testRateCardLineId1]: {
-								original: 10,
-								negotiated: undefined
+							rateCardLines: {
+								[testRateCardLineId1]: {
+									original: 10,
+									negotiated: undefined
+								}
 							}
 						}
 					},
@@ -169,9 +185,12 @@ describe('negotiationReducer', () => {
 							original: 200,
 							negotiated: undefined
 						}
-					}
+					},
+					addons: {}
 				}
-			}
+			},
+			addons: {},
+			offers: {}
 		};
 
 		test(`returns the state with the product's negotiated recurring charge set`, () => {
@@ -187,9 +206,11 @@ describe('negotiationReducer', () => {
 						},
 						rateCards: {
 							[testRateCartId]: {
-								[testRateCardLineId1]: {
-									original: 10,
-									negotiated: negotiatedValue
+								rateCardLines: {
+									[testRateCardLineId1]: {
+										original: 10,
+										negotiated: negotiatedValue
+									}
 								}
 							}
 						},
@@ -202,15 +223,19 @@ describe('negotiationReducer', () => {
 								original: 200,
 								negotiated: undefined
 							}
-						}
+						},
+						addons: {}
 					}
-				}
+				},
+				addons: {},
+				offers: {}
 			};
 			expect(
 				negotiationReducer(testState, {
 					type: negotiateRateCardLine,
 					payload: {
 						productId: testProductId,
+						itemType: 'products',
 						rateCardId: testRateCartId,
 						rateCardLineId: testRateCardLineId1,
 						value: negotiatedValue
@@ -240,9 +265,12 @@ describe('negotiationReducer', () => {
 							original: 200,
 							negotiated: undefined
 						}
-					}
+					},
+					addons: {}
 				}
-			}
+			},
+			addons: {},
+			offers: {}
 		};
 
 		const testProductId2 = 'testProductId2';
@@ -267,7 +295,8 @@ describe('negotiationReducer', () => {
 							original: 300,
 							negotiated: undefined
 						}
-					}
+					},
+					addons: {}
 				},
 				[testProductId3]: {
 					volume: {
@@ -286,12 +315,15 @@ describe('negotiationReducer', () => {
 							original: 2000,
 							negotiated: undefined
 						}
-					}
+					},
+					addons: {}
 				}
 			};
 			test(`returns the state with the new products added`, () => {
 				const expectedState: Negotiation = {
-					products: { ...testState.products, ...newProducts }
+					products: { ...testState.products, ...newProducts },
+					addons: {},
+					offers: {}
 				};
 
 				const updated = negotiationReducer(testState, {
@@ -324,7 +356,8 @@ describe('negotiationReducer', () => {
 								original: 300,
 								negotiated: undefined
 							}
-						}
+						},
+						addons: {}
 					},
 					[testProductId2]: {
 						volume: {
@@ -343,12 +376,15 @@ describe('negotiationReducer', () => {
 								original: 2000,
 								negotiated: undefined
 							}
-						}
+						},
+						addons: {}
 					}
 				};
 
 				const expectedState: Negotiation = {
-					products: newProducts
+					products: newProducts,
+					addons: {},
+					offers: {}
 				};
 
 				expect(
@@ -380,13 +416,15 @@ describe('negotiationReducer', () => {
 					},
 					rateCards: {
 						[rateCardId1]: {
-							[rateCartLineId1]: {
-								original: 1,
-								negotiated: undefined
-							},
-							[rateCartLineId2]: {
-								original: 2,
-								negotiated: undefined
+							rateCardLines: {
+								[rateCartLineId1]: {
+									original: 1,
+									negotiated: undefined
+								},
+								[rateCartLineId2]: {
+									original: 2,
+									negotiated: undefined
+								}
 							}
 						}
 					},
@@ -399,9 +437,12 @@ describe('negotiationReducer', () => {
 							original: 200,
 							negotiated: undefined
 						}
-					}
+					},
+					addons: {}
 				}
-			}
+			},
+			addons: {},
+			offers: {}
 		};
 		test(`updates the current state with the one described in the attachment`, () => {
 			const attachment: Attachment = {
@@ -435,13 +476,15 @@ describe('negotiationReducer', () => {
 					[productId]: {
 						rateCards: {
 							[rateCardId1]: {
-								[rateCartLineId1]: {
-									negotiated: 42,
-									original: 1
-								},
-								[rateCartLineId2]: {
-									negotiated: 43,
-									original: 2
+								rateCardLines: {
+									[rateCartLineId1]: {
+										negotiated: 42,
+										original: 1
+									},
+									[rateCartLineId2]: {
+										negotiated: 43,
+										original: 2
+									}
 								}
 							}
 						},
@@ -460,9 +503,12 @@ describe('negotiationReducer', () => {
 								original: 200,
 								negotiated: 2
 							}
-						}
+						},
+						addons: {}
 					}
-				}
+				},
+				addons: {},
+				offers: {}
 			};
 
 			expect(
@@ -495,13 +541,15 @@ describe('selectors', () => {
 					},
 					rateCards: {
 						[rateCardId1]: {
-							[rateCartLineId1]: {
-								original: 1,
-								negotiated: 42
-							},
-							[rateCartLineId2]: {
-								original: 2,
-								negotiated: 43
+							rateCardLines: {
+								[rateCartLineId1]: {
+									original: 1,
+									negotiated: 42
+								},
+								[rateCartLineId2]: {
+									original: 2,
+									negotiated: 43
+								}
 							}
 						}
 					},
@@ -514,9 +562,12 @@ describe('selectors', () => {
 							original: 200,
 							negotiated: 2
 						}
-					}
+					},
+					addons: {}
 				}
-			}
+			},
+			addons: {},
+			offers: {}
 		};
 
 		const attachment: Attachment = {
@@ -542,6 +593,7 @@ describe('selectors', () => {
 				}
 			},
 			addons: {},
+			offers: {},
 			custom: {}
 		};
 

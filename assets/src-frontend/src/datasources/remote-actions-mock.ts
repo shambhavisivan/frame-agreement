@@ -22,7 +22,8 @@ import {
 	mockOfferData,
 	attachment,
 	DELTA_CALC_RESULT_MOCK,
-	CP_FIELD_METADATA
+	CP_FIELD_METADATA,
+	mockDiscountThresholds
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
@@ -51,7 +52,8 @@ export const remoteActions: RemoteActions = {
 				Object.entries(mockCommercialProductData.cpData).filter(([key]) =>
 					ids.includes(key)
 				)
-			)
+			),
+			discThresh: mockDiscountThresholds
 		};
 
 		return new Promise((resolve) => {
@@ -75,7 +77,8 @@ export const remoteActions: RemoteActions = {
 		const dataForIds = {
 			cpData: Object.fromEntries(
 				Object.entries(mockOfferData.cpData).filter(([key]) => ids.includes(key))
-			)
+			),
+			discThresh: mockDiscountThresholds
 		};
 
 		return new Promise((resolve) => {

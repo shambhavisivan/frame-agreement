@@ -204,7 +204,7 @@ namespace SfGlobal {
 		Name: string;
 		cspmb__Discount_Threshold__c: number;
 		cspmb__Authorization_Level__c: string;
-		cspmb__Discount_Type__c: string;
+		cspmb__Discount_Type__c: 'Amount' | 'Percentage' | 'Nagative Line Item';
 	}
 
 	interface CommercialProductStandalone {

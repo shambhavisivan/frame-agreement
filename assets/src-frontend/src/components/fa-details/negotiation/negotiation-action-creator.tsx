@@ -1,29 +1,58 @@
-import { NegotiationAction } from './negotiation-reducer';
+import { NegotiationAction, NegotiationItemType } from './negotiation-reducer';
 
-export interface ProductActions {
-	negotiateRecurring(value: number): void;
-	negotiateOneOff(value: number): void;
+export interface NegotiateProductActions {
+	negotiateProductRecurring(value: number): void;
+	negotiateProductOneOff(value: number): void;
+	negotiateProductAddonRecurring(addonId: string, value: number): void;
+	negotiateProductAddonOneOff(addonId: string, value: number): void;
 	negotiateRateCardLine(rateCardId: string, rateCardLineId: string, value: number): void;
+	negotiateAddonRecurring(value: number): void;
+	negotiateAddonOneOff(value: number): void;
 }
 
-export const createActionsForProduct = (dispatch: React.Dispatch<NegotiationAction>) => (
-	productId: string
-): ProductActions => {
+export const createActionsForNegotiateProduct = (dispatch: React.Dispatch<NegotiationAction>) => (
+	productId: string,
+	itemType: NegotiationItemType
+): NegotiateProductActions => {
 	return {
-		negotiateRecurring(value: number): void {
+		negotiateProductRecurring(value: number): void {
 			return dispatch({
-				type: 'negotiateRecurring',
+				type: 'negotiateProductRecurring',
 				payload: {
 					productId,
+					itemType,
 					value
 				}
 			});
 		},
-		negotiateOneOff(value: number): void {
+		negotiateProductOneOff(value: number): void {
 			return dispatch({
-				type: 'negotiateOneOff',
+				type: 'negotiateProductOneOff',
 				payload: {
 					productId,
+					itemType,
+					value
+				}
+			});
+		},
+		negotiateProductAddonRecurring(addonId: string, value: number): void {
+			return dispatch({
+				type: 'negotiateProductAddonRecurring',
+				payload: {
+					productId,
+					itemType,
+					addonId,
+					value
+				}
+			});
+		},
+		negotiateProductAddonOneOff(addonId: string, value: number): void {
+			return dispatch({
+				type: 'negotiateProductAddonOneOff',
+				payload: {
+					productId,
+					itemType,
+					addonId,
 					value
 				}
 			});
@@ -34,7 +63,26 @@ export const createActionsForProduct = (dispatch: React.Dispatch<NegotiationActi
 				payload: {
 					productId,
 					rateCardId,
+					itemType,
 					rateCardLineId,
+					value
+				}
+			});
+		},
+		negotiateAddonRecurring(value: number): void {
+			return dispatch({
+				type: 'negotiateAddonRecurring',
+				payload: {
+					addonId: productId,
+					value
+				}
+			});
+		},
+		negotiateAddonOneOff(value: number): void {
+			return dispatch({
+				type: 'negotiateAddonOneOff',
+				payload: {
+					addonId: productId,
 					value
 				}
 			});

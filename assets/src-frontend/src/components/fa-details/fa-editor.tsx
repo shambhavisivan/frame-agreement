@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect, useMemo, useReducer, useState } from 'r
 import { CommercialProductStandalone, FrameAgreement } from '../../datasources';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
 import { LoadingFallback } from '../loading-fallback';
-import { createActionsForProduct } from './negotiation/negotiation-action-creator';
+import { createActionsForNegotiateProduct } from './negotiation/negotiation-action-creator';
 import { CSButton, CSDataTable } from '@cloudsense/cs-ui-components';
 
 import negotiationReducer from './negotiation/negotiation-reducer';
@@ -29,7 +29,11 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 		}
 	}, [attachmentStatus, attachment]);
 
-	const [state, dispatch] = useReducer(negotiationReducer, { products: {} });
+	const [state, dispatch] = useReducer(negotiationReducer, {
+		products: {},
+		addons: {},
+		offers: {}
+	});
 
 	const selectedProducts = useMemo(
 		() =>
@@ -89,7 +93,7 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 				/>
 				<ProductsList
 					selectedProducts={selectedProducts}
-					createProductActions={createActionsForProduct(dispatch)}
+					createProductActions={createActionsForNegotiateProduct(dispatch)}
 				/>
 				{/* TODO: Move this to parent file. It needs to be sibling to header and pages. Add conditional so it is only rendered on details page */}
 				<footer className="action-footer">

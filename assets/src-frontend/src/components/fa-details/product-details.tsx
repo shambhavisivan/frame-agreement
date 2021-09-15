@@ -3,16 +3,16 @@ import { ProductNegotiation } from './negotiation/negotiation-reducer';
 import React, { ReactElement } from 'react';
 import { Negotiation } from './negotiation';
 import { RateCards } from './rate-cards';
-import { ProductActions } from './products-list';
+import { NegotiateProductActions } from './negotiation/negotiation-action-creator';
 
 interface ProductDetailsProps {
 	product: CommercialProductStandalone & ProductNegotiation;
-	actions: ProductActions;
+	actions: NegotiateProductActions;
 }
 
 export function ProductDetails({
 	product: { id, name, product, rateCards },
-	actions: { negotiateOneOff, negotiateRecurring, negotiateRateCardLine }
+	actions: { negotiateProductOneOff, negotiateProductRecurring, negotiateRateCardLine }
 }: ProductDetailsProps): ReactElement {
 	return (
 		<tr>
@@ -22,11 +22,14 @@ export function ProductDetails({
 			<td>
 				<Negotiation
 					negotiable={product?.recurring}
-					onNegotiatedChanged={negotiateRecurring}
+					onNegotiatedChanged={(value): void => negotiateProductRecurring(value)}
 				/>
 			</td>
 			<td>
-				<Negotiation negotiable={product?.oneOff} onNegotiatedChanged={negotiateOneOff} />
+				<Negotiation
+					negotiable={product?.oneOff}
+					onNegotiatedChanged={(value): void => negotiateProductOneOff(value)}
+				/>
 			</td>
 			<td>
 				<RateCards rateCards={rateCards} negotiateRateCardLine={negotiateRateCardLine} />

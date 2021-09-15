@@ -21,6 +21,8 @@ import {
 	ProductsByIdsData,
 	ProductsInCategoryData
 } from './graphql-endpoints/interface';
+import { DiscountThreshold } from '.';
+import { Negotiation } from '../components/fa-details/negotiation/negotiation-reducer';
 
 export const mockAppSettings: AppSettings = {
 	account: {
@@ -52,8 +54,44 @@ export const mockAppSettings: AppSettings = {
 
 export const mockFrameAgreements: FrameAgreement[] = frameAgreements.map(deforcify);
 
+export const mockDiscountThresholds: DiscountThreshold[] = [
+	{
+		id: 'a1f4K0000002NaOQAU',
+		name: 'Data Threshold',
+		discountThresholdCode: 'data07',
+		discountType: 'Percentage',
+		authorizationLevel: 'a1P4K000008Ci07UAC',
+		discountThreshold: 20
+	},
+	{
+		id: 'a1f4K000000Put8QAC',
+		name: 'Voice Threshold',
+		discountThresholdCode: 'voice01',
+		discountType: 'Amount',
+		authorizationLevel: 'a1P4K000004UwUaUAK',
+		discountThreshold: 10
+	}
+];
+
+export const mockAuthLevels = {
+	a1i4I000003Q4GGQA0: 'a1P4K000004UwUaUAK',
+	a1i4I000003Kqe8QAC: 'a1P4K000004UwUaUAK',
+	a1i4I000003KqdtQAC: 'a1P4K000004UwUaUAK',
+	a1d4I000005Vx2RQAS: 'a1P4K000008Ci07UAC',
+	a1d4I000005VsVYQA0: 'a1P4K000008Ci07UAC',
+	a1d4I000005VvmoQAC: 'a1P4K000008Ci07UAC',
+	a1d4I000005Vx2bQAC: 'a1P4K000008Ci07UAC',
+	a1d4I000005Vx2gQAC: 'a1P4K000008Ci07UAC',
+	a1N4I000002wyh9UAA: 'a1P4K000004UwUaUAK',
+	a1N4I000002wyg0UAA: 'a1P4K000004UwUaUAK',
+	a1q4I000009tfziQAA: 'a1P4K000004UwUaUAK',
+	a1p4I00000Cn44DQAR: 'a1P4K000008Ci07UAC',
+	a1p4I00000Cn42gQAB: 'a1P4K000008Ci07UAC'
+};
+
 export const mockCommercialProductData: CommercialProductData = {
-	cpData: deforcify(productData)
+	cpData: deforcify(productData),
+	discThresh: mockDiscountThresholds
 };
 
 export const mockCommercialProducts: CommercialProductStandalone[] = commercialProducts.map(
@@ -61,7 +99,8 @@ export const mockCommercialProducts: CommercialProductStandalone[] = commercialP
 );
 
 export const mockOfferData: CommercialProductData = {
-	cpData: deforcify(productData)
+	cpData: deforcify(productData),
+	discThresh: mockDiscountThresholds
 };
 
 export const mockOffers: CommercialProductStandalone[] = commercialProducts.map(deforcify);
@@ -822,6 +861,110 @@ export const attachment: Attachment = {
 			recurring: 5
 		}
 	}
+};
+
+export const mockNegotiationState: Negotiation = {
+	products: {
+		a1i4I000003Q4GGQA0: {
+			volume: {
+				mv: null,
+				mvp: null,
+				muc: null,
+				mucp: null
+			},
+			product: {
+				oneOff: { original: 500, negotiated: 500 },
+				recurring: { original: 255, negotiated: 255 }
+			},
+			rateCards: {},
+			addons: {}
+		},
+		a1i4I000003Kqe8QAC: {
+			volume: {
+				mv: null,
+				mvp: null,
+				muc: null,
+				mucp: null
+			},
+			addons: {
+				a1d4I000005Vx2RQAS: {
+					oneOff: { original: undefined, negotiated: undefined },
+					recurring: { original: undefined, negotiated: undefined }
+				}
+			},
+			charges: {
+				a1l4I00000AFilFQAT: {
+					recurring: { original: 5.5, negotiated: undefined },
+					oneOff: { original: 15.5, negotiated: undefined }
+				}
+			},
+			rateCards: {},
+			product: {
+				oneOff: { original: undefined, negotiated: undefined },
+				recurring: { original: undefined, negotiated: undefined }
+			}
+		},
+		a1i4I000003KqdtQAC: {
+			volume: {
+				mv: null,
+				mvp: null,
+				muc: null,
+				mucp: null
+			},
+			addons: {
+				a1d4I000005VsVYQA0: {
+					oneOff: { original: 20, negotiated: undefined },
+					recurring: { original: 5, negotiated: undefined }
+				},
+				a1d4I000005VvmoQAC: {
+					oneOff: { original: 8, negotiated: undefined },
+					recurring: { original: 2, negotiated: undefined }
+				},
+				a1d4I000005Vx2bQAC: {
+					oneOff: { original: 15, negotiated: undefined },
+					recurring: { original: 5, negotiated: undefined }
+				},
+				a1d4I000005Vx2gQAC: {
+					oneOff: { original: undefined, negotiated: undefined },
+					recurring: { original: undefined, negotiated: undefined }
+				}
+			},
+			charges: {
+				a1l4I00000Du1O3QAJ: {
+					recurring: { original: 4, negotiated: undefined },
+					oneOff: { original: undefined, negotiated: undefined }
+				},
+				a1l4I00000Du1a0QAB: {
+					oneOff: { original: 10, negotiated: undefined },
+					recurring: { original: undefined, negotiated: undefined }
+				}
+			},
+			rateCards: {
+				a1q4I000009tfziQAA: {
+					rateCardLines: {
+						a1p4I00000Cn44DQAR: { original: 100, negotiated: undefined },
+						a1p4I00000Cn42gQAB: { original: 85.5, negotiated: undefined }
+					},
+					authId: 'a1P4K000008Ci07UAC'
+				}
+			},
+			product: {
+				oneOff: { original: undefined, negotiated: undefined },
+				recurring: { original: undefined, negotiated: undefined }
+			}
+		}
+	},
+	addons: {
+		a1N4I000002wyh9UAA: {
+			oneOff: { original: 7, negotiated: undefined },
+			recurring: { original: 1.5, negotiated: undefined }
+		},
+		a1N4I000002wyg0UAA: {
+			oneOff: { original: 15, negotiated: undefined },
+			recurring: { original: 5, negotiated: undefined }
+		}
+	},
+	offers: {}
 };
 
 export const DELTA_CALC_RESULT_MOCK: DeltaResult = {

@@ -805,7 +805,8 @@ export function saveFrameAgreement(frameAgreement) {
 			])
 		);
 
-		if (frameAgreement.Id) {
+		// attachment is available only when FA is opened. Updates done in list has no attachment data
+		if (frameAgreement.Id && frameAgreement._ui?.attachment) {
 			let _attachment = frameAgreement._ui.attachment;
 
 			frameAgreement._ui.commercialProducts.forEach(cp => {

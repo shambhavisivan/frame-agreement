@@ -1,6 +1,6 @@
 # Approvals
 
-Frame Agreement Management can be used to handle both out of the box and standard approval processes. Approval History can be seen above the product negotiation section of the Frame Agreement console: 
+Framework Agreement Management can be used to handle both out of the box and standard approval processes. Approval History can be seen above the product negotiation section of the Frame Agreement console: 
 
 ![]({{images}}/Approvals1.png)
 

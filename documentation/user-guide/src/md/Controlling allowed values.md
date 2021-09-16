@@ -1,14 +1,14 @@
 # Controlling allowed values
 
-Each Commercial Product can have one or more Discount Levels associated with it. Discount Levels can be used to constrain what can be negotiated for a particular Commercial Product. If any discount levels are present, the corresponding charge negotiation will be changed from free entry to a predefined picklist of allowed values. 
+Each Commercial Product can have one or more Discount Levels associated with it. Discount Levels can be used to constrain what can be negotiated for a particular Commercial Product. If any discount levels are present, the corresponding charge negotiation will be changed from free entry to a predefined picklist of allowed values.
 
-Example of two add ons where one has associated Discount Levels and one has no constraints: 
+Example of two add ons where one has associated Discount Levels and one has no constraints:
 
 ![]({{images}}/ConVal1.png)
 
 ## IgnoreSettings
 
-IgnoreSettings allows users to disable the discount treshold on certain commercial products based on Frame Agreement field values. This is possible through utilisation of the "onFaUpdate" event and the "ignoreSettings" store property.
+IgnoreSettings allows users to disable the discount threshold on certain commercial products based on Frame Agreement field values. This is possible through utilization of the "onFaUpdate" event and the "ignoreSettings" store property.
 
 IgnoreSettings is an internal JSON that holds a list of ignored products (and custom tabs, but this article focuses on products).
 
@@ -60,7 +60,7 @@ window.FAM.subscribe("onFaUpdate", ignoreSettings => {
   return new Promise(async () => {
     // Get active frame agreement to compare properties
     let active_fa = await window.FAM.api.getActiveFrameAgreement();
-	
+
     let _productsToIgnore = ["a1F1t0000001JBjEAM", "a1F1t0000001JCDEA2", "a1F1t0000001JC8EAM", "a1F1t00000017Y0EAI"];
 	// Check if fa field has specific value
     if (active_fa.csfam__Disable_Levels__c === true) {
@@ -108,7 +108,7 @@ window.FAM.subscribe("onFaUpdate", ignoreSettings => {
 	// This will return list of all commercial products
     let _allProducts = await window.FAM.api.getCommercialProducts();
 
-    /* 
+    /*
 		Faster way for ES6 savy:
 		let [active_fa, _allProducts] = await Promise.all([window.FAM.api.getActiveFrameAgreement(), window.FAM.api.getCommercialProducts()]);
 	*/

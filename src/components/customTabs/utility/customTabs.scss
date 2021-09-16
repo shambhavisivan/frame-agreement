@@ -36,8 +36,15 @@
         cursor: pointer;
     }
 
-    .product-card__container.product-open .container__header {
-        border-bottom: 1px dashed var(--main-bg);
+    .product-card__container {
+
+        &.product-open .container__header {
+            border-bottom: 1px dashed var(--main-bg);
+        }
+
+        &.unsaved {
+            border-left: 2px solid var(--select-primary-br);
+        }
     }
 
     .dynamic-group-discounts {

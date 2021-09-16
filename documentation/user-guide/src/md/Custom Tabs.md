@@ -8,7 +8,7 @@ Create a JSON Data record "FA-Custom-Tabs". The value must be an array of object
 
 - label - Name of custom tab
 - container_id  - Id property of tab container element
-- onEnter - event to be triggered upon enetering the tab
+- onEnter - event to be triggered upon entering the tab
 Example JSON Data:
 
 ```javascript
@@ -39,7 +39,7 @@ window.FAM.registerMethod('customTabEnter1', id => {
 		// ****************************
 		resolve();
 	});
-});	
+});
 ```
 
 ## Register plugin and resource

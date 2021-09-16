@@ -3,9 +3,26 @@ global with sharing class API_1 {
 		return FAMDelta.getDelta(fa1, fa2);
 	}
 
+	@TestVisible
+	private static final String FA_ALREADY_ACTIVATED_MSG = 'FA is already active.';
+	@TestVisible
+	private static final String FA_REPLACED_MSG = 'FA was already activated and replaced.';
+	@TestVisible
+	private static final String FA_CANNOT_ACTIVATE_MSG = 'FA under {0} cannot be activated';
+	@TestVisible
+	private static final String FA_DEFAULT_ERROR_MSG = 'FA cannot be activated';
+
 	global static String activateFrameAgreement(Id faId, Boolean isAsync) {
 		Map<String, String> responseMessage = new Map<String, String>();
 		responseMessage.put('status', 'Success');
+
+		Fac_Settings__c facSettings = FrameRateManagerController.getFacSetting();
+		Set<String> activationNonEligibleStatus = new Set<String> {
+			facSettings.active_status__c,
+			facSettings.requires_approval_status__c,
+			'Pending',
+			facSettings.closed_status__c
+		};
 
 		csconta__Frame_Agreement__c fa = [
 			select id, async_job__c, csconta__status__c
@@ -13,12 +30,22 @@ global with sharing class API_1 {
 			where id = :faId
 		];
 
-		if (fa.csconta__status__c == 'Active') {
+		if (activationNonEligibleStatus.contains(fa.csconta__status__c)) {
 			responseMessage.put('status', 'Error');
-			responseMessage.put('errorMessage', 'FA is already active.');
-		} else if (fa.csconta__status__c == 'Replaced') {
-			responseMessage.put('status', 'Error');
-			responseMessage.put('errorMessage', 'FA was already activated and replaced.');
+
+			if (fa.csconta__status__c == facSettings.active_status__c) {
+				responseMessage.put('errorMessage', FA_ALREADY_ACTIVATED_MSG);
+			} else if (fa.csconta__status__c == facSettings.requires_approval_status__c || fa.csconta__status__c == 'Pending') {
+				responseMessage.put('errorMessage',
+					String.format(FA_CANNOT_ACTIVATE_MSG, new List<Object> { fa.csconta__Status__c })
+				);
+			} else if (fa.csconta__status__c == facSettings.closed_status__c) {
+				responseMessage.put('errorMessage', FA_REPLACED_MSG);
+			} else {
+				responseMessage.put('errorMessage', FA_DEFAULT_ERROR_MSG);
+			}
+
+			return Json.serialize(responseMessage);
 		}
 
 		Map<String, Id> cprg = FrameAgreementActivation.createPricingRuleGroup(faId);

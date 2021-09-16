@@ -156,6 +156,7 @@
 				filterCommercialProducts: "{!$RemoteAction.FrameRateManagerController.filterCommercialProducts}",
 				getChildFrameAgreements: "{!$RemoteAction.FrameRateManagerController.getChildFrameAgreements}",
 				migrateFrameAgreements: "{!$RemoteAction.FrameRateManagerController.migrateFrameAgreements}",
+				getNameSpacePrefix: "{!$RemoteAction.FrameRateManagerController.getNameSpacePrefix}",
 				findReplacementOffers: "{!$RemoteAction.FrameRateManagerController.findReplacementOffers}",
 				getFaOffers: "{!$RemoteAction.FrameRateManagerController.getFaOffers}"
 			},

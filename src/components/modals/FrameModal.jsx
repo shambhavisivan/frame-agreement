@@ -15,6 +15,7 @@ class FrameModal extends Component {
 		// this.togglePanel = this.togglePanel.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.addFrameAgreements = this.addFrameAgreements.bind(this);
+		this.filterChildFrameAgreement = this.filterChildFrameAgreement.bind(this);
 
 		this.state = {
 			// searchValue: '',
@@ -45,15 +46,7 @@ class FrameModal extends Component {
 		let faSize = eligableFa.length;
 
 		if (this.state.faFilter) {
-			faSize = eligableFa.filter(fa => {
-				if (this.state.faFilter && this.state.faFilter.length >= 2) {
-					return fa.csconta__Agreement_Name__c
-						.toLowerCase()
-						.includes(this.state.faFilter.toLowerCase());
-				} else {
-					return true;
-				}
-			}).length;
+			faSize = eligableFa.filter(this.filterChildFrameAgreement).length;
 		}
 		return faSize;
 	}
@@ -84,6 +77,20 @@ class FrameModal extends Component {
 		this.setState({
 			selected: {}
 		});
+	}
+
+	filterChildFrameAgreement(fa) {
+		if (!this.state.faFilter) {
+			return true;
+		} else if (
+			this.state.faFilter.length >= 2 &&
+			fa.csconta__Agreement_Name__c
+		) {
+			return fa.csconta__Agreement_Name__c
+				.toLowerCase()
+				.includes(this.state.faFilter.toLowerCase());
+		}
+		return false;
 	}
 
 	render() {
@@ -129,8 +136,14 @@ class FrameModal extends Component {
 								<InputSearch
 									placeholder={window.SF.labels.input_quickSearchPlaceholder}
 									value={this.state.faFilter}
-									onChange={val => {
-										this.setState({ faFilter: val });
+									onChange={(val) => {
+										this.setState({
+											faFilter: val,
+											pagination: {
+												...this.state.pagination,
+												page: 1,
+											},
+										});
 									}}
 								/>
 							</div>
@@ -163,15 +176,7 @@ class FrameModal extends Component {
 											]._ui.attachment.products.hasOwnProperty(fa.Id)
 										);
 									})
-									.filter(fa => {
-										if (this.state.faFilter && this.state.faFilter.length >= 2) {
-											return fa.csconta__Agreement_Name__c
-												.toLowerCase()
-												.includes(this.state.faFilter.toLowerCase());
-										} else {
-											return true;
-										}
-									})
+									.filter(this.filterChildFrameAgreement)
 									.paginate(this.state.pagination.page, this.state.pagination.pageSize)
 									.map(fa => {
 										return (

@@ -24,6 +24,7 @@ class LookupField extends React.Component {
 		this._setState = this._setState.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.onSearchChange = this.onSearchChange.bind(this);
+		this.onClear = this.onClear.bind(this);
 		// this.onOpenLookupModal = this.onOpenLookupModal.bind(this);
 
 		this.filter = null;
@@ -33,6 +34,8 @@ class LookupField extends React.Component {
 		}
 
 		this.labelField = this.props.columns[0];
+		this.initialRecords = [];
+		this.confirmSelected = {};
 
 		this.state = {
 			value: this.props.value,
@@ -78,6 +81,8 @@ class LookupField extends React.Component {
 					: {},
 				loadedInput: true,
 				loadingOverlay: false
+			}, () => {
+				this.confirmSelected = this.state.selected;
 			});
 		});
 	}
@@ -98,6 +103,7 @@ class LookupField extends React.Component {
 	onCloseModal(event) {
 		this._setState({
 			open: false,
+			selected: this.confirmSelected,
 			pagination: {
 				page: 1
 			}
@@ -193,8 +199,15 @@ class LookupField extends React.Component {
 		}
 	}
 
+	onClear() {
+		this._setState({ recordLabel: '', selected: {} }, () => {
+			this.props.onChange('');
+		});
+	}
+
 	onSave() {
 		let _record = this.state.selected;
+		this.confirmSelected = _record;
 		this._setState({ recordLabel: _record[this.labelField] }, () => {
 			this.props.onChange(_record.Id);
 			this.onCloseModal();
@@ -216,7 +229,12 @@ class LookupField extends React.Component {
 				}
 			},
 			() => {
-				if (!this.state.records.length) {
+				if (this.initialRecords.length) {
+					this._setState({
+						records: this.initialRecords,
+						loadingOverlay: false
+					});
+				} else if (!this.state.records.length) {
 					let params = {};
 					params.field = this.props.field;
 					params.columns = this.props.columns;
@@ -228,7 +246,7 @@ class LookupField extends React.Component {
 					window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]).then(
 						response => {
 							response = decodeEntities(response);
-
+							this.initialRecords = response;
 							this._setState({
 								records: response,
 								loadingOverlay: false
@@ -313,6 +331,14 @@ class LookupField extends React.Component {
 						onClick={e => this.onOpenLookupModal(e)}
 						value={this.state.loadedInput ? decodeEntities(this.state.recordLabel) : '-'}
 					/>
+					{this.state.selected.Id && !this.props.disabled && (
+						<div
+							className={'fa-lookup-icon forward' + (this.props.disabled ? ' disabled' : '')}
+							onClick={() => this.onClear()}
+						>
+							<Icon svg-class="icon-search" name="close" width="14" height="14" />
+						</div>
+					)}
 					<div
 						className={'fa-lookup-icon ' + (this.props.disabled ? 'disabled' : '')}
 						onClick={e => this.onOpenLookupModal(e)}

@@ -160,7 +160,7 @@ export const validateProduct = (data, initialFrameAgreementData, status) => {
     */
 	let validation = window.SF.getAuthLevels();
 
-	let errataMap = CP_VALIDATION;
+	let errataMap = { ...CP_VALIDATION };
 
 	if (!data.authLevel) {
 		return errataMap;

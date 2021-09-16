@@ -19,6 +19,7 @@ import {
 	toggleFrameAgreementOperations
 } from "~/src/actions";
 import Checkbox from "../utillity/inputs/Checkbox";
+import { getNameSpacePrefix } from "../../api";
 
 class CreateOffersModal extends Component {
 	constructor(props) {
@@ -183,8 +184,9 @@ class CreateOffersModal extends Component {
 				},
 			},
 		};
-		this.setState({ navigateToPLM: true }, () => {
-			$Lightning.use("c:PLMApp", function () {
+		this.setState({ navigateToPLM: true }, async () => {
+			const nameSpacePrefix = await getNameSpacePrefix();
+			$Lightning.use(nameSpacePrefix + ":PLMApp", function () {
 				$Lightning.createComponent(
 					"csplm:PlmView",
 					plmOfferId,

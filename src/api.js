@@ -40,6 +40,8 @@ const eventList = new Set([
 const dgEventPrefix = 'DGE_';
 const dcEventPrefix = 'DCE_';
 
+let nameSpacePrefix;
+
 export const hasSubscription = event => {
 	return subscriptions.hasOwnProperty(event);
 };
@@ -238,6 +240,13 @@ export const getDefaultCatalogueId = async (_) => {
 		throw new Error(error.message);
 	}
 };
+
+export const getNameSpacePrefix = async () => {
+	if (!nameSpacePrefix) {
+		nameSpacePrefix = await window.SF.invokeAction('getNameSpacePrefix', []) || 'c';
+	}
+	return nameSpacePrefix;
+}
 
 export function findReplacementOffers(expiredOfferIds) {
 	return new Promise((resolve, reject) => {

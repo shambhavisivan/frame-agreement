@@ -415,6 +415,7 @@ global with sharing class FAMDelta {
 		// .clone() because apex will remove key from map if removed from Set created from keySet
 		Set<String>  sourceProductIds = sourceProducts.keySet().clone();
 		Set<String>  targetProductIds = targetProducts.keySet().clone();
+		List<Id> priceItemIds = new List<Id>();
 
 		for (String cpId : sourceProductIds) {
 			if (targetProductIds.contains(cpId)) {
@@ -426,11 +427,14 @@ global with sharing class FAMDelta {
 			}
 			// Delete this cpId from productIds_2 so that we are left with added
 			targetProductIds.remove(cpId);
+			priceItemIds.add(cpId);
 		}
 
 		for (String cpId : targetProductIds) {
 			comparisonMap.put(cpId, 'added');
+			priceItemIds.add(cpId);
 		}
+		Set<Id> priceItemCharges = FrameRateManagerController.getCommercialProductCharges(priceItemIds).keySet();
 
 		for (String productId : unchangedProductIds) {
 			Map<String, Object> original_cp = (Map<String, Object>) sourceProducts.get(productId);
@@ -459,7 +463,8 @@ global with sharing class FAMDelta {
 			Map<String, Object> charges1 = (Map<String, Object>) original_cp.get('_charges');
 			Map<String, Object> charges2 = (Map<String, Object>) secondary_cp.get('_charges');
 
-			if (charges1 != null || charges2 != null) {
+			if ((charges1 != null || charges2 != null) &&
+				priceItemCharges.contains(productId)) {
 
 				if (charges1 == null) {
 					charges1 = new Map<String, Object>();
@@ -479,7 +484,8 @@ global with sharing class FAMDelta {
 			Map<String, Object> product1 = (Map<String, Object>) original_cp.get('_product');
 			Map<String, Object> product2 = (Map<String, Object>) secondary_cp.get('_product');
 
-			if (product1 != null || product2 != null) {
+			if ((product1 != null || product2 != null) &&
+				!priceItemCharges.contains(productId)) {
 
 				if (product1 == null) {
 					product1 = new Map<String, Object>();

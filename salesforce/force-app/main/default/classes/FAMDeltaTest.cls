@@ -1,5 +1,4 @@
 @isTest
-
 private class FAMDeltaTest {
 
 	static String getUUID() {
@@ -32,9 +31,6 @@ private class FAMDeltaTest {
 		for (Integer i = 0; i < rclvalues.size(); i++) {
 			rcAtt.put('rcl' + i, rclvalues[i]);
 		}
-
-		system.debug(rclvalues);
-		system.debug(rcAtt);
 
 		return rcAtt;
 	}
@@ -494,26 +490,73 @@ private class FAMDeltaTest {
 	}
 
 	public static testMethod void testGetDiffNoCharges() {
+		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
+			name = 'cp_1',
+			cspmb__one_off_charge__c = 20.00,
+			cspmb__is_active__c = true,
+			cspmb__recurring_charge__c = 15 - 00,
+			cspmb__price_item_code__c = 'cp_1',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__role__c = 'Basic'
+		);
+
+		insert cp_1;
+
+		// pricing element and types
+		cspmb__Pricing_Element_Type__c pricingElementType_1 = new cspmb__Pricing_Element_Type__c(
+			cspmb__label__c = 'One-off charge', cspmb__type__c = 'One-off charge'
+		);
+		insert pricingElementType_1;
+
+
+		cspmb__Pricing_Element__c pricingElement_1 = new cspmb__Pricing_Element__c(
+			cspmb__pricing_element_type__c = pricingElementType_1.Id, cspmb__commercial_product__c = cp_1.Id
+		);
+		insert pricingElement_1;
+
+		cspmb__pricing_rule__c pr_1 = new cspmb__pricing_rule__c(cspmb__description__c = 'Test.');
+		insert pr_1;
+
+		cspmb__Price_Item_Pricing_Rule_Association__c pipra_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
+			cspmb__pricing_element__c = pricingElement_1.Id
+		);
+		insert pipra_1;
+
+		cspmb__Pricing_Rule_Group__c prg_1 = new cspmb__Pricing_Rule_Group__c(
+			cspmb__description__c = 'Testing.', cspmb__pricing_rule_group_code__c = 'Code101'
+		);
+		insert prg_1;
+
+		cspmb__Pricing_Rule_Group_Rule_Association__c prgra_1 = new cspmb__Pricing_Rule_Group_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__pricing_rule_group__c = prg_1.Id
+		);
+		insert prgra_1;
+
+		csutil__JSON_Data__c standardPricebook = new csutil__JSON_Data__c(
+			name = 'FA-StandardPricebook', csutil__value__c = prg_1.Id
+		);
+		insert standardPricebook;
 		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
-			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__agreement_name__c = 'FA SAME',
 			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
 			csconta__agreement_level__c = 'Frame Agreement',
-			csconta__Status__c = 'Draft'
+			csconta__status__c = 'Draft'
 		);
 		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
-			csconta__Agreement_Name__c = 'FA SAME',
+			csconta__agreement_name__c = 'FA SAME',
 			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
 			csconta__agreement_level__c = 'Master Agreement',
-			csconta__Status__c = 'Active'
+			csconta__status__c = 'Active'
 		);
 
 		insert fa1;
 		insert fa2;
 
-		String att_no_charges_1 = '{"custom":"","products":{"a1F1t0000001JBoEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_charges":{"a1I1t000001WkzoEAC":{"oneOff":7}}},"a1F1t0000001JBZEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}},"a1F1t0000001JBUEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SXxEAM":{"oneOff":10,"recurring":21.79},"a1A1t0000003SgeEAE":{"oneOff":10.99,"recurring":31.99}},"_product":{"oneOff":69,"recurring":269},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t0000001X2dEAE":{"a1M1t000000peXUEAY":55.98,"a1M1t000000peXZEAY":65.43,"a1M1t000000peXeEAI":12.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14},"a1x1t00000049NCAAY":{"Name":"ALL2","value":14}}},"a1F1t0000001JBjEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SbnEAE":{"oneOff":10,"recurring":12}},"_product":{"recurring":269},"_allowances":{}},"a1F1t00000017Y0EAI":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000002cIMEAY":{"oneOff":8.49,"recurring":12.75},"a1A1t0000003ScfEAE":{"oneOff":8.49,"recurring":82.44}},"_charges":{"a1I1t000001WkzjEAC":{"recurring":12}},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}}}}';
-		String att_no_charges_2 = '{"custom":"","products":{"a1F1t0000001JBoEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_charges":{"a1I1t000001WkzjEAC":{"recurring":12},"a1I1t000001WkzoEAC":{"oneOff":7}}},"a1F1t0000001JBZEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}},"a1F1t0000001JBUEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SXxEAM":{"oneOff":5,"recurring":19.79},"a1A1t0000003SgeEAE":{"oneOff":10.99,"recurring":31.99}},"_product":{"oneOff":67,"recurring":267},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":120.99},"a1N1t0000001X2dEAE":{"a1M1t000000peXUEAY":50.98,"a1M1t000000peXZEAY":65.43,"a1M1t000000peXeEAI":12.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":50.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14},"a1x1t00000049NCAAY":{"Name":"ALL2","value":14}}},"a1F1t0000001JCDEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_charges":{"a1I1t000001WkzjEAC":{"recurring":12},"a1I1t000001WkzoEAC":{"oneOff":7}}},"a1F1t00000017Y0EAI":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000002cIMEAY":{"oneOff":8.49,"recurring":12.75},"a1A1t0000003ScfEAE":{"oneOff":8.49,"recurring":82.44}},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}}}}';
+		String att_no_charges_1 = '{"custom":"","products":{"' + cp_1.id + '":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_charges":{"' + pricingElement_1.id + '":{"oneOff":7}}},"a1F1t0000001JBZEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}},"a1F1t0000001JBUEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SXxEAM":{"oneOff":10,"recurring":21.79},"a1A1t0000003SgeEAE":{"oneOff":10.99,"recurring":31.99}},"_product":{"oneOff":69,"recurring":269},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t0000001X2dEAE":{"a1M1t000000peXUEAY":55.98,"a1M1t000000peXZEAY":65.43,"a1M1t000000peXeEAI":12.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14},"a1x1t00000049NCAAY":{"Name":"ALL2","value":14}}},"a1F1t0000001JBjEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SbnEAE":{"oneOff":10,"recurring":12}},"_product":{"recurring":269},"_allowances":{}},"a1F1t00000017Y0EAI":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000002cIMEAY":{"oneOff":8.49,"recurring":12.75},"a1A1t0000003ScfEAE":{"oneOff":8.49,"recurring":82.44}},"_charges":{"a1I1t000001WkzjEAC":{"recurring":12}},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}}}}';
+		String att_no_charges_2 = '{"custom":"","products":{"' + cp_1.id + '":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_charges":{"a1I1t000001WkzjEAC":{"recurring":12},"' + pricingElement_1.id + '":{"oneOff":7}}},"a1F1t0000001JBZEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}},"a1F1t0000001JBUEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SXxEAM":{"oneOff":5,"recurring":19.79},"a1A1t0000003SgeEAE":{"oneOff":10.99,"recurring":31.99}},"_product":{"oneOff":67,"recurring":267},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":120.99},"a1N1t0000001X2dEAE":{"a1M1t000000peXUEAY":50.98,"a1M1t000000peXZEAY":65.43,"a1M1t000000peXeEAI":12.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":50.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14},"a1x1t00000049NCAAY":{"Name":"ALL2","value":14}}},"a1F1t0000001JCDEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_charges":{"a1I1t000001WkzjEAC":{"recurring":12},"' + pricingElement_1.id + '":{"oneOff":7}}},"a1F1t00000017Y0EAI":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000002cIMEAY":{"oneOff":8.49,"recurring":12.75},"a1A1t0000003ScfEAE":{"oneOff":8.49,"recurring":82.44}},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}}}}';
 
-		String expected_diff = '{"_products":{"a1F1t00000017Y0EAI":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"unchanged","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"unchanged","old_value":55.43,"new_value":55.43}}},"a1N1t0000001QxrEAE":{"status":"unchanged","rcl":{"a1M1t000000BFrVEAW":{"status":"unchanged","old_value":124.99,"new_value":124.99}}}},"product":{},"charges":{"a1I1t000001WkzjEAC":{"recurring":{"status":"removed","old_value":12,"new_value":null}}},"addons":{"a1A1t0000003ScfEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":82.44,"new_value":82.44},"oneOff":{"status":"unchanged","old_value":8.49,"new_value":8.49}},"a1A1t0000002cIMEAY":{"status":"unchanged","recurring":{"status":"unchanged","old_value":12.75,"new_value":12.75},"oneOff":{"status":"unchanged","old_value":8.49,"new_value":8.49}}}},"a1F1t0000001JBUEA2":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"changed","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"changed","old_value":55.43,"new_value":50.43}}},"a1N1t0000001X2dEAE":{"status":"changed","rcl":{"a1M1t000000peXeEAI":{"status":"unchanged","old_value":12.99,"new_value":12.99},"a1M1t000000peXZEAY":{"status":"unchanged","old_value":65.43,"new_value":65.43},"a1M1t000000peXUEAY":{"status":"changed","old_value":55.98,"new_value":50.98}}},"a1N1t0000001QxrEAE":{"status":"changed","rcl":{"a1M1t000000BFrVEAW":{"status":"changed","old_value":124.99,"new_value":120.99}}}},"product":{"recurring":{"status":"changed","old_value":269,"new_value":267},"oneOff":{"status":"changed","old_value":69,"new_value":67}},"charges":{},"addons":{"a1A1t0000003SgeEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":31.99,"new_value":31.99},"oneOff":{"status":"unchanged","old_value":10.99,"new_value":10.99}},"a1A1t0000003SXxEAM":{"status":"changed","recurring":{"status":"changed","old_value":21.79,"new_value":19.79},"oneOff":{"status":"changed","old_value":10,"new_value":5}}}},"a1F1t0000001JBZEA2":{"volume":{},"rateCard":{"a1N1t0000001QxrEAE":{"status":"added","rcl":{"a1M1t000000BFrVEAW":{"status":"added","old_value":null,"new_value":124.99}}}},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JBoEAM":{"volume":{},"rateCard":{},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{"a1I1t000001WkzjEAC":{"recurring":{"status":"added","old_value":null,"new_value":12}},"a1I1t000001WkzoEAC":{"oneOff":{"status":"unchanged","old_value":7,"new_value":7}}},"addons":{}},"a1F1t0000001JCDEA2":"added","a1F1t0000001JBjEAM":"removed"},"csconta__agreement_level__c":{"status":"changed","old_value":"Frame Agreement","new_value":"Master Agreement"},"csconta__effective_end_date__c":{"status":"unchanged","old_value":"2019-12-17T13:06:06.000Z","new_value":"2019-12-17T13:06:06.000Z"},"csconta__Status__c":{"status":"changed","old_value":"Draft","new_value":"Active"},"csconta__Agreement_Name__c":{"status":"unchanged","old_value":"FA SAME","new_value":"FA SAME"}}';
+		String expected_diff = '{"_products":{"a1F1t00000017Y0EAI":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"unchanged","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"unchanged","old_value":55.43,"new_value":55.43}}},"a1N1t0000001QxrEAE":{"status":"unchanged","rcl":{"a1M1t000000BFrVEAW":{"status":"unchanged","old_value":124.99,"new_value":124.99}}}},"product":{},"charges":{},"addons":{"a1A1t0000003ScfEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":82.44,"new_value":82.44},"oneOff":{"status":"unchanged","old_value":8.49,"new_value":8.49}},"a1A1t0000002cIMEAY":{"status":"unchanged","recurring":{"status":"unchanged","old_value":12.75,"new_value":12.75},"oneOff":{"status":"unchanged","old_value":8.49,"new_value":8.49}}}},"a1F1t0000001JBUEA2":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"changed","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"changed","old_value":55.43,"new_value":50.43}}},"a1N1t0000001X2dEAE":{"status":"changed","rcl":{"a1M1t000000peXeEAI":{"status":"unchanged","old_value":12.99,"new_value":12.99},"a1M1t000000peXZEAY":{"status":"unchanged","old_value":65.43,"new_value":65.43},"a1M1t000000peXUEAY":{"status":"changed","old_value":55.98,"new_value":50.98}}},"a1N1t0000001QxrEAE":{"status":"changed","rcl":{"a1M1t000000BFrVEAW":{"status":"changed","old_value":124.99,"new_value":120.99}}}},"product":{"recurring":{"status":"changed","old_value":269,"new_value":267},"oneOff":{"status":"changed","old_value":69,"new_value":67}},"charges":{},"addons":{"a1A1t0000003SgeEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":31.99,"new_value":31.99},"oneOff":{"status":"unchanged","old_value":10.99,"new_value":10.99}},"a1A1t0000003SXxEAM":{"status":"changed","recurring":{"status":"changed","old_value":21.79,"new_value":19.79},"oneOff":{"status":"changed","old_value":10,"new_value":5}}}},"a1F1t0000001JBZEA2":{"volume":{},"rateCard":{"a1N1t0000001QxrEAE":{"status":"added","rcl":{"a1M1t000000BFrVEAW":{"status":"added","old_value":null,"new_value":124.99}}}},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"' + cp_1.id + '":{"volume":{},"rateCard":{},"product":{},"charges":{"a1I1t000001WkzjEAC":{"recurring":{"status":"added","old_value":null,"new_value":12}},"' + pricingElement_1.id + '":{"oneOff":{"status":"unchanged","old_value":7,"new_value":7}}},"addons":{}},"a1F1t0000001JCDEA2":"added","a1F1t0000001JBjEAM":"removed"},"csconta__agreement_level__c":{"status":"changed","old_value":"Frame Agreement","new_value":"Master Agreement"},"csconta__effective_end_date__c":{"status":"unchanged","old_value":"2019-12-17T13:06:06.000Z","new_value":"2019-12-17T13:06:06.000Z"},"csconta__Status__c":{"status":"changed","old_value":"Draft","new_value":"Active"},"csconta__Agreement_Name__c":{"status":"unchanged","old_value":"FA SAME","new_value":"FA SAME"}}';
 
 		FrameRateManagerController.saveAttachment(fa1.Id, att_no_charges_1);
 		FrameRateManagerController.saveAttachment(fa2.Id, att_no_charges_2);
@@ -549,7 +592,7 @@ private class FAMDeltaTest {
 		String att_no_addons_1 = '{"custom":"","products":{"a1F1t0000001JBoEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{}},"a1F1t0000001JBZEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}},"a1F1t0000001JBUEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SXxEAM":{"oneOff":10,"recurring":21.79},"a1A1t0000003SgeEAE":{"oneOff":10.99,"recurring":31.99}},"_product":{"oneOff":69,"recurring":269},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t0000001X2dEAE":{"a1M1t000000peXUEAY":55.98,"a1M1t000000peXZEAY":65.43,"a1M1t000000peXeEAI":12.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14},"a1x1t00000049NCAAY":{"Name":"ALL2","value":14}}},"a1F1t0000001JBjEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SbnEAE":{"oneOff":10,"recurring":12}},"_product":{"recurring":269},"_allowances":{}},"a1F1t00000017Y0EAI":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000002cIMEAY":{"oneOff":8.49,"recurring":12.75},"a1A1t0000003ScfEAE":{"oneOff":8.49,"recurring":82.44}},"_charges":{"a1I1t000001WkzjEAC":{"recurring":12},"a1I1t000001WkzoEAC":{"oneOff":7}},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}}}}';
 		String att_no_addons_2 = '{"custom":"","products":{"a1F1t0000001JBoEAM":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{}},"a1F1t0000001JBZEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}},"a1F1t0000001JBUEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000003SXxEAM":{"oneOff":5,"recurring":19.79},"a1A1t0000003SgeEAE":{"oneOff":10.99,"recurring":31.99}},"_product":{"oneOff":67,"recurring":267},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":120.99},"a1N1t0000001X2dEAE":{"a1M1t000000peXUEAY":50.98,"a1M1t000000peXZEAY":65.43,"a1M1t000000peXeEAI":12.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":50.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14},"a1x1t00000049NCAAY":{"Name":"ALL2","value":14}}},"a1F1t0000001JCDEA2":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_product":{"recurring":269},"_allowances":{}},"a1F1t00000017Y0EAI":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"a1A1t0000002cIMEAY":{"oneOff":8.49,"recurring":12.75},"a1A1t0000003ScfEAE":{"oneOff":8.49,"recurring":82.44}},"_charges":{"a1I1t000001WkzjEAC":{"recurring":12},"a1I1t000001WkzoEAC":{"oneOff":7}},"_rateCards":{"a1N1t0000001QxrEAE":{"a1M1t000000BFrVEAW":124.99},"a1N1t000000GUYbEAO":{"a1M1t000000WwRtEAK":55.43,"a1M1t000000WwS3EAK":12.9,"a1M1t000000WwRyEAK":44.21},"a1N1t000000GUYgEAO":{"a1M1t000000WwSIEA0":10.88,"a1M1t000000WwS8EAK":41.11,"a1M1t000000WwSDEA0":14.55,"a1M1t000000WwSNEA0":76.55}},"_allowances":{"a1x1t0000001iWkAAI":{"Name":"ALL1","value":14}}}}}';
 
-		String expected_diff = '{"_products":{"a1F1t00000017Y0EAI":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"unchanged","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"unchanged","old_value":55.43,"new_value":55.43}}},"a1N1t0000001QxrEAE":{"status":"unchanged","rcl":{"a1M1t000000BFrVEAW":{"status":"unchanged","old_value":124.99,"new_value":124.99}}}},"product":{},"charges":{"a1I1t000001WkzoEAC":{"oneOff":{"status":"unchanged","old_value":7,"new_value":7}},"a1I1t000001WkzjEAC":{"recurring":{"status":"unchanged","old_value":12,"new_value":12}}},"addons":{"a1A1t0000003ScfEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":82.44,"new_value":82.44},"oneOff":{"status":"unchanged","old_value":8.49,"new_value":8.49}},"a1A1t0000002cIMEAY":{"status":"unchanged","recurring":{"status":"unchanged","old_value":12.75,"new_value":12.75},"oneOff":{"status":"unchanged","old_value":8.49,"new_value":8.49}}}},"a1F1t0000001JBUEA2":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"changed","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"changed","old_value":55.43,"new_value":50.43}}},"a1N1t0000001X2dEAE":{"status":"changed","rcl":{"a1M1t000000peXeEAI":{"status":"unchanged","old_value":12.99,"new_value":12.99},"a1M1t000000peXZEAY":{"status":"unchanged","old_value":65.43,"new_value":65.43},"a1M1t000000peXUEAY":{"status":"changed","old_value":55.98,"new_value":50.98}}},"a1N1t0000001QxrEAE":{"status":"changed","rcl":{"a1M1t000000BFrVEAW":{"status":"changed","old_value":124.99,"new_value":120.99}}}},"product":{"recurring":{"status":"changed","old_value":269,"new_value":267},"oneOff":{"status":"changed","old_value":69,"new_value":67}},"charges":{},"addons":{"a1A1t0000003SgeEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":31.99,"new_value":31.99},"oneOff":{"status":"unchanged","old_value":10.99,"new_value":10.99}},"a1A1t0000003SXxEAM":{"status":"changed","recurring":{"status":"changed","old_value":21.79,"new_value":19.79},"oneOff":{"status":"changed","old_value":10,"new_value":5}}}},"a1F1t0000001JBZEA2":{"volume":{},"rateCard":{"a1N1t0000001QxrEAE":{"status":"added","rcl":{"a1M1t000000BFrVEAW":{"status":"added","old_value":null,"new_value":124.99}}}},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JBoEAM":{"volume":{},"rateCard":{},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JCDEA2":"added","a1F1t0000001JBjEAM":"removed"},"csconta__agreement_level__c":{"status":"changed","old_value":"Frame Agreement","new_value":"Master Agreement"},"csconta__effective_end_date__c":{"status":"unchanged","old_value":"2019-12-17T13:06:06.000Z","new_value":"2019-12-17T13:06:06.000Z"},"csconta__Status__c":{"status":"changed","old_value":"Draft","new_value":"Active"},"csconta__Agreement_Name__c":{"status":"unchanged","old_value":"FA SAME","new_value":"FA SAME"}}';
+		String expected_diff = '{"_products":{"a1F1t00000017Y0EAI":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"unchanged","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"unchanged","old_value":55.43,"new_value":55.43}}},"a1N1t0000001QxrEAE":{"status":"unchanged","rcl":{"a1M1t000000BFrVEAW":{"status":"unchanged","old_value":124.99,"new_value":124.99}}}},"product":{},"charges":{},"addons":{"a1A1t0000003ScfEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":82.44,"new_value":82.44},"oneOff":{"status":"unchanged","old_value":8.49,"new_value":8.49}},"a1A1t0000002cIMEAY":{"status":"unchanged","recurring":{"status":"unchanged","old_value":12.75,"new_value":12.75},"oneOff":{"status":"unchanged","old_value":8.49,"new_value":8.49}}}},"a1F1t0000001JBUEA2":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"changed","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"changed","old_value":55.43,"new_value":50.43}}},"a1N1t0000001X2dEAE":{"status":"changed","rcl":{"a1M1t000000peXeEAI":{"status":"unchanged","old_value":12.99,"new_value":12.99},"a1M1t000000peXZEAY":{"status":"unchanged","old_value":65.43,"new_value":65.43},"a1M1t000000peXUEAY":{"status":"changed","old_value":55.98,"new_value":50.98}}},"a1N1t0000001QxrEAE":{"status":"changed","rcl":{"a1M1t000000BFrVEAW":{"status":"changed","old_value":124.99,"new_value":120.99}}}},"product":{"recurring":{"status":"changed","old_value":269,"new_value":267},"oneOff":{"status":"changed","old_value":69,"new_value":67}},"charges":{},"addons":{"a1A1t0000003SgeEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":31.99,"new_value":31.99},"oneOff":{"status":"unchanged","old_value":10.99,"new_value":10.99}},"a1A1t0000003SXxEAM":{"status":"changed","recurring":{"status":"changed","old_value":21.79,"new_value":19.79},"oneOff":{"status":"changed","old_value":10,"new_value":5}}}},"a1F1t0000001JBZEA2":{"volume":{},"rateCard":{"a1N1t0000001QxrEAE":{"status":"added","rcl":{"a1M1t000000BFrVEAW":{"status":"added","old_value":null,"new_value":124.99}}}},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JBoEAM":{"volume":{},"rateCard":{},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JCDEA2":"added","a1F1t0000001JBjEAM":"removed"},"csconta__agreement_level__c":{"status":"changed","old_value":"Frame Agreement","new_value":"Master Agreement"},"csconta__effective_end_date__c":{"status":"unchanged","old_value":"2019-12-17T13:06:06.000Z","new_value":"2019-12-17T13:06:06.000Z"},"csconta__Status__c":{"status":"changed","old_value":"Draft","new_value":"Active"},"csconta__Agreement_Name__c":{"status":"unchanged","old_value":"FA SAME","new_value":"FA SAME"}}';
 
 		FrameRateManagerController.saveAttachment(fa1.Id, att_no_addons_1);
 		FrameRateManagerController.saveAttachment(fa2.Id, att_no_addons_2);
@@ -560,7 +603,7 @@ private class FAMDeltaTest {
 		Map<String, Object> diff_no_addons = FAMDelta.getDelta(fa1.Id, fa2.Id);
 
 		Test.stopTest();
-		system.debug(JSON.serialize(diff_no_addons));
+
 		system.assertEquals(expected_diff, JSON.serialize(diff_no_addons));
 
 
@@ -673,5 +716,111 @@ private class FAMDeltaTest {
 		Test.stopTest();
 
 		System.assertEquals(expected_diff, Json.serialize(diff));
+	}
+
+	@isTest
+	public static void testAdvancedAndLegacyChargesDiff() {
+		cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
+			name = 'cp_1',
+			cspmb__one_off_charge__c = 20.00,
+			cspmb__is_active__c = true,
+			cspmb__recurring_charge__c = 15 - 00,
+			cspmb__price_item_code__c = 'cp_1',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__role__c = 'Basic'
+		);
+
+		insert cp_1;
+
+		// pricing element and types
+		cspmb__Pricing_Element_Type__c pricingElementType_1 = new cspmb__Pricing_Element_Type__c(
+			cspmb__label__c = 'One-off charge', cspmb__type__c = 'One-off charge'
+		);
+		cspmb__Pricing_Element_Type__c pricingElementType_2 = new cspmb__Pricing_Element_Type__c(
+			cspmb__type__c = 'Recurring Charge'
+		);
+		insert pricingElementType_1;
+		insert pricingElementType_2;
+
+
+		cspmb__Pricing_Element__c pricingElement_1 = new cspmb__Pricing_Element__c(
+			cspmb__pricing_element_type__c = pricingElementType_1.Id, cspmb__commercial_product__c = cp_1.Id
+		);
+		cspmb__Pricing_Element__c pricingElement_2 = new cspmb__Pricing_Element__c(
+			cspmb__pricing_element_type__c = pricingElementType_2.Id, cspmb__commercial_product__c = cp_1.Id
+		);
+		insert pricingElement_1;
+		insert pricingElement_2;
+
+		cspmb__pricing_rule__c pr_1 = new cspmb__pricing_rule__c(cspmb__description__c = 'Test.');
+		insert pr_1;
+
+		cspmb__Price_Item_Pricing_Rule_Association__c pipra_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
+			cspmb__pricing_element__c = pricingElement_1.Id
+		);
+		cspmb__Price_Item_Pricing_Rule_Association__c pipra_2 = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
+			cspmb__pricing_element__c = pricingElement_2.Id
+		);
+		insert pipra_1;
+		insert pipra_2;
+
+		cspmb__Pricing_Rule_Group__c prg_1 = new cspmb__Pricing_Rule_Group__c(
+			cspmb__description__c = 'Testing.', cspmb__pricing_rule_group_code__c = 'Code101'
+		);
+		insert prg_1;
+
+		cspmb__Pricing_Rule_Group_Rule_Association__c prgra_1 = new cspmb__Pricing_Rule_Group_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__pricing_rule_group__c = prg_1.Id
+		);
+		insert prgra_1;
+
+		csutil__JSON_Data__c standardPricebook = new csutil__JSON_Data__c(
+			name = 'FA-StandardPricebook', csutil__value__c = prg_1.Id
+		);
+		insert standardPricebook;
+		csconta__Frame_Agreement__c fa1 = new csconta__Frame_Agreement__c(
+			csconta__agreement_name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Frame Agreement',
+			csconta__status__c = 'Draft'
+		);
+		csconta__Frame_Agreement__c fa2 = new csconta__Frame_Agreement__c(
+			csconta__agreement_name__c = 'FA SAME',
+			csconta__effective_end_date__c = DateTime.newInstanceGmt(2019, 12, 17, 13, 6, 6),
+			csconta__agreement_level__c = 'Frame Agreement',
+			csconta__status__c = 'Active'
+		);
+
+		insert fa1;
+		insert fa2;
+
+		String att1 = '{"custom":{},"products":{"' + cp_1.id + '":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"commercialProductCode":"ADV","_charges":{"' + pricingElement_1.id + '":{"oneOff":50},"' + pricingElement_2.id + '":{"oneOff":18}},"_product":{"oneOff":20},"_allowances":{}}},"addons":{},"offers":{},"faOffers":{"categoryId":"a1x4K000000Q5RPQA0","offerIdsCharges":{}}}';
+		String att2 = '{"custom":{},"products":{"' + cp_1.id + '":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"commercialProductCode":"ADV","_charges":{"' + pricingElement_1.id + '":{"oneOff":46},"' + pricingElement_2.id + '":{"oneOff":16}},"_product":{"oneOff":16},"_allowances":{}}},"addons":{},"offers":{},"faOffers":{"categoryId":"a1x4K000000Q5RPQA0","offerIdsCharges":{}}}';
+
+		// String expected_diff = '{"_offers":{"a1F1t0000001JBUEA2":{"volume":{},"rateCard":{"a1N1t000000GUYgEAO":{"status":"unchanged","rcl":{"a1M1t000000WwSNEA0":{"status":"unchanged","old_value":76.55,"new_value":76.55},"a1M1t000000WwSDEA0":{"status":"unchanged","old_value":14.55,"new_value":14.55},"a1M1t000000WwS8EAK":{"status":"unchanged","old_value":41.11,"new_value":41.11},"a1M1t000000WwSIEA0":{"status":"unchanged","old_value":10.88,"new_value":10.88}}},"a1N1t000000GUYbEAO":{"status":"changed","rcl":{"a1M1t000000WwRyEAK":{"status":"unchanged","old_value":44.21,"new_value":44.21},"a1M1t000000WwS3EAK":{"status":"unchanged","old_value":12.9,"new_value":12.9},"a1M1t000000WwRtEAK":{"status":"changed","old_value":50.43,"new_value":55.43}}},"a1N1t0000001X2dEAE":{"status":"changed","rcl":{"a1M1t000000peXeEAI":{"status":"unchanged","old_value":12.99,"new_value":12.99},"a1M1t000000peXZEAY":{"status":"unchanged","old_value":65.43,"new_value":65.43},"a1M1t000000peXUEAY":{"status":"changed","old_value":50.98,"new_value":55.98}}},"a1N1t0000001QxrEAE":{"status":"changed","rcl":{"a1M1t000000BFrVEAW":{"status":"changed","old_value":120.99,"new_value":124.99}}}},"product":{"recurring":{"status":"changed","old_value":267,"new_value":269},"oneOff":{"status":"changed","old_value":67,"new_value":69}},"charges":{},"addons":{"a1A1t0000003SgeEAE":{"status":"unchanged","recurring":{"status":"unchanged","old_value":31.99,"new_value":31.99},"oneOff":{"status":"unchanged","old_value":10.99,"new_value":10.99}},"a1A1t0000003SXxEAM":{"status":"changed","recurring":{"status":"changed","old_value":19.79,"new_value":21.79},"oneOff":{"status":"changed","old_value":5,"new_value":10}}}},"a1F1t0000001JBZEA2":{"volume":{},"rateCard":{"a1N1t0000001QxrEAE":{"status":"removed","rcl":{"a1M1t000000BFrVEAW":{"status":"removed","old_value":124.99,"new_value":null}}}},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JBoEAM":{"volume":{},"rateCard":{},"product":{"recurring":{"status":"unchanged","old_value":269,"new_value":269},"oneOff":{"status":"unchanged","old_value":null,"new_value":null}},"charges":{},"addons":{}},"a1F1t0000001JBjEAM":"added","a1F1t0000001JCDEA2":"removed"},"_products":{},"csconta__agreement_level__c":{"status":"changed","old_value":"Frame Agreement","new_value":"Master Agreement"},"csconta__effective_end_date__c":{"status":"unchanged","old_value":"2019-12-17T13:06:06.000Z","new_value":"2019-12-17T13:06:06.000Z"},"csconta__Status__c":{"status":"changed","old_value":"Draft","new_value":"Active"},"csconta__Agreement_Name__c":{"status":"unchanged","old_value":"FA SAME","new_value":"FA SAME"}}';
+		FrameRateManagerController.saveAttachment(fa1.Id, att1);
+		FrameRateManagerController.saveAttachment(fa2.Id, att2);
+
+		Test.startTest();
+		Map<String, Object> diff = FAMDelta.getDelta(fa1.Id, fa2.Id);
+
+		standardPricebook.csutil__value__c = '';
+		update standardPricebook;
+
+		Map<String, Object> diffWithoutPriceBook = FAMDelta.getDelta(fa1.Id, fa2.Id);
+
+		Test.stopTest();
+
+		System.assertEquals(true, Json.serialize(diff).contains(pricingElement_1.id), 'Diff must include advanced charges');
+		System.assertEquals(true, Json.serialize(diff).contains(pricingElement_2.id), 'Diff must include advanced charges');
+		System.assertEquals(true, Json.serialize(diff).contains('"product":{}'), 'Diff mustn\'t incluce legacy charges');
+
+		System.assertEquals(false, Json.serialize(diffWithoutPriceBook).contains(pricingElement_1.id), 'Diff mustn\'t include advanced charges');
+		System.assertEquals(false, Json.serialize(diffWithoutPriceBook).contains(pricingElement_2.id), 'Diff mustn\'t include advanced charges');
+		System.assertEquals(true, Json.serialize(diffWithoutPriceBook).contains('"charges":{}'), 'Diff mustn\'t include advanced charges');
+		System.assertEquals(true, Json.serialize(diffWithoutPriceBook).contains('"product":{"'), 'Diff must include legacy charges(double quotes after braces means it has valid props');
+		System.assertEquals(true, Json.serialize(diffWithoutPriceBook).contains('"old_value":' + String.valueOf((Integer)cp_1.cspmb__one_off_charge__c)), 'Diff must include legacy charges');
 	}
 }

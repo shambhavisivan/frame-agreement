@@ -334,9 +334,17 @@ const negotiateDiscountCodesForItems = async (data, removed_group, type = COMMER
 		await window.FAM.api.negotiateOffers(active_fa.Id, _negoArray);
 	}
 
+	return _negoArray.length;
+};
+
+const negotiateDiscountCodesForItemsAndSave = async (data, removed_group, type = COMMERCIAL_PRODUCT) => {
+	const active_fa = await window.FAM.api.getActiveFrameAgreement();
+
+	const negotiatedItemsCount = await negotiateDiscountCodesForItems(data, removed_group, type);
+
 	await window.FAM.api.saveFrameAgreement(active_fa.Id);
 
-	return _negoArray.length;
+	return negotiatedItemsCount;
 };
 
 //TODO: change this implementation when merging FAM and FAM-EXT
@@ -724,8 +732,8 @@ class DiscountCodesTab extends React.Component {
 
 		await this.updateCustomData();
 
-		const cpResult = await negotiateDiscountCodesForItems();
-		const offerResult = await negotiateDiscountCodesForItems(
+		const cpResult = await negotiateDiscountCodesForItemsAndSave();
+		const offerResult = await negotiateDiscountCodesForItemsAndSave(
 			null,
 			null,
 			OFFER
@@ -763,8 +771,8 @@ class DiscountCodesTab extends React.Component {
 
 				if (!isUnapplied) {
 					this.updateCustomData(false, true).then(response => {
-						negotiateDiscountCodesForItems(null, removed_group);
-						negotiateDiscountCodesForItems(null, removed_group, OFFER);
+						negotiateDiscountCodesForItemsAndSave(null, removed_group);
+						negotiateDiscountCodesForItemsAndSave(null, removed_group, OFFER);
 					});
 				}
 			}

@@ -8,7 +8,7 @@ import {
 import { useProductIdsInDefaultCatalogue } from './use-productIds-in-default-catalogue';
 
 export function useCommercialProducts(
-	filterIds: Array<string> = []
+	filterIds: Array<string> | undefined
 ): {
 	status: QueryStatus;
 	data?: CommercialProductStandalone[];
@@ -20,10 +20,12 @@ export function useCommercialProducts(
 
 	const { productIds } = useProductIdsInDefaultCatalogue(filter);
 	// to avoid filter and default catalogue filter mixing up
-	const productIdsFilter = filterIds.length ? filterIds : productIds.length ? productIds : [];
+	const productIdsFilter = filterIds?.length ? filterIds : productIds.length ? productIds : [];
 
-	const { status, data } = useQuery(['commercialProducts', productIdsFilter], () =>
-		remoteActions.getCommercialProducts(productIdsFilter)
+	const { status, data } = useQuery(
+		['commercialProducts', productIdsFilter],
+		() => remoteActions.getCommercialProducts(productIdsFilter),
+		{ enabled: typeof filterIds !== 'undefined' }
 	);
 
 	return {

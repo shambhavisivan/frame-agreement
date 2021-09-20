@@ -1,4 +1,11 @@
-import { Attachment, Products, Addons, Volume } from '../../../datasources';
+import {
+	Addons,
+	Attachment,
+	CommercialProductData,
+	CommercialProductStandalone,
+	Products,
+	Volume
+} from '../../../datasources';
 
 export interface Negotiable {
 	original: number | undefined;
@@ -111,7 +118,8 @@ export type NegotiationAction =
 	| {
 			type: 'addProducts';
 			payload: {
-				products: { [productId: string]: ProductNegotiation };
+				products: CommercialProductStandalone[];
+				productsData: CommercialProductData;
 			};
 	  }
 	| {
@@ -174,11 +182,66 @@ export default function negotiationReducer(
 			};
 
 		case 'addProducts':
+			const negotiatedProducts = action.payload.products.reduce(
+				(
+					accumulator,
+					currentProduct
+				): {
+					[productId: string]: ProductNegotiation;
+				} => {
+					const productData = action.payload.productsData.cpData[currentProduct.id];
+					if (!productData) {
+						throw new Error('Product data cannot be found');
+					}
+
+					const negotiation: ProductNegotiation = {
+						rateCards: productData.rateCards.reduce((accu, rateCard) => {
+							const rateCardLines = rateCard.rateCardLines.reduce(
+								(acculine, { id, name, rateValue }) => {
+									acculine[id] = {
+										name: name,
+										original: rateValue,
+										negotiated: undefined
+									};
+									return acculine;
+								},
+								{} as RateCardLines
+							);
+							accu[rateCard.id] = {
+								rateCardLines: rateCardLines
+							};
+							return accu;
+						}, {} as RateCards),
+						product: {
+							recurring: {
+								original: currentProduct?.recurringCharge,
+								negotiated: undefined
+							},
+							oneOff: {
+								original: currentProduct?.oneOffCharge,
+								negotiated: undefined
+							}
+						},
+						volume: {
+							mv: null,
+							mvp: null,
+							muc: null,
+							mucp: null
+						},
+						addons: {}
+					};
+					accumulator[currentProduct.id] = negotiation;
+					return accumulator;
+				},
+				{} as {
+					[productId: string]: ProductNegotiation;
+				}
+			);
 			return {
 				...state,
 				products: {
 					...state.products,
-					...action.payload.products
+					...negotiatedProducts
 				}
 			};
 

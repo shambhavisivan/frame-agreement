@@ -92,7 +92,7 @@ export const remoteActions: RemoteActions = {
 	async getCommercialProductData(ids: string[]): Promise<CommercialProductData> {
 		const commercialProductData: SfGlobal.CommercialProductData = await SF.invokeAction(
 			'getCommercialProductData',
-			[ids]
+			[ids, []]
 		);
 
 		return deforcify(commercialProductData);

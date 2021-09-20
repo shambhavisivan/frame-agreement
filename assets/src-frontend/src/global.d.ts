@@ -38,7 +38,7 @@ namespace SfGlobal {
 		queryFrameAgreements(
 			paramsArray: [string, string | null, string | null, number | null]
 		): Promise<FrameAgreement[]>;
-		getCommercialProductData(paramsArray: [string[]]): Promise<CommercialProductData>;
+		getCommercialProductData(paramsArray: [string[], string[]]): Promise<CommercialProductData>;
 		getCommercialProducts(cpIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
 		getOffers(offerIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
 		getOfferData(paramsArray: [string[], string[]]): Promise<CommercialProductData>;

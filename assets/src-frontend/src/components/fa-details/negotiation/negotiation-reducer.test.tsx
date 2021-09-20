@@ -1,4 +1,8 @@
-import { Attachment } from '../../../datasources';
+import {
+	Attachment,
+	CommercialProductData,
+	CommercialProductStandalone
+} from '../../../datasources';
 import negotiationReducer, {
 	Negotiation,
 	NegotiationAction,
@@ -44,6 +48,7 @@ describe('negotiationReducer', () => {
 			addons: {},
 			offers: {}
 		};
+
 		test(`returns the state with the product's negotiated recurring charge set`, () => {
 			const negotiatedValue = 42;
 			const expectedState: Negotiation = {
@@ -247,58 +252,16 @@ describe('negotiationReducer', () => {
 
 	describe(addProducts, () => {
 		const testState: Negotiation = {
-			products: {
-				[testProductId]: {
-					volume: {
-						mv: null,
-						muc: null,
-						mvp: null,
-						mucp: null
-					},
-					rateCards: {},
-					product: {
-						oneOff: {
-							original: 100,
-							negotiated: undefined
-						},
-						recurring: {
-							original: 200,
-							negotiated: undefined
-						}
-					},
-					addons: {}
-				}
-			},
-			addons: {},
-			offers: {}
+			products: {},
+			offers: {},
+			addons: {}
 		};
 
 		const testProductId2 = 'testProductId2';
-		const testProductId3 = 'testProductId3';
 
 		describe(`with new products having new ids`, () => {
 			const newProducts: { [productId: string]: ProductNegotiation } = {
-				[testProductId2]: {
-					volume: {
-						mv: null,
-						muc: null,
-						mvp: null,
-						mucp: null
-					},
-					rateCards: {},
-					product: {
-						oneOff: {
-							original: 200,
-							negotiated: undefined
-						},
-						recurring: {
-							original: 300,
-							negotiated: undefined
-						}
-					},
-					addons: {}
-				},
-				[testProductId3]: {
+				[testProductId]: {
 					volume: {
 						mv: null,
 						muc: null,
@@ -319,6 +282,30 @@ describe('negotiationReducer', () => {
 					addons: {}
 				}
 			};
+
+			const productsData: CommercialProductData = {
+				cpData: {
+					[testProductId]: {
+						addons: [],
+						allowances: [],
+						rateCards: [],
+						charges: []
+					}
+				},
+				discThresh: [],
+				discLevels: []
+			};
+
+			const products: CommercialProductStandalone[] = [
+				{
+					id: testProductId,
+					name: 'testproductname',
+					contractTerm: '12months',
+					oneOffCharge: 1000,
+					recurringCharge: 2000
+				}
+			];
+
 			test(`returns the state with the new products added`, () => {
 				const expectedState: Negotiation = {
 					products: { ...testState.products, ...newProducts },
@@ -329,7 +316,8 @@ describe('negotiationReducer', () => {
 				const updated = negotiationReducer(testState, {
 					type: addProducts,
 					payload: {
-						products: newProducts
+						products: products,
+						productsData: productsData
 					}
 				});
 				expect(updated).toEqual(expectedState);
@@ -337,9 +325,78 @@ describe('negotiationReducer', () => {
 		});
 
 		describe(`with one of the new products with same id as the one already present`, () => {
+			const testState: Negotiation = {
+				products: {
+					[testProductId]: {
+						volume: {
+							mv: null,
+							muc: null,
+							mvp: null,
+							mucp: null
+						},
+						rateCards: {},
+						product: {
+							oneOff: {
+								original: 100,
+								negotiated: undefined
+							},
+							recurring: {
+								original: 200,
+								negotiated: undefined
+							}
+						},
+						addons: {}
+					}
+				},
+				offers: {},
+				addons: {}
+			};
+			const productsData: CommercialProductData = {
+				cpData: {
+					[testProductId2]: {
+						addons: [],
+						allowances: [],
+						rateCards: [],
+						charges: []
+					}
+				},
+				discLevels: [],
+				discThresh: []
+			};
+
+			const products: CommercialProductStandalone[] = [
+				{
+					id: testProductId2,
+					name: 'testproductname',
+					contractTerm: '12months',
+					oneOffCharge: 200,
+					recurringCharge: 300
+				}
+			];
+
 			test(`returns the state with the old product replaced`, () => {
 				const newProducts: { [productId: string]: ProductNegotiation } = {
 					[testProductId]: {
+						volume: {
+							mv: null,
+							muc: null,
+							mvp: null,
+							mucp: null
+						},
+						rateCards: {},
+						product: {
+							oneOff: {
+								original: 100,
+								negotiated: undefined
+							},
+							recurring: {
+								original: 200,
+								negotiated: undefined
+							}
+						},
+						addons: {}
+					},
+					[testProductId2]: {
 						volume: {
 							mv: null,
 							muc: null,
@@ -358,26 +415,6 @@ describe('negotiationReducer', () => {
 							}
 						},
 						addons: {}
-					},
-					[testProductId2]: {
-						volume: {
-							mv: null,
-							muc: null,
-							mvp: null,
-							mucp: null
-						},
-						rateCards: {},
-						product: {
-							oneOff: {
-								original: 1000,
-								negotiated: undefined
-							},
-							recurring: {
-								original: 2000,
-								negotiated: undefined
-							}
-						},
-						addons: {}
 					}
 				};
 
@@ -391,7 +428,8 @@ describe('negotiationReducer', () => {
 					negotiationReducer(testState, {
 						type: addProducts,
 						payload: {
-							products: newProducts
+							products: products,
+							productsData: productsData
 						}
 					})
 				).toEqual(expectedState);

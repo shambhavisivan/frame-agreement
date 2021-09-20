@@ -37,7 +37,7 @@ export function AddProductsModal({
 	onModalClose,
 	addedProductIds
 }: AddProductsModalProp): ReactElement {
-	const [productIds, setProductIds] = useState<string[]>([]);
+	const [productIds, setProductIds] = useState<string[] | undefined>(undefined);
 	const { data: products, status } = useCommercialProducts(productIds);
 	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
 	const [showCategorizationPanel, setShowCategorizationPanel] = useState(false);
@@ -86,7 +86,11 @@ export function AddProductsModal({
 			},
 			{ ...selectedProducts }
 		);
-		setSelectedProducts(selected);
+		setSelectedProducts(
+			(prevState): SelectedProducts => {
+				return { ...prevState, ...selected };
+			}
+		);
 	};
 
 	const reloadCps = (value: string | Record<string, string[]>): void => {
@@ -162,7 +166,7 @@ export function AddProductsModal({
 			<CSModalFooter>
 				<CSButton
 					label={labels.btnAddProducts}
-					disabled={!selectedProducts?.length}
+					disabled={!Object.values(selectedProducts)?.length}
 					onClick={(): void => {
 						onAddProducts(Object.values(selectedProducts));
 						onModalClose();

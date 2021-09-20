@@ -22,8 +22,12 @@ describe('test useCommercialProducts hook', () => {
 			})
 		);
 
+	afterEach(() => {
+		getCommercialProductsSpy.mockClear();
+	});
+
 	test('returns commercial products and calls getCommercialProducts once', async () => {
-		const { result, waitFor } = renderHook(() => useCommercialProducts());
+		const { result, waitFor } = renderHook(() => useCommercialProducts([]));
 		await waitFor(() => {
 			return result.current.status === QueryStatus.Success;
 		});
@@ -35,5 +39,14 @@ describe('test useCommercialProducts hook', () => {
 		});
 		expect(getCommercialProductsSpy.mock.calls.length).toBe(1);
 		expect(getCommercialProductsSpy).toHaveBeenCalledWith(mockProductIds);
+	});
+
+	test('should not call getCommercialProducts if filterIds are undefined', async () => {
+		const { result, waitFor } = renderHook(() => useCommercialProducts(undefined));
+		await waitFor(() => {
+			return result.current.status === QueryStatus.Success;
+		});
+
+		expect(getCommercialProductsSpy.mock.calls.length).toBe(0);
 	});
 });

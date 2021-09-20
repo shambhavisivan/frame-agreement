@@ -89,7 +89,8 @@ export function ProductListGrid({
 					(modifiedData: CSDataTableColumnInterface[], currentMeta: FieldMetadata) => {
 						const columnMeta: CSDataTableColumnInterface = {
 							key: currentMeta.apiName,
-							header: currentMeta.fieldLabel
+							header: currentMeta.fieldLabel,
+							grow: 2
 						};
 						modifiedData.push(columnMeta);
 						return modifiedData;

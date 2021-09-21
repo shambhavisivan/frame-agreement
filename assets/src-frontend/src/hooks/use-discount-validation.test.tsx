@@ -13,6 +13,8 @@ import {
 } from '../components/fa-details/negotiation/negotiation-reducer';
 import React, { FunctionComponent, ReactElement, ReactNode } from 'react';
 import { DiscountThresholdViolation } from '../components/fa-details/negotiation/discount-validator';
+import { deforcify } from '../datasources/deforcify';
+import { DiscLevels_general } from '../local-server/local_data';
 
 describe('test useDiscountValidation hook', () => {
 	// Cleanup mock
@@ -27,6 +29,18 @@ describe('test useDiscountValidation hook', () => {
 	}): ReactElement => (
 		<discountContext.Provider value={value}>{children}</discountContext.Provider>
 	);
+
+	const testWrapper = makeWrapper({
+		negotiation: mockNegotiationState,
+		discountThresholds: mockDiscountThresholds,
+		authLevels: mockAuthLevels,
+		discountLevels: DiscLevels_general.map((discWrap: SfGlobal.DiscLevelWrapper) => {
+			return {
+				...discWrap,
+				discountLevel: deforcify(discWrap.discountLevel)
+			};
+		})
+	});
 
 	const testProductId = 'a1i4I000003Q4GGQA0';
 	const testItemType: NegotiationItemType = 'products';
@@ -45,11 +59,7 @@ describe('test useDiscountValidation hook', () => {
 				current: { validateProductThreshold }
 			}
 		} = renderHook(() => useDiscountValidation(), {
-			wrapper: makeWrapper({
-				negotiation: mockNegotiationState,
-				discountThresholds: mockDiscountThresholds,
-				authLevels: mockAuthLevels
-			})
+			wrapper: testWrapper
 		});
 
 		test('should validate the product charge against given threshold', async () => {
@@ -74,11 +84,7 @@ describe('test useDiscountValidation hook', () => {
 				current: { validateAddonThreshold }
 			}
 		} = renderHook(() => useDiscountValidation(), {
-			wrapper: makeWrapper({
-				negotiation: mockNegotiationState,
-				discountThresholds: mockDiscountThresholds,
-				authLevels: mockAuthLevels
-			})
+			wrapper: testWrapper
 		});
 
 		test('should validate the addon charge against given threshold', async () => {
@@ -106,11 +112,7 @@ describe('test useDiscountValidation hook', () => {
 				current: { validateRateCardLineThreshold }
 			}
 		} = renderHook(() => useDiscountValidation(), {
-			wrapper: makeWrapper({
-				negotiation: mockNegotiationState,
-				discountThresholds: mockDiscountThresholds,
-				authLevels: mockAuthLevels
-			})
+			wrapper: testWrapper
 		});
 
 		test('should validate the rate card line item value against given threshold', async () => {

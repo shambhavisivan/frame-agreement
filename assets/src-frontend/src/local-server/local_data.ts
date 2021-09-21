@@ -1495,7 +1495,7 @@ export const AuthLevels = [
 	}
 ];
 
-export const DiscLevels_general = [
+export const DiscLevels_general: SfGlobal.DiscLevelWrapper[] = [
 	{
 		discountLevel: {
 			Id: 'a141t00000137a8AAA',
@@ -1505,6 +1505,16 @@ export const DiscLevels_general = [
 			cspmb__Discount_Values__c: '10,20,30'
 		},
 		priceItemId: 'a1F1t00000017Y0EAI'
+	},
+	{
+		discountLevel: {
+			Id: 'a141t00000137a8AAA',
+			Name: 'Test',
+			cspmb__Charge_Type__c: 'oneOff',
+			cspmb__Discount_Type__c: 'Percentage',
+			cspmb__Discount_Values__c: '10,20,30'
+		},
+		priceItemId: 'a1i4I000003Q4GGQA0'
 	},
 	{
 		discountLevel: {

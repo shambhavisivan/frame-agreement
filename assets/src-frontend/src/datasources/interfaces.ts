@@ -92,6 +92,7 @@ export interface CommercialProductData {
 		[id: string]: CommercialProduct;
 	};
 	discThresh: DiscountThreshold[];
+	discLevels: DiscLevelWrapper[];
 }
 
 export interface Addon {
@@ -241,11 +242,12 @@ export interface DeltaProduct {
 	volume: { [key in keyof Volume]: ValueStatus };
 }
 
+export type DiscountType = 'Amount' | 'Percentage' | 'Nagative Line Item';
 export interface DiscountThreshold {
 	id: string;
 	name: string;
 	discountThresholdCode?: string;
-	discountType: 'Amount' | 'Percentage' | 'Nagative Line Item';
+	discountType: DiscountType;
 	discountThreshold: number;
 	authorizationLevel: string;
 	profileName?: string;
@@ -256,4 +258,20 @@ export interface Volume {
 	mucp: number | null;
 	mv: number | null;
 	mvp: number | null;
+}
+export interface DiscountLevel {
+	id: string;
+	name: string;
+	chargeType: string;
+	discountType: DiscountType;
+	discountValues?: string;
+	discountIncrement?: string;
+	minimumDiscountValue?: number;
+	maximumDiscountValue?: number;
+}
+
+export interface DiscLevelWrapper {
+	addonId?: string;
+	discountLevel: DiscountLevel;
+	priceItemId?: string;
 }

@@ -1,4 +1,9 @@
-import { commercialProducts, frameAgreements, productData } from '../local-server/local_data';
+import {
+	commercialProducts,
+	DiscLevels_general,
+	frameAgreements,
+	productData
+} from '../local-server/local_data';
 import { deforcify } from './deforcify';
 import {
 	AppSettings,
@@ -91,7 +96,13 @@ export const mockAuthLevels = {
 
 export const mockCommercialProductData: CommercialProductData = {
 	cpData: deforcify(productData),
-	discThresh: mockDiscountThresholds
+	discThresh: mockDiscountThresholds,
+	discLevels: DiscLevels_general.map((discWrap: SfGlobal.DiscLevelWrapper) => {
+		return {
+			...discWrap,
+			discountLevel: deforcify(discWrap.discountLevel)
+		};
+	})
 };
 
 export const mockCommercialProducts: CommercialProductStandalone[] = commercialProducts.map(
@@ -100,7 +111,13 @@ export const mockCommercialProducts: CommercialProductStandalone[] = commercialP
 
 export const mockOfferData: CommercialProductData = {
 	cpData: deforcify(productData),
-	discThresh: mockDiscountThresholds
+	discThresh: mockDiscountThresholds,
+	discLevels: DiscLevels_general.map((discWrap: SfGlobal.DiscLevelWrapper) => {
+		return {
+			...discWrap,
+			discountLevel: deforcify(discWrap.discountLevel)
+		};
+	})
 };
 
 export const mockOffers: CommercialProductStandalone[] = commercialProducts.map(deforcify);

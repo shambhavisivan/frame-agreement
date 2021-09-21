@@ -96,7 +96,7 @@ namespace SfGlobal {
 	}
 
 	interface CommercialProductData {
-		discLevels: DiscLevel[];
+		discLevels: DiscLevelWrapper[];
 		discThresh: DiscThresh[];
 		childUsageTypes: { [key: string]: ChildUsageType[] };
 		cpData: CpData;
@@ -186,17 +186,21 @@ namespace SfGlobal {
 		Id: string;
 	}
 
-	interface DiscLevel {
-		addonId: string;
+	interface DiscLevelWrapper {
+		addonId?: string;
 		discountLevel: DiscountLevel;
+		priceItemId?: string;
 	}
 
 	interface DiscountLevel {
 		Id: string;
 		Name: string;
 		cspmb__Charge_Type__c: string;
-		cspmb__Discount_Type__c: string;
-		cspmb__Discount_Values__c: string;
+		cspmb__Discount_Type__c: 'Amount' | 'Percentage' | 'Nagative Line Item';
+		cspmb__Discount_Values__c?: string;
+		cspmb__Discount_Increment__c?: string;
+		cspmb__Minimum_Discount_Value__c?: number;
+		cspmb__Maximum_Discount_Value__c?: number;
 	}
 
 	interface DiscThresh {

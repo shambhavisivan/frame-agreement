@@ -130,6 +130,7 @@ export interface UserLocaleInfo {
 	userLocaleLang: string;
 	userLocaleCountry: string;
 	decimalSeparator: string;
+	currency: string;
 }
 
 export interface FieldMetadata {

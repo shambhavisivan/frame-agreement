@@ -132,7 +132,8 @@ export const mockDispatcherAuthToken: DispatcherToken = {
 export const mockUserLocale: UserLocaleInfo = {
 	userLocaleLang: 'en',
 	userLocaleCountry: 'GB',
-	decimalSeparator: '.'
+	decimalSeparator: '.',
+	currency: 'GBP'
 };
 
 export const faFieldMetadataMock: FieldMetadata[] = [

@@ -2517,6 +2517,8 @@ global with sharing class FrameRateManagerController {
 		String[] userLocale = UserInfo.getLocale().split('_');
 		userLocaleMap.put('userLocaleLang', userLocale[0]);
 		userLocaleMap.put('userLocaleCountry', userLocale[1]);
+		String defaultCurrency = UserInfo.getDefaultCurrency();
+		userLocaleMap.put('currency', defaultCurrency);
 		// hack to get decimal separator for apps using vfpages.
 		Decimal value = 1000.10;
 		String formattedValue = value.format();

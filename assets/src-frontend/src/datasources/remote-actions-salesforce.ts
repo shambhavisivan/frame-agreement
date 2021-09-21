@@ -148,12 +148,7 @@ export const remoteActions: RemoteActions = {
 	},
 
 	async getUserLocale(): Promise<UserLocaleInfo> {
-		const localeInfo = await SF.invokeAction('getUserLocale');
-		return {
-			userLocaleLang: localeInfo.userLocaleLang,
-			userLocaleCountry: localeInfo.userLocaleCountry,
-			decimalSeparator: localeInfo.decimalSeparator
-		};
+		return await SF.invokeAction('getUserLocale');
 	},
 
 	async getFieldMetadata(sObjectName: string): Promise<FieldMetadata[]> {

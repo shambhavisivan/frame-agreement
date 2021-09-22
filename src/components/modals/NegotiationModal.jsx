@@ -184,6 +184,7 @@ class NegotiationModal extends Component {
 				rated: {}
 			},
 			attachment,
+			updatedAttachment: JSON.parse(JSON.stringify(attachment)),
 			count: {
 				addons: 0,
 				charges: 0,
@@ -256,6 +257,10 @@ class NegotiationModal extends Component {
 				this._charges.push(oneOffCharge, recurringCharge);
 			}
 		})();
+
+		this.eventHookData = {
+			type: props.commercialProductType  === Constants.ROLE_OFFER? 'Offers': 'Commercial Products'
+		};
 	}
 
 	_setState(newState, callback) {
@@ -507,8 +512,107 @@ class NegotiationModal extends Component {
 			return +val.toFixed(8);
 		}
 
+		function frameHookAddonData(eventHookData, updatedAttachment, cp, addon, chargeType, negotiatedValue) {
+			const prevNegotiation = updatedAttachment[cp.Id]._addons || {};
+			eventHookData[cp.Id] = {
+				...eventHookData[cp.Id],
+				addons: {
+					...eventHookData[cp.Id]?.addons || {},
+					previousNegotiations: {
+						...eventHookData[cp.Id]?.addons?.previousNegotiations || {},
+						[addon.Id]: {
+							...eventHookData[cp.Id]?.addons?.previousNegotiations[addon.Id] || {},
+							[chargeType]: prevNegotiation[addon.Id][chargeType]
+						}
+					},
+					currentNegotiations: {
+						...eventHookData[cp.Id]?.addons?.currentNegotiations || {},
+						[addon.Id]: {
+							...eventHookData[cp.Id]?.addons?.currentNegotiations[addon.Id] || {},
+							[chargeType]: negotiatedValue
+						}
+					}
+				}
+			}
+
+			return eventHookData;
+		}
+
+		function frameHookChargesData(eventHookData, updatedAttachment, cp, charge, negotiatedValue) {
+			const prevNegotiation = updatedAttachment[cp.Id]._charges || {};
+			eventHookData[cp.Id] = {
+				...eventHookData[cp.Id],
+				charges: {
+					...eventHookData[cp.Id]?.charges || {},
+					previousNegotiations: {
+						...eventHookData[cp.Id]?.charges?.previousNegotiations || {},
+						[charge.Id]: {
+							...eventHookData[cp.Id]?.charges?.previousNegotiations[charge.Id] || {},
+							[charge._type]: prevNegotiation[charge.Id][charge._type]
+						}
+					},
+					currentNegotiations: {
+						...eventHookData[cp.Id]?.charges?.currentNegotiations || {},
+						[charge.Id]: {
+							...eventHookData[cp.Id]?.charges?.currentNegotiations[charge.Id] || {},
+							[charge._type]: negotiatedValue
+						}
+					}
+				}
+			}
+
+			return eventHookData;
+		}
+
+		function frameHookProductChargesData(eventHookData, updatedAttachment, cp, chargeType, negotiatedValue) {
+			const prevNegotiation = updatedAttachment[cp.Id]._product || {};
+			eventHookData[cp.Id] = {
+				...eventHookData[cp.Id],
+				product: {
+					...eventHookData[cp.Id]?.product || {},
+					previousNegotiations: {
+						...eventHookData[cp.Id]?.product?.previousNegotiations || {},
+						[chargeType]: prevNegotiation[chargeType]
+					},
+					currentNegotiations: {
+						...eventHookData[cp.Id]?.product?.currentNegotiations || {},
+						[chargeType]: negotiatedValue
+					}
+				}
+			}
+
+			return eventHookData;
+		}
+
+		function frameHookRateCardsData(eventHookData, updatedAttachment, cp, rc, rcl, negotiatedValue) {
+			const prevNegotiation = updatedAttachment[cp.Id]._rateCards || {};
+			eventHookData[cp.Id] = {
+				...eventHookData[cp.Id],
+				rateCards: {
+					...eventHookData[cp.Id]?.rateCards || {},
+					previousNegotiations: {
+						...eventHookData[cp.Id]?.rateCards?.previousNegotiations || {},
+						[rc.Id]: {
+							...eventHookData[cp.Id]?.rateCards?.previousNegotiations[rc.Id] || {},
+							[rcl.Id]: prevNegotiation[rc.Id][rcl.Id]
+						}
+					},
+					currentNegotiations: {
+						...eventHookData[cp.Id]?.rateCards?.currentNegotiations || {},
+						[rc.Id]: {
+							...eventHookData[cp.Id]?.rateCards?.currentNegotiations[rc.Id] || {},
+							[rcl.Id]: negotiatedValue
+						}
+					}
+				}
+			}
+
+			return eventHookData;
+		}
+
 		let selected = { ...this.state.selected };
-		let attachment = this.state.attachment;
+		let attachment = { ...this.state.attachment };
+		let eventHookData = this.eventHookData;
 
 		if (Object.keys(selected.addons).length) {
 			this.commercialProducts.forEach(cp => {
@@ -519,16 +623,21 @@ class NegotiationModal extends Component {
 							attachment[cp.Id]._addons[addon.Id] = attachment[cp.Id]._addons[addon.Id] || {};
 
 							if (addon.cspmb__One_Off_Charge__c && isDiscountAllowed('oneOff', addon)) {
-								attachment[cp.Id]._addons[addon.Id].oneOff = applyDiscountRate(
+								const negotiatedValue = applyDiscountRate(
 									attachment[cp.Id]._addons[addon.Id].oneOff || addon.cspmb__One_Off_Charge__c,
 									this.state
 								);
+								attachment[cp.Id]._addons[addon.Id].oneOff = negotiatedValue;
+								eventHookData = frameHookAddonData(eventHookData, this.state.updatedAttachment, cp, addon, 'oneOff', negotiatedValue);
 							}
+
 							if (addon.cspmb__Recurring_Charge__c && isDiscountAllowed('recurring', addon)) {
-								attachment[cp.Id]._addons[addon.Id].recurring = applyDiscountRate(
+								const negotiatedValue = applyDiscountRate(
 									attachment[cp.Id]._addons[addon.Id].recurring || addon.cspmb__Recurring_Charge__c,
 									this.state
 								);
+								attachment[cp.Id]._addons[addon.Id].recurring = negotiatedValue;
+								eventHookData = frameHookAddonData(eventHookData, this.state.updatedAttachment, cp, addon, 'recurring', negotiatedValue);
 							}
 						}
 					});
@@ -547,14 +656,16 @@ class NegotiationModal extends Component {
 							attachment[cp.Id]._charges = attachment[cp.Id]._charges || {};
 							attachment[cp.Id]._charges[charge.Id] =
 								attachment[cp.Id]._charges[charge.Id] || {};
-							attachment[cp.Id]._charges[charge.Id][
-								charge._type
-							] = applyDiscountRate(
+							const negotiatedValue = applyDiscountRate(
 								attachment[cp.Id]._charges[charge.Id][
 									charge._type
 								] || charge[charge._type],
 								this.state
 							);
+							attachment[cp.Id]._charges[charge.Id][
+								charge._type
+							] = negotiatedValue;
+							eventHookData = frameHookChargesData(eventHookData, this.state.updatedAttachment, cp, charge, negotiatedValue);
 						}
 					});
 				} else {
@@ -573,19 +684,23 @@ class NegotiationModal extends Component {
 									oneOffCharge &&
 									isDiscountAllowed(charge.type, cp)
 								) {
-									attachment[cp.Id]._product.oneOff = applyDiscountRate(
+									const negotiatedValue = applyDiscountRate(
 										attachment[cp.Id]._product.oneOff || oneOffCharge,
 										this.state
 									);
+									attachment[cp.Id]._product.oneOff = negotiatedValue;
+									eventHookData = frameHookProductChargesData(eventHookData, this.state.updatedAttachment, cp, 'oneOff', negotiatedValue);
 								} else if (
 									charge.type == 'recurring' &&
 									recurringCharge &&
 									isDiscountAllowed(charge.type, cp)
 								) {
-									attachment[cp.Id]._product.recurring = applyDiscountRate(
+									const negotiatedValue = applyDiscountRate(
 										attachment[cp.Id]._product.recurring || recurringCharge,
 										this.state
 									);
+									attachment[cp.Id]._product.recurring = negotiatedValue;
+									eventHookData = frameHookProductChargesData(eventHookData, this.state.updatedAttachment, cp, 'recurring', negotiatedValue);
 								}
 							}
 						});
@@ -602,10 +717,12 @@ class NegotiationModal extends Component {
 							if (selected.rated.hasOwnProperty(rcl.Id)) {
 								attachment[cp.Id]._rateCards = attachment[cp.Id]._rateCards || {};
 								attachment[cp.Id]._rateCards[rc.Id] = attachment[cp.Id]._rateCards[rc.Id] || {};
-								attachment[cp.Id]._rateCards[rc.Id][rcl.Id] = applyDiscountRate(
+								const negotiatedValue = applyDiscountRate(
 									attachment[cp.Id]._rateCards[rc.Id][rcl.Id] || rcl.cspmb__rate_value__c,
 									this.state
 								);
+								attachment[cp.Id]._rateCards[rc.Id][rcl.Id] = negotiatedValue;
+								eventHookData = frameHookRateCardsData(eventHookData, this.state.updatedAttachment, cp, rc, rcl, negotiatedValue);
 							}
 						});
 					});
@@ -1163,7 +1280,7 @@ class NegotiationModal extends Component {
 						disabled={!this.state.actionTaken}
 						className="fa-button fa-button--default"
 						onClick={() => {
-							this.props.onNegotiate(this.state.attachment);
+							this.props.onNegotiate(this.state.attachment, this.eventHookData);
 							this.onCloseModal();
 						}}
 					>

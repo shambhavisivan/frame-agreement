@@ -47,11 +47,16 @@ class NegotiationStandaloneModal extends Component {
 			applyRecurring: true,
 			validation: {},
 			attachment,
+			updatedAttachment: JSON.parse(JSON.stringify(attachment)),
 			actionTaken: false,
 			pagination: {
 				page_addons: 1,
 				pageSize: 10
 			}
+		};
+
+		this.eventHookData = {
+			type: 'Standalone Addons'
 		};
 	}
 
@@ -95,8 +100,25 @@ class NegotiationStandaloneModal extends Component {
 			return +val.toFixed(8);
 		}
 
+		function frameHookStandAloneAddonData(eventHookData, updatedAttachment, addon, chargeType, negotiatedValue) {
+			const prevNegotiation = updatedAttachment[addon.Id] || {};
+			eventHookData[addon.Id] = {
+				...eventHookData[addon.Id],
+				previousNegotiations: {
+					...eventHookData[addon.Id]?.previousNegotiations,
+					[chargeType]: prevNegotiation[chargeType]
+				},
+				currentNegotiations: {
+					...eventHookData[addon.Id]?.currentNegotiations,
+					[chargeType]: negotiatedValue
+				}
+			}
+
+			return eventHookData;
+		}
 		let attachment = {};
 		let associatedAddOns = this.state.attachment;
+		let eventHookData = this.eventHookData;
 
 		this.props.addons.forEach(add => {
 			// Ignore DL
@@ -123,9 +145,17 @@ class NegotiationStandaloneModal extends Component {
 			) {
 				// If there aren't any RC DLs
 				if (!_dl.some((dl) => isRecurring(dl.cspmb__Charge_Type__c))) {
-					addOn[add.Id].recurring = applyDiscountRate(
+					const negotiatedValue = applyDiscountRate(
 						associatedAddOns[add.Id]?.recurring || add.cspmb__Recurring_Charge__c,
 						this.state.discountMode
+					);
+					addOn[add.Id].recurring = negotiatedValue;
+					eventHookData = frameHookStandAloneAddonData(
+						eventHookData,
+						this.state.updatedAttachment,
+						add,
+						"recurring",
+						negotiatedValue
 					);
 				}
 			}
@@ -137,9 +167,17 @@ class NegotiationStandaloneModal extends Component {
 			) {
 				// If there aren't any NRC DLs
 				if (!_dl.some((dl) => isOneOff(dl.cspmb__Charge_Type__c))) {
-					addOn[add.Id].oneOff = applyDiscountRate(
+					const negotiatedValue = applyDiscountRate(
 						associatedAddOns[add.Id]?.oneOff || add.cspmb__One_Off_Charge__c,
 						this.state.discountMode
+					);
+					addOn[add.Id].oneOff = negotiatedValue;
+					eventHookData = frameHookStandAloneAddonData(
+						eventHookData,
+						this.state.updatedAttachment,
+						add,
+						"oneOff",
+						negotiatedValue
 					);
 				}
 			}
@@ -277,7 +315,7 @@ class NegotiationStandaloneModal extends Component {
 						disabled={!this.state.actionTaken}
 						className="fa-button fa-button--default"
 						onClick={() => {
-							this.props.onNegotiate(this.state.attachment);
+							this.props.onNegotiate(this.state.attachment, this.eventHookData);
 						}}
 					>
 						{window.SF.labels.modal_bulk_btn_save}

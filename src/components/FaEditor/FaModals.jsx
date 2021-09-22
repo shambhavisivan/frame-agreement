@@ -50,10 +50,21 @@ class FaModals extends React.Component {
 		this.props.toggleModals();
 	}
 
-	async onBulkNegotiate(data) {
-		data = await publish('onBeforeBulkNegotiation', data);
+	async onBulkNegotiate(attachment, negotiations) {
+		let eventData = {
+			attachment,
+			negotiations
+		}
+		try {
+			eventData = await publish('onBeforeBulkNegotiation', eventData);
+		} catch (error) {
+			console.error("Rejected by the subscriber: ");
+			console.error("error message: ", error);
+			this.onCloseModal();
+			return;
+		}
 
-		this.props.bulkNegotiate(this.props.faId, data);
+		this.props.bulkNegotiate(this.props.faId, attachment);
 		this.props.validateFrameAgreement(this.props.faId);
 		window.FAM.api.validateStatusConsistency(this.props.faId);
 
@@ -61,10 +72,21 @@ class FaModals extends React.Component {
 		this.onCloseModal();
 	}
 
-	async onBulkNegotiateAddons(data) {
-		data = await publish('onBeforeBulkNegotiation', data);
+	async onBulkNegotiateAddons(attachment, negotiations) {
+		let eventData = {
+			attachment,
+			negotiations
+		}
+		try {
+			eventData = await publish('onBeforeBulkNegotiation', eventData);
+		} catch (error) {
+			console.error("Rejected by the subscriber: ");
+			console.error("error message: ", error);
+			this.onCloseModal();
+			return;
+		}
 
-		this.props.bulkNegotiateAddons(this.props.faId, data);
+		this.props.bulkNegotiateAddons(this.props.faId, attachment);
 		this.props.validateFrameAgreement(this.props.faId);
 		window.FAM.api.validateStatusConsistency(this.props.faId);
 
@@ -154,10 +176,21 @@ class FaModals extends React.Component {
 		publish('onAfterAddProducts', agreements);
 	}
 
-	async onBulkNegotiateOffers(data) {
-		data = await publish('onBeforeBulkNegotiation', data);
+	async onBulkNegotiateOffers(attachment, negotiations) {
+		let eventData = {
+			attachment,
+			negotiations
+		}
+		try {
+			eventData = await publish('onBeforeBulkNegotiation', eventData);
+		} catch (error) {
+			console.error("Rejected by the subscriber: ");
+			console.error("error message: ", error);
+			this.onCloseModal();
+			return;
+		}
 
-		this.props.bulkNegotiateOffers(this.props.faId, data);
+		this.props.bulkNegotiateOffers(this.props.faId, attachment);
 		this.props.validateFrameAgreement(this.props.faId);
 		window.FAM.api.validateStatusConsistency(this.props.faId);
 

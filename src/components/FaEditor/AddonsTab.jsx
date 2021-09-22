@@ -48,8 +48,12 @@ class AddonsTab extends React.Component {
 		});
 	}
 
-	async onNegotiate(data, addonId) {
+	async onNegotiate(data, addonId, negotiationContext) {
 		let initialFrameAgreementStandaloneAddOn = this.props.currentFrameAgreement._ui.attachment?.addons;
+		let eventHookData = {
+			type: 'Standalone Addons',
+			[addonId]: { ...negotiationContext }
+		}
 		this.props.setAddonValidation(
 			this.props.faId,
 			validateAddons(
@@ -63,7 +67,13 @@ class AddonsTab extends React.Component {
 			)
 		);
 
-		data = await publish('onBeforeNegotiate', data);
+		try {
+			eventHookData = await publish('onBeforeNegotiate', eventHookData);
+		} catch (error) {
+			console.error("Rejected by the subscriber: ");
+			console.error("error message: ", error);
+			return;
+		}
 
 		this.props.negotiateAddons(this.props.faId, addonId, data);
 
@@ -176,8 +186,8 @@ class AddonsTab extends React.Component {
 									onSelect={(addon) =>
 										this.props.onSelectAddon(addon)
 									}
-									onNegotiate={(data) => {
-										this.onNegotiate(data, add.Id);
+									onNegotiate={(data, addonId, negotiationContext) => {
+										this.onNegotiate(data, addonId, negotiationContext);
 									}}
 									attachment={
 										this.props.frameAgreements[

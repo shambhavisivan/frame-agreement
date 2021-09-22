@@ -33,11 +33,21 @@ export class StandaloneAddon extends React.Component {
 	}
 
 	negotiateInline(addon, chargeType, value) {
-		let negotiation = this.props.attachment;
-		negotiation[addon.Id] = negotiation[addon.Id] || {};
-		negotiation[addon.Id][chargeType] = +value;
+		const prevNegotiation = { ...this.props.attachment };
+		const negotiationContext = {
+			previousNegotiations: {
+				[chargeType]: prevNegotiation[addon.Id][chargeType]
+			},
+			currentNegotiations: {
+				[chargeType]: Number(value)
+			}
+		}
 
-		this.props.onNegotiate(negotiation, addon.Id);
+		let updatedNegotiation = this.props.attachment;
+		updatedNegotiation[addon.Id] = updatedNegotiation[addon.Id] || {};
+		updatedNegotiation[addon.Id][chargeType] = Number(value);
+
+		this.props.onNegotiate(updatedNegotiation, addon.Id, negotiationContext);
 	}
 
 	render() {

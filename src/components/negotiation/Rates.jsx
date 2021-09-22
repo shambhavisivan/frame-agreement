@@ -21,11 +21,25 @@ export class Rates extends React.Component {
 	}
 
 	negotiateInline(rc, rcl, value) {
-		let negotiation = this.props.attachment;
-		negotiation[rc.Id] = negotiation[rc.Id] || {};
-		negotiation[rc.Id][rcl.Id] = +value;
+		const prevNegotiation = { ...this.props.attachment };
+		const negotiationContext = {
+			previousNegotiations: {
+				[rc.Id]: {
+					[rcl.Id]: prevNegotiation[rc.Id][rcl.Id]
+				}
+			},
+			currentNegotiations: {
+				[rc.Id]: {
+					[rcl.Id]: Number(value)
+				}
+			}
+		}
 
-		this.props.onNegotiate(negotiation);
+		let updatedNegotiation = { ...prevNegotiation }
+		updatedNegotiation[rc.Id] = updatedNegotiation[rc.Id] || {};
+		updatedNegotiation[rc.Id][rcl.Id] =  Number(value);
+
+		this.props.onNegotiate(updatedNegotiation, negotiationContext);
 	}
 
 	// Might need to revert

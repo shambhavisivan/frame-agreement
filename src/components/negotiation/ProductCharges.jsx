@@ -26,10 +26,20 @@ export class ProductCharges extends React.Component {
 	}
 
 	negotiateInline(chargeType, value) {
-		let negotiation = this.props.attachment;
-		negotiation[chargeType] = +value;
+		const prevNegotiation = { ...this.props.attachment };
+		const negotiationContext = {
+			previousNegotiations: {
+				[chargeType]: prevNegotiation[chargeType]
+			},
+			currentNegotiations: {
+				[chargeType]: Number(value)
+			}
+		}
 
-		this.props.onNegotiate(negotiation);
+		let updatedNegotiation = { ...prevNegotiation };
+		updatedNegotiation[chargeType] = Number(value);
+
+		this.props.onNegotiate(updatedNegotiation, negotiationContext);
 	}
 
 	isChargeAllowed(chargeType) {

@@ -55,13 +55,32 @@ export class CommercialProduct extends React.Component {
 		let _volume = this.props.frameAgreements[this.props.faId]._ui.attachment.products[
 			this.productId
 		]._volume;
+		const negotiationContext = {
+			previousNegotiations: {
+				volume: {
+					[volume]: _volume[volume]
+				}
+			},
+			currentNegotiations: {
+				volume: {
+					[volume]: value
+				}
+			}
+		}
 		_volume[volume] = value;
-		this.onNegotiate('_volume', _volume);
+
+		this.onNegotiate('_volume', _volume, negotiationContext);
 	}
 
-	async onNegotiate(type, data) {
+	async onNegotiate(type, data, negotiationContext) {
 		let initialFrameAgreementProducts = this.props.currentFrameAgreement._ui.attachment?.products ?? {};
+		let eventHookData = {
+			type: 'Commercial Products',
+			[this.productId]: {}
+		}
+
 		if (type === '_addons') {
+			eventHookData[this.productId].addons = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
@@ -79,6 +98,7 @@ export class CommercialProduct extends React.Component {
 		}
 
 		if (type === '_charges') {
+			eventHookData[this.productId].charges = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
@@ -97,6 +117,7 @@ export class CommercialProduct extends React.Component {
 		}
 
 		if (type === '_rateCards') {
+			eventHookData[this.productId].rateCards = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
@@ -114,6 +135,7 @@ export class CommercialProduct extends React.Component {
 		}
 
 		if (type === '_product') {
+			eventHookData[this.productId].product = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
@@ -135,7 +157,17 @@ export class CommercialProduct extends React.Component {
 			);
 		}
 
-		data = await publish('onBeforeNegotiate', data);
+		if (type === '_volume') {
+			eventHookData[this.productId].volume = { ...negotiationContext }
+		}
+
+		try {
+			eventHookData = await publish('onBeforeNegotiate', eventHookData);
+		} catch (error) {
+			console.error("Rejected by the subscriber: ");
+			console.error("error message: ", error);
+			return;
+		}
 
 		window.FAM.api.validateStatusConsistency(this.props.faId);
 
@@ -244,8 +276,8 @@ export class CommercialProduct extends React.Component {
 										validation={this.props.validation[this.productId].addons}
 										attachment={_attachment._addons || {}}
 										addons={this.props.product._addons}
-										onNegotiate={data => {
-											this.onNegotiate('_addons', data);
+										onNegotiate={(data, negotiationContext) => {
+											this.onNegotiate('_addons', data, negotiationContext);
 										}}
 									/>
 								</Tab>
@@ -270,8 +302,8 @@ export class CommercialProduct extends React.Component {
 											levels={this.props.product._discountLvIds}
 											validation={this.props.validation[this.productId].charges}
 											attachment={_attachment._charges || {}}
-											onNegotiate={data => {
-												this.onNegotiate('_charges', data);
+											onNegotiate={(data, negotiationContext) => {
+												this.onNegotiate('_charges', data, negotiationContext);
 											}}
 											authLevel={this.props.product.cspmb__Authorization_Level__c}
 											charges={this.props.product._charges}
@@ -291,8 +323,8 @@ export class CommercialProduct extends React.Component {
 											levels={this.props.product._discountLvIds}
 											validation={this.props.validation[this.productId].product}
 											attachment={_attachment._product || {}}
-											onNegotiate={data => {
-												this.onNegotiate('_product', data);
+											onNegotiate={(data, negotiationContext) => {
+												this.onNegotiate('_product', data, negotiationContext);
 											}}
 										/>
 									)}
@@ -310,8 +342,8 @@ export class CommercialProduct extends React.Component {
 										validation={this.props.validation[this.productId].rated}
 										attachment={_attachment._rateCards || {}}
 										rateCards={this.props.product._rateCards}
-										onNegotiate={data => {
-											this.onNegotiate('_rateCards', data);
+										onNegotiate={(data, negotiationContext) => {
+											this.onNegotiate('_rateCards', data, negotiationContext);
 										}}
 									/>
 								</Tab>

@@ -24,11 +24,25 @@ export class Addons extends React.Component {
 	}
 
 	negotiateInline(addon, chargeType, value) {
-		let negotiation = this.props.attachment;
-		negotiation[addon.Id] = negotiation[addon.Id] || {};
-		negotiation[addon.Id][chargeType] = +value;
+		const prevNegotiation = { ...this.props.attachment };
+		const negotiationContext = {
+			previousNegotiations: {
+				[addon.Id]: {
+					[chargeType]: prevNegotiation[addon.Id][chargeType]
+				}
+			},
+			currentNegotiations: {
+				[addon.Id]: {
+					[chargeType]: Number(value)
+				}
+			}
+		}
 
-		this.props.onNegotiate(negotiation);
+		let updatedNegotiation = { ...prevNegotiation }
+		updatedNegotiation[addon.Id] = updatedNegotiation[addon.Id] || {};
+		updatedNegotiation[addon.Id][chargeType] = Number(value);
+
+		this.props.onNegotiate(updatedNegotiation, negotiationContext);
 	}
 
 	// Id, Name, cspmb__Is_Active__c, cspmb__Effective_Start_Date__c, cspmb__Effective_End_Date__c, cspmb__Billing_Frequency__c, cspmb__Authorization_Level__c, cspmb__Recurring_Charge__c

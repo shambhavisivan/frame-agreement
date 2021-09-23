@@ -768,7 +768,9 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	modal_categorization_btn_apply: 'Apply Filter',
 	modal_categorization_title: 'Product Categorization',
 	modal_categorization_btn_clear: 'Clear Filter',
-	no_categories_available: 'No categories associated with the catalogue'
+	no_categories_available: 'No categories associated with the catalogue',
+	addons_tab_title: 'Standalone Addons',
+	offers_tab_title: 'Offers'
 };
 /* eslint-enable */
 

@@ -26,18 +26,19 @@ interface AddProductsModalProp {
 	onAddProducts: (products: CommercialProductStandalone[]) => void;
 	addedProductIds: Array<string>;
 }
-type SelectedProducts = { [id: string]: CommercialProductStandalone };
+export type SelectedProducts = { [id: string]: CommercialProductStandalone };
 const commercialProductFilter: ProductFilter = {
 	role: CommercialProductRole.basic,
 	type: CommercialProductType.commercialProduct
 };
+
 export function AddProductsModal({
 	isModalOpen,
 	onAddProducts,
 	onModalClose,
 	addedProductIds
 }: AddProductsModalProp): ReactElement {
-	const [productIds, setProductIds] = useState<string[] | undefined>(undefined);
+	const [productIds, setProductIds] = useState<string[]>([]);
 	const { data: products, status } = useCommercialProducts(productIds);
 	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
 	const [showCategorizationPanel, setShowCategorizationPanel] = useState(false);

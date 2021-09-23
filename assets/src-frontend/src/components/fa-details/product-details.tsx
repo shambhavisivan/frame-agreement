@@ -32,7 +32,10 @@ export function ProductDetails({
 				/>
 			</td>
 			<td>
-				<RateCards rateCards={rateCards} negotiateRateCardLine={negotiateRateCardLine} />
+				<RateCards
+					rateCards={rateCards || {}}
+					negotiateRateCardLine={negotiateRateCardLine}
+				/>
 			</td>
 		</tr>
 	);

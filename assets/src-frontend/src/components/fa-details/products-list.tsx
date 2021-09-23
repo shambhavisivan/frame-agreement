@@ -1,32 +1,38 @@
 import React, { ReactElement } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
 import { NegotiateProductActions } from './negotiation/negotiation-action-creator';
-import { NegotiationItemType, ProductNegotiation } from './negotiation/negotiation-reducer';
-import { ProductDetails } from './product-details';
+import { NegotiationItemType } from './negotiation/negotiation-reducer';
+import { ProductListGrid, ProductStatus } from './product-list-grid';
+
+export interface ProductActions {
+	negotiateRecurring(value: number): void;
+	negotiateOneOff(value: number): void;
+	negotiateRateCardLine(rateCardId: string, rateCardLineId: string, value: number): void;
+}
 
 interface ProductsListProps {
-	selectedProducts: (CommercialProductStandalone & ProductNegotiation)[];
+	productList: CommercialProductStandalone[];
 	createProductActions: (
 		productId: string,
-		itemType: NegotiationItemType
+		actionType: NegotiationItemType
 	) => NegotiateProductActions;
 }
 
 export function ProductsList({
-	selectedProducts,
+	productList,
 	createProductActions
 }: ProductsListProps): ReactElement {
 	return (
-		<table>
-			<tbody>
-				{selectedProducts.map((p) => (
-					<ProductDetails
-						key={p.id}
-						product={p}
-						actions={createProductActions(p.id, 'products')}
-					/>
-				))}
-			</tbody>
-		</table>
+		<div>
+			<ProductListGrid
+				data={productList}
+				selectedProducts={function (
+					selectedProducts: CommercialProductStandalone[],
+					checkBoxState: ProductStatus
+				): void {
+					throw new Error('Function not implemented.');
+				}}
+			/>
+		</div>
 	);
 }

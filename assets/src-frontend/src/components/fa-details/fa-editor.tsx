@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useReducer, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import {
 	CommercialProductData,
 	CommercialProductStandalone,
@@ -6,14 +6,17 @@ import {
 } from '../../datasources';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
 import { LoadingFallback } from '../loading-fallback';
-import { CSButton, CSDataTable } from '@cloudsense/cs-ui-components';
+import { CSButton } from '@cloudsense/cs-ui-components';
 
-import negotiationReducer, { selectAttachment } from './negotiation/negotiation-reducer';
-import { AddProductsModal } from '../dialogs/add-products-modal';
+import { selectAttachment } from './negotiation/negotiation-reducer';
+import { AddProductsModal, SelectedProducts } from '../dialogs/add-products-modal';
 import { useGetFaAttachment } from '../../hooks/use-get-fa-attachment';
 import { QueryStatus } from 'react-query';
 import { useCommercialProductData } from '../../hooks/use-commercial-product-data';
 import { useSaveAttachment } from '../../hooks/use-save-attachment';
+import { ProductStatus } from './product-list-grid';
+import { DetailsTab } from './details-tab';
+import { store } from './details-page-provider';
 
 interface FaEditorProps {
 	agreement?: FrameAgreement;
@@ -29,6 +32,8 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 		productIds || []
 	);
 	const { mutate: saveAttachment } = useSaveAttachment();
+	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
+	const { dispatch, ...state } = useContext(store);
 
 	useEffect(() => {
 		if (attachmentStatus === QueryStatus.Success) {
@@ -38,20 +43,19 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	}, [attachmentStatus, attachment]);
 
 	useEffect(() => {
+		if (Object.keys(state.products).length) {
+			saveAttachment({
+				faId: agreement?.id || '',
+				attachment: selectAttachment(state)
+			});
+		}
+	}, [agreement?.id, saveAttachment, Object.keys(state.products).length]);
+
+	useEffect(() => {
 		if (productDataStatus === QueryStatus.Success && productsStatus === QueryStatus.Success) {
 			addProductsToFa(products);
 		}
 	}, [productDataStatus, products, productsStatus]);
-
-	const [state, dispatch] = useReducer(negotiationReducer, {
-		products: {},
-		offers: {},
-		addons: {}
-	});
-
-	useEffect(() => {
-		saveAttachment({ faId: agreement?.id || '', attachment: selectAttachment(state) });
-	}, [Object.keys(state.products).length, agreement]);
 
 	function addProductsToFa(products: CommercialProductStandalone[]): void {
 		dispatch({
@@ -75,36 +79,39 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 			onAddProducts={onAddProducts}
 			onModalClose={(): void => setAddProductsModalOpen(false)}
 			addedProductIds={productIds || []}
-		/>
+		></AddProductsModal>
 	);
+
+	const selectProducts = (
+		productList: CommercialProductStandalone[],
+		productStatus: ProductStatus
+	): void => {
+		const selected = productList.reduce(
+			(selectedProd, currentSelected): SelectedProducts => {
+				if (!selectedProd[currentSelected.id] && productStatus === 'add') {
+					selectedProd[currentSelected.id] = currentSelected;
+				} else {
+					delete selectedProd[currentSelected.id];
+				}
+				return selectedProd;
+			},
+			{ ...selectedProducts }
+		);
+		setSelectedProducts(
+			(prevState): SelectedProducts => {
+				return { ...prevState, ...selected };
+			}
+		);
+	};
 
 	return (
 		<LoadingFallback status={productsStatus}>
 			<LoadingFallback status={attachmentStatus}>
 				{isAddProductModalOpen && productSelection}
-				{/* TODO: products will be fed to seperate component to render products/details */}
-				{products.map((product) => (
-					<p>
-						{product.id}::: {product.name}
-					</p>
-				))}
-				{/* TODO: add table rows data */}
-				<CSDataTable
-					columns={[
-						{
-							key: 'products',
-							header: 'products'
-						}
-					]}
-					rows={[
-						{
-							key: 0,
-							data: {
-								products: ''
-							}
-						}
-					]}
-					density="comfortable"
+				<DetailsTab
+					products={productIds?.length ? products : []}
+					selectedProducts={selectProducts}
+					attachment={attachment || {}}
 				/>
 				{/* TODO: Move this to parent file. It needs to be sibling to header and pages. Add conditional so it is only rendered on details page */}
 				<footer className="action-footer">

@@ -267,6 +267,8 @@ namespace SfGlobal {
 		modal_categorization_title: string;
 		modal_categorization_btn_clear: string;
 		no_categories_available: string;
+		addons_tab_title: string;
+		offers_tab_title: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

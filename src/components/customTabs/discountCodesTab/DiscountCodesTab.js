@@ -166,11 +166,16 @@ async function negotiateData(data, active_fa, removed_group) {
 		}, {});
 
 	data.forEach(cp => {
+		const negotiatedProduct = active_fa._ui.attachment.products[cp.Id]
+			? active_fa._ui.attachment.products[cp.Id]
+			: active_fa._ui.attachment.offers[cp.Id];
+
 		if (rcl_codes.length && cp._rateCards?.length) {
 			// rcl is nested inside rc, flatten this structure to avoid nested loop
 			let _rateCardLines = cp._rateCards.reduce((acc, iter) => [...acc, ...iter.rateCardLines], []);
 
 			_rateCardLines.forEach(rcl => {
+				const originalValue = rcl.cspmb__rate_value__c;
 				let _value = rcl.cspmb__rate_value__c;
 
 				rcl_codes.forEach(rclc => {
@@ -180,14 +185,29 @@ async function negotiateData(data, active_fa, removed_group) {
 							rclc.csfamext__rate_value__c,
 							_value
 						);
-
-						_negoArray.push({
-							priceItemId: cp.Id,
-							rateCard: rcl.cspmb__Rate_Card__c,
-							rateCardLine: rcl.Id,
-							value: _value,
-						});
 					}
+				});
+
+				if (
+					_value === originalValue &&
+					negotiatedProduct._rateCards?.hasOwnProperty(
+						rcl.cspmb__Rate_Card__c
+					) &&
+					negotiatedProduct._rateCards[rcl.cspmb__Rate_Card__c][
+						rcl.Id
+					] < originalValue
+				) {
+					_value =
+						negotiatedProduct._rateCards[rcl.cspmb__Rate_Card__c][
+							rcl.Id
+						];
+				}
+
+				_negoArray.push({
+					priceItemId: cp.Id,
+					rateCard: rcl.cspmb__Rate_Card__c,
+					rateCardLine: rcl.Id,
+					value: _value,
 				});
 			});
 		}
@@ -204,6 +224,8 @@ async function negotiateData(data, active_fa, removed_group) {
 			// Apply to charges
 
 			cp._charges.forEach(charge => {
+				const originalRecurringPrice = charge.recurring;
+				const originalOneOffPrice = charge.oneOff;
 				let _recurring = charge.recurring;
 				let _oneOff = charge.oneOff;
 
@@ -241,10 +263,28 @@ async function negotiateData(data, active_fa, removed_group) {
 				_negoFormatCharge.value = {};
 
 				if (_recurring !== undefined) {
+					if (
+						_recurring === originalRecurringPrice &&
+						negotiatedProduct._charges?.hasOwnProperty(charge.Id) &&
+						negotiatedProduct._charges[charge.Id]?.recurring <
+							_recurring
+					) {
+						_recurring =
+							negotiatedProduct._charges[charge.Id].recurring;
+					}
 					_negoFormatCharge.value.recurring = _recurring;
 				}
 
 				if (_oneOff !== undefined) {
+					if (
+						_oneOff === originalOneOffPrice &&
+						negotiatedProduct._charges?.hasOwnProperty(charge.Id) &&
+						negotiatedProduct._charges[charge.Id]?.oneOff <
+							_oneOff
+					) {
+						_oneOff =
+							negotiatedProduct._charges[charge.Id].oneOff;
+					}
 					_negoFormatCharge.value.oneOff = _oneOff;
 				}
 
@@ -254,6 +294,8 @@ async function negotiateData(data, active_fa, removed_group) {
 			});
 		} else {
 			// Apply to product charges
+			const originalRecurringPrice = _originalProductValues[cp.Id].recurring;
+			const originalOneOffPrice = _originalProductValues[cp.Id].oneOff;
 			let _recurring = _originalProductValues[cp.Id].recurring;
 			let _oneOff = _originalProductValues[cp.Id].oneOff;
 
@@ -290,10 +332,22 @@ async function negotiateData(data, active_fa, removed_group) {
 			_negoFormatCp.value = {};
 
 			if (_recurring !== undefined) {
+				if (
+					_recurring === originalRecurringPrice &&
+					negotiatedProduct._product?.recurring < _recurring
+				) {
+					_recurring = negotiatedProduct._product.recurring;
+				}
 				_negoFormatCp.value.recurring = _recurring;
 			}
 
 			if (_oneOff !== undefined) {
+				if (
+					_oneOff === originalOneOffPrice &&
+					negotiatedProduct._product?.oneOff < _oneOff
+				) {
+					_oneOff = negotiatedProduct._product.oneOff;
+				}
 				_negoFormatCp.value.oneOff = _oneOff;
 			}
 

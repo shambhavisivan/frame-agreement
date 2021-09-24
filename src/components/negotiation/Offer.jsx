@@ -163,8 +163,8 @@ export class Offer extends React.Component {
 		try {
 			eventHookData = await publish('onBeforeNegotiate', eventHookData);
 		} catch (error) {
-			console.error("Rejected by the subscriber: ");
-			console.error("error message: ", error);
+			console.error(window.SF.labels.subscriber_rejection_error);
+			console.error(error);
 			return;
 		}
 

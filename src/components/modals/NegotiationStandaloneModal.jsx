@@ -20,6 +20,7 @@ import {
 
 import { createToast } from '~/src/actions';
 import { DiscountInput } from '../utillity/inputs/discount-input';
+import * as Constants from '~/src/utils/constants'
 
 const ADDON_VALUE_FIELD = 'cspmb__Recurring_Charge__c';
 const RATE_VALUE_FIELD = 'cspmb__rate_value__c';
@@ -56,7 +57,7 @@ class NegotiationStandaloneModal extends Component {
 		};
 
 		this.eventHookData = {
-			type: 'Standalone Addons'
+			type: Constants.EVENT_DATA_STANDALONE_ADDON
 		};
 	}
 

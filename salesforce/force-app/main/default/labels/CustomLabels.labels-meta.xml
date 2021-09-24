@@ -1303,6 +1303,20 @@
         <value>They will be visible as soon as you create them.</value>
     </labels>
     <labels>
+        <fullName>subscriber_rejection_error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>subscriber_rejection_error</shortDescription>
+        <value>Rejected by the subscriber</value>
+    </labels>
+    <labels>
+        <fullName>subscriber_rejection_input_error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>subscriber_rejection_input_error</shortDescription>
+        <value>Rejected by the subscriber or invalid input format, check logs for more information. Kindly refer user guide incase the error is due to invalid input format</value>
+    </labels>
+    <labels>
         <fullName>toast_approvalAction_failed</fullName>
         <language>en_US</language>
         <protected>true</protected>

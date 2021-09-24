@@ -10,3 +10,7 @@ export const FA_OFFERS = {
 }
 
 export const IGNORE_PRS = true;
+
+export const EVENT_DATA_COMMERCIAL_PRODUCT = "Commercial Products";
+export const EVENT_DATA_OFFER = "Offers";
+export const EVENT_DATA_STANDALONE_ADDON = "Standalone Addons";

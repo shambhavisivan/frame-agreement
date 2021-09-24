@@ -22,6 +22,7 @@ import { DiscountInput } from '../utillity/inputs/discount-input';
 import { isDiscountAllowed } from '../../utils/shared-service';
 
 import * as Constants from '~/src/utils/constants'
+import { frameHookAddonData, frameHookChargesData, frameHookProductChargesData, frameHookRateCardsData } from '../../utils/event-service';
 
 // import { getFrameAgreements } from '~/src/actions';
 
@@ -259,7 +260,10 @@ class NegotiationModal extends Component {
 		})();
 
 		this.eventHookData = {
-			type: props.commercialProductType  === Constants.ROLE_OFFER? 'Offers': 'Commercial Products'
+			type:
+				props.commercialProductType === Constants.ROLE_OFFER
+					? Constants.EVENT_DATA_OFFER
+					: Constants.EVENT_DATA_COMMERCIAL_PRODUCT,
 		};
 	}
 
@@ -510,104 +514,6 @@ class NegotiationModal extends Component {
 			}
 
 			return +val.toFixed(8);
-		}
-
-		function frameHookAddonData(eventHookData, updatedAttachment, cp, addon, chargeType, negotiatedValue) {
-			const prevNegotiation = updatedAttachment[cp.Id]._addons || {};
-			eventHookData[cp.Id] = {
-				...eventHookData[cp.Id],
-				addons: {
-					...eventHookData[cp.Id]?.addons || {},
-					previousNegotiations: {
-						...eventHookData[cp.Id]?.addons?.previousNegotiations || {},
-						[addon.Id]: {
-							...eventHookData[cp.Id]?.addons?.previousNegotiations[addon.Id] || {},
-							[chargeType]: prevNegotiation[addon.Id][chargeType]
-						}
-					},
-					currentNegotiations: {
-						...eventHookData[cp.Id]?.addons?.currentNegotiations || {},
-						[addon.Id]: {
-							...eventHookData[cp.Id]?.addons?.currentNegotiations[addon.Id] || {},
-							[chargeType]: negotiatedValue
-						}
-					}
-				}
-			}
-
-			return eventHookData;
-		}
-
-		function frameHookChargesData(eventHookData, updatedAttachment, cp, charge, negotiatedValue) {
-			const prevNegotiation = updatedAttachment[cp.Id]._charges || {};
-			eventHookData[cp.Id] = {
-				...eventHookData[cp.Id],
-				charges: {
-					...eventHookData[cp.Id]?.charges || {},
-					previousNegotiations: {
-						...eventHookData[cp.Id]?.charges?.previousNegotiations || {},
-						[charge.Id]: {
-							...eventHookData[cp.Id]?.charges?.previousNegotiations[charge.Id] || {},
-							[charge._type]: prevNegotiation[charge.Id][charge._type]
-						}
-					},
-					currentNegotiations: {
-						...eventHookData[cp.Id]?.charges?.currentNegotiations || {},
-						[charge.Id]: {
-							...eventHookData[cp.Id]?.charges?.currentNegotiations[charge.Id] || {},
-							[charge._type]: negotiatedValue
-						}
-					}
-				}
-			}
-
-			return eventHookData;
-		}
-
-		function frameHookProductChargesData(eventHookData, updatedAttachment, cp, chargeType, negotiatedValue) {
-			const prevNegotiation = updatedAttachment[cp.Id]._product || {};
-			eventHookData[cp.Id] = {
-				...eventHookData[cp.Id],
-				product: {
-					...eventHookData[cp.Id]?.product || {},
-					previousNegotiations: {
-						...eventHookData[cp.Id]?.product?.previousNegotiations || {},
-						[chargeType]: prevNegotiation[chargeType]
-					},
-					currentNegotiations: {
-						...eventHookData[cp.Id]?.product?.currentNegotiations || {},
-						[chargeType]: negotiatedValue
-					}
-				}
-			}
-
-			return eventHookData;
-		}
-
-		function frameHookRateCardsData(eventHookData, updatedAttachment, cp, rc, rcl, negotiatedValue) {
-			const prevNegotiation = updatedAttachment[cp.Id]._rateCards || {};
-			eventHookData[cp.Id] = {
-				...eventHookData[cp.Id],
-				rateCards: {
-					...eventHookData[cp.Id]?.rateCards || {},
-					previousNegotiations: {
-						...eventHookData[cp.Id]?.rateCards?.previousNegotiations || {},
-						[rc.Id]: {
-							...eventHookData[cp.Id]?.rateCards?.previousNegotiations[rc.Id] || {},
-							[rcl.Id]: prevNegotiation[rc.Id][rcl.Id]
-						}
-					},
-					currentNegotiations: {
-						...eventHookData[cp.Id]?.rateCards?.currentNegotiations || {},
-						[rc.Id]: {
-							...eventHookData[cp.Id]?.rateCards?.currentNegotiations[rc.Id] || {},
-							[rcl.Id]: negotiatedValue
-						}
-					}
-				}
-			}
-
-			return eventHookData;
 		}
 
 		let selected = { ...this.state.selected };

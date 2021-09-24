@@ -365,6 +365,8 @@
 			  "rl_tab": "{!$Label.rl_tab}",
 			  "save_fa_message": "{!$Label.save_fa_message}",
 			  "save_fa_products_message": "{!$Label.save_fa_products_message}",
+			  "subscriber_rejection_error": "{!$Label.subscriber_rejection_error}",
+			  "subscriber_rejection_input_error": "{!$Label.subscriber_rejection_input_error}",
 			  "toast_approvalAction_failed": "{!$Label.toast_approvalAction_failed}",
 			  "toast_approvalAction_success": "{!$Label.toast_approvalAction_success}",
 			  "toast_created_fa": "{!$Label.toast_created_fa}",

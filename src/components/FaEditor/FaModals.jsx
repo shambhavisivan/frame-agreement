@@ -58,8 +58,8 @@ class FaModals extends React.Component {
 		try {
 			eventData = await publish('onBeforeBulkNegotiation', eventData);
 		} catch (error) {
-			console.error("Rejected by the subscriber: ");
-			console.error("error message: ", error);
+			console.error(window.SF.labels.subscriber_rejection_error);
+			console.error(error);
 			this.onCloseModal();
 			return;
 		}
@@ -80,8 +80,8 @@ class FaModals extends React.Component {
 		try {
 			eventData = await publish('onBeforeBulkNegotiation', eventData);
 		} catch (error) {
-			console.error("Rejected by the subscriber: ");
-			console.error("error message: ", error);
+			console.error(window.SF.labels.subscriber_rejection_error);
+			console.error(error);
 			this.onCloseModal();
 			return;
 		}
@@ -184,8 +184,8 @@ class FaModals extends React.Component {
 		try {
 			eventData = await publish('onBeforeBulkNegotiation', eventData);
 		} catch (error) {
-			console.error("Rejected by the subscriber: ");
-			console.error("error message: ", error);
+			console.error(window.SF.labels.subscriber_rejection_error);
+			console.error(error);
 			this.onCloseModal();
 			return;
 		}

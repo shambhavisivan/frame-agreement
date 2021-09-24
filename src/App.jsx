@@ -56,6 +56,8 @@ import {
 	undoDecomposition,
 	submitForApproval
 } from './api';
+import { buildBulkNegotiationEventData } from './utils/event-service';
+import * as Constants from '~/src/utils/constants'
 
 const OFFER = 'OFFER';
 export class App extends Component {
@@ -617,9 +619,43 @@ export class App extends Component {
 		 * @return Promise(attachment) updated attachment
 		 */
 		window.FAM.api.negotiate = async (faId, data = window.mandatory('negotiate()')) => {
-			data = await publish('onBeforeNegotiate', data);
-			this.props.apiNegotiate(faId, data);
-			publish('onAfterNegotiate', this.props.frameAgreements[faId]._ui.attachment);
+			let resp_attachment = this.props.frameAgreements[faId]._ui
+				.attachment;
+
+			if (resp_attachment === null) {
+				resp_attachment = await this.props.getAttachment(faId);
+			}
+			let negotiationData = new Array();
+
+			if (Array.isArray(data)) {
+				negotiationData = [...data];
+			} else {
+				negotiationData.push(data);
+			}
+			let commercialProducts = await window.FAM.api.getCommercialProducts(
+				faId
+			);
+			//data will be transformed for efficiency
+			commercialProducts = JSON.parse(JSON.stringify(commercialProducts));
+			try {
+				let eventData = buildBulkNegotiationEventData(
+					negotiationData,
+					resp_attachment.products,
+					commercialProducts,
+					Constants.EVENT_DATA_COMMERCIAL_PRODUCT
+				);
+				eventData = await publish("onBeforeNegotiate", eventData);
+				this.props.apiNegotiate(faId, data);
+				publish(
+					"onAfterNegotiate",
+					this.props.frameAgreements[faId]._ui.attachment
+				);
+			} catch (error) {
+				console.error(
+					window.SF.labels.subscriber_rejection_input_error
+				);
+				console.error(error);
+			}
 
 			this.props.validateFrameAgreement(faId);
 
@@ -629,9 +665,41 @@ export class App extends Component {
 		};
 
 		window.FAM.api.negotiateOffers = async (faId, data = window.mandatory('negotiateOffers()')) => {
-			data = await publish('onBeforeOfferNegotiate', data);
-			this.props.apiNegotiateOffer(faId, data);
-			publish('onAfterOfferNegotiate', this.props.frameAgreements[faId]._ui.attachment);
+			let resp_attachment = this.props.frameAgreements[faId]._ui
+				.attachment;
+
+			if (resp_attachment === null) {
+				resp_attachment = await this.props.getAttachment(faId);
+			}
+			let negotiationData = new Array();
+
+			if (Array.isArray(data)) {
+				negotiationData = [...data];
+			} else {
+				negotiationData.push(data);
+			}
+			let offers = await window.FAM.api.getOffers(faId);
+			//data will be transformed for efficiency
+			offers = JSON.parse(JSON.stringify(offers));
+			try {
+				let eventData = buildBulkNegotiationEventData(
+					negotiationData,
+					resp_attachment.products,
+					offers,
+					Constants.EVENT_DATA_OFFER
+				);
+				eventData = await publish("onBeforeNegotiate", eventData);
+				this.props.apiNegotiateOffer(faId, data);
+				publish(
+					"onAfterNegotiate",
+					this.props.frameAgreements[faId]._ui.attachment
+				);
+			} catch (error) {
+				console.error(
+					window.SF.labels.subscriber_rejection_input_error
+				);
+				console.error(error);
+			}
 
 			this.props.validateFrameAgreement(faId);
 

@@ -33,18 +33,18 @@ export const validateAddons = (data, attachment, initialFrameAgreementAttachment
 				addon
 			};
 
-			if (isFalsyExceptZero(attachment[addon.Id]?.oneOff)) {
+			if (!isFalsyExceptZero(attachment[addon.Id]?.oneOff)) {
 				negotiationFormat.negotiatedOneOff = attachment[addon.Id].oneOff;
 
-				if (isFalsyExceptZero(initialFrameAgreementAttachment[addon.Id]?.oneOff)) {
+				if (!isFalsyExceptZero(initialFrameAgreementAttachment[addon.Id]?.oneOff)) {
 					negotiationFormat.initialNegotiatedOneOff = initialFrameAgreementAttachment[addon.Id].oneOff;
 				}
 			}
 
-			if (isFalsyExceptZero(attachment[addon.Id]?.recurring)) {
+			if (!isFalsyExceptZero(attachment[addon.Id]?.recurring)) {
 				negotiationFormat.negotiatedRecurring = attachment[addon.Id].recurring;
 
-				if (isFalsyExceptZero(initialFrameAgreementAttachment[addon.Id]?.recurring)) {
+				if (!isFalsyExceptZero(initialFrameAgreementAttachment[addon.Id]?.recurring)) {
 					negotiationFormat.initialNegotiatedRecurring = initialFrameAgreementAttachment[addon.Id].recurring;
 				}
 			}
@@ -85,7 +85,7 @@ export const validateAddons = (data, attachment, initialFrameAgreementAttachment
 						) || 0;
 
 					if (
-						isFalsyExceptZero(negotiationFormat.negotiatedOneOff) &&
+						!isFalsyExceptZero(negotiationFormat.negotiatedOneOff) &&
 						!isIgnoreAuthorization(
 							negotiationFormat.initialNegotiatedOneOff,
 							negotiationFormat.negotiatedOneOff,
@@ -109,7 +109,7 @@ export const validateAddons = (data, attachment, initialFrameAgreementAttachment
 					}
 
 					if (
-						isFalsyExceptZero(negotiationFormat.negotiatedRecurring) &&
+						!isFalsyExceptZero(negotiationFormat.negotiatedRecurring) &&
 						!isIgnoreAuthorization(
 							negotiationFormat.initialNegotiatedRecurring,
 							negotiationFormat.negotiatedRecurring,
@@ -189,7 +189,7 @@ export const validateProduct = (data, initialFrameAgreementData, status) => {
 					) || 0;
 
 				if (
-					isFalsyExceptZero(data.negotiatedOneOff) &&
+					!isFalsyExceptZero(data.negotiatedOneOff) &&
 					!isIgnoreAuthorization(
 						initialFrameAgreementData?.negotiatedOneOff,
 						data.negotiatedOneOff,
@@ -213,7 +213,7 @@ export const validateProduct = (data, initialFrameAgreementData, status) => {
 				}
 
 				if (
-					isFalsyExceptZero(data.negotiatedRecurring) &&
+					!isFalsyExceptZero(data.negotiatedRecurring) &&
 					!isIgnoreAuthorization(
 						initialFrameAgreementData?.negotiatedRecurring,
 						data.negotiatedRecurring,
@@ -325,7 +325,7 @@ export const validateCharges = (data, authLevel, attachment, initialFrameAgreeme
 						) || 0;
 
 					if (
-						isFalsyExceptZero(negotiationFormat.negotiatedValue) &&
+						!isFalsyExceptZero(negotiationFormat.negotiatedValue) &&
 						!isIgnoreAuthorization(
 							negotiationFormat.initialNegotiatedValue,
 							negotiationFormat.negotiatedValue,
@@ -385,7 +385,7 @@ export const validateRateCardLines = (rcData, data2, initialFrameAgreementAttach
 					negotiatedValue: attachment[_rc.Id] && attachment[_rc.Id][_rcl.Id]
 				};
 
-				if (isFalsyExceptZero(negotiationFormat.negotiatedValue)) {
+				if (!isFalsyExceptZero(negotiationFormat.negotiatedValue)) {
 
 					if (initialFrameAgreementAttachment[_rc.Id]) {
 						negotiationFormat.initialNegotiatedValue = initialFrameAgreementAttachment[_rc.Id][_rcl.Id]

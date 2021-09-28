@@ -614,7 +614,7 @@ export const restructureReplacementCp = (cpReplacementPrsData, replacementCpCode
 }
 
 export const isFalsyExceptZero = (value) => {
-	return value || value === 0;
+	return !(value || value === 0);
 }
 
 export default sharedService;

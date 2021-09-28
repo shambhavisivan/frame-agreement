@@ -57,6 +57,8 @@ import {
 	submitForApproval
 } from './api';
 import { buildBulkNegotiationEventData } from './utils/event-service';
+import { transformProductData } from './utils/transformation-service';
+import { validateNegotiationInputData } from './utils/api-data-validation-service';
 import * as Constants from '~/src/utils/constants'
 
 const OFFER = 'OFFER';
@@ -637,7 +639,9 @@ export class App extends Component {
 			);
 			//data will be transformed for efficiency
 			commercialProducts = JSON.parse(JSON.stringify(commercialProducts));
+			commercialProducts = transformProductData(commercialProducts);
 			try {
+				negotiationData = validateNegotiationInputData(negotiationData, commercialProducts, this.props.settings.FACSettings);
 				let eventData = buildBulkNegotiationEventData(
 					negotiationData,
 					resp_attachment.products,
@@ -645,7 +649,7 @@ export class App extends Component {
 					Constants.EVENT_DATA_COMMERCIAL_PRODUCT
 				);
 				eventData = await publish("onBeforeNegotiate", eventData);
-				this.props.apiNegotiate(faId, data);
+				this.props.apiNegotiate(faId, negotiationData);
 				publish(
 					"onAfterNegotiate",
 					this.props.frameAgreements[faId]._ui.attachment
@@ -681,7 +685,9 @@ export class App extends Component {
 			let offers = await window.FAM.api.getOffers(faId);
 			//data will be transformed for efficiency
 			offers = JSON.parse(JSON.stringify(offers));
+			offers = transformProductData(offers);
 			try {
+				negotiationData = validateNegotiationInputData(negotiationData, offers, this.props.settings.FACSettings);
 				let eventData = buildBulkNegotiationEventData(
 					negotiationData,
 					resp_attachment.products,
@@ -689,7 +695,7 @@ export class App extends Component {
 					Constants.EVENT_DATA_OFFER
 				);
 				eventData = await publish("onBeforeNegotiate", eventData);
-				this.props.apiNegotiateOffer(faId, data);
+				this.props.apiNegotiateOffer(faId, negotiationData);
 				publish(
 					"onAfterNegotiate",
 					this.props.frameAgreements[faId]._ui.attachment

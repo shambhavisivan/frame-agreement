@@ -1,4 +1,8 @@
 global with sharing class FrameRateManagerController {
+	public static final Integer DEFAULT_QUERY_LIMIT = 5000;
+	public static final Integer DEFAULT_RECORDS_PER_PAGE = 50;
+	public static final String CP_TYPE = 'Commercial Product';
+	public static final String CP_ROLE = 'Basic';
 
 	public transient csutil.CustomResource[] commonContainerPageResources {
 		get;
@@ -1147,7 +1151,7 @@ global with sharing class FrameRateManagerController {
 		return overrideCharges(cpIdMap);
 	}
 
-	private static List<cspmb__Price_Item__c> overrideCharges(Map<Id, cspmb__Price_Item__c> cpIdMap) {
+	public static List<cspmb__Price_Item__c> overrideCharges(Map<Id, cspmb__Price_Item__c> cpIdMap) {
 		// modification of cpList is added because of PLM advanced pricing regulation
 		// fetching recurring and one-off adjustment, then showing them in one-off and recurring charge of CP
 		csutil__JSON_Data__c standardPricebook = getStandardPricebook();
@@ -2695,7 +2699,7 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	private static Boolean getPsSwitchStatus() {
+	public static Boolean getPsSwitchStatus() {
 		Fac_Settings__c facSettings = getFacSetting();
 
 		return facSettings.is_ps_enabled__c;

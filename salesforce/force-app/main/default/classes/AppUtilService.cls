@@ -38,5 +38,33 @@ public class AppUtilService {
 
 		return new List<String>(faSobjectDescribe.fields.getMap().keySet());
 	}
+
+	public static List<String> getSObjectFields(String sObjectName) {
+		Schema.DescribeSObjectResult faSobjectDescribe = AppUtilService.getSobjectDescribe(sObjectName);
+		return new List<String>(faSobjectDescribe.fields.getMap().keySet());
+	}
+
+	public static String getFilterClause(String filterFields) {
+
+		Map<String, Object> filterFieldsMap =  new Map<String, Object>();
+		String whereClause = '(';
+		if (String.isNotBlank(filterFields)) {
+			filterFieldsMap = (Map<String, Object>) Json.deserializeUntyped(filterFields);
+
+			Integer index = 1;
+			for (String key : filterFieldsMap.keySet()) {
+				if (index == filterFieldsMap.keySet().size()) {
+					whereClause += key + ' like \'%' + filterFieldsMap.get(key) + '%\'';
+				} else {
+					whereClause += key + ' like \'%' + filterFieldsMap.get(key) + '%\' and ';
+				}
+				index++;
+			}
+			whereClause+= ')';
+		} else {
+			whereClause = '';
+		}
+		return whereClause;
+	}
 }
 

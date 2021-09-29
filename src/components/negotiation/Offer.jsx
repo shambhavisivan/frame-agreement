@@ -37,6 +37,7 @@ export class Offer extends React.Component {
 		super(props);
 
 		this.onExpandOffer = this.onExpandOffer.bind(this);
+		this.buildEventData = this.buildEventData.bind(this);
 
 		this.offerId = this.props.offer.Id;
 		this.validation = this.props.validationOffersInfo || {};
@@ -74,12 +75,17 @@ export class Offer extends React.Component {
 
 	async onNegotiate(type, data, negotiationContext) {
 		let initialFrameAgreementOffers = this.props.currentFrameAgreement._ui.attachment?.offers ?? {};
-		let eventHookData = {
-			type: 'Offers',
-			[this.offerId]: {}
+		let eventHookData = this.buildEventData(type, negotiationContext);
+
+		try {
+			eventHookData = await publish('onBeforeNegotiate', eventHookData);
+		} catch (error) {
+			console.error(window.SF.labels.subscriber_rejection_error);
+			console.error(error);
+			return;
 		}
+
 		if (type === '_addons') {
-			eventHookData[this.offerId].addons = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.offerId,
@@ -97,7 +103,6 @@ export class Offer extends React.Component {
 		}
 
 		if (type === '_charges') {
-			eventHookData[this.offerId].charges = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.offerId,
@@ -116,7 +121,6 @@ export class Offer extends React.Component {
 		}
 
 		if (type === '_rateCards') {
-			eventHookData[this.offerId].rateCards = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.offerId,
@@ -134,7 +138,6 @@ export class Offer extends React.Component {
 		}
 
 		if (type === '_product') {
-			eventHookData[this.offerId].product = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.offerId,
@@ -156,23 +159,36 @@ export class Offer extends React.Component {
 			);
 		}
 
-		if (type === '_volume') {
-			eventHookData[this.productId].volume = { ...negotiationContext }
-		}
-
-		try {
-			eventHookData = await publish('onBeforeNegotiate', eventHookData);
-		} catch (error) {
-			console.error(window.SF.labels.subscriber_rejection_error);
-			console.error(error);
-			return;
-		}
-
 		window.FAM.api.validateStatusConsistency(this.props.faId);
 
 		this.props.negotiateOffers(this.props.faId, this.offerId, type, data);
 
 		publish('onAfterNegotiate', this.props.frameAgreements[this.props.faId]._ui.attachment);
+	}
+
+	buildEventData(type, negotiationContext) {
+		let eventHookData = {
+			type: 'Offers',
+			[this.offerId]: {}
+		}
+
+		switch (type) {
+			case '_addons':
+				eventHookData[this.offerId].addons = { ...negotiationContext };
+				return eventHookData;
+			case '_charges':
+				eventHookData[this.offerId].charges = { ...negotiationContext };
+				return eventHookData;
+			case '_rateCards':
+				eventHookData[this.offerId].rateCards = { ...negotiationContext };
+				return eventHookData;
+			case '_product':
+				eventHookData[this.offerId].product = { ...negotiationContext };
+				return eventHookData;
+			case '_volume':
+				eventHookData[this.offerId].volume = { ...negotiationContext };
+				return eventHookData;
+		}
 	}
 
 	render() {

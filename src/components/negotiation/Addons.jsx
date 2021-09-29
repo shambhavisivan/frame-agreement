@@ -38,7 +38,7 @@ export class Addons extends React.Component {
 			}
 		}
 
-		let updatedNegotiation = { ...prevNegotiation }
+		let updatedNegotiation = { ...prevNegotiation };
 		updatedNegotiation[addon.Id] = updatedNegotiation[addon.Id] || {};
 		updatedNegotiation[addon.Id][chargeType] = Number(value);
 

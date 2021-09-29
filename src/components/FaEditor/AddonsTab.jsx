@@ -54,6 +54,13 @@ class AddonsTab extends React.Component {
 			type: 'Standalone Addons',
 			[addonId]: { ...negotiationContext }
 		}
+		try {
+			eventHookData = await publish('onBeforeNegotiate', eventHookData);
+		} catch (error) {
+			console.error(window.SF.labels.subscriber_rejection_error);
+			console.error(error);
+			return;
+		}
 		this.props.setAddonValidation(
 			this.props.faId,
 			validateAddons(
@@ -66,14 +73,6 @@ class AddonsTab extends React.Component {
 				}
 			)
 		);
-
-		try {
-			eventHookData = await publish('onBeforeNegotiate', eventHookData);
-		} catch (error) {
-			console.error(window.SF.labels.subscriber_rejection_error);
-			console.error(error);
-			return;
-		}
 
 		this.props.negotiateAddons(this.props.faId, addonId, data);
 

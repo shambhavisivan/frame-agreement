@@ -36,6 +36,7 @@ export class CommercialProduct extends React.Component {
 		super(props);
 
 		this.onExpandProduct = this.onExpandProduct.bind(this);
+		this.buildEventData = this.buildEventData.bind(this);
 
 		this.productId = this.props.product.Id;
 		this.validation = this.props.validation || {};
@@ -74,13 +75,17 @@ export class CommercialProduct extends React.Component {
 
 	async onNegotiate(type, data, negotiationContext) {
 		let initialFrameAgreementProducts = this.props.currentFrameAgreement._ui.attachment?.products ?? {};
-		let eventHookData = {
-			type: 'Commercial Products',
-			[this.productId]: {}
+		let eventHookData = this.buildEventData(type, negotiationContext);
+
+		try {
+			eventHookData = await publish('onBeforeNegotiate', eventHookData);
+		} catch (error) {
+			console.error(window.SF.labels.subscriber_rejection_error);
+			console.error(error);
+			return;
 		}
 
 		if (type === '_addons') {
-			eventHookData[this.productId].addons = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
@@ -98,7 +103,6 @@ export class CommercialProduct extends React.Component {
 		}
 
 		if (type === '_charges') {
-			eventHookData[this.productId].charges = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
@@ -117,7 +121,6 @@ export class CommercialProduct extends React.Component {
 		}
 
 		if (type === '_rateCards') {
-			eventHookData[this.productId].rateCards = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
@@ -135,7 +138,6 @@ export class CommercialProduct extends React.Component {
 		}
 
 		if (type === '_product') {
-			eventHookData[this.productId].product = { ...negotiationContext }
 			this.props.setValidation(
 				this.props.faId,
 				this.productId,
@@ -157,23 +159,36 @@ export class CommercialProduct extends React.Component {
 			);
 		}
 
-		if (type === '_volume') {
-			eventHookData[this.productId].volume = { ...negotiationContext }
-		}
-
-		try {
-			eventHookData = await publish('onBeforeNegotiate', eventHookData);
-		} catch (error) {
-			console.error(window.SF.labels.subscriber_rejection_error);
-			console.error(error);
-			return;
-		}
-
 		window.FAM.api.validateStatusConsistency(this.props.faId);
 
 		this.props.negotiate(this.props.faId, this.productId, type, data);
 
 		publish('onAfterNegotiate', this.props.frameAgreements[this.props.faId]._ui.attachment);
+	}
+
+	buildEventData(type, negotiationContext) {
+		let eventHookData = {
+			type: 'Commercial Products',
+			[this.productId]: {}
+		}
+
+		switch (type) {
+			case '_addons':
+				eventHookData[this.productId].addons = { ...negotiationContext };
+				return eventHookData;
+			case '_charges':
+				eventHookData[this.productId].charges = { ...negotiationContext };
+				return eventHookData;
+			case '_rateCards':
+				eventHookData[this.productId].rateCards = { ...negotiationContext };
+				return eventHookData;
+			case '_product':
+				eventHookData[this.productId].product = { ...negotiationContext };
+				return eventHookData;
+			case '_volume':
+				eventHookData[this.productId].volume = { ...negotiationContext };
+				return eventHookData;
+		}
 	}
 
 	render() {

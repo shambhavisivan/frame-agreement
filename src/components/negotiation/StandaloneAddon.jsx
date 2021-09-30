@@ -44,7 +44,7 @@ export class StandaloneAddon extends React.Component {
 		}
 
 		let updatedNegotiation = { ...prevNegotiation };
-		updatedNegotiation[addon.Id] = updatedNegotiation[addon.Id] || {};
+		updatedNegotiation[addon.Id] = { ...updatedNegotiation[addon.Id] } || {};
 		updatedNegotiation[addon.Id][chargeType] = Number(value);
 
 		this.props.onNegotiate(updatedNegotiation, addon.Id, negotiationContext);

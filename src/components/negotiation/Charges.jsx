@@ -48,7 +48,7 @@ export class Charges extends React.Component {
 		}
 
 		let updatedNegotiation = { ...prevNegotiation }
-		updatedNegotiation[charge.Id] = updatedNegotiation[charge.Id] || {};
+		updatedNegotiation[charge.Id] = { ...updatedNegotiation[charge.Id] } || {};
 		updatedNegotiation[charge.Id][charge._type] = Number(value);
 
 		this.props.onNegotiate(updatedNegotiation, negotiationContext);

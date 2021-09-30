@@ -36,7 +36,7 @@ export class Rates extends React.Component {
 		}
 
 		let updatedNegotiation = { ...prevNegotiation }
-		updatedNegotiation[rc.Id] = updatedNegotiation[rc.Id] || {};
+		updatedNegotiation[rc.Id] = { ...updatedNegotiation[rc.Id] } || {};
 		updatedNegotiation[rc.Id][rcl.Id] =  Number(value);
 
 		this.props.onNegotiate(updatedNegotiation, negotiationContext);

@@ -620,7 +620,7 @@ export class App extends Component {
 		 * @param  Object data 		negotiation structure
 		 * @return Promise(attachment) updated attachment
 		 */
-		window.FAM.api.negotiate = async (faId, data = window.mandatory('negotiate()')) => {
+		window.FAM.api.negotiate = async (faId, data = window.mandatory('negotiate()'), ignoreHooks) => {
 			let resp_attachment = this.props.frameAgreements[faId]._ui
 				.attachment;
 
@@ -642,18 +642,24 @@ export class App extends Component {
 			commercialProducts = transformProductData(commercialProducts);
 			try {
 				negotiationData = validateNegotiationInputData(negotiationData, commercialProducts, this.props.settings.FACSettings);
-				let eventData = buildBulkNegotiationEventData(
-					negotiationData,
-					resp_attachment.products,
-					commercialProducts,
-					Constants.EVENT_DATA_COMMERCIAL_PRODUCT
-				);
-				eventData = await publish("onBeforeNegotiate", eventData);
+
+				if (!ignoreHooks) {
+					let eventData = buildBulkNegotiationEventData(
+						negotiationData,
+						resp_attachment.products,
+						commercialProducts,
+						Constants.EVENT_DATA_COMMERCIAL_PRODUCT
+					);
+					eventData = await publish("onBeforeNegotiate", eventData);
+				}
 				this.props.apiNegotiate(faId, negotiationData);
-				publish(
-					"onAfterNegotiate",
-					this.props.frameAgreements[faId]._ui.attachment
-				);
+
+				if (!ignoreHooks) {
+					publish(
+						"onAfterNegotiate",
+						this.props.frameAgreements[faId]._ui.attachment
+					);
+				}
 			} catch (error) {
 				console.error(
 					window.SF.labels.subscriber_rejection_input_error
@@ -668,7 +674,7 @@ export class App extends Component {
 			return (this.props.frameAgreements[faId]._ui.attachment);
 		};
 
-		window.FAM.api.negotiateOffers = async (faId, data = window.mandatory('negotiateOffers()')) => {
+		window.FAM.api.negotiateOffers = async (faId, data = window.mandatory('negotiateOffers()'), ignoreHooks) => {
 			let resp_attachment = this.props.frameAgreements[faId]._ui
 				.attachment;
 
@@ -688,18 +694,24 @@ export class App extends Component {
 			offers = transformProductData(offers);
 			try {
 				negotiationData = validateNegotiationInputData(negotiationData, offers, this.props.settings.FACSettings);
-				let eventData = buildBulkNegotiationEventData(
-					negotiationData,
-					resp_attachment.offers,
-					offers,
-					Constants.EVENT_DATA_OFFER
-				);
-				eventData = await publish("onBeforeNegotiate", eventData);
+
+				if (!ignoreHooks) {
+					let eventData = buildBulkNegotiationEventData(
+						negotiationData,
+						resp_attachment.offers,
+						offers,
+						Constants.EVENT_DATA_OFFER
+					);
+					eventData = await publish("onBeforeNegotiate", eventData);
+				}
 				this.props.apiNegotiateOffer(faId, negotiationData);
-				publish(
-					"onAfterNegotiate",
-					this.props.frameAgreements[faId]._ui.attachment
-				);
+
+				if (!ignoreHooks) {
+					publish(
+						"onAfterNegotiate",
+						this.props.frameAgreements[faId]._ui.attachment
+					);
+				}
 			} catch (error) {
 				console.error(
 					window.SF.labels.subscriber_rejection_input_error

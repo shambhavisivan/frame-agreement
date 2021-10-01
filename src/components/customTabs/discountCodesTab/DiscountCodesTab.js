@@ -383,9 +383,9 @@ const negotiateDiscountCodesForItems = async (data, removed_group, type = COMMER
 	// Will hold negotiation API compliant structure
 	const _negoArray = await negotiateData(cpsOrOffers, active_fa, removed_group);
 	if (type === COMMERCIAL_PRODUCT) {
-		await window.FAM.api.negotiate(active_fa.Id, _negoArray);
+		await window.FAM.api.negotiate(active_fa.Id, _negoArray, true);
 	} else if (type === OFFER) {
-		await window.FAM.api.negotiateOffers(active_fa.Id, _negoArray);
+		await window.FAM.api.negotiateOffers(active_fa.Id, _negoArray, true);
 	}
 
 	return _negoArray.length;

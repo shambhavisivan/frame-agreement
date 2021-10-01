@@ -73,7 +73,9 @@ export const remoteActions: RemoteActions = {
 						.requires_approval_status as string
 				},
 				dispatcherServiceUrl: settings.FACSettings.dispatcherServiceUrl,
-				isPsEnabled: settings.FACSettings.isPsEnabled
+				isPsEnabled: settings.FACSettings.isPsEnabled,
+				inputMinmaxRestriction: settings.FACSettings.input_minmax_restriction,
+				discountAsPrice: settings.FACSettings.discount_as_price
 			}
 		};
 	},

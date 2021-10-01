@@ -15,6 +15,10 @@ function convertPercentToAmount(originalAmount: number, percentValue: number): n
 	return (originalAmount * percentValue) / 100;
 }
 
+export function convertAmountToPercent(originalAmount: number, amountValue: number): number {
+	return (amountValue * 100) / originalAmount;
+}
+
 export function applyDiscount(originalAmount: number, discount: Discount): number {
 	let discountAmount: number = discount.discountValue;
 	if (discount.discountType === 'Percentage') {
@@ -28,21 +32,20 @@ export function validateDiscountThreshold(
 	thresholds: DiscountThreshold[]
 ): DiscountThresholdViolation[] {
 	const violations: DiscountThresholdViolation[] = [];
-	if (!Boolean(negotiable.negotiated)) {
-		return violations;
-	}
-	const discount = (negotiable.original || 0) - (negotiable.negotiated || 0);
-	for (const discountThreshold of thresholds) {
-		let thresholdAmount = discountThreshold.discountThreshold;
-		if (discountThreshold.discountType === 'Percentage') {
-			thresholdAmount = convertPercentToAmount(negotiable.original || 0, thresholdAmount);
-		}
-		if (discount > thresholdAmount) {
-			const violation: DiscountThresholdViolation = {
-				thresholdName: discountThreshold.name,
-				violatedAmount: discount - thresholdAmount
-			};
-			violations.push(violation);
+	if (negotiable && negotiable.original !== undefined && negotiable.negotiated !== undefined) {
+		const discount = negotiable.original - (negotiable.negotiated || negotiable.original);
+		for (const discountThreshold of thresholds) {
+			let thresholdAmount = discountThreshold.discountThreshold;
+			if (discountThreshold.discountType === 'Percentage') {
+				thresholdAmount = convertPercentToAmount(negotiable.original || 0, thresholdAmount);
+			}
+			if (discount > thresholdAmount) {
+				const violation: DiscountThresholdViolation = {
+					thresholdName: discountThreshold.name,
+					violatedAmount: discount - thresholdAmount
+				};
+				violations.push(violation);
+			}
 		}
 	}
 	return violations;

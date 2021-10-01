@@ -1764,4 +1764,11 @@
         <shortDescription>no_categories_available</shortDescription>
         <value>No categories associated with the catalogue</value>
     </labels>
+    <labels>
+        <fullName>dropdown_no_selection</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>dropdown_no_selection</shortDescription>
+        <value>No selection made on the dropdown</value>
+    </labels>
 </CustomLabels>

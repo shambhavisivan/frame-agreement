@@ -53,7 +53,9 @@ export const mockAppSettings: AppSettings = {
 			requiresApprovalStatus: 'Requires Approval'
 		},
 		dispatcherServiceUrl: 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com',
-		isPsEnabled: true
+		isPsEnabled: true,
+		inputMinmaxRestriction: true,
+		discountAsPrice: false
 	}
 };
 
@@ -770,7 +772,8 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	modal_categorization_btn_clear: 'Clear Filter',
 	no_categories_available: 'No categories associated with the catalogue',
 	addons_tab_title: 'Standalone Addons',
-	offers_tab_title: 'Offers'
+	offers_tab_title: 'Offers',
+	dropdown_no_selection: '--none'
 };
 /* eslint-enable */
 
@@ -908,8 +911,8 @@ export const mockNegotiationState: Negotiation = {
 			},
 			addons: {
 				a1d4I000005Vx2RQAS: {
-					oneOff: { original: undefined, negotiated: undefined },
-					recurring: { original: undefined, negotiated: undefined }
+					oneOff: { original: 5, negotiated: undefined },
+					recurring: { original: 1, negotiated: undefined }
 				}
 			},
 			charges: {
@@ -920,8 +923,8 @@ export const mockNegotiationState: Negotiation = {
 			},
 			rateCards: {},
 			product: {
-				oneOff: { original: undefined, negotiated: undefined },
-				recurring: { original: undefined, negotiated: undefined }
+				oneOff: { original: 50, negotiated: undefined },
+				recurring: { original: 8, negotiated: undefined }
 			}
 		},
 		a1i4I000003KqdtQAC: {
@@ -945,18 +948,18 @@ export const mockNegotiationState: Negotiation = {
 					recurring: { original: 5, negotiated: undefined }
 				},
 				a1d4I000005Vx2gQAC: {
-					oneOff: { original: undefined, negotiated: undefined },
-					recurring: { original: undefined, negotiated: undefined }
+					oneOff: { original: 5, negotiated: undefined },
+					recurring: { original: 1, negotiated: undefined }
 				}
 			},
 			charges: {
 				a1l4I00000Du1O3QAJ: {
 					recurring: { original: 4, negotiated: undefined },
-					oneOff: { original: undefined, negotiated: undefined }
+					oneOff: { original: 6, negotiated: undefined }
 				},
 				a1l4I00000Du1a0QAB: {
 					oneOff: { original: 10, negotiated: undefined },
-					recurring: { original: undefined, negotiated: undefined }
+					recurring: { original: 1, negotiated: undefined }
 				}
 			},
 			rateCards: {
@@ -969,8 +972,8 @@ export const mockNegotiationState: Negotiation = {
 				}
 			},
 			product: {
-				oneOff: { original: undefined, negotiated: undefined },
-				recurring: { original: undefined, negotiated: undefined }
+				oneOff: { original: 7, negotiated: undefined },
+				recurring: { original: 1, negotiated: undefined }
 			}
 		}
 	},

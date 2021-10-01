@@ -405,7 +405,8 @@
 			  "warning_no_commercial_products_linked": "{!$Label.warning_no_commercial_products_linked}",
 			  "warning_no_offers_linked": "{!$Label.warning_no_offers_linked}",
 			  "filter_text_warning_message": "{!$Label.filter_text_warning_message}",
-			  "addon_label": "{!$Label.addon_label}"
+			  "addon_label": "{!$Label.addon_label}",
+				"dropdown_no_selection": "{!$Label.dropdown_no_selection}"
 			},
 			fieldLabels: {}
 		};

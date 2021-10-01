@@ -13,6 +13,8 @@ export type FacSetting = {
 	};
 	dispatcherServiceUrl: string;
 	isPsEnabled: boolean;
+	inputMinmaxRestriction: boolean;
+	discountAsPrice: boolean;
 };
 
 export interface AppSettings {
@@ -133,6 +135,17 @@ export interface UserLocaleInfo {
 	currency: string;
 }
 
+export type FieldType =
+	| 'REFERENCE'
+	| 'NUMBER'
+	| 'DATE'
+	| 'DATETIME'
+	| 'STRING'
+	| 'BOOLEAN'
+	| 'ID'
+	| 'PICKLIST'
+	| 'DOUBLE';
+
 export interface FieldMetadata {
 	fieldLabel: string;
 	apiName: string;
@@ -140,16 +153,7 @@ export interface FieldMetadata {
 	isCustom: boolean;
 	scale: number;
 	precision: number;
-	fieldType:
-		| 'REFERENCE'
-		| 'NUMBER'
-		| 'DATE'
-		| 'DATETIME'
-		| 'STRING'
-		| 'BOOLEAN'
-		| 'ID'
-		| 'PICKLIST'
-		| 'DOUBLE';
+	fieldType: FieldType;
 }
 
 export interface ProcessInstanceHistory {

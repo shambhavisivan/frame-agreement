@@ -9,3 +9,7 @@ export function capitalizeString<T extends string>(
 	const stringVal = inputString.toLowerCase(); // normalise input to lower case.
 	return `${stringVal[0].toLocaleUpperCase()}${stringVal.slice(1)}` as CapitalizeString<T>;
 }
+
+export function isNotUndefinedOrNull(value: number | null | undefined): boolean {
+	return value !== undefined && value !== null;
+}

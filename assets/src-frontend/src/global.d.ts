@@ -269,6 +269,7 @@ namespace SfGlobal {
 		no_categories_available: string;
 		addons_tab_title: string;
 		offers_tab_title: string;
+		dropdown_no_selection: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

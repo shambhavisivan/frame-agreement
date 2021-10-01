@@ -690,7 +690,7 @@ export class App extends Component {
 				negotiationData = validateNegotiationInputData(negotiationData, offers, this.props.settings.FACSettings);
 				let eventData = buildBulkNegotiationEventData(
 					negotiationData,
-					resp_attachment.products,
+					resp_attachment.offers,
 					offers,
 					Constants.EVENT_DATA_OFFER
 				);

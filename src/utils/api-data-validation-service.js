@@ -36,7 +36,7 @@ export const validateNegotiationInputData = (
 					if (!isFalsyExceptZero(negotiationProduct.value?.oneOff)) {
 						if (
 							!isDiscountAllowed(ONE_OFF, addon) ||
-							!isFalsyExceptZero(originalOneOffValue)
+							isFalsyExceptZero(originalOneOffValue)
 						) {
 							validOneOff = false;
 						} else {
@@ -70,7 +70,7 @@ export const validateNegotiationInputData = (
 					) {
 						if (
 							!isDiscountAllowed(RECURRING, addon) ||
-							!isFalsyExceptZero(originalRecurringValue)
+							isFalsyExceptZero(originalRecurringValue)
 						) {
 							validRecurring = false;
 						} else {
@@ -212,7 +212,7 @@ export const validateNegotiationInputData = (
 				if (!isFalsyExceptZero(negotiationProduct.value?.oneOff)) {
 					if (
 						!isDiscountAllowed(ONE_OFF, product) ||
-						!isFalsyExceptZero(originalOneOffValue)
+						isFalsyExceptZero(originalOneOffValue)
 					) {
 						validOneOff = false;
 					} else {
@@ -243,7 +243,7 @@ export const validateNegotiationInputData = (
 				if (!isFalsyExceptZero(negotiationProduct.value?.recurring)) {
 					if (
 						!isDiscountAllowed(RECURRING, product) ||
-						!isFalsyExceptZero(originalRecurringValue)
+						isFalsyExceptZero(originalRecurringValue)
 					) {
 						validRecurring = false;
 					} else {

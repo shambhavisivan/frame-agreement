@@ -10,8 +10,8 @@ export function formatCellValue(value: unknown, type: FieldMetadata['fieldType']
 			return new Date(Number(value)).toLocaleString();
 		case 'REFERENCE':
 			const referenceField = value as { id: string };
-			return referenceField?.id;
+			return referenceField?.id ? referenceField.id : '';
 		default:
-			return value;
+			return value ? value : '';
 	}
 }

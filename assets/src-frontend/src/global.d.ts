@@ -42,12 +42,12 @@ namespace SfGlobal {
 		getCommercialProducts(cpIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
 		getOffers(offerIds: [string[] | null]): Promise<CommercialProductStandalone[]>;
 		getOfferData(paramsArray: [string[], string[]]): Promise<CommercialProductData>;
-		upsertFrameAgreements(paramsArray: [string | null, string]): Promise<FrameAgreement>;
+		upsertFrameAgreements(paramsArray: [string | null, string, []]): Promise<FrameAgreement>;
 		saveAttachment(paramsArray: [string, string]): Promise<string>;
 		getDispatcherAuthToken(userAgent: [string]): Promise<DispatcherToken>;
 		getUserLocale(): Promise<UserLocaleInfo>;
 		getFieldMetadata(sObjectName: [string]): Promise<FieldMetadata[]>;
-		cloneFrameAgreement(faId: [string]): Promise<FrameAgreement>;
+		cloneFrameAgreement(faId: [string, []]): Promise<FrameAgreement>;
 		deleteFrameAgreement(faId: [string]): Promise<string>;
 		getApprovalHistory(faId: [string]): Promise<SfdcApprovalHistory>;
 		approveRejectRecallRecord(paramsArray: [string, string, string]): Promise<boolean>;

@@ -131,7 +131,8 @@ export const remoteActions: RemoteActions = {
 	): Promise<FrameAgreement> {
 		const frameAgreement = await SF.invokeAction('upsertFrameAgreements', [
 			faId,
-			JSON.stringify(fieldData)
+			JSON.stringify(fieldData),
+			[]
 		]);
 
 		return deforcify(frameAgreement);
@@ -164,7 +165,7 @@ export const remoteActions: RemoteActions = {
 	async cloneFrameAgreement(faId: string): Promise<FrameAgreement> {
 		const clonedFrameAgreement: SfGlobal.FrameAgreement = await SF.invokeAction(
 			'cloneFrameAgreement',
-			[faId]
+			[faId, []]
 		);
 		return deforcify(clonedFrameAgreement);
 	},

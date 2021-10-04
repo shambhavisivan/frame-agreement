@@ -188,14 +188,17 @@ export const validateNegotiationInputData = (
 				);
 				const originalRateValue = rateCard.rateCardLines.get(
 					negotiationProduct.rateCardLine
-				);
-				negotiationProduct.value = checkAndRestrictMinMax(
-					negotiationProduct.value,
-					originalRateValue,
-					FACSettings
-				);
-				if (!isFalsyExceptZero(negotiationProduct.value)) {
-					validInputNegotiationData.push(negotiationProduct);
+				).cspmb__rate_value__c;
+
+				if (!isFalsyExceptZero(originalRateValue)) {
+					negotiationProduct.value = checkAndRestrictMinMax(
+						negotiationProduct.value,
+						originalRateValue,
+						FACSettings
+					);
+					if (!isFalsyExceptZero(negotiationProduct.value)) {
+						validInputNegotiationData.push(negotiationProduct);
+					}
 				}
 			}
 		} else {

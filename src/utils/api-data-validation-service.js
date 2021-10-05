@@ -11,6 +11,7 @@ const ONE_OFF = "oneOff";
 export const validateNegotiationInputData = (
 	negotiatedProductsInput,
 	products,
+	productsInAttachment,
 	FACSettings
 ) => {
 	let validInputNegotiationData = new Array();
@@ -48,6 +49,9 @@ export const validateNegotiationInputData = (
 
 							negotiationProduct.value.oneOff = checkAndRestrictMinMax(
 								negotiationProduct.value.oneOff,
+								productsInAttachment[
+									negotiationProduct.priceItemId
+								]._addons[addon.Id].oneOff,
 								originalOneOffValue,
 								FACSettings
 							);
@@ -82,6 +86,9 @@ export const validateNegotiationInputData = (
 
 							negotiationProduct.value.recurring = checkAndRestrictMinMax(
 								negotiationProduct.value.recurring,
+								productsInAttachment[
+									negotiationProduct.priceItemId
+								]._addons[addon.Id].recurring,
 								originalRecurringValue,
 								FACSettings
 							);
@@ -125,6 +132,8 @@ export const validateNegotiationInputData = (
 					);
 					negotiationProduct.value.oneOff = checkAndRestrictMinMax(
 						negotiationProduct.value.oneOff,
+						productsInAttachment[negotiationProduct.priceItemId]
+							._charges[charge.Id].oneOff,
 						originalOneOffValue,
 						FACSettings
 					);
@@ -155,6 +164,8 @@ export const validateNegotiationInputData = (
 					);
 					negotiationProduct.value.recurring = checkAndRestrictMinMax(
 						negotiationProduct.value.recurring,
+						productsInAttachment[negotiationProduct.priceItemId]
+							._charges[charge.Id].recurring,
 						originalRecurringValue,
 						FACSettings
 					);
@@ -186,13 +197,16 @@ export const validateNegotiationInputData = (
 				const rateCard = product._rateCards.get(
 					negotiationProduct.rateCard
 				);
-				const originalRateValue = rateCard.rateCardLines.get(
+				const rateCardLine = rateCard.rateCardLines.get(
 					negotiationProduct.rateCardLine
-				).cspmb__rate_value__c;
+				);
+				const originalRateValue = rateCardLine.cspmb__rate_value__c;
 
 				if (!isFalsyExceptZero(originalRateValue)) {
 					negotiationProduct.value = checkAndRestrictMinMax(
 						negotiationProduct.value,
+						productsInAttachment[negotiationProduct.priceItemId]
+							._rateCards[rateCard.Id][rateCardLine.Id],
 						originalRateValue,
 						FACSettings
 					);
@@ -226,6 +240,8 @@ export const validateNegotiationInputData = (
 						);
 						negotiationProduct.value.oneOff = checkAndRestrictMinMax(
 							negotiationProduct.value.oneOff,
+							productsInAttachment[negotiationProduct.priceItemId]
+								._product.oneOff,
 							originalOneOffValue,
 							FACSettings
 						);
@@ -257,6 +273,8 @@ export const validateNegotiationInputData = (
 						);
 						negotiationProduct.value.recurring = checkAndRestrictMinMax(
 							negotiationProduct.value.recurring,
+							productsInAttachment[negotiationProduct.priceItemId]
+								._product.recurring,
 							originalRecurringValue,
 							FACSettings
 						);
@@ -284,7 +302,13 @@ export const validateNegotiationInputData = (
 	return validInputNegotiationData;
 };
 
-const getDiscountSet = (productOrAddon, originalValue, chargeType, charge, isAdvancedCharges = false) => {
+const getDiscountSet = (
+	productOrAddon,
+	originalValue,
+	chargeType,
+	charge,
+	isAdvancedCharges = false
+) => {
 	let discountSet = new Set();
 
 	if (productOrAddon._discountLvIds?.length) {
@@ -330,16 +354,13 @@ const getDiscountSet = (productOrAddon, originalValue, chargeType, charge, isAdv
 
 const checkAndRestrictMinMax = (
 	negotiatedPrice,
-	OriginalPrice,
+	manualNegotiatedPrice,
+	originalPrice,
 	FACSettings
 ) => {
 	if (FACSettings.input_minmax_restriction) {
-		if (negotiatedPrice < 0) {
-			negotiatedPrice = 0;
-		}
-
-		if (negotiatedPrice > OriginalPrice) {
-			negotiatedPrice = OriginalPrice;
+		if (negotiatedPrice < 0 || negotiatedPrice > originalPrice) {
+			negotiatedPrice = manualNegotiatedPrice;
 		}
 	}
 

@@ -641,7 +641,12 @@ export class App extends Component {
 			commercialProducts = JSON.parse(JSON.stringify(commercialProducts));
 			commercialProducts = transformProductData(commercialProducts);
 			try {
-				negotiationData = validateNegotiationInputData(negotiationData, commercialProducts, this.props.settings.FACSettings);
+				negotiationData = validateNegotiationInputData(
+					negotiationData,
+					commercialProducts,
+					resp_attachment.products,
+					this.props.settings.FACSettings
+				);
 
 				if (!ignoreHooks) {
 					let eventData = buildBulkNegotiationEventData(
@@ -693,7 +698,12 @@ export class App extends Component {
 			offers = JSON.parse(JSON.stringify(offers));
 			offers = transformProductData(offers);
 			try {
-				negotiationData = validateNegotiationInputData(negotiationData, offers, this.props.settings.FACSettings);
+				negotiationData = validateNegotiationInputData(
+					negotiationData,
+					offers,
+					resp_attachment.offers,
+					this.props.settings.FACSettings
+				);
 
 				if (!ignoreHooks) {
 					let eventData = buildBulkNegotiationEventData(

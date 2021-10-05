@@ -17,7 +17,7 @@ import { useCommercialProducts } from '../../hooks/use-commercial-products';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { useFilterCommercialProduct } from '../../hooks/use-filter-commercial-product';
 import { useProductsInCategory } from '../../hooks/use-products-in-category';
-import { ProductListGrid, ProductStatus } from '../fa-details/product-list-grid';
+import { ProductListGrid } from '../fa-details/product-list-grid';
 import { ProductCategorisation } from './product-categorisation';
 
 interface AddProductsModalProp {
@@ -72,13 +72,12 @@ export function AddProductsModal({
 		}
 	}, [filterCpStatus, filteredCp]);
 
-	const updateSelectedProducts = (
-		selectedRows: CommercialProductStandalone[],
-		productStatus: ProductStatus
-	): void => {
+	// un used for now will be pluged when making grid selectable in the trailing change
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const updateSelectedProducts = (selectedRows: CommercialProductStandalone[]): void => {
 		const selected = selectedRows.reduce(
 			(selectedProd, currentSelected): SelectedProducts => {
-				if (!selectedProd[currentSelected.id] && productStatus === 'add') {
+				if (!selectedProd[currentSelected.id]) {
 					selectedProd[currentSelected.id] = currentSelected;
 				} else {
 					delete selectedProd[currentSelected.id];
@@ -157,7 +156,6 @@ export function AddProductsModal({
 							(product: CommercialProductStandalone) =>
 								!addedProductIds.includes(product.id)
 						)}
-						selectedProducts={updateSelectedProducts}
 						filterHandler={searchHandler}
 					/>
 				) : (

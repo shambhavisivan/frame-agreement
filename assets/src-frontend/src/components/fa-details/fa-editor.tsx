@@ -43,13 +43,13 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	}, [attachmentStatus, attachment]);
 
 	useEffect(() => {
-		if (Object.keys(state.products).length) {
+		if (state?.products && Object.keys(state.products).length) {
 			saveAttachment({
 				faId: agreement?.id || '',
 				attachment: selectAttachment(state)
 			});
 		}
-	}, [agreement?.id, saveAttachment, Object.keys(state.products).length]);
+	}, [agreement?.id, saveAttachment, Object.keys(state?.products || {}).length]);
 
 	useEffect(() => {
 		if (productDataStatus === QueryStatus.Success && productsStatus === QueryStatus.Success) {

@@ -1,8 +1,8 @@
 import {
-	CSCheckbox,
 	CSDataTable,
 	CSDataTableColumnInterface,
 	CSDataTableRowInterface,
+	CSDataTableRowWithMetaInterface,
 	CSDropdown,
 	CSInputSearch,
 	CSList,
@@ -25,16 +25,13 @@ export type ProductStatus = 'add' | 'remove';
 type GridProps = {
 	data: CommercialProductStandalone[];
 	filterHandler?: (filterString: string) => void;
-	selectedProducts: (
-		selectedProducts: CommercialProductStandalone[],
-		checkBoxState: ProductStatus
-	) => void;
+	isCollapsible?: boolean;
 };
 
 export function ProductListGrid({
 	data,
 	filterHandler,
-	selectedProducts
+	isCollapsible = false
 }: GridProps): ReactElement {
 	const { metadata, metadataStatus } = useFieldMetadata(CP_API_NAME);
 	const [fieldMetadata, setFieldMetadata] = useState<CSDataTableColumnInterface[]>([]);
@@ -149,24 +146,13 @@ export function ProductListGrid({
 				)
 			}
 		];
-		modifiedColumnData.unshift({
-			key: 'check-box',
-			render: (row) => (
-				<CSCheckbox
-					label="select"
-					labelHidden={true}
-					onChange={({ currentTarget: { checked } }): void =>
-						selectedProducts(
-							([row.data] as unknown) as CommercialProductStandalone[],
-							checked ? 'add' : 'remove'
-						)
-					}
-				/>
-			)
-		});
-
 		return modifiedColumnData;
 	}, [fieldMetadata]);
+
+	const renderDetails = (row: CSDataTableRowWithMetaInterface): ReactElement => {
+		// product details page should be plugged here
+		return <div>{row.data?.name}</div>;
+	};
 
 	return (
 		<div>
@@ -189,6 +175,8 @@ export function ProductListGrid({
 						data: product
 					})) || ([] as CSDataTableRowInterface[])
 				}
+				subsectionRender={renderDetails}
+				collapsible={isCollapsible}
 			/>
 		</div>
 	);

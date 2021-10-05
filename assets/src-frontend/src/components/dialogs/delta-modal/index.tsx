@@ -5,7 +5,8 @@ import {
 	CSModal,
 	CSModalBody,
 	CSModalHeader,
-	CSModalFooter
+	CSModalFooter,
+	CSDataTableRowInterface
 } from '@cloudsense/cs-ui-components';
 import { QueryStatus, useFrameAgreements } from '../../../hooks/use-frame-agreements';
 import { FrameAgreement, Products } from '../../../datasources';
@@ -101,8 +102,20 @@ export function DeltaModal({
 					lookupColumns={AGREEMENT_LOOKUP_OPTIONS}
 					lookupOptions={agreementList}
 					mode="client"
-					onSelectChange={(value): void => setSourceAgreement(value)}
-					{...(sourceAgreement && { value: sourceAgreement })}
+					onSelectChange={(value): void =>
+						setSourceAgreement(
+							((value as CSDataTableRowInterface)
+								?.data as unknown) as Partial<FaDeltaView>
+						)
+					}
+					{...(sourceAgreement && {
+						value: {
+							key: sourceAgreement?.id,
+							data: sourceAgreement
+						} as CSDataTableRowInterface
+					})}
+					columns={[{ key: 'agreementName' }]}
+					options={(agreementList as unknown) as CSDataTableRowInterface[]}
 				/>
 				<CSLookup
 					label={labels.targetFa}
@@ -110,8 +123,20 @@ export function DeltaModal({
 					lookupColumns={AGREEMENT_LOOKUP_OPTIONS}
 					lookupOptions={agreementList}
 					mode="client"
-					onSelectChange={(value): void => setTargetAgreement(value)}
-					{...(targetAgreement && { value: targetAgreement })}
+					onSelectChange={(value): void =>
+						setTargetAgreement(
+							((value as CSDataTableRowInterface)
+								?.data as unknown) as Partial<FaDeltaView>
+						)
+					}
+					{...(targetAgreement && {
+						value: {
+							key: targetAgreement?.id,
+							data: sourceAgreement
+						} as CSDataTableRowInterface
+					})}
+					columns={[{ key: 'agreementName' }]}
+					options={(agreementList as unknown) as CSDataTableRowInterface[]}
 				/>
 			</div>
 			<div className="agreements-wrapper">

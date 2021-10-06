@@ -333,6 +333,8 @@ const getDiscountSet = (
 				}
 
 				if (!isFalsyExceptZero(newPrice)) {
+					newPrice = Number(newPrice).toFixedNumber();
+
 					if (
 						isOneOff(discount.cspmb__Charge_Type__c) &&
 						chargeType === ONE_OFF

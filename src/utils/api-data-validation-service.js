@@ -123,13 +123,15 @@ export const validateNegotiationInputData = (
 					charge._type === ONE_OFF
 				) {
 					const originalOneOffValue = charge.oneOff;
-					const oneOffDiscountSet = getDiscountSet(
-						product,
-						originalOneOffValue,
-						ONE_OFF,
-						charge,
-						true
-					);
+					const oneOffDiscountSet = !negotiationProduct.ignoreDiscountAssociations
+						? getDiscountSet(
+								product,
+								originalOneOffValue,
+								ONE_OFF,
+								charge,
+								true
+						  )
+						: new Set();
 					negotiationProduct.value.oneOff = checkAndRestrictMinMax(
 						negotiationProduct.value.oneOff,
 						productsInAttachment[negotiationProduct.priceItemId]
@@ -155,13 +157,15 @@ export const validateNegotiationInputData = (
 					charge._type === RECURRING
 				) {
 					const originalRecurringValue = charge.recurring;
-					const recurringDiscountSet = getDiscountSet(
-						product,
-						originalRecurringValue,
-						RECURRING,
-						charge,
-						true
-					);
+					const recurringDiscountSet = !negotiationProduct.ignoreDiscountAssociations
+						? getDiscountSet(
+								product,
+								originalRecurringValue,
+								RECURRING,
+								charge,
+								true
+						  )
+						: new Set();
 					negotiationProduct.value.recurring = checkAndRestrictMinMax(
 						negotiationProduct.value.recurring,
 						productsInAttachment[negotiationProduct.priceItemId]
@@ -233,11 +237,13 @@ export const validateNegotiationInputData = (
 					) {
 						validOneOff = false;
 					} else {
-						const oneOffDiscountSet = getDiscountSet(
-							product,
-							originalOneOffValue,
-							ONE_OFF
-						);
+						const oneOffDiscountSet = !negotiationProduct.ignoreDiscountAssociations
+							? getDiscountSet(
+									product,
+									originalOneOffValue,
+									ONE_OFF
+							  )
+							: new Set();
 						negotiationProduct.value.oneOff = checkAndRestrictMinMax(
 							negotiationProduct.value.oneOff,
 							productsInAttachment[negotiationProduct.priceItemId]
@@ -266,11 +272,13 @@ export const validateNegotiationInputData = (
 					) {
 						validRecurring = false;
 					} else {
-						const recurringDiscountSet = getDiscountSet(
-							product,
-							originalRecurringValue,
-							RECURRING
-						);
+						const recurringDiscountSet = !negotiationProduct.ignoreDiscountAssociations
+							? getDiscountSet(
+									product,
+									originalRecurringValue,
+									RECURRING
+							  )
+							: new Set();
 						negotiationProduct.value.recurring = checkAndRestrictMinMax(
 							negotiationProduct.value.recurring,
 							productsInAttachment[negotiationProduct.priceItemId]

@@ -257,10 +257,12 @@ async function negotiateData(data, active_fa, removed_group) {
 					}
 				});
 
-				let _negoFormatCharge = {};
-				_negoFormatCharge.priceItemId = cp.Id;
-				_negoFormatCharge.charge = charge.Id;
-				_negoFormatCharge.value = {};
+				let _negoFormatCharge = {
+					priceItemId: cp.Id,
+					charge: charge.Id,
+					value: {},
+					ignoreDiscountAssociations: true
+				};
 
 				if (_recurring !== undefined) {
 					if (
@@ -327,9 +329,11 @@ async function negotiateData(data, active_fa, removed_group) {
 					}
 				});
 
-			let _negoFormatCp = {};
-			_negoFormatCp.priceItemId = cp.Id;
-			_negoFormatCp.value = {};
+			let _negoFormatCp = {
+				priceItemId: cp.Id,
+				value: {},
+				ignoreDiscountAssociations: true
+			};
 
 			if (_recurring !== undefined) {
 				if (

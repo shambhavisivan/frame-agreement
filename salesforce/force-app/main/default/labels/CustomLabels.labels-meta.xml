@@ -1757,11 +1757,18 @@
         <shortDescription>Addons</shortDescription>
         <value>Addons</value>
     </labels>
-	<labels>
+    <labels>
         <fullName>no_categories_available</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>no_categories_available</shortDescription>
         <value>No categories associated with the catalogue</value>
+    </labels>
+    <labels>
+        <fullName>invalid_priceItem_Id</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Invalid or null price item id</shortDescription>
+        <value>Price item id is invalid or null!</value>
     </labels>
 </CustomLabels>

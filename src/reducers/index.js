@@ -1691,7 +1691,7 @@ const rootReducer = (state = initialState, action) => {
 						}
 					} else {
 						if (
-							replacementData[key].addon_vs_addon_assoc.hasOwnProperty(
+							replacementData[key].addon_vs_addon_assoc?.hasOwnProperty(
 								add.cspmb__Add_On_Price_Item__c
 							)
 						) {
@@ -1710,9 +1710,9 @@ const rootReducer = (state = initialState, action) => {
 
 				let rcIdSet = new Set(Object.keys(_attachment.products[new_cp.Id]._rateCards || {}));
 
-				let old_rc = copy(_attachment.products[key]._rateCards) || {};
+				let old_rc = copy(_attachment.products[key]._rateCards);
 
-				if (rcIdSet.size) {
+				if (rcIdSet.size && old_rc) {
 					rcIdSet.forEach((rcId) => {
 						if (old_rc[rcId]) {
 							_attachment.products[new_cp.Id]._rateCards[rcId] = {
@@ -2736,7 +2736,7 @@ const rootReducer = (state = initialState, action) => {
 
 				// Not in std catalogue so remove from attachment
 				if (!new_cp) {
-					delete _attachment.offers[replacementData[key].new_cp.Id];
+					delete _attachment.offers[offerReplacementData[key].new_cp.Id];
 					continue;
 				}
 
@@ -2753,7 +2753,7 @@ const rootReducer = (state = initialState, action) => {
 				}, new Map());
 
 				// since attachment is indexed by addon assoc id, we need to traverse the offer data to find addon -> addon assoc correlation
-				new_cp._addons.forEach(add => {
+				new_cp._addons?.forEach(add => {
 					if (oldAddonCodeAssociationMap.has(add.cspmb__Add_On_Price_Item_Code__c)) {
 						new_addons[add.Id] = copy(
 							old_addons[
@@ -2770,11 +2770,11 @@ const rootReducer = (state = initialState, action) => {
 					...new_addons
 				};
 
-				let rcIdSet = new Set(offerReplacementData[key].rc || []);
+				let rcIdSet = new Set(Object.keys(_attachment.offers[new_cp.Id]._rateCards || {}));
 
 				let old_rc = copy(_attachment.offers[key]._rateCards);
 
-				if (rcIdSet.size) {
+				if (rcIdSet.size && old_rc) {
 					rcIdSet.forEach((rcId) => {
 						if (old_rc[rcId]) {
 							_attachment.offers[new_cp.Id]._rateCards[rc.Id] = {

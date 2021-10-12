@@ -167,7 +167,7 @@ class FaList extends Component {
 			csconta__Account__c: newAccId
 		};
 
-		return this.props.saveFrameAgreement(this.props.frameAgreements[faId], data);
+		return this.props.saveFrameAgreement(data);
 	}
 
 	faMenuAction(action, faId) {

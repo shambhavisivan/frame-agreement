@@ -177,6 +177,8 @@ async function negotiateData(data, active_fa, removed_group) {
 			_rateCardLines.forEach(rcl => {
 				const originalValue = rcl.cspmb__rate_value__c;
 				let _value = rcl.cspmb__rate_value__c;
+				let eligibleDiscountCodes = 0;
+				let eligibleIgnoredDiscountCodes = 0;
 
 				rcl_codes.forEach(rclc => {
 					if (rclc.records.rcl[rcl.Id]) {
@@ -185,10 +187,16 @@ async function negotiateData(data, active_fa, removed_group) {
 							rclc.csfamext__rate_value__c,
 							_value
 						);
+						eligibleDiscountCodes++;
+
+						if (!rclc.csfamext__rate_value__c) {
+							eligibleIgnoredDiscountCodes++;
+						}
 					}
 				});
 
 				if (
+					eligibleIgnoredDiscountCodes !== eligibleDiscountCodes &&
 					_value === originalValue &&
 					negotiatedProduct._rateCards?.hasOwnProperty(
 						rcl.cspmb__Rate_Card__c
@@ -219,6 +227,10 @@ async function negotiateData(data, active_fa, removed_group) {
 		if (!targeted_cp.has(cp.Id)) {
 			return; // skip iteration
 		}
+		let eligibleRecurringDiscountCodes = 0;
+		let eligibleIgnoredRecurringDiscountCodes = 0;
+		let eligibleOneOffDiscountCodes = 0;
+		let eligibleIgnoredOneOffDiscountCodes = 0;
 
 		if (cp._charges.length) {
 			// Apply to charges
@@ -241,6 +253,11 @@ async function negotiateData(data, active_fa, removed_group) {
 								cpc.csfamext__recurring_charge__c,
 								_recurring
 							);
+							eligibleRecurringDiscountCodes++;
+
+							if (!cpc.csfamext__recurring_charge__c) {
+								eligibleIgnoredRecurringDiscountCodes++;
+							}
 						}
 
 						if (
@@ -253,6 +270,11 @@ async function negotiateData(data, active_fa, removed_group) {
 								cpc.csfamext__one_off_charge__c,
 								_oneOff
 							);
+							eligibleOneOffDiscountCodes++;
+
+							if (!cpc.csfamext__one_off_charge__c) {
+								eligibleIgnoredOneOffDiscountCodes++;
+							}
 						}
 					}
 				});
@@ -266,6 +288,7 @@ async function negotiateData(data, active_fa, removed_group) {
 
 				if (_recurring !== undefined) {
 					if (
+						eligibleRecurringDiscountCodes !== eligibleIgnoredRecurringDiscountCodes &&
 						_recurring === originalRecurringPrice &&
 						negotiatedProduct._charges?.hasOwnProperty(charge.Id) &&
 						negotiatedProduct._charges[charge.Id]?.recurring <
@@ -279,6 +302,7 @@ async function negotiateData(data, active_fa, removed_group) {
 
 				if (_oneOff !== undefined) {
 					if (
+						eligibleOneOffDiscountCodes !== eligibleIgnoredOneOffDiscountCodes &&
 						_oneOff === originalOneOffPrice &&
 						negotiatedProduct._charges?.hasOwnProperty(charge.Id) &&
 						negotiatedProduct._charges[charge.Id]?.oneOff <
@@ -314,6 +338,11 @@ async function negotiateData(data, active_fa, removed_group) {
 							cpc.csfamext__recurring_charge__c,
 							_recurring
 						);
+						eligibleRecurringDiscountCodes++;
+
+						if (!cpc.csfamext__recurring_charge__c) {
+							eligibleIgnoredRecurringDiscountCodes++;
+						}
 					}
 
 					if (
@@ -326,6 +355,11 @@ async function negotiateData(data, active_fa, removed_group) {
 							cpc.csfamext__one_off_charge__c,
 							_oneOff
 						);
+						eligibleOneOffDiscountCodes++;
+
+						if (!cpc.csfamext__one_off_charge__c) {
+							eligibleIgnoredOneOffDiscountCodes++;
+						}
 					}
 				});
 
@@ -337,6 +371,7 @@ async function negotiateData(data, active_fa, removed_group) {
 
 			if (_recurring !== undefined) {
 				if (
+					eligibleRecurringDiscountCodes !== eligibleIgnoredRecurringDiscountCodes &&
 					_recurring === originalRecurringPrice &&
 					negotiatedProduct._product?.recurring < _recurring
 				) {
@@ -347,6 +382,7 @@ async function negotiateData(data, active_fa, removed_group) {
 
 			if (_oneOff !== undefined) {
 				if (
+					eligibleOneOffDiscountCodes !== eligibleIgnoredOneOffDiscountCodes &&
 					_oneOff === originalOneOffPrice &&
 					negotiatedProduct._product?.oneOff < _oneOff
 				) {

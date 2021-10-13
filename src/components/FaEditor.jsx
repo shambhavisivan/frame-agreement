@@ -201,6 +201,24 @@ export class FaEditor extends Component {
 				resolve(data);
 			});
 		});
+		// Enable save on events
+		SUBSCRIPTIONS['sub9'] = window.FAM.subscribe('onAfterAddAddons', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
+				});
+				resolve(data);
+			});
+		});
+		// Enable save on events
+		SUBSCRIPTIONS['sub10'] = window.FAM.subscribe('onAfterDeleteAddons', data => {
+			return new Promise(resolve => {
+				this._setState({
+					actionTaken: true
+				});
+				resolve(data);
+			});
+		});
 	}
 
 	setActiveTabIndex() {

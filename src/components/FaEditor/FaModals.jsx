@@ -156,14 +156,14 @@ class FaModals extends React.Component {
 	}
 
 	async onAddAddons(addons = []) {
-		addons = await publish('onBeforeAddStandaloneAddons', addons);
+		addons = await publish('onBeforeAddAddons', addons);
 
 		let _addonSet = new Set(addons);
 
 		await this.props.addAddonsToFa(this.props.faId, Array.from(_addonSet));
 
 		publish(
-			'onAfterAddStandaloneAddons',
+			'onAfterAddAddons',
 			this.props.frameAgreements[this.props.faId]._ui.standaloneAddons.map(add => add.Id)
 		);
 

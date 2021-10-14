@@ -269,6 +269,7 @@ namespace SfGlobal {
 		modal_unsavedChanges_alert: string;
 		toast_saved_fa: string;
 		btn_ok: string;
+		incorrect_fa: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

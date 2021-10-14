@@ -780,7 +780,8 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	btn_Save: 'Save',
 	modal_unsavedChanges_alert: 'You have unsaved changes, are you sure you want to leave?',
 	toast_saved_fa: 'Successfuly saved frame agreement!',
-	btn_ok: 'Ok'
+	btn_ok: 'Ok',
+	incorrect_fa: 'Input frame agreement is either incorrect or not found'
 };
 /* eslint-enable */
 

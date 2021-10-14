@@ -1,30 +1,40 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
-import { NegotiateProductActions } from './negotiation/negotiation-action-creator';
-import { NegotiationItemType } from './negotiation/negotiation-reducer';
+import { SelectedProducts } from '../dialogs/add-products-modal';
 import { ProductListGrid } from './product-list-grid';
-
-export interface ProductActions {
-	negotiateRecurring(value: number): void;
-	negotiateOneOff(value: number): void;
-	negotiateRateCardLine(rateCardId: string, rateCardLineId: string, value: number): void;
-}
 
 interface ProductsListProps {
 	productList: CommercialProductStandalone[];
-	createProductActions: (
-		productId: string,
-		actionType: NegotiationItemType
-	) => NegotiateProductActions;
 }
 
-export function ProductsList({
-	productList,
-	createProductActions
-}: ProductsListProps): ReactElement {
+export function ProductsList({ productList }: ProductsListProps): ReactElement {
+	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
+
+	const onSelectProduct = (
+		event: React.ChangeEvent<HTMLInputElement>,
+		selectedRows: CommercialProductStandalone[]
+	): void => {
+		const selected = selectedRows.reduce(
+			(selectedProd, currentSelected): SelectedProducts => {
+				if (!selectedProd[currentSelected.id]) {
+					selectedProd[currentSelected.id] = currentSelected;
+				} else {
+					delete selectedProd[currentSelected.id];
+				}
+				return selectedProd;
+			},
+			{ ...selectedProducts }
+		);
+		setSelectedProducts(selected);
+	};
+
 	return (
 		<div>
-			<ProductListGrid data={productList} />
+			<ProductListGrid
+				data={productList}
+				selectedProducts={Object.values(selectedProducts) || []}
+				onSelectRow={onSelectProduct}
+			/>
 		</div>
 	);
 }

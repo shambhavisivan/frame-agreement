@@ -13,6 +13,7 @@ import {
 } from '@cloudsense/cs-ui-components';
 import { ApprovalProcess } from './approval';
 import { FaStatusContextProvider } from '../../providers/fa-status-provider';
+import { DetailsProvider } from './details-page-provider';
 
 interface FrameAgreementDetailsProps {
 	agreementId: string;
@@ -27,48 +28,50 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 	return (
 		<div className="details-wrapper">
 			<LoadingFallback status={faStatus}>
-				<FaStatusContextProvider faId={agreementId}>
-					<div className="field-wrapper"> </div>
-					<ApprovalProcess faId={agreementId} />
-					Agreement ID: {agreementId}, name: {agreement?.name}
-					<CSCard className="products-search-wrapper">
-						<CSCardHeader title="">
-							<h2>Products</h2>
-							<div className="products-search">
-								<CSInputSearch
-									label="Quick search"
-									labelHidden
-									placeholder="Quick search"
-								/>
-								<CSDropdown align="right" iconName="table">
-									<CSButton label="Button 1" />
-									<CSButton label="Button 2 with more content" />
-								</CSDropdown>
-							</div>
-							<div className="info-items">
-								<span className="item">
-									<span className="value">7</span>
-									<span className="label">items</span>
-								</span>
-								<span className="item">
-									<span className="value">3</span>
-									<span className="label">Apple</span>
-								</span>
-								<span className="item">
-									<span className="value">1</span>
-									<span className="label">Huawei</span>
-								</span>
-								<span className="item">
-									<span className="value">1</span>
-									<span className="label">Samsung</span>
-								</span>
-							</div>
-						</CSCardHeader>
-						<CSCardBody padding="0">
-							<FaEditor agreement={agreement} />
-						</CSCardBody>
-					</CSCard>
-				</FaStatusContextProvider>
+				<DetailsProvider>
+					<FaStatusContextProvider faId={agreementId}>
+						<div className="field-wrapper"> </div>
+						<ApprovalProcess faId={agreementId} />
+						Agreement ID: {agreementId}, name: {agreement?.name}
+						<CSCard className="products-search-wrapper">
+							<CSCardHeader title="">
+								<h2>Products</h2>
+								<div className="products-search">
+									<CSInputSearch
+										label="Quick search"
+										labelHidden
+										placeholder="Quick search"
+									/>
+									<CSDropdown align="right" iconName="table">
+										<CSButton label="Button 1" />
+										<CSButton label="Button 2 with more content" />
+									</CSDropdown>
+								</div>
+								<div className="info-items">
+									<span className="item">
+										<span className="value">7</span>
+										<span className="label">items</span>
+									</span>
+									<span className="item">
+										<span className="value">3</span>
+										<span className="label">Apple</span>
+									</span>
+									<span className="item">
+										<span className="value">1</span>
+										<span className="label">Huawei</span>
+									</span>
+									<span className="item">
+										<span className="value">1</span>
+										<span className="label">Samsung</span>
+									</span>
+								</div>
+							</CSCardHeader>
+							<CSCardBody padding="0">
+								<FaEditor agreement={agreement} />
+							</CSCardBody>
+						</CSCard>
+					</FaStatusContextProvider>
+				</DetailsProvider>
 			</LoadingFallback>
 		</div>
 	);

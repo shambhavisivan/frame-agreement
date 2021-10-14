@@ -26,7 +26,9 @@ interface AddProductsModalProp {
 	onAddProducts: (products: CommercialProductStandalone[]) => void;
 	addedProductIds: Array<string>;
 }
-export type SelectedProducts = { [id: string]: CommercialProductStandalone };
+export interface SelectedProducts {
+	[id: string]: CommercialProductStandalone;
+}
 const commercialProductFilter: ProductFilter = {
 	role: CommercialProductRole.basic,
 	type: CommercialProductType.commercialProduct
@@ -72,9 +74,12 @@ export function AddProductsModal({
 		}
 	}, [filterCpStatus, filteredCp]);
 
-	// un used for now will be pluged when making grid selectable in the trailing change
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const updateSelectedProducts = (selectedRows: CommercialProductStandalone[]): void => {
+	const updateSelectedProducts = (
+		event: React.ChangeEvent<HTMLInputElement>,
+		selectedRows: CommercialProductStandalone[]
+	): void => {
+		// to support multiSelect, assuming "{selectedRows}" this as an array
+
 		const selected = selectedRows.reduce(
 			(selectedProd, currentSelected): SelectedProducts => {
 				if (!selectedProd[currentSelected.id]) {
@@ -86,11 +91,7 @@ export function AddProductsModal({
 			},
 			{ ...selectedProducts }
 		);
-		setSelectedProducts(
-			(prevState): SelectedProducts => {
-				return { ...prevState, ...selected };
-			}
-		);
+		setSelectedProducts(selected);
 	};
 
 	const reloadCps = (value: string | Record<string, string[]>): void => {
@@ -157,6 +158,8 @@ export function AddProductsModal({
 								!addedProductIds.includes(product.id)
 						)}
 						filterHandler={searchHandler}
+						onSelectRow={updateSelectedProducts}
+						selectedProducts={Object.values(selectedProducts)}
 					/>
 				) : (
 					<p>No products to show here</p>

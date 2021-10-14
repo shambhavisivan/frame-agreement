@@ -26,12 +26,19 @@ type GridProps = {
 	data: CommercialProductStandalone[];
 	filterHandler?: (filterString: string) => void;
 	isCollapsible?: boolean;
+	onSelectRow?: (
+		event: React.ChangeEvent<HTMLInputElement>,
+		row: CommercialProductStandalone[]
+	) => void;
+	selectedProducts?: CommercialProductStandalone[];
 };
 
 export function ProductListGrid({
 	data,
 	filterHandler,
-	isCollapsible = false
+	isCollapsible = false,
+	onSelectRow,
+	selectedProducts
 }: GridProps): ReactElement {
 	const { metadata, metadataStatus } = useFieldMetadata(CP_API_NAME);
 	const [fieldMetadata, setFieldMetadata] = useState<CSDataTableColumnInterface[]>([]);
@@ -154,6 +161,11 @@ export function ProductListGrid({
 		return <div>{row.data?.name}</div>;
 	};
 
+	const getSelectedKeys = useMemo(
+		(): string[] => selectedProducts?.map((product) => product.id) || [],
+		[selectedProducts]
+	);
+
 	return (
 		<div>
 			<CSInputSearch
@@ -177,6 +189,12 @@ export function ProductListGrid({
 				}
 				subsectionRender={renderDetails}
 				collapsible={isCollapsible}
+				selectable={!!onSelectRow}
+				selectedKeys={getSelectedKeys}
+				onSelectChange={(event, selectedRow): void =>
+					onSelectRow &&
+					onSelectRow(event, [selectedRow.data as CommercialProductStandalone] || [])
+				}
 			/>
 		</div>
 	);

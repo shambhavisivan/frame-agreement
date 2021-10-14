@@ -1,11 +1,9 @@
-import React, { ReactElement, useContext, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { CSTabGroup, CSTab } from '@cloudsense/cs-ui-components';
 import { ProductStatus } from './product-list-grid';
 import { Attachment, CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { ProductsList } from './products-list';
-import { createActionsForNegotiateProduct } from './negotiation/negotiation-action-creator';
-import { store } from './details-page-provider';
 
 type DetailTabProps = {
 	attachment: Attachment;
@@ -29,7 +27,6 @@ export function DetailsTab({
 }: DetailTabProps): ReactElement {
 	const [activeTab, setActiveTab] = useState(TabNames.products);
 	const labels = useCustomLabels();
-	const { dispatch } = useContext(store);
 	const onTabClick = (activeTab: TabNames): void => setActiveTab(activeTab);
 
 	return (
@@ -53,14 +50,7 @@ export function DetailsTab({
 					></CSTab>
 				</CSTabGroup>
 			</div>
-			<div>
-				{activeTab === TabNames.products && (
-					<ProductsList
-						productList={products}
-						createProductActions={createActionsForNegotiateProduct(dispatch)}
-					/>
-				)}
-			</div>
+			<div>{activeTab === TabNames.products && <ProductsList productList={products} />}</div>
 		</div>
 	);
 }

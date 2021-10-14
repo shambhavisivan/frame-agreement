@@ -531,7 +531,7 @@ export function selectAttachment(state: Negotiation): Attachment {
 	);
 
 	const offers: Attachment['offers'] = Object.fromEntries(
-		Object.entries(state.offers).map(([productId, productNegotiation]) => {
+		Object.entries(state?.offers || {}).map(([productId, productNegotiation]) => {
 			const attachedProductNegotiation = {
 				product: {
 					...(productNegotiation.product.oneOff.negotiated && {
@@ -550,7 +550,7 @@ export function selectAttachment(state: Negotiation): Attachment {
 	);
 
 	const addons: Attachment['addons'] = Object.fromEntries(
-		Object.entries(state.addons).map(([addonId, negotiable]) => {
+		Object.entries(state?.addons || {}).map(([addonId, negotiable]) => {
 			const attachedAddonNegotiation = {
 				...(negotiable.oneOff.negotiated && {
 					oneOff: negotiable.oneOff.negotiated

@@ -5,6 +5,7 @@ import { remoteActions } from '../datasources';
 import { RemoteActionsProvider } from '../providers/app-settings-provider';
 import { Header } from './header';
 import { Pages } from './pages';
+import { ScrapParent } from './ScrapParent';
 
 const queryCache = new QueryCache({
 	defaultConfig: {
@@ -21,6 +22,8 @@ export function App(): ReactElement {
 			<RemoteActionsProvider queryCache={queryCache} remoteActions={remoteActions}>
 				<Header />
 				<Pages />
+				{/* TODO: remove in actual implementation */}
+				<ScrapParent />
 				<ReactQueryDevtools initialIsOpen={false} />
 			</RemoteActionsProvider>
 		</div>

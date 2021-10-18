@@ -55,6 +55,8 @@ namespace SfGlobal {
 		getAttachmentBody(paramsArray: [string]): Promise<string>;
 		getDelta(paramArray: [string, string]): Promise<DeltaResult>;
 		filterCommercialProducts(filterData: [string]): Promise<CommercialProductStandalone[]>;
+		/* eslint-disable  @typescript-eslint/no-explicit-any */
+		queryProducts(paramsArray: [string[], string, string | null, number]): Promise<any>;
 	}
 
 	interface CategorizationData {

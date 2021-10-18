@@ -44,6 +44,13 @@ export interface RemoteActions {
 	getAttachmentBody(faId: string): Promise<Attachment>;
 	getDelta(sourceFaId: string, targetFaId: string): Promise<DeltaResult>;
 	filterCommercialProducts(filterData: string): Promise<CommercialProductStandalone[]>;
+	/* eslint-disable  @typescript-eslint/no-explicit-any */
+	queryProducts(
+		priceItemIds: string[],
+		filterFields: string,
+		lastRecordId: string | null,
+		queryLimit: number
+	): Promise<any>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -211,5 +218,22 @@ export const remoteActions: RemoteActions = {
 		const filteredCp = await SF.invokeAction('filterCommercialProducts', [filterData]);
 
 		return filteredCp.map(deforcify);
+	},
+
+	/* eslint-disable  @typescript-eslint/no-explicit-any */
+	async queryProducts(
+		priceItemIds: string[],
+		filterFields: string,
+		lastRecordId: string,
+		queryLimit: number
+	): Promise<any> {
+		const cps = await SF.invokeAction('queryProducts', [
+			priceItemIds,
+			filterFields,
+			lastRecordId,
+			queryLimit
+		]);
+
+		return cps.map(deforcify);
 	}
 };

@@ -158,7 +158,8 @@
 				migrateFrameAgreements: "{!$RemoteAction.FrameRateManagerController.migrateFrameAgreements}",
 				getNameSpacePrefix: "{!$RemoteAction.FrameRateManagerController.getNameSpacePrefix}",
 				findReplacementOffers: "{!$RemoteAction.FrameRateManagerController.findReplacementOffers}",
-				getFaOffers: "{!$RemoteAction.FrameRateManagerController.getFaOffers}"
+				getFaOffers: "{!$RemoteAction.FrameRateManagerController.getFaOffers}",
+				queryProducts: "{!$RemoteAction.FrameRateManagerController.queryProducts}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

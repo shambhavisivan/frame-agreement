@@ -2960,6 +2960,16 @@ global with sharing class FrameRateManagerController {
 		return validFaOffers;
 	}
 
+	@RemoteAction
+	public static List<cspmb__price_item__c> queryProducts(
+			List<Id> priceItemIds,
+			String filterFields,
+			Id lastRecordId,
+			Integer queryLimit
+	) {
+		return CommercialProductService.queryProducts(priceItemIds, filterFields, lastRecordId, queryLimit);
+	}
+
 	// WRAPPERS
 	public class RateCard {
 		public Id Id {

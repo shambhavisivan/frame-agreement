@@ -173,5 +173,15 @@ export const remoteActions: RemoteActions = {
 
 	async filterCommercialProducts() {
 		return mockCommercialProducts;
+	},
+
+	/* eslint-disable  @typescript-eslint/no-explicit-any */
+	async queryProducts(
+		priceItemIds: string[],
+		filterFields: string,
+		lastRecordId: string,
+		queryLimit: number
+	): Promise<any> {
+		return mockCommercialProducts;
 	}
 };

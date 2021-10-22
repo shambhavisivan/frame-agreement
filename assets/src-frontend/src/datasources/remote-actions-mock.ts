@@ -217,5 +217,9 @@ export const remoteActions: RemoteActions = {
 						: priceItemIds.includes(mockProduct.id)
 			  )
 			: mockCommercialProducts;
+	},
+
+	async getFrameAgreement(faId: string): Promise<FrameAgreement> {
+		return Promise.resolve(mockFrameAgreements[0]);
 	}
 };

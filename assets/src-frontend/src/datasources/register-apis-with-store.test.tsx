@@ -1,8 +1,7 @@
 import React from 'react';
-import { remoteActions } from '../datasources/remote-actions-salesforce';
 import { render } from '@testing-library/react';
 import { RegisterApisWithStore } from './register-apis-with-store';
-import { FrameAgreement } from '.';
+import { FrameAgreement, remoteActions } from '.';
 import { CUSTOM_LABELS_MOCK, mockFrameAgreements } from './mock-data';
 import { DetailsProvider } from '../components/fa-details/details-page-provider';
 import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
@@ -135,6 +134,32 @@ describe('RegisterApisWithStore', () => {
 			expect(updateResult !== 'Success').toBeTruthy();
 			expect(updateResult).toEqual(CUSTOM_LABELS_MOCK.no_active_fa);
 			expect(upsertFrameAgreementsSpy.mock.calls.length).toBe(0);
+		});
+	});
+
+	describe('refreshFrameAgreement', () => {
+		test('should reset the frame agreement in query cache', async () => {
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+			const spyOnGetFrameAgreements = jest
+				.spyOn(remoteActions, 'getFrameAgreement')
+				.mockResolvedValue(mockFrameAgreements[0]);
+
+			const refreshFrameAgreementFunc = globalAny?.FAM?.api?.refreshFa as (
+				faId: string
+			) => Promise<SfGlobal.FrameAgreementAttachment>;
+
+			const refreshedAgreement = await refreshFrameAgreementFunc(mockFrameAgreements[0].id);
+
+			expect(spyOnGetFrameAgreements).toBeCalledTimes(1);
+			expect(refreshedAgreement.frameAgreement.csconta__Status__c).toBe(
+				mockFrameAgreements[0].status
+			);
+
+			spyOnGetFrameAgreements.mockClear();
 		});
 	});
 });

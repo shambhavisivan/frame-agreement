@@ -7,6 +7,7 @@ import { useQueryCache } from 'react-query';
 import { useFrameAgreements } from '../hooks/use-frame-agreements';
 import { AgreementService } from '../service/agreementService';
 import { useAppSettings } from '../hooks/use-app-settings';
+import { forcify } from './forcify';
 
 export function RegisterApisWithStore(): ReactElement {
 	const queryCache = useQueryCache();
@@ -52,6 +53,26 @@ export function RegisterApisWithStore(): ReactElement {
 		return;
 	};
 	registerApiEndpoint('validateStatusConsistency', validateStatusConsistency);
+
+	const refreshFa = async (
+		frameAgreementId: string,
+		refreshAttachment = false
+	): Promise<SfGlobal.FrameAgreementAttachment> => {
+		const refreshedAgreementAttachment = await agreementService.refreshFrameAgreement(
+			frameAgreementId,
+			refreshAttachment
+		);
+		const forcifiedRefreshedAgreementAttachment: SfGlobal.FrameAgreementAttachment = {
+			frameAgreement: (forcify(
+				refreshedAgreementAttachment.frameAgreement,
+				'csconta'
+			) as unknown) as SfGlobal.FrameAgreement,
+			attachment: refreshedAgreementAttachment.attachment
+		};
+
+		return forcifiedRefreshedAgreementAttachment;
+	};
+	registerApiEndpoint('refreshFa', refreshFa);
 
 	return <></>;
 }

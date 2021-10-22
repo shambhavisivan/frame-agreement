@@ -59,6 +59,7 @@ export interface RemoteActions {
 		queryLimit: number,
 		alreadyAddedIds: string[]
 	): Promise<CommercialProductStandalone[]>;
+	getFrameAgreement(faId: string): Promise<FrameAgreement>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -277,5 +278,11 @@ export const remoteActions: RemoteActions = {
 		]);
 
 		return cps.map(deforcify);
+	},
+
+	async getFrameAgreement(faId: string): Promise<FrameAgreement> {
+		const frameAgreement = await SF.invokeAction('getFrameAgreement', [faId]);
+
+		return deforcify(frameAgreement);
 	}
 };

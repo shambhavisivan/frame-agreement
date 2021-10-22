@@ -61,6 +61,7 @@ namespace SfGlobal {
 		queryProducts(
 			paramsArray: [string[], string | null, string | null, number, string[]]
 		): Promise<CommercialProductStandalone[]>;
+		getFrameAgreement(faId: [string]): Promise<FrameAgreement>;
 	}
 
 	interface CategorizationData {
@@ -337,6 +338,18 @@ namespace SfGlobal {
 		isAdmin: boolean;
 		currentUser: string;
 		listProcess: SfdcProcessInstance[];
+	}
+
+	interface Attachment {
+		custom?: Addons;
+		products?: Products;
+		offers?: Products;
+		addons?: Addons;
+	}
+
+	export interface FrameAgreementAttachment {
+		frameAgreement: FrameAgreement;
+		attachment?: Attachment;
 	}
 
 	/* eslint-enable @typescript-eslint/naming-convention */

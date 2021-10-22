@@ -303,3 +303,8 @@ export interface DiscLevelWrapper {
 export interface Subscriber {
 	unsubscribe: () => void;
 }
+
+export interface FrameAgreementAttachment {
+	frameAgreement: FrameAgreement;
+	attachment?: Attachment;
+}

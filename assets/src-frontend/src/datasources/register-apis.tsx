@@ -19,6 +19,10 @@ interface FamApi {
 	getActiveFrameAgreement?: () => FrameAgreement;
 	setStatusOfFrameAgreement?: (faId: string, newStatus: string) => Promise<string>;
 	validateStatusConsistency?: (faId: string) => Promise<void>;
+	refreshFa?: (
+		faId: string,
+		refreshAttachment: boolean
+	) => Promise<SfGlobal.FrameAgreementAttachment>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

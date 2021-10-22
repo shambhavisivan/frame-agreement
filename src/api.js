@@ -36,7 +36,11 @@ const eventList = new Set([
 	'onBeforeAddOffers',
 	'onBeforeDeleteOffers',
 	'onAfterAddOffers',
-	'onAfterDeleteOffers'
+	'onAfterDeleteOffers',
+	'onBeforeAddChildFrameAgreements',
+	'onAfterAddChildFrameAgreements',
+	'onBeforeDeleteChildFrameAgreements',
+	'onAfterDeleteChildFrameAgreements'
 ]);
 
 const dgEventPrefix = 'DGE_';

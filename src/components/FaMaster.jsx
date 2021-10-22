@@ -129,7 +129,7 @@ class FaMaster extends Component {
 			});
 		});
 		// Enable save on events
-		SUBSCRIPTIONS['sub2'] = window.FAM.subscribe('onAfterAddProducts', data => {
+		SUBSCRIPTIONS['sub2'] = window.FAM.subscribe('onAfterAddChildFrameAgreements', data => {
 			return new Promise(resolve => {
 				this._setState({
 					actionTaken: true
@@ -147,7 +147,7 @@ class FaMaster extends Component {
 			});
 		});
 		// Enable save on events
-		SUBSCRIPTIONS['sub4'] = window.FAM.subscribe('onAfterDeleteProducts', data => {
+		SUBSCRIPTIONS['sub4'] = window.FAM.subscribe('onAfterDeleteChildFrameAgreements', data => {
 			return new Promise(resolve => {
 				this._setState({
 					actionTaken: true
@@ -157,24 +157,6 @@ class FaMaster extends Component {
 		});
 		// Enable save on FA events
 		SUBSCRIPTIONS['sub5'] = window.FAM.subscribe('onFaUpdate', data => {
-			return new Promise(resolve => {
-				this._setState({
-					actionTaken: true
-				});
-				resolve(data);
-			});
-		});
-		// Enable save on events
-		SUBSCRIPTIONS['sub6'] = window.FAM.subscribe('onAfterAddOffers', data => {
-			return new Promise(resolve => {
-				this._setState({
-					actionTaken: true
-				});
-				resolve(data);
-			});
-		});
-		// Enable save on events
-		SUBSCRIPTIONS['sub7'] = window.FAM.subscribe('onAfterDeleteOffers', data => {
 			return new Promise(resolve => {
 				this._setState({
 					actionTaken: true
@@ -278,12 +260,12 @@ class FaMaster extends Component {
 
 	async _removeAgreements() {
 		return new Promise(async resolve => {
-			let productsToDelete = await publish(
-				'onBeforeDeleteProducts',
+			let agreementsToDelete = await publish(
+				'onBeforeDeleteChildFrameAgreements',
 				Object.keys(this.state.selectedAgreements)
 			);
 
-			await this.props.removeFaFromMaster(this.faId, productsToDelete);
+			await this.props.removeFaFromMaster(this.faId, agreementsToDelete);
 
 			this._setState(
 				{
@@ -291,10 +273,10 @@ class FaMaster extends Component {
 				},
 				() => {
 					publish(
-						'onAfterDeleteProducts',
-						Object.values(this.props.frameAgreements).map(fa => productsToDelete.includes(fa.Id))
+						'onAfterDeleteChildFrameAgreements',
+						Object.values(this.props.frameAgreements).map(fa => agreementsToDelete.includes(fa.Id))
 					);
-					resolve(productsToDelete);
+					resolve(agreementsToDelete);
 				}
 			);
 		});

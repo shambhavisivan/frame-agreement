@@ -172,8 +172,9 @@ class FaModals extends React.Component {
 	}
 
 	async onAddFa(agreements) {
+		agreements = await publish('onBeforeAddChildFrameAgreements', agreements);
 		await this.props.addFaToMaster(this.props.faId, agreements);
-		publish('onAfterAddProducts', agreements);
+		publish('onAfterAddChildFrameAgreements', agreements);
 	}
 
 	async onBulkNegotiateOffers(attachment, negotiations) {

@@ -13,7 +13,8 @@ export enum QueryKeys {
 	productsInCategory = 'productsInCategory',
 	filterCommercialProduct = 'filterCommercialProduct',
 	standaloneAddons = 'standaloneAddons',
-	approvalHistory = 'approvalHistory'
+	approvalHistory = 'approvalHistory',
+	appSettings = 'appSettings'
 }
 export const FA_API_NAME = 'csconta__Frame_Agreement__c';
 export const FA_STATUS_FIELD_NAME = 'csconta__Status__c';

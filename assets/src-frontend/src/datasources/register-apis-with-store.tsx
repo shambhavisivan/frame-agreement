@@ -46,5 +46,12 @@ export function RegisterApisWithStore(): ReactElement {
 	};
 	registerApiEndpoint('setStatusOfFrameAgreement', setStatusOfFrameAgreement);
 
+	const validateStatusConsistency = async (frameAgreementId: string): Promise<void> => {
+		await agreementService.validateFrameAgreementStatusConsistency(frameAgreementId);
+
+		return;
+	};
+	registerApiEndpoint('validateStatusConsistency', validateStatusConsistency);
+
 	return <></>;
 }

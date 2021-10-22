@@ -58,7 +58,8 @@ export const mockAppSettings: AppSettings = {
 		inputMinmaxRestriction: true,
 		discountAsPrice: false,
 		faEditableStatuses: ['Draft', 'Requires Approval', 'Approved'],
-		approversRevise: true
+		approversRevise: true,
+		activeStatusManagement: true
 	}
 };
 

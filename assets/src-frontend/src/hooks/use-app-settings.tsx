@@ -1,4 +1,5 @@
 import { QueryStatus, useQuery } from 'react-query';
+import { QueryKeys } from '../app-constants';
 import { AppSettings, remoteActions } from '../datasources';
 
 export { QueryStatus } from 'react-query';
@@ -9,7 +10,7 @@ export function useAppSettings(
 	status: QueryStatus;
 	settings: AppSettings | undefined;
 } {
-	const { status, data } = useQuery('appSettings', getAppSettings);
+	const { status, data } = useQuery(QueryKeys.appSettings, getAppSettings);
 
 	return {
 		status,

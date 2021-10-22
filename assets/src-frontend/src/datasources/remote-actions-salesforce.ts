@@ -94,7 +94,8 @@ export const remoteActions: RemoteActions = {
 				faEditableStatuses: settings.FACSettings.fa_editable_statuses
 					.split(',')
 					.map((status: string) => status.trim()),
-				approversRevise: settings.FACSettings.approvers_revise
+				approversRevise: settings.FACSettings.approvers_revise,
+				activeStatusManagement: settings.FACSettings.active_status_management__c
 			}
 		};
 	},

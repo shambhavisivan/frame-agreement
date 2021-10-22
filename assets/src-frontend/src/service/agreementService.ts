@@ -5,6 +5,7 @@ import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
 import { QueryCache } from 'react-query';
 import { deforcify } from '../datasources/deforcify';
 import { DetailsState } from '../components/fa-details/details-page-provider';
+import { FAMClientError } from '../error/fam-client-error-handler';
 
 class AgreementService {
 	private _settings: AppSettings;
@@ -79,6 +80,52 @@ class AgreementService {
 		this.updateFa(faId, FA_STATUS_FIELD_NAME, newState);
 		return 'Success';
 	};
+
+	public async validateFrameAgreementStatusConsistency(frameAgreementId: string): Promise<void> {
+		if (!this._settings?.facSettings.activeStatusManagement) {
+			return;
+		}
+
+		let cacheIndex = -1;
+		const agreement = this._agreementList.find((fa: FrameAgreement, index: number) => {
+			if (fa.id === frameAgreementId) {
+				cacheIndex = index;
+				return true;
+			}
+			return false;
+		});
+
+		if (!agreement) {
+			throw new FAMClientError(this._customLabels.incorrectFa);
+		}
+		const facStatuses = this._settings?.facSettings.statuses;
+		let updatedAgreement = agreement;
+
+		//TODO: need to add approvalNeeded flag
+		if (agreement.status && facStatuses) {
+			if (
+				facStatuses.requiresApprovalStatus &&
+				(agreement.status === facStatuses.draftStatus ||
+					agreement.status === facStatuses.approvedStatus)
+			) {
+				updatedAgreement = await remoteActions.upsertFrameAgreements(frameAgreementId, {
+					// eslint-disable-next-line @typescript-eslint/naming-convention
+					csconta__Status__c: facStatuses.requiresApprovalStatus
+				});
+			} else if (
+				facStatuses.draftStatus &&
+				agreement.status === facStatuses?.requiresApprovalStatus
+			) {
+				updatedAgreement = await remoteActions.upsertFrameAgreements(frameAgreementId, {
+					// eslint-disable-next-line @typescript-eslint/naming-convention
+					csconta__Status__c: facStatuses.draftStatus
+				});
+			}
+		}
+
+		this._agreementList[cacheIndex] = updatedAgreement;
+		this._queryCache.setQueryData(QueryKeys.frameagreement, this._agreementList);
+	}
 }
 
 export { AgreementService };

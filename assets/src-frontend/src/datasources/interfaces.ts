@@ -20,6 +20,7 @@ export type FacSetting = {
 	discountAsPrice: boolean;
 	faEditableStatuses: string[];
 	approversRevise: boolean;
+	activeStatusManagement: boolean;
 };
 
 export interface AppSettings {

@@ -18,6 +18,7 @@ interface FamApi {
 	toast?: (type: CSToastVariant, title: string, message: string, timeout: number) => void;
 	getActiveFrameAgreement?: () => FrameAgreement;
 	setStatusOfFrameAgreement?: (faId: string, newStatus: string) => Promise<string>;
+	validateStatusConsistency?: (faId: string) => Promise<void>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

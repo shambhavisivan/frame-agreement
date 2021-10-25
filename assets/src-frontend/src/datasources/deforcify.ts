@@ -30,7 +30,7 @@ const modifyFirstLetter = (modifier: (letter: string) => string) => (val: string
 	return [modifier(firstLetter), ...rest].join('');
 };
 
-const capitalize = modifyFirstLetter((s) => s.toUpperCase());
+export const capitalize = modifyFirstLetter((s) => s.toUpperCase());
 const uncapitalize = modifyFirstLetter((s) => s.toLowerCase());
 
 function toCamel(val: string): string {
@@ -46,11 +46,11 @@ export function deforcifyKeyName<T extends string>(keyName: T): DeforcifiedKeyNa
 	return toCamel(body) as DeforcifiedKeyName<T>;
 }
 
-function isObject(value: object | unknown): value is object {
+export function isObject(value: object | unknown): value is object {
 	return typeof value === 'object';
 }
 
-function isArray<T>(value: T[] | unknown): value is T[] {
+export function isArray<T>(value: T[] | unknown): value is T[] {
 	return Array.isArray(value);
 }
 

@@ -51,6 +51,12 @@ export interface RemoteActions {
 		lastRecordId: string | null,
 		queryLimit: number
 	): Promise<any>;
+	getItemsCountAndIds(
+		sobjectName: string,
+		cpType: string,
+		cpRole: string
+	): Promise<Map<string, any>>;
+	getAddOnsCountAndIds(id: string | null): Promise<Map<string, any>>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -235,5 +241,23 @@ export const remoteActions: RemoteActions = {
 		]);
 
 		return cps.map(deforcify);
+	},
+	async getItemsCountAndIds(
+		sobjectName: string,
+		cpType: string,
+		cpRole: string
+	): Promise<Map<string, any>> {
+		const cpCountAndIds = await SF.invokeAction('getItemsCountAndIds', [
+			sobjectName,
+			cpType,
+			cpRole
+		]);
+
+		return cpCountAndIds;
+	},
+	async getAddOnsCountAndIds(id: string | null): Promise<Map<string, any>> {
+		const addOnCountAndIds = await SF.invokeAction('getAddOnsCountAndIds', [id]);
+
+		return addOnCountAndIds;
 	}
 };

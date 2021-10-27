@@ -11,18 +11,12 @@ public class CommercialProductService {
 
 		// when empty/ null parameters are passed, return 1st page of records
 		if ((priceItemIds == null || (priceItemIds != null && priceItemIds.isEmpty())) && (filterFields == null || filterFields == '') && (queryLimit == null || queryLimit < 0)) {
-			queryLimit = FrameRateManagerController.DEFAULT_RECORDS_PER_PAGE;
+			queryLimit = FrameRateManagerController.DEFAULT_QUERY_LIMIT;
 		}
 
-		// when priceItemIds is non-empty/not null, ignore every other parameter
+		// when priceItemIds is non-empty/not null, ignore other filterFields if present in params
 		if (priceItemIds != null && !priceItemIds.isEmpty()) {
-			lastRecordId = null;
 			filterFields = null;
-			queryLimit = null;
-			// for large priceItemIds list, set a limit of 100
-			if (priceItemIds.size() > 100) {
-				queryLimit = 100;
-			}
 		}
 
 		Map<Id, cspmb__price_item__c> cpIdMap;
@@ -48,13 +42,14 @@ public class CommercialProductService {
 			    'and (cspmb__type__c = null ' +
 			    'OR (cspmb__type__c = :cpType ' +
 			    'AND cspmb__role__c = :cpRole)) ';
-		}
-
-		if (priceItemIds != null && !priceItemIds.isEmpty()) {
-			if (isPsEnabled) {
-				query += 'where id in :priceItemIds ';
-			} else if (!isPsEnabled && !priceItemIds.isEmpty()) {
+			
+			if (priceItemIds != null && !priceItemIds.isEmpty()) {
 				query += 'and id in :priceItemIds ';
+			}
+
+		} else {
+			if (priceItemIds != null) {
+				query += 'where id in :priceItemIds ';
 			}
 		}
 

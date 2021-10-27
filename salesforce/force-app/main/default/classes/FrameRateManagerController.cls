@@ -1,4 +1,7 @@
 global with sharing class FrameRateManagerController {
+	public static final Integer DEFAULT_QUERY_LIMIT = 5000;
+	public static final String CP_TYPE = 'Commercial Product';
+	public static final String CP_ROLE = 'Basic';
 
 	public transient csutil.CustomResource[] commonContainerPageResources {
 		get;
@@ -1147,7 +1150,7 @@ global with sharing class FrameRateManagerController {
 		return overrideCharges(cpIdMap);
 	}
 
-	private static List<cspmb__Price_Item__c> overrideCharges(Map<Id, cspmb__Price_Item__c> cpIdMap) {
+	public static List<cspmb__Price_Item__c> overrideCharges(Map<Id, cspmb__Price_Item__c> cpIdMap) {
 		// modification of cpList is added because of PLM advanced pricing regulation
 		// fetching recurring and one-off adjustment, then showing them in one-off and recurring charge of CP
 		csutil__JSON_Data__c standardPricebook = getStandardPricebook();
@@ -2695,7 +2698,7 @@ global with sharing class FrameRateManagerController {
 		}
 	}
 
-	private static Boolean getPsSwitchStatus() {
+	public static Boolean getPsSwitchStatus() {
 		Fac_Settings__c facSettings = getFacSetting();
 
 		return facSettings.is_ps_enabled__c;
@@ -2968,6 +2971,133 @@ global with sharing class FrameRateManagerController {
 			Integer queryLimit
 	) {
 		return CommercialProductService.queryProducts(priceItemIds, filterFields, lastRecordId, queryLimit);
+	}
+
+	@RemoteAction
+	public static Map<String, Object> getItemsCountAndIds(String sobjectName, String cpType, String cpRole) {
+
+		String queryCount = 'select count() from ' + sobjectName;
+		String queryIds = 'select id from ' + sobjectName;
+		// we will later add checks if needed, for other SObjects too like offers, etc. incase a  different where clause is to be used for each of them.
+		String whereClause = '';
+		if (sobjectName == 'cspmb__price_item__c') {
+			whereClause += ' where cspmb__account__c = null ' +
+			    'and cspmb__is_active__c = true ' +
+			    'and (cspmb__effective_start_date__c = null ' +
+			    'OR (cspmb__effective_start_date__c != null ' +
+			    'and cspmb__effective_start_date__c < TODAY)) ' +
+			    'and (cspmb__effective_end_date__c = null ' +
+			    'OR (cspmb__effective_end_date__c != null ' +
+			    'and cspmb__effective_end_date__c > TODAY)) ' +
+			    // If user turns off PS after a successful synchronisation
+			    'and (cspmb__type__c = null ' +
+			    'OR (cspmb__type__c = :cpType ' +
+			    'AND cspmb__role__c = :cpRole))';
+		}
+
+		if (whereClause.length() > 1) {
+			queryCount += whereClause;
+			queryIds += whereClause;
+		}
+
+		queryIds += ' order by id';
+
+		Integer count = database.countQuery(queryCount);
+
+		List<SObject> sobs = database.query(queryIds);
+		List<Id> idList = new List<Id>();
+		for (SObject sob : sobs) {
+			idList.add(sob.id);
+		}
+
+		Map<String, Object> sObjectCountAndIds = new Map<String, Object>();
+		sObjectCountAndIds.put('count', count);
+		sObjectCountAndIds.put('ids', idList);
+
+		return sObjectCountAndIds;
+	}
+
+	@RemoteAction
+	public static Map<String, Object> getAddOnsCountAndIds (Id priceItemId) {
+		// TODO: uncomment below lines after addOn api commit is merged.
+		// if (priceItemId == null) {
+		// 	throw new CustomExceptions.ApplicationException(System.Label.invalid_priceItem_Id);
+		// }
+		List<cspmb__price_item_add_on_price_item_association__c> priceItemAddonAssociations =
+			new List<cspmb__price_item_add_on_price_item_association__c>();
+		List<cspmb__add_on_price_item__c> addOns = new List<cspmb__add_on_price_item__c>();
+
+		List<String> fieldsArr = AppUtilService.getSObjectFields('cspmb__add_on_price_item__c');
+		for (String field: fieldsArr) {
+			 fieldsArr.set(fieldsArr.indexOf(field), 'cspmb__add_on_price_item__r.' + field);
+		}
+
+		String query =
+		    'select id, cspmb__price_item__c, cspmb__overrides_add_on_charges__c, cspmb__effective_end_date__c, ' +
+		    'cspmb__effective_start_date__c, cspmb__one_off_charge__c, cspmb__recurring_charge__c, ' +
+		    'cspmb__add_on_price_item__c, ' + String.join(fieldsArr, ',');
+
+		query +=
+		    ' from cspmb__price_item_add_on_price_item_association__c where cspmb__price_item__c = :priceItemId and ' +
+		    'cspmb__add_on_price_item__r.cspmb__is_active__c = true';
+
+		/*
+		* 'order by id' is needed to ensure that we always pass a standard order of ids in the ascending order so that
+		* the correct last record id value is used to fetch records for every subsequent page. Having no ORDER BY
+		* clause returns ids in a random order.
+		*/
+		query += ' order by id';
+
+		try {
+			priceItemAddonAssociations = (List<cspmb__price_item_add_on_price_item_association__c>) database.query(
+				query
+			);
+		}
+		catch (QueryException e) {
+			throw new CustomExceptions.ApplicationException(e.getMessage());
+		}
+
+		// filter out only valid priceItem - addOn associations
+		List<cspmb__price_item_add_on_price_item_association__c> filteredPriceItemAddonAssociations =
+			new List<cspmb__price_item_add_on_price_item_association__c>();
+
+		for (cspmb__price_item_add_on_price_item_association__c addonAsson : priceItemAddonAssociations) {
+
+			Date effectiveStartDate = addonAsson.cspmb__add_on_price_item__r.cspmb__effective_start_date__c;
+			Date effectiveEndDate = addonAsson.cspmb__add_on_price_item__r.cspmb__effective_end_date__c;
+
+			Boolean start_invalid = effectiveStartDate != null && Date.today() < effectiveStartDate;
+			Boolean end_invalid = effectiveEndDate != null && Date.today() > effectiveEndDate;
+
+			Boolean start_invalid_assoc =
+				addonAsson.cspmb__effective_start_date__c != null &&
+					date.today() < addonAsson.cspmb__effective_start_date__c;
+			Boolean end_invalid_assoc =
+				addonAsson.cspmb__effective_end_date__c != null &&
+					date.today() > addonAsson.cspmb__effective_end_date__c;
+
+			if (!(start_invalid || end_invalid) && !(start_invalid_assoc || end_invalid_assoc)) {
+				filteredPriceItemAddonAssociations.add(addonAsson);
+			}
+		}
+
+		for (cspmb__price_item_add_on_price_item_association__c assocItem: filteredPriceItemAddonAssociations) {
+			addOns.add((cspmb__add_on_price_item__c) assocItem.getSObject('cspmb__add_on_price_item__r'));
+		}
+
+		List<Id> addOnIds = new List<Id>();
+		Integer count = 0;
+
+		for (cspmb__add_on_price_item__c addOn: addOns) {
+			addOnIds.add(addOn.id);
+			++count;
+		}
+
+		Map<String, Object> addOnCountAndIds = new Map<String, Object>();
+		addOnCountAndIds.put('count', count);
+		addOnCountAndIds.put('ids', addOnIds);
+
+		return addOnCountAndIds;
 	}
 
 	// WRAPPERS

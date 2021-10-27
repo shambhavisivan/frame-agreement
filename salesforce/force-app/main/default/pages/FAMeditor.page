@@ -159,7 +159,9 @@
 				getNameSpacePrefix: "{!$RemoteAction.FrameRateManagerController.getNameSpacePrefix}",
 				findReplacementOffers: "{!$RemoteAction.FrameRateManagerController.findReplacementOffers}",
 				getFaOffers: "{!$RemoteAction.FrameRateManagerController.getFaOffers}",
-				queryProducts: "{!$RemoteAction.FrameRateManagerController.queryProducts}"
+				queryProducts: "{!$RemoteAction.FrameRateManagerController.queryProducts}",
+				getItemsCountAndIds: "{!$RemoteAction.FrameRateManagerController.getItemsCountAndIds}",
+				getAddOnsCountAndIds: "{!$RemoteAction.FrameRateManagerController.getAddOnsCountAndIds}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

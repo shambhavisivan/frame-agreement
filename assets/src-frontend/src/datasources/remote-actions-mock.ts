@@ -183,5 +183,17 @@ export const remoteActions: RemoteActions = {
 		queryLimit: number
 	): Promise<any> {
 		return mockCommercialProducts;
+	},
+
+	async getItemsCountAndIds(
+		sobjectName: string,
+		cpType: string,
+		cpRole: string
+	): Promise<Map<string, any>> {
+		return new Map<string, any>();
+	},
+
+	async getAddOnsCountAndIds(id: string | null): Promise<Map<string, any>> {
+		return new Map<string, any>();
 	}
 };

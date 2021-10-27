@@ -1,22 +1,16 @@
 import React, { ReactElement, useState } from 'react';
 import { remoteActions } from '../datasources';
 import './ScrapParentStyles.scss';
-import { Pagination } from './ScrapPagination';
+import { ServerSidePagination } from './ServerSidePagination';
 
-interface CurrentPageInfo {
-	currentPage: number;
-	pageSize: number;
-}
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 
+// TODO: this component is to be plugged with add-modal component and refactored accordingly in the next patch/changeset
 export function ScrapParent(): ReactElement {
-	// TODO: move cps to react-query store
-	const [cps, setCps] = useState([]);
-	const [currentPageDetails, setCurrentPageDetails] = useState<CurrentPageInfo>({
-		currentPage: 0,
-		pageSize: 5
-	});
+	const [cps, setCps] = useState<any>([]);
+	const [currentPage, setCurrentPage] = useState(0);
+	const [pageSize, setPageSize] = useState(0);
 
-	/* eslint-disable  @typescript-eslint/no-explicit-any */
 	const getCps = async (queryLimit: number, lastRecordId?: string | null): Promise<any> => {
 		const commercialProducts = await remoteActions.queryProducts(
 			[],
@@ -27,24 +21,40 @@ export function ScrapParent(): ReactElement {
 		return commercialProducts;
 	};
 
-	/* eslint-disable  @typescript-eslint/no-explicit-any */
-	const updateCps = (cpResponse: any): void => {
-		const newCps = JSON.parse(JSON.stringify(cps));
+	const updateCps = (
+		cpResponse: any,
+		newPage: number,
+		pgSize: number,
+		totalCount: number
+	): void => {
+		let newCps: any[] = [];
+		let pageStartIndex = (newPage - 1) * pgSize;
+		const pageEndIndex = pageStartIndex + pgSize - 1;
+
+		if (cps.length === 0) {
+			for (let i = 0; i < totalCount; i++) {
+				newCps.push({});
+			}
+		} else {
+			newCps = JSON.parse(JSON.stringify(cps));
+		}
+
 		cpResponse.map((item: any) => {
-			newCps.push(item);
+			if (pageStartIndex <= pageEndIndex) {
+				newCps[pageStartIndex] = item;
+				pageStartIndex += 1;
+			}
 		});
+
 		setCps(newCps);
 	};
 
-	/* eslint-disable  @typescript-eslint/no-explicit-any */
 	const currentPageData = (): any => {
-		const firstPageIndex = (currentPageDetails.currentPage - 1) * currentPageDetails.pageSize;
-		const lastPageIndex = firstPageIndex + currentPageDetails.pageSize;
-		//TODO: in actual implementation add sorting as per business requirements if needed.
+		const firstPageIndex = (currentPage - 1) * pageSize;
+		const lastPageIndex = firstPageIndex + pageSize;
 		return cps.slice(firstPageIndex, lastPageIndex);
 	};
 
-	const msg = <h1>Loading... !</h1>;
 	return (
 		<>
 			<table>
@@ -68,16 +78,19 @@ export function ScrapParent(): ReactElement {
 									</tr>
 								);
 						  })
-						: msg}
+						: ''}
 				</tbody>
 			</table>
-			<Pagination
+			<ServerSidePagination
 				queryFunction={getCps}
 				updateData={updateCps}
-				updatePage={setCurrentPageDetails}
-				// TODO: cps will be removed from props once it can be fetched from react query store
+				updateParentPageSize={setPageSize}
+				updatePage={setCurrentPage}
+				getCountAndIds={remoteActions.getItemsCountAndIds}
 				cps={cps}
 			/>
+			{/* below line is just to test react query states later */}
+			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
 		</>
 	);
 }

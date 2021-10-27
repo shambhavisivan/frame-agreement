@@ -477,7 +477,7 @@ export default function negotiationReducer(
 			return {
 				...state,
 				[negotiationItemType]: {
-					...state[itemType],
+					...state[negotiationItemType],
 					[itemId]: {
 						...state[negotiationItemType][itemId],
 						volume

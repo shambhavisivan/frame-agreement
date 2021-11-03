@@ -195,7 +195,7 @@ export default function negotiationReducer(
 					}
 
 					const negotiation: ProductNegotiation = {
-						rateCards: productData.rateCards.reduce((accu, rateCard) => {
+						rateCards: productData?.rateCards.reduce((accu, rateCard) => {
 							const rateCardLines = rateCard.rateCardLines.reduce(
 								(acculine, { id, name, rateValue }) => {
 									acculine[id] = {

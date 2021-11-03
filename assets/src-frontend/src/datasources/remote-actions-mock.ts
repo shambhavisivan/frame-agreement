@@ -8,7 +8,8 @@ import {
 	FieldMetadata,
 	ApprovalHistory,
 	ApprovalActionType,
-	DeltaResult
+	DeltaResult,
+	Addon
 } from './interfaces';
 import {
 	mockCommercialProductData,
@@ -22,13 +23,14 @@ import {
 	mockOfferData,
 	attachment,
 	DELTA_CALC_RESULT_MOCK,
-	CP_FIELD_METADATA
+	CP_FIELD_METADATA,
+	ADDON_METADATA
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 import { deforcify, deforcifyKeyName } from './deforcify';
-import { approval } from '../local-server/local_data';
-import { CP_API_NAME } from '../app-constants';
+import { addons, approval } from '../local-server/local_data';
+import { ADDON_API_NAME, CP_API_NAME } from '../app-constants';
 
 const FAKE_DELAY_MS = 500;
 
@@ -96,7 +98,6 @@ export const remoteActions: RemoteActions = {
 		/* eslint-disable no-console */
 		console.log(`Upserted`, upsertedFa);
 		/* eslint-enable no-console */
-
 		return new Promise((resolve) => {
 			setTimeout(() => resolve(deforcify(upsertedFa)), FAKE_DELAY_MS);
 		});
@@ -126,6 +127,9 @@ export const remoteActions: RemoteActions = {
 		switch (sObjectName) {
 			case CP_API_NAME:
 				fieldMetadata = CP_FIELD_METADATA;
+				break;
+			case ADDON_API_NAME:
+				fieldMetadata = ADDON_METADATA;
 				break;
 			default:
 				fieldMetadata = faFieldMetadataMock;
@@ -173,5 +177,16 @@ export const remoteActions: RemoteActions = {
 
 	async filterCommercialProducts() {
 		return mockCommercialProducts;
+	},
+	async queryAddons(
+		priceItemId: string,
+		lastRecordId: string | null,
+		limit: number | null
+	): Promise<Addon[]> {
+		const mockaddons = addons.map(deforcify);
+
+		return new Promise((resolve) => {
+			setTimeout(() => resolve(mockaddons), FAKE_DELAY_MS);
+		});
 	}
 };

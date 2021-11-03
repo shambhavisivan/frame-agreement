@@ -19,6 +19,7 @@ import {
 import { CommercialProductStandalone, FieldMetadata } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { useFieldMetadata } from '../../hooks/use-field-metadata';
+import { ProductDetails } from './product-details';
 
 export type ProductStatus = 'add' | 'remove';
 
@@ -157,8 +158,7 @@ export function ProductListGrid({
 	}, [fieldMetadata]);
 
 	const renderDetails = (row: CSDataTableRowWithMetaInterface): ReactElement => {
-		// product details page should be plugged here
-		return <div>{row.data?.name}</div>;
+		return <ProductDetails product={row.data as CommercialProductStandalone} />;
 	};
 
 	const getSelectedKeys = useMemo(

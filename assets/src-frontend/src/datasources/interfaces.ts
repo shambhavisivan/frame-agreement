@@ -99,6 +99,9 @@ export interface CommercialProductData {
 
 export interface Addon {
 	id: string;
+	name: string;
+	oneOffCharge?: number;
+	recurringCharge?: number;
 }
 
 export interface Allowance {

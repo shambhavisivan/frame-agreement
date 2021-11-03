@@ -9,6 +9,7 @@ export enum QueryKeys {
 	filterCommercialProduct = 'filterCommercialProduct'
 }
 export const FA_API_NAME = 'csconta__Frame_Agreement__c';
+export const ADDON_API_NAME = 'cspmb__Add_On_Price_Item__c';
 export const SEARCH_INPUT_VALIDATION_MESSAGE = 'Enter atleast 3 or more characters to begin search';
 export const DEFAULT_GRID_VISIBLE_FIELDS = 5;
 export const DEFAULT_SEARCH_TRIGGER_LIMIT = 3;
@@ -63,3 +64,33 @@ export const THEME_DELTA_MODAL = {
 };
 
 export const CP_API_NAME = 'cspmb__Price_Item__c';
+
+export const ADDON_PRODUCT_DETAILS_GRID_METADATA: FieldMetadata[] = [
+	{
+		apiName: 'name',
+		fieldLabel: 'Add On Name',
+		fieldType: 'STRING',
+		isCustom: false,
+		isUpdatable: true,
+		precision: 0,
+		scale: 0
+	},
+	{
+		apiName: 'oneOffCharge',
+		fieldLabel: 'One-Off Charge',
+		fieldType: 'DOUBLE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 18,
+		scale: 2
+	},
+	{
+		apiName: 'recurringCharge',
+		fieldLabel: 'Recurring Charge',
+		fieldType: 'DOUBLE',
+		isCustom: true,
+		isUpdatable: true,
+		precision: 18,
+		scale: 2
+	}
+];

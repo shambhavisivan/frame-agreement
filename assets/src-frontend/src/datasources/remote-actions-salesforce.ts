@@ -9,7 +9,8 @@ import {
 	FieldMetadata,
 	ApprovalHistory,
 	ApprovalActionType,
-	DeltaResult
+	DeltaResult,
+	Addon
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 
@@ -44,6 +45,11 @@ export interface RemoteActions {
 	getAttachmentBody(faId: string): Promise<Attachment>;
 	getDelta(sourceFaId: string, targetFaId: string): Promise<DeltaResult>;
 	filterCommercialProducts(filterData: string): Promise<CommercialProductStandalone[]>;
+	queryAddons(
+		priceItemId: string,
+		lastRecordId: string | null,
+		limit: number | null
+	): Promise<Addon[]>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -214,5 +220,15 @@ export const remoteActions: RemoteActions = {
 		const filteredCp = await SF.invokeAction('filterCommercialProducts', [filterData]);
 
 		return filteredCp.map(deforcify);
+	},
+
+	async queryAddons(priceItemId, lastRecordId, limit): Promise<Addon[]> {
+		const addonsList: SfGlobal.Addon[] = await SF.invokeAction('queryAddons', [
+			priceItemId,
+			lastRecordId,
+			limit
+		]);
+
+		return addonsList.map(deforcify);
 	}
 };

@@ -34,6 +34,7 @@ export function ProductsList({ productList }: ProductsListProps): ReactElement {
 				data={productList}
 				selectedProducts={Object.values(selectedProducts) || []}
 				onSelectRow={onSelectProduct}
+				isCollapsible={true}
 			/>
 		</div>
 	);

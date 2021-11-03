@@ -55,6 +55,7 @@ namespace SfGlobal {
 		getAttachmentBody(paramsArray: [string]): Promise<string>;
 		getDelta(paramArray: [string, string]): Promise<DeltaResult>;
 		filterCommercialProducts(filterData: [string]): Promise<CommercialProductStandalone[]>;
+		queryAddons(paramArray: [string, string | null, number | null]): Promise<Addon[]>;
 	}
 
 	interface CategorizationData {
@@ -121,24 +122,10 @@ namespace SfGlobal {
 	}
 
 	interface Addon {
-		Id: string;
-		cspmb__Price_Item__c: string;
-		cspmb__Overrides_Add_On_Charges__c: boolean;
-		cspmb__Add_On_Price_Item__c: string;
-		cspmb__Add_On_Price_Item__r: CspmbAddOnPriceItemR;
-		cspmb__One_Off_Charge__c: number;
-		cspmb__Recurring_Charge__c: number;
-	}
-
-	interface CspmbAddOnPriceItemR {
-		cspmb__Effective_Start_Date__c: number;
 		Name: string;
-		cspmb__Authorization_Level__c: string;
+		Id: string;
 		cspmb__One_Off_Charge__c: number;
 		cspmb__Recurring_Charge__c: number;
-		cspmb__Is_One_Off_Discount_Allowed__c: boolean;
-		cspmb__Is_Recurring_Discount_Allowed__c: boolean;
-		Id: string;
 	}
 
 	interface Allowance {
@@ -270,6 +257,9 @@ namespace SfGlobal {
 		addons_tab_title: string;
 		offers_tab_title: string;
 		dropdown_no_selection: string;
+		addons_header_name: string;
+		addons_header_oneOff_neg: string;
+		addons_header_recc_neg: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

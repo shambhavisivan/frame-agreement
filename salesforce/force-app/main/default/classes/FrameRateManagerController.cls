@@ -2959,6 +2959,11 @@ global with sharing class FrameRateManagerController {
 		return validFaOffers;
 	}
 
+	@RemoteAction
+	public static List<cspmb__Add_On_Price_Item__c> queryAddons(Id priceItemId, Id lastRecordId, Integer queryLimit) {
+		return AddOnService.queryAddons(priceItemId, lastRecordId, queryLimit);
+	}
+
 	// WRAPPERS
 	public class RateCard {
 		public Id Id {

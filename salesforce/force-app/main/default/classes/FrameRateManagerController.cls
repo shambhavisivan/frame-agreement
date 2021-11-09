@@ -2384,7 +2384,7 @@ global with sharing class FrameRateManagerController {
 		Attachment returnAttachment;
 		Attachment attachment = getAttachment(faId);
 
-		if (attachment == null) {
+		if (attachment == null || attachment.CreatedById != System.UserInfo.getUserId()) {
 			returnAttachment = createAttachment(faId, FAC_ATTACHMENT_NAME, FAC_ATTACHMENT_DESC, attachmentBody, 'text/plain');
 		} else {
 			returnAttachment = updateAttachment(attachment, attachmentBody);
@@ -2400,6 +2400,7 @@ global with sharing class FrameRateManagerController {
 				Id,
 				Name,
 				ParentId,
+				CreatedById,
 				Body
 			from
 				Attachment
@@ -2407,6 +2408,7 @@ global with sharing class FrameRateManagerController {
 			ParentId = :parentId
 			and
 			Name like:FAC_ATTACHMENT_NAME
+			Order by LastModifiedDate desc
 			limit 1
 		];
 
@@ -2419,23 +2421,10 @@ global with sharing class FrameRateManagerController {
 
 	@RemoteAction
 	public static String getAttachmentBody(Id parentId) {
-		List <Attachment> attachment = [
-			select
-				Id,
-				Name,
-				Body,
-				ParentId
-			from
-				Attachment
-			where
-			ParentId = :parentId
-			and
-			Name like:FAC_ATTACHMENT_NAME
-			limit 1
-		];
+		Attachment attachment = getAttachment(parentId);
 
-		if (attachment.size() > 0) {
-			return EncodingUtil.base64Encode(attachment[0].Body);
+		if (attachment != null) {
+			return EncodingUtil.base64Encode(attachment.Body);
 		} else {
 			return null;
 		}

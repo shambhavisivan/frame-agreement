@@ -117,4 +117,65 @@ public class PostInstallScriptTest {
 
 		System.assertEquals(0, jsonSettings.size());
 	}
+
+	@isTest
+	static void testSchedulerJobCreationOnInstall() {
+		PostInstallScript postInstallScriptCls = new PostInstallScript();
+
+		Test.startTest();
+		Test.testInstall(postInstallScriptCls, null);
+		Test.stopTest();
+
+		CronTrigger cronJob = [
+			select id
+			from cronTrigger
+			where cronJobDetail.name = :PostInstallScript.FA_ATTACHMENT_CLEANUP_SCHEDULER
+		];
+
+		System.assert(cronJob != null);
+	}
+
+	@isTest
+	static void testPostInstallAlreadyHavingCleanupScheduler() {
+		PostInstallScript postInstallScriptCls = new PostInstallScript();
+
+		Test.startTest();
+		Test.testInstall(postInstallScriptCls, null);
+		Test.testInstall(postInstallScriptCls, new Version(2, 23));
+		Test.stopTest();
+
+		CronTrigger cronJob = [
+			select id
+			from cronTrigger
+			where cronJobDetail.name = :PostInstallScript.FA_ATTACHMENT_CLEANUP_SCHEDULER
+		];
+
+		System.assert(cronJob != null);
+	}
+
+	@isTest
+	static void testSchedulerJobCreationOnInstallAfterDeletion() {
+		PostInstallScript postInstallScriptCls = new PostInstallScript();
+
+		Test.startTest();
+		Test.testInstall(postInstallScriptCls, null);
+
+		CronTrigger cronJob = [
+			select id
+			from cronTrigger
+			where cronJobDetail.name = :PostInstallScript.FA_ATTACHMENT_CLEANUP_SCHEDULER
+		];
+
+		System.abortJob(cronJob.id);
+		Test.testInstall(postInstallScriptCls, new Version(2, 23));
+		Test.stopTest();
+
+		cronJob = [
+			select id
+			from cronTrigger
+			where cronJobDetail.name = :PostInstallScript.FA_ATTACHMENT_CLEANUP_SCHEDULER
+		];
+
+		System.assert(cronJob != null);
+	}
 }

@@ -5,11 +5,24 @@ global class PostInstallScript implements InstallHandler {
 	public static final String FA_CATEGORIZATION_KEY = 'FA-Categorization';
 	public static final String FA_STANDARDPRICEBOOK_KEY = 'FA-StandardPricebook';
 	public static final String FA_CUSTOM_BUTTONS_KEY = 'FA-Custom-Buttons';
+	public static final String FA_ATTACHMENT_CLEANUP_SCHEDULER = 'CS Framework Agreement Attachment Cleanup Schedulable';
+	private static final String CRONJOB_FREQUENCY_EVERYDAY_MIDNIGHT = '0 0 0 * * ? *';
 
 	global void onInstall(InstallContext context) {
 		if (!context.isUpgrade() && context.previousVersion() == null) {
 			PostInstallScript.insertJsonDataConfigs();
 			PostInstallScript.insertFacSetting(context.organizationId());
+		}
+
+		List<CronTrigger> cronTriggers = [
+			select id
+			from cronTrigger
+			where cronJobDetail.name = :PostInstallScript.FA_ATTACHMENT_CLEANUP_SCHEDULER
+		];
+
+		if (cronTriggers == null || cronTriggers.isEmpty()) {
+			FaAttachmentSchedulableCleanup faAttachmentSchedulableCleanup = new FaAttachmentSchedulableCleanup();
+			System.schedule(FA_ATTACHMENT_CLEANUP_SCHEDULER, CRONJOB_FREQUENCY_EVERYDAY_MIDNIGHT, faAttachmentSchedulableCleanup);
 		}
 	}
 

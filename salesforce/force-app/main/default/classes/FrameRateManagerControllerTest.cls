@@ -8,6 +8,9 @@ private class FrameRateManagerControllerTest {
 	};
 
 	public static final String SAMPLE_CP_NAME = 'cp_1';
+	private static final String SAMPLE_FA_1_NAME = 'FA1';
+	private static final String SAMPLE_FA_2_NAME = 'FA2';
+	private static final String SAMPLE_FA_3_NAME = 'FA3';
 
 	public static String generateRandomString(Integer len) {
 		final String chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
@@ -422,10 +425,10 @@ private class FrameRateManagerControllerTest {
 
 		// FRAME AGREEMENTS
 		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(
-			csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA1', csconta__Account__c = test_account.Id
+			csconta__Status__c = 'Draft', csconta__Agreement_Name__c = SAMPLE_FA_1_NAME, csconta__Account__c = test_account.Id
 		);
-		csconta__Frame_Agreement__c fa_2 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA2');
-		csconta__Frame_Agreement__c fa_3 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA3');
+		csconta__Frame_Agreement__c fa_2 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = SAMPLE_FA_2_NAME);
+		csconta__Frame_Agreement__c fa_3 = new csconta__Frame_Agreement__c(csconta__Status__c = 'Draft', csconta__Agreement_Name__c = SAMPLE_FA_3_NAME);
 
 		csconta__Frame_Agreement__c fa_master = new csconta__Frame_Agreement__c(
 			csconta__Status__c = 'Draft', csconta__Agreement_Name__c = 'FA-Master', csconta__agreement_level__c = 'Master Agreement'
@@ -1710,25 +1713,42 @@ private class FrameRateManagerControllerTest {
 	@isTest
 	public static void testAttachmentMethods() {
 		setupPricingModel();
-		cspmb__Price_Item__c cp_1 = [select Id,Name from cspmb__Price_Item__c where Name = 'cp_1' limit 1];
-		cspmb__Price_Item__c cp_2 = [select Id,Name from cspmb__Price_Item__c where Name = 'cp_2' limit 1];
+		csconta__Frame_Agreement__c fa_1 = [select Id,csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = :SAMPLE_FA_1_NAME limit 1];
+		csconta__Frame_Agreement__c fa_2 = [select Id,csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = :SAMPLE_FA_2_NAME limit 1];
+		csconta__Frame_Agreement__c fa_3 = [select Id,csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = :SAMPLE_FA_3_NAME limit 1];
 
 		List<String> attachmentBodies = new List<String>();
 
 		Test.startTest();
 
-		Attachment a1 = FrameRateManagerController.createAttachment(cp_1.Id, 'TestName', 'testDescription', 'TestBody_1', 'text/plain');
+		Attachment a1 = FrameRateManagerController.createAttachment(fa_1.Id, 'TestName', 'testDescription', 'TestBody_1', 'text/plain');
 		attachmentBodies.add(a1.body.toString()); // TestBody_1
 
 		attachmentBodies.add('TestBody_2'); // TestBody_2
 
-		attachmentBodies.add(FrameRateManagerController.saveAttachment(cp_1.Id, 'TestBody_3')); // TestBody_3
-		attachmentBodies.add(FrameRateManagerController.saveAttachment(cp_1.Id, 'TestBody_4')); // TestBody_4
+		attachmentBodies.add(FrameRateManagerController.saveAttachment(fa_1.Id, 'TestBody_3')); // TestBody_3
+		attachmentBodies.add(FrameRateManagerController.saveAttachment(fa_1.Id, 'TestBody_4')); // TestBody_4
 
-		attachmentBodies.add(FrameRateManagerController.getAttachmentBody(cp_1.Id)); // VGVzdEJvZHlfNA==
-		attachmentBodies.add(FrameRateManagerController.getAttachmentBody(cp_2.Id)); // null
+		attachmentBodies.add(FrameRateManagerController.getAttachmentBody(fa_1.Id)); // VGVzdEJvZHlfNA==
+		attachmentBodies.add(FrameRateManagerController.getAttachmentBody(fa_2.Id)); // null
+
+		FrameRateManagerController.saveAttachment(fa_3.Id, 'TestBody_5');
+
+		User anotherUser = createMockUserForProfile('System Administrator');
+		System.runAs(anotherUser) {
+			FrameRateManagerController.saveAttachment(fa_3.Id, 'TestBody_5.1');
+			attachmentBodies.add(FrameRateManagerController.getAttachmentBody(fa_3.Id));
+		}
 
 		Test.stopTest();
+
+		List<Attachment> fa_3_Attachment = [
+			select
+				id, body
+			from attachment
+			where parentId = :fa_3.id
+			order by lastModifiedDate desc
+		];
 
 		System.assertEquals('TestBody_1', attachmentBodies[0]);
 		System.assertEquals('TestBody_2', attachmentBodies[1]);
@@ -1736,6 +1756,9 @@ private class FrameRateManagerControllerTest {
 		System.assertEquals('TestBody_4', attachmentBodies[3]);
 		System.assertEquals('VGVzdEJvZHlfNA==', attachmentBodies[4]);
 		System.assertEquals(null, attachmentBodies[5]);
+		System.assertEquals(fa_3_Attachment[0].body.toString(),
+			EncodingUtil.base64Decode(attachmentBodies[6]).toString(),
+			'The most recently modified/created attachment must be returned');
 
 	}
 

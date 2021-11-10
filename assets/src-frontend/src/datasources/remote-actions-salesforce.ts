@@ -50,6 +50,7 @@ export interface RemoteActions {
 		lastRecordId: string | null,
 		limit: number | null
 	): Promise<Addon[]>;
+	getStandaloneAddons(): Promise<Addon[]>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -230,5 +231,11 @@ export const remoteActions: RemoteActions = {
 		]);
 
 		return addonsList.map(deforcify);
+	},
+
+	async getStandaloneAddons(): Promise<Addon[]> {
+		const sfAddons = await SF.invokeAction('getStandaloneAddons');
+
+		return sfAddons.map(deforcify);
 	}
 };

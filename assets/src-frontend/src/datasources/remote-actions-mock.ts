@@ -178,11 +178,20 @@ export const remoteActions: RemoteActions = {
 	async filterCommercialProducts() {
 		return mockCommercialProducts;
 	},
+
 	async queryAddons(
 		priceItemId: string,
 		lastRecordId: string | null,
 		limit: number | null
 	): Promise<Addon[]> {
+		const mockaddons = addons.map(deforcify);
+
+		return new Promise((resolve) => {
+			setTimeout(() => resolve(mockaddons), FAKE_DELAY_MS);
+		});
+	},
+
+	async getStandaloneAddons() {
 		const mockaddons = addons.map(deforcify);
 
 		return new Promise((resolve) => {

@@ -6,7 +6,8 @@ export enum QueryKeys {
 	compareAgreement = 'compareAgreement',
 	categoriesInCatalogue = 'categoriesInCatalogue',
 	productsInCategory = 'productsInCategory',
-	filterCommercialProduct = 'filterCommercialProduct'
+	filterCommercialProduct = 'filterCommercialProduct',
+	standaloneAddons = 'standaloneAddons'
 }
 export const FA_API_NAME = 'csconta__Frame_Agreement__c';
 export const ADDON_API_NAME = 'cspmb__Add_On_Price_Item__c';

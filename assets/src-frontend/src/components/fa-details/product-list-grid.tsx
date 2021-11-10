@@ -5,11 +5,9 @@ import {
 	CSDataTableRowWithMetaInterface,
 	CSDropdown,
 	CSInputSearch,
-	CSList,
-	CSListItem,
 	CSToastApi
 } from '@cloudsense/cs-ui-components';
-import React, { ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { QueryStatus } from 'react-query';
 import {
 	CP_API_NAME,
@@ -19,6 +17,7 @@ import {
 import { CommercialProductStandalone, FieldMetadata } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { useFieldMetadata } from '../../hooks/use-field-metadata';
+import { GridColumnChooser } from './grid-column-chooser';
 import { ProductDetails } from './product-details';
 
 export type ProductStatus = 'add' | 'remove';
@@ -46,46 +45,6 @@ export function ProductListGrid({
 	const [filterString, setFilterString] = useState<string>('');
 	const labels = useCustomLabels();
 
-	const renderColumnChooser = (): ReactNode => {
-		const apiNames = fieldMetadata.map((metadata) => metadata.key);
-		const modifyColumnMetadata = (metadata: FieldMetadata, includes: boolean): void => {
-			if (!includes) {
-				setFieldMetadata((prevMetadata) => [
-					...prevMetadata,
-					{
-						key: metadata.apiName,
-						header: metadata.fieldLabel
-					}
-				]);
-				return;
-			}
-
-			const filteredMetadata: CSDataTableColumnInterface[] = fieldMetadata.filter(
-				(metainfo) => metainfo.key !== metadata.apiName
-			);
-
-			setFieldMetadata(filteredMetadata);
-		};
-
-		return (
-			<CSList variant="check-list">
-				{metadata?.map((metadata) => {
-					const isColumnVisible = new Set(apiNames).has(metadata.apiName);
-					return (
-						<CSListItem
-							key={metadata.apiName}
-							text={metadata.fieldLabel}
-							onSelectChange={(): void =>
-								modifyColumnMetadata(metadata, isColumnVisible)
-							}
-							selected={isColumnVisible}
-						/>
-					);
-				})}
-			</CSList>
-		);
-	};
-
 	useEffect(() => {
 		function transformFieldMetadata(metadata: FieldMetadata[]): CSDataTableColumnInterface[] {
 			const transformedData = metadata
@@ -105,6 +64,7 @@ export function ProductListGrid({
 
 			return transformedData;
 		}
+
 		if (metadataStatus === QueryStatus.Success) {
 			setFieldMetadata((prevState) => [
 				...prevState,
@@ -149,13 +109,21 @@ export function ProductListGrid({
 				key: 'column-chooser',
 				header: (
 					<CSDropdown mode="list" iconName="table" position="top">
-						{renderColumnChooser()}
+						{metadataStatus === QueryStatus.Success && (
+							<GridColumnChooser
+								metadata={metadata || []}
+								selectedFieldList={fieldMetadata}
+								onSelectField={(metadata): void => {
+									setFieldMetadata(metadata);
+								}}
+							/>
+						)}
 					</CSDropdown>
 				)
 			}
 		];
 		return modifiedColumnData;
-	}, [fieldMetadata]);
+	}, [fieldMetadata, metadata, metadataStatus]);
 
 	const renderDetails = (row: CSDataTableRowWithMetaInterface): ReactElement => {
 		return <ProductDetails product={row.data as CommercialProductStandalone} />;

@@ -56,6 +56,7 @@ namespace SfGlobal {
 		getDelta(paramArray: [string, string]): Promise<DeltaResult>;
 		filterCommercialProducts(filterData: [string]): Promise<CommercialProductStandalone[]>;
 		queryAddons(paramArray: [string, string | null, number | null]): Promise<Addon[]>;
+		getStandaloneAddons(): Promise<Addon[]>;
 	}
 
 	interface CategorizationData {

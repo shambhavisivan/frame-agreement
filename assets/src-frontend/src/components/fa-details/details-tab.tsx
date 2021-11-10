@@ -4,6 +4,7 @@ import { ProductStatus } from './product-list-grid';
 import { Attachment, CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { ProductsList } from './products-list';
+import { StandaloneAddons } from './standalone-addons';
 
 type DetailTabProps = {
 	attachment: Attachment;
@@ -51,6 +52,7 @@ export function DetailsTab({
 				</CSTabGroup>
 			</div>
 			<div>{activeTab === TabNames.products && <ProductsList productList={products} />}</div>
+			<div>{activeTab === TabNames.addonSA && <StandaloneAddons />}</div>
 		</div>
 	);
 }

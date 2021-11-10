@@ -2967,6 +2967,17 @@ global with sharing class FrameRateManagerController {
 	}
 
 	@RemoteAction
+	public static List<cspmb__price_item__c> queryProducts(
+		List<Id> priceItemIds,
+		String filterFields,
+		Id lastRecordId,
+		Integer queryLimit,
+		List<Id> alreadyAddedIds
+	) {
+		return CommercialProductService.queryProducts(priceItemIds, filterFields, lastRecordId, queryLimit, alreadyAddedIds);
+	}
+
+	@RemoteAction
 	public static List<Id> getProductIds(List<Id> filterIds, String filterFields) {
 		String queryIds = 'select id from cspmb__Price_Item__c';
 		String whereClause = '';

@@ -79,7 +79,7 @@ export function ProductListGrid({
 			currentTarget: { value }
 		} = event;
 		if (key === 'Enter') {
-			if (value.length > DEFAULT_SEARCH_TRIGGER_LIMIT) {
+			if (value.length > DEFAULT_SEARCH_TRIGGER_LIMIT || value.length === 0) {
 				filterHandler && filterHandler(value);
 				resetInputFilter();
 			} else {
@@ -147,23 +147,27 @@ export function ProductListGrid({
 				onKeyDown={filterProducts}
 				disabled={!filterHandler}
 			/>
-			<CSDataTable
-				columns={addColumnChooser}
-				rows={
-					data?.map((product) => ({
-						key: product.id,
-						data: product
-					})) || ([] as CSDataTableRowInterface[])
-				}
-				subsectionRender={renderDetails}
-				collapsible={isCollapsible}
-				selectable={!!onSelectRow}
-				selectedKeys={getSelectedKeys}
-				onSelectChange={(event, selectedRow): void =>
-					onSelectRow &&
-					onSelectRow(event, [selectedRow.data as CommercialProductStandalone] || [])
-				}
-			/>
+			{data.length ? (
+				<CSDataTable
+					columns={addColumnChooser}
+					rows={
+						data?.map((product) => ({
+							key: product.id,
+							data: product
+						})) || ([] as CSDataTableRowInterface[])
+					}
+					subsectionRender={renderDetails}
+					collapsible={isCollapsible}
+					selectable={!!onSelectRow}
+					selectedKeys={getSelectedKeys}
+					onSelectChange={(event, selectedRow): void =>
+						onSelectRow &&
+						onSelectRow(event, [selectedRow.data as CommercialProductStandalone] || [])
+					}
+				/>
+			) : (
+				<p>No products to show here</p>
+			)}
 		</div>
 	);
 }

@@ -195,7 +195,7 @@ private class CommercialProductServiceTest {
 
 		Test.startTest();
 
-		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(null, null, null, null);
+		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(null, null, null, null, new List<Id>());
 
 		Test.stopTest();
 
@@ -214,9 +214,9 @@ private class CommercialProductServiceTest {
 
 		Test.startTest();
 
-		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(null, null, null, 5);
+		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(null, null, null, 5, new List<Id>());
 		String lastRecordId = queriedCPs.get(queriedCPs.size() - 1).id;
-		List<cspmb__price_item__c> nextQueriedCPs = CommercialProductService.queryProducts(null, null, lastRecordId, 5);
+		List<cspmb__price_item__c> nextQueriedCPs = CommercialProductService.queryProducts(null, null, lastRecordId, 5, new List<Id>());
 
 		Test.stopTest();
 
@@ -236,9 +236,9 @@ private class CommercialProductServiceTest {
 
 		Test.startTest();
 
-		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(null, null, null, 5);
+		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(null, null, null, 5, new List<Id>());
 		String lastRecordId = queriedCPs.get(queriedCPs.size() - 1).id;
-		List<cspmb__price_item__c> nextQueriedCPs = CommercialProductService.queryProducts(null, null, lastRecordId, 5);
+		List<cspmb__price_item__c> nextQueriedCPs = CommercialProductService.queryProducts(null, null, lastRecordId, 5, new List<Id>());
 
 		Test.stopTest();
 
@@ -263,34 +263,39 @@ private class CommercialProductServiceTest {
 			new List<Id>(),
 			null,
 			null,
-			null
+			null,
+			new List<Id>()
 		);
 		//with lastRecordId, without queryLimit
 		List<cspmb__price_item__c> nextQueriedCPs = CommercialProductService.queryProducts(
 			new List<Id>(),
 			null,
 			queriedCPs.get(queriedCPs.size() - 1).id,
-			null
+			null,
+			new List<Id>()
 		);
 		//without lastRecordId, with queryLimit
 		List<cspmb__price_item__c> queriedCPsWithLimit = CommercialProductService.queryProducts(
 			new List<Id>(),
 			null,
 			null,
-			4
+			4,
+			new List<Id>()
 		);
 		// with lastRecordId, with queryLimit
 		List<cspmb__price_item__c> nextQueriedCPsWithLimit = CommercialProductService.queryProducts(
 			new List<Id>(),
 			null,
 			queriedCPsWithLimit.get(queriedCPsWithLimit.size() - 1).id,
-			4
+			4,
+			new List<Id>()
 		);
 		List<cspmb__price_item__c> nextCPsListWithLimit = CommercialProductService.queryProducts(
 			new List<Id>(),
 			null,
 			nextQueriedCPsWithLimit.get(nextQueriedCPsWithLimit.size() - 1).id,
-			4
+			4,
+			new List<Id>()
 		);
 
 		Test.stopTest();
@@ -320,27 +325,30 @@ private class CommercialProductServiceTest {
 		Test.startTest();
 
 		//without lastRecordId, without queryLimit
-		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(cpIdList, null, null, null);
+		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(cpIdList, null, null, null, new List<Id>());
 		//with lastRecordId, without queryLimit
 		List<cspmb__price_item__c> nextQueriedCPs = CommercialProductService.queryProducts(
 			cpIdList,
 			null,
 			queriedCPs.get(queriedCPs.size() - 1).id,
-			null
+			null,
+			new List<Id>()
 		);
 		//without lastRecordId, with queryLimit
 		List<cspmb__price_item__c> queriedCPsWithLimit = CommercialProductService.queryProducts(
 			cpIdList,
 			null,
 			null,
-			4
+			4,
+			new List<Id>()
 		);
 		// with lastRecordId, with queryLimit
 		List<cspmb__price_item__c> nextQueriedCPsWithLimit = CommercialProductService.queryProducts(
 			cpIdList,
 			null,
 			queriedCPsWithLimit.get(queriedCPsWithLimit.size() - 1).id,
-			4
+			4,
+			new List<Id>()
 		);
 
 		Test.stopTest();
@@ -371,32 +379,37 @@ private class CommercialProductServiceTest {
 			null,
 			'{\"name\":\"cp_7\"}',
 			null,
-			null
+			null,
+			new List<Id>()
 		);
 		List<cspmb__price_item__c> queriedCPs2 = CommercialProductService.queryProducts(
 			null,
 			'{\"cspmb__type__c\":\"cp_7\"}',
 			queriedCPs.get(queriedCPs.size() - 1).id,
-			null
+			null,
+			new List<Id>()
 		);
 		List<cspmb__price_item__c> queriedCPs3 = CommercialProductService.queryProducts(
 			null,
 			'{\"name\":\"p_\"}',
 			queriedCPs.get(queriedCPs.size() - 1).id,
-			3
+			3,
+			new List<Id>()
 		);
 		List<cspmb__price_item__c> queriedCPs4 = CommercialProductService.queryProducts(
 			cpIdList,
 			'{\"name\":\"p_\"}',
 			null,
-			3
+			3,
+			new List<Id>()
 		);
 		// with multiple filter fields
 		List<cspmb__price_item__c> queriedCPs5 = CommercialProductService.queryProducts(
 			null,
 			'{\"name\":\"cp_\",\"cspmb__price_item_code__c\":\"_2\"}',
 			null,
-			3
+			3,
+			new List<Id>()
 		);
 
 		Test.stopTest();
@@ -426,13 +439,46 @@ private class CommercialProductServiceTest {
 		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(
 			cpIdList,
 			'{\"name\":\"cp_2\",\"cspmb__price_item_code__c\":\"cp_2\"}',
-			cps[4].id,
-			6
+			cps[0].id,
+			6,
+			new List<Id>()
 		);
 
 		Test.stopTest();
 
-		System.assertEquals(queriedCPs.size(), 5);
+		System.assertEquals(queriedCPs.size(), 1);
+	}
+
+	@IsTest
+	static void testQueryProductsWithAlreadyAddedIds() {
+
+		List<cspmb__Price_Item__c> cps = [
+			select id
+			from cspmb__Price_Item__c
+		];
+		List<Id> cpIdList = new List<Id>();
+
+		for (cspmb__price_item__c cp : cps) {
+			cpIdList.add(cp.id);
+		}
+
+		List<Id> alreadyAddedIds = new List<Id>();
+		alreadyAddedIds.add(cps[6].id);
+		alreadyAddedIds.add(cps[7].id);
+
+		Test.startTest();
+
+		List<cspmb__price_item__c> queriedCPs = CommercialProductService.queryProducts(
+			cpIdList,
+			'{\"name\":\"cp_\"}',
+			cps[4].id,
+			6,
+			alreadyAddedIds
+		);
+
+		Test.stopTest();
+
+		System.assertEquals(queriedCPs.size(), 3);
 	}
 
 	@IsTest
@@ -453,13 +499,15 @@ private class CommercialProductServiceTest {
 			new List<Id>(),
 			'{\"name\":\"cp_2\",\"cspmb__price_item_code__c\":\"cp_2\"}',
 			null,
-			6
+			6,
+			new List<Id>()
 		);
 		List<cspmb__price_item__c> queriedCPs2 = CommercialProductService.queryProducts(
 			new List<Id>(),
 			'{\"cspmb__role__c\":\"Basic\",\"cspmb__type__c\":\"Commercial Product\"}',
 			queriedCPs.get(queriedCPs.size() - 1).id,
-			2
+			2,
+			new List<Id>()
 		);
 
 		Test.stopTest();
@@ -494,7 +542,7 @@ private class CommercialProductServiceTest {
 
 		Test.startTest();
 
-		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50);
+		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50, new List<Id>());
 
 		Test.stopTest();
 
@@ -520,7 +568,7 @@ private class CommercialProductServiceTest {
 
 		Test.startTest();
 
-		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50);
+		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50, new List<Id>());
 
 		Test.stopTest();
 
@@ -554,7 +602,7 @@ private class CommercialProductServiceTest {
 
 		Test.startTest();
 
-		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50);
+		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50, new List<Id>());
 
 		Test.stopTest();
 
@@ -602,7 +650,7 @@ private class CommercialProductServiceTest {
 
 		Test.startTest();
 
-		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50);
+		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50, new List<Id>());
 
 		Test.stopTest();
 
@@ -651,7 +699,7 @@ private class CommercialProductServiceTest {
 
 		Test.startTest();
 
-		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50);
+		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(cpIdList, null, null, 50, new List<Id>());
 
 		Test.stopTest();
 
@@ -685,7 +733,7 @@ private class CommercialProductServiceTest {
 		insert facSettings;
 
 		Test.startTest();
-		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(new List<Id>(), null, null, 10);
+		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(new List<Id>(), null, null, 10, new List<Id>());
 		Test.stopTest();
 
 		System.assertEquals(9, cps.size());
@@ -698,9 +746,9 @@ private class CommercialProductServiceTest {
 		insert facSettings;
 
 		Test.startTest();
-		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(new List<Id>(), null, null, 10);
+		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(new List<Id>(), null, null, 10, new List<Id>());
 		Test.stopTest();
 
 		System.assertEquals(0, cps.size());
 	}
-}
+ }

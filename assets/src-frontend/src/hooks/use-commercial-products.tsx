@@ -8,7 +8,11 @@ import {
 import { useProductIdsInDefaultCatalogue } from './use-productIds-in-default-catalogue';
 
 export function useCommercialProducts(
-	filterIds: Array<string> | undefined
+	filterIds: Array<string> = [],
+	filterFields: string | null = null,
+	lastRecordId: string | null = null,
+	queryLimit = 0,
+	alreadyAddedIds: Array<string> = []
 ): {
 	status: QueryStatus;
 	data?: CommercialProductStandalone[];
@@ -21,11 +25,30 @@ export function useCommercialProducts(
 	const { productIds } = useProductIdsInDefaultCatalogue(filter);
 	// to avoid filter and default catalogue filter mixing up
 	const productIdsFilter = filterIds?.length ? filterIds : productIds.length ? productIds : [];
+	// converting filter string to the form : {"Name":"LX12"} and strigifying it as needed by queryProducts Apex api
+	const filterContent: string | null = filterFields
+		? JSON.stringify({
+				name: filterFields
+		  })
+		: filterFields;
 
 	const { status, data } = useQuery(
-		['commercialProducts', productIdsFilter],
-		() => remoteActions.getCommercialProducts(productIdsFilter),
-		{ enabled: typeof filterIds !== 'undefined' }
+		[
+			'commercialProducts',
+			productIdsFilter,
+			filterContent,
+			lastRecordId,
+			queryLimit,
+			alreadyAddedIds
+		],
+		() =>
+			remoteActions.queryProducts(
+				productIdsFilter,
+				filterContent,
+				lastRecordId,
+				queryLimit,
+				alreadyAddedIds
+			)
 	);
 
 	return {

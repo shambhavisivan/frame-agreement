@@ -3,17 +3,13 @@ public class CommercialProductService {
 			List<Id> priceItemIds,
 			String filterFields,
 			Id lastRecordId,
-			Integer queryLimit
+			Integer queryLimit,
+			List<Id> skipIds
 	) {
 
 		// when empty/ null parameters are passed, return 1st page of records
 		if ((priceItemIds == null || (priceItemIds != null && priceItemIds.isEmpty())) && (filterFields == null || filterFields == '') && (queryLimit == null || queryLimit <= 0)) {
 			queryLimit = FrameRateManagerController.DEFAULT_QUERY_LIMIT;
-		}
-
-		// when priceItemIds is non-empty/not null, ignore other filterFields if present in params
-		if (priceItemIds != null && !priceItemIds.isEmpty()) {
-			filterFields = null;
 		}
 
 		Map<Id, cspmb__price_item__c> cpIdMap;
@@ -44,20 +40,44 @@ public class CommercialProductService {
 				query += 'and id in :priceItemIds ';
 			}
 
+			if (skipIds != null && !skipIds.isEmpty()) {
+				query += 'and id not in :skipIds ';
+			}
+
 		} else {
 			if (priceItemIds != null) {
 				query += 'where id in :priceItemIds ';
+
+				if (skipIds != null && !skipIds.isEmpty()) {
+					query += 'and id not in :skipIds ';
+		 		}
+			} else {
+				if (skipIds != null && !skipIds.isEmpty()) {
+					query += 'where id not in :skipIds ';
+		 		}
 			}
 		}
 
-		// check for lastRecordId incase of pagination
+		// check for lastRecordId for pagination
 		if (lastRecordId != null) {
-			query += ' and id > :lastRecordId';
+			/*
+			 * to fulfil a rare use case where ps switch is enabled and no catalogue or categories are configured/ synced
+			 * in which case, priceItemIds will be empty. skipIds supplied is also empty.
+			 */
+			if (query.right(21) == 'cspmb__price_item__c ') {
+				query += ' where id > :lastRecordId';
+			} else {
+				query += ' and id > :lastRecordId';
+			}
 		}
 
 		// add  filterFields as part of where clause
 		if (filterClause.length() > 0) {
-			query += ' and ' + filterClause;
+			if (query.right(21) == 'cspmb__price_item__c ') {
+				query += ' where ' + filterClause;
+			} else {
+				query += ' and ' + filterClause;
+			}
 		}
 
 	   /*

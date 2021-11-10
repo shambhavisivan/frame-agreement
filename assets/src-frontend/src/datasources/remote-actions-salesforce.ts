@@ -52,6 +52,13 @@ export interface RemoteActions {
 	): Promise<Addon[]>;
 	getStandaloneAddons(): Promise<Addon[]>;
 	getProductIds(filterIds: Array<string>, filterString: string | null): Promise<string[]>;
+	queryProducts(
+		priceItemIds: string[],
+		filterFields: string | null,
+		lastRecordId: string | null,
+		queryLimit: number,
+		alreadyAddedIds: string[]
+	): Promise<CommercialProductStandalone[]>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -244,5 +251,23 @@ export const remoteActions: RemoteActions = {
 		const cpIds = await SF.invokeAction('getProductIds', [filterIds, filterString]);
 
 		return cpIds;
+	},
+
+	async queryProducts(
+		priceItemIds: string[],
+		filterFields: string | null,
+		lastRecordId: string | null,
+		queryLimit: number,
+		alreadyAddedIds: string[]
+	): Promise<CommercialProductStandalone[]> {
+		const cps = await SF.invokeAction('queryProducts', [
+			priceItemIds,
+			filterFields,
+			lastRecordId,
+			queryLimit,
+			alreadyAddedIds
+		]);
+
+		return cps.map(deforcify);
 	}
 };

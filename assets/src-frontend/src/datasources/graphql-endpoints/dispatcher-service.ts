@@ -55,7 +55,7 @@ export class DispatcherService {
 		if (!this._connection) {
 			this._connection = axios.create({
 				baseURL: dispatcherServiceUrl,
-				timeout: 10000
+				timeout: 20000
 			});
 		}
 

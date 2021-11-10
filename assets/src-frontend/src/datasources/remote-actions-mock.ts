@@ -200,5 +200,15 @@ export const remoteActions: RemoteActions = {
 	},
 	async getProductIds(filterIds: Array<string>, filterString: string | null): Promise<string[]> {
 		return ['a1F1t0000001JBoEAM', 'a1F1t0000001JBZEA2'];
+	},
+
+	async queryProducts(
+		priceItemIds: string[],
+		filterFields: string | null,
+		lastRecordId: string | null,
+		queryLimit: number,
+		alreadyAddedIds: string[]
+	): Promise<CommercialProductStandalone[]> {
+		return mockCommercialProducts;
 	}
 };

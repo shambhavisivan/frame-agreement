@@ -14,6 +14,7 @@ export function ProductCategorisation({ onApplyFilter }: Props): ReactElement {
 		settings?.defaultCatalogueId || ''
 	);
 	const [filterData, setFilterData] = useState<Record<string, string[]>>({});
+	const [categoryId, setCategoryId] = useState('');
 	const labels = useCustomLabels();
 
 	const createFilter = (field: string, value: string): void => {
@@ -43,7 +44,15 @@ export function ProductCategorisation({ onApplyFilter }: Props): ReactElement {
 				categoryList?.length ? (
 					<ul>
 						{categoryList?.map((category) => (
-							<li key={category.id} onClick={(): void => onApplyFilter(category.id)}>
+							<li
+								key={category.id}
+								onClick={(): void => {
+									if (categoryId !== category.id) {
+										onApplyFilter(category.id);
+										setCategoryId(category.id);
+									}
+								}}
+							>
 								{category.name}
 							</li>
 						))}

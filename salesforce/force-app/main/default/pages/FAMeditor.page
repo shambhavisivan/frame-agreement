@@ -160,7 +160,8 @@
 				findReplacementOffers: "{!$RemoteAction.FrameRateManagerController.findReplacementOffers}",
 				getFaOffers: "{!$RemoteAction.FrameRateManagerController.getFaOffers}",
 				queryAddons: "{!$RemoteAction.FrameRateManagerController.queryAddons}",
-				getProductIds: "{!$RemoteAction.FrameRateManagerController.getProductIds}"
+				getProductIds: "{!$RemoteAction.FrameRateManagerController.getProductIds}",
+				queryProducts: "{!$RemoteAction.FrameRateManagerController.queryProducts}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

@@ -113,7 +113,7 @@ class AddonsTab extends React.Component {
 		let _isMaster = isMaster(this.props.frameAgreements[this.props.faId]);
 		let standardData = this.props.settings.ButtonStandardData;
 
-		let _isAddAddonsEnabled = !_isMaster && evaluateExpressionOnAgreement(standardData.AddProducts, this.props.frameAgreements[this.props.faId]);
+		let _isAddAddonsEnabled = !_isMaster && evaluateExpressionOnAgreement(standardData.AddAddons, this.props.frameAgreements[this.props.faId]);
 
 		if (_addons.length) {
 			standaloneAddons = (

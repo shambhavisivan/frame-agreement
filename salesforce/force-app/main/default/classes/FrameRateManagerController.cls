@@ -1690,11 +1690,9 @@ global with sharing class FrameRateManagerController {
 					prId_RateCards.put(cpId, new List<RateCard>());
 				}
 
-				if (rc.rateCardLines != null && !rc.rateCardLines.isEmpty()) {
-					List<RateCard> tempRcList = prId_RateCards.get(cpId);
-					tempRcList.add(rc);
-					prId_RateCards.put(cpId, tempRcList);
-				}
+				List<RateCard> tempRcList = prId_RateCards.get(cpId);
+				tempRcList.add(rc);
+				prId_RateCards.put(cpId, tempRcList);
 
 			}
 

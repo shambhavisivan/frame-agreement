@@ -498,7 +498,26 @@ const _getCommercialProductData = priceItemIdList => {
 		let results = await Promise.all(promiseArray);
 
 		let merged_result = results.reduce((acc, val) => {
-			return { ...acc, ...val };
+
+			if (!Object.keys(acc).length) {
+				return val;
+			}
+
+			Object.keys(acc).forEach((key) => {
+				if (Array.isArray(acc[key])) {
+					acc[key] = [
+						...acc[key],
+						...val[key]
+					]
+				} else {
+					acc[key] = {
+						...acc[key],
+						...val[key]
+					}
+				}
+			});
+
+			return acc;
 		}, {});
 
 		if (isPsEnabled) {

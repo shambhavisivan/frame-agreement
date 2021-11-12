@@ -3,15 +3,20 @@ import {
 	queryCpsInCatalogue,
 	queryCpDataByIds,
 	queryOfferIdsInCatalogue,
-	queryCategoriesInCatalogue
-} from '../graphql-actions/api-actions-graphql';
-import { decodeEntities, mergePrsPpdmProductInfo, getFieldLabel, restructureProductData } from '../utils/shared-service';
-import * as Constants from '~/src/utils/constants';
+	queryCategoriesInCatalogue,
+} from "../graphql-actions/api-actions-graphql";
+import {
+	decodeEntities,
+	mergePrsPpdmProductInfo,
+	getFieldLabel,
+	restructureProductData,
+} from "../utils/shared-service";
+import * as Constants from "~/src/utils/constants";
 
 // export const toggleModal = data => ({ type: TOGGLE_MODAL, payload: data }); // DIRECTLY ACTIONED TO STORE
 const _defaultModals = {
 	actionIframe: false,
-	actionIframeUrl: '',
+	actionIframeUrl: "",
 	productModal: false,
 	addonModal: false,
 	frameModal: false,
@@ -26,26 +31,28 @@ const _defaultModals = {
 let appSettingsCache;
 // ***********************************************************************
 export const _registerMethod = (name, method) => ({
-	type: 'REGISTER_METHOD',
-	payload: { name, method }
+	type: "REGISTER_METHOD",
+	payload: { name, method },
 });
 
 export function registerMethod(name, method) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(_registerMethod(name, method));
 	};
 }
 
 // ***********************************************************************
-export const _loadAccounts = data => ({
-	type: 'LOAD_ACCOUNTS',
-	payload: { data }
+export const _loadAccounts = (data) => ({
+	type: "LOAD_ACCOUNTS",
+	payload: { data },
 });
 
 export function loadAccounts(params) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]).then(data => {
+			window.SF.invokeAction("getLookupRecords", [
+				JSON.stringify(params),
+			]).then((data) => {
 				data = decodeEntities(data);
 				dispatch(_loadAccounts(data));
 				resolve(data);
@@ -57,14 +64,16 @@ export function loadAccounts(params) {
 
 // ***********************************************************************
 export const _recieveApprovalHistory = (faId, data) => ({
-	type: 'GET_APPROVAL_HISTORY',
-	payload: { faId, data }
+	type: "GET_APPROVAL_HISTORY",
+	payload: { faId, data },
 });
 
 export function getApprovalHistory(faId) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getApprovalHistory', [faId.slice(0, 15)]).then(response => {
+			window.SF.invokeAction("getApprovalHistory", [
+				faId.slice(0, 15),
+			]).then((response) => {
 				try {
 					response.listProcess = response.listProcess || [];
 				} catch (err) {}
@@ -78,39 +87,39 @@ export function getApprovalHistory(faId) {
 
 // ***********************************************************************
 export const _setCustomData = (faId, data) => ({
-	type: 'SET_CD',
-	payload: { faId, data }
+	type: "SET_CD",
+	payload: { faId, data },
 });
 
 export function setCustomData(faId, data) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(_setCustomData(faId, data));
 	};
 }
 // ***********************************************************************
 export const negotiate = (faId, priceItemId, type, data) => ({
-	type: 'NEGOTIATE',
-	payload: { faId, priceItemId, type, data }
+	type: "NEGOTIATE",
+	payload: { faId, priceItemId, type, data },
 });
 
 export const negotiateAddons = (faId, standaloneAddonId, data) => ({
-	type: 'NEGOTIATE_ADDONS',
-	payload: { faId, standaloneAddonId, data }
+	type: "NEGOTIATE_ADDONS",
+	payload: { faId, standaloneAddonId, data },
 });
 
 export const apiNegotiate = (faId, data) => ({
-	type: 'NEGOTIATE_API',
-	payload: { faId, data }
+	type: "NEGOTIATE_API",
+	payload: { faId, data },
 });
 
 export const bulkNegotiate = (faId, data) => ({
-	type: 'NEGOTIATE_BULK',
-	payload: { faId, data }
+	type: "NEGOTIATE_BULK",
+	payload: { faId, data },
 });
 
 export const bulkNegotiateAddons = (faId, data) => ({
-	type: 'NEGOTIATE_BULK_ADDONS',
-	payload: { faId, data }
+	type: "NEGOTIATE_BULK_ADDONS",
+	payload: { faId, data },
 });
 
 // export function negotiate(priceItemId, type, data) {
@@ -126,92 +135,119 @@ export const bulkNegotiateAddons = (faId, data) => ({
 // }
 // ***********************************************************************
 
-export const _refreshFrameAgreement = result => ({
-	type: 'REFRESH_FA',
-	payload: result
+export const _refreshFrameAgreement = (result) => ({
+	type: "REFRESH_FA",
+	payload: result,
 });
 
-export const _getFrameAgreement = result => ({
-	type: 'GET_FA',
-	payload: result
+export const _getFrameAgreement = (result) => ({
+	type: "GET_FA",
+	payload: result,
 });
 
 export const _loadRelatedLists = (faId, rlData) => ({
-	type: 'LOAD_RL',
-	payload: { faId, rlData }
+	type: "LOAD_RL",
+	payload: { faId, rlData },
 });
 
 export function getRelatedLists(faId) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
-			window.SF.invokeAction('getRelatedLists', [faId]).then(async response => {
-				// Load field labels if not loaded already
-				for (const list of response) {
-					if (!window.SF.fieldLabels.hasOwnProperty(list.object)) {
-						await window.SF.invokeAction('getFieldLabels', [list.object]).then(r => {
-							window.SF.fieldLabels[list.object] = r;
-						});
+			window.SF.invokeAction("getRelatedLists", [faId]).then(
+				async (response) => {
+					// Load field labels if not loaded already
+					for (const list of response) {
+						if (
+							!window.SF.fieldLabels.hasOwnProperty(list.object)
+						) {
+							await window.SF.invokeAction("getFieldLabels", [
+								list.object,
+							]).then((r) => {
+								window.SF.fieldLabels[list.object] = r;
+							});
+						}
 					}
-				}
 
-				dispatch(_loadRelatedLists(faId, response));
-				resolve(response);
-				return response;
-			});
+					dispatch(_loadRelatedLists(faId, response));
+					resolve(response);
+					return response;
+				}
+			);
 		});
 	};
 }
 
 export function getFrameAgreement(faId) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getFrameAgreement', [faId]).then(response => {
-				dispatch(_getFrameAgreement(response));
-				resolve(response);
-				return response;
-			});
+			window.SF.invokeAction("getFrameAgreement", [faId]).then(
+				(response) => {
+					dispatch(_getFrameAgreement(response));
+					resolve(response);
+					return response;
+				}
+			);
 		});
 	};
 }
 
-export function refreshFrameAgreement(faId) {
-	return function(dispatch) {
+export function refreshFrameAgreement(faId, shouldRefreshAttachment) {
+	return function (dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getFrameAgreement', [faId]).then(response => {
-				dispatch(_refreshFrameAgreement(response));
+			window.SF.invokeAction("getFrameAgreement", [faId]).then(
+				(response) => {
+					dispatch(_refreshFrameAgreement(response));
 
-				return window.SF.invokeAction('getAttachmentBody', [faId]).then(response => {
-					try {
-						response = JSON.parse(atob(response));
-						// In case of manual malicious modifications
-						response = response || {};
-					} catch (e) {
-						// No attachment
-						response = {};
+					if (!shouldRefreshAttachment) {
+						resolve(response);
+						return response;
+					} else {
+						return window.SF.invokeAction("getAttachmentBody", [
+							faId,
+						]).then((response) => {
+							try {
+								response = JSON.parse(atob(response));
+								// In case of manual malicious modifications
+								response = response || {};
+							} catch (e) {
+								// No attachment
+								response = {};
+							}
+
+							if (!response.hasOwnProperty("custom")) {
+								let _attachment = {};
+								_attachment.products = JSON.parse(
+									JSON.stringify(response)
+								);
+								_attachment.custom = "";
+								response = _attachment;
+							}
+
+							dispatch(recieveGetAttachment(faId, response));
+							dispatch(validateFrameAgreement(faId));
+							resolve(response);
+							return response;
+						});
 					}
-
-					if (!response.hasOwnProperty('custom')) {
-						let _attachment = {};
-						_attachment.products = JSON.parse(JSON.stringify(response));
-						_attachment.custom = '';
-						response = _attachment;
-					}
-
-					dispatch(recieveGetAttachment(faId, response));
-					dispatch(validateFrameAgreement(faId));
-					resolve(response);
-					return response;
-				});
-			});
+				}
+			);
 		});
 	};
 }
 
 export function setFrameAgreementState(faId, newStatus) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('setFrameAgreementState', [faId, newStatus]).then(response => {
-				dispatch(_getFrameAgreement({ Id: faId, csconta__Status__c: newStatus }));
+			window.SF.invokeAction("setFrameAgreementState", [
+				faId,
+				newStatus,
+			]).then((response) => {
+				dispatch(
+					_getFrameAgreement({
+						Id: faId,
+						csconta__Status__c: newStatus,
+					})
+				);
 				resolve(response);
 				return response;
 			});
@@ -219,70 +255,84 @@ export function setFrameAgreementState(faId, newStatus) {
 	};
 }
 
-const _createNewVersionOfFrameAgreement = newFa => ({
-	type: 'NEW_VERSION',
-	payload: newFa
+const _createNewVersionOfFrameAgreement = (newFa) => ({
+	type: "NEW_VERSION",
+	payload: newFa,
 });
 
 export function createNewVersionOfFrameAgreement(faId) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise(async (resolve, reject) => {
 			const isPsEnabled = await getPsSwitch();
 			let createNewVersionPromise = null;
 
 			if (isPsEnabled) {
-				createNewVersionPromise = new Promise(async (resolve, reject) => {
-					const linkedFa = await dispatch(
-						linkFrameAgreementCatalogue({Id: faId}, actions.CREATE_FA_NEW_VERSION)
-					);
-					resolve(linkedFa.frameAgreement);
-				});
+				createNewVersionPromise = new Promise(
+					async (resolve, reject) => {
+						const linkedFa = await dispatch(
+							linkFrameAgreementCatalogue(
+								{ Id: faId },
+								actions.CREATE_FA_NEW_VERSION
+							)
+						);
+						resolve(linkedFa.frameAgreement);
+					}
+				);
 			} else {
 				createNewVersionPromise = executeSaveFrameAgreementAction(
-					{Id: faId},
+					{ Id: faId },
 					actions.CREATE_FA_NEW_VERSION
 				);
 			}
-			createNewVersionPromise.then(response => {
-				dispatch(_createNewVersionOfFrameAgreement(response));
-				resolve(response);
-				return response;
-			}).finally(() => {
-				dispatch(toggleFrameAgreementOperations(false));
-			});
+			createNewVersionPromise
+				.then((response) => {
+					dispatch(_createNewVersionOfFrameAgreement(response));
+					resolve(response);
+					return response;
+				})
+				.finally(() => {
+					dispatch(toggleFrameAgreementOperations(false));
+				});
 		});
 	};
 }
 
 export function submitForApproval(faId) {
 	return new Promise((resolve, reject) => {
-		window.SF.invokeAction('submitForApproval', [faId.slice(0, 15)]).then(response => {
-			resolve(response);
-			return response;
-		});
+		window.SF.invokeAction("submitForApproval", [faId.slice(0, 15)]).then(
+			(response) => {
+				resolve(response);
+				return response;
+			}
+		);
 	});
 }
 // ***********************************************************************
-export const toggleFieldVisibility = index => ({
-	type: 'TOGGLE_FIELD_VISIBILITY',
-	payload: index
+export const toggleFieldVisibility = (index) => ({
+	type: "TOGGLE_FIELD_VISIBILITY",
+	payload: index,
 });
 
-export const toggleFaFieldVisibility = index => ({
-	type: 'TOGGLE_FA_FIELD_VISIBILITY',
-	payload: index
+export const toggleFaFieldVisibility = (index) => ({
+	type: "TOGGLE_FA_FIELD_VISIBILITY",
+	payload: index,
 });
 
 // ***********************************************************************
-export const setValidation = (faId, priceItemId = null, type = null, data = null) => ({
-	type: 'SET_VALIDATION',
-	payload: { faId, priceItemId, type, data }
+export const setValidation = (
+	faId,
+	priceItemId = null,
+	type = null,
+	data = null
+) => ({
+	type: "SET_VALIDATION",
+	payload: { faId, priceItemId, type, data },
 });
 
 export const setAddonValidation = (faId, data) => ({
-	type: 'SET_ADDON_VALIDATION',
-	payload: { faId, data }
+	type: "SET_ADDON_VALIDATION",
+	payload: { faId, data },
 });
 
 export const validateFrameAgreement = (
@@ -291,68 +341,70 @@ export const validateFrameAgreement = (
 	type = null,
 	data = null
 ) => ({
-	type: 'VALIDATE_FA',
-	payload: { faId, priceItemId, type, data }
+	type: "VALIDATE_FA",
+	payload: { faId, priceItemId, type, data },
 });
 
-export const _toggleModals = data => ({
-	type: 'TOGGLE_MODALS',
-	payload: data
+export const _toggleModals = (data) => ({
+	type: "TOGGLE_MODALS",
+	payload: data,
 });
 
-export const _removeToast = id => ({
-	type: 'REMOVE_TOAST',
-	payload: { id }
+export const _removeToast = (id) => ({
+	type: "REMOVE_TOAST",
+	payload: { id },
 });
 
 export const _clearToasts = () => ({
-	type: 'CLEAR_TOAST_QUEUE',
-	payload: {}
+	type: "CLEAR_TOAST_QUEUE",
+	payload: {},
 });
 
 export const addToast = (type, title, message, timeout) => ({
-	type: 'ADD_TOAST',
-	payload: { type, title, message, timeout }
+	type: "ADD_TOAST",
+	payload: { type, title, message, timeout },
 });
 
 export function toggleModals(data = _defaultModals) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(_toggleModals(data));
 	};
 }
 
 export function createToast(type, title, message, timeout = 3000) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(addToast(type, title, message, timeout));
 	};
 }
 
 export function removeToast(id) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(_removeToast(id));
 	};
 }
 
 export function clearToasts(id) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(_clearToasts());
 	};
 }
 
 // ***********************************************************************
-export const recieveAppSettings = result => ({
-	type: 'RECIEVE_SETTINGS',
-	payload: result
+export const recieveAppSettings = (result) => ({
+	type: "RECIEVE_SETTINGS",
+	payload: result,
 });
 
 export function getAppSettings() {
-	return function(dispatch) {
+	return function (dispatch) {
 		// dispatch(requestAppSettings());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getAppSettings', [window.SF.param.account]).then(response => {
+			window.SF.invokeAction("getAppSettings", [
+				window.SF.param.account,
+			]).then((response) => {
 				if (!response) {
-					reject('Cannot get app settings!');
+					reject("Cannot get app settings!");
 					return response;
 				}
 				setTimeout(() => {
@@ -366,32 +418,34 @@ export function getAppSettings() {
 	};
 }
 // ***********************************************************************
-export const recievePicklistOptions = result => ({
-	type: 'RECIEVE_PICKLIST_OPTIONS',
-	payload: result
+export const recievePicklistOptions = (result) => ({
+	type: "RECIEVE_PICKLIST_OPTIONS",
+	payload: result,
 });
 
 export function getPicklistOptions(picklistFields) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getPicklistOptions', [picklistFields]).then(response => {
-				setTimeout(() => {
-					dispatch(recievePicklistOptions(response));
-					resolve(response);
-					return response;
-				});
-			});
+			window.SF.invokeAction("getPicklistOptions", [picklistFields]).then(
+				(response) => {
+					setTimeout(() => {
+						dispatch(recievePicklistOptions(response));
+						resolve(response);
+						return response;
+					});
+				}
+			);
 		});
 	};
 }
 
-const recieveCloneFrameAgreement = result => ({
-	type: 'RECIEVE_CLONE_FA',
-	payload: result
+const recieveCloneFrameAgreement = (result) => ({
+	type: "RECIEVE_CLONE_FA",
+	payload: result,
 });
 
 export function cloneFrameAgreement(faId) {
-	return function(dispatch) {
+	return function (dispatch) {
 		// dispatch(requestAppSettings());
 		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise(async (resolve, reject) => {
@@ -400,44 +454,53 @@ export function cloneFrameAgreement(faId) {
 
 			if (isPsEnabled) {
 				clonePromise = new Promise(async (resolve, reject) => {
-					const linkedFa = await dispatch(linkFrameAgreementCatalogue({Id: faId}, actions.CLONE));
+					const linkedFa = await dispatch(
+						linkFrameAgreementCatalogue({ Id: faId }, actions.CLONE)
+					);
 					resolve(linkedFa.frameAgreement);
 				});
 			} else {
 				clonePromise = cloneFrameAgreementAction(faId, actions.CLONE);
 			}
-			clonePromise.then(response => {
-				dispatch(recieveCloneFrameAgreement(response));
-				resolve(response);
-				return response;
-			}).finally(() => {
-				dispatch(toggleFrameAgreementOperations(false));
-			});
+			clonePromise
+				.then((response) => {
+					dispatch(recieveCloneFrameAgreement(response));
+					resolve(response);
+					return response;
+				})
+				.finally(() => {
+					dispatch(toggleFrameAgreementOperations(false));
+				});
 		});
 	};
 }
 
-const _deleteFrameAgreement = faId => ({
-	type: 'DELETE_FA',
-	payload: faId
+const _deleteFrameAgreement = (faId) => ({
+	type: "DELETE_FA",
+	payload: faId,
 });
 
 export function deleteFrameAgreement(faId) {
-	return function(dispatch) {
+	return function (dispatch) {
 		// dispatch(requestPriceItemData());
 		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('deleteFrameAgreement', [faId]).then(response => {
-				if (response === 'Success') {
-					dispatch(_deleteFrameAgreement(faId));
-				} else {
-					console.error('Could not delete Frame Agreement', response);
-				}
-				resolve(response);
-				return response;
-			}).finally(() => {
-				dispatch(toggleFrameAgreementOperations(false));
-			});
+			window.SF.invokeAction("deleteFrameAgreement", [faId])
+				.then((response) => {
+					if (response === "Success") {
+						dispatch(_deleteFrameAgreement(faId));
+					} else {
+						console.error(
+							"Could not delete Frame Agreement",
+							response
+						);
+					}
+					resolve(response);
+					return response;
+				})
+				.finally(() => {
+					dispatch(toggleFrameAgreementOperations(false));
+				});
 		});
 	};
 }
@@ -445,27 +508,29 @@ export function deleteFrameAgreement(faId) {
 // ***********************************************************************
 
 export const setFrameAgreementCpFilter = (faId, cpIdSet) => ({
-	type: 'SET_CP_FILTER',
-	payload: { faId, cpIdSet }
+	type: "SET_CP_FILTER",
+	payload: { faId, cpIdSet },
 });
 
 // ***********************************************************************
 
 export const setDisableDiscount = (faId, disableConfig) => ({
-	type: 'SET_DISABLE_DISCOUNT',
-	payload: { faId, disableConfig }
+	type: "SET_DISABLE_DISCOUNT",
+	payload: { faId, disableConfig },
 });
 
 // ***********************************************************************
 
-const _recievePriceItemData = result => ({
-	type: 'RECIEVE_PRICE_ITEM_DATA',
-	payload: result
+const _recievePriceItemData = (result) => ({
+	type: "RECIEVE_PRICE_ITEM_DATA",
+	payload: result,
 });
 
-const _getCommercialProductData = priceItemIdList => {
+const _getCommercialProductData = (priceItemIdList) => {
 	return new Promise(async (resolve, reject) => {
-		let priceItemChunks = priceItemIdList.chunk(window.SF.product_chunk_size || 100);
+		let priceItemChunks = priceItemIdList.chunk(
+			window.SF.product_chunk_size || 100
+		);
 		const isPsEnabled = await getPsSwitch();
 		let promiseArray = [];
 		let cpData;
@@ -521,7 +586,6 @@ const _getCommercialProductData = priceItemIdList => {
 		}, {});
 
 		if (isPsEnabled) {
-
 			for (let id in cpData) {
 				if (merged_result.cpData[id]) {
 					merged_result.cpData[id].addons = cpData[id].addons;
@@ -533,26 +597,28 @@ const _getCommercialProductData = priceItemIdList => {
 	});
 };
 
-export const getCommercialProductData = priceItemIdList => {
-	return function(dispatch) {
+export const getCommercialProductData = (priceItemIdList) => {
+	return function (dispatch) {
 		return _getCommercialProductData(priceItemIdList).then(
-			merged_result => {
+			(merged_result) => {
 				dispatch(_recievePriceItemData(merged_result));
 				return merged_result;
 			},
-			error => {}
+			(error) => {}
 		);
 	};
 };
 
-export const receiveOfferData = result => ({
-	type: 'RECIEVE_OFFER_DATA',
-	payload: result
+export const receiveOfferData = (result) => ({
+	type: "RECIEVE_OFFER_DATA",
+	payload: result,
 });
 
-export const getOfferData = offerIdList => {
-	return async function(dispatch) {
-		const offerChunks = offerIdList.chunk(window.SF.product_chunk_size || 100);
+export const getOfferData = (offerIdList) => {
+	return async function (dispatch) {
+		const offerChunks = offerIdList.chunk(
+			window.SF.product_chunk_size || 100
+		);
 		try {
 			const offerMeta = await queryCpDataByIds(offerIdList);
 			const offerData = restructureProductData(offerMeta);
@@ -565,7 +631,10 @@ export const getOfferData = offerIdList => {
 						  )
 						: []
 				);
-				return window.SF.invokeAction("getOfferData", [cpChunk, addonIdList]);
+				return window.SF.invokeAction("getOfferData", [
+					cpChunk,
+					addonIdList,
+				]);
 			});
 
 			const results = await Promise.all(promiseArray);
@@ -587,21 +656,21 @@ export const getOfferData = offerIdList => {
 			}
 
 			dispatch(receiveOfferData(merged_result));
-		} catch(e) {
+		} catch (e) {
 			throw new Error(e.message);
 		}
-	}
-}
+	};
+};
 
 const _addFaToMaster = (faId, agreements) => ({
-	type: 'ADD_FA',
-	payload: { faId, agreements }
+	type: "ADD_FA",
+	payload: { faId, agreements },
 });
 
 export function addFaToMaster(faId, agreements) {
-	return function(dispatch) {
-		return new Promise(async resolve => {
-			await window.SF.invokeAction('addFaToMaster', [faId, agreements]);
+	return function (dispatch) {
+		return new Promise(async (resolve) => {
+			await window.SF.invokeAction("addFaToMaster", [faId, agreements]);
 			dispatch(_addFaToMaster(faId, agreements));
 			resolve(agreements);
 		});
@@ -609,14 +678,17 @@ export function addFaToMaster(faId, agreements) {
 }
 
 const _removeFaFromMaster = (faId, agreements) => ({
-	type: 'REMOVE_FA',
-	payload: { faId, agreements }
+	type: "REMOVE_FA",
+	payload: { faId, agreements },
 });
 
 export function removeFaFromMaster(faId, agreements) {
-	return function(dispatch) {
-		return new Promise(async resolve => {
-			await window.SF.invokeAction('removeFaFromMaster', [faId, agreements]);
+	return function (dispatch) {
+		return new Promise(async (resolve) => {
+			await window.SF.invokeAction("removeFaFromMaster", [
+				faId,
+				agreements,
+			]);
 			dispatch(_removeFaFromMaster(faId, agreements));
 			resolve(agreements);
 		});
@@ -626,12 +698,12 @@ export function removeFaFromMaster(faId, agreements) {
 // ***********************************************************************
 
 const _replaceCpEntities = (faId, replacementData) => ({
-	type: 'REPLACE_CHARGES',
-	payload: { faId, replacementData }
+	type: "REPLACE_CHARGES",
+	payload: { faId, replacementData },
 });
 
 export function replaceCpEntities(faId, replacementData) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_replaceCpEntities(faId, replacementData));
 			resolve();
@@ -642,12 +714,12 @@ export function replaceCpEntities(faId, replacementData) {
 // ***********************************************************************
 
 const _addProductsToFa = (faId, products) => ({
-	type: 'ADD_PRODUCTS',
-	payload: { faId, products }
+	type: "ADD_PRODUCTS",
+	payload: { faId, products },
 });
 
 export function addProductsToFa(faId, products) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_addProductsToFa(faId, products));
 			resolve(products);
@@ -656,12 +728,12 @@ export function addProductsToFa(faId, products) {
 }
 
 const _addAddonsToFa = (faId, addons) => ({
-	type: 'ADD_ADDONS',
-	payload: { faId, addons }
+	type: "ADD_ADDONS",
+	payload: { faId, addons },
 });
 
 export function addAddonsToFa(faId, addons) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_addAddonsToFa(faId, addons));
 			resolve(addons);
@@ -672,12 +744,12 @@ export function addAddonsToFa(faId, addons) {
 // ***********************************************************************
 
 const _resetNegotiation = (faId, entitiyMap) => ({
-	type: 'RESET_NEGOTIATION',
-	payload: { faId, entitiyMap }
+	type: "RESET_NEGOTIATION",
+	payload: { faId, entitiyMap },
 });
 
 export function resetNegotiation(faId, entitiyMap) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(_resetNegotiation(faId, entitiyMap));
 	};
 }
@@ -685,12 +757,12 @@ export function resetNegotiation(faId, entitiyMap) {
 // ***********************************************************************
 
 const _removeProductsFromFa = (faId, products) => ({
-	type: 'REMOVE_PRODUCTS',
-	payload: { faId, products }
+	type: "REMOVE_PRODUCTS",
+	payload: { faId, products },
 });
 
 export function removeProductsFromFa(faId, products) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_removeProductsFromFa(faId, products));
 			resolve(products);
@@ -698,15 +770,13 @@ export function removeProductsFromFa(faId, products) {
 	};
 }
 
-
-
 const _removeAddonsFromFa = (faId, addons) => ({
-	type: 'REMOVE_ADDONS',
-	payload: { faId, addons }
+	type: "REMOVE_ADDONS",
+	payload: { faId, addons },
 });
 
 export function removeAddonsFromFa(faId, addons) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_removeAddonsFromFa(faId, addons));
 			resolve(addons);
@@ -714,17 +784,19 @@ export function removeAddonsFromFa(faId, addons) {
 	};
 }
 
-export const recieveGetFrameAgreements = result => ({
-	type: 'RECIEVE_FRAME_AGREEMENTS',
-	payload: result
+export const recieveGetFrameAgreements = (result) => ({
+	type: "RECIEVE_FRAME_AGREEMENTS",
+	payload: result,
 });
 
 export function getFrameAgreements() {
-	return function(dispatch) {
+	return function (dispatch) {
 		// dispatch(requestGetFrameAgreements());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getFrameAgreements', [window.SF.param.account]).then(response => {
+			window.SF.invokeAction("getFrameAgreements", [
+				window.SF.param.account,
+			]).then((response) => {
 				dispatch(recieveGetFrameAgreements(response));
 				resolve(response);
 				return response;
@@ -736,36 +808,40 @@ export function getFrameAgreements() {
 // ***********************************************************************
 
 const recieveGetAttachment = (faId, data) => ({
-	type: 'RECIEVE_GET_ATTACHMENT',
-	payload: { faId, data }
+	type: "RECIEVE_GET_ATTACHMENT",
+	payload: { faId, data },
 });
 
 export function getAttachment(faId) {
-	return function(dispatch) {
+	return function (dispatch) {
 		// dispatch(requestGetAttachment());
 
 		return new Promise((resolve, reject) => {
-			window.SF.invokeAction('getAttachmentBody', [faId]).then(response => {
-				try {
-					response = JSON.parse(atob(response));
-					// In case of manual malicious modifications
-					response = response || {};
-				} catch (e) {
-					// No attachment
-					response = {};
-				}
+			window.SF.invokeAction("getAttachmentBody", [faId]).then(
+				(response) => {
+					try {
+						response = JSON.parse(atob(response));
+						// In case of manual malicious modifications
+						response = response || {};
+					} catch (e) {
+						// No attachment
+						response = {};
+					}
 
-				if (!response.hasOwnProperty('custom')) {
-					let _attachment = {};
-					_attachment.products = JSON.parse(JSON.stringify(response));
-					_attachment.custom = '';
-					response = _attachment;
-				}
+					if (!response.hasOwnProperty("custom")) {
+						let _attachment = {};
+						_attachment.products = JSON.parse(
+							JSON.stringify(response)
+						);
+						_attachment.custom = "";
+						response = _attachment;
+					}
 
-				dispatch(recieveGetAttachment(faId, response));
-				resolve(response);
-				return response;
-			});
+					dispatch(recieveGetAttachment(faId, response));
+					resolve(response);
+					return response;
+				}
+			);
 		});
 	};
 }
@@ -792,19 +868,24 @@ export function getAttachment(faId) {
 // }
 // ***********************************************************************
 
-const _saveFrameAgreement = upsertedFa => ({
-	type: 'SAVE_FA',
-	payload: upsertedFa
+const _saveFrameAgreement = (upsertedFa) => ({
+	type: "SAVE_FA",
+	payload: upsertedFa,
 });
 
 export function saveFrameAgreement(frameAgreement) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(toggleFrameAgreementOperations(true));
 		if (frameAgreement === undefined) {
-			console.error('No Frame agreement!');
+			console.error("No Frame agreement!");
 		}
 
-		var ommited = new Set(['csconta__Account__r', 'Name', '_ui', 'LastModifiedDate']);
+		var ommited = new Set([
+			"csconta__Account__r",
+			"Name",
+			"_ui",
+			"LastModifiedDate",
+		]);
 
 		var SF_data = {};
 
@@ -817,10 +898,10 @@ export function saveFrameAgreement(frameAgreement) {
 		let promiseArray = [];
 
 		promiseArray.push(
-			window.SF.invokeAction('upsertFrameAgreements', [
+			window.SF.invokeAction("upsertFrameAgreements", [
 				frameAgreement.Id || null,
 				JSON.stringify(SF_data),
-				null
+				null,
 			])
 		);
 
@@ -828,95 +909,110 @@ export function saveFrameAgreement(frameAgreement) {
 		if (frameAgreement.Id && frameAgreement._ui?.attachment) {
 			let _attachment = frameAgreement._ui.attachment;
 
-			frameAgreement._ui.commercialProducts.forEach(cp => {
+			frameAgreement._ui.commercialProducts.forEach((cp) => {
 				_attachment.products[cp.Id]._allowances = {};
-				cp._allowances.forEach(all => {
+				cp._allowances.forEach((all) => {
 					_attachment.products[cp.Id]._allowances[all.Id] = {
 						Name: all.Name,
-						value: all.cspmb__amount__c || null
+						value: all.cspmb__amount__c || null,
 					};
 				});
 			});
 
-			frameAgreement._ui.offers.forEach(offer => {
+			frameAgreement._ui.offers.forEach((offer) => {
 				_attachment.offers[offer.Id]._allowances = {};
-				offer._allowances.forEach(all => {
+				offer._allowances.forEach((all) => {
 					_attachment.offers[offer.Id]._allowances[all.Id] = {
 						Name: all.Name,
-						value: all.cspmb__amount__c || null
+						value: all.cspmb__amount__c || null,
 					};
 				});
 			});
 
 			promiseArray.push(
-				window.SF.invokeAction('saveAttachment', [frameAgreement.Id, JSON.stringify(_attachment)])
+				window.SF.invokeAction("saveAttachment", [
+					frameAgreement.Id,
+					JSON.stringify(_attachment),
+				])
 			);
 		}
 
-		return Promise.all(promiseArray).then(
-			response => {
-				dispatch(_saveFrameAgreement(response[0]));
-				dispatch(executeFrameAgreementAction(frameAgreement.Id, actions.CLONE));
-				return response;
-			},
-			error => {}
-		).finally(() => {
-			dispatch(toggleFrameAgreementOperations(false));
-		});
+		return Promise.all(promiseArray)
+			.then(
+				(response) => {
+					dispatch(_saveFrameAgreement(response[0]));
+					dispatch(
+						executeFrameAgreementAction(
+							frameAgreement.Id,
+							actions.CLONE
+						)
+					);
+					return response;
+				},
+				(error) => {}
+			)
+			.finally(() => {
+				dispatch(toggleFrameAgreementOperations(false));
+			});
 	};
 }
 // ***********************************************************************
 
 const _updateFrameAgreement = (faId, field, value) => ({
-	type: 'UPDATE_FA',
-	payload: { faId, field, value }
+	type: "UPDATE_FA",
+	payload: { faId, field, value },
 });
 
 export function updateFrameAgreement(faId, field, value) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(_updateFrameAgreement(faId, field, value));
 	};
 }
 // ***********************************************************************
 
-const _updateIgnoreSettings = data => ({
-	type: 'UPDATE_IGNORE',
-	payload: data
+const _updateIgnoreSettings = (data) => ({
+	type: "UPDATE_IGNORE",
+	payload: data,
 });
 
 export function updateIgnoreSettings(newIgnoreSettings) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(_updateIgnoreSettings(newIgnoreSettings));
 	};
 }
 
-const _createFrameAgreement = result => ({
-	type: 'CREATE_FA',
-	payload: result
+const _createFrameAgreement = (result) => ({
+	type: "CREATE_FA",
+	payload: result,
 });
 
 export function createFrameAgreement(faData) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise(async (resolve, reject) => {
 			const isPsEnabled = await getPsSwitch();
 			let newFa = {};
 
 			if (isPsEnabled) {
-				const linkedFa = await dispatch(linkFrameAgreementCatalogue(faData, actions.CREATE_FA));
+				const linkedFa = await dispatch(
+					linkFrameAgreementCatalogue(faData, actions.CREATE_FA)
+				);
 				newFa = linkedFa.frameAgreement;
 				faData._ui.attachment = { ...linkedFa.faAttachment };
 			} else {
-				newFa = await executeSaveFrameAgreementAction(faData, actions.CREATE_FA);
-				await window.SF.invokeAction('saveAttachment', [
+				newFa = await executeSaveFrameAgreementAction(
+					faData,
+					actions.CREATE_FA
+				);
+				await window.SF.invokeAction("saveAttachment", [
 					newFa.Id,
-					JSON.stringify(faData._ui.attachment)
+					JSON.stringify(faData._ui.attachment),
 				]);
 			}
 
 			newFa = {
 				...newFa,
-				_ui: faData._ui
+				_ui: faData._ui,
 			};
 
 			dispatch(_createFrameAgreement(newFa));
@@ -929,19 +1025,19 @@ export function createFrameAgreement(faData) {
 }
 
 export const recieveStandaloneAddons = (addons, alInfo) => ({
-	type: 'LOAD_STANDALONE_ADDONS',
-	payload: { addons, alInfo }
+	type: "LOAD_STANDALONE_ADDONS",
+	payload: { addons, alInfo },
 });
 
 export function getStandaloneAddons() {
-	return function(dispatch) {
+	return function (dispatch) {
 		// dispatch(requestCommercialProducts());
 
 		return new Promise((resolve, reject) => {
 			Promise.all([
-				window.SF.invokeAction('getStandaloneAddons', []),
-				window.SF.invokeAction('getAddonDiscountInformation', [])
-			]).then(response => {
+				window.SF.invokeAction("getStandaloneAddons", []),
+				window.SF.invokeAction("getAddonDiscountInformation", []),
+			]).then((response) => {
 				dispatch(recieveStandaloneAddons(response[0], response[1]));
 				resolve(response);
 				return response;
@@ -952,9 +1048,9 @@ export function getStandaloneAddons() {
 
 // ***********************************************************************
 
-export const recieveCommercialProducts = result => ({
-	type: 'RECIEVE_COMMERCIAL_PRODUCTS',
-	payload: result
+export const recieveCommercialProducts = (result) => ({
+	type: "RECIEVE_COMMERCIAL_PRODUCTS",
+	payload: result,
 });
 
 export function getCommercialProducts() {
@@ -990,7 +1086,7 @@ export function getCommercialProducts() {
 	};
 }
 
-const recieveOffers = result => ({
+const recieveOffers = (result) => ({
 	type: "RECEIVE_OFFERS",
 	payload: result,
 });
@@ -999,22 +1095,21 @@ export function getOffers() {
 	return async function (dispatch) {
 		const offersInCatalogue = await queryOfferIdsInCatalogue();
 		const offerIdsInCatalogue = offersInCatalogue.map((cp) => cp.id);
-		const response = await window.SF.invokeAction("getOffers", [offerIdsInCatalogue]);
-		const offers = mergePrsPpdmProductInfo(
-			offersInCatalogue,
-			response
-		);
+		const response = await window.SF.invokeAction("getOffers", [
+			offerIdsInCatalogue,
+		]);
+		const offers = mergePrsPpdmProductInfo(offersInCatalogue, response);
 		dispatch(recieveOffers(offers));
 	};
 }
 
 const _addOffersToFa = (faId, offers) => ({
-	type: 'ADD_OFFERS',
-	payload: { faId, offers }
+	type: "ADD_OFFERS",
+	payload: { faId, offers },
 });
 
 export function addOffersToFa(faId, offers) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_addOffersToFa(faId, offers));
 			resolve(offers);
@@ -1023,12 +1118,12 @@ export function addOffersToFa(faId, offers) {
 }
 
 const _removeOffersFromFa = (faId, offers) => ({
-	type: 'REMOVE_OFFERS',
-	payload: { faId, offers }
+	type: "REMOVE_OFFERS",
+	payload: { faId, offers },
 });
 
 export function removeOffersFromFa(faId, offers) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_removeOffersFromFa(faId, offers));
 			resolve(offers);
@@ -1037,7 +1132,7 @@ export function removeOffersFromFa(faId, offers) {
 }
 
 export function toggleFrameAgreementOperations(disableFlag) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_toggleFrameAgreementOperations(disableFlag));
 			resolve();
@@ -1045,31 +1140,31 @@ export function toggleFrameAgreementOperations(disableFlag) {
 	};
 }
 
-const _toggleFrameAgreementOperations = disableFlag => ({
-	type: 'TOGGLE_FRAME_AGREEMENT_OPERATIONS',
-	payload: disableFlag
-})
+const _toggleFrameAgreementOperations = (disableFlag) => ({
+	type: "TOGGLE_FRAME_AGREEMENT_OPERATIONS",
+	payload: disableFlag,
+});
 
 // ***********************************************************************
 
-const _cloneAgreementBeforeChanges = frameAgreementId => ({
-	type: 'CLONE_FRAME_AGREEMENT',
-	payload: frameAgreementId
-})
+const _cloneAgreementBeforeChanges = (frameAgreementId) => ({
+	type: "CLONE_FRAME_AGREEMENT",
+	payload: frameAgreementId,
+});
 
 // ***********************************************************************
 
-const _resetAgreementChanges = frameAgreementId => ({
-	type: 'RESET_CURRENT_FRAME_AGREEMENT_CHANGES',
-	payload: frameAgreementId
-})
+const _resetAgreementChanges = (frameAgreementId) => ({
+	type: "RESET_CURRENT_FRAME_AGREEMENT_CHANGES",
+	payload: frameAgreementId,
+});
 
 // ***********************************************************************
 
-const _clearFrameAgreementAttachment = frameAgreementId => ({
-	type: 'CLEAR_FA_ATTACHMENT',
-	payload: frameAgreementId
-})
+const _clearFrameAgreementAttachment = (frameAgreementId) => ({
+	type: "CLEAR_FA_ATTACHMENT",
+	payload: frameAgreementId,
+});
 
 export function executeFrameAgreementAction(frameAgreementId, action) {
 	return (dispatch) => {
@@ -1090,36 +1185,36 @@ export function executeFrameAgreementAction(frameAgreementId, action) {
 					resolve();
 				});
 		}
-	}
+	};
 }
 
 export const negotiateOffers = (faId, priceItemId, type, data) => ({
-	type: 'NEGOTIATE_OFFERS',
-	payload: { faId, priceItemId, type, data }
+	type: "NEGOTIATE_OFFERS",
+	payload: { faId, priceItemId, type, data },
 });
 
 export const bulkNegotiateOffers = (faId, data) => ({
-	type: 'NEGOTIATE_BULK_OFFERS',
-	payload: { faId, data }
+	type: "NEGOTIATE_BULK_OFFERS",
+	payload: { faId, data },
 });
 
 export const apiNegotiateOffer = (faId, data) => ({
-	type: 'NEGOTIATE_API_OFFER',
-	payload: { faId, data }
+	type: "NEGOTIATE_API_OFFER",
+	payload: { faId, data },
 });
 
 export const setFrameAgreementOfferFilter = (faId, offerIdSet) => ({
-	type: 'SET_OFFER_FILTER',
-	payload: { faId, offerIdSet }
+	type: "SET_OFFER_FILTER",
+	payload: { faId, offerIdSet },
 });
 
 const _replaceOfferEntities = (faId, replacementData) => ({
-	type: 'REPLACE_OFFER_CHARGES',
-	payload: { faId, replacementData }
+	type: "REPLACE_OFFER_CHARGES",
+	payload: { faId, replacementData },
 });
 
 export function replaceOfferEntities(faId, replacementData) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
 			dispatch(_replaceOfferEntities(faId, replacementData));
 			resolve();
@@ -1128,12 +1223,12 @@ export function replaceOfferEntities(faId, replacementData) {
 }
 
 const syncFaOffersAttachment = (faId, attachment) => ({
-	type: 'SYNC_FA_OFFER_ATTACHMENT',
-	payload: { faId, attachment }
+	type: "SYNC_FA_OFFER_ATTACHMENT",
+	payload: { faId, attachment },
 });
 
 export function createFaOffer(frameAgreement, cpId) {
-	return function(dispatch) {
+	return function (dispatch) {
 		dispatch(toggleFrameAgreementOperations(true));
 		return new Promise(async (resolve, reject) => {
 			const faId = frameAgreement.Id;
@@ -1141,13 +1236,16 @@ export function createFaOffer(frameAgreement, cpId) {
 			const newFaOffer = await window.SF.invokeAction("createFaOffer", [
 				faId,
 				cpId,
-				attachment.faOffers.categoryId
+				attachment.faOffers.categoryId,
 			]);
 			attachment.faOffers.offerIdsCharges[newFaOffer.Id] = {
 				oneOffCharge: newFaOffer.cspmb__One_Off_Charge__c,
 				recurringCharge: newFaOffer.cspmb__Recurring_Charge__c,
 			};
-			await window.SF.invokeAction('saveAttachment', [faId, JSON.stringify(attachment)]);
+			await window.SF.invokeAction("saveAttachment", [
+				faId,
+				JSON.stringify(attachment),
+			]);
 			dispatch(syncFaOffersAttachment(faId, attachment));
 			resolve(newFaOffer);
 		}).finally(() => {
@@ -1157,23 +1255,25 @@ export function createFaOffer(frameAgreement, cpId) {
 }
 
 const _addFaOfferToFa = (faId, addedFaOffers) => ({
-	type: 'ADD_FA_OFFER',
-	payload: { faId, addedFaOffers }
+	type: "ADD_FA_OFFER",
+	payload: { faId, addedFaOffers },
 });
 
 export function addFaOffersToFa(faId, newFaOfferIds) {
 	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
-			const faOffer = await window.SF.invokeAction("getFaOffers", [Array.from(newFaOfferIds)]);
+			const faOffer = await window.SF.invokeAction("getFaOffers", [
+				Array.from(newFaOfferIds),
+			]);
 			dispatch(_addFaOfferToFa(faId, faOffer));
 			resolve(faOffer);
 		});
 	};
-};
+}
 
 const _deleteFaOffers = (faId, deletedFaOffers) => ({
-	type: 'DELETE_FA_OFFER',
-	payload: { faId, deletedFaOffers }
+	type: "DELETE_FA_OFFER",
+	payload: { faId, deletedFaOffers },
 });
 
 export function deleteFaOffers(frameAgreement, faOfferIdList) {
@@ -1232,24 +1332,24 @@ export function filterCommercialProducts(filterData) {
 
 const getPsSwitch = () => {
 	return new Promise((resolve, reject) => {
-
 		if (!appSettingsCache) {
-			appSettingsCache =  getAppSettings();
+			appSettingsCache = getAppSettings();
 		}
 		const { FACSettings } = appSettingsCache;
 		resolve(FACSettings.isPsEnabled);
 	});
-
-}
+};
 
 export function migrateFrameAgreement(faData) {
-	return function(dispatch) {
+	return function (dispatch) {
 		return new Promise(async (resolve, reject) => {
-			const linkedFa = await dispatch(linkFrameAgreementCatalogue(faData, actions.MIGRATE, true));
+			const linkedFa = await dispatch(
+				linkFrameAgreementCatalogue(faData, actions.MIGRATE, true)
+			);
 			faData._ui.attachment = { ...linkedFa.faAttachment };
 			const migratedFa = {
 				...linkedFa.frameAgreement,
-				_ui: faData._ui
+				_ui: faData._ui,
 			};
 
 			dispatch(_createFrameAgreement(migratedFa));
@@ -1260,7 +1360,9 @@ export function migrateFrameAgreement(faData) {
 	};
 }
 
-const linkFrameAgreementCatalogue = (faData, actionType) => async (dispatch) => {
+const linkFrameAgreementCatalogue = (faData, actionType) => async (
+	dispatch
+) => {
 	return new Promise(async (resolve, reject) => {
 		let response = {};
 		const isPsEnabled = await getPsSwitch();
@@ -1268,9 +1370,10 @@ const linkFrameAgreementCatalogue = (faData, actionType) => async (dispatch) => 
 		let attachment = { ...faData._ui?.attachment };
 
 		if (isPsEnabled) {
-			const offerCategory = await window.SF.invokeAction('createFaOfferCategory', [
-				newFa.Id
-			]);
+			const offerCategory = await window.SF.invokeAction(
+				"createFaOfferCategory",
+				[newFa.Id]
+			);
 
 			if (!attachment || !Object.keys(attachment).length) {
 				attachment = await dispatch(getAttachment(faData.Id));
@@ -1278,9 +1381,9 @@ const linkFrameAgreementCatalogue = (faData, actionType) => async (dispatch) => 
 
 			attachment.faOffers = Constants.FA_OFFERS;
 			attachment.faOffers.categoryId = offerCategory.Id;
-			await window.SF.invokeAction('saveAttachment', [
+			await window.SF.invokeAction("saveAttachment", [
 				newFa.Id,
-				JSON.stringify(attachment)
+				JSON.stringify(attachment),
 			]);
 		}
 		response.frameAgreement = newFa;
@@ -1288,29 +1391,28 @@ const linkFrameAgreementCatalogue = (faData, actionType) => async (dispatch) => 
 
 		resolve(response);
 	}).catch((error) => {
-		reject(error)
+		reject(error);
 	});
-}
+};
 
 const executeSaveFrameAgreementAction = (faData, actionType) => {
 	return new Promise(async (resolve, reject) => {
 		let newFa = null;
 		const stdCatalogueCategories = await getStdCatalogueCategories();
 
-		switch(actionType) {
-
+		switch (actionType) {
 			case actions.CREATE_FA:
-				newFa = await window.SF.invokeAction('upsertFrameAgreements', [
+				newFa = await window.SF.invokeAction("upsertFrameAgreements", [
 					null,
 					JSON.stringify(faData),
-					stdCatalogueCategories
+					stdCatalogueCategories,
 				]);
 				break;
 
 			case actions.MIGRATE:
-				newFa = await window.SF.invokeAction('migrateFrameAgreements', [
+				newFa = await window.SF.invokeAction("migrateFrameAgreements", [
 					faData.Id,
-					stdCatalogueCategories
+					stdCatalogueCategories,
 				]);
 				break;
 
@@ -1319,40 +1421,40 @@ const executeSaveFrameAgreementAction = (faData, actionType) => {
 				break;
 
 			case actions.CREATE_FA_NEW_VERSION:
-				newFa = window.SF.invokeAction('createNewVersionOfFrameAgreement', [
-					faData.Id,
-					stdCatalogueCategories
-				]);
+				newFa = window.SF.invokeAction(
+					"createNewVersionOfFrameAgreement",
+					[faData.Id, stdCatalogueCategories]
+				);
 				break;
 		}
 
 		resolve(newFa);
 	}).catch((error) => {
-		reject(error)
+		reject(error);
 	});
-}
+};
 
 const cloneFrameAgreementAction = async (faId) => {
-
 	const stdCatalogueCategories = await getStdCatalogueCategories();
 
 	return new Promise(async (resolve, reject) => {
-		const newFa = await window.SF.invokeAction('cloneFrameAgreement', [
+		const newFa = await window.SF.invokeAction("cloneFrameAgreement", [
 			faId,
-			stdCatalogueCategories
+			stdCatalogueCategories,
 		]);
 		resolve(newFa);
 	}).catch((error) => {
-		reject(error)
+		reject(error);
 	});
-}
+};
 
 const getStdCatalogueCategories = () => {
-	return new Promise(async(resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		const isPsEnabled = await getPsSwitch();
-		const stdCatalogueCategories = isPsEnabled ? await queryCategoriesInCatalogue() : null;
+		const stdCatalogueCategories = isPsEnabled
+			? await queryCategoriesInCatalogue()
+			: null;
 
 		resolve(stdCatalogueCategories);
-	})
-
-}
+	});
+};

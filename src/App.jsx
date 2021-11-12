@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Switch, Route } from 'react-router-dom';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Switch, Route } from "react-router-dom";
 
 import {
 	addProductsToFa,
@@ -33,20 +33,20 @@ import {
 	addOffersToFa,
 	removeOffersFromFa,
 	apiNegotiateOffer,
-	migrateFrameAgreement
-} from './actions';
+	migrateFrameAgreement,
+} from "./actions";
 // import { editModalWidth } from "./actions";
-import FaList from './components/FaList';
-import FaEditor from './components/FaEditor';
-import FaMaster from './components/FaMaster';
+import FaList from "./components/FaList";
+import FaEditor from "./components/FaEditor";
+import FaMaster from "./components/FaMaster";
 
-import LandingSkeleton from './components/skeletons/LandingSkeleton';
-import EditorSkeleton from './components/skeletons/EditorSkeleton';
-import CommercialProductSkeleton from './components/skeletons/CommercialProductSkeleton';
+import LandingSkeleton from "./components/skeletons/LandingSkeleton";
+import EditorSkeleton from "./components/skeletons/EditorSkeleton";
+import CommercialProductSkeleton from "./components/skeletons/CommercialProductSkeleton";
 
-import { log } from '~/src/utils/shared-service.js';
+import { log } from "~/src/utils/shared-service.js";
 
-import { withRouter } from 'react-router-dom';
+import { withRouter } from "react-router-dom";
 
 import {
 	publish,
@@ -54,14 +54,14 @@ import {
 	createPricingRuleGroup,
 	decomposeAttachment,
 	undoDecomposition,
-	submitForApproval
-} from './api';
-import { buildBulkNegotiationEventData } from './utils/event-service';
-import { transformProductData } from './utils/transformation-service';
-import { validateNegotiationInputData } from './utils/api-data-validation-service';
-import * as Constants from '~/src/utils/constants'
+	submitForApproval,
+} from "./api";
+import { buildBulkNegotiationEventData } from "./utils/event-service";
+import { transformProductData } from "./utils/transformation-service";
+import { validateNegotiationInputData } from "./utils/api-data-validation-service";
+import * as Constants from "~/src/utils/constants";
 
-const OFFER = 'OFFER';
+const OFFER = "OFFER";
 export class App extends Component {
 	constructor(props) {
 		super(props);
@@ -90,20 +90,20 @@ export class App extends Component {
 		 * @param List<Object> 	List of products to add
 		 */
 		window.FAM.api.addProducts = async (
-			faId = window.mandatory('addProducts()'),
+			faId = window.mandatory("addProducts()"),
 			products = []
 		) => {
-			products = await publish('onBeforeAddProducts', products);
+			products = await publish("onBeforeAddProducts", products);
 
-			if (products.some(cp_id => cp_id.length === 15)) {
-				console.warn('Converting to 18 char Id...');
+			if (products.some((cp_id) => cp_id.length === 15)) {
+				console.warn("Converting to 18 char Id...");
 				// Generate 15: 18 map
 				let charMap = {};
-				this.props.commercialProducts.forEach(cp => {
+				this.props.commercialProducts.forEach((cp) => {
 					charMap[cp.Id.substring(0, 15)] = cp.Id;
 				});
 
-				products = products.map(cp_id => {
+				products = products.map((cp_id) => {
 					if (cp_id.length === 15) {
 						return charMap[cp_id];
 					}
@@ -133,7 +133,10 @@ export class App extends Component {
 			// IF not, load attachment for FA
 			if (this.props.frameAgreements[faId]._ui.attachment === null) {
 				let resp_attachment = await this.props.getAttachment(faId);
-				IdsToLoad = [...IdsToLoad, ...Object.keys(resp_attachment.products)];
+				IdsToLoad = [
+					...IdsToLoad,
+					...Object.keys(resp_attachment.products),
+				];
 			}
 
 			await this.props.getCommercialProductData(IdsToLoad);
@@ -141,13 +144,15 @@ export class App extends Component {
 			this.props.validateFrameAgreement(faId);
 
 			publish(
-				'onAfterAddProducts',
-				this.props.frameAgreements[faId]._ui.commercialProducts.map(cp => cp.Id)
+				"onAfterAddProducts",
+				this.props.frameAgreements[faId]._ui.commercialProducts.map(
+					(cp) => cp.Id
+				)
 			);
 
-			await window.SF.invokeAction('saveAttachment', [
+			await window.SF.invokeAction("saveAttachment", [
 				faId,
-				JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+				JSON.stringify(this.props.frameAgreements[faId]._ui.attachment),
 			]);
 			return this.props.frameAgreements[faId];
 		};
@@ -160,7 +165,7 @@ export class App extends Component {
 		 * @return void
 		 */
 		window.FAM.api.setVolumeFields = async (faId, productId, volume) => {
-			return this.props.negotiate(faId, productId, '_volume', volume);
+			return this.props.negotiate(faId, productId, "_volume", volume);
 		};
 
 		/**
@@ -168,9 +173,15 @@ export class App extends Component {
 		 * @param  String faId 		Frame agreement id
 		 * @param List<Object> 	List of products to delete
 		 */
-		window.FAM.api.removeProducts = (faId = window.mandatory('addProducts()'), products = []) => {
-			return new Promise(async resolve => {
-				let productsToDelete = await publish('onBeforeDeleteProducts', products);
+		window.FAM.api.removeProducts = (
+			faId = window.mandatory("addProducts()"),
+			products = []
+		) => {
+			return new Promise(async (resolve) => {
+				let productsToDelete = await publish(
+					"onBeforeDeleteProducts",
+					products
+				);
 
 				// IF not, load attachment for FA
 				if (this.props.frameAgreements[faId]._ui.attachment === null) {
@@ -179,13 +190,17 @@ export class App extends Component {
 
 				await this.props.removeProductsFromFa(faId, productsToDelete);
 				publish(
-					'onAfterDeleteProducts',
-					this.props.frameAgreements[faId]._ui.commercialProducts.map(cp => cp.Id)
+					"onAfterDeleteProducts",
+					this.props.frameAgreements[faId]._ui.commercialProducts.map(
+						(cp) => cp.Id
+					)
 				);
 
-				await window.SF.invokeAction('saveAttachment', [
+				await window.SF.invokeAction("saveAttachment", [
 					faId,
-					JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+					JSON.stringify(
+						this.props.frameAgreements[faId]._ui.attachment
+					),
 				]);
 				resolve(this.props.frameAgreements[faId]._ui.attachment);
 			});
@@ -207,7 +222,7 @@ export class App extends Component {
 		 * @param  String faId 		Frame agreement id
 		 * @returns void
 		 */
-		window.FAM.api.activateFrameAgreement = async faId => {
+		window.FAM.api.activateFrameAgreement = async (faId) => {
 			// 1) Create a structure that is matching one element -> one pipra
 			this.props.toggleFrameAgreementOperations(true);
 			let _attachment_prod = {};
@@ -215,46 +230,64 @@ export class App extends Component {
 			let _attachment_offer = {};
 
 			try {
-				_attachment_prod = this.props.frameAgreements[faId]._ui.attachment.products || {};
-				_attachment_addon = this.props.frameAgreements[faId]._ui.attachment.addons || {};
-				_attachment_offer = this.props.frameAgreements[faId]._ui.attachment.offers || {};
+				_attachment_prod =
+					this.props.frameAgreements[faId]._ui.attachment.products ||
+					{};
+				_attachment_addon =
+					this.props.frameAgreements[faId]._ui.attachment.addons ||
+					{};
+				_attachment_offer =
+					this.props.frameAgreements[faId]._ui.attachment.offers ||
+					{};
 			} catch (err) {
 				// No attachment or no products
 			}
 
 			let structure = [];
 			for (var cpId in _attachment_prod) {
-				if (_attachment_prod[cpId].hasOwnProperty('_addons')) {
+				if (_attachment_prod[cpId].hasOwnProperty("_addons")) {
 					let addons = _attachment_prod[cpId]._addons;
 					for (var cpaoa in addons) {
 						structure.push({
 							cpaoaId: cpaoa,
-							recurring: addons[cpaoa].hasOwnProperty('recurring') ? addons[cpaoa].recurring : null,
-							oneOff: addons[cpaoa].hasOwnProperty('oneOff') ? addons[cpaoa].oneOff : null
+							recurring: addons[cpaoa].hasOwnProperty("recurring")
+								? addons[cpaoa].recurring
+								: null,
+							oneOff: addons[cpaoa].hasOwnProperty("oneOff")
+								? addons[cpaoa].oneOff
+								: null,
 						});
 					}
 				}
 
-				if (_attachment_prod[cpId].hasOwnProperty('_charges')) {
+				if (_attachment_prod[cpId].hasOwnProperty("_charges")) {
 					let charges = _attachment_prod[cpId]._charges;
 					for (var chId in charges) {
 						structure.push({
 							peId: chId,
-							recurring: charges[chId].hasOwnProperty('recurring') ? charges[chId].recurring : null,
-							oneOff: charges[chId].hasOwnProperty('oneOff') ? charges[chId].oneOff : null
+							recurring: charges[chId].hasOwnProperty("recurring")
+								? charges[chId].recurring
+								: null,
+							oneOff: charges[chId].hasOwnProperty("oneOff")
+								? charges[chId].oneOff
+								: null,
 						});
 					}
 				}
 
-				if (_attachment_prod[cpId].hasOwnProperty('_product')) {
+				if (_attachment_prod[cpId].hasOwnProperty("_product")) {
 					structure.push({
 						cpId: cpId,
-						recurring: _attachment_prod[cpId]._product.hasOwnProperty('recurring')
+						recurring: _attachment_prod[
+							cpId
+						]._product.hasOwnProperty("recurring")
 							? _attachment_prod[cpId]._product.recurring
 							: null,
-						oneOff: _attachment_prod[cpId]._product.hasOwnProperty('oneOff')
+						oneOff: _attachment_prod[cpId]._product.hasOwnProperty(
+							"oneOff"
+						)
 							? _attachment_prod[cpId]._product.oneOff
-							: null
+							: null,
 					});
 				}
 			}
@@ -262,12 +295,14 @@ export class App extends Component {
 			for (var addonId in _attachment_addon) {
 				structure.push({
 					addonId: addonId,
-					recurring: _attachment_addon[addonId].hasOwnProperty('recurring')
+					recurring: _attachment_addon[addonId].hasOwnProperty(
+						"recurring"
+					)
 						? _attachment_addon[addonId].recurring
 						: null,
-					oneOff: _attachment_addon[addonId].hasOwnProperty('oneOff')
+					oneOff: _attachment_addon[addonId].hasOwnProperty("oneOff")
 						? _attachment_addon[addonId].oneOff
-						: null
+						: null,
 				});
 			}
 
@@ -326,19 +361,21 @@ export class App extends Component {
 			}
 
 			// 2) Remove items that have no charge value
-			structure = structure.filter(item => item.recurring !== null || item.oneOff !== null);
+			structure = structure.filter(
+				(item) => item.recurring !== null || item.oneOff !== null
+			);
 
-			structure = await publish('onBeforeActivation', structure);
+			structure = await publish("onBeforeActivation", structure);
 
 			// Create pricing rule group, pricing rule and association between them. Return pricing rule id to be used in next stage
 			const PR_ID = await createPricingRuleGroup(faId);
 
-			if (typeof PR_ID !== 'string') {
-				console.error('Activation failed, invalid pricing rule Id!');
+			if (typeof PR_ID !== "string") {
+				console.error("Activation failed, invalid pricing rule Id!");
 				return false;
 			}
 
-			log.bg.blue('Pricing rule group created: ' + PR_ID);
+			log.bg.blue("Pricing rule group created: " + PR_ID);
 
 			// This will hold the structure in chunks on n
 			let decompositionDataChunked = [];
@@ -352,37 +389,49 @@ export class App extends Component {
 				i += this.props.settings.FACSettings.decomposition_chunk_size
 			) {
 				decompositionDataChunked.push(
-					structure.slice(i, i + this.props.settings.FACSettings.decomposition_chunk_size)
+					structure.slice(
+						i,
+						i +
+							this.props.settings.FACSettings
+								.decomposition_chunk_size
+					)
 				);
 			}
 
 			console.log(decompositionDataChunked);
 
 			// Fill the promise array
-			decompositionDataChunked.forEach(chunk => {
-				decompositionPromiseArray.push(decomposeAttachment(chunk, PR_ID, faId));
+			decompositionDataChunked.forEach((chunk) => {
+				decompositionPromiseArray.push(
+					decomposeAttachment(chunk, PR_ID, faId)
+				);
 			});
 
 			if (!decompositionDataChunked.length) {
-				decompositionPromiseArray.push(decomposeAttachment([], PR_ID, faId));
+				decompositionPromiseArray.push(
+					decomposeAttachment([], PR_ID, faId)
+				);
 			}
 
 			//********************************************
 			// Wait for all to resolve
 			let result = await Promise.all(decompositionPromiseArray);
-			publish('onAfterActivation', PR_ID);
+			publish("onAfterActivation", PR_ID);
 
 			result = new Set(result);
 			//********************************************
 
-			console.log('Merged results:', result);
+			console.log("Merged results:", result);
 
 			// If the decomposition was successful
-			if ((!result.has('Success') || result.size > 1) && decompositionDataChunked.length) {
-				console.error('Decomposition failed, undoing...!');
+			if (
+				(!result.has("Success") || result.size > 1) &&
+				decompositionDataChunked.length
+			) {
+				console.error("Decomposition failed, undoing...!");
 
 				this.props.createToast(
-					'error',
+					"error",
 					window.SF.labels.toast_decomposition_title_failed,
 					window.SF.labels.toast_decomposition_failed
 				);
@@ -394,13 +443,13 @@ export class App extends Component {
 					undoArray.push(structure.slice(i, i + 10000));
 				}
 
-				undoArray.forEach(chunk => {
+				undoArray.forEach((chunk) => {
 					undoPromiseArray.push(undoDecomposition(PR_ID));
 				});
 
 				let undo_result = await Promise.all(undoPromiseArray);
 				this.props.createToast(
-					'warning',
+					"warning",
 					window.SF.labels.toast_decomposition_title_revered,
 					window.SF.labels.toast_decomposition_revered
 				);
@@ -409,18 +458,31 @@ export class App extends Component {
 					faId,
 					this.props.settings.FACSettings.statuses.active_status
 				);
-				await this.props.refreshFrameAgreement(faId);
+				const shouldRefreshAttachment = true;
+				await this.props.refreshFrameAgreement(
+					faId,
+					shouldRefreshAttachment
+				);
 
-				if (this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c) {
+				if (
+					this.props.frameAgreements[faId]
+						.csconta__replaced_frame_agreement__c
+				) {
+					const shouldRefreshAttachment = true;
 					await this.props.refreshFrameAgreement(
-						this.props.frameAgreements[faId].csconta__replaced_frame_agreement__c
+						this.props.frameAgreements[faId]
+							.csconta__replaced_frame_agreement__c,
+						shouldRefreshAttachment
 					);
 				}
 
 				this.props.createToast(
-					'success',
+					"success",
 					window.SF.labels.toast_decomposition_title_success,
-					window.SF.labels.toast_decomposition_success + ' (' + structure.length + ')'
+					window.SF.labels.toast_decomposition_success +
+						" (" +
+						structure.length +
+						")"
 				);
 			}
 			this.props.toggleFrameAgreementOperations(false);
@@ -431,11 +493,12 @@ export class App extends Component {
 		 * @param  String faId frame agreement id to submit
 		 * @return String      event message
 		 */
-		window.FAM.api.submitForApproval = async faId => {
+		window.FAM.api.submitForApproval = async (faId) => {
 			let response = await submitForApproval(faId);
+			const shouldRefreshAttachment = true;
 			await Promise.all([
 				this.props.getApprovalHistory(faId),
-				this.props.refreshFrameAgreement(faId)
+				this.props.refreshFrameAgreement(faId, shouldRefreshAttachment),
 			]);
 			return response;
 		};
@@ -445,7 +508,7 @@ export class App extends Component {
 		 * @param  String faId frame agreement id
 		 * @return Boolean     is editable?
 		 */
-		window.FAM.api.isAgreementEditable = faId => {
+		window.FAM.api.isAgreementEditable = (faId) => {
 			let _editable = false;
 			let _settings = this.props.settings.FACSettings;
 			let _fa = this.props.frameAgreements[faId];
@@ -474,7 +537,7 @@ export class App extends Component {
 		 * @param  String faId frame agreement id
 		 * @return String     new status
 		 */
-		window.FAM.api.validateStatusConsistency = async faId => {
+		window.FAM.api.validateStatusConsistency = async (faId) => {
 			if (!this.props.settings.FACSettings.active_status_management__c) {
 				return false;
 			}
@@ -489,12 +552,20 @@ export class App extends Component {
 				(_fa.csconta__Status__c === _statuses.draft_status ||
 					_fa.csconta__Status__c === _statuses.approved_status)
 			) {
-				if (!_statuses.hasOwnProperty('draft_status') || !_statuses.draft_status) {
-					log.bg.orange('Cannot set state to ' + newStatus + ' - not defined in Custom Settings');
+				if (
+					!_statuses.hasOwnProperty("draft_status") ||
+					!_statuses.draft_status
+				) {
+					log.bg.orange(
+						"Cannot set state to " +
+							newStatus +
+							" - not defined in Custom Settings"
+					);
 				} else {
 					console.log(
-						'Changing the state of FA to %c' + _statuses.requires_approval_status,
-						'font-style: italic;color: #0070d2'
+						"Changing the state of FA to %c" +
+							_statuses.requires_approval_status,
+						"font-style: italic;color: #0070d2"
 					);
 
 					_result = await this.props.setFrameAgreementState(
@@ -510,16 +581,24 @@ export class App extends Component {
 				_fa.csconta__Status__c === _statuses.requires_approval_status
 			) {
 				if (
-					!_statuses.hasOwnProperty('requires_approval_status') ||
+					!_statuses.hasOwnProperty("requires_approval_status") ||
 					!_statuses.requires_approval_status
 				) {
-					log.bg.orange('Cannot set state to ' + newStatus + ' - not defined in Custom Settings');
+					log.bg.orange(
+						"Cannot set state to " +
+							newStatus +
+							" - not defined in Custom Settings"
+					);
 				} else {
 					console.log(
-						'Changing the state of FA to %c' + _statuses.draft_status,
-						'font-style: italic;color: #0070d2'
+						"Changing the state of FA to %c" +
+							_statuses.draft_status,
+						"font-style: italic;color: #0070d2"
 					);
-					_result = await this.props.setFrameAgreementState(faId, _statuses.draft_status);
+					_result = await this.props.setFrameAgreementState(
+						faId,
+						_statuses.draft_status
+					);
 					return _result;
 				}
 			}
@@ -530,18 +609,22 @@ export class App extends Component {
 		 * @param  String faId 		get cp for this specific fa
 		 * @return List<Object> 	commercial products
 		 */
-		window.FAM.api.getCommercialProducts = async faId => {
+		window.FAM.api.getCommercialProducts = async (faId) => {
 			if (!faId) {
 				return this.props.getCommercialProducts();
 			} else {
 				if (this.props.frameAgreements[faId]._ui.attachment === null) {
 					let resp_attachment = await this.props.getAttachment(faId);
 					// No need to wait for this one, we only need products
-					this.props.getCommercialProductData(Object.keys(resp_attachment.products));
+					this.props.getCommercialProductData(
+						Object.keys(resp_attachment.products)
+					);
 
-					return this.props.frameAgreements[faId]._ui.commercialProducts;
+					return this.props.frameAgreements[faId]._ui
+						.commercialProducts;
 				} else {
-					return this.props.frameAgreements[faId]._ui.commercialProducts;
+					return this.props.frameAgreements[faId]._ui
+						.commercialProducts;
 				}
 			}
 		};
@@ -549,10 +632,14 @@ export class App extends Component {
 		/**
 		 * reload all the fa information
 		 * @param  String faId 		frame agreement id
+		 * @param  boolean shouldRefreshAttachment	will refresh the attachment as well when true
 		 * @return Promise 			remote action response
 		 */
-		window.FAM.api.refreshFa = faId => {
-			return this.props.refreshFrameAgreement(faId);
+		window.FAM.api.refreshFa = (faId, shouldRefreshAttachment = false) => {
+			return this.props.refreshFrameAgreement(
+				faId,
+				shouldRefreshAttachment
+			);
 		};
 
 		/**
@@ -570,9 +657,11 @@ export class App extends Component {
 		 * @param  String faId 		frame agreement id
 		 * @return Promise 			remote action response
 		 */
-		window.FAM.api.saveFrameAgreement = async faId => {
-			let result = await this.props.saveFrameAgreement(this.props.frameAgreements[faId]);
-			await publish('onAfterSaveFrameAgreement', result);
+		window.FAM.api.saveFrameAgreement = async (faId) => {
+			let result = await this.props.saveFrameAgreement(
+				this.props.frameAgreements[faId]
+			);
+			await publish("onAfterSaveFrameAgreement", result);
 			return result;
 		};
 
@@ -581,14 +670,16 @@ export class App extends Component {
 		 * @param  String faId 			frame agreement id
 		 * @return Promise(attachment) 	promise that resolves custom data
 		 */
-		window.FAM.api.getCustomData = (faId = window.mandatory('getCustomData()')) => {
+		window.FAM.api.getCustomData = (
+			faId = window.mandatory("getCustomData()")
+		) => {
 			return new Promise((resolve, reject) => {
 				let _fa = this.props.frameAgreements[faId];
 				let _attachment = null;
 				try {
 					_attachment = _fa._ui.attachment.custom;
 				} catch (err) {
-					console.warn('Attachment cannot be loaded for FA:', faId);
+					console.warn("Attachment cannot be loaded for FA:", faId);
 					console.warn(err);
 					reject(null);
 				}
@@ -603,13 +694,15 @@ export class App extends Component {
 		 * @return void
 		 */
 		window.FAM.api.setCustomData = (
-			faId = window.mandatory('setCustomData()'),
-			data = window.mandatory('setCustomData()')
+			faId = window.mandatory("setCustomData()"),
+			data = window.mandatory("setCustomData()")
 		) => {
 			return new Promise((resolve, reject) => {
 				this.props.setCustomData(faId, data);
 				setTimeout(() => {
-					resolve(this.props.frameAgreements[faId]._ui.attachment.custom);
+					resolve(
+						this.props.frameAgreements[faId]._ui.attachment.custom
+					);
 				});
 			});
 		};
@@ -620,7 +713,11 @@ export class App extends Component {
 		 * @param  Object data 		negotiation structure
 		 * @return Promise(attachment) updated attachment
 		 */
-		window.FAM.api.negotiate = async (faId, data = window.mandatory('negotiate()'), ignoreHooks) => {
+		window.FAM.api.negotiate = async (
+			faId,
+			data = window.mandatory("negotiate()"),
+			ignoreHooks
+		) => {
 			let resp_attachment = this.props.frameAgreements[faId]._ui
 				.attachment;
 
@@ -676,10 +773,14 @@ export class App extends Component {
 
 			await window.FAM.api.validateStatusConsistency(faId);
 
-			return (this.props.frameAgreements[faId]._ui.attachment);
+			return this.props.frameAgreements[faId]._ui.attachment;
 		};
 
-		window.FAM.api.negotiateOffers = async (faId, data = window.mandatory('negotiateOffers()'), ignoreHooks) => {
+		window.FAM.api.negotiateOffers = async (
+			faId,
+			data = window.mandatory("negotiateOffers()"),
+			ignoreHooks
+		) => {
 			let resp_attachment = this.props.frameAgreements[faId]._ui
 				.attachment;
 
@@ -733,8 +834,8 @@ export class App extends Component {
 
 			await window.FAM.api.validateStatusConsistency(faId);
 
-			return (this.props.frameAgreements[faId]._ui.attachment);
-		}
+			return this.props.frameAgreements[faId]._ui.attachment;
+		};
 
 		window.SF.getAuthLevels = () => this.props.settings.AuthLevels || {};
 
@@ -743,14 +844,16 @@ export class App extends Component {
 		 * @param  String faId - get cp for this specific fa
 		 * @return List<Object> - offers
 		 */
-		 window.FAM.api.getOffers = async faId => {
+		window.FAM.api.getOffers = async (faId) => {
 			if (!faId) {
 				return this.props.getOffers();
 			} else {
 				if (this.props.frameAgreements[faId]._ui.attachment === null) {
 					let resp_attachment = await this.props.getAttachment(faId);
 					// No need to wait for this one, we only need products
-					this.props.getOfferData(Object.keys(resp_attachment.offers));
+					this.props.getOfferData(
+						Object.keys(resp_attachment.offers)
+					);
 
 					return this.props.frameAgreements[faId]._ui.offers;
 				} else {
@@ -764,26 +867,25 @@ export class App extends Component {
 		 * @param  String faId - Frame agreement id
 		 * @param List<Object> - List of offers to add
 		 */
-		 window.FAM.api.addOffers = async (
-			faId = window.mandatory('addOffers()'),
+		window.FAM.api.addOffers = async (
+			faId = window.mandatory("addOffers()"),
 			offers = []
 		) => {
 			if (!offers.length) {
 				return;
 			}
 
-			offers = await publish('onBeforeAddOffers', offers);
+			offers = await publish("onBeforeAddOffers", offers);
 
-			if (offers.some(cp_id => cp_id.length === 15)) {
-				console.warn('Converting to 18 char Id...');
+			if (offers.some((cp_id) => cp_id.length === 15)) {
+				console.warn("Converting to 18 char Id...");
 				// Generate 15: 18 map
 				let charMap = {};
-				this.props.offers.forEach(offer => {
+				this.props.offers.forEach((offer) => {
 					charMap[offer.Id.substring(0, 15)] = offer.Id;
 				});
 
-				offers = offers.map(offer_id => {
-
+				offers = offers.map((offer_id) => {
 					if (offer_id.length === 15) {
 						return charMap[offer_id];
 					}
@@ -795,9 +897,7 @@ export class App extends Component {
 
 			// Sort out offers data
 			let IdsToLoad = this.props.offers.reduce((acc, offer) => {
-
 				if (_offersSet.has(offer.Id)) {
-
 					if (!offer._dataLoaded) {
 						return [...acc, ...[offer.Id]];
 					} else {
@@ -811,7 +911,10 @@ export class App extends Component {
 			// IF not, load attachment for FA
 			if (this.props.frameAgreements[faId]._ui.attachment === null) {
 				let resp_attachment = await this.props.getAttachment(faId);
-				IdsToLoad = [...IdsToLoad, ...Object.keys(resp_attachment.offers)];
+				IdsToLoad = [
+					...IdsToLoad,
+					...Object.keys(resp_attachment.offers),
+				];
 			}
 
 			await this.props.getOfferData(IdsToLoad);
@@ -819,13 +922,15 @@ export class App extends Component {
 			this.props.validateFrameAgreement(faId);
 
 			await publish(
-				'onAfterAddOffers',
-				this.props.frameAgreements[faId]._ui.offers.map(offer => offer.Id)
+				"onAfterAddOffers",
+				this.props.frameAgreements[faId]._ui.offers.map(
+					(offer) => offer.Id
+				)
 			);
 
-			await window.SF.invokeAction('saveAttachment', [
+			await window.SF.invokeAction("saveAttachment", [
 				faId,
-				JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+				JSON.stringify(this.props.frameAgreements[faId]._ui.attachment),
 			]);
 			return this.props.frameAgreements[faId];
 		};
@@ -835,9 +940,15 @@ export class App extends Component {
 		 * @param  String faId - Frame agreement id
 		 * @param List<Object> - List of offers to delete
 		 */
-		window.FAM.api.removeOffers = (faId = window.mandatory('addOffers()'), offers = []) => {
-			return new Promise(async resolve => {
-				let offersToDelete = await publish('onBeforeDeleteOffers', offers);
+		window.FAM.api.removeOffers = (
+			faId = window.mandatory("addOffers()"),
+			offers = []
+		) => {
+			return new Promise(async (resolve) => {
+				let offersToDelete = await publish(
+					"onBeforeDeleteOffers",
+					offers
+				);
 
 				// IF not, load attachment for FA
 				if (this.props.frameAgreements[faId]._ui.attachment === null) {
@@ -846,61 +957,82 @@ export class App extends Component {
 
 				await this.props.removeOffersFromFa(faId, offersToDelete);
 				await publish(
-					'onAfterDeleteOffers',
-					this.props.frameAgreements[faId]._ui.offers.map(offer => offer.Id)
+					"onAfterDeleteOffers",
+					this.props.frameAgreements[faId]._ui.offers.map(
+						(offer) => offer.Id
+					)
 				);
 
-				await window.SF.invokeAction('saveAttachment', [
+				await window.SF.invokeAction("saveAttachment", [
 					faId,
-					JSON.stringify(this.props.frameAgreements[faId]._ui.attachment)
+					JSON.stringify(
+						this.props.frameAgreements[faId]._ui.attachment
+					),
 				]);
 				resolve(this.props.frameAgreements[faId]._ui.attachment);
 			});
 		};
 
-		window.FAM.api.migrateFrameAgreement = (faId = window.mandatory('frameAgreementId')) => {
-			return new Promise(async resolve => {
+		window.FAM.api.migrateFrameAgreement = (
+			faId = window.mandatory("frameAgreementId")
+		) => {
+			return new Promise(async (resolve) => {
 				try {
-					const migratedFa = this.props.migrateFrameAgreement(this.props.frameAgreements[faId])
+					const migratedFa = this.props.migrateFrameAgreement(
+						this.props.frameAgreements[faId]
+					);
 					resolve(migratedFa);
 				} catch (error) {
 					console.error(error);
 				}
 			});
-		}
+		};
 
 		Promise.all([
 			this.props.getAppSettings(),
-			window.SF.invokeAction('getFieldLabels', ['cspmb__Usage_Type__c']).then(r => {
-				window.SF.fieldLabels['cspmb__Usage_Type__c'] = r;
+			window.SF.invokeAction("getFieldLabels", [
+				"cspmb__Usage_Type__c",
+			]).then((r) => {
+				window.SF.fieldLabels["cspmb__Usage_Type__c"] = r;
 			}),
-			window.SF.invokeAction('getFieldLabels', ['csconta__Frame_Agreement__c']).then(r => {
-				window.SF.fieldLabels['csconta__Frame_Agreement__c'] = r;
+			window.SF.invokeAction("getFieldLabels", [
+				"csconta__Frame_Agreement__c",
+			]).then((r) => {
+				window.SF.fieldLabels["csconta__Frame_Agreement__c"] = r;
 			}),
-			window.SF.invokeAction('getFieldLabels', ['cspmb__Price_Item__c']).then(r => {
-				window.SF.fieldLabels['cspmb__Price_Item__c'] = r;
+			window.SF.invokeAction("getFieldLabels", [
+				"cspmb__Price_Item__c",
+			]).then((r) => {
+				window.SF.fieldLabels["cspmb__Price_Item__c"] = r;
 			}),
-			window.SF.invokeAction('getFieldLabels', ['cspmb__Add_On_Price_Item__c']).then(r => {
-				window.SF.fieldLabels['cspmb__Add_On_Price_Item__c'] = r;
+			window.SF.invokeAction("getFieldLabels", [
+				"cspmb__Add_On_Price_Item__c",
+			]).then((r) => {
+				window.SF.fieldLabels["cspmb__Add_On_Price_Item__c"] = r;
 			}),
-			this.props.getStandaloneAddons()
-		]).then(response => {
-			let _promiseArray = [this.props.getFrameAgreements(), this.props.getCommercialProducts()];
+			this.props.getStandaloneAddons(),
+		]).then((response) => {
+			let _promiseArray = [
+				this.props.getFrameAgreements(),
+				this.props.getCommercialProducts(),
+			];
 
-			let picklists = response[0].HeaderData.filter(f => f.type === 'picklist').map(f => f.field);
+			let picklists = response[0].HeaderData.filter(
+				(f) => f.type === "picklist"
+			).map((f) => f.field);
 
 			// Load agreement levels for "Add new Agreement" picklist
-			picklists.push('csconta__agreement_level__c');
-			picklists.push('csconta__Status__c');
+			picklists.push("csconta__agreement_level__c");
+			picklists.push("csconta__Status__c");
 
 			_promiseArray.push(this.props.getPicklistOptions(picklists));
 
-			Promise.all(_promiseArray).then(responseArr => {
-				publish('onLoad', [responseArr]);
+			Promise.all(_promiseArray).then((responseArr) => {
+				publish("onLoad", [responseArr]);
 			});
 		});
 
-		this.landing = this.props.history.location.pathname === '/';
+		this.landing = this.props.history.location.pathname === "/";
 	}
 
 	render() {
@@ -971,17 +1103,17 @@ const mapDispatchToProps = {
 	addOffersToFa,
 	removeOffersFromFa,
 	apiNegotiateOffer,
-	migrateFrameAgreement
+	migrateFrameAgreement,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	return {
 		frameAgreements: state.frameAgreements,
 		commercialProducts: state.commercialProducts,
 		settings: state.settings,
 		validation: state.validation,
 		initialised: state.initialised,
-		offers: state.offers
+		offers: state.offers,
 	};
 };
 

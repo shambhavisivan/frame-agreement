@@ -315,12 +315,12 @@ window.FAM.api.resetNegotiation("a1u4J000000Y8iGQAS").then(result => {}, reject 
 
 ### refreshFa
 
-**Parameters:** `[ Id <String> faId ]` \
+**Parameters:** `[ Id <String> faId, <boolean> shouldRefreshAttachment [optional]]` \
 **Resolves:** `[ Object active_frame_agreement ]` \
-**Description:** (Promise) Refreshes a given Frame Agreement. \
+**Description:** (Promise) Refreshes a given Frame Agreement. Refreshes the attachment as well if the second argument is set to true. If the argument is omitted, it defaults to false \
 **Example:**<br>
 ```javascript
-window.FAM.api.refreshFa("a1u4J000000Y8iGQAS").then(result => {}, reject => {});
+window.FAM.api.refreshFa("a1u4J000000Y8iGQAS", true).then(result => {}, reject => {});
 ```
 
 

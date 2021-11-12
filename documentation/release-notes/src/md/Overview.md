@@ -1,8 +1,8 @@
 # Overview
 
-Release date: October 2021
+Release date: November 2021
 
-Build number: R35 (v35.0)
+Build number: R35 Patch 1 (v35.0.1)
 
 Installation URL: /packaging/installPackage.apexp?p0=04t1t000003TuZ7
 

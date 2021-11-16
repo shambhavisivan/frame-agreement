@@ -57,6 +57,7 @@ namespace SfGlobal {
 		filterCommercialProducts(filterData: [string]): Promise<CommercialProductStandalone[]>;
 		queryAddons(paramArray: [string, string | null, number | null]): Promise<Addon[]>;
 		getStandaloneAddons(): Promise<Addon[]>;
+		getProductIds(paramsArray: [string[], string | null]): Promise<string[]>;
 	}
 
 	interface CategorizationData {

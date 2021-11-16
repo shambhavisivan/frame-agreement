@@ -1,5 +1,7 @@
 global with sharing class FrameRateManagerController {
 	public static final Integer DEFAULT_QUERY_LIMIT = 5000;
+	public static final String CP_TYPE = 'Commercial Product';
+	public static final String CP_ROLE = 'Basic';
 
 	public transient csutil.CustomResource[] commonContainerPageResources {
 		get;
@@ -2962,6 +2964,45 @@ global with sharing class FrameRateManagerController {
 	@RemoteAction
 	public static List<cspmb__Add_On_Price_Item__c> queryAddons(Id priceItemId, Id lastRecordId, Integer queryLimit) {
 		return AddOnService.queryAddons(priceItemId, lastRecordId, queryLimit);
+	}
+
+	@RemoteAction
+	public static List<Id> getProductIds(List<Id> filterIds, String filterFields) {
+		String queryIds = 'select id from cspmb__Price_Item__c';
+		String whereClause = '';
+
+		whereClause += ' where cspmb__account__c = null ' +
+			'and cspmb__is_active__c = true ' +
+			'and (cspmb__effective_start_date__c = null ' +
+			'OR (cspmb__effective_start_date__c != null ' +
+			'and cspmb__effective_start_date__c < TODAY)) ' +
+			'and (cspmb__effective_end_date__c = null ' +
+			'OR (cspmb__effective_end_date__c != null ' +
+			'and cspmb__effective_end_date__c > TODAY)) ' +
+			'and (cspmb__type__c = null ' +
+			'OR (cspmb__type__c = :CP_TYPE ' +
+			'AND cspmb__role__c = :CP_ROLE))';
+
+		String filterClause = AppUtilService.getFilterClause(filterFields);
+
+		if (filterIds != null && !filterIds.isEmpty()) {
+			whereClause += ' and id in :filterIds';
+		}
+
+		if (filterClause.length() > 0) {
+			whereClause += ' and ' + filterClause;
+		}
+
+		queryIds += whereClause;
+		queryIds += ' order by id';
+
+		List<cspmb__Price_Item__c> products = database.query(queryIds);
+		List<Id> productIds = new List<Id>();
+		for (cspmb__Price_Item__c product : products) {
+			productIds.add(product.id);
+		}
+
+		return productIds;
 	}
 
 	// WRAPPERS

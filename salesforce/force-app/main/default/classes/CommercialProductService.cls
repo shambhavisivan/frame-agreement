@@ -1,7 +1,4 @@
 public class CommercialProductService {
-	private static final String CP_TYPE = 'Commercial Product';
-	private static final String CP_ROLE = 'Basic';
-
 	public static List<cspmb__price_item__c> queryProducts(
 			List<Id> priceItemIds,
 			String filterFields,
@@ -40,8 +37,8 @@ public class CommercialProductService {
 			    'and cspmb__effective_end_date__c > TODAY)) ' +
 			    // If user turns off PS after a successful synchronisation
 			    'and (cspmb__type__c = null ' +
-			    'OR (cspmb__type__c = :CP_TYPE ' +
-			    'AND cspmb__role__c = :CP_ROLE)) ';
+			    'OR (cspmb__type__c = ' + '\'' + FrameRateManagerController.CP_TYPE + '\'' +
+			    ' AND cspmb__role__c = ' + '\'' + FrameRateManagerController.CP_ROLE + '\'' + ')) ';
 
 			if (priceItemIds != null && !priceItemIds.isEmpty()) {
 				query += 'and id in :priceItemIds ';

@@ -197,5 +197,8 @@ export const remoteActions: RemoteActions = {
 		return new Promise((resolve) => {
 			setTimeout(() => resolve(mockaddons), FAKE_DELAY_MS);
 		});
+	},
+	async getProductIds(filterIds: Array<string>, filterString: string | null): Promise<string[]> {
+		return ['a1F1t0000001JBoEAM', 'a1F1t0000001JBZEA2'];
 	}
 };

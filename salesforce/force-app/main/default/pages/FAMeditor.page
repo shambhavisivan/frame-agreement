@@ -159,7 +159,8 @@
 				getNameSpacePrefix: "{!$RemoteAction.FrameRateManagerController.getNameSpacePrefix}",
 				findReplacementOffers: "{!$RemoteAction.FrameRateManagerController.findReplacementOffers}",
 				getFaOffers: "{!$RemoteAction.FrameRateManagerController.getFaOffers}",
-				queryAddons: "{!$RemoteAction.FrameRateManagerController.queryAddons}"
+				queryAddons: "{!$RemoteAction.FrameRateManagerController.queryAddons}",
+				getProductIds: "{!$RemoteAction.FrameRateManagerController.getProductIds}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

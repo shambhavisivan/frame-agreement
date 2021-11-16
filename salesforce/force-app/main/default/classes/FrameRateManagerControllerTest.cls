@@ -2625,4 +2625,47 @@ private class FrameRateManagerControllerTest {
 		System.assertEquals(1, activeOffers_5.size(), 'Offers with valid effective start date and end dates but marked inactive should be filtered');
 
 	}
+
+	@IsTest
+	public static void testGetProductIds() {
+		String name = 'Product-X';
+		Integer i = 1;
+		while (i <= 10) {
+			cspmb__Price_Item__c cp_1 = new cspmb__Price_Item__c(
+					name = name + i,
+					cspmb__one_off_charge__c = 10.00,
+					cspmb__is_active__c = true,
+					cspmb__recurring_charge__c = 15 - 00,
+					cspmb__price_item_code__c = name + i,
+					cspmb__type__c = 'Commercial Product',
+					cspmb__role__c = 'Basic'
+				);
+			i = i + 1;
+			insert cp_1;
+		}
+
+		List<cspmb__Price_Item__c> cps = [
+			select id
+			from cspmb__Price_Item__c
+		];
+		List<Id> cpIdList = new List<Id>();
+
+		for (cspmb__price_item__c cp : cps) {
+			cpIdList.add(cp.id);
+		}
+
+		List<Id> sObjectIds = new List<Id>();
+
+		Test.startTest();
+
+		sObjectIds = FrameRateManagerController.getProductIds(
+			new List<Id>{cps[0].id, cps[2].id, cps[7].id, cps[9].id},
+			'{\"name\":\"X1\"}'
+		);
+
+		Test.stopTest();
+
+		System.assertEquals(sObjectIds.size(), 2);
+		System.assertEquals(sObjectIds, new List<Id>{cps[0].id, cps[9].id});
+	}
 }

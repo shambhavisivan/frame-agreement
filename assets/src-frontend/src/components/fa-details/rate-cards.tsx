@@ -1,23 +1,30 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import { Negotiation } from './negotiation';
-import { RateCardLines, RateCards as IRateCards } from './negotiation/negotiation-reducer';
+import { RateCard as IRateCard } from '../../datasources';
+import { store } from './details-page-provider';
 
 interface RateCardsProps {
-	rateCards: IRateCards;
+	rateCards: IRateCard[];
+	productId: string;
 	negotiateRateCardLine: (rateCardId: string, rateCardLineId: string, value: number) => void;
 }
 
-export function RateCards({ rateCards, negotiateRateCardLine }: RateCardsProps): ReactElement {
+export function RateCards({
+	rateCards,
+	negotiateRateCardLine,
+	productId
+}: RateCardsProps): ReactElement {
 	return (
 		<table>
 			<tbody>
-				{Object.entries(rateCards).map(([rateCardId, rateCard]) => {
+				{rateCards.map(({ id, rateCardLines }) => {
 					return (
 						<RateCard
-							key={rateCardId}
-							rateCardLines={rateCard.rateCardLines}
-							rateCardId={rateCardId}
+							key={id}
+							rateCardLines={rateCardLines}
+							rateCardId={id}
 							onNegotiatedChanged={negotiateRateCardLine}
+							productId={productId}
 						/>
 					);
 				})}
@@ -27,25 +34,32 @@ export function RateCards({ rateCards, negotiateRateCardLine }: RateCardsProps):
 }
 
 interface RateCardProps {
-	rateCardLines: RateCardLines;
+	rateCardLines: IRateCard['rateCardLines'];
 	rateCardId: string;
 	onNegotiatedChanged: (rateCardId: string, rateCardLineId: string, value: number) => void;
+	productId: string;
 }
 
-function RateCard({ rateCardLines, rateCardId, onNegotiatedChanged }: RateCardProps): ReactElement {
+function RateCard({
+	rateCardLines,
+	rateCardId,
+	onNegotiatedChanged,
+	productId
+}: RateCardProps): ReactElement {
 	return (
 		<>
-			{Object.entries(rateCardLines).map(([rateCardLineId, rateCardLine]) => {
+			{rateCardLines.map(({ id: rateCardLineId, rateValue, name }) => {
 				return (
 					<RateCardLineComponent
 						key={rateCardLineId}
-						name={rateCardLine.name || ''}
+						name={name || ''}
 						rateCardId={rateCardId}
 						rateCardLineId={rateCardLineId}
-						value={rateCardLine}
+						value={rateValue}
 						onNegotiatedChanged={(value: number): void =>
 							onNegotiatedChanged(rateCardId, rateCardLineId, value)
 						}
+						productId={productId}
 					/>
 				);
 			})}
@@ -57,11 +71,9 @@ interface RateCardLineProps {
 	rateCardId: string;
 	rateCardLineId: string;
 	name: string;
-	value: {
-		original: number | undefined;
-		negotiated: number | undefined;
-	};
+	value: number;
 	onNegotiatedChanged: (value: number) => void;
+	productId: string;
 }
 
 function RateCardLineComponent({
@@ -69,15 +81,26 @@ function RateCardLineComponent({
 	rateCardLineId,
 	name,
 	value,
-	onNegotiatedChanged
+	onNegotiatedChanged,
+	productId
 }: RateCardLineProps): ReactElement {
+	const { negotiation } = useContext(store);
 	return (
 		<tr>
 			<th>
 				{name} ({rateCardId}/{rateCardLineId})
 			</th>
 			<th>
-				<Negotiation negotiable={value} onNegotiatedChanged={onNegotiatedChanged} />
+				<Negotiation
+					negotiable={{
+						original: value,
+						negotiated:
+							negotiation?.products[productId]?.rateCards[rateCardId]?.rateCardLines[
+								rateCardLineId
+							]?.negotiated
+					}}
+					onNegotiatedChanged={onNegotiatedChanged}
+				/>
 			</th>
 		</tr>
 	);

@@ -1,9 +1,9 @@
 import React, { PropsWithChildren, ReactElement } from 'react';
-import { Negotiation } from '../components/fa-details/negotiation/negotiation-reducer';
+import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
 import { DiscLevelWrapper, DiscountThreshold } from '../datasources';
 
 export interface ContextProps {
-	negotiation: Negotiation;
+	negotiation: Negotiation['negotiation'];
 	discountThresholds?: DiscountThreshold[];
 	authLevels: { [productId: string]: string };
 	discountLevels: DiscLevelWrapper[];

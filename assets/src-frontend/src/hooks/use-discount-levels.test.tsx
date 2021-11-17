@@ -9,7 +9,7 @@ import { ContextProps, discountContext } from '../providers/discount-conformance
 import {
 	ChargeType,
 	NegotiationItemType
-} from '../components/fa-details/negotiation/negotiation-reducer';
+} from '../components/fa-details/negotiation/details-reducer';
 import React, { FunctionComponent, ReactElement, ReactNode } from 'react';
 import { deforcify } from '../datasources/deforcify';
 import { DiscLevels_general } from '../local-server/local_data';

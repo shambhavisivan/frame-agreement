@@ -8,7 +8,8 @@ import { ADDON_PRODUCT_DETAILS_GRID_METADATA } from '../../app-constants';
 import { RateCards } from './rate-cards';
 import { store } from './details-page-provider';
 import { createActionsForNegotiateProduct } from './negotiation/negotiation-action-creator';
-import { NegotiationItemType } from './negotiation/negotiation-reducer';
+import { NegotiationItemType } from './negotiation/details-reducer';
+import { QueryStatus, useCommercialProductData } from '../../hooks/use-commercial-product-data';
 
 interface ProductDetailsProps {
 	product: CommercialProductStandalone;
@@ -26,9 +27,10 @@ export function ProductDetails({
 	const labels = useCustomLabels();
 	const [activeDetails, setActiveDetails] = useState<ChildButtons>(ChildButtons.addon);
 	const { addonList } = useQueryAddons(id);
-	const { dispatch, ...state } = useContext(store);
+	const { dispatch } = useContext(store);
 	const negotiateActions = createActionsForNegotiateProduct(dispatch);
 	const { negotiateRateCardLine } = negotiateActions(id, productType);
+	const { data: productData, status } = useCommercialProductData([id]);
 
 	const onClickButton = (buttonName: ChildButtons): void => {
 		setActiveDetails(buttonName);
@@ -50,16 +52,15 @@ export function ProductDetails({
 					fieldMetadata={ADDON_PRODUCT_DETAILS_GRID_METADATA}
 				/>
 			)}
-			{activeDetails === ChildButtons.ratecard && (
-				<tr>
-					<td>
-						<RateCards
-							rateCards={state.products[id].rateCards || {}}
-							negotiateRateCardLine={negotiateRateCardLine}
-						/>
-					</td>
-				</tr>
-			)}
+			{activeDetails === ChildButtons.ratecard &&
+				status === QueryStatus.Success &&
+				productData?.cpData[id].rateCards && (
+					<RateCards
+						productId={id}
+						rateCards={productData?.cpData[id].rateCards}
+						negotiateRateCardLine={negotiateRateCardLine}
+					/>
+				)}
 		</div>
 	);
 }

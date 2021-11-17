@@ -8,7 +8,7 @@ import { Discount } from './discount-validator';
 import { NegotiateDiff } from './negotiate-diff';
 import { NegotiateLevel } from './negotiate-level';
 import { NegotiateValue } from './negotiate-value';
-import { Negotiable } from './negotiation-reducer';
+import { Negotiable } from './details-reducer';
 
 export interface NegotiateInputProps {
 	negotiable: Negotiable;
@@ -63,7 +63,7 @@ export function NegotiateInput({
 						maxValue={
 							isMinMaxEnabled
 								? discountType === 'Amount'
-									? negotiable.original
+									? negotiable.original || undefined
 									: 100
 								: undefined
 						}

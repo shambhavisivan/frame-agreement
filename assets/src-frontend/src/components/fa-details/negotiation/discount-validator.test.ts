@@ -7,7 +7,7 @@ import {
 	filterDiscountLevelValues,
 	validateDiscountThreshold
 } from './discount-validator';
-import { Negotiable } from './negotiation-reducer';
+import { Negotiable } from './details-reducer';
 
 describe('test discount validator utils', () => {
 	describe('validateDiscountThreshold', () => {

@@ -1,5 +1,5 @@
 import { DiscountLevel, DiscountThreshold, DiscountType } from '../../../datasources';
-import { Negotiable } from './negotiation-reducer';
+import { Negotiable } from './details-reducer';
 
 export interface DiscountThresholdViolation {
 	thresholdName: string;
@@ -33,7 +33,9 @@ export function validateDiscountThreshold(
 ): DiscountThresholdViolation[] {
 	const violations: DiscountThresholdViolation[] = [];
 	if (negotiable && negotiable.original !== undefined && negotiable.negotiated !== undefined) {
-		const discount = negotiable.original - (negotiable.negotiated || negotiable.original);
+		const discount = negotiable.original
+			? negotiable.original - (negotiable.negotiated || negotiable.original)
+			: 0;
 		for (const discountThreshold of thresholds) {
 			let thresholdAmount = discountThreshold.discountThreshold;
 			if (discountThreshold.discountType === 'Percentage') {

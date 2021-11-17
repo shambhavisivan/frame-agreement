@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { isNotUndefinedOrNull } from '../../app-utils';
 import { convertAmountToPercent } from './discount-validator';
-import { Negotiable } from './negotiation-reducer';
+import { Negotiable } from './details-reducer';
 
 export interface NegotiateDiffProps {
 	isThresholdViolated: boolean;

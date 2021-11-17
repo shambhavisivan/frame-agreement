@@ -27,7 +27,7 @@ import {
 	ProductsInCategoryData
 } from './graphql-endpoints/interface';
 import { DiscountThreshold } from '.';
-import { Negotiation } from '../components/fa-details/negotiation/negotiation-reducer';
+import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
 
 export const mockAppSettings: AppSettings = {
 	account: {
@@ -889,7 +889,7 @@ export const attachment: Attachment = {
 	}
 };
 
-export const mockNegotiationState: Negotiation = {
+export const mockNegotiationState: Negotiation['negotiation'] = {
 	products: {
 		a1i4I000003Q4GGQA0: {
 			volume: {

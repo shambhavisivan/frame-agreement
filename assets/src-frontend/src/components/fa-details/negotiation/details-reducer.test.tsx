@@ -3,14 +3,16 @@ import {
 	CommercialProductData,
 	CommercialProductStandalone
 } from '../../../datasources';
-import negotiationReducer, {
-	Negotiation,
+import {
+	detailsReducer,
+	Negotiation as INegotiation,
 	NegotiationAction,
 	ProductNegotiation,
 	selectAttachment
-} from './negotiation-reducer';
+} from './details-reducer';
 
-describe('negotiationReducer', () => {
+type Negotiation = INegotiation['negotiation'];
+describe('detailsReducer', () => {
 	const negotiateRecurring: NegotiationAction['type'] = 'negotiateProductRecurring';
 	const negotiateOneOff: NegotiationAction['type'] = 'negotiateProductOneOff';
 	const addProducts: NegotiationAction['type'] = 'addProducts';
@@ -51,41 +53,47 @@ describe('negotiationReducer', () => {
 
 		test(`returns the state with the product's negotiated recurring charge set`, () => {
 			const negotiatedValue = 42;
-			const expectedState: Negotiation = {
-				products: {
-					[testProductId]: {
-						volume: {
-							mv: null,
-							muc: null,
-							mvp: null,
-							mucp: null
-						},
-						rateCards: {},
-						product: {
-							oneOff: {
-								original: 100,
-								negotiated: undefined
+			const expectedState: INegotiation = {
+				negotiation: {
+					products: {
+						[testProductId]: {
+							volume: {
+								mv: null,
+								muc: null,
+								mvp: null,
+								mucp: null
 							},
-							recurring: {
-								original: 200,
-								negotiated: negotiatedValue
-							}
-						},
-						addons: {}
-					}
+							rateCards: {},
+							product: {
+								oneOff: {
+									original: 100,
+									negotiated: undefined
+								},
+								recurring: {
+									original: 200,
+									negotiated: negotiatedValue
+								}
+							},
+							addons: {}
+						}
+					},
+					addons: {},
+					offers: {}
 				},
-				addons: {},
-				offers: {}
+				activeFa: undefined
 			};
 			expect(
-				negotiationReducer(testState, {
-					type: negotiateRecurring,
-					payload: {
-						productId: testProductId,
-						itemType: 'products',
-						value: negotiatedValue
+				detailsReducer(
+					{ negotiation: testState },
+					{
+						type: negotiateRecurring,
+						payload: {
+							productId: testProductId,
+							itemType: 'products',
+							value: negotiatedValue
+						}
 					}
-				})
+				)
 			).toEqual(expectedState);
 		});
 	});
@@ -121,42 +129,48 @@ describe('negotiationReducer', () => {
 		test(`returns the state with the product's negotiated oneOff charge set`, () => {
 			const negotiatedValue = 42;
 
-			const expectedState: Negotiation = {
-				products: {
-					[testProductId]: {
-						volume: {
-							mv: null,
-							muc: null,
-							mvp: null,
-							mucp: null
-						},
-						rateCards: {},
-						product: {
-							oneOff: {
-								original: 100,
-								negotiated: negotiatedValue
+			const expectedState: INegotiation = {
+				negotiation: {
+					products: {
+						[testProductId]: {
+							volume: {
+								mv: null,
+								muc: null,
+								mvp: null,
+								mucp: null
 							},
-							recurring: {
-								original: 200,
-								negotiated: undefined
-							}
-						},
-						addons: {}
-					}
+							rateCards: {},
+							product: {
+								oneOff: {
+									original: 100,
+									negotiated: negotiatedValue
+								},
+								recurring: {
+									original: 200,
+									negotiated: undefined
+								}
+							},
+							addons: {}
+						}
+					},
+					addons: {},
+					offers: {}
 				},
-				addons: {},
-				offers: {}
+				activeFa: undefined
 			};
 
 			expect(
-				negotiationReducer(testState, {
-					type: negotiateOneOff,
-					payload: {
-						productId: testProductId,
-						itemType: 'products',
-						value: negotiatedValue
+				detailsReducer(
+					{ negotiation: testState },
+					{
+						type: negotiateOneOff,
+						payload: {
+							productId: testProductId,
+							itemType: 'products',
+							value: negotiatedValue
+						}
 					}
-				})
+				)
 			).toEqual(expectedState);
 		});
 	});
@@ -200,52 +214,58 @@ describe('negotiationReducer', () => {
 
 		test(`returns the state with the product's negotiated recurring charge set`, () => {
 			const negotiatedValue = 42;
-			const expectedState: Negotiation = {
-				products: {
-					[testProductId]: {
-						volume: {
-							mv: null,
-							muc: null,
-							mvp: null,
-							mucp: null
-						},
-						rateCards: {
-							[testRateCartId]: {
-								rateCardLines: {
-									[testRateCardLineId1]: {
-										original: 10,
-										negotiated: negotiatedValue
+			const expectedState: INegotiation = {
+				negotiation: {
+					products: {
+						[testProductId]: {
+							volume: {
+								mv: null,
+								muc: null,
+								mvp: null,
+								mucp: null
+							},
+							rateCards: {
+								[testRateCartId]: {
+									rateCardLines: {
+										[testRateCardLineId1]: {
+											original: 10,
+											negotiated: negotiatedValue
+										}
 									}
 								}
-							}
-						},
-						product: {
-							oneOff: {
-								original: 100,
-								negotiated: undefined
 							},
-							recurring: {
-								original: 200,
-								negotiated: undefined
-							}
-						},
-						addons: {}
-					}
+							product: {
+								oneOff: {
+									original: 100,
+									negotiated: undefined
+								},
+								recurring: {
+									original: 200,
+									negotiated: undefined
+								}
+							},
+							addons: {}
+						}
+					},
+					addons: {},
+					offers: {}
 				},
-				addons: {},
-				offers: {}
+				activeFa: undefined
 			};
 			expect(
-				negotiationReducer(testState, {
-					type: negotiateRateCardLine,
-					payload: {
-						productId: testProductId,
-						itemType: 'products',
-						rateCardId: testRateCartId,
-						rateCardLineId: testRateCardLineId1,
-						value: negotiatedValue
+				detailsReducer(
+					{ negotiation: testState },
+					{
+						type: negotiateRateCardLine,
+						payload: {
+							productId: testProductId,
+							itemType: 'products',
+							rateCardId: testRateCartId,
+							rateCardLineId: testRateCardLineId1,
+							value: negotiatedValue
+						}
 					}
-				})
+				)
 			).toEqual(expectedState);
 		});
 	});
@@ -307,19 +327,25 @@ describe('negotiationReducer', () => {
 			];
 
 			test(`returns the state with the new products added`, () => {
-				const expectedState: Negotiation = {
-					products: { ...testState.products, ...newProducts },
-					addons: {},
-					offers: {}
+				const expectedState: INegotiation = {
+					negotiation: {
+						products: { ...testState.products, ...newProducts },
+						addons: {},
+						offers: {}
+					},
+					activeFa: undefined
 				};
 
-				const updated = negotiationReducer(testState, {
-					type: addProducts,
-					payload: {
-						products: products,
-						productsData: productsData
+				const updated = detailsReducer(
+					{ negotiation: testState },
+					{
+						type: addProducts,
+						payload: {
+							products: products,
+							productsData: productsData
+						}
 					}
-				});
+				);
 				expect(updated).toEqual(expectedState);
 			});
 		});
@@ -418,20 +444,26 @@ describe('negotiationReducer', () => {
 					}
 				};
 
-				const expectedState: Negotiation = {
-					products: newProducts,
-					addons: {},
-					offers: {}
+				const expectedState: INegotiation = {
+					negotiation: {
+						products: newProducts,
+						addons: {},
+						offers: {}
+					},
+					activeFa: undefined
 				};
 
 				expect(
-					negotiationReducer(testState, {
-						type: addProducts,
-						payload: {
-							products: products,
-							productsData: productsData
+					detailsReducer(
+						{ negotiation: testState },
+						{
+							type: addProducts,
+							payload: {
+								products: products,
+								productsData: productsData
+							}
 						}
-					})
+					)
 				).toEqual(expectedState);
 			});
 		});
@@ -468,11 +500,11 @@ describe('negotiationReducer', () => {
 					},
 					product: {
 						recurring: {
-							original: 100,
+							original: undefined,
 							negotiated: undefined
 						},
 						oneOff: {
-							original: 200,
+							original: undefined,
 							negotiated: undefined
 						}
 					},
@@ -509,53 +541,60 @@ describe('negotiationReducer', () => {
 				custom: {}
 			};
 
-			const expectedState: Negotiation = {
-				products: {
-					[productId]: {
-						rateCards: {
-							[rateCardId1]: {
-								rateCardLines: {
-									[rateCartLineId1]: {
-										negotiated: 42,
-										original: 1
-									},
-									[rateCartLineId2]: {
-										negotiated: 43,
-										original: 2
+			const expectedState: INegotiation = {
+				negotiation: {
+					products: {
+						[productId]: {
+							rateCards: {
+								[rateCardId1]: {
+									rateCardLines: {
+										[rateCartLineId1]: {
+											negotiated: 42,
+											original: undefined
+										},
+										[rateCartLineId2]: {
+											negotiated: 43,
+											original: undefined
+										}
 									}
 								}
-							}
-						},
-						volume: {
-							muc: null,
-							mucp: null,
-							mv: null,
-							mvp: null
-						},
-						product: {
-							recurring: {
-								original: 100,
-								negotiated: 1
 							},
-							oneOff: {
-								original: 200,
-								negotiated: 2
-							}
-						},
-						addons: {}
-					}
+							volume: {
+								muc: null,
+								mucp: null,
+								mv: null,
+								mvp: null
+							},
+							product: {
+								recurring: {
+									original: undefined,
+									negotiated: 1
+								},
+								oneOff: {
+									original: undefined,
+									negotiated: 2
+								}
+							},
+							addons: {},
+							charges: {}
+						}
+					},
+					addons: {},
+					offers: {}
 				},
-				addons: {},
-				offers: {}
+				activeFa: undefined
 			};
 
 			expect(
-				negotiationReducer(testState, {
-					type: 'loadAttachment',
-					payload: {
-						attachment
+				detailsReducer(
+					{ negotiation: testState },
+					{
+						type: 'loadAttachment',
+						payload: {
+							attachment
+						}
 					}
-				})
+				)
 			).toEqual(expectedState);
 		});
 	});
@@ -635,8 +674,24 @@ describe('selectors', () => {
 			custom: {}
 		};
 
-		test(`updates the current state with the one described in the attachment`, () => {
+		test(`modify state to match attachment object`, () => {
 			expect(selectAttachment(testState)).toEqual(attachment);
 		});
 	});
+});
+
+describe('test updateof currentFA', () => {
+	const testState: INegotiation = {} as INegotiation;
+
+	expect(
+		detailsReducer(testState, {
+			type: 'updateActiveFa',
+			payload: {
+				agreement: { id: 'someId', agreementName: 'some-agreement', name: 'AGR_001' }
+			}
+		})
+	).toEqual({
+		activeFa: { id: 'someId', agreementName: 'some-agreement', name: 'AGR_001' },
+		negotiation: {}
+	} as INegotiation);
 });

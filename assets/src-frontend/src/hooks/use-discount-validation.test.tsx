@@ -10,7 +10,7 @@ import { ContextProps, discountContext } from '../providers/discount-conformance
 import {
 	ChargeType,
 	NegotiationItemType
-} from '../components/fa-details/negotiation/negotiation-reducer';
+} from '../components/fa-details/negotiation/details-reducer';
 import React, { FunctionComponent, ReactElement, ReactNode } from 'react';
 import { DiscountThresholdViolation } from '../components/fa-details/negotiation/discount-validator';
 import { deforcify } from '../datasources/deforcify';

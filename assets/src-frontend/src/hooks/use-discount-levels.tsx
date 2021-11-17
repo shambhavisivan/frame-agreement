@@ -8,7 +8,7 @@ import {
 	ChargeType,
 	NegotiationItemType,
 	ProductNegotiation
-} from '../components/fa-details/negotiation/negotiation-reducer';
+} from '../components/fa-details/negotiation/details-reducer';
 import { DiscountLevel } from '../datasources';
 import { discountContext } from '../providers/discount-conformance-provider';
 

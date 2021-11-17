@@ -1,4 +1,4 @@
-import { NegotiationAction, NegotiationItemType } from './negotiation-reducer';
+import { NegotiationAction, NegotiationItemType } from './details-reducer';
 
 export interface NegotiateProductActions {
 	negotiateProductRecurring(value: number): void;

@@ -21,7 +21,7 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 	return (
 		<div className="details-wrapper">
 			<LoadingFallback status={faStatus}>
-				<DetailsProvider>
+				<DetailsProvider agreement={agreement || ({} as FrameAgreement)}>
 					<FaStatusContextProvider faId={agreementId}>
 						<div className="field-wrapper"> </div>
 						<ApprovalProcess faId={agreementId} />

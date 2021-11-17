@@ -23,6 +23,7 @@ import { isDiscountAllowed } from '../../utils/shared-service';
 
 import * as Constants from '~/src/utils/constants'
 import { frameHookAddonData, frameHookChargesData, frameHookProductChargesData, frameHookRateCardsData } from '../../utils/event-service';
+import { isFalsyExceptZero } from '~/src/utils/shared-service';
 
 // import { getFrameAgreements } from '~/src/actions';
 
@@ -496,24 +497,33 @@ class NegotiationModal extends Component {
 			return;
 		}
 
+		const facSettings = this.props.settings.FACSettings;
 		const _DISCOUNT = +discount * -1;
 		console.log(_DISCOUNT);
 
-		function applyDiscountRate(val, state) {
-			val = +val;
+		function applyDiscountRate(prevNegotiatedPrice, state, originalPrice) {
+			prevNegotiatedPrice = +prevNegotiatedPrice;
+			let  discountedPrice = prevNegotiatedPrice;
+
 			if (state.discountMode === 'fixed') {
-				val = val + _DISCOUNT;
+				discountedPrice = discountedPrice + _DISCOUNT;
 			} else {
-				var discountSum = (val * Math.abs(_DISCOUNT)) / 100;
+				var discountSum = (discountedPrice * Math.abs(_DISCOUNT)) / 100;
 
 				if (_DISCOUNT >= 0) {
-					val = val + discountSum;
+					discountedPrice = discountedPrice + discountSum;
 				} else {
-					val = val - discountSum;
+					discountedPrice = discountedPrice - discountSum;
 				}
 			}
 
-			return +val.toFixed(8);
+			if (facSettings.input_minmax_restriction) {
+				if (discountedPrice < 0 || discountedPrice > originalPrice) {
+					discountedPrice = prevNegotiatedPrice;
+				}
+			}
+
+			return +discountedPrice.toFixed(8);
 		}
 
 		let selected = { ...this.state.selected };
@@ -529,18 +539,30 @@ class NegotiationModal extends Component {
 							attachment[cp.Id]._addons[addon.Id] = attachment[cp.Id]._addons[addon.Id] || {};
 
 							if (addon.cspmb__One_Off_Charge__c && isDiscountAllowed('oneOff', addon)) {
+								const prevNegotiatedPrice = !isFalsyExceptZero(
+									attachment[cp.Id]._addons[addon.Id].oneOff
+								)
+									? attachment[cp.Id]._addons[addon.Id].oneOff
+									: addon.cspmb__One_Off_Charge__c;
 								const negotiatedValue = applyDiscountRate(
-									attachment[cp.Id]._addons[addon.Id].oneOff || addon.cspmb__One_Off_Charge__c,
-									this.state
+									prevNegotiatedPrice,
+									this.state,
+									addon.cspmb__One_Off_Charge__c
 								);
 								attachment[cp.Id]._addons[addon.Id].oneOff = negotiatedValue;
 								eventHookData = frameHookAddonData(eventHookData, this.state.updatedAttachment, cp, addon, 'oneOff', negotiatedValue);
 							}
 
 							if (addon.cspmb__Recurring_Charge__c && isDiscountAllowed('recurring', addon)) {
+								const prevNegotiatedPrice = !isFalsyExceptZero(
+									attachment[cp.Id]._addons[addon.Id].recurring
+								)
+									? attachment[cp.Id]._addons[addon.Id].recurring
+									: addon.cspmb__Recurring_Charge__c;
 								const negotiatedValue = applyDiscountRate(
-									attachment[cp.Id]._addons[addon.Id].recurring || addon.cspmb__Recurring_Charge__c,
-									this.state
+									prevNegotiatedPrice,
+									this.state,
+									addon.cspmb__Recurring_Charge__c
 								);
 								attachment[cp.Id]._addons[addon.Id].recurring = negotiatedValue;
 								eventHookData = frameHookAddonData(eventHookData, this.state.updatedAttachment, cp, addon, 'recurring', negotiatedValue);
@@ -562,11 +584,19 @@ class NegotiationModal extends Component {
 							attachment[cp.Id]._charges = attachment[cp.Id]._charges || {};
 							attachment[cp.Id]._charges[charge.Id] =
 								attachment[cp.Id]._charges[charge.Id] || {};
-							const negotiatedValue = applyDiscountRate(
+							const prevNegotiatedPrice = !isFalsyExceptZero(
 								attachment[cp.Id]._charges[charge.Id][
 									charge._type
-								] || charge[charge._type],
-								this.state
+								]
+							)
+								? attachment[cp.Id]._charges[charge.Id][
+										charge._type
+								  ]
+								: charge[charge._type];
+							const negotiatedValue = applyDiscountRate(
+								prevNegotiatedPrice,
+								this.state,
+								charge[charge._type]
 							);
 							attachment[cp.Id]._charges[charge.Id][
 								charge._type
@@ -590,9 +620,15 @@ class NegotiationModal extends Component {
 									oneOffCharge &&
 									isDiscountAllowed(charge.type, cp)
 								) {
+									const prevNegotiatedPrice = !isFalsyExceptZero(
+										attachment[cp.Id]._product.oneOff
+									)
+										? attachment[cp.Id]._product.oneOff
+										: oneOffCharge;
 									const negotiatedValue = applyDiscountRate(
-										attachment[cp.Id]._product.oneOff || oneOffCharge,
-										this.state
+										prevNegotiatedPrice,
+										this.state,
+										oneOffCharge
 									);
 									attachment[cp.Id]._product.oneOff = negotiatedValue;
 									eventHookData = frameHookProductChargesData(eventHookData, this.state.updatedAttachment, cp, 'oneOff', negotiatedValue);
@@ -601,9 +637,15 @@ class NegotiationModal extends Component {
 									recurringCharge &&
 									isDiscountAllowed(charge.type, cp)
 								) {
+									const prevNegotiatedPrice = !isFalsyExceptZero(
+										attachment[cp.Id]._product.recurring
+									)
+										? attachment[cp.Id]._product.recurring
+										: recurringCharge;
 									const negotiatedValue = applyDiscountRate(
-										attachment[cp.Id]._product.recurring || recurringCharge,
-										this.state
+										prevNegotiatedPrice,
+										this.state,
+										recurringCharge
 									);
 									attachment[cp.Id]._product.recurring = negotiatedValue;
 									eventHookData = frameHookProductChargesData(eventHookData, this.state.updatedAttachment, cp, 'recurring', negotiatedValue);
@@ -623,9 +665,15 @@ class NegotiationModal extends Component {
 							if (selected.rated.hasOwnProperty(rcl.Id)) {
 								attachment[cp.Id]._rateCards = attachment[cp.Id]._rateCards || {};
 								attachment[cp.Id]._rateCards[rc.Id] = attachment[cp.Id]._rateCards[rc.Id] || {};
+								const prevNegotiatedPrice = !isFalsyExceptZero(
+									attachment[cp.Id]._rateCards[rc.Id][rcl.Id]
+								)
+									? attachment[cp.Id]._rateCards[rc.Id][rcl.Id]
+									: rcl.cspmb__rate_value__c;
 								const negotiatedValue = applyDiscountRate(
-									attachment[cp.Id]._rateCards[rc.Id][rcl.Id] || rcl.cspmb__rate_value__c,
-									this.state
+									prevNegotiatedPrice,
+									this.state,
+									rcl.cspmb__rate_value__c
 								);
 								attachment[cp.Id]._rateCards[rc.Id][rcl.Id] = negotiatedValue;
 								eventHookData = frameHookRateCardsData(eventHookData, this.state.updatedAttachment, cp, rc, rcl, negotiatedValue);

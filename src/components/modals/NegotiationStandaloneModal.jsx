@@ -3,27 +3,11 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Modal from 'react-responsive-modal';
-import Icon from '../utillity/Icon';
-import InputSearch from '../utillity/inputs/InputSearch';
-import Toggle from '../utillity/inputs/Toggle';
-import Checkbox from '../utillity/inputs/Checkbox';
-import Pagination from '../utillity/Pagination';
-import NumberFormat from '~/src/components/negotiation/NumberFormat';
-import Render from '../utillity/Render';
-import { isDiscountAllowed, isOneOff, isRecurring } from '../../utils/shared-service';
-
-import {
-	validateAddons,
-	validateCharges,
-	validateRateCardLines
-} from '../../utils/validation-service';
+import { isDiscountAllowed, isFalsyExceptZero, isOneOff, isRecurring } from '../../utils/shared-service';
 
 import { createToast } from '~/src/actions';
 import { DiscountInput } from '../utillity/inputs/discount-input';
 import * as Constants from '~/src/utils/constants'
-
-const ADDON_VALUE_FIELD = 'cspmb__Recurring_Charge__c';
-const RATE_VALUE_FIELD = 'cspmb__rate_value__c';
 
 class NegotiationStandaloneModal extends Component {
 	constructor(props) {
@@ -83,9 +67,12 @@ class NegotiationStandaloneModal extends Component {
 
 	applyDiscount() {
 		const _DISCOUNT = +this.state.discount * -1;
+		const facSettings = this.props.settings.FACSettings;
 
-		function applyDiscountRate(val, discountMode) {
+		function applyDiscountRate(val, discountMode, originalPrice) {
 			val = +val;
+			const prevNegotiatedPrice = val;
+
 			if (discountMode === 'fixed') {
 				val = val + _DISCOUNT;
 			} else {
@@ -95,6 +82,12 @@ class NegotiationStandaloneModal extends Component {
 					val = val + discountSum;
 				} else {
 					val = val - discountSum;
+				}
+			}
+
+			if (facSettings.input_minmax_restriction) {
+				if (val < 0 || val > originalPrice) {
+					val = prevNegotiatedPrice;
 				}
 			}
 
@@ -146,9 +139,15 @@ class NegotiationStandaloneModal extends Component {
 			) {
 				// If there aren't any RC DLs
 				if (!_dl.some((dl) => isRecurring(dl.cspmb__Charge_Type__c))) {
+					const prevNegotiatedPrice = !isFalsyExceptZero(
+						associatedAddOns[add.Id]?.recurring
+					)
+						? associatedAddOns[add.Id]?.recurring
+						: add.cspmb__Recurring_Charge__c
 					const negotiatedValue = applyDiscountRate(
-						associatedAddOns[add.Id]?.recurring || add.cspmb__Recurring_Charge__c,
-						this.state.discountMode
+						prevNegotiatedPrice,
+						this.state.discountMode,
+						add.cspmb__Recurring_Charge__c
 					);
 					addOn[add.Id].recurring = negotiatedValue;
 					eventHookData = frameHookStandAloneAddonData(
@@ -166,11 +165,17 @@ class NegotiationStandaloneModal extends Component {
 				add.hasOwnProperty('cspmb__One_Off_Charge__c') &&
 				isDiscountAllowed('oneOff', add)
 			) {
+				const prevNegotiatedPrice = !isFalsyExceptZero(
+					associatedAddOns[add.Id]?.oneOff
+				)
+					? associatedAddOns[add.Id]?.oneOff
+					: add.cspmb__One_Off_Charge__c
 				// If there aren't any NRC DLs
 				if (!_dl.some((dl) => isOneOff(dl.cspmb__Charge_Type__c))) {
 					const negotiatedValue = applyDiscountRate(
-						associatedAddOns[add.Id]?.oneOff || add.cspmb__One_Off_Charge__c,
-						this.state.discountMode
+						prevNegotiatedPrice,
+						this.state.discountMode,
+						add.cspmb__One_Off_Charge__c
 					);
 					addOn[add.Id].oneOff = negotiatedValue;
 					eventHookData = frameHookStandAloneAddonData(

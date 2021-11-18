@@ -17,7 +17,9 @@ export function DetailsProvider({
 	children,
 	agreement
 }: PropsWithChildren<ProviderProps>): ReactElement {
-	const initialState: Negotiation = { negotiation: { products: {}, offers: {}, addons: {} } };
+	const initialState: Negotiation = {
+		negotiation: { products: {}, offers: {}, addons: {}, custom: undefined }
+	};
 
 	const [state, dispatch] = useReducer(detailsReducer, initialState);
 

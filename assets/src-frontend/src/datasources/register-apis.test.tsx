@@ -1,12 +1,11 @@
 import { remoteActions } from '../datasources/remote-actions-salesforce';
 import * as reactQuery from 'react-query';
 import React from 'react';
-import { act, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { FamWindow } from './register-apis';
-import { attachment, mockFrameAgreements, mockAppSettings } from './mock-data';
+import { mockFrameAgreements, mockAppSettings } from './mock-data';
 import { approval, approval2 } from '../local-server/local_data';
 import { QueryKeys } from '../app-constants';
-import { Attachment } from '.';
 import * as deforcify from './deforcify';
 import { RegisterApis } from './register-apis';
 import { CSToastApi, CSToastVariant } from '@cloudsense/cs-ui-components';
@@ -32,29 +31,6 @@ describe('RegisterApis', () => {
 
 	afterEach(() => {
 		jest.clearAllMocks();
-	});
-
-	describe('getAttachment', () => {
-		test('should return the parsed atatchment object by calling the remote action and update the query cache', async () => {
-			const fakeFaId = 'fakeFaId';
-			const getAttachmentBodySpy = jest
-				.spyOn(remoteActions, 'getAttachmentBody')
-				.mockReturnValue(Promise.resolve(attachment));
-
-			const getAttachmentFunc = globalAny?.FAM?.api?.getAttachment as (
-				faId: string
-			) => Promise<Attachment>;
-
-			let faAttachment: Attachment | undefined = undefined;
-			await act(async () => {
-				faAttachment = await getAttachmentFunc(fakeFaId);
-			});
-
-			expect(faAttachment).toEqual(attachment);
-			expect(getAttachmentBodySpy.mock.calls.length).toBe(1);
-			expect(getAttachmentBodySpy).toBeCalledWith(fakeFaId);
-			expect(setQueryData).toBeCalledWith([QueryKeys.faAttachment, fakeFaId], attachment);
-		});
 	});
 
 	describe('isAgreementEditable', () => {

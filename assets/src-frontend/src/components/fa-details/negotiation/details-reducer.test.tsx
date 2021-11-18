@@ -49,7 +49,8 @@ describe('detailsReducer', () => {
 				}
 			},
 			addons: {},
-			offers: {}
+			offers: {},
+			custom: undefined
 		};
 
 		test(`returns the state with the product's negotiated recurring charge set`, () => {
@@ -79,7 +80,8 @@ describe('detailsReducer', () => {
 						}
 					},
 					addons: {},
-					offers: {}
+					offers: {},
+					custom: undefined
 				},
 				activeFa: undefined
 			};
@@ -124,7 +126,8 @@ describe('detailsReducer', () => {
 				}
 			},
 			addons: {},
-			offers: {}
+			offers: {},
+			custom: undefined
 		};
 
 		test(`returns the state with the product's negotiated oneOff charge set`, () => {
@@ -155,7 +158,8 @@ describe('detailsReducer', () => {
 						}
 					},
 					addons: {},
-					offers: {}
+					offers: {},
+					custom: undefined
 				},
 				activeFa: undefined
 			};
@@ -210,7 +214,8 @@ describe('detailsReducer', () => {
 				}
 			},
 			addons: {},
-			offers: {}
+			offers: {},
+			custom: undefined
 		};
 
 		test(`returns the state with the product's negotiated recurring charge set`, () => {
@@ -249,7 +254,8 @@ describe('detailsReducer', () => {
 						}
 					},
 					addons: {},
-					offers: {}
+					offers: {},
+					custom: undefined
 				},
 				activeFa: undefined
 			};
@@ -275,7 +281,8 @@ describe('detailsReducer', () => {
 		const testState: Negotiation = {
 			products: {},
 			offers: {},
-			addons: {}
+			addons: {},
+			custom: undefined
 		};
 
 		const testProductId2 = 'testProductId2';
@@ -335,7 +342,8 @@ describe('detailsReducer', () => {
 					negotiation: {
 						products: { ...testState.products, ...newProducts },
 						addons: {},
-						offers: {}
+						offers: {},
+						custom: undefined
 					},
 					activeFa: undefined
 				};
@@ -380,7 +388,8 @@ describe('detailsReducer', () => {
 					}
 				},
 				offers: {},
-				addons: {}
+				addons: {},
+				custom: undefined
 			};
 			const productsData: CommercialProductData = {
 				cpData: {
@@ -457,7 +466,8 @@ describe('detailsReducer', () => {
 					negotiation: {
 						products: newProducts,
 						addons: {},
-						offers: {}
+						offers: {},
+						custom: undefined
 					},
 					activeFa: undefined
 				};
@@ -521,7 +531,8 @@ describe('detailsReducer', () => {
 				}
 			},
 			addons: {},
-			offers: {}
+			offers: {},
+			custom: undefined
 		};
 		test(`updates the current state with the one described in the attachment`, () => {
 			const attachment: Attachment = {
@@ -589,7 +600,8 @@ describe('detailsReducer', () => {
 						}
 					},
 					addons: {},
-					offers: {}
+					offers: {},
+					custom: undefined
 				},
 				activeFa: undefined
 			};
@@ -648,7 +660,8 @@ describe('detailsReducer', () => {
 					}
 				},
 				addons: {},
-				offers: {}
+				offers: {},
+				custom: undefined
 			};
 
 			const expectedState: INegotiation = {
@@ -692,7 +705,8 @@ describe('detailsReducer', () => {
 						}
 					},
 					addons: {},
-					offers: {}
+					offers: {},
+					custom: undefined
 				},
 				activeFa: undefined
 			};
@@ -754,7 +768,8 @@ describe('detailsReducer', () => {
 					}
 				},
 				addons: {},
-				offers: {}
+				offers: {},
+				custom: undefined
 			};
 
 			const expectedState: INegotiation = {
@@ -798,7 +813,8 @@ describe('detailsReducer', () => {
 						}
 					},
 					addons: {},
-					offers: {}
+					offers: {},
+					custom: undefined
 				},
 				activeFa: undefined
 			};
@@ -903,7 +919,8 @@ describe('selectors', () => {
 				}
 			},
 			addons: {},
-			offers: {}
+			offers: {},
+			custom: 'test data'
 		};
 
 		const attachment: Attachment = {
@@ -953,7 +970,7 @@ describe('selectors', () => {
 			},
 			addons: {},
 			offers: {},
-			custom: {}
+			custom: 'test data'
 		};
 
 		test(`modify state to match attachment object`, () => {

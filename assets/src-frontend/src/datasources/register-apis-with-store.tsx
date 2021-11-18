@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext } from 'react';
-import { FrameAgreement, AppSettings } from '.';
+import { FrameAgreement, AppSettings, Attachment } from '.';
 import { registerApiEndpoint } from './register-apis';
 import { useCustomLabels } from '../hooks/use-custom-labels';
 import { store } from '../components/fa-details/details-page-provider';
@@ -23,6 +23,11 @@ export function RegisterApisWithStore(): ReactElement {
 		customLabels,
 		detailsPageProvider
 	);
+
+	const getFaAttachment = async (faId: string): Promise<Attachment> => {
+		return await agreementService.getFaAttachment(faId);
+	};
+	registerApiEndpoint('getAttachment', getFaAttachment);
 
 	const getActiveFrameAgreement = (): FrameAgreement => {
 		return agreementService.getActiveFrameAgreement();
@@ -73,6 +78,36 @@ export function RegisterApisWithStore(): ReactElement {
 		return forcifiedRefreshedAgreementAttachment;
 	};
 	registerApiEndpoint('refreshFa', refreshFa);
+
+	const setCustomData = async (
+		faId: string,
+		data: string | Record<string, unknown>
+	): Promise<void> => {
+		const activeFa = getActiveFrameAgreement();
+		if (faId !== activeFa.id) {
+			throw new Error(customLabels.notTheActiveFa);
+		}
+
+		detailsPageProvider.dispatch({
+			type: 'setCustomData',
+			payload: {
+				data
+			}
+		});
+	};
+	registerApiEndpoint('setCustomData', setCustomData);
+
+	const getCustomData = async (
+		faId: string
+	): Promise<string | Record<string, unknown> | undefined> => {
+		const activeFa = getActiveFrameAgreement();
+		if (faId !== activeFa.id) {
+			throw new Error(customLabels.notTheActiveFa);
+		}
+
+		return detailsPageProvider.negotiation.custom;
+	};
+	registerApiEndpoint('getCustomData', getCustomData);
 
 	return <></>;
 }

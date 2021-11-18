@@ -1,4 +1,4 @@
-import { AppSettings, FrameAgreement, FrameAgreementAttachment } from '../datasources';
+import { AppSettings, Attachment, FrameAgreement, FrameAgreementAttachment } from '../datasources';
 import { Deforcified } from '../datasources/deforcify';
 import { remoteActions } from '../datasources';
 import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
@@ -27,11 +27,28 @@ class AgreementService {
 		this._customLabels = customLabels;
 		this._detailsPageProvider = detailsPageProvider;
 	}
-	public getActiveFrameAgreement = (): FrameAgreement => {
+
+	public getActiveFrameAgreement(): FrameAgreement {
 		if (!this._detailsPageProvider.activeFa) {
 			throw new Error(this._customLabels.noActiveFa);
 		}
 		return this._detailsPageProvider.activeFa;
+	}
+
+	public getFaAttachment = async (faId: string): Promise<Attachment> => {
+		const attachment = await remoteActions.getAttachmentBody(faId);
+		const activeFa = this.getActiveFrameAgreement();
+		if (faId !== activeFa.id) {
+			throw new Error(this._customLabels.notTheActiveFa);
+		}
+		this._queryCache.setQueryData([QueryKeys.faAttachment, faId], attachment);
+		this._detailsPageProvider.dispatch({
+			type: 'loadAttachment',
+			payload: {
+				attachment
+			}
+		});
+		return attachment;
 	};
 
 	public updateFa = async (

@@ -37,7 +37,7 @@ export interface AppSettings {
 }
 
 export interface Attachment {
-	custom?: Addons;
+	custom?: string | Record<string, unknown>;
 	products?: Products;
 	offers?: Products;
 	addons?: Addons;

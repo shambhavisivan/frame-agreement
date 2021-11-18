@@ -50,6 +50,7 @@ export interface Negotiation {
 		addons: {
 			[addonId: string]: NegotiableCharges;
 		};
+		custom?: string | Record<string, unknown> | undefined;
 	};
 	activeFa?: FrameAgreement;
 }
@@ -162,6 +163,12 @@ export type NegotiationAction =
 			type: 'addAddonsToFa';
 			payload: {
 				addons: Addon[];
+			};
+	  }
+	| {
+			type: 'setCustomData';
+			payload: {
+				data: string | Record<string, unknown>;
 			};
 	  };
 
@@ -556,6 +563,15 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 				}
 			};
 
+		case 'setCustomData':
+			return {
+				activeFa,
+				negotiation: {
+					...state,
+					custom: action.payload.data
+				}
+			};
+
 		default:
 			return { negotiation: { ...state } };
 	}
@@ -638,6 +654,6 @@ export function selectAttachment(state: Negotiation['negotiation']): Attachment 
 		products: formatProducts(state.products),
 		offers: formatProducts(state.offers),
 		addons,
-		custom: {}
+		custom: state.custom
 	};
 }

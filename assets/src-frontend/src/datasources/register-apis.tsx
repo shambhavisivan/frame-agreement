@@ -1,9 +1,8 @@
 import { CSToastApi, CSToastVariant } from '@cloudsense/cs-ui-components';
-import React, { ReactElement, useReducer } from 'react';
+import React, { ReactElement } from 'react';
 import { useQueryCache } from 'react-query';
 import { Attachment, FrameAgreement, remoteActions } from '.';
 import { QueryKeys } from '../app-constants';
-import { detailsReducer, Negotiation } from '../components/fa-details/negotiation/details-reducer';
 import { useFrameAgreements } from '../hooks/use-frame-agreements';
 import { useAppSettings } from '../hooks/use-app-settings';
 
@@ -24,6 +23,8 @@ interface FamApi {
 		refreshAttachment: boolean
 	) => Promise<SfGlobal.FrameAgreementAttachment>;
 	clearToasts?: () => void;
+	setCustomData?: (faId: string, data: string | Record<string, unknown>) => Promise<void>;
+	getCustomData?: (faId: string) => Promise<string | Record<string, unknown> | undefined>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -47,22 +48,6 @@ export function RegisterApis(): ReactElement {
 	const queryCache = useQueryCache();
 	const { agreementList = [] } = useFrameAgreements();
 	const { settings } = useAppSettings();
-	const initialState: Negotiation = { negotiation: { products: {}, offers: {}, addons: {} } };
-	const negotiationStateDispatch = useReducer(detailsReducer, initialState);
-	const dispatch = negotiationStateDispatch[1];
-
-	const getFaAttachment = async (faId: string): Promise<Attachment> => {
-		const attachment = await remoteActions.getAttachmentBody(faId);
-		queryCache.setQueryData([QueryKeys.faAttachment, faId], attachment);
-		dispatch({
-			type: 'loadAttachment',
-			payload: {
-				attachment
-			}
-		});
-		return attachment;
-	};
-	registerApiEndpoint('getAttachment', getFaAttachment);
 
 	const isAgreementEditable = async (faId: string): Promise<boolean> => {
 		const facSettings = settings?.facSettings;

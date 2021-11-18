@@ -10,7 +10,7 @@ export interface ContextProps {
 }
 
 export const discountContext = React.createContext<ContextProps>({
-	negotiation: { products: {}, offers: {}, addons: {} },
+	negotiation: { products: {}, offers: {}, addons: {}, custom: undefined },
 	authLevels: {},
 	discountThresholds: [],
 	discountLevels: []

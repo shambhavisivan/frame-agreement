@@ -1,18 +1,22 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { FamWindow } from './register-apis';
 import { RegisterApisWithStore } from './register-apis-with-store';
-import { FrameAgreement, remoteActions } from '.';
-import { CUSTOM_LABELS_MOCK, mockFrameAgreements } from './mock-data';
-import { DetailsProvider } from '../components/fa-details/details-page-provider';
+import { Attachment, FrameAgreement, remoteActions } from '.';
+import { attachment, CUSTOM_LABELS_MOCK, mockFrameAgreements } from './mock-data';
+import { DetailsProvider, store } from '../components/fa-details/details-page-provider';
 import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
 import * as reactQuery from 'react-query';
 import * as deforcify from './deforcify';
-import { FamWindow } from './register-apis';
+import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
+import { AgreementService } from '../service/agreementService';
 
 describe('RegisterApisWithStore', () => {
 	const setQueryData = jest.fn();
+	const getDefaultConfig = jest.fn();
 	const useQueryCache = jest.fn().mockReturnValue({
-		setQueryData
+		setQueryData,
+		getDefaultConfig
 	});
 	jest.spyOn(reactQuery, 'useQueryCache').mockImplementation(useQueryCache);
 
@@ -27,24 +31,34 @@ describe('RegisterApisWithStore', () => {
 		jest.clearAllMocks();
 	});
 
+	const mockState: Negotiation = {
+		negotiation: { products: {}, offers: {}, addons: {}, custom: undefined },
+		activeFa: mockFrameAgreements[0]
+	};
+	const mockDispatch = jest.fn();
+
 	describe('getActiveFrameAgreement', () => {
 		test('should return the current active frame agreement in fa editor', () => {
+			const mockFaId = mockFrameAgreements[0].id;
 			render(
 				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
 					<RegisterApisWithStore />
 				</DetailsProvider>
 			);
-			const mockFaId = mockFrameAgreements[0].id;
+
 			const getActiveFrameAgreementFunc = globalAny?.FAM?.api
 				?.getActiveFrameAgreement as () => FrameAgreement;
 			const activeFa = getActiveFrameAgreementFunc();
+
 			expect(activeFa.id).toEqual(mockFaId);
 		});
 
 		test('should throw an error if no active fa found', () => {
 			render(<RegisterApisWithStore />);
+
 			const getActiveFrameAgreementFunc = globalAny?.FAM?.api
 				?.getActiveFrameAgreement as () => FrameAgreement;
+
 			expect(getActiveFrameAgreementFunc).toThrowError(CUSTOM_LABELS_MOCK.no_active_fa);
 		});
 	});
@@ -160,6 +174,157 @@ describe('RegisterApisWithStore', () => {
 			);
 
 			spyOnGetFrameAgreements.mockClear();
+		});
+	});
+
+	describe('setCustomData', () => {
+		test('should update the custom data to application state by calling reducer dispatch', async () => {
+			const useQuery = jest.fn().mockReturnValue({
+				status: reactQuery.QueryStatus.Success,
+				agreementList: mockFrameAgreements
+			});
+			jest.spyOn(reactQuery, 'useQuery').mockImplementation(useQuery);
+			const getActiveFaSpy = jest.spyOn(
+				AgreementService.prototype,
+				'getActiveFrameAgreement'
+			);
+			const mockUseContext = jest
+				.spyOn(React, 'useContext')
+				.mockImplementation(() => ({ ...mockState, dispatch: mockDispatch }));
+
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const customDataInput = 'test data';
+
+			const setCustomDataFunc = globalAny?.FAM?.api?.setCustomData as (
+				faId: string,
+				data: string | Promise<string | Record<string, unknown>>
+			) => Promise<void>;
+			await setCustomDataFunc(mockFrameAgreements[0].id, customDataInput);
+
+			expect(getActiveFaSpy).toBeCalled();
+			expect(mockDispatch).toBeCalledWith({
+				type: 'setCustomData',
+				payload: {
+					data: customDataInput
+				}
+			});
+			expect(mockUseContext).toBeCalledWith(store);
+		});
+
+		test('should throw an error when the given FA is not the activeFa', async () => {
+			const customDataInput = 'test data';
+			const inactiveFaId = mockFrameAgreements[1].id;
+			const getActiveFaSpy = jest.spyOn(
+				AgreementService.prototype,
+				'getActiveFrameAgreement'
+			);
+
+			const setCustomDataFunc = globalAny?.FAM?.api?.setCustomData as (
+				faId: string,
+				data: string | Promise<string | Record<string, unknown>>
+			) => Promise<void>;
+
+			await expect(setCustomDataFunc(inactiveFaId, customDataInput)).rejects.toThrowError(
+				CUSTOM_LABELS_MOCK.not_the_active_fa
+			);
+			expect(getActiveFaSpy).toBeCalled();
+		});
+	});
+
+	describe('getCustomData', () => {
+		test('should fetch the updated custom data back from application state', async () => {
+			const customDataInput = 'test data';
+			const mockUseContext = jest.spyOn(React, 'useContext').mockImplementation(() => ({
+				...mockState,
+				negotiation: { ...mockState.negotiation, custom: customDataInput },
+				dispatch: mockDispatch
+			}));
+			const getActiveFaSpy = jest.spyOn(
+				AgreementService.prototype,
+				'getActiveFrameAgreement'
+			);
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const getCustomDataFunc = globalAny?.FAM?.api?.getCustomData as (
+				faId: string
+			) => Promise<string | Record<string, unknown>>;
+			const cusomDataOutput = await getCustomDataFunc(mockFrameAgreements[0].id);
+
+			expect(getActiveFaSpy).toBeCalled();
+			expect(cusomDataOutput).toEqual(customDataInput);
+			expect(mockUseContext).toBeCalledWith(store);
+		});
+
+		test('should throw an error when the given FA is not the activeFa', async () => {
+			const inactiveFaId = mockFrameAgreements[1].id;
+			const getActiveFaSpy = jest.spyOn(
+				AgreementService.prototype,
+				'getActiveFrameAgreement'
+			);
+
+			const getCustomDataFunc = globalAny?.FAM?.api?.getCustomData as (
+				faId: string
+			) => Promise<void>;
+
+			await expect(getCustomDataFunc(inactiveFaId)).rejects.toThrowError(
+				CUSTOM_LABELS_MOCK.not_the_active_fa
+			);
+			expect(getActiveFaSpy).toBeCalled();
+		});
+	});
+
+	describe('getAttachment', () => {
+		test('should return the parsed atatchment object by calling the remote action and update the query cache', async () => {
+			const fakeFaId = mockFrameAgreements[0].id;
+			const getAttachmentBodySpy = jest
+				.spyOn(remoteActions, 'getAttachmentBody')
+				.mockReturnValue(Promise.resolve(attachment));
+			const getActiveFaSpy = jest.spyOn(
+				AgreementService.prototype,
+				'getActiveFrameAgreement'
+			);
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const getAttachmentFunc = globalAny?.FAM?.api?.getAttachment as (
+				faId: string
+			) => Promise<Attachment>;
+			const faAttachment = await getAttachmentFunc(fakeFaId);
+
+			expect(faAttachment).toEqual(attachment);
+			expect(getActiveFaSpy).toBeCalled();
+			expect(getAttachmentBodySpy.mock.calls.length).toBe(1);
+			expect(getAttachmentBodySpy).toBeCalledWith(fakeFaId);
+			expect(setQueryData).toBeCalledWith([QueryKeys.faAttachment, fakeFaId], attachment);
+		});
+
+		test('should throw an error when the given FA is not the activeFa', async () => {
+			const inactiveFaId = mockFrameAgreements[1].id;
+			const getActiveFaSpy = jest.spyOn(
+				AgreementService.prototype,
+				'getActiveFrameAgreement'
+			);
+
+			const getAttachmentFunc = globalAny?.FAM?.api?.getAttachment as (
+				faId: string
+			) => Promise<Attachment>;
+
+			await expect(getAttachmentFunc(inactiveFaId)).rejects.toThrowError(
+				CUSTOM_LABELS_MOCK.not_the_active_fa
+			);
+			expect(getActiveFaSpy).toBeCalled();
 		});
 	});
 });

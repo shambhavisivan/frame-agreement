@@ -1019,7 +1019,8 @@ export const mockNegotiationState: Negotiation['negotiation'] = {
 			recurring: { original: 5, negotiated: undefined }
 		}
 	},
-	offers: {}
+	offers: {},
+	custom: { customKey: 'customValue' }
 };
 
 export const DELTA_CALC_RESULT_MOCK: DeltaResult = {

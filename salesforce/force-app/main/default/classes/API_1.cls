@@ -74,10 +74,7 @@ global with sharing class API_1 {
 				API_1.undoActivation(cprg.get('prId'));
 			}
 		} else {
-			Decimal chunkSize = [
-				select decomposition_chunk_size__c from
-				Fac_Settings__c
-			]?.decomposition_chunk_size__c;
+			Decimal chunkSize = facSettings.decomposition_chunk_size__c;
 
 			try {
 				DecomposeAttachmentQueueable decompose = new DecomposeAttachmentQueueable(

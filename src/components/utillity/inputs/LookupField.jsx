@@ -6,6 +6,9 @@ import Lookup from '../Lookup';
 
 import { decodeEntities, openSFLink } from '~/src/utils/shared-service';
 
+const DEFAULT_RECORD_PER_PAGE = 20;
+const DEFAULT_PAGES_TO_LOAD = 10;
+
 class LookupField extends React.Component {
 	// disabled={!this.props.editable}
 	// onChange={this.onChange}
@@ -25,6 +28,7 @@ class LookupField extends React.Component {
 		this.onCloseModal = this.onCloseModal.bind(this);
 		this.onSearchChange = this.onSearchChange.bind(this);
 		this.onClear = this.onClear.bind(this);
+		this.loadLookupData = this.loadLookupData.bind(this);
 		// this.onOpenLookupModal = this.onOpenLookupModal.bind(this);
 
 		this.filter = null;
@@ -91,6 +95,44 @@ class LookupField extends React.Component {
 		this.mounted = false;
 	}
 
+	async componentDidUpdate(prevProps, prevState) {
+		if (this.props.value !== prevProps.value) {
+			let records = this.state.records;
+
+			if (this.props.value && !records.length) {
+				const response = await this.loadLookupData().catch(error => {
+						throw new Error(error);
+					}
+				);
+				records = decodeEntities(response);
+				this.initialRecords = records;
+				this._setState({
+					records: records,
+				});
+			}
+			const userSelectedLookupRecord = records.find(
+				(record) => {
+					return record.Id === this.props.value;
+				}
+			);
+			this.confirmSelected = {};
+			let label = '';
+			let selectedId = '';
+
+			if (userSelectedLookupRecord) {
+				label = userSelectedLookupRecord[this.labelField];
+				selectedId = userSelectedLookupRecord.Id;
+				this.confirmSelected = userSelectedLookupRecord;
+			}
+			this._setState(
+				{ recordLabel: label, selected: this.confirmSelected },
+				() => {
+					this.props.onChange(selectedId);
+				}
+			);
+		}
+	}
+
 	_setState(newState, callback) {
 		if (this.mounted) {
 			this.setState(newState, () => {
@@ -134,7 +176,7 @@ class LookupField extends React.Component {
 				}
 
 				params.lastId = null;
-				params.offset = 20 * 10;
+				params.offset = DEFAULT_RECORD_PER_PAGE * DEFAULT_PAGES_TO_LOAD;
 
 				Promise.all([
 					window.SF.invokeAction('getLookupInformation', [
@@ -235,15 +277,7 @@ class LookupField extends React.Component {
 						loadingOverlay: false
 					});
 				} else if (!this.state.records.length) {
-					let params = {};
-					params.field = this.props.field;
-					params.columns = this.props.columns;
-					params.whereClause = this.filter;
-					params.lastId = null;
-					params.offset = 20 * 10;
-
-					// Call remote action
-					window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]).then(
+					this.loadLookupData().then(
 						response => {
 							response = decodeEntities(response);
 							this.initialRecords = response;
@@ -312,9 +346,21 @@ class LookupField extends React.Component {
 		}
 
 		parameter.lastId = this.state.records[this.state.records.length - 1].Id;
-		parameter.offset = 20 * pagesToLoad;
+		parameter.offset = DEFAULT_RECORD_PER_PAGE * pagesToLoad;
 
 		return window.SF.invokeAction('getLookupRecords', [JSON.stringify(parameter)]);
+	}
+
+	loadLookupData() {
+		let params = {};
+		params.field = this.props.field;
+		params.columns = this.props.columns;
+		params.whereClause = this.filter;
+		params.lastId = null;
+		params.offset = DEFAULT_RECORD_PER_PAGE * DEFAULT_PAGES_TO_LOAD;
+
+		// Call remote action
+		return window.SF.invokeAction('getLookupRecords', [JSON.stringify(params)]);
 	}
 
 	render() {

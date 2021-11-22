@@ -40,10 +40,14 @@ class SFDatePicker extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		if (this.props.initialDate && this.state.dateValue !== new Date(this.props.initialDate)
-		 && prevProps.initialDate !== this.props.initialDate) {
+		if (
+			this.state.dateValue !== new Date(this.props.initialDate) &&
+			prevProps.initialDate !== this.props.initialDate
+		) {
 			this.setState({
-				dateValue: this.props.initialDate ? new Date(this.props.initialDate) : null
+				dateValue: this.props.initialDate
+					? new Date(this.props.initialDate)
+					: null,
 			});
 		}
 	}

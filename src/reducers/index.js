@@ -982,14 +982,10 @@ const rootReducer = (state = initialState, action) => {
 
 		case 'REFRESH_FA':
 			var updatedFa = {
-				...state.frameAgreements[action.payload.Id],
-				...action.payload
-			};
-			updatedFa = {
-				...updatedFa,
+				...action.payload,
 				_ui: {
-					...updatedFa._ui,
-					headerRows: organizeHeaderFields(state.settings.HeaderData, updatedFa)
+					...state.frameAgreements[action.payload.Id]._ui,
+					headerRows: organizeHeaderFields(state.settings.HeaderData, action.payload)
 				}
 			};
 

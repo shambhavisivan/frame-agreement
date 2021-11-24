@@ -1778,4 +1778,11 @@
         <shortDescription>Invalid or null price item id</shortDescription>
         <value>Price item id is invalid or null!</value>
     </labels>
+    <labels>
+        <fullName>btn_ok</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Ok</shortDescription>
+        <value>Ok</value>
+    </labels>
 </CustomLabels>

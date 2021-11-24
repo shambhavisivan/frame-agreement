@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { HashRouter as Router, Redirect, Route, Switch, useParams } from 'react-router-dom';
 import { FrameAgreementDetails } from './fa-details';
 import { FrameAgreementList } from './fa-list';
+import { Header } from './header';
 import { NotFound } from './not-found';
 
 // eslint-disable-next-line prettier/prettier
@@ -41,5 +42,10 @@ function FrameAgreementDetailsPage(): ReactElement {
 }
 
 function FrameAgreementListPage(): ReactElement {
-	return <FrameAgreementList />;
+	return (
+		<>
+			<Header />
+			<FrameAgreementList />
+		</>
+	);
 }

@@ -7,6 +7,7 @@ import { CSCard, CSCardBody } from '@cloudsense/cs-ui-components';
 import { ApprovalProcess } from './approval';
 import { FaStatusContextProvider } from '../../providers/fa-status-provider';
 import { DetailsProvider } from './details-page-provider';
+import { DetailsHeader } from './details-header';
 
 interface FrameAgreementDetailsProps {
 	agreementId: string;
@@ -23,6 +24,7 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 			<LoadingFallback status={faStatus}>
 				<DetailsProvider agreement={agreement || ({} as FrameAgreement)}>
 					<FaStatusContextProvider faId={agreementId}>
+						<DetailsHeader />
 						<div className="field-wrapper"> </div>
 						<ApprovalProcess faId={agreementId} />
 						Agreement ID: {agreementId}, name: {agreement?.name}

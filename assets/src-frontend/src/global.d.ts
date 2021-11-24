@@ -262,6 +262,10 @@ namespace SfGlobal {
 		addons_header_name: string;
 		addons_header_oneOff_neg: string;
 		addons_header_recc_neg: string;
+		btn_Save: string;
+		modal_unsavedChanges_alert: string;
+		toast_saved_fa: string;
+		btn_ok: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

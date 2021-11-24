@@ -30,18 +30,24 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 		productIds || []
 	);
 	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
-	const { dispatch } = useContext(store);
+	const {
+		dispatch,
+		negotiation: { products: stateProduct }
+	} = useContext(store);
 
 	useEffect(() => {
 		if (attachmentStatus === QueryStatus.Success) {
-			const alreadyAddedProductIds = Object.keys(attachment?.products || {});
-			setProductIds(alreadyAddedProductIds.length ? alreadyAddedProductIds : undefined);
 			dispatch({
 				type: 'loadAttachment',
 				payload: { attachment: attachment || {} }
 			});
 		}
 	}, [attachmentStatus, attachment]);
+
+	useEffect(() => {
+		const alreadyAddedProductIds = Object.keys(stateProduct || {});
+		setProductIds(alreadyAddedProductIds.length ? alreadyAddedProductIds : undefined);
+	}, [stateProduct]);
 
 	useEffect(() => {
 		function addProductsToFa(products: CommercialProductStandalone[]): void {

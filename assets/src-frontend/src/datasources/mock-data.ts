@@ -776,7 +776,11 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	dropdown_no_selection: '--none',
 	addons_header_name: 'Name',
 	addons_header_oneOff_neg: 'Negotiated One Off',
-	addons_header_recc_neg: 'Negotiated Recurring'
+	addons_header_recc_neg: 'Negotiated Recurring',
+	btn_Save: 'Save',
+	modal_unsavedChanges_alert: 'You have unsaved changes, are you sure you want to leave?',
+	toast_saved_fa: 'Successfuly saved frame agreement!',
+	btn_ok: 'Ok'
 };
 /* eslint-enable */
 

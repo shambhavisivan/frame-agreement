@@ -8,10 +8,12 @@ import {
 import _ from 'lodash';
 import React, { ReactElement, useContext, useState } from 'react';
 import { useHistory } from 'react-router';
+import { FrameAgreement } from '../../datasources';
 import { useAppSettings } from '../../hooks/use-app-settings';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { useGetFaAttachment } from '../../hooks/use-get-fa-attachment';
 import { useSaveAttachment } from '../../hooks/use-save-attachment';
+import { isStandardButtonVisible } from '../app-utils';
 import { ConfirmationModal } from '../dialogs/confirmation-modal';
 import { store } from './details-page-provider';
 import { selectAttachment } from './negotiation/details-reducer';
@@ -73,11 +75,16 @@ export function DetailsHeader(): ReactElement {
 					<CSButton label={'< back'} onClick={onTriggeringBack} />
 				</CSMainHeaderLeft>
 				<CSMainHeaderRight>
-					<CSButton
-						disabled={!isAgreementNegotiated()}
-						label={label.btnSave}
-						onClick={saveAttachment}
-					/>
+					{isStandardButtonVisible(
+						settings?.buttonStandardData.save,
+						activeFa || ({} as FrameAgreement)
+					) && (
+						<CSButton
+							disabled={!isAgreementNegotiated()}
+							label={label.btnSave}
+							onClick={saveAttachment}
+						/>
+					)}
 				</CSMainHeaderRight>
 			</CSMainHeader>
 		</>

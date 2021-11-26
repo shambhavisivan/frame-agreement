@@ -19,13 +19,16 @@ export type FacSetting = {
 	approversRevise: boolean;
 };
 
+export interface StandardButtonData {
+	save: string[] | string;
+}
 export interface AppSettings {
 	account: Account;
 	defaultCatalogueId: string;
 	headerData: Record<string, unknown>;
 	customTabsData: Record<string, unknown>;
 	buttonCustomData: Record<string, unknown>;
-	buttonStandardData: Record<string, unknown>;
+	buttonStandardData: StandardButtonData;
 	relatedListsData: Record<string, unknown>;
 	addonCategorizationData: Record<string, unknown>;
 	categorizationData: SfGlobal.CategorizationData[];

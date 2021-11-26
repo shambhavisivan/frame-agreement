@@ -82,7 +82,7 @@ namespace SfGlobal {
 		DefaultCatalogueId: string;
 		CustomTabsData: Record<string, unknown>;
 		ButtonCustomData: Record<string, unknown>;
-		ButtonStandardData: Record<string, unknown>;
+		ButtonStandardData: StandardButtonData;
 		RelatedListsData: Record<string, unknown>;
 		AddonCategorizationData: Record<string, unknown>;
 		CategorizationData: CategorizationData[];

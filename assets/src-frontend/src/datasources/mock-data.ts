@@ -39,7 +39,7 @@ export const mockAppSettings: AppSettings = {
 	defaultCatalogueId: 'testCatalogueId000',
 	customTabsData: {},
 	buttonCustomData: {},
-	buttonStandardData: {},
+	buttonStandardData: { save: '*' },
 	relatedListsData: {},
 	addonCategorizationData: {},
 	categorizationData: [

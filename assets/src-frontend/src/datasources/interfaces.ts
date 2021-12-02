@@ -15,6 +15,8 @@ export type FacSetting = {
 	isPsEnabled: boolean;
 	inputMinmaxRestriction: boolean;
 	discountAsPrice: boolean;
+	faEditableStatuses: string[];
+	approversRevise: boolean;
 };
 
 export interface AppSettings {

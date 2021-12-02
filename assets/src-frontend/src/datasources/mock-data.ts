@@ -55,7 +55,9 @@ export const mockAppSettings: AppSettings = {
 		dispatcherServiceUrl: 'https://cs-messaging-dispatcher-eu-dev.herokuapp.com',
 		isPsEnabled: true,
 		inputMinmaxRestriction: true,
-		discountAsPrice: false
+		discountAsPrice: false,
+		faEditableStatuses: ['Draft', 'Requires Approval', 'Approved'],
+		approversRevise: true
 	}
 };
 

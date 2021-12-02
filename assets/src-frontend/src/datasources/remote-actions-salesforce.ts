@@ -90,7 +90,11 @@ export const remoteActions: RemoteActions = {
 				dispatcherServiceUrl: settings.FACSettings.dispatcherServiceUrl,
 				isPsEnabled: settings.FACSettings.isPsEnabled,
 				inputMinmaxRestriction: settings.FACSettings.input_minmax_restriction,
-				discountAsPrice: settings.FACSettings.discount_as_price
+				discountAsPrice: settings.FACSettings.discount_as_price,
+				faEditableStatuses: settings.FACSettings.fa_editable_statuses
+					.split(',')
+					.map((status: string) => status.trim()),
+				approversRevise: settings.FACSettings.approvers_revise
 			}
 		};
 	},

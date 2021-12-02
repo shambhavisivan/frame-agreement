@@ -5,6 +5,7 @@ import { QueryKeys } from '../app-constants';
 import { detailsReducer, Negotiation } from '../components/fa-details/negotiation/details-reducer';
 import { useCustomLabels } from '../hooks/use-custom-labels';
 import { useFrameAgreements } from '../hooks/use-frame-agreements';
+import { useAppSettings } from '../hooks/use-app-settings';
 import { deforcify } from './deforcify';
 
 interface FamApi {
@@ -14,6 +15,7 @@ interface FamApi {
 		field: keyof SfGlobal.FrameAgreement,
 		value: SfGlobal.FrameAgreement[keyof SfGlobal.FrameAgreement]
 	) => Promise<void>;
+	isAgreementEditable?: (faId: string) => Promise<boolean>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -37,6 +39,7 @@ export function RegisterApis(): ReactElement {
 	const queryCache = useQueryCache();
 	const { agreementList = [] } = useFrameAgreements();
 	const customLabels = useCustomLabels();
+	const { settings } = useAppSettings();
 	const initialState: Negotiation = { negotiation: { products: {}, offers: {}, addons: {} } };
 	const negotiationStateDispatch = useReducer(detailsReducer, initialState);
 	const dispatch = negotiationStateDispatch[1];
@@ -82,6 +85,27 @@ export function RegisterApis(): ReactElement {
 		);
 	};
 	registerApiEndpoint('updateFrameAgreement', updateFa);
+
+	const isAgreementEditable = async (faId: string): Promise<boolean> => {
+		const facSettings = settings?.facSettings;
+		const fa = agreementList.find((agreement) => agreement.id === faId);
+		let isApprover = false;
+		let isPending = false;
+		const appovalHistory = await remoteActions.getApprovalHistory(faId);
+		queryCache.setQueryData([QueryKeys.approvalHistory, faId], appovalHistory);
+		if (appovalHistory) {
+			isApprover = appovalHistory.isApprover;
+			isPending = appovalHistory.isPending;
+		}
+		if (facSettings?.faEditableStatuses?.includes(fa?.status || '')) {
+			return true;
+		}
+		if (isPending && isApprover && facSettings?.approversRevise) {
+			return true;
+		}
+		return false;
+	};
+	registerApiEndpoint('isAgreementEditable', isAgreementEditable);
 
 	return <></>;
 }

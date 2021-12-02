@@ -14,6 +14,7 @@ import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { useGetFaAttachment } from '../../hooks/use-get-fa-attachment';
 import { useSaveAttachment } from '../../hooks/use-save-attachment';
 import { isStandardButtonVisible } from '../app-utils';
+import { faStatusContext } from '../../providers/fa-status-provider';
 import { ConfirmationModal } from '../dialogs/confirmation-modal';
 import { store } from './details-page-provider';
 import { selectAttachment } from './negotiation/details-reducer';
@@ -26,6 +27,7 @@ export function DetailsHeader(): ReactElement {
 	const history = useHistory();
 	const { attachment } = useGetFaAttachment(activeFa?.id || '');
 	const label = useCustomLabels();
+	const { faStatus } = useContext(faStatusContext);
 
 	const saveAttachment = (): void => {
 		if (isAgreementNegotiated()) {
@@ -33,7 +35,7 @@ export function DetailsHeader(): ReactElement {
 				() =>
 					CSToastApi.renderCSToast(
 						{
-							variant: 'error',
+							variant: 'success',
 							text: label.toastSavedFa,
 							closeButton: true
 						},
@@ -73,6 +75,7 @@ export function DetailsHeader(): ReactElement {
 			<CSMainHeader maxWidth="1200px">
 				<CSMainHeaderLeft title={settings?.account.name ? settings.account.name : ''}>
 					<CSButton label={'< back'} onClick={onTriggeringBack} />
+					{faStatus && faStatus}
 				</CSMainHeaderLeft>
 				<CSMainHeaderRight>
 					{isStandardButtonVisible(

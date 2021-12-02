@@ -215,6 +215,9 @@ export const remoteActions: RemoteActions = {
 	async getAttachmentBody(faId: string) {
 		try {
 			const attachmentBlob = await SF.invokeAction('getAttachmentBody', [faId]);
+			if (!attachmentBlob) {
+				return {} as Attachment;
+			}
 			const decodedString = atob(attachmentBlob);
 
 			return JSON.parse(decodedString) as Attachment;

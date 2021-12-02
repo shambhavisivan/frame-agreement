@@ -10,6 +10,7 @@ import { store } from './details-page-provider';
 import { createActionsForNegotiateProduct } from './negotiation/negotiation-action-creator';
 import { NegotiationItemType } from './negotiation/details-reducer';
 import { QueryStatus, useCommercialProductData } from '../../hooks/use-commercial-product-data';
+import { ChargeList } from './charge-list';
 
 interface ProductDetailsProps {
 	product: CommercialProductStandalone;
@@ -17,7 +18,8 @@ interface ProductDetailsProps {
 }
 const enum ChildButtons {
 	'addon' = 'addon',
-	'ratecard' = 'ratecard'
+	'ratecard' = 'ratecard',
+	'charges' = 'charges'
 }
 
 export function ProductDetails({
@@ -29,7 +31,11 @@ export function ProductDetails({
 	const { addonList } = useQueryAddons(id);
 	const { dispatch } = useContext(store);
 	const negotiateActions = createActionsForNegotiateProduct(dispatch);
-	const { negotiateRateCardLine } = negotiateActions(id, productType);
+	const {
+		negotiateRateCardLine,
+		negotiateAdvancedRecurringCharge,
+		negotiateAdvancedOneOffCharge
+	} = negotiateActions(id, productType);
 	const { data: productData, status } = useCommercialProductData([id]);
 
 	const onClickButton = (buttonName: ChildButtons): void => {
@@ -46,6 +52,10 @@ export function ProductDetails({
 				label={labels.productsRates}
 				onClick={(): void => onClickButton(ChildButtons.ratecard)}
 			/>
+			<CSButton
+				label={labels.chargesHeaderName}
+				onClick={(): void => onClickButton(ChildButtons.charges)}
+			/>
 			{activeDetails === ChildButtons.addon && (
 				<AddonGrid
 					addonList={addonList || []}
@@ -61,6 +71,15 @@ export function ProductDetails({
 						negotiateRateCardLine={negotiateRateCardLine}
 					/>
 				)}
+
+			{activeDetails === ChildButtons.charges && status === QueryStatus.Success && (
+				<ChargeList
+					chargeList={productData?.cpData[id].charges || []}
+					productId={id}
+					negotiateOneOffCharge={negotiateAdvancedOneOffCharge}
+					negotiateRecurringCharge={negotiateAdvancedRecurringCharge}
+				/>
+			)}
 		</div>
 	);
 }

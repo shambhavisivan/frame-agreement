@@ -271,6 +271,12 @@ namespace SfGlobal {
 		btn_ok: string;
 		incorrect_fa: string;
 		no_active_fa: string;
+		charges_header_name: string;
+		charges_header_neg: string;
+		charges_header_oneOff: string;
+		charges_header_recc: string;
+		charges_header_recc_neg: string;
+		charges_header_type: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

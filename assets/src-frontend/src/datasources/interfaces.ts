@@ -1,3 +1,5 @@
+import { ChargeType } from '../components/fa-details/negotiation/details-reducer';
+
 export interface Account {
 	id: string;
 	name: string;
@@ -59,7 +61,7 @@ export interface Products {
 	[productId: string]: AttachmentProductNegotiation;
 }
 
-interface Product {
+export interface Product {
 	recurring?: number | null;
 	oneOff?: number | null;
 }
@@ -91,7 +93,15 @@ export interface CommercialProduct {
 	addons: Addon[];
 	allowances?: Allowance[];
 	rateCards: RateCard[];
-	charges: { id: string }[];
+	charges: Charge[];
+}
+
+export interface Charge {
+	id: string;
+	name: string;
+	recurring: number;
+	oneOff: number;
+	chargeType: ChargeType;
 }
 
 export interface CommercialProductData {

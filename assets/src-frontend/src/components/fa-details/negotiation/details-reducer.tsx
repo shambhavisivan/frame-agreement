@@ -3,6 +3,7 @@ import {
 	CommercialProductData,
 	CommercialProductStandalone,
 	FrameAgreement,
+	Product,
 	Volume
 } from '../../../datasources';
 
@@ -137,6 +138,24 @@ export type NegotiationAction =
 			payload: {
 				agreement: FrameAgreement;
 			};
+	  }
+	| {
+			type: 'negotiateOneOffCharge';
+			payload: {
+				value: Negotiable['negotiated'];
+				itemType: NegotiationItemType;
+				productId: string;
+				chargeId: string;
+			};
+	  }
+	| {
+			type: 'negotiateRecurringCharge';
+			payload: {
+				value: Negotiable['negotiated'];
+				itemType: NegotiationItemType;
+				productId: string;
+				chargeId: string;
+			};
 	  };
 
 // TODO: use normalized state for negotiables - will simplify updates
@@ -243,7 +262,25 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 							muc: null,
 							mucp: null
 						},
-						addons: {}
+						addons: {},
+						charges: productData?.charges?.reduce(
+							(accu, currentCharge) => {
+								accu[currentCharge.id] = {
+									oneOff: {
+										original: currentCharge.oneOff,
+										negotiated: undefined
+									},
+									recurring: {
+										original: currentCharge.recurring,
+										negotiated: undefined
+									}
+								};
+								return accu;
+							},
+							{} as {
+								[chargeId: string]: NegotiableCharges;
+							}
+						)
 					};
 					accumulator[currentProduct.id] = negotiation;
 					return accumulator;
@@ -445,65 +482,114 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 		case 'updateActiveFa':
 			return { negotiation: { ...state }, activeFa: action.payload.agreement };
 
+		case 'negotiateOneOffCharge':
+			return {
+				activeFa,
+				negotiation: {
+					...state,
+					[action.payload.itemType]: {
+						[action.payload.productId]: {
+							...state.products[action.payload.productId],
+							charges: Object.fromEntries(
+								Object.entries(
+									state.products[action.payload.productId].charges || {}
+								).map(([chargeId, negCharges]) => {
+									if (chargeId === action.payload.chargeId) {
+										negCharges.oneOff.negotiated = action.payload.value;
+									}
+									return [chargeId, negCharges];
+								})
+							)
+						}
+					}
+				}
+			};
+
+		case 'negotiateRecurringCharge':
+			return {
+				activeFa,
+				negotiation: {
+					...state,
+					[action.payload.itemType]: {
+						[action.payload.productId]: {
+							...state.products[action.payload.productId],
+							charges: Object.fromEntries(
+								Object.entries(
+									state.products[action.payload.productId].charges || {}
+								).map(([chargeId, negCharges]) => {
+									if (chargeId === action.payload.chargeId) {
+										negCharges.recurring.negotiated = action.payload.value;
+									}
+									return [chargeId, negCharges];
+								})
+							)
+						}
+					}
+				}
+			};
+
 		default:
 			return { negotiation: { ...state } };
 	}
 }
 
 export function selectAttachment(state: Negotiation['negotiation']): Attachment {
-	const products: Attachment['products'] = Object.fromEntries(
-		Object.entries(state.products || {}).map(([productId, productNegotiation]) => {
-			const attachedProductNegotiation = {
-				product: {
-					...(productNegotiation?.product?.oneOff.negotiated && {
-						oneOff: productNegotiation.product.oneOff.negotiated
-					}),
-					...(productNegotiation?.product?.recurring.negotiated && {
-						recurring: productNegotiation.product.recurring.negotiated
-					})
-				},
-				rateCards: Object.fromEntries(
-					Object.entries(productNegotiation?.rateCards || {}).map(
-						([rateCardId, rateCard]) => {
-							return [
-								rateCardId,
-								Object.fromEntries(
-									Object.entries(rateCard.rateCardLines).map(
-										([rateCardLineId, rateCardLine]) => {
-											return [rateCardLineId, rateCardLine.negotiated || 0];
-										}
+	const formatProducts = (
+		products: Negotiation['negotiation']['products'] | Negotiation['negotiation']['offers']
+	): Attachment['products'] | Attachment['offers'] =>
+		Object.fromEntries(
+			Object.entries(products || {}).map(([productId, productNegotiation]) => {
+				const attachedProductNegotiation = {
+					product: {
+						...(productNegotiation?.product?.oneOff?.negotiated && {
+							oneOff: productNegotiation.product.oneOff.negotiated
+						}),
+						...(productNegotiation?.product?.recurring?.negotiated && {
+							recurring: productNegotiation.product.recurring.negotiated
+						})
+					},
+					rateCards: Object.fromEntries(
+						Object.entries(productNegotiation?.rateCards || {}).map(
+							([rateCardId, rateCard]) => {
+								return [
+									rateCardId,
+									Object.fromEntries(
+										Object.entries(rateCard.rateCardLines).map(
+											([rateCardLineId, rateCardLine]) => {
+												return [
+													rateCardLineId,
+													rateCardLine.negotiated || 0
+												];
+											}
+										)
 									)
-								)
-							];
+								];
+							}
+						)
+					),
+					charges: Object.keys(productNegotiation?.charges || {}).reduce(
+						(chargeResult, chargeId) => {
+							chargeResult[chargeId] = {
+								oneOff: productNegotiation.charges
+									? productNegotiation.charges[chargeId].oneOff.negotiated
+									: undefined,
+								recurring: productNegotiation.charges
+									? productNegotiation.charges[chargeId].recurring.negotiated
+									: undefined
+							};
+							return chargeResult;
+						},
+						{} as {
+							[chargeId: string]: Product;
 						}
-					)
-				),
-				volume: productNegotiation.volume,
-				allowances: {}
-			};
+					),
+					volume: productNegotiation.volume,
+					allowances: {}
+				};
 
-			return [productId, attachedProductNegotiation];
-		})
-	);
-
-	const offers: Attachment['offers'] = Object.fromEntries(
-		Object.entries(state?.offers || {}).map(([productId, productNegotiation]) => {
-			const attachedProductNegotiation = {
-				product: {
-					...(productNegotiation.product.oneOff.negotiated && {
-						oneOff: productNegotiation.product.oneOff.negotiated
-					}),
-					...(productNegotiation.product.recurring.negotiated && {
-						recurring: productNegotiation.product.recurring.negotiated
-					})
-				},
-				volume: productNegotiation.volume,
-				allowances: {}
-			};
-
-			return [productId, attachedProductNegotiation];
-		})
-	);
+				return [productId, attachedProductNegotiation];
+			})
+		);
 
 	const addons: Attachment['addons'] = Object.fromEntries(
 		Object.entries(state?.addons || {}).map(([addonId, negotiable]) => {
@@ -521,8 +607,8 @@ export function selectAttachment(state: Negotiation['negotiation']): Attachment 
 	);
 
 	return {
-		products,
-		offers,
+		products: formatProducts(state.products),
+		offers: formatProducts(state.offers),
 		addons,
 		custom: {}
 	};

@@ -29,7 +29,7 @@ export function NegotiateDiff({
 	const [negotiationText, setNegotiationText] = useState(`${createNegotiateDiffText()}`);
 
 	useEffect((): void => {
-		setNegotiationText(`${createNegotiateDiffText()}`);
+		setNegotiationText(createNegotiateDiffText());
 	}, [createNegotiateDiffText, negotiable]);
 
 	const onDiffClick = (): void => {

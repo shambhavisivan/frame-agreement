@@ -21,7 +21,6 @@ export function Negotiation({
 		<table>
 			<tbody>
 				<tr>
-					<td>{negotiable?.original || 'N/A'}</td>
 					<td>
 						<CSInputText
 							value={String(input)}

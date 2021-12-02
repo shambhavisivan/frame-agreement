@@ -5,6 +5,7 @@ import {
 } from '../../../datasources';
 import {
 	detailsReducer,
+	NegotiableCharges,
 	Negotiation as INegotiation,
 	NegotiationAction,
 	ProductNegotiation,
@@ -299,6 +300,7 @@ describe('detailsReducer', () => {
 							negotiated: undefined
 						}
 					},
+					charges: {},
 					addons: {}
 				}
 			};
@@ -371,6 +373,7 @@ describe('detailsReducer', () => {
 								negotiated: undefined
 							}
 						},
+						charges: {},
 						addons: {}
 					}
 				},
@@ -420,6 +423,7 @@ describe('detailsReducer', () => {
 								negotiated: undefined
 							}
 						},
+						charges: {},
 						addons: {}
 					},
 					[testProductId2]: {
@@ -440,6 +444,7 @@ describe('detailsReducer', () => {
 								negotiated: undefined
 							}
 						},
+						charges: {},
 						addons: {}
 					}
 				};
@@ -597,12 +602,226 @@ describe('detailsReducer', () => {
 				)
 			).toEqual(expectedState);
 		});
+
+		test('negotiate advanced oneoffcharge', () => {
+			const stateWithAdvancedCharges: Negotiation = {
+				products: {
+					[productId]: {
+						volume: {
+							mv: null,
+							muc: null,
+							mvp: null,
+							mucp: null
+						},
+						product: {} as NegotiableCharges,
+						rateCards: {
+							[rateCardId1]: {
+								rateCardLines: {
+									[rateCartLineId1]: {
+										original: 1,
+										negotiated: undefined
+									},
+									[rateCartLineId2]: {
+										original: 2,
+										negotiated: undefined
+									}
+								}
+							}
+						},
+						charges: {
+							'charge-id': {
+								oneOff: {
+									negotiated: 0,
+									original: 0
+								},
+								recurring: {
+									negotiated: 0,
+									original: 0
+								}
+							}
+						},
+						addons: {}
+					}
+				},
+				addons: {},
+				offers: {}
+			};
+
+			const expectedState: INegotiation = {
+				negotiation: {
+					products: {
+						[productId]: {
+							rateCards: {
+								[rateCardId1]: {
+									rateCardLines: {
+										[rateCartLineId1]: {
+											negotiated: undefined,
+											original: 1
+										},
+										[rateCartLineId2]: {
+											negotiated: undefined,
+											original: 2
+										}
+									}
+								}
+							},
+							product: {} as NegotiableCharges,
+							volume: {
+								muc: null,
+								mucp: null,
+								mv: null,
+								mvp: null
+							},
+							addons: {},
+							charges: {
+								'charge-id': {
+									oneOff: {
+										negotiated: 45,
+										original: 0
+									},
+									recurring: {
+										negotiated: 0,
+										original: 0
+									}
+								}
+							}
+						}
+					},
+					addons: {},
+					offers: {}
+				},
+				activeFa: undefined
+			};
+
+			expect(expectedState).toEqual(
+				detailsReducer(
+					{ negotiation: stateWithAdvancedCharges },
+					{
+						type: 'negotiateOneOffCharge',
+						payload: {
+							productId: productId,
+							itemType: 'products',
+							chargeId: 'charge-id',
+							value: 45
+						}
+					}
+				)
+			);
+		});
+
+		test('negotiate advanced recurring charge', () => {
+			const stateWithAdvancedCharges: Negotiation = {
+				products: {
+					[productId]: {
+						volume: {
+							mv: null,
+							muc: null,
+							mvp: null,
+							mucp: null
+						},
+						product: {} as NegotiableCharges,
+						rateCards: {
+							[rateCardId1]: {
+								rateCardLines: {
+									[rateCartLineId1]: {
+										original: 1,
+										negotiated: undefined
+									},
+									[rateCartLineId2]: {
+										original: 2,
+										negotiated: undefined
+									}
+								}
+							}
+						},
+						charges: {
+							'charge-id': {
+								oneOff: {
+									negotiated: 0,
+									original: 0
+								},
+								recurring: {
+									negotiated: 0,
+									original: 0
+								}
+							}
+						},
+						addons: {}
+					}
+				},
+				addons: {},
+				offers: {}
+			};
+
+			const expectedState: INegotiation = {
+				negotiation: {
+					products: {
+						[productId]: {
+							product: {} as NegotiableCharges,
+							rateCards: {
+								[rateCardId1]: {
+									rateCardLines: {
+										[rateCartLineId1]: {
+											negotiated: undefined,
+											original: 1
+										},
+										[rateCartLineId2]: {
+											negotiated: undefined,
+											original: 2
+										}
+									}
+								}
+							},
+							volume: {
+								muc: null,
+								mucp: null,
+								mv: null,
+								mvp: null
+							},
+							addons: {},
+							charges: {
+								'charge-id': {
+									oneOff: {
+										negotiated: 0,
+										original: 0
+									},
+									recurring: {
+										negotiated: 4500,
+										original: 0
+									}
+								}
+							}
+						}
+					},
+					addons: {},
+					offers: {}
+				},
+				activeFa: undefined
+			};
+
+			expect(expectedState).toEqual(
+				detailsReducer(
+					{ negotiation: stateWithAdvancedCharges },
+					{
+						type: 'negotiateRecurringCharge',
+						payload: {
+							productId: productId,
+							itemType: 'products',
+							chargeId: 'charge-id',
+							value: 4500
+						}
+					}
+				)
+			);
+		});
 	});
 });
 
 describe('selectors', () => {
 	describe('selectAttachment', () => {
 		const productId = 'productId';
+		const productId2 = 'productId2';
+		const chargeId = 'chargeId';
 		const rateCardId1 = 'rateCartId1';
 		const rateCartLineId1 = 'rateCartLineId1';
 		const rateCartLineId2 = 'rateCartLineId2';
@@ -641,6 +860,42 @@ describe('selectors', () => {
 						}
 					},
 					addons: {}
+				},
+				[productId2]: {
+					product: {} as NegotiableCharges,
+					volume: {
+						mv: null,
+						muc: null,
+						mvp: null,
+						mucp: null
+					},
+					rateCards: {
+						[rateCardId1]: {
+							rateCardLines: {
+								[rateCartLineId1]: {
+									original: 1,
+									negotiated: 42
+								},
+								[rateCartLineId2]: {
+									original: 2,
+									negotiated: 43
+								}
+							}
+						}
+					},
+					charges: {
+						[chargeId]: {
+							oneOff: {
+								negotiated: 456,
+								original: 456
+							},
+							recurring: {
+								negotiated: 678,
+								original: 789
+							}
+						}
+					},
+					addons: {}
 				}
 			},
 			addons: {},
@@ -666,6 +921,29 @@ describe('selectors', () => {
 					product: {
 						recurring: 1,
 						oneOff: 2
+					},
+					charges: {}
+				},
+				[productId2]: {
+					rateCards: {
+						[rateCardId1]: {
+							[rateCartLineId1]: 42,
+							[rateCartLineId2]: 43
+						}
+					},
+					volume: {
+						muc: null,
+						mucp: null,
+						mv: null,
+						mvp: null
+					},
+					allowances: {},
+					product: {},
+					charges: {
+						[chargeId]: {
+							oneOff: 456,
+							recurring: 678
+						}
 					}
 				}
 			},

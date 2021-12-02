@@ -8,6 +8,8 @@ export interface NegotiateProductActions {
 	negotiateRateCardLine(rateCardId: string, rateCardLineId: string, value: number): void;
 	negotiateAddonRecurring(value: number): void;
 	negotiateAddonOneOff(value: number): void;
+	negotiateAdvancedOneOffCharge(value: number, chargeId: string): void;
+	negotiateAdvancedRecurringCharge(value: number, chargeId: string): void;
 }
 
 export const createActionsForNegotiateProduct = (dispatch: React.Dispatch<NegotiationAction>) => (
@@ -85,6 +87,18 @@ export const createActionsForNegotiateProduct = (dispatch: React.Dispatch<Negoti
 					addonId: productId,
 					value
 				}
+			});
+		},
+		negotiateAdvancedOneOffCharge(value: number, chargeId: string): void {
+			return dispatch({
+				type: 'negotiateOneOffCharge',
+				payload: { value, itemType, productId, chargeId }
+			});
+		},
+		negotiateAdvancedRecurringCharge(value: number, chargeId: string): void {
+			return dispatch({
+				type: 'negotiateRecurringCharge',
+				payload: { value, itemType, productId, chargeId }
 			});
 		}
 	};

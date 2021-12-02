@@ -1,14 +1,18 @@
 public class CommercialProductService {
 	public static List<cspmb__price_item__c> queryProducts(
-			List<Id> priceItemIds,
-			String filterFields,
-			Id lastRecordId,
-			Integer queryLimit,
-			List<Id> skipIds
+		List<Id> priceItemIds,
+		String filterFields,
+		Id lastRecordId,
+		Integer queryLimit,
+		List<Id> skipIds
 	) {
 
-		// when empty/ null parameters are passed, return 1st page of records
-		if ((priceItemIds == null || (priceItemIds != null && priceItemIds.isEmpty())) && (filterFields == null || filterFields == '') && (queryLimit == null || queryLimit <= 0)) {
+		// when empty/ null parameters are passed, set default query limit
+		if (
+			(priceItemIds == null || (priceItemIds != null && priceItemIds.isEmpty())) &&
+			(filterFields == null || filterFields == '') &&
+			(queryLimit <= 0)
+		) {
 			queryLimit = FrameRateManagerController.DEFAULT_QUERY_LIMIT;
 		}
 
@@ -87,7 +91,7 @@ public class CommercialProductService {
 		*/
 		query += ' order by id';
 		query += ' limit ' + String.valueOf(
-			queryLimit != null ? queryLimit : FrameRateManagerController.DEFAULT_QUERY_LIMIT
+			queryLimit > 0 ? queryLimit : FrameRateManagerController.DEFAULT_QUERY_LIMIT
 		);
 
 		try {

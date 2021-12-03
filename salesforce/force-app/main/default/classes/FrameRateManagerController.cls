@@ -39,6 +39,9 @@ global with sharing class FrameRateManagerController {
 	private static final String FRAME_AGREEMENT_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated;
 	@TestVisible
 	private static final String FRAME_AGREEMENT_STATUS_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated_statusError;
+	private static final List<String> CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST = new List<String>{
+		'Initial Price', 'Price Override'
+	};
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -672,9 +675,27 @@ global with sharing class FrameRateManagerController {
 		// This is not the list of charges for given price item
 		// On these sobjects you can find price rule, price element and price item
 		List <cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = [
-			select id, cspmb__recurring_adjustment__c, cspmb__one_off_adjustment__c, cspmb__pricing_element__c
+			select
+				id,
+				cspmb__recurring_adjustment__c,
+				cspmb__one_off_adjustment__c,
+				cspmb__pricing_element__c
 			from cspmb__Price_Item_Pricing_Rule_Association__c
-			where cspmb__pricing_element__c in:pricingElementIds and cspmb__pricing_rule__c in:pricingRuleList
+			where cspmb__pricing_element__c in:pricingElementIds
+			and cspmb__pricing_rule__c in:pricingRuleList
+			and cspmb__target_price__c = 'Sales'
+			and
+			(
+				(
+					cspmb__one_off_adjustment__c != null
+					and cspmb__one_off_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+				)
+				or
+				(
+					cspmb__recurring_adjustment__c != null
+					and cspmb__recurring_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+				)
+			)
 		];
 
 		List <PricingElementWrapper> priceItemChargesData = new List <PricingElementWrapper>();
@@ -1169,9 +1190,6 @@ global with sharing class FrameRateManagerController {
 			pricingRuleList.add(prgra.cspmb__pricing_rule__c);
 		}
 
-		List<String> adjustmentTypeList = new List<String>{
-			'Initial Price', 'Price Override'
-		};
 		List<cspmb__Price_Item_Pricing_Rule_Association__c> pipraList = new List<cspmb__Price_Item_Pricing_Rule_Association__c>();
 		if (!prgs.isEmpty()) {
 			pipraList = [
@@ -1180,8 +1198,18 @@ global with sharing class FrameRateManagerController {
 				from cspmb__Price_Item_Pricing_Rule_Association__c
 				where cspmb__price_item__c in :cpIdMap.values()
 				and cspmb__pricing_rule__c in :pricingRuleList
-				and (cspmb__one_off_adjustment_type__c in :adjustmentTypeList
-				or cspmb__one_off_adjustment_type__c in :adjustmentTypeList)
+				and
+				(
+					(
+						cspmb__one_off_adjustment__c != null
+						and cspmb__one_off_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+					)
+					or
+					(
+						cspmb__recurring_adjustment__c != null
+						and cspmb__recurring_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+					)
+				)
 			];
 		}
 
@@ -2349,6 +2377,19 @@ global with sharing class FrameRateManagerController {
 			select Id, cspmb__pricing_element__c
 			from cspmb__Price_Item_Pricing_Rule_Association__c
 			where cspmb__price_item__c = :priceItemId
+			and cspmb__target_price__c = 'Sales'
+			and
+			(
+				(
+					cspmb__one_off_adjustment__c != null
+					and cspmb__one_off_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+				)
+				or
+				(
+					cspmb__recurring_adjustment__c != null
+					and cspmb__recurring_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+				)
+			)
 		]) {
 			priceElementIdList.add(pipra.cspmb__pricing_element__c);
 			pricingElementObj.put(pipra.cspmb__pricing_element__c, pipra);

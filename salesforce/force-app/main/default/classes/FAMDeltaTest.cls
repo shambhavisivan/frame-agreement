@@ -519,7 +519,9 @@ private class FAMDeltaTest {
 
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
-			cspmb__pricing_element__c = pricingElement_1.Id
+			cspmb__pricing_element__c = pricingElement_1.Id,
+			cspmb__target_price__c = 'Sales',
+			cspmb__one_off_adjustment__c = 100, cspmb__one_off_adjustment_type__c = 'Initial Price'
 		);
 		insert pipra_1;
 
@@ -757,11 +759,15 @@ private class FAMDeltaTest {
 
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
-			cspmb__pricing_element__c = pricingElement_1.Id
+			cspmb__pricing_element__c = pricingElement_1.Id,
+			cspmb__target_price__c = 'Sales',
+			cspmb__one_off_adjustment__c = 100, cspmb__one_off_adjustment_type__c = 'Initial Price'
 		);
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_2 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
-			cspmb__pricing_element__c = pricingElement_2.Id
+			cspmb__pricing_element__c = pricingElement_2.Id,
+			cspmb__target_price__c = 'Sales',
+			cspmb__recurring_adjustment__c = 100, cspmb__recurring_adjustment_type__c = 'Initial Price'
 		);
 		insert pipra_1;
 		insert pipra_2;

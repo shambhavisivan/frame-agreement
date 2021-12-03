@@ -136,24 +136,52 @@ private class FrameRateManagerControllerTest {
 		insert pricingElement_2;
 		insert pricingElement_invalid;
 
+		cspmb__Pricing_Element__c pricingElement_cp_2_1 = new cspmb__Pricing_Element__c(
+			cspmb__pricing_element_type__c = pricingElementType_2.Id, cspmb__commercial_product__c = cp_2.Id
+		);
+
+		insert pricingElement_cp_2_1;
+
 		cspmb__pricing_rule__c pr_1 = new cspmb__pricing_rule__c(cspmb__description__c = 'Test.');
 		insert pr_1;
 
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
-			cspmb__pricing_element__c = pricingElement_1.Id
+			cspmb__pricing_element__c = pricingElement_1.Id,
+			cspmb__target_price__c = 'Sales',
+			cspmb__one_off_adjustment__c = 100, cspmb__one_off_adjustment_type__c = 'Initial Price'
 		);
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_2 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
-			cspmb__pricing_element__c = pricingElement_2.Id
+			cspmb__pricing_element__c = pricingElement_2.Id,
+			cspmb__target_price__c = 'Sales',
+			cspmb__recurring_adjustment__c = 80, cspmb__recurring_adjustment_type__c = 'Initial Price'
 		);
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_3 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
-			cspmb__pricing_element__c = pricingElement_invalid.Id
+			cspmb__pricing_element__c = pricingElement_invalid.Id,
+			cspmb__target_price__c = 'Sales',
+			cspmb__one_off_adjustment__c = 100, cspmb__one_off_adjustment_type__c = 'Initial Price'
 		);
 		insert pipra_1;
 		insert pipra_2;
 		insert pipra_3;
+
+		cspmb__Price_Item_Pricing_Rule_Association__c pipra_cp_2_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
+			cspmb__pricing_element__c = pricingElement_cp_2_1.Id,
+			cspmb__target_price__c = 'List',
+			cspmb__recurring_adjustment__c = 80, cspmb__recurring_adjustment_type__c = 'Initial Price'
+		);
+		insert pipra_cp_2_1;
+
+		cspmb__Price_Item_Pricing_Rule_Association__c pipra_cp_3_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
+			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_3.Id,
+			cspmb__pricing_element__c = pricingElement_2.Id,
+			cspmb__target_price__c = 'Sales',
+			cspmb__one_off_adjustment__c = 100, cspmb__recurring_adjustment_type__c = 'Initial Price'
+		);
+		insert pipra_cp_3_1;
 
 		cspmb__Pricing_Rule_Group__c prg_1 = new cspmb__Pricing_Rule_Group__c(
 			cspmb__description__c = 'Testing.', cspmb__pricing_rule_group_code__c = generateRandomString(10)
@@ -552,10 +580,15 @@ private class FrameRateManagerControllerTest {
 
 		Map<Id, cspmb__Price_Item__c> cp_1 = new Map<Id, cspmb__Price_Item__c>([select Id,Name from cspmb__Price_Item__c where Name = 'cp_1']);
 		List <Id> cpIdList = new List<Id>(cp_1.keySet());
-
+		Map<Id, cspmb__Price_Item__c> cp_2 = new Map<Id, cspmb__Price_Item__c>([select Id,Name from cspmb__Price_Item__c where Name = 'cp_2']);
+		List <Id> cp_2_IdList = new List<Id>(cp_2.keySet());
+		Map<Id, cspmb__Price_Item__c> cp_3 = new Map<Id, cspmb__Price_Item__c>([select Id,Name from cspmb__Price_Item__c where Name = 'cp_3']);
+		List <Id> cp_3_IdList = new List<Id>(cp_3.keySet());
 
 		Test.startTest();
 		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMap = FrameRateManagerController.getCommercialProductCharges(cpIdList);
+		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> pic_2_Map = FrameRateManagerController.getCommercialProductCharges(cp_2_IdList);
+		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> pic_3_Map = FrameRateManagerController.getCommercialProductCharges(cp_3_IdList);
 		// Invalid Id
 		Map <Id, List <FrameRateManagerController.PricingElementWrapper>> picMapEmpty = FrameRateManagerController.getCommercialProductCharges(new List <Id>{
 			'01p1t00000M4Gqp'
@@ -564,6 +597,8 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		System.assertNotEquals(0, picMap.keySet().size());
+		System.assertEquals(0, pic_2_Map.keySet().size(), 'Only target price of type sales is considered');
+		System.assertEquals(0, pic_3_Map.keySet().size(), 'Only adjustment price type of Initial price and price override is eligible provided oneoff/recurring is not null');
 		System.assertEquals(0, picMapEmpty.keySet().size());
 
 	}

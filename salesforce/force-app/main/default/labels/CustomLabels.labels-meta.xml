@@ -1792,4 +1792,11 @@
         <shortDescription>incorrect_fa</shortDescription>
         <value>Input frame agreement is either incorrect or not found</value>
     </labels>
+    <labels>
+        <fullName>no_active_fa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>no_active_fa</shortDescription>
+        <value>No active frame agreement in fa editor.</value>
+    </labels>
 </CustomLabels>

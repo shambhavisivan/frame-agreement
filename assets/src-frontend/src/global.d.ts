@@ -270,6 +270,7 @@ namespace SfGlobal {
 		toast_saved_fa: string;
 		btn_ok: string;
 		incorrect_fa: string;
+		no_active_fa: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

@@ -18,13 +18,14 @@ interface FamApi {
 	) => Promise<void>;
 	isAgreementEditable?: (faId: string) => Promise<boolean>;
 	toast?: (type: CSToastVariant, title: string, message: string, timeout: number) => void;
+	getActiveFrameAgreement?: () => FrameAgreement;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export type FamWindow = Window & { FAM?: { api?: FamApi } };
 declare const window: FamWindow;
 
-function registerApiEndpoint(name: keyof FamApi, endpoint: FamApi[keyof FamApi]): void {
+export function registerApiEndpoint(name: keyof FamApi, endpoint: FamApi[keyof FamApi]): void {
 	// eslint-disable-next-line no-console
 	console.debug(`Registering API endpoint ${name}`);
 	if (!window.FAM) {

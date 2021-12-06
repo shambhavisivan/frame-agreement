@@ -8,6 +8,7 @@ import { ApprovalProcess } from './approval';
 import { FaStatusContextProvider } from '../../providers/fa-status-provider';
 import { DetailsProvider } from './details-page-provider';
 import { DetailsHeader } from './details-header';
+import { RegisterApisWithStore } from '../../datasources/register-apis-with-store';
 
 interface FrameAgreementDetailsProps {
 	agreementId: string;
@@ -23,6 +24,7 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 		<div className="details-wrapper">
 			<LoadingFallback status={faStatus}>
 				<DetailsProvider agreement={agreement || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
 					<FaStatusContextProvider faId={agreementId}>
 						<DetailsHeader />
 						<div className="field-wrapper"> </div>

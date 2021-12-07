@@ -1,6 +1,5 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
-import '../sass/PaginationStyles.scss';
 import { PAGE_SIZES } from '../app-constants';
 
 interface PaginationComponentProps {

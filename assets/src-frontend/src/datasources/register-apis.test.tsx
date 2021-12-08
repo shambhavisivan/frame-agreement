@@ -9,6 +9,7 @@ import { QueryKeys } from '../app-constants';
 import { Attachment } from '.';
 import * as deforcify from './deforcify';
 import { RegisterApis } from './register-apis';
+import { CSToastApi, CSToastVariant } from '@cloudsense/cs-ui-components';
 
 describe('RegisterApis', () => {
 	const setQueryData = jest.fn();
@@ -137,6 +138,30 @@ describe('RegisterApis', () => {
 				deforcify.deforcify(approval2)
 			);
 			expect(approvalHistorySpy).toBeCalledWith(mockFaId);
+		});
+	});
+
+	describe('toast', () => {
+		const csToastApiSpy = jest.spyOn(CSToastApi, 'renderCSToast');
+		test('should display the toast message by calling CSToastApi', async () => {
+			const toastType: CSToastVariant = 'success';
+			const title = 'Toast Title';
+			const message = 'Toast Message';
+			const timeout = 1000; // milliseconds
+
+			const toastFunc = globalAny?.FAM?.api?.toast as (
+				type: CSToastVariant,
+				title: string,
+				message: string,
+				timeout: number
+			) => void;
+			toastFunc(toastType, title, message, timeout);
+
+			expect(csToastApiSpy).toBeCalledWith(
+				{ variant: toastType, text: title, detail: message, closeButton: true },
+				'top-right',
+				timeout / 1000
+			);
 		});
 	});
 });

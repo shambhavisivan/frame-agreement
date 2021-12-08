@@ -1,3 +1,4 @@
+import { CSToastApi, CSToastVariant } from '@cloudsense/cs-ui-components';
 import React, { ReactElement, useReducer } from 'react';
 import { useQueryCache } from 'react-query';
 import { Attachment, FrameAgreement, remoteActions } from '.';
@@ -16,6 +17,7 @@ interface FamApi {
 		value: SfGlobal.FrameAgreement[keyof SfGlobal.FrameAgreement]
 	) => Promise<void>;
 	isAgreementEditable?: (faId: string) => Promise<boolean>;
+	toast?: (type: CSToastVariant, title: string, message: string, timeout: number) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -106,6 +108,25 @@ export function RegisterApis(): ReactElement {
 		return false;
 	};
 	registerApiEndpoint('isAgreementEditable', isAgreementEditable);
+
+	const showToast = (
+		type: CSToastVariant,
+		title: string,
+		message: string,
+		timeout: number
+	): void => {
+		CSToastApi.renderCSToast(
+			{
+				variant: type,
+				text: title,
+				detail: message,
+				closeButton: true
+			},
+			'top-right',
+			timeout / 1000
+		);
+	};
+	registerApiEndpoint('toast', showToast);
 
 	return <></>;
 }

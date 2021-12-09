@@ -1,7 +1,9 @@
 @isTest
 private class API_1Test {
 
+	private static final String NO_ATTACH_FA_NAME = 'FA1';
 	private static final String VALID_FA_NAME = 'FA2';
+	private static final String TWO_ATTACH_FA_NAME = 'FA3';
 
 	static void setupData() {
 		Account test_account = new Account(name = 'TestAcc');
@@ -85,7 +87,7 @@ private class API_1Test {
 		// FRAME AGREEMENTS
 		csconta__Frame_Agreement__c fa_1 = new csconta__Frame_Agreement__c(
 			csconta__status__c = 'Draft',
-			csconta__agreement_name__c = 'FA1',
+			csconta__agreement_name__c = NO_ATTACH_FA_NAME,
 			csconta__account__c = test_account.Id
 		);
 		csconta__Frame_Agreement__c fa_2 = new csconta__Frame_Agreement__c(
@@ -93,8 +95,14 @@ private class API_1Test {
 			csconta__agreement_name__c = VALID_FA_NAME,
 			csconta__account__c = test_account.Id
 		);
+		csconta__Frame_Agreement__c fa_3 = new csconta__Frame_Agreement__c(
+			csconta__status__c = 'Draft',
+			csconta__agreement_name__c = TWO_ATTACH_FA_NAME,
+			csconta__account__c = test_account.Id
+		);
 		insert fa_1;
 		insert fa_2;
+		insert fa_3;
 
 		// cp_1, add1assoc, pricingElement_1, add_standalone, cp_no_prices -> has to create cppra for every except cp_no_prices
 		String body = '{"custom":{},"products":{"' +
@@ -107,14 +115,33 @@ private class API_1Test {
 			'},"_allowances":{}}},"addons":{"' + add_standalone.id + '":{"oneoff":' + add_standalone.cspmb__one_off_charge__c +
 			',"recurring":' + add_standalone.cspmb__recurring_charge__c + '}}}';
 
-		Attachment newAttach = new Attachment(
+		Attachment faAttach = new Attachment(
 			ParentId = fa_2.id,
 			Body =  Blob.valueOf(body),
 			Description = 'Added products and negotiated data against Frame Agreement',
 			ContentType = 'text/plain',
 			Name = 'FrameAgreementAttachment'
 		);
-		insert newAttach;
+		insert faAttach;
+
+		Attachment faAttach2 = new Attachment(
+			ParentId = fa_3.id,
+			Body =  Blob.valueOf(body),
+			Description = 'Added products and negotiated data against Frame Agreement',
+			ContentType = 'text/plain',
+			Name = 'FrameAgreementAttachment'
+		);
+		insert faAttach2;
+
+		String otherBody = 'OtherData';
+		Attachment otherAttach = new Attachment(
+			ParentId = fa_3.id,
+			Body =  Blob.valueOf(otherBody),
+			Description = 'Added other attachment',
+			ContentType = 'text/plain',
+			Name = 'OtherAttachment'
+		);
+		insert otherAttach;
 	}
 
 	@isTest
@@ -124,31 +151,40 @@ private class API_1Test {
 		csconta__Frame_Agreement__c fa_null_attachment = [
 			select id
 			from csconta__Frame_Agreement__c
-			where csconta__agreement_name__c = 'FA1'
+			where csconta__agreement_name__c = :NO_ATTACH_FA_NAME
 		];
 		csconta__Frame_Agreement__c fa = [
 			select id
 			from csconta__Frame_Agreement__c
 			where csconta__agreement_name__c = :VALID_FA_NAME
 		];
+		csconta__Frame_Agreement__c fa_two_attachment = [
+			select id
+			from csconta__Frame_Agreement__c
+			where csconta__agreement_name__c = :TWO_ATTACH_FA_NAME
+		];
 
 		Test.startTest();
 
-		String msg1 = API_1.activateFrameAgreement(fa_null_attachment.id, false);
-		String msg2 = API_1.activateFrameAgreement(fa.id, false);
+		String fa1_msg = API_1.activateFrameAgreement(fa_null_attachment.id, false);
+		String fa2_msg = API_1.activateFrameAgreement(fa.id, false);
+		String fa3_msg = API_1.activateFrameAgreement(fa_two_attachment.id, false);
 
 		Test.stopTest();
 
-		Map<String, Object> null_pointer_msg = (Map<String, Object>) JSON.deserializeUntyped(msg1);
-		Map<String, Object> success_msg = (Map<String, Object>) JSON.deserializeUntyped(msg2);
+		Map<String, Object> null_pointer_msg = (Map<String, Object>) JSON.deserializeUntyped(fa1_msg);
+		Map<String, Object> success_msg = (Map<String, Object>) JSON.deserializeUntyped(fa2_msg);
+		Map<String, Object> fa_two_attachment_success_msg = (Map<String, Object>) JSON.deserializeUntyped(fa3_msg);
 
 		System.assertEquals('Framework attachment does not exist.', null_pointer_msg.get('errorMessage'));
 		System.assertEquals('Success', success_msg.get('status'));
+		System.assertEquals('Success', fa_two_attachment_success_msg.get('status'));
 		List<cspmb__Price_Item_Pricing_Rule_Association__c> cppras = [
 			select id, cspmb__one_off_adjustment__c, cspmb__recurring_adjustment__c
 			from cspmb__Price_Item_Pricing_Rule_Association__c
 		];
-		System.assertEquals(4, cppras.size(), cppras);
+		// We should be having the PRA records created based on FA2 + FA3
+		System.assertEquals(4 + 4, cppras.size(), cppras);
 	}
 
 	@isTest

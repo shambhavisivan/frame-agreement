@@ -1,4 +1,5 @@
 public with sharing class FrameAgreementActivation {
+	public static final String FAC_ATTACHMENT_NAME = 'FrameAgreementAttachment';
 
 	public static Object[] sliceList(Object[] inputList, Integer firstIndex, Integer lastIndex) {
 
@@ -67,7 +68,9 @@ public with sharing class FrameAgreementActivation {
 		Blob body = [
 			select id, parentId, body
 			from Attachment
-			where parentId = :faId
+			where parentId = :faId and name = :FAC_ATTACHMENT_NAME
+			order by LastModifiedDate DESC
+			limit 1
 		]?.body;
 
 		if (body == null) {

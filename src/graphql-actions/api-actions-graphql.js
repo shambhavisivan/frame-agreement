@@ -1,5 +1,11 @@
 import { getDefaultCatalogueId } from "../api";
-import { PRODUCT_TYPE_CP, ROLE_BASIC, ROLE_OFFER } from "../utils/constants";
+import {
+	PRODUCT_TYPE_CP,
+	ROLE_BASIC,
+	ROLE_MASTER,
+	ROLE_VARIANT,
+	ROLE_OFFER,
+} from "../utils/constants";
 import { invokeGraphQLService } from "../utils/dispatcher-service";
 import {
 	PRODUCTS_IN_CATALOGUE,
@@ -22,11 +28,10 @@ export const queryCpsInCatalogue = async () => {
 		if (!response.isSuccess) {
 			throw new Error(response.error);
 		} else {
-			return response.data.productsInCatalogue.data
-				.filter(
-					(cp) =>
-						cp.role && cp.role === ROLE_BASIC && cp.type === PRODUCT_TYPE_CP
-				);
+			const roleSet = new Set([ROLE_BASIC, ROLE_MASTER, ROLE_VARIANT]);
+			return response.data.productsInCatalogue.data.filter(
+				(cp) => roleSet.has(cp?.role) && cp.type === PRODUCT_TYPE_CP
+			);
 		}
 	} catch (error) {
 		throw new Error(error.message);
@@ -76,8 +81,9 @@ export const queryProductsInCategory = async (categoryId) => {
 		if (!response.isSuccess) {
 			throw new Error(response.error);
 		} else {
+			const roleSet = new Set([ROLE_BASIC, ROLE_MASTER, ROLE_VARIANT]);
 			return response.data.productsInCategory.data.filter(
-				(cp) => cp.role && cp.role === ROLE_BASIC && cp.type === PRODUCT_TYPE_CP
+				(cp) => roleSet.has(cp?.role) && cp.type === PRODUCT_TYPE_CP
 			);
 		}
 	} catch (error) {
@@ -87,9 +93,7 @@ export const queryProductsInCategory = async (categoryId) => {
 
 export const queryOffersInCategory = async (categoryId) => {
 	if (!categoryId) {
-		throw new Error(
-			"category Id cannot be null for queryOffersInCategory"
-		);
+		throw new Error("category Id cannot be null for queryOffersInCategory");
 	}
 	const variables = {
 		categoryId: categoryId,
@@ -105,7 +109,10 @@ export const queryOffersInCategory = async (categoryId) => {
 			throw new Error(response.error);
 		} else {
 			return response.data.productsInCategory.data.filter(
-				(cp) => cp.role && cp.role === ROLE_OFFER && cp.type === PRODUCT_TYPE_CP
+				(cp) =>
+					cp.role &&
+					cp.role === ROLE_OFFER &&
+					cp.type === PRODUCT_TYPE_CP
 			);
 		}
 	} catch (error) {
@@ -127,54 +134,54 @@ export const queryOfferIdsInCatalogue = async () => {
 		if (!response.isSuccess) {
 			throw new Error(response.error);
 		} else {
-			return response.data.productsInCatalogue.data
-				.filter(
-					(cp) =>
-						cp.role && cp.role === ROLE_OFFER && cp.type === PRODUCT_TYPE_CP
-				);
+			return response.data.productsInCatalogue.data.filter(
+				(cp) =>
+					cp.role &&
+					cp.role === ROLE_OFFER &&
+					cp.type === PRODUCT_TYPE_CP
+			);
 		}
 	} catch (error) {
 		throw new Error(error.message);
 	}
 };
 
-
-export const queryCpDataByIds = productIds => {
+export const queryCpDataByIds = (productIds) => {
 	let productIdentifiers = [];
-	productIds.forEach(productId => {
+	productIds.forEach((productId) => {
 		productIdentifiers.push({
-			productId
+			productId,
 		});
 	});
 
 	return queryCpByIdentifiers(productIdentifiers);
-}
+};
 
-export const queryCpDataByOfferCode = commercialProductOfferCodes => {
+export const queryCpDataByOfferCode = (commercialProductOfferCodes) => {
 	let productIdentifiers = [];
-	commercialProductOfferCodes.forEach(productCode => {
+	commercialProductOfferCodes.forEach((productCode) => {
 		productIdentifiers.push({
-			productCode
+			productCode,
 		});
 	});
 
 	return queryCpByIdentifiers(productIdentifiers);
-}
+};
 
-export const queryCpDataByProductCode = commercialProductCodes => {
+export const queryCpDataByProductCode = (commercialProductCodes) => {
 	let productIdentifiers = [];
-	commercialProductCodes.forEach(productCode => {
+	commercialProductCodes.forEach((productCode) => {
 		productIdentifiers.push({
-			productCode
+			productCode,
 		});
 	});
 
 	return queryCpByIdentifiers(productIdentifiers);
-}
+};
 
 export const queryCpByIdentifiers = async (productIdentifiers) => {
 	const variables = {
-		productIdentifiers
+		productIdentifiers,
 	};
 
 	try {
@@ -188,7 +195,7 @@ export const queryCpByIdentifiers = async (productIdentifiers) => {
 		} else {
 			return response.data.getProductsByIdentifiers;
 		}
-	} catch(error) {
+	} catch (error) {
 		throw new Error(error.message);
 	}
-}
+};

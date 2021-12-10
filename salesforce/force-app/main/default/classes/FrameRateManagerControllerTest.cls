@@ -76,12 +76,36 @@ private class FrameRateManagerControllerTest {
 			cspmb__Role__c = 'Basic'
 		);
 
+		// Master CP
+		cspmb__Price_Item__c cp_4 = new cspmb__Price_Item__c(
+			Name = 'cp_4',
+			cspmb__One_Off_Charge__c = 50.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 25 - 00,
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Master'
+		);
 
 		insert cp_1;
 		insert cp_2;
 		insert cp_3;
+		insert cp_4;
 		insert cp_addon_inv;
 		insert cp_addon_assoc_inv;
+
+		// Variant CP
+		cspmb__Price_Item__c cp_5 = new cspmb__Price_Item__c(
+			Name = 'cp_5',
+			cspmb__One_Off_Charge__c = 60.00,
+			cspmb__Is_Active__c = true,
+			cspmb__Recurring_Charge__c = 25 - 00,
+			cspmb__Price_Item_Code__c = 'cp_5',
+			cspmb__Type__c = 'Commercial Product',
+			cspmb__Role__c = 'Variant',
+			cspmb__Master_Price_item__c = cp_4.id
+		);
+
+		insert cp_5;
 
 		// allowances
 		cspmb__Usage_Type__c ut_main = new cspmb__Usage_Type__c(
@@ -1341,8 +1365,8 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		System.assertEquals(5, cpIdList.size());
-		System.assertEquals(4, getCommercialProducts.size());
+		System.assertEquals(7, cpIdList.size());
+		System.assertEquals(6, getCommercialProducts.size());
 	}
 
 	@isTest
@@ -1363,8 +1387,8 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		System.assertEquals(5, cpIdList.size());
-		System.assertEquals(5, getCommercialProducts.size());
+		System.assertEquals(7, cpIdList.size());
+		System.assertEquals(7, getCommercialProducts.size());
 	}
 
 	@IsTest
@@ -1605,7 +1629,7 @@ private class FrameRateManagerControllerTest {
 		List<cspmb__Price_Item__c> getCommercialProducts = FrameRateManagerController.getCommercialProducts(new List<Id>());
 		Test.stopTest();
 
-		System.assertEquals(4, getCommercialProducts.size());
+		System.assertEquals(6, getCommercialProducts.size());
 	}
 
 	@isTest
@@ -2202,8 +2226,8 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		System.assertEquals(5, cpIdList.size());
-		System.assertEquals(4, getCommercialProducts.size());
+		System.assertEquals(7, cpIdList.size());
+		System.assertEquals(6, getCommercialProducts.size());
 	}
 
 	public static testMethod void testFilterCommercialProductsReturnsEmpty() {

@@ -28,6 +28,7 @@ import {
 } from './graphql-endpoints/interface';
 import { DiscountThreshold } from '.';
 import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
+import { PAGE_SIZES } from '../app-constants';
 
 export const mockAppSettings: AppSettings = {
 	account: {
@@ -386,7 +387,9 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 	}
 ];
 
-export const mockProductIds: string[] = ['id-1', 'id-2'];
+export const mockProductIds: string[] = mockCommercialProducts
+	.slice(0, PAGE_SIZES[0])
+	.map((mockProduct) => mockProduct.id);
 
 export const mockProductsInCatalogueResponse: GraphQLResponse = {
 	data: {
@@ -790,7 +793,7 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 export const attachment: Attachment = {
 	custom: {},
 	products: {
-		a1i4I000003Q4GGQA0: {
+		a1F1t0000001JBoEAM: {
 			volume: {
 				mv: null,
 				mvp: null,
@@ -803,7 +806,7 @@ export const attachment: Attachment = {
 			},
 			allowances: {}
 		},
-		a1i4I000003Kqe8QAC: {
+		a1F1t0000001JBZEA2: {
 			volume: {
 				mv: null,
 				mvp: null,
@@ -829,7 +832,7 @@ export const attachment: Attachment = {
 				}
 			}
 		},
-		a1i4I000003KqdtQAC: {
+		a1F1t0000001JBUEA2: {
 			volume: {
 				mv: null,
 				mvp: null,

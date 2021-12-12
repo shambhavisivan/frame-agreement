@@ -199,7 +199,7 @@ export const remoteActions: RemoteActions = {
 		});
 	},
 	async getProductIds(filterIds: Array<string>, filterString: string | null): Promise<string[]> {
-		return ['a1F1t0000001JBoEAM', 'a1F1t0000001JBZEA2'];
+		return mockCommercialProducts.map((mockProduct) => mockProduct.id);
 	},
 
 	async queryProducts(
@@ -209,6 +209,13 @@ export const remoteActions: RemoteActions = {
 		queryLimit: number,
 		alreadyAddedIds: string[]
 	): Promise<CommercialProductStandalone[]> {
-		return mockCommercialProducts;
+		return priceItemIds?.length
+			? mockCommercialProducts.filter((mockProduct) =>
+					alreadyAddedIds?.length
+						? priceItemIds.includes(mockProduct.id) &&
+						  !alreadyAddedIds.includes(mockProduct.id)
+						: priceItemIds.includes(mockProduct.id)
+			  )
+			: mockCommercialProducts;
 	}
 };

@@ -41,7 +41,7 @@ describe('useGetProductIds hook', () => {
 		});
 
 		expect(result.current.itemIds).toEqual(mockProductIds);
-		expect(result.current.itemIds?.length).toEqual(2);
+		expect(result.current.itemIds?.length).toEqual(10);
 		expect(useProductIdsSpy).toHaveBeenCalledWith({
 			role: CommercialProductRole.basic,
 			type: CommercialProductType.commercialProduct

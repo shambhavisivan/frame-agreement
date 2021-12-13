@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
-import classnames from 'classnames';
 import { PAGE_SIZES } from '../app-constants';
+import { CSButtonGroup, CSButton, CSSelect } from '@cloudsense/cs-ui-components';
 
 interface PaginationComponentProps {
 	onNextPageClickHandler: (nextPage: number, pageSize: number) => void;
@@ -58,70 +58,64 @@ export function Pagination(props: PaginationComponentProps): ReactElement {
 	};
 
 	return (
-		<ul className={classnames('pagination-container')}>
-			{/* Left page range navigation arrow */}
-			<li
-				className={classnames('pagination-item', {
-					disabled: props.isLeftPageRangeArrowDisabled(currentPage)
+		<div className="pagination-container">
+			<CSButtonGroup marginPosition="right">
+				{/* Left page range navigation arrow */}
+				<CSButton
+					label="Left page range"
+					labelHidden
+					iconName="jump_to_left"
+					disabled={props.isLeftPageRangeArrowDisabled(currentPage)}
+					onClick={callPreviousPageRangeClickHandler}
+				/>
+				{/* Left page navigation arrow */}
+				<CSButton
+					label="Left page navigation"
+					labelHidden
+					iconName="chevronleft"
+					disabled={currentPage === 1}
+					onClick={(): void => {
+						setCurrentPage((prevState) => prevState - 1);
+						props.onNextPageClickHandler(currentPage - 1, pageSize);
+					}}
+				/>
+				{/* Page numbers */}
+				{props.getPageNumbers(currentPage, pageSize).map((pgNo, index) => {
+					return (
+						<CSButton
+							label={pgNo.toString()}
+							className="current-page-btn"
+							onClick={(): void => {
+								setCurrentPage(pgNo);
+								props.onNextPageClickHandler(pgNo, pageSize);
+							}}
+							key={index}
+						/>
+					);
 				})}
-				onClick={callPreviousPageRangeClickHandler}
-			>
-				<div className="arrow left" />
-				<div className="arrow left" />
-			</li>
-			{/* Left page navigation arrow */}
-			<li
-				className={classnames('pagination-item', {
-					disabled: currentPage === 1
-				})}
-				onClick={(): void => {
-					setCurrentPage((prevState) => prevState - 1);
-					props.onNextPageClickHandler(currentPage - 1, pageSize);
-				}}
-			>
-				<div className="arrow left" />
-			</li>
-			{/* Page numbers */}
-			{props.getPageNumbers(currentPage, pageSize).map((pgNo) => {
-				return (
-					<li
-						className={classnames('pagination-item', {
-							selected: currentPage === pgNo
-						})}
-						onClick={(): void => {
-							setCurrentPage(pgNo);
-							props.onNextPageClickHandler(pgNo, pageSize);
-						}}
-					>
-						{pgNo}
-					</li>
-				);
-			})}
-			{/*  Right Navigation arrow */}
-			<li
-				className={classnames('pagination-item', {
-					disabled: !hasMorePages
-				})}
-				onClick={(): void => {
-					setCurrentPage((prevState) => prevState + 1);
-					props.onNextPageClickHandler(currentPage + 1, pageSize);
-				}}
-			>
-				<div className="arrow right" />
-			</li>
-			{/* Right page range navigation arrow */}
-			<li
-				className={classnames('pagination-item', {
-					disabled: props.isRightPageRangeArrowDisabled(currentPage, pageSize)
-				})}
-				onClick={callNextPageRangeClickHandler}
-			>
-				<div className="arrow right" />
-				<div className="arrow right" />
-			</li>
+				{/*  Right Navigation arrow */}
+				<CSButton
+					label="Right navigation"
+					labelHidden
+					iconName="chevronright"
+					disabled={!hasMorePages}
+					onClick={(): void => {
+						setCurrentPage((prevState) => prevState + 1);
+						props.onNextPageClickHandler(currentPage + 1, pageSize);
+					}}
+				/>
+				{/* Right page range navigation arrow */}
+				<CSButton
+					label="Right page range"
+					labelHidden
+					iconName="jump_to_right"
+					disabled={props.isRightPageRangeArrowDisabled(currentPage, pageSize)}
+					onClick={callNextPageRangeClickHandler}
+				/>
+			</CSButtonGroup>
 			{/* Page size select drop-down */}
-			<li>
-				<select value={pageSize} onChange={callPageSizeChangeHandler}>
+			<>
+				<CSSelect label="Page size select" labelHidden onChange={callPageSizeChangeHandler}>
 					{PAGE_SIZES.map((val) => {
 						return (
 							<option key={val} value={val}>
@@ -129,8 +123,8 @@ export function Pagination(props: PaginationComponentProps): ReactElement {
 							</option>
 						);
 					})}
-				</select>
-			</li>
-		</ul>
+				</CSSelect>
+			</>
+		</div>
 	);
 }

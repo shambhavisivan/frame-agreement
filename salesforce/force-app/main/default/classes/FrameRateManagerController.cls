@@ -2,17 +2,10 @@ global with sharing class FrameRateManagerController {
 	public static final Integer DEFAULT_QUERY_LIMIT = 5000;
 	public static final String CP_TYPE = 'Commercial Product';
 	public static final List<String> CP_ROLES = new List<String>{
-		'Basic', 
-		'Master', 
+		'Basic',
+		'Master',
 		'Variant'
 	};
-	/*
-	 * the below constant CP_ROLE will be removed in another changeset. It is needed here for
-	 * CommercialProductService.cls to pass build on master branch. We will not make changes to CommercialProductService
-	 * in this changeset to use CP_ROLES declared above as it is not relevant to T-60931 patch that will be released
-	 * from R35.
-	 */
-    public static final String CP_ROLE = 'Basic';
 
 	public transient csutil.CustomResource[] commonContainerPageResources {
 		get;

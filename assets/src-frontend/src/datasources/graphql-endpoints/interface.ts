@@ -1,7 +1,7 @@
 export enum CommercialProductRole {
 	master = 'Master',
 	basic = 'Basic',
-	varient = 'Varient',
+	variant = 'Variant',
 	offer = 'Offer'
 }
 
@@ -12,7 +12,7 @@ export enum CommercialProductType {
 }
 
 export interface ProductFilter {
-	role: CommercialProductRole;
+	role: Set<CommercialProductRole>;
 	type: CommercialProductType;
 }
 

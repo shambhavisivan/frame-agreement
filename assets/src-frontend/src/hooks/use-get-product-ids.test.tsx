@@ -10,6 +10,15 @@ import {
 } from '../datasources/graphql-endpoints/interface';
 
 describe('useGetProductIds hook', () => {
+	const mockProductFilter = {
+		role: new Set<CommercialProductRole>([
+			CommercialProductRole.basic,
+			CommercialProductRole.master,
+			CommercialProductRole.variant
+		]),
+		type: CommercialProductType.commercialProduct
+	};
+
 	const getProductIdsSpy = jest
 		.spyOn(remoteActions, 'getProductIds')
 		.mockImplementation((productIdsFilter, filterString) => {
@@ -42,10 +51,7 @@ describe('useGetProductIds hook', () => {
 
 		expect(result.current.itemIds).toEqual(mockProductIds);
 		expect(result.current.itemIds?.length).toEqual(10);
-		expect(useProductIdsSpy).toHaveBeenCalledWith({
-			role: CommercialProductRole.basic,
-			type: CommercialProductType.commercialProduct
-		});
+		expect(useProductIdsSpy).toHaveBeenCalledWith(mockProductFilter);
 		expect(getProductIdsSpy.mock.calls.length).toBe(1);
 		expect(getProductIdsSpy).toHaveBeenCalledWith(mockProductIds, null);
 	});
@@ -58,10 +64,7 @@ describe('useGetProductIds hook', () => {
 
 		expect(result.current.itemIds).toEqual(['id-2']);
 		expect(result.current.itemIds?.length).toEqual(1);
-		expect(useProductIdsSpy).toHaveBeenCalledWith({
-			role: CommercialProductRole.basic,
-			type: CommercialProductType.commercialProduct
-		});
+		expect(useProductIdsSpy).toHaveBeenCalledWith(mockProductFilter);
 		expect(getProductIdsSpy.mock.calls.length).toBe(1);
 		expect(getProductIdsSpy).toHaveBeenCalledWith(['id-2'], '');
 	});
@@ -74,10 +77,7 @@ describe('useGetProductIds hook', () => {
 
 		expect(result.current.itemIds).toEqual(['id-1']);
 		expect(result.current.itemIds?.length).toEqual(1);
-		expect(useProductIdsSpy).toHaveBeenCalledWith({
-			role: CommercialProductRole.basic,
-			type: CommercialProductType.commercialProduct
-		});
+		expect(useProductIdsSpy).toHaveBeenCalledWith(mockProductFilter);
 		expect(getProductIdsSpy.mock.calls.length).toBe(1);
 		expect(getProductIdsSpy).toHaveBeenCalledWith(
 			mockProductIds,

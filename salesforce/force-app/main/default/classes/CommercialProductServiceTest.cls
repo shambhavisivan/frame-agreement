@@ -94,6 +94,16 @@ private class CommercialProductServiceTest {
 			cspmb__role__c = 'Basic'
 		);
 
+		// Master CP
+		cspmb__Price_Item__c masterCp = new cspmb__Price_Item__c(
+			name = 'masterCp',
+			cspmb__one_off_charge__c = 50.00,
+			cspmb__is_active__c = true,
+			cspmb__recurring_charge__c = 25 - 00,
+			cspmb__type__c = 'Commercial Product',
+			cspmb__role__c = 'Master'
+		);
+
 		insert cp_1;
 		insert cp_2;
 		insert cp_3;
@@ -104,6 +114,20 @@ private class CommercialProductServiceTest {
 		insert cp_8;
 		insert cp_addon_inv;
 		insert cp_addon_assoc_inv;
+		insert masterCp;
+
+		// Variant CP
+		cspmb__Price_Item__c variantCp = new cspmb__Price_Item__c(
+			name = 'variantCp',
+			cspmb__one_off_charge__c = 60.00,
+			cspmb__is_active__c = true,
+			cspmb__recurring_charge__c = 25 - 00,
+			cspmb__price_item_code__c = 'cp_5',
+			cspmb__type__c = 'Commercial Product',
+			cspmb__role__c = 'Variant',
+			cspmb__master_price_item__c = masterCp.id
+		);
+		insert variantCp;
 
 		// pricing element and types
 		cspmb__Pricing_Element_Type__c pricingElementType_1 = new cspmb__Pricing_Element_Type__c(
@@ -199,7 +223,7 @@ private class CommercialProductServiceTest {
 
 		Test.stopTest();
 
-		System.assertEquals(queriedCPs.size(), 9);
+		System.assertEquals(queriedCPs.size(),11);
 		for(cspmb__price_item__c pi: queriedCPs) {
 			System.assertNotEquals(pi.name, 'cp_3');
 		}
@@ -300,14 +324,14 @@ private class CommercialProductServiceTest {
 
 		Test.stopTest();
 
-		System.assertEquals(queriedCPs.size(), 9);
+		System.assertEquals(queriedCPs.size(), 11);
 		System.assertEquals(nextQueriedCPs.size(), 0);
 		for(cspmb__price_item__c cp: nextQueriedCPsWithLimit) {
 			System.assertNotEquals(cp.id, queriedCPsWithLimit.get(queriedCPsWithLimit.size() - 1).id);
 		}
 		System.assertEquals(queriedCPsWithLimit.size(), 4);
 		System.assertEquals(nextQueriedCPsWithLimit.size(), 4);
-		System.assertEquals(nextCPsListWithLimit.size(), 1);
+		System.assertEquals(nextCPsListWithLimit.size(), 3);
 	}
 
 	@IsTest
@@ -353,7 +377,7 @@ private class CommercialProductServiceTest {
 
 		Test.stopTest();
 
-		System.assertEquals(queriedCPs.size(), 9);
+		System.assertEquals(queriedCPs.size(), 11);
 		System.assertEquals(nextQueriedCPs.size(), 0);
 		System.assertEquals(queriedCPsWithLimit.size(), 4);
 		System.assertEquals(nextQueriedCPsWithLimit.size(), 4);
@@ -546,8 +570,8 @@ private class CommercialProductServiceTest {
 
 		Test.stopTest();
 
-		System.assertEquals(10, cpIdList.size());
-		System.assertEquals(10, cps.size());
+		System.assertEquals(12, cpIdList.size());
+		System.assertEquals(12, cps.size());
 	}
 
 	@IsTest
@@ -572,8 +596,8 @@ private class CommercialProductServiceTest {
 
 		Test.stopTest();
 
-		System.assertEquals(10, cpIdList.size());
-		System.assertEquals(9, cps.size());
+		System.assertEquals(12, cpIdList.size());
+		System.assertEquals(11, cps.size());
 	}
 
 	@IsTest
@@ -736,7 +760,7 @@ private class CommercialProductServiceTest {
 		List<cspmb__Price_Item__c> cps = CommercialProductService.queryProducts(new List<Id>(), null, null, 10, new List<Id>());
 		Test.stopTest();
 
-		System.assertEquals(9, cps.size());
+		System.assertEquals(10, cps.size());
 	}
 
 	@IsTest

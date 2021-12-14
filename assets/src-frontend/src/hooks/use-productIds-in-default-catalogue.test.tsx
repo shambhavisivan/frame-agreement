@@ -17,7 +17,7 @@ import { AppSettings } from '../datasources';
 describe('test useProductIdsInDefaultCatalogue hook', () => {
 	jest.mock('../datasources/graphql-endpoints/pricing-service-graphql');
 	const mockFilter = {
-		role: CommercialProductRole.basic,
+		role: new Set([CommercialProductRole.basic]),
 		type: CommercialProductType.commercialProduct
 	};
 	const queryProductsSpy = jest
@@ -38,7 +38,7 @@ describe('test useProductIdsInDefaultCatalogue hook', () => {
 		);
 
 		const mockFilter = {
-			role: CommercialProductRole.basic,
+			role: new Set([CommercialProductRole.basic]),
 			type: CommercialProductType.commercialProduct
 		};
 

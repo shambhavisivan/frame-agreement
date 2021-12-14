@@ -8,11 +8,7 @@ import {
 import React, { ReactElement, useEffect, useState } from 'react';
 import { QueryStatus } from 'react-query';
 import { AppSettings, CommercialProductStandalone } from '../../datasources';
-import {
-	CommercialProductRole,
-	CommercialProductType,
-	ProductFilter
-} from '../../datasources/graphql-endpoints/interface';
+import { cpFilter as commercialProductFilter } from '../../app-constants';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
 import { useGetProductIds } from '../../hooks/use-get-product-ids';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
@@ -32,10 +28,6 @@ interface AddProductsModalProp {
 export interface SelectedProducts {
 	[id: string]: CommercialProductStandalone;
 }
-const commercialProductFilter: ProductFilter = {
-	role: CommercialProductRole.basic,
-	type: CommercialProductType.commercialProduct
-};
 
 export function AddProductsModal({
 	isModalOpen,
@@ -126,20 +118,24 @@ export function AddProductsModal({
 		 */
 		if (!checkFilterCpIsApplied() && !isPsEnabled) {
 			setProductList(products || []);
-			setAllProductIds(itemIds || []);
+			setAllProductIds(skipAddedIds());
 			setProductIds([]);
 			setLastRecordId(null);
 		}
 	}, [filterCp]);
 
 	useEffect(() => {
+		setAllProductIds(skipAddedIds());
+	}, [itemIds, itemIdsStatus, addedProductIds]);
+
+	const skipAddedIds = (): string[] => {
 		let ids: string[] = JSON.parse(JSON.stringify(allProductIds));
 		if (itemIdsStatus === QueryStatus.Success && !checkFilterCpIsApplied()) {
 			ids = itemIds || [];
 		}
 		ids = ids.filter((id) => !addedProductIds.includes(id));
-		setAllProductIds(ids);
-	}, [itemIds, itemIdsStatus, addedProductIds]);
+		return ids;
+	};
 
 	const checkFilterCpIsApplied = (): boolean => {
 		for (const filterItem of filterCp) {

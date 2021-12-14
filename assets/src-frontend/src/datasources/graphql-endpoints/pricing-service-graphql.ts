@@ -38,7 +38,7 @@ export class PricingServiceGraphQL implements PricingServiceApi {
 			} else {
 				const productsInCatalogueResponse: ProductsInCatalogueResponse = response.data as ProductsInCatalogueResponse;
 				return productsInCatalogueResponse.productsInCatalogue.data
-					.filter((cp) => cp.role && cp.role === filter.role && cp.type === filter.type)
+					.filter((cp) => filter.role?.has(cp?.role) && cp.type === filter.type)
 					.map((cp) => cp.id);
 			}
 		} catch (error) {
@@ -87,7 +87,7 @@ export class PricingServiceGraphQL implements PricingServiceApi {
 			} else {
 				const productsInCategoryResponse: ProductsInCategoryResponse = response.data as ProductsInCategoryResponse;
 				return productsInCategoryResponse.productsInCategory.data.filter(
-					(cp) => cp.role && cp.role === filter.role && cp.type === filter.type
+					(cp) => filter.role?.has(cp?.role) && cp.type === filter.type
 				);
 			}
 		} catch (error) {

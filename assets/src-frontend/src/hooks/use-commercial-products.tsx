@@ -1,11 +1,7 @@
 import { QueryStatus, useQuery } from 'react-query';
 import { CommercialProductStandalone, remoteActions } from '../datasources';
-import {
-	CommercialProductRole,
-	CommercialProductType,
-	ProductFilter
-} from '../datasources/graphql-endpoints/interface';
 import { useProductIdsInDefaultCatalogue } from './use-productIds-in-default-catalogue';
+import { cpFilter as filter } from '../app-constants';
 
 export function useCommercialProducts(
 	filterIds: Array<string> = [],
@@ -17,11 +13,6 @@ export function useCommercialProducts(
 	status: QueryStatus;
 	data?: CommercialProductStandalone[];
 } {
-	const filter: ProductFilter = {
-		role: CommercialProductRole.basic,
-		type: CommercialProductType.commercialProduct
-	};
-
 	const { productIds } = useProductIdsInDefaultCatalogue(filter);
 	// to avoid filter and default catalogue filter mixing up
 	const productIdsFilter = filterIds?.length ? filterIds : productIds.length ? productIds : [];

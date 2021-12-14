@@ -1,4 +1,10 @@
 public class CommercialProductService {
+	public static final List<String> CP_ROLES = new List<String>{
+		'Basic',
+		'Master',
+		'Variant'
+	};
+
 	public static List<cspmb__price_item__c> queryProducts(
 		List<Id> priceItemIds,
 		String filterFields,
@@ -38,7 +44,7 @@ public class CommercialProductService {
 			    // If user turns off PS after a successful synchronisation
 			    'and (cspmb__type__c = null ' +
 			    'OR (cspmb__type__c = ' + '\'' + FrameRateManagerController.CP_TYPE + '\'' +
-			    ' AND cspmb__role__c = ' + '\'' + FrameRateManagerController.CP_ROLE + '\'' + ')) ';
+			    ' AND cspmb__role__c in :CP_ROLES)) ';
 
 			if (priceItemIds != null && !priceItemIds.isEmpty()) {
 				query += 'and id in :priceItemIds ';
@@ -105,4 +111,3 @@ public class CommercialProductService {
 
 	}
 }
-

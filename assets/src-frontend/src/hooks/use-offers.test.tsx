@@ -30,7 +30,7 @@ describe('test useOffers hook', () => {
 
 		expect(result.current.data).toEqual(mockOffers);
 		expect(useProductIdsSpy).toHaveBeenCalledWith({
-			role: CommercialProductRole.offer,
+			role: new Set([CommercialProductRole.offer]),
 			type: CommercialProductType.commercialProduct
 		});
 		expect(getOffersSpy.mock.calls.length).toBe(1);

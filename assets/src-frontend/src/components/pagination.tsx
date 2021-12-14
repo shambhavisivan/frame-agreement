@@ -23,7 +23,7 @@ export function Pagination(props: PaginationComponentProps): ReactElement {
 	const prevResetState = useRef<string>();
 
 	useEffect(() => {
-		if (props.shouldResetPage && props.shouldResetPage !== prevResetState.current) {
+		if (props.shouldResetPage !== prevResetState.current) {
 			setCurrentPage(1);
 			prevResetState.current = props.shouldResetPage;
 		}

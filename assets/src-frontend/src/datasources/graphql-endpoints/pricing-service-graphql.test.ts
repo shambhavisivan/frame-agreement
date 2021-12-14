@@ -40,7 +40,7 @@ describe('PricingServiceGraphQL', () => {
 		test('should return commercial product basic ids in the given catalogue', async () => {
 			const productFilter = {
 				type: CommercialProductType.commercialProduct,
-				role: CommercialProductRole.basic
+				role: new Set([CommercialProductRole.basic])
 			};
 
 			DispatcherService.prototype.queryData = jest.fn().mockImplementationOnce(() => {
@@ -63,7 +63,7 @@ describe('PricingServiceGraphQL', () => {
 		test('should return commercial product offer ids in the given catalogue', async () => {
 			const productFilter = {
 				type: CommercialProductType.commercialProduct,
-				role: CommercialProductRole.offer
+				role: new Set([CommercialProductRole.offer])
 			};
 
 			DispatcherService.prototype.queryData = jest.fn().mockImplementationOnce(() => {
@@ -86,7 +86,7 @@ describe('PricingServiceGraphQL', () => {
 		test('should throw error when there is error fetching products', async () => {
 			const productFilter = {
 				type: CommercialProductType.commercialProduct,
-				role: CommercialProductRole.offer
+				role: new Set([CommercialProductRole.offer])
 			};
 			const mockErrorMessage = 'Mock Error Message';
 
@@ -146,7 +146,7 @@ describe('PricingServiceGraphQL', () => {
 			const testCategoryId = 'categoryid1';
 			const productFilter = {
 				type: CommercialProductType.commercialProduct,
-				role: CommercialProductRole.basic
+				role: new Set([CommercialProductRole.basic])
 			};
 
 			DispatcherService.prototype.queryData = jest.fn().mockImplementationOnce(() => {
@@ -170,7 +170,7 @@ describe('PricingServiceGraphQL', () => {
 			const testCategoryId = 'categoryid2';
 			const productFilter = {
 				type: CommercialProductType.commercialProduct,
-				role: CommercialProductRole.offer
+				role: new Set([CommercialProductRole.offer])
 			};
 
 			DispatcherService.prototype.queryData = jest.fn().mockImplementationOnce(() => {
@@ -194,7 +194,7 @@ describe('PricingServiceGraphQL', () => {
 			const testCategoryId = 'categoryid1';
 			const productFilter = {
 				type: CommercialProductType.commercialProduct,
-				role: CommercialProductRole.basic
+				role: new Set([CommercialProductRole.basic])
 			};
 			const mockErrorMessage = 'Mock Error Message';
 

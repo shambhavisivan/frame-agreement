@@ -13,7 +13,7 @@ import { useProductsInCategory } from './use-products-in-category';
 describe('useProductsInCategory test', () => {
 	jest.mock('../datasources/graphql-endpoints/pricing-service-graphql');
 	const mockFilter = {
-		role: CommercialProductRole.basic,
+		role: new Set([CommercialProductRole.basic]),
 		type: CommercialProductType.commercialProduct
 	};
 	const queryProductsSpy = jest

@@ -12,7 +12,7 @@ export function useOffers(): {
 	data?: CommercialProductStandalone[];
 } {
 	const filter: ProductFilter = {
-		role: CommercialProductRole.offer,
+		role: new Set<CommercialProductRole>([CommercialProductRole.offer]),
 		type: CommercialProductType.commercialProduct
 	};
 

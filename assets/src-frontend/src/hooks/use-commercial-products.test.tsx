@@ -4,11 +4,8 @@ import { mockCommercialProducts, mockProductIds } from '../datasources/mock-data
 import * as productsInDefaultCatalogue from './use-productIds-in-default-catalogue';
 import { remoteActions } from '../datasources/remote-actions-salesforce';
 import { useCommercialProducts } from './use-commercial-products';
-import {
-	CommercialProductRole,
-	CommercialProductType
-} from '../datasources/graphql-endpoints/interface';
 import { CommercialProductStandalone } from '../datasources';
+import { cpFilter as mockProductFilter } from '../app-constants';
 
 describe('test useCommercialProducts hook', () => {
 	const getCommercialProductsSpy = jest
@@ -65,10 +62,7 @@ describe('test useCommercialProducts hook', () => {
 		});
 
 		expect(result.current.data).toEqual(mockCommercialProducts.slice(0, 10));
-		expect(useProductIdsSpy).toHaveBeenCalledWith({
-			role: CommercialProductRole.basic,
-			type: CommercialProductType.commercialProduct
-		});
+		expect(useProductIdsSpy).toHaveBeenCalledWith(mockProductFilter);
 		expect(getCommercialProductsSpy.mock.calls.length).toBe(1);
 		expect(getCommercialProductsSpy).toHaveBeenCalledWith(mockProductIds, null, null, 0, []);
 	});
@@ -89,10 +83,7 @@ describe('test useCommercialProducts hook', () => {
 
 		expect(result.current.data?.length).toEqual(1);
 		expect(result.current.data ? result.current.data[0].id : '').toEqual('a1F1t0000001JBoEAM');
-		expect(useProductIdsSpy).toHaveBeenCalledWith({
-			role: CommercialProductRole.basic,
-			type: CommercialProductType.commercialProduct
-		});
+		expect(useProductIdsSpy).toHaveBeenCalledWith(mockProductFilter);
 		expect(getCommercialProductsSpy.mock.calls.length).toBe(1);
 		expect(getCommercialProductsSpy).toHaveBeenCalledWith(
 			['a1F1t0000001JBoEAM', 'a1F1t0000001JBZEA2'],
@@ -115,10 +106,7 @@ describe('test useCommercialProducts hook', () => {
 
 		expect(result.current.data?.length).toEqual(1);
 		expect(result.current.data ? result.current.data[0].id : '').toEqual('a1F1t0000001JBZEA2');
-		expect(useProductIdsSpy).toHaveBeenCalledWith({
-			role: CommercialProductRole.basic,
-			type: CommercialProductType.commercialProduct
-		});
+		expect(useProductIdsSpy).toHaveBeenCalledWith(mockProductFilter);
 		expect(getCommercialProductsSpy.mock.calls.length).toBe(1);
 		expect(getCommercialProductsSpy).toHaveBeenCalledWith(
 			['a1F1t0000001JBoEAM', 'a1F1t0000001JBZEA2'],
@@ -138,10 +126,7 @@ describe('test useCommercialProducts hook', () => {
 		});
 
 		expect(result.current.data?.length).toEqual(5);
-		expect(useProductIdsSpy).toHaveBeenCalledWith({
-			role: CommercialProductRole.basic,
-			type: CommercialProductType.commercialProduct
-		});
+		expect(useProductIdsSpy).toHaveBeenCalledWith(mockProductFilter);
 		expect(getCommercialProductsSpy.mock.calls.length).toBe(1);
 		expect(getCommercialProductsSpy).toHaveBeenCalledWith(
 			mockProductIds,

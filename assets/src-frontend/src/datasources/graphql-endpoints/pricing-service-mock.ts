@@ -36,10 +36,9 @@ export class PricingServiceGraphQL implements PricingServiceApi {
 		categoryId: string,
 		filter: ProductFilter
 	): Promise<ProductsInCategoryData[]> {
-		const mockResponse =
-			filter.role === CommercialProductRole.basic
-				? mockProductsInCategory[categoryId]
-				: mockOffersInCategory[categoryId];
+		const mockResponse = filter.role?.has(CommercialProductRole.basic)
+			? mockProductsInCategory[categoryId]
+			: mockOffersInCategory[categoryId];
 		return Promise.resolve(mockResponse);
 	}
 

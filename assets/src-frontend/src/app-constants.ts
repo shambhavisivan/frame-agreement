@@ -1,4 +1,9 @@
 import { FieldMetadata } from './datasources';
+import {
+	CommercialProductRole,
+	CommercialProductType,
+	ProductFilter
+} from './datasources/graphql-endpoints/interface';
 
 export enum QueryKeys {
 	frameagreement = 'frameAgreement',
@@ -97,3 +102,12 @@ export const ADDON_PRODUCT_DETAILS_GRID_METADATA: FieldMetadata[] = [
 		scale: 2
 	}
 ];
+
+export const cpFilter: ProductFilter = {
+	role: new Set<CommercialProductRole>([
+		CommercialProductRole.basic,
+		CommercialProductRole.master,
+		CommercialProductRole.variant
+	]),
+	type: CommercialProductType.commercialProduct
+};

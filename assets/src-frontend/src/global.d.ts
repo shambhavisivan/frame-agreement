@@ -210,6 +210,8 @@ namespace SfGlobal {
 		cspmb__Is_Active__c: boolean;
 		cspmb__Recurring_Charge__c: number | undefined;
 		cspmb__One_Off_Charge__c: number | undefined;
+		cspmb__Is_One_Off_Discount_Allowed__c: boolean;
+		cspmb__Is_Recurring_Discount_Allowed__c: boolean;
 	}
 
 	interface CustomLabelsSf {
@@ -277,6 +279,13 @@ namespace SfGlobal {
 		charges_header_recc: string;
 		charges_header_recc_neg: string;
 		charges_header_type: string;
+		product_charge_header_name: string;
+		product_charge_header_oneOff: string;
+		product_charge_header_oneOff_neg: string;
+		product_charge_header_recc: string;
+		product_charge_header_recc_neg: string;
+		one_off_product: string;
+		recurring_product: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

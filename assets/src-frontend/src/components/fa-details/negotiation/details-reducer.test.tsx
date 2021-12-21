@@ -324,7 +324,9 @@ describe('detailsReducer', () => {
 					name: 'testproductname',
 					contractTerm: '12months',
 					oneOffCharge: 1000,
-					recurringCharge: 2000
+					recurringCharge: 2000,
+					isOneOffDiscountAllowed: true,
+					isRecurringDiscountAllowed: true
 				}
 			];
 
@@ -399,7 +401,9 @@ describe('detailsReducer', () => {
 					name: 'testproductname',
 					contractTerm: '12months',
 					oneOffCharge: 200,
-					recurringCharge: 300
+					recurringCharge: 300,
+					isRecurringDiscountAllowed: true,
+					isOneOffDiscountAllowed: true
 				}
 			];
 

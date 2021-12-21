@@ -144,6 +144,8 @@ export interface CommercialProductStandalone {
 	isActive?: boolean;
 	oneOffCharge?: number;
 	recurringCharge?: number;
+	isOneOffDiscountAllowed: boolean;
+	isRecurringDiscountAllowed: boolean;
 }
 
 export interface UserLocaleInfo {

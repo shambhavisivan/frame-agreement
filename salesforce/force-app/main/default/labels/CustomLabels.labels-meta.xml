@@ -1799,4 +1799,18 @@
         <shortDescription>no_active_fa</shortDescription>
         <value>No active frame agreement in fa editor.</value>
     </labels>
+    <labels>
+        <fullName>one_off_product</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>one_off_product</shortDescription>
+        <value>One-off Charge (Product)</value>
+    </labels>
+    <labels>
+        <fullName>recurring_product</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>recurring_product</shortDescription>
+        <value>Recurring charge (Product)</value>
+    </labels>
 </CustomLabels>

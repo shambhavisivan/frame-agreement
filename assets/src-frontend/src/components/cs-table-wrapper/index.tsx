@@ -20,7 +20,7 @@ type CSTableProps = {
 export function CsTableWrapper(props: CSTableProps): ReactElement {
 	// show only first 5 fields for visibility purposes
 	const [columnMetadata, setColumnMetadata] = useState<FieldMetadata[]>(
-		props.columnMetadata.length > 4 ? props.columnMetadata.slice(0, 5) : props.columnMetadata
+		props.columnMetadata?.length > 4 ? props.columnMetadata.slice(0, 5) : props.columnMetadata
 	);
 	const [showColumnChooser, setShowColumnChooser] = useState(false);
 

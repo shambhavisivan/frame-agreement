@@ -11,7 +11,9 @@ const commercialProducts: Array<CommercialProductStandalone> = [
 		contractTerm: '12 Months',
 		oneOffCharge: 60.2336,
 		recurringCharge: 269.665423,
-		isActive: true
+		isActive: true,
+		isOneOffDiscountAllowed: true,
+		isRecurringDiscountAllowed: true
 	},
 	{
 		id: 'a1F1t0000001JBZEA2',
@@ -19,7 +21,9 @@ const commercialProducts: Array<CommercialProductStandalone> = [
 		contractTerm: '12 Months',
 		oneOffCharge: 60.2336,
 		recurringCharge: 269,
-		isActive: true
+		isActive: true,
+		isOneOffDiscountAllowed: true,
+		isRecurringDiscountAllowed: true
 	}
 ];
 

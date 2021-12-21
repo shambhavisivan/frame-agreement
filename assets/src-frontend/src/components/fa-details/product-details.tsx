@@ -11,6 +11,7 @@ import { createActionsForNegotiateProduct } from './negotiation/negotiation-acti
 import { NegotiationItemType } from './negotiation/details-reducer';
 import { QueryStatus, useCommercialProductData } from '../../hooks/use-commercial-product-data';
 import { ChargeList } from './charge-list';
+import { LegacyProductCharge } from './legacy-product-charge';
 
 interface ProductDetailsProps {
 	product: CommercialProductStandalone;
@@ -23,23 +24,49 @@ const enum ChildButtons {
 }
 
 export function ProductDetails({
-	product: { id },
+	product,
 	productType = 'products'
 }: ProductDetailsProps): ReactElement {
 	const labels = useCustomLabels();
 	const [activeDetails, setActiveDetails] = useState<ChildButtons>(ChildButtons.addon);
-	const { addonList } = useQueryAddons(id);
+	const { addonList } = useQueryAddons(product.id);
 	const { dispatch } = useContext(store);
 	const negotiateActions = createActionsForNegotiateProduct(dispatch);
 	const {
 		negotiateRateCardLine,
 		negotiateAdvancedRecurringCharge,
-		negotiateAdvancedOneOffCharge
-	} = negotiateActions(id, productType);
-	const { data: productData, status } = useCommercialProductData([id]);
+		negotiateAdvancedOneOffCharge,
+		negotiateProductOneOff,
+		negotiateProductRecurring
+	} = negotiateActions(product.id, productType);
+	const { data: productData, status } = useCommercialProductData([product.id]);
 
 	const onClickButton = (buttonName: ChildButtons): void => {
 		setActiveDetails(buttonName);
+	};
+
+	const renderCharges = (): ReactElement => {
+		if (activeDetails === ChildButtons.charges && status === QueryStatus.Success) {
+			if (productData?.cpData[product.id]?.charges?.length) {
+				return (
+					<ChargeList
+						chargeList={productData?.cpData[product.id].charges || []}
+						productId={product.id}
+						negotiateOneOffCharge={negotiateAdvancedOneOffCharge}
+						negotiateRecurringCharge={negotiateAdvancedRecurringCharge}
+					/>
+				);
+			} else {
+				return (
+					<LegacyProductCharge
+						product={product}
+						oneOffChargeNegotiation={negotiateProductOneOff}
+						recurringChargeNegotiation={negotiateProductRecurring}
+					/>
+				);
+			}
+		}
+		return <></>;
 	};
 
 	return (
@@ -64,22 +91,14 @@ export function ProductDetails({
 			)}
 			{activeDetails === ChildButtons.ratecard &&
 				status === QueryStatus.Success &&
-				productData?.cpData[id].rateCards && (
+				productData?.cpData[product.id].rateCards && (
 					<RateCards
-						productId={id}
-						rateCards={productData?.cpData[id].rateCards}
+						productId={product.id}
+						rateCards={productData?.cpData[product.id].rateCards}
 						negotiateRateCardLine={negotiateRateCardLine}
 					/>
 				)}
-
-			{activeDetails === ChildButtons.charges && status === QueryStatus.Success && (
-				<ChargeList
-					chargeList={productData?.cpData[id].charges || []}
-					productId={id}
-					negotiateOneOffCharge={negotiateAdvancedOneOffCharge}
-					negotiateRecurringCharge={negotiateAdvancedRecurringCharge}
-				/>
-			)}
+			{renderCharges()}
 		</div>
 	);
 }

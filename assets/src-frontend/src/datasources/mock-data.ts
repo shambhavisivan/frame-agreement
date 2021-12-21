@@ -793,7 +793,14 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	charges_header_oneOff: 'One Off Adjustment',
 	charges_header_recc: 'Recurring Adjustment',
 	charges_header_recc_neg: 'Negotiated Recurring',
-	charges_header_type: 'Charge Type'
+	charges_header_type: 'Charge Type',
+	product_charge_header_name: 'Product Charges',
+	product_charge_header_oneOff: 'One-Off Adjustment',
+	product_charge_header_oneOff_neg: 'Negotiated One Off',
+	product_charge_header_recc: 'Recurring Adjustment',
+	product_charge_header_recc_neg: 'Negotiated Recurring',
+	one_off_product: 'One-off Charge (Product)',
+	recurring_product: 'Recurring charge (Product)'
 };
 /* eslint-enable */
 

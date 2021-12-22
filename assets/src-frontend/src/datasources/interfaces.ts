@@ -1,4 +1,5 @@
 import { ChargeType } from '../components/fa-details/negotiation/details-reducer';
+import { Deforcified } from './deforcify';
 
 export interface Account {
 	id: string;
@@ -21,16 +22,13 @@ export type FacSetting = {
 	approversRevise: boolean;
 };
 
-export interface StandardButtonData {
-	save: string[] | string;
-}
 export interface AppSettings {
 	account: Account;
 	defaultCatalogueId: string;
 	headerData: Record<string, unknown>;
 	customTabsData: Record<string, unknown>;
 	buttonCustomData: Record<string, unknown>;
-	buttonStandardData: StandardButtonData;
+	buttonStandardData: Deforcified<SfGlobal.StandardButtonData>;
 	relatedListsData: Record<string, unknown>;
 	addonCategorizationData: Record<string, unknown>;
 	categorizationData: SfGlobal.CategorizationData[];

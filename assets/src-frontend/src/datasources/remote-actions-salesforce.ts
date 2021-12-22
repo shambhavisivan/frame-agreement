@@ -74,7 +74,7 @@ export const remoteActions: RemoteActions = {
 			defaultCatalogueId: settings.DefaultCatalogueId,
 			customTabsData: settings.CustomTabsData,
 			buttonCustomData: settings.ButtonCustomData,
-			buttonStandardData: settings.ButtonStandardData,
+			buttonStandardData: deforcify(settings.ButtonStandardData),
 			relatedListsData: settings.RelatedListsData,
 			addonCategorizationData: settings.AddonCategorizationData,
 			categorizationData: settings.CategorizationData,

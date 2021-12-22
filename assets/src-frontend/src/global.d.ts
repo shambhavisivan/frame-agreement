@@ -69,6 +69,12 @@ namespace SfGlobal {
 		values: string[];
 	}
 
+	/* eslint-disable @typescript-eslint/naming-convention */
+	export interface StandardButtonData {
+		Save: string[] | string;
+	}
+	/* eslint-enable @typescript-eslint/naming-convention */
+
 	// TODO define the unknowns
 	interface AppSettings {
 		account: {

@@ -4,7 +4,7 @@ import { ProductStatus } from './product-list-grid';
 import { CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { ProductsList } from './products-list';
-import { StandaloneAddons } from './standalone-addons';
+import { StandaloneAddons } from './standalone-addons/standalone-addons';
 
 type DetailTabProps = {
 	products: CommercialProductStandalone[];

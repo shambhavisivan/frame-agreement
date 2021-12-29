@@ -14,9 +14,18 @@ import { GridColumnChooser } from './grid-column-chooser';
 interface Props {
 	fieldMetadata?: FieldMetadata[];
 	addonList: Addon[];
+	selectedAddonIds?: string[];
+	onSelectRow?: (event: React.ChangeEvent<HTMLInputElement>, row: Addon[]) => void;
+	isCollapsible?: boolean;
 }
 
-export function AddonGrid({ fieldMetadata, addonList }: Props): ReactElement {
+export function AddonGrid({
+	fieldMetadata,
+	addonList,
+	selectedAddonIds,
+	isCollapsible = false,
+	onSelectRow
+}: Props): ReactElement {
 	const [metadata, setFieldMetadata] = useState<CSDataTableColumnInterface[]>([]);
 	const { metadata: addonMetadata, metadataStatus } = useFieldMetadata(ADDON_API_NAME);
 
@@ -68,7 +77,13 @@ export function AddonGrid({ fieldMetadata, addonList }: Props): ReactElement {
 		<div>
 			{addonList.length ? (
 				<CSDataTable
+					collapsible={isCollapsible}
+					selectable={!!onSelectRow}
+					selectedKeys={selectedAddonIds}
 					columns={addColumnChooser}
+					onSelectChange={(event, selectedRow): void =>
+						onSelectRow && onSelectRow(event, [selectedRow?.data as Addon])
+					}
 					rows={
 						addonList?.map((addon) => ({
 							key: addon.id,

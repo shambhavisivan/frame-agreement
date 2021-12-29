@@ -293,6 +293,8 @@ namespace SfGlobal {
 		product_charge_header_recc_neg: string;
 		one_off_product: string;
 		recurring_product: string;
+		btn_AddAddons: string;
+		modal_addAddons_title: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

@@ -801,7 +801,9 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	product_charge_header_recc: 'Recurring Adjustment',
 	product_charge_header_recc_neg: 'Negotiated Recurring',
 	one_off_product: 'One-off Charge (Product)',
-	recurring_product: 'Recurring charge (Product)'
+	recurring_product: 'Recurring charge (Product)',
+	btn_AddAddons: 'Add Addons',
+	modal_addAddons_title: 'Add stand-alone Add Ons'
 };
 /* eslint-enable */
 

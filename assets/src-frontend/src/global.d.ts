@@ -295,6 +295,7 @@ namespace SfGlobal {
 		recurring_product: string;
 		btn_AddAddons: string;
 		modal_addAddons_title: string;
+		modal_addAddons_input_search_placeholder: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

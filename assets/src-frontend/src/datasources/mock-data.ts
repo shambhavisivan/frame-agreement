@@ -803,7 +803,8 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	one_off_product: 'One-off Charge (Product)',
 	recurring_product: 'Recurring charge (Product)',
 	btn_AddAddons: 'Add Addons',
-	modal_addAddons_title: 'Add stand-alone Add Ons'
+	modal_addAddons_title: 'Add stand-alone Add Ons',
+	modal_addAddons_input_search_placeholder: 'Filter Addons'
 };
 /* eslint-enable */
 

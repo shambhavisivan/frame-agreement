@@ -1,11 +1,12 @@
 import {
 	CSButton,
+	CSInputText,
 	CSModal,
 	CSModalBody,
 	CSModalFooter,
 	CSModalHeader
 } from '@cloudsense/cs-ui-components';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Addon } from '../../../datasources';
 import { useCustomLabels } from '../../../hooks/use-custom-labels';
 import { AddonGrid } from '../addon-grid';
@@ -29,6 +30,11 @@ export function AddAddonsModal({
 }: Props): ReactElement {
 	const labels = useCustomLabels();
 	const [selectedAddons, setSelectedAddons] = useState<SelectedAddons>({});
+	const [addOnsToLoad, setAddonsToLoad] = useState<Addon[]>([]);
+
+	useEffect(() => {
+		setAddonsToLoad(addOnList);
+	}, [addOnList]);
 
 	const onSelectAddons = (addOnList: Addon[]): void => {
 		const modifySelection = addOnList.reduce(
@@ -47,6 +53,15 @@ export function AddAddonsModal({
 		setSelectedAddons({ ...modifySelection });
 	};
 
+	const onFilter = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
+		if (value.length) {
+			const filteredAddons = addOnsToLoad.filter((addon) => addon.name.includes(value));
+			setAddonsToLoad(filteredAddons);
+			return;
+		}
+		setAddonsToLoad(addOnList);
+	};
+
 	return (
 		<CSModal
 			visible={isModalOpen}
@@ -55,9 +70,15 @@ export function AddAddonsModal({
 			className="product-selection-modal"
 		>
 			<CSModalHeader title={labels.modalAddAddonsTitle} />
+			<CSInputText
+				label={labels.modalAddAddonsInputSearchPlaceholder}
+				labelHidden
+				placeholder={labels.modalAddAddonsInputSearchPlaceholder}
+				onChange={onFilter}
+			/>
 			<CSModalBody padding="0">
 				<AddonGrid
-					addonList={addOnList}
+					addonList={addOnsToLoad}
 					selectedAddonIds={Object.values(selectedAddons).map((addon) => addon.id)}
 					onSelectRow={(event, row): void => onSelectAddons(row)}
 				/>

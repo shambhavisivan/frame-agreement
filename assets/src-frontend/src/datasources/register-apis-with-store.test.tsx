@@ -1,14 +1,28 @@
 import React from 'react';
+import { remoteActions } from '../datasources/remote-actions-salesforce';
 import { render } from '@testing-library/react';
-import { FamWindow } from './register-apis';
 import { RegisterApisWithStore } from './register-apis-with-store';
 import { FrameAgreement } from '.';
 import { CUSTOM_LABELS_MOCK, mockFrameAgreements } from './mock-data';
 import { DetailsProvider } from '../components/fa-details/details-page-provider';
+import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
+import * as reactQuery from 'react-query';
+import * as deforcify from './deforcify';
+import { FamWindow } from './register-apis';
 
-describe('RegisterApis', () => {
+describe('RegisterApisWithStore', () => {
+	const setQueryData = jest.fn();
+	const useQueryCache = jest.fn().mockReturnValue({
+		setQueryData
+	});
+	jest.spyOn(reactQuery, 'useQueryCache').mockImplementation(useQueryCache);
+
 	const globalAny: FamWindow = (global as unknown) as FamWindow;
 	globalAny.FAM = {};
+
+	jest.spyOn(remoteActions, 'queryFrameAgreements').mockImplementation(
+		jest.fn(() => Promise.resolve(mockFrameAgreements))
+	);
 
 	afterEach(() => {
 		jest.clearAllMocks();
@@ -33,6 +47,94 @@ describe('RegisterApis', () => {
 			const getActiveFrameAgreementFunc = globalAny?.FAM?.api
 				?.getActiveFrameAgreement as () => FrameAgreement;
 			expect(getActiveFrameAgreementFunc).toThrowError(CUSTOM_LABELS_MOCK.no_active_fa);
+		});
+	});
+
+	describe('updateFrameAgreement', () => {
+		test('should update the frame agreement in query cache', async () => {
+			const mockFaId = 'a1t1t0000009wpQAAQ';
+			const fakeStatus = 'Active';
+			const field = FA_STATUS_FIELD_NAME;
+
+			const deforcifySpy = jest.spyOn(deforcify, 'deforcify');
+
+			const updateFrameAgreementFunc = globalAny?.FAM?.api?.updateFrameAgreement as (
+				faId: string,
+				field: keyof SfGlobal.FrameAgreement,
+				value: string | number | undefined
+			) => Promise<void>;
+			await updateFrameAgreementFunc(mockFaId, field, fakeStatus);
+
+			expect(deforcifySpy).toBeCalledWith({ [field]: fakeStatus });
+			expect(setQueryData).toBeCalledWith(QueryKeys.frameagreement, expect.any(Function));
+		});
+
+		test('should throw error when an incorrect frame agreement is given', async () => {
+			const incorrectFaId = 'incorrectFaId';
+			const fakeStatus = 'Active';
+			const field = FA_STATUS_FIELD_NAME;
+			const deforcifySpy = jest.spyOn(deforcify, 'deforcify');
+
+			const updateFrameAgreementFunc = globalAny?.FAM?.api?.updateFrameAgreement as (
+				faId: string,
+				field: keyof SfGlobal.FrameAgreement,
+				value: string | number | undefined
+			) => Promise<void>;
+
+			await expect(
+				updateFrameAgreementFunc(incorrectFaId, field, fakeStatus)
+			).rejects.toThrow(CUSTOM_LABELS_MOCK.incorrect_fa);
+
+			expect(deforcifySpy).toHaveBeenCalledTimes(0);
+			expect(setQueryData).toHaveBeenCalledTimes(0);
+		});
+	});
+
+	describe('setStatusOfFrameAgreement', () => {
+		test('should update the new status of a frame agreement', async () => {
+			const upsertFrameAgreementsSpy = jest
+				.spyOn(remoteActions, 'upsertFrameAgreements')
+				.mockReturnValue(Promise.resolve(mockFrameAgreements[0]));
+
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const mockFaId = mockFrameAgreements[0].id;
+
+			const setStatusOfFrameAgreementFunc = globalAny?.FAM?.api
+				?.setStatusOfFrameAgreement as (faId: string, newState: string) => Promise<string>;
+
+			const updateResult = await setStatusOfFrameAgreementFunc(mockFaId, 'Active');
+
+			expect(updateResult).toEqual('Success');
+			expect(upsertFrameAgreementsSpy.mock.calls.length).toBe(1);
+			expect(upsertFrameAgreementsSpy).toBeCalledWith(mockFaId, {
+				//eslint-disable-next-line @typescript-eslint/naming-convention
+				csconta__Status__c: 'Active'
+			});
+		});
+
+		test('should return an error message when frame agreement status update is unsuccessful', async () => {
+			const mockUpdateResult = 'DML Exception';
+			const upsertFrameAgreementsSpy = jest
+				.spyOn(remoteActions, 'upsertFrameAgreements')
+				.mockReturnValue(Promise.reject(mockUpdateResult));
+
+			render(<RegisterApisWithStore />);
+
+			const mockFaId = mockFrameAgreements[0].id;
+
+			const setStatusOfFrameAgreementFunc = globalAny?.FAM?.api
+				?.setStatusOfFrameAgreement as (faId: string, newState: string) => Promise<string>;
+
+			const updateResult = await setStatusOfFrameAgreementFunc(mockFaId, 'Active');
+
+			expect(updateResult !== 'Success').toBeTruthy();
+			expect(updateResult).toEqual(CUSTOM_LABELS_MOCK.no_active_fa);
+			expect(upsertFrameAgreementsSpy.mock.calls.length).toBe(0);
 		});
 	});
 });

@@ -16,6 +16,7 @@ export enum QueryKeys {
 	approvalHistory = 'approvalHistory'
 }
 export const FA_API_NAME = 'csconta__Frame_Agreement__c';
+export const FA_STATUS_FIELD_NAME = 'csconta__Status__c';
 export const ADDON_API_NAME = 'cspmb__Add_On_Price_Item__c';
 export const SEARCH_INPUT_VALIDATION_MESSAGE = 'Enter atleast 3 or more characters to begin search';
 export const DEFAULT_GRID_VISIBLE_FIELDS = 5;

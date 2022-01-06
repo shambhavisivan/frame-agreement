@@ -788,6 +788,7 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	btn_ok: 'Ok',
 	incorrect_fa: 'Input frame agreement is either incorrect or not found',
 	no_active_fa: 'No active frame agreement in fa editor.',
+	not_the_active_fa: 'This is not the current active fa/ fa id.',
 	charges_header_name: 'Charges',
 	charges_header_neg: 'Negotiated One Off',
 	charges_header_oneOff: 'One Off Adjustment',

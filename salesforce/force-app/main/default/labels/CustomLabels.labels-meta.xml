@@ -1796,7 +1796,7 @@
         <fullName>no_active_fa</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>no_active_fa</shortDescription>
+        <shortDescription>no active fa opened in the editor.</shortDescription>
         <value>No active frame agreement in fa editor.</value>
     </labels>
     <labels>
@@ -1812,5 +1812,12 @@
         <protected>true</protected>
         <shortDescription>recurring_product</shortDescription>
         <value>Recurring charge (Product)</value>
+    </labels>
+    <labels>
+        <fullName>not_the_active_fa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>not the current active fa/ fa id.</shortDescription>
+        <value>This is not the current active fa/ fa id.</value>
     </labels>
 </CustomLabels>

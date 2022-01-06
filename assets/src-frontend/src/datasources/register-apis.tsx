@@ -4,10 +4,8 @@ import { useQueryCache } from 'react-query';
 import { Attachment, FrameAgreement, remoteActions } from '.';
 import { QueryKeys } from '../app-constants';
 import { detailsReducer, Negotiation } from '../components/fa-details/negotiation/details-reducer';
-import { useCustomLabels } from '../hooks/use-custom-labels';
 import { useFrameAgreements } from '../hooks/use-frame-agreements';
 import { useAppSettings } from '../hooks/use-app-settings';
-import { deforcify } from './deforcify';
 
 interface FamApi {
 	getAttachment?: (faId: string) => Promise<Attachment>;
@@ -19,6 +17,7 @@ interface FamApi {
 	isAgreementEditable?: (faId: string) => Promise<boolean>;
 	toast?: (type: CSToastVariant, title: string, message: string, timeout: number) => void;
 	getActiveFrameAgreement?: () => FrameAgreement;
+	setStatusOfFrameAgreement?: (faId: string, newStatus: string) => Promise<string>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -41,7 +40,6 @@ export function registerApiEndpoint(name: keyof FamApi, endpoint: FamApi[keyof F
 export function RegisterApis(): ReactElement {
 	const queryCache = useQueryCache();
 	const { agreementList = [] } = useFrameAgreements();
-	const customLabels = useCustomLabels();
 	const { settings } = useAppSettings();
 	const initialState: Negotiation = { negotiation: { products: {}, offers: {}, addons: {} } };
 	const negotiationStateDispatch = useReducer(detailsReducer, initialState);
@@ -59,35 +57,6 @@ export function RegisterApis(): ReactElement {
 		return attachment;
 	};
 	registerApiEndpoint('getAttachment', getFaAttachment);
-
-	const updateFa = async (
-		faId: string,
-		field: keyof SfGlobal.FrameAgreement,
-		value: SfGlobal.FrameAgreement[keyof SfGlobal.FrameAgreement]
-	): Promise<void> => {
-		const faFound = agreementList.find((fa) => fa.id === faId);
-		if (!faFound) {
-			throw new Error(customLabels.incorrectFa);
-		}
-		const sfData: Partial<SfGlobal.FrameAgreement> = { [field]: value };
-		const faData: Partial<FrameAgreement> = deforcify(sfData);
-		queryCache.setQueryData(
-			QueryKeys.frameagreement,
-			(oldData: FrameAgreement[] | undefined) => {
-				if (oldData && oldData?.length) {
-					return oldData?.map((agreement) => {
-						if (agreement.id === faId) {
-							return { ...agreement, ...faData };
-						}
-						return agreement;
-					});
-				} else {
-					return [];
-				}
-			}
-		);
-	};
-	registerApiEndpoint('updateFrameAgreement', updateFa);
 
 	const isAgreementEditable = async (faId: string): Promise<boolean> => {
 		const facSettings = settings?.facSettings;

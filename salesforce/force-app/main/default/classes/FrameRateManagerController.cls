@@ -43,9 +43,17 @@ global with sharing class FrameRateManagerController {
 	private static final String FRAME_AGREEMENT_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated;
 	@TestVisible
 	private static final String FRAME_AGREEMENT_STATUS_MIGRATION_EXCEPTION = System.Label.msg_fa_migrated_statusError;
+	@TestVisible
+	private static final String CPPRA_ADJUSTMENT_TYPE_INIT = 'Initial Price';
+	@TestVisible
+	private static final String CPPRA_ADJUSTMENT_TYPE_OVERRIDE = 'Price Override';
 	private static final List<String> CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST = new List<String>{
-		'Initial Price', 'Price Override'
+		CPPRA_ADJUSTMENT_TYPE_INIT, CPPRA_ADJUSTMENT_TYPE_OVERRIDE
 	};
+	@TestVisible
+	private static final String CPPRA_TARGET_PRICE_SALES = 'Sales';
+	@TestVisible
+	private static final String CPPRA_TARGET_PRICE_LIST = 'List';
 
 	global FrameRateManagerController() {
 		accountId = ApexPages.currentPage().getParameters().get('account');
@@ -687,17 +695,28 @@ global with sharing class FrameRateManagerController {
 			from cspmb__Price_Item_Pricing_Rule_Association__c
 			where cspmb__pricing_element__c in:pricingElementIds
 			and cspmb__pricing_rule__c in:pricingRuleList
-			and cspmb__target_price__c = 'Sales'
 			and
 			(
 				(
 					cspmb__one_off_adjustment__c != null
-					and cspmb__one_off_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+					and (
+						cspmb__one_off_adjustment_type__c = :CPPRA_ADJUSTMENT_TYPE_INIT
+						or (
+							cspmb__one_off_adjustment_type__c = :CPPRA_ADJUSTMENT_TYPE_OVERRIDE
+							and cspmb__target_price__c = :CPPRA_TARGET_PRICE_SALES
+						)
+					)
 				)
 				or
 				(
 					cspmb__recurring_adjustment__c != null
-					and cspmb__recurring_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+					and (
+						cspmb__recurring_adjustment_type__c = :CPPRA_ADJUSTMENT_TYPE_INIT
+						or (
+							cspmb__recurring_adjustment_type__c = :CPPRA_ADJUSTMENT_TYPE_OVERRIDE
+							and cspmb__target_price__c = :CPPRA_TARGET_PRICE_SALES
+            )
+					)
 				)
 			)
 		];
@@ -2381,17 +2400,28 @@ global with sharing class FrameRateManagerController {
 			select Id, cspmb__pricing_element__c
 			from cspmb__Price_Item_Pricing_Rule_Association__c
 			where cspmb__price_item__c = :priceItemId
-			and cspmb__target_price__c = 'Sales'
 			and
 			(
 				(
 					cspmb__one_off_adjustment__c != null
-					and cspmb__one_off_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+					and (
+						cspmb__one_off_adjustment_type__c = :CPPRA_ADJUSTMENT_TYPE_INIT
+						or (
+							cspmb__one_off_adjustment_type__c = :CPPRA_ADJUSTMENT_TYPE_OVERRIDE
+							and cspmb__target_price__c = :CPPRA_TARGET_PRICE_SALES
+						)
+					)
 				)
 				or
 				(
 					cspmb__recurring_adjustment__c != null
-					and cspmb__recurring_adjustment_type__c in :CPPRA_ACCEPTED_ADJUSTMENT_TYPE_LIST
+					and (
+						cspmb__recurring_adjustment_type__c = :CPPRA_ADJUSTMENT_TYPE_INIT
+						or (
+							cspmb__recurring_adjustment_type__c = :CPPRA_ADJUSTMENT_TYPE_OVERRIDE
+							and cspmb__target_price__c = :CPPRA_TARGET_PRICE_SALES
+            )
+					)
 				)
 			)
 		]) {

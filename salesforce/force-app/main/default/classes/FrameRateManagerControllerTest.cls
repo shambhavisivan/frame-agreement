@@ -175,20 +175,20 @@ private class FrameRateManagerControllerTest {
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
 			cspmb__pricing_element__c = pricingElement_1.Id,
-			cspmb__target_price__c = 'Sales',
-			cspmb__one_off_adjustment__c = 100, cspmb__one_off_adjustment_type__c = 'Initial Price'
+			cspmb__target_price__c = FrameRateManagerController.CPPRA_TARGET_PRICE_LIST,
+			cspmb__one_off_adjustment__c = 100, cspmb__one_off_adjustment_type__c = FrameRateManagerController.CPPRA_ADJUSTMENT_TYPE_INIT
 		);
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_2 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
 			cspmb__pricing_element__c = pricingElement_2.Id,
-			cspmb__target_price__c = 'Sales',
-			cspmb__recurring_adjustment__c = 80, cspmb__recurring_adjustment_type__c = 'Initial Price'
+			cspmb__target_price__c = FrameRateManagerController.CPPRA_TARGET_PRICE_SALES,
+			cspmb__recurring_adjustment__c = 80, cspmb__recurring_adjustment_type__c = FrameRateManagerController.CPPRA_ADJUSTMENT_TYPE_INIT
 		);
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_3 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
 			cspmb__pricing_element__c = pricingElement_invalid.Id,
-			cspmb__target_price__c = 'Sales',
-			cspmb__one_off_adjustment__c = 100, cspmb__one_off_adjustment_type__c = 'Initial Price'
+			cspmb__target_price__c = FrameRateManagerController.CPPRA_TARGET_PRICE_SALES,
+			cspmb__one_off_adjustment__c = 100, cspmb__one_off_adjustment_type__c = FrameRateManagerController.CPPRA_ADJUSTMENT_TYPE_OVERRIDE
 		);
 		insert pipra_1;
 		insert pipra_2;
@@ -197,16 +197,16 @@ private class FrameRateManagerControllerTest {
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_cp_2_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_1.Id,
 			cspmb__pricing_element__c = pricingElement_cp_2_1.Id,
-			cspmb__target_price__c = 'List',
-			cspmb__recurring_adjustment__c = 80, cspmb__recurring_adjustment_type__c = 'Initial Price'
+			cspmb__target_price__c = FrameRateManagerController.CPPRA_TARGET_PRICE_LIST,
+			cspmb__recurring_adjustment__c = 80, cspmb__recurring_adjustment_type__c = FrameRateManagerController.CPPRA_ADJUSTMENT_TYPE_OVERRIDE
 		);
 		insert pipra_cp_2_1;
 
 		cspmb__Price_Item_Pricing_Rule_Association__c pipra_cp_3_1 = new cspmb__Price_Item_Pricing_Rule_Association__c(
 			cspmb__pricing_rule__c = pr_1.Id, cspmb__price_item__c = cp_3.Id,
 			cspmb__pricing_element__c = pricingElement_2.Id,
-			cspmb__target_price__c = 'Sales',
-			cspmb__one_off_adjustment__c = 100, cspmb__recurring_adjustment_type__c = 'Initial Price'
+			cspmb__target_price__c = FrameRateManagerController.CPPRA_TARGET_PRICE_SALES,
+			cspmb__one_off_adjustment__c = 100, cspmb__recurring_adjustment_type__c = FrameRateManagerController.CPPRA_ADJUSTMENT_TYPE_INIT
 		);
 		insert pipra_cp_3_1;
 
@@ -624,7 +624,7 @@ private class FrameRateManagerControllerTest {
 		Test.stopTest();
 
 		System.assertNotEquals(0, picMap.keySet().size());
-		System.assertEquals(0, pic_2_Map.keySet().size(), 'Only target price of type sales is considered');
+		System.assertEquals(0, pic_2_Map.keySet().size(), 'Only target price of type sales is considered for adjustment type price override');
 		System.assertEquals(0, pic_3_Map.keySet().size(), 'Only adjustment price type of Initial price and price override is eligible provided oneoff/recurring is not null');
 		System.assertEquals(0, picMapEmpty.keySet().size());
 

@@ -5,7 +5,8 @@ div.pagination-container {
 	padding: 0.5rem 1rem;
 
 	.cs-button-group {
-		.current-page-btn {
+		.page-btn,
+		.page-btn-active {
 			padding: 0 0.75rem;
 		}
 	}

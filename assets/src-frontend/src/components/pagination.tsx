@@ -64,6 +64,7 @@ export function Pagination(props: PaginationComponentProps): ReactElement {
 				<CSButton
 					label="Left page range"
 					labelHidden
+					className="range-btn-left"
 					iconName="jump_to_left"
 					disabled={props.isLeftPageRangeArrowDisabled(currentPage)}
 					onClick={callPreviousPageRangeClickHandler}
@@ -72,6 +73,7 @@ export function Pagination(props: PaginationComponentProps): ReactElement {
 				<CSButton
 					label="Left page navigation"
 					labelHidden
+					className="navigation-btn-left"
 					iconName="chevronleft"
 					disabled={currentPage === 1}
 					onClick={(): void => {
@@ -84,7 +86,8 @@ export function Pagination(props: PaginationComponentProps): ReactElement {
 					return (
 						<CSButton
 							label={pgNo.toString()}
-							className="current-page-btn"
+							className={currentPage === pgNo ? 'page-btn-active' : 'page-btn'}
+							btnStyle={currentPage === pgNo ? 'brand' : 'initial'}
 							onClick={(): void => {
 								setCurrentPage(pgNo);
 								props.onNextPageClickHandler(pgNo, pageSize);
@@ -97,6 +100,7 @@ export function Pagination(props: PaginationComponentProps): ReactElement {
 				<CSButton
 					label="Right navigation"
 					labelHidden
+					className="navigation-btn-right"
 					iconName="chevronright"
 					disabled={!hasMorePages}
 					onClick={(): void => {
@@ -108,6 +112,7 @@ export function Pagination(props: PaginationComponentProps): ReactElement {
 				<CSButton
 					label="Right page range"
 					labelHidden
+					className="range-btn-right"
 					iconName="jump_to_right"
 					disabled={props.isRightPageRangeArrowDisabled(currentPage, pageSize)}
 					onClick={callNextPageRangeClickHandler}

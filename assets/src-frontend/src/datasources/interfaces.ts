@@ -51,7 +51,7 @@ export interface AttachmentProductNegotiation {
 	volume?: Volume;
 	product?: Product;
 	rateCards?: RateCards;
-	allowances?: Allowance;
+	allowances?: Allowances;
 	addons?: Addons;
 	charges?: { [chargeId: string]: Product };
 }
@@ -67,6 +67,10 @@ export interface Product {
 
 export interface RateCards {
 	[rateCardId: string]: { [rateCardLineId: string]: number };
+}
+
+export interface Allowances {
+	[allowanceId: string]: { name: string; value: number };
 }
 
 export interface Volume {
@@ -119,7 +123,15 @@ export interface Addon {
 }
 
 export interface Allowance {
-	[allowanceId: string]: { value: number; name: string };
+	amount: number;
+	id: string;
+	name: string;
+	usageType: {
+		id: string;
+		name: string;
+		type: string;
+		unitOfMeasure: string;
+	};
 }
 
 export interface RateCard {

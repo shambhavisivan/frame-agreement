@@ -57,9 +57,9 @@ export const mockAppSettings: AppSettings = {
 		isPsEnabled: true,
 		inputMinmaxRestriction: true,
 		discountAsPrice: false,
+		activeStatusManagement: true,
 		faEditableStatuses: ['Draft', 'Requires Approval', 'Approved'],
-		approversRevise: true,
-		activeStatusManagement: true
+		approversRevise: true
 	}
 };
 
@@ -961,6 +961,16 @@ export const mockNegotiationState: Negotiation['negotiation'] = {
 			product: {
 				oneOff: { original: 50, negotiated: undefined },
 				recurring: { original: 8, negotiated: undefined }
+			},
+			allowances: {
+				a1O4K000001upTpUAI: {
+					name: 'Special Outgoing Bonus',
+					value: 300
+				},
+				a1O4K000001ukAhUAI: {
+					name: '20 min allowance',
+					value: 10
+				}
 			}
 		},
 		a1i4I000003KqdtQAC: {

@@ -27,6 +27,7 @@ interface FamApi {
 	getCustomData?: (faId: string) => Promise<string | Record<string, unknown> | undefined>;
 	submitForApproval?: (faId: string) => Promise<boolean>;
 	activateFrameAgreement?: (faId: string) => Promise<void>;
+	saveFrameAgreement?: (faId: string) => Promise<SfGlobal.FrameAgreement>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

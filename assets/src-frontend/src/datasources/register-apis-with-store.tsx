@@ -119,5 +119,14 @@ export function RegisterApisWithStore(): ReactElement {
 	};
 	registerApiEndpoint('activateFrameAgreement', activateFrameAgreement);
 
+	const saveFrameAgreement = async (
+		frameAgreementId: string
+	): Promise<SfGlobal.FrameAgreement> => {
+		const savedFrameAgreement = await agreementService.saveFrameAgreement(frameAgreementId);
+
+		return (forcify(savedFrameAgreement, 'csconta') as unknown) as SfGlobal.FrameAgreement;
+	};
+	registerApiEndpoint('saveFrameAgreement', saveFrameAgreement);
+
 	return <></>;
 }

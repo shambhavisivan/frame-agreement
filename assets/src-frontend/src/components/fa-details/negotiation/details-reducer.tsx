@@ -1,5 +1,6 @@
 import {
 	Addon,
+	Allowances,
 	Attachment,
 	CommercialProductData,
 	CommercialProductStandalone,
@@ -35,6 +36,7 @@ export interface ProductNegotiation {
 	charges?: {
 		[chargeId: string]: NegotiableCharges;
 	};
+	allowances?: Allowances;
 }
 
 export type NegotiationItemType = 'products' | 'offers' | 'addons';
@@ -50,6 +52,7 @@ export interface Negotiation {
 		addons: {
 			[addonId: string]: NegotiableCharges;
 		};
+		allowances?: Allowances;
 		custom?: string | Record<string, unknown> | undefined;
 	};
 	activeFa?: FrameAgreement;
@@ -302,7 +305,15 @@ export function detailsReducer(
 							{} as {
 								[chargeId: string]: NegotiableCharges;
 							}
-						)
+						),
+						allowances: productData?.allowances?.reduce((accumulator, allowance) => {
+							accumulator[allowance.id] = {
+								name: allowance.name,
+								value: allowance.amount
+							};
+
+							return accumulator;
+						}, {} as Allowances)
 					};
 					accumulator[currentProduct.id] = negotiation;
 					return accumulator;
@@ -454,7 +465,8 @@ export function detailsReducer(
 									return accu;
 								},
 								{} as ProductNegotiation['rateCards']
-							)
+							),
+							allowances: productNegotiation?.allowances || {}
 						};
 					});
 				}
@@ -589,7 +601,7 @@ export function detailsReducer(
 			};
 
 		default:
-			return { negotiation: { ...state } };
+			return { ...inputState };
 	}
 }
 
@@ -644,7 +656,7 @@ export function selectAttachment(state: Negotiation['negotiation']): Attachment 
 						}
 					),
 					volume: productNegotiation.volume,
-					allowances: {}
+					allowances: productNegotiation?.allowances || {}
 				};
 
 				return [productId, attachedProductNegotiation];

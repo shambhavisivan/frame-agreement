@@ -9,6 +9,7 @@ import { FAMClientError } from '../error/fam-client-error-handler';
 import { selectAttachment } from '../components/fa-details/negotiation/details-reducer';
 import { usePublisher as publishEventData } from '../hooks/use-publisher-subscriber';
 import { CSToastApi } from '@cloudsense/cs-ui-components';
+import { forcify } from '../datasources/forcify';
 
 class AgreementService {
 	private _settings: AppSettings;
@@ -264,6 +265,53 @@ class AgreementService {
 				3
 			);
 		}
+	};
+
+	public saveFrameAgreement = async (frameAgreementId: string): Promise<FrameAgreement> => {
+		const agreement = this._agreementList.find((fa) => fa.id === frameAgreementId);
+		if (!agreement) {
+			throw new FAMClientError(this._customLabels.incorrectFa);
+		}
+
+		const activeFrameAgreement: FrameAgreement | undefined = this._detailsPageProvider.activeFa;
+
+		if (
+			activeFrameAgreement &&
+			this._detailsPageProvider.negotiation &&
+			activeFrameAgreement.id === frameAgreementId
+		) {
+			await remoteActions.saveAttachment(
+				frameAgreementId,
+				selectAttachment(this._detailsPageProvider.negotiation)
+			);
+		}
+
+		const forcifiedAgreement = (forcify(
+			agreement,
+			'csconta'
+		) as unknown) as SfGlobal.FrameAgreement;
+
+		await publishEventData('onBeforeSaveFrameAgreement', forcifiedAgreement);
+		this._detailsPageProvider.dispatch({
+			type: 'toggleDisableAgreementOperation',
+			payload: true
+		});
+
+		const savedFrameAgreement = await remoteActions.upsertFrameAgreements(
+			frameAgreementId,
+			forcifiedAgreement
+		);
+
+		this._detailsPageProvider.dispatch({
+			type: 'toggleDisableAgreementOperation',
+			payload: false
+		});
+		await publishEventData(
+			'onAfterSaveFrameAgreement',
+			(forcify(savedFrameAgreement, 'csconta') as unknown) as SfGlobal.FrameAgreement
+		);
+
+		return savedFrameAgreement;
 	};
 }
 

@@ -473,4 +473,37 @@ describe('RegisterApisWithStore', () => {
 			expect(publisherSubscriberSpy).toBeCalledTimes(1);
 		});
 	});
+
+	describe('saveFrameAgreement', () => {
+		test('should save frame agreement', async () => {
+			const fakeFaId = mockFrameAgreements[0].id;
+
+			const saveAttachmentSpy = jest
+				.spyOn(remoteActions, 'saveAttachment')
+				.mockReturnValue(Promise.resolve(JSON.stringify(attachment)));
+
+			const upsertFrameAgreementsSpy = jest
+				.spyOn(remoteActions, 'upsertFrameAgreements')
+				.mockReturnValue(Promise.resolve(mockFrameAgreements[0]));
+
+			const publisherSubscriberSpy = jest
+				.spyOn(publisherSubscriber, 'usePublisher')
+				.mockReturnValue(Promise.resolve(mockFrameAgreements[0]));
+
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const saveFrameAgreementFunc = globalAny?.FAM?.api?.saveFrameAgreement as (
+				faId: string
+			) => Promise<SfGlobal.FrameAgreement>;
+			await saveFrameAgreementFunc(fakeFaId);
+
+			expect(saveAttachmentSpy.mock.calls.length).toBe(1);
+			expect(upsertFrameAgreementsSpy).toBeCalledTimes(1);
+			expect(publisherSubscriberSpy).toBeCalledTimes(2);
+		});
+	});
 });

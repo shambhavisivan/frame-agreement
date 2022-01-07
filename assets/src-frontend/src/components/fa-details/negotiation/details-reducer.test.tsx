@@ -308,7 +308,8 @@ describe('detailsReducer', () => {
 						}
 					},
 					charges: {},
-					addons: {}
+					addons: {},
+					allowances: {}
 				}
 			};
 
@@ -458,7 +459,8 @@ describe('detailsReducer', () => {
 							}
 						},
 						charges: {},
-						addons: {}
+						addons: {},
+						allowances: {}
 					}
 				};
 
@@ -596,7 +598,8 @@ describe('detailsReducer', () => {
 								}
 							},
 							addons: {},
-							charges: {}
+							charges: {},
+							allowances: {}
 						}
 					},
 					addons: {},

@@ -154,9 +154,35 @@ export const remoteActions: RemoteActions = {
 		faId: string | null,
 		fieldData: Partial<FrameAgreement>
 	): Promise<FrameAgreement> {
+		const restrictedField = new Set([
+			'csconta__Account__r',
+			'Name',
+			'LastModifiedDate',
+			'CreatedById',
+			'LastModifiedById',
+			'OwnerId',
+			'csconta__Is_Deleted__c',
+			'csconta__Created_Date__c',
+			'csconta__Last_Modified_Date__c',
+			'csconta__System_Modstamp__c'
+		]);
+
+		let sfFrameAgreementData = {} as Partial<FrameAgreement>;
+
+		if (faId) {
+			Object.keys(fieldData).forEach((field) => {
+				if (!restrictedField.has(field)) {
+					sfFrameAgreementData = {
+						...sfFrameAgreementData,
+						[field]: fieldData[field as keyof FrameAgreement]
+					};
+				}
+			});
+		}
+
 		const frameAgreement = await SF.invokeAction('upsertFrameAgreements', [
 			faId,
-			JSON.stringify(fieldData),
+			JSON.stringify(sfFrameAgreementData),
 			[]
 		]);
 

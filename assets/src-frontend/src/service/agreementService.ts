@@ -6,6 +6,9 @@ import { QueryCache } from 'react-query';
 import { deforcify } from '../datasources/deforcify';
 import { DetailsState } from '../components/fa-details/details-page-provider';
 import { FAMClientError } from '../error/fam-client-error-handler';
+import { selectAttachment } from '../components/fa-details/negotiation/details-reducer';
+import { usePublisher as publishEventData } from '../hooks/use-publisher-subscriber';
+import { CSToastApi } from '@cloudsense/cs-ui-components';
 
 class AgreementService {
 	private _settings: AppSettings;
@@ -205,6 +208,62 @@ class AgreementService {
 			await this.refreshFrameAgreement(faId, true);
 		}
 		return response;
+	};
+
+	public activateFrameAgreement = async (frameAgreementId: string): Promise<void> => {
+		const faFound = this._agreementList.find((fa) => fa.id === frameAgreementId);
+		if (!faFound) {
+			throw new FAMClientError(this._customLabels.incorrectFa);
+		}
+
+		if (
+			this._detailsPageProvider.negotiation &&
+			this._detailsPageProvider.activeFa?.id === frameAgreementId
+		) {
+			await remoteActions.saveAttachment(
+				frameAgreementId,
+				selectAttachment(this._detailsPageProvider.negotiation)
+			);
+		}
+
+		await publishEventData(
+			'onBeforeActivation',
+			selectAttachment(this._detailsPageProvider.negotiation)
+		);
+		this._detailsPageProvider.dispatch({
+			type: 'toggleDisableAgreementOperation',
+			payload: true
+		});
+		const prgId = await remoteActions.activateFrameAgreement(frameAgreementId);
+		this._detailsPageProvider.dispatch({
+			type: 'toggleDisableAgreementOperation',
+			payload: false
+		});
+
+		if (prgId) {
+			CSToastApi.renderCSToast(
+				{
+					variant: 'success',
+					text: this._customLabels.toastDecompositionTitleSuccess,
+					detail: this._customLabels.toastDecompositionSuccess,
+					closeButton: true
+				},
+				'top-center',
+				3
+			);
+			await publishEventData('onAfterActivation', prgId);
+		} else {
+			CSToastApi.renderCSToast(
+				{
+					variant: 'error',
+					text: this._customLabels.toastDecompositionTitleFailed,
+					detail: this._customLabels.toastDecompositionFailed,
+					closeButton: true
+				},
+				'top-center',
+				3
+			);
+		}
 	};
 }
 

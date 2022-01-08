@@ -114,5 +114,10 @@ export function RegisterApisWithStore(): ReactElement {
 	};
 	registerApiEndpoint('submitForApproval', submitForApproval);
 
+	const activateFrameAgreement = async (frameAgreementId: string): Promise<void> => {
+		await agreementService.activateFrameAgreement(frameAgreementId);
+	};
+	registerApiEndpoint('activateFrameAgreement', activateFrameAgreement);
+
 	return <></>;
 }

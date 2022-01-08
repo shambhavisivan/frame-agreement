@@ -3081,6 +3081,21 @@ global with sharing class FrameRateManagerController {
 		return productIds;
 	}
 
+	@RemoteAction
+	public static String activateFrameAgreement(String faId) {
+		String activationResponse = API_1.activateFrameAgreement(faId, false);
+
+		Map<String, Object> responseMap = (Map<String, Object>)JSON.deserializeUntyped(activationResponse);
+		String status = (String)responseMap.get('status');
+
+		if (!status.equalsIgnoreCase('Success')) {
+			String error = (String)responseMap.get('errorMessage');
+			throw new ApplicationException(error);
+		}
+
+		return (String)responseMap.get('prgId');
+	}
+
 	// WRAPPERS
 	public class RateCard {
 		public Id Id {

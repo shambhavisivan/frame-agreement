@@ -225,5 +225,9 @@ export const remoteActions: RemoteActions = {
 
 	async submitForApproval(faId: string): Promise<boolean> {
 		return true;
+	},
+
+	async activateFrameAgreement(faId: string): Promise<string> {
+		return Promise.resolve('prgId-1');
 	}
 };

@@ -11,6 +11,7 @@ private class FrameRateManagerControllerTest {
 	private static final String SAMPLE_FA_1_NAME = 'FA1';
 	private static final String SAMPLE_FA_2_NAME = 'FA2';
 	private static final String SAMPLE_FA_3_NAME = 'FA3';
+	private static final String VALID_FA_ATTACHMENT_BODY = 'FA4';
 
 	public static String generateRandomString(Integer len) {
 		final String chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
@@ -467,6 +468,28 @@ private class FrameRateManagerControllerTest {
 		insert fa_3;
 		insert fA_account;
 		insert fa_master;
+
+		csconta__Frame_Agreement__c fa_4 = new csconta__Frame_Agreement__c(
+			csconta__status__c = 'Draft',
+			csconta__agreement_name__c = VALID_FA_ATTACHMENT_BODY,
+			csconta__account__c = test_account.Id
+		);
+		insert fa_4;
+
+		String body = '{"custom":{},"products":{"' +
+			cp_1.id + '":{"_volume":{"mv":null,"mvp":null,"muc":null,"mucp":null},"_addons":{"' +
+			add1assoc.id + '":{"oneoff":' + add1assoc.cspmb__one_off_charge__c + ',"recurring":' + add1assoc.cspmb__recurring_charge__c +
+			'}},"_charges":{"' + pricingelement_1.id +'":{"oneoff":17,"recurring":18}},"_product":{"oneoff":' +
+			cp_1.cspmb__one_off_charge__c + ',"recurring":' + cp_1.cspmb__recurring_charge__c + '},"_allowances":{}}}}';
+
+		Attachment faAttach = new Attachment(
+			ParentId = fa_4.id,
+			Body =  Blob.valueOf(body),
+			Description = 'Added products and negotiated data against Frame Agreement',
+			ContentType = 'text/plain',
+			Name = 'FrameAgreementAttachment'
+		);
+		insert faAttach;
 
 		String decomposeData = '[{"cpId":"' + cp_1.Id + '","recurring":266,"oneOff":null},{"cpId":"' + cp_1.Id + '","recurring":263,"oneOff":null},{"peId":"' + pricingElement_1.Id + '","recurring":12,"oneOff":null},{"peId":"' + pricingElement_1.Id + '","recurring":null,"oneOff":12},{"cpaoaId":"' + add1assoc.Id + '","recurring":null,"oneOff":12},{"cpaoaId":"' + add1assoc.Id + '","recurring":12,"oneOff":null}]';
 
@@ -1123,7 +1146,7 @@ private class FrameRateManagerControllerTest {
 
 		Test.stopTest();
 
-		System.assertEquals(2, faList.size());
+		System.assertEquals(3, faList.size());
 		System.assertEquals(fa_1.Id, fa.Id);
 
 		fa_1 = [select Id, csconta__Status__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = 'FA1' limit 1];
@@ -2749,5 +2772,28 @@ private class FrameRateManagerControllerTest {
 
 		System.assertEquals(sObjectIds.size(), 2);
 		System.assertEquals(sObjectIds, new List<Id>{cps[0].id, cps[9].id});
+	}
+
+	@isTest
+	public static void activateFrameAgreementTest() {
+		setupPricingModel();
+		csconta__Frame_Agreement__c fa_1 = [select Id,csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = :VALID_FA_ATTACHMENT_BODY limit 1];
+		csconta__Frame_Agreement__c fa_2 = [select Id,csconta__Agreement_Name__c from csconta__Frame_Agreement__c where csconta__Agreement_Name__c = :SAMPLE_FA_2_NAME limit 1];
+
+		Test.startTest();
+
+		String prgId = FrameRateManagerController.activateFrameAgreement(fa_1.id);
+
+		Boolean expectedExceptionThrown = false;
+		try {
+			FrameRateManagerController.activateFrameAgreement(fa_2.id);
+		} catch (Exception e) {
+			expectedExceptionThrown = true;
+		}
+
+		Test.stopTest();
+
+		System.assertNotEquals(prgId, null);
+		System.assert(expectedExceptionThrown);
 	}
 }

@@ -63,6 +63,7 @@ namespace SfGlobal {
 		): Promise<CommercialProductStandalone[]>;
 		getFrameAgreement(faId: [string]): Promise<FrameAgreement>;
 		submitForApproval(faId: [string]): Promise<boolean>;
+		activateFrameAgreement(faId: [string]): Promise<string>;
 	}
 
 	interface CategorizationData {
@@ -106,6 +107,7 @@ namespace SfGlobal {
 		csconta__agreement_level__c: string;
 		csconta__Status__c: string;
 		csconta__Account__c: string;
+		csconta__replaced_frame_agreement__c: string;
 		/* eslint-enable @typescript-eslint/naming-convention */
 	}
 
@@ -298,6 +300,10 @@ namespace SfGlobal {
 		btn_AddAddons: string;
 		modal_addAddons_title: string;
 		modal_addAddons_input_search_placeholder: string;
+		toast_decomposition_title_success: string;
+		toast_decomposition_success: string;
+		toast_decomposition_title_failed: string;
+		toast_decomposition_failed: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

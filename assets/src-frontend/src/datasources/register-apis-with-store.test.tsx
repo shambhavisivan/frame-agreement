@@ -11,6 +11,8 @@ import * as deforcify from './deforcify';
 import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
 import { AgreementService } from '../service/agreementService';
 import { approval } from '../local-server/local_data';
+import { CSToastApi } from '@cloudsense/cs-ui-components';
+import * as publisherSubscriber from '../hooks/use-publisher-subscriber';
 
 describe('RegisterApisWithStore', () => {
 	const setQueryData = jest.fn();
@@ -184,14 +186,14 @@ describe('RegisterApisWithStore', () => {
 				status: reactQuery.QueryStatus.Success,
 				agreementList: mockFrameAgreements
 			});
-			jest.spyOn(reactQuery, 'useQuery').mockImplementation(useQuery);
+			jest.spyOn(reactQuery, 'useQuery').mockImplementationOnce(useQuery);
 			const getActiveFaSpy = jest.spyOn(
 				AgreementService.prototype,
 				'getActiveFrameAgreement'
 			);
 			const mockUseContext = jest
 				.spyOn(React, 'useContext')
-				.mockImplementation(() => ({ ...mockState, dispatch: mockDispatch }));
+				.mockImplementationOnce(() => ({ ...mockState, dispatch: mockDispatch }));
 
 			render(
 				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
@@ -240,7 +242,7 @@ describe('RegisterApisWithStore', () => {
 	describe('getCustomData', () => {
 		test('should fetch the updated custom data back from application state', async () => {
 			const customDataInput = 'test data';
-			const mockUseContext = jest.spyOn(React, 'useContext').mockImplementation(() => ({
+			const mockUseContext = jest.spyOn(React, 'useContext').mockImplementationOnce(() => ({
 				...mockState,
 				negotiation: { ...mockState.negotiation, custom: customDataInput },
 				dispatch: mockDispatch
@@ -383,6 +385,92 @@ describe('RegisterApisWithStore', () => {
 			expect(getAttachmentBodySpy).toBeCalledTimes(0);
 			expect(approvalHistorySpy).toBeCalledTimes(0);
 			expect(setQueryData).toBeCalledTimes(0);
+		});
+	});
+
+	describe('activateFrameAgreement', () => {
+		const publisherSubscriberSpy = jest
+			.spyOn(publisherSubscriber, 'usePublisher')
+			.mockReturnValue(Promise.resolve(mockFrameAgreements[0]));
+
+		test('should activate frame agreement', async () => {
+			const fakeFaId = mockFrameAgreements[0].id;
+
+			const saveAttachmentSpy = jest
+				.spyOn(remoteActions, 'saveAttachment')
+				.mockReturnValue(Promise.resolve(JSON.stringify(attachment)));
+
+			const activateFrameAgreementSpy = jest
+				.spyOn(remoteActions, 'activateFrameAgreement')
+				.mockReturnValue(Promise.resolve('validPrgId'));
+
+			const csToastSpy = jest.spyOn(CSToastApi, 'renderCSToast');
+
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const activateFrameAgreementFunc = globalAny?.FAM?.api?.activateFrameAgreement as (
+				faId: string
+			) => Promise<void>;
+			await activateFrameAgreementFunc(fakeFaId);
+
+			expect(saveAttachmentSpy.mock.calls.length).toBe(1);
+			expect(activateFrameAgreementSpy.mock.calls.length).toBe(1);
+			expect(csToastSpy).toBeCalledTimes(1);
+			expect(csToastSpy).toBeCalledWith(
+				{
+					variant: 'success',
+					text: CUSTOM_LABELS_MOCK.toast_decomposition_title_success,
+					detail: CUSTOM_LABELS_MOCK.toast_decomposition_success,
+					closeButton: true
+				},
+				'top-center',
+				3
+			);
+			expect(publisherSubscriberSpy).toBeCalledTimes(2);
+		});
+
+		test('should show error when activation of frame agreement fails', async () => {
+			const fakeFaId = mockFrameAgreements[0].id;
+
+			const saveAttachmentSpy = jest
+				.spyOn(remoteActions, 'saveAttachment')
+				.mockReturnValue(Promise.resolve(JSON.stringify(attachment)));
+
+			const activateFrameAgreementSpy = jest
+				.spyOn(remoteActions, 'activateFrameAgreement')
+				.mockReturnValue(Promise.resolve(''));
+
+			const csToastSpy = jest.spyOn(CSToastApi, 'renderCSToast');
+
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const activateFrameAgreementFunc = globalAny?.FAM?.api?.activateFrameAgreement as (
+				faId: string
+			) => Promise<void>;
+			await activateFrameAgreementFunc(fakeFaId);
+
+			expect(saveAttachmentSpy.mock.calls.length).toBe(1);
+			expect(activateFrameAgreementSpy.mock.calls.length).toBe(1);
+			expect(csToastSpy).toBeCalledTimes(1);
+			expect(csToastSpy).toBeCalledWith(
+				{
+					variant: 'error',
+					text: CUSTOM_LABELS_MOCK.toast_decomposition_title_failed,
+					detail: CUSTOM_LABELS_MOCK.toast_decomposition_failed,
+					closeButton: true
+				},
+				'top-center',
+				3
+			);
+			expect(publisherSubscriberSpy).toBeCalledTimes(1);
 		});
 	});
 });

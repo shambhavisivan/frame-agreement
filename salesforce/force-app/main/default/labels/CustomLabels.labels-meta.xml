@@ -1377,7 +1377,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>toast_decomposition_title_success</shortDescription>
-        <value>Decomposition succeded!</value>
+        <value>Decomposition succeeded!</value>
     </labels>
     <labels>
         <fullName>toast_discount_calculated</fullName>

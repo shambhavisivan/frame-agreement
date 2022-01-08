@@ -161,7 +161,8 @@
 				getFaOffers: "{!$RemoteAction.FrameRateManagerController.getFaOffers}",
 				queryAddons: "{!$RemoteAction.FrameRateManagerController.queryAddons}",
 				getProductIds: "{!$RemoteAction.FrameRateManagerController.getProductIds}",
-				queryProducts: "{!$RemoteAction.FrameRateManagerController.queryProducts}"
+				queryProducts: "{!$RemoteAction.FrameRateManagerController.queryProducts}",
+				activateFrameAgreement: "{!$RemoteAction.FrameRateManagerController.activateFrameAgreement}"
 			},
 			labels: {
 			  "accounts_modal_no_assoc": "{!$Label.accounts_modal_no_assoc}",

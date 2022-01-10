@@ -1,4 +1,5 @@
 import {
+	Addon,
 	Attachment,
 	CommercialProductData,
 	CommercialProductStandalone,
@@ -155,6 +156,12 @@ export type NegotiationAction =
 				itemType: NegotiationItemType;
 				productId: string;
 				chargeId: string;
+			};
+	  }
+	| {
+			type: 'addAddonsToFa';
+			payload: {
+				addons: Addon[];
 			};
 	  };
 
@@ -525,6 +532,27 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 							)
 						}
 					}
+				}
+			};
+
+		case 'addAddonsToFa':
+			return {
+				negotiation: {
+					...state,
+					addons: action.payload.addons.reduce((accumulator, currentAddon) => {
+						accumulator[currentAddon.id] = {
+							oneOff: {
+								negotiated: undefined,
+								original: currentAddon.oneOffCharge
+							},
+							recurring: {
+								negotiated: undefined,
+								original: currentAddon.recurringCharge
+							}
+						};
+
+						return accumulator;
+					}, {} as Negotiation['negotiation']['addons'])
 				}
 			};
 

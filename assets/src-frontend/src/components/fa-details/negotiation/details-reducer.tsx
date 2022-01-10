@@ -583,6 +583,41 @@ export function detailsReducer(
 
 						return accumulator;
 					}, {} as Negotiation['negotiation']['addons'])
+				},
+				activeFa
+			};
+
+		case 'negotiateAddonOneOff':
+			return {
+				negotiation: {
+					...state,
+					addons: {
+						...state.addons,
+						[action.payload.addonId]: {
+							...state.addons[action.payload.addonId],
+							oneOff: {
+								negotiated: action.payload.value,
+								original: undefined
+							}
+						}
+					}
+				}
+			};
+
+		case 'negotiateAddonRecurring':
+			return {
+				negotiation: {
+					...state,
+					addons: {
+						...state.addons,
+						[action.payload.addonId]: {
+							...state.addons[action.payload.addonId],
+							recurring: {
+								negotiated: action.payload.value,
+								original: undefined
+							}
+						}
+					}
 				}
 			};
 

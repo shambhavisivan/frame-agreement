@@ -2,6 +2,7 @@ import {
 	CSDataTable,
 	CSDataTableColumnInterface,
 	CSDataTableRowInterface,
+	CSDataTableRowWithMetaInterface,
 	CSDropdown
 } from '@cloudsense/cs-ui-components';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
@@ -9,6 +10,7 @@ import { QueryStatus } from 'react-query';
 import { ADDON_API_NAME, DEFAULT_GRID_VISIBLE_FIELDS } from '../../app-constants';
 import { Addon, FieldMetadata } from '../../datasources';
 import { useFieldMetadata } from '../../hooks/use-field-metadata';
+import { AddonNegotiation } from './addon-negotiation';
 import { GridColumnChooser } from './grid-column-chooser';
 
 interface Props {
@@ -73,6 +75,10 @@ export function AddonGrid({
 		return modifiedColumnData;
 	}, [addonMetadata, metadata, metadataStatus]);
 
+	const renderDetails = (row: CSDataTableRowWithMetaInterface): ReactElement => {
+		return <AddonNegotiation addon={row.data as Addon} />;
+	};
+
 	return (
 		<div>
 			{addonList.length ? (
@@ -90,6 +96,7 @@ export function AddonGrid({
 							data: addon
 						})) || ([] as CSDataTableRowInterface[])
 					}
+					subsectionRender={renderDetails}
 				/>
 			) : (
 				<p>No addons to show here</p>

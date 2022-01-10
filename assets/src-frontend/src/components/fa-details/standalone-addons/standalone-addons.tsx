@@ -37,7 +37,7 @@ export function StandaloneAddons(): ReactElement {
 
 	return (
 		<>
-			<AddonGrid addonList={selectedAddons || []} />
+			<AddonGrid addonList={selectedAddons || []} isCollapsible={true} />
 			{addOnModal}
 			<CSButton label={labels.btnAddAddons} onClick={toggleAddonsModal} />
 		</>

@@ -120,6 +120,8 @@ export interface Addon {
 	name: string;
 	oneOffCharge?: number;
 	recurringCharge?: number;
+	isOneOffDiscountAllowed: boolean;
+	isRecurringDiscountAllowed: boolean;
 }
 
 export interface Allowance {

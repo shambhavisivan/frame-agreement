@@ -141,6 +141,8 @@ namespace SfGlobal {
 		Id: string;
 		cspmb__One_Off_Charge__c: number;
 		cspmb__Recurring_Charge__c: number;
+		cspmb__Is_One_Off_Discount_Allowed__c: boolean;
+		cspmb__Is_Recurring_Discount_Allowed__c: boolean;
 	}
 
 	interface Allowance {

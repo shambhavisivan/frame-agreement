@@ -669,23 +669,30 @@ export const frameAgreements = [
 	}
 ];
 
-export const STANDALONE_ADDONS = [
+export const STANDALONE_ADDONS: SfGlobal.Addon[] = [
 	{
 		Id: 'a0w1t0000002hSaAAI',
 		Name: 'Extra 200MB',
 		cspmb__One_Off_Charge__c: 10,
-		cspmb__Recurring_Charge__c: 12
+		cspmb__Recurring_Charge__c: 12,
+		cspmb__Is_One_Off_Discount_Allowed__c: true,
+		cspmb__Is_Recurring_Discount_Allowed__c: true
 	},
 	{
 		Id: 'a0w1t000000zDnNAAU',
 		Name: '1000 SMS',
 		cspmb__One_Off_Charge__c: 22,
-		cspmb__Recurring_Charge__c: 82.44
+		cspmb__Recurring_Charge__c: 82.44,
+		cspmb__Is_One_Off_Discount_Allowed__c: true,
+		cspmb__Is_Recurring_Discount_Allowed__c: true
 	},
 	{
 		Id: 'a0w1t000000zDnhAAE',
 		Name: '1000 Min',
-		cspmb__One_Off_Charge__c: 14
+		cspmb__One_Off_Charge__c: 14,
+		cspmb__Recurring_Charge__c: 0,
+		cspmb__Is_One_Off_Discount_Allowed__c: true,
+		cspmb__Is_Recurring_Discount_Allowed__c: true
 	}
 ];
 
@@ -3646,19 +3653,21 @@ export const newFA = {
 	}
 };
 
-export const addons = [
+export const addons: SfGlobal.Addon[] = [
 	{
-		cspmb__Effective_Start_Date__c: 1545868800000,
 		Name: 'Extra 200MB',
 		cspmb__One_Off_Charge__c: 10,
 		cspmb__Recurring_Charge__c: 12,
-		Id: 'a0w1t0000002hSaAAI'
+		Id: 'a0w1t0000002hSaAAI',
+		cspmb__Is_One_Off_Discount_Allowed__c: true,
+		cspmb__Is_Recurring_Discount_Allowed__c: true
 	},
 	{
-		cspmb__Effective_Start_Date__c: 1545868800000,
 		Name: '1000 SMS',
 		cspmb__One_Off_Charge__c: 10,
 		cspmb__Recurring_Charge__c: 82.44,
-		Id: 'a0w1t000000zDnNAAU'
+		Id: 'a0w1t000000zDnNAAU',
+		cspmb__Is_One_Off_Discount_Allowed__c: true,
+		cspmb__Is_Recurring_Discount_Allowed__c: true
 	}
 ];

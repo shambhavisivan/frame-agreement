@@ -25,6 +25,7 @@ interface FamApi {
 	clearToasts?: () => void;
 	setCustomData?: (faId: string, data: string | Record<string, unknown>) => Promise<void>;
 	getCustomData?: (faId: string) => Promise<string | Record<string, unknown> | undefined>;
+	submitForApproval?: (faId: string) => Promise<boolean>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

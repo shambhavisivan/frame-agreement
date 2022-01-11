@@ -60,6 +60,7 @@ export interface RemoteActions {
 		alreadyAddedIds: string[]
 	): Promise<CommercialProductStandalone[]>;
 	getFrameAgreement(faId: string): Promise<FrameAgreement>;
+	submitForApproval(faId: string): Promise<boolean>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -284,5 +285,9 @@ export const remoteActions: RemoteActions = {
 		const frameAgreement = await SF.invokeAction('getFrameAgreement', [faId]);
 
 		return deforcify(frameAgreement);
+	},
+	async submitForApproval(faId: string): Promise<boolean> {
+		const result = await SF.invokeAction('submitForApproval', [faId]);
+		return result;
 	}
 };

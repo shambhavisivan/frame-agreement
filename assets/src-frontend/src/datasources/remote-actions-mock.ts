@@ -221,5 +221,9 @@ export const remoteActions: RemoteActions = {
 
 	async getFrameAgreement(faId: string): Promise<FrameAgreement> {
 		return Promise.resolve(mockFrameAgreements[0]);
+	},
+
+	async submitForApproval(faId: string): Promise<boolean> {
+		return true;
 	}
 };

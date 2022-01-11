@@ -196,6 +196,16 @@ class AgreementService {
 			}
 		);
 	};
+
+	public submitForApproval = async (faId: string): Promise<boolean> => {
+		const response = await remoteActions.submitForApproval(faId);
+		if (response) {
+			const appovalHistory = await remoteActions.getApprovalHistory(faId);
+			this._queryCache.setQueryData([QueryKeys.approvalHistory, faId], appovalHistory);
+			await this.refreshFrameAgreement(faId, true);
+		}
+		return response;
+	};
 }
 
 export { AgreementService };

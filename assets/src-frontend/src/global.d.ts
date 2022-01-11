@@ -62,6 +62,7 @@ namespace SfGlobal {
 			paramsArray: [string[], string | null, string | null, number, string[]]
 		): Promise<CommercialProductStandalone[]>;
 		getFrameAgreement(faId: [string]): Promise<FrameAgreement>;
+		submitForApproval(faId: [string]): Promise<boolean>;
 	}
 
 	interface CategorizationData {

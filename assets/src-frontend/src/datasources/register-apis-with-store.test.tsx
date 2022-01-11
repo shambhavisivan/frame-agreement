@@ -10,6 +10,7 @@ import * as reactQuery from 'react-query';
 import * as deforcify from './deforcify';
 import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
 import { AgreementService } from '../service/agreementService';
+import { approval } from '../local-server/local_data';
 
 describe('RegisterApisWithStore', () => {
 	const setQueryData = jest.fn();
@@ -325,6 +326,63 @@ describe('RegisterApisWithStore', () => {
 				CUSTOM_LABELS_MOCK.not_the_active_fa
 			);
 			expect(getActiveFaSpy).toBeCalled();
+		});
+	});
+
+	describe('submitForApproval', () => {
+		const getFrameAgreementSpy = jest
+			.spyOn(remoteActions, 'getFrameAgreement')
+			.mockResolvedValue(mockFrameAgreements[0]);
+
+		const getAttachmentBodySpy = jest
+			.spyOn(remoteActions, 'getAttachmentBody')
+			.mockResolvedValue(attachment);
+
+		const approvalHistorySpy = jest
+			.spyOn(remoteActions, 'getApprovalHistory')
+			.mockImplementation(jest.fn(() => Promise.resolve(deforcify.deforcify(approval))));
+
+		const mockFaId = mockFrameAgreements[0].id;
+
+		test('should submit the frame agreement for approval refetch fa and history.', async () => {
+			const submitForApprovalSpy = jest
+				.spyOn(remoteActions, 'submitForApproval')
+				.mockResolvedValue(true);
+
+			const submitForApprovalunc = globalAny?.FAM?.api?.submitForApproval as (
+				faId: string
+			) => Promise<boolean>;
+
+			const result = await submitForApprovalunc(mockFaId);
+
+			expect(result).toBeTruthy();
+			expect(getFrameAgreementSpy).toBeCalledWith(mockFaId);
+			expect(submitForApprovalSpy).toBeCalledWith(mockFaId);
+			expect(getAttachmentBodySpy).toBeCalledWith(mockFaId);
+			expect(approvalHistorySpy).toBeCalledWith(mockFaId);
+			expect(setQueryData).toBeCalledWith(
+				[QueryKeys.approvalHistory, mockFaId],
+				deforcify.deforcify(approval)
+			);
+		});
+
+		test('should return false when fa is submitted for approval again. and not refetch fa and history.', async () => {
+			const submitForApprovalSpy = jest
+				.spyOn(remoteActions, 'submitForApproval')
+				.mockResolvedValue(false);
+
+			const submitForApprovalunc = globalAny?.FAM?.api?.submitForApproval as (
+				faId: string
+			) => Promise<boolean>;
+
+			const result = await submitForApprovalunc(mockFaId);
+
+			expect(result).toBeFalsy();
+			expect(getFrameAgreementSpy).toBeCalledTimes(0);
+			expect(submitForApprovalSpy).toBeCalledWith(mockFaId);
+			expect(getAttachmentBodySpy).toBeCalledTimes(0);
+			expect(approvalHistorySpy).toBeCalledTimes(0);
+			expect(setQueryData).toBeCalledTimes(0);
 		});
 	});
 });

@@ -108,6 +108,11 @@ export function RegisterApisWithStore(): ReactElement {
 		return detailsPageProvider.negotiation.custom;
 	};
 	registerApiEndpoint('getCustomData', getCustomData);
+	const submitForApproval = async (faId: string): Promise<boolean> => {
+		const result = await agreementService.submitForApproval(faId);
+		return result;
+	};
+	registerApiEndpoint('submitForApproval', submitForApproval);
 
 	return <></>;
 }

@@ -238,6 +238,7 @@ export function detailsReducer(
 			};
 
 		case 'addProducts':
+			const stateProductsIds = new Set(Object.keys(state.products));
 			const negotiatedProducts = action.payload.products.reduce(
 				(
 					accumulator,
@@ -245,8 +246,8 @@ export function detailsReducer(
 				): {
 					[productId: string]: ProductNegotiation;
 				} => {
-					if (Object.keys(state.products).includes(currentProduct.id)) {
-						return {};
+					if (stateProductsIds.has(currentProduct.id)) {
+						return accumulator;
 					}
 					const productData = action.payload.productsData.cpData[currentProduct.id];
 					if (!productData) {

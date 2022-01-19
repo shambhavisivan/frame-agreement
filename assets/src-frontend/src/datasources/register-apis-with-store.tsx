@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { FrameAgreement, AppSettings, Attachment } from '.';
 import { registerApiEndpoint } from './register-apis';
 import { useCustomLabels } from '../hooks/use-custom-labels';
@@ -8,6 +8,8 @@ import { useFrameAgreements } from '../hooks/use-frame-agreements';
 import { AgreementService } from '../service/agreementService';
 import { useAppSettings } from '../hooks/use-app-settings';
 import { forcify } from './forcify';
+import { useGetProductIds } from '../hooks/use-get-product-ids';
+import { FAMClientError } from '../error/fam-client-error-handler';
 
 export function RegisterApisWithStore(): ReactElement {
 	const queryCache = useQueryCache();
@@ -15,13 +17,27 @@ export function RegisterApisWithStore(): ReactElement {
 	const customLabels = useCustomLabels();
 	const { agreementList = [] } = useFrameAgreements();
 	const { settings = {} as AppSettings } = useAppSettings();
+	const { itemIds } = useGetProductIds([], null);
+	const [triggerSave, setTriggerSave] = useState<boolean>(false);
+
+	useEffect(() => {
+		async function callSaveFa(): Promise<void> {
+			if (triggerSave) {
+				// eslint-disable-next-line  @typescript-eslint/no-non-null-asserted-optional-chain
+				await saveFrameAgreement(detailsPageProvider.activeFa?.id!);
+				setTriggerSave(false);
+			}
+		}
+		callSaveFa();
+	}, [detailsPageProvider, triggerSave]);
 
 	const agreementService: AgreementService = new AgreementService(
 		settings,
 		agreementList,
 		queryCache,
 		customLabels,
-		detailsPageProvider
+		detailsPageProvider,
+		itemIds ? itemIds : []
 	);
 
 	const getFaAttachment = async (faId: string): Promise<Attachment> => {
@@ -127,6 +143,30 @@ export function RegisterApisWithStore(): ReactElement {
 		return (forcify(savedFrameAgreement, 'csconta') as unknown) as SfGlobal.FrameAgreement;
 	};
 	registerApiEndpoint('saveFrameAgreement', saveFrameAgreement);
+
+	const addProducts = async (
+		faId: string,
+		productIds: string[] = []
+	): Promise<FrameAgreement | unknown> => {
+		try {
+			if (checkIsActiveFa(faId)) {
+				await agreementService.addProducts(faId, productIds);
+				setTriggerSave(true);
+				return agreementList.find((fa) => fa.id === faId)!;
+			}
+		} catch (e) {
+			return Promise.reject(e);
+		}
+	};
+	registerApiEndpoint('addProducts', addProducts);
+
+	const checkIsActiveFa = (faId: string): never | true => {
+		const activeFrameAgreement: FrameAgreement | undefined = detailsPageProvider.activeFa;
+		if (activeFrameAgreement?.id !== faId) {
+			throw new FAMClientError(customLabels.notTheActiveFa);
+		}
+		return true;
+	};
 
 	return <></>;
 }

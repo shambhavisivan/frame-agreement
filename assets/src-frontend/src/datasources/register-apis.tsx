@@ -28,6 +28,7 @@ interface FamApi {
 	submitForApproval?: (faId: string) => Promise<boolean>;
 	activateFrameAgreement?: (faId: string) => Promise<void>;
 	saveFrameAgreement?: (faId: string) => Promise<SfGlobal.FrameAgreement>;
+	addProducts?: (faId: string, productIds?: string[]) => Promise<FrameAgreement | unknown>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

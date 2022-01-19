@@ -6,7 +6,7 @@ export function useSubscriber(eventType: string, callback: <T>(data: T) => Promi
 	return publisherSubscriber.subscribe(eventType, callback);
 }
 
-export function usePublisher<T>(eventType: string, dataToPublish: T): Promise<T> {
+export async function usePublisher<T>(eventType: string, dataToPublish: T): Promise<T> {
 	const publisherSubscriber: PublisherSubscriber = PublisherSubscriber.getInstance();
-	return publisherSubscriber.publish(eventType, dataToPublish);
+	return await publisherSubscriber.publish(eventType, dataToPublish);
 }

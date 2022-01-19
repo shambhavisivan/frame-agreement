@@ -2,8 +2,15 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { FamWindow } from './register-apis';
 import { RegisterApisWithStore } from './register-apis-with-store';
-import { Attachment, FrameAgreement, remoteActions } from '.';
-import { attachment, CUSTOM_LABELS_MOCK, mockFrameAgreements } from './mock-data';
+import { FrameAgreement, remoteActions, Attachment } from '.';
+import {
+	CUSTOM_LABELS_MOCK,
+	mockFrameAgreements,
+	attachment,
+	mockCommercialProductData,
+	mockCommercialProducts,
+	mockProductIds
+} from './mock-data';
 import { DetailsProvider, store } from '../components/fa-details/details-page-provider';
 import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
 import * as reactQuery from 'react-query';
@@ -11,8 +18,15 @@ import * as deforcify from './deforcify';
 import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
 import { AgreementService } from '../service/agreementService';
 import { approval } from '../local-server/local_data';
+import * as pubSub from '../hooks/use-publisher-subscriber';
+import * as productIdHook from '../hooks/use-get-product-ids';
 import { CSToastApi } from '@cloudsense/cs-ui-components';
 import * as publisherSubscriber from '../hooks/use-publisher-subscriber';
+
+const useProductIdsSpy = jest.spyOn(productIdHook, 'useGetProductIds').mockReturnValue({
+	itemIdsStatus: reactQuery.QueryStatus.Success,
+	itemIds: [mockProductIds[0]]
+});
 
 describe('RegisterApisWithStore', () => {
 	const setQueryData = jest.fn();
@@ -504,6 +518,65 @@ describe('RegisterApisWithStore', () => {
 			expect(saveAttachmentSpy.mock.calls.length).toBe(1);
 			expect(upsertFrameAgreementsSpy).toBeCalledTimes(1);
 			expect(publisherSubscriberSpy).toBeCalledTimes(2);
+		});
+	});
+
+	describe('addProducts', () => {
+		test('should add products to a frame agreement and save the fa.', async () => {
+			const mockFaId = mockFrameAgreements[0].id;
+			const mockProductId = mockProductIds[0];
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const pubSubSpy = jest
+				.spyOn(pubSub, 'usePublisher')
+				.mockReturnValue(Promise.resolve([mockProductId]));
+
+			const queryProductsSpy = jest
+				.spyOn(remoteActions, 'queryProducts')
+				.mockResolvedValue([mockCommercialProducts[0]]);
+
+			const useEffectSpy = jest.spyOn(React, 'useEffect');
+
+			const getCommercialProductDataSpy = jest
+				.spyOn(remoteActions, 'getCommercialProductData')
+				.mockResolvedValue(mockCommercialProductData);
+
+			const addProductsFunc = globalAny?.FAM?.api?.addProducts as (
+				faId: string,
+				productIds: string[]
+			) => Promise<FrameAgreement>;
+
+			const result = await addProductsFunc(mockFaId, [mockProductId]);
+
+			expect(pubSubSpy).toBeCalled();
+			expect(useProductIdsSpy).toBeCalledWith([], null);
+			expect(queryProductsSpy).toBeCalledWith([mockProductId], null, null, 10, []);
+			expect(getCommercialProductDataSpy).toBeCalled();
+			expect(useEffectSpy).toBeCalled();
+			expect(result.id).toEqual(mockFaId);
+		});
+
+		test('should throw an error if user attempts to add products to an inactive/ invalid fa.', async () => {
+			const mockFaId = mockFrameAgreements[0].id;
+			const mockProductId = mockProductIds[0];
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[1] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const addProductsFunc = globalAny?.FAM?.api?.addProducts as (
+				faId: string,
+				productIds: string[]
+			) => Promise<FrameAgreement>;
+
+			await expect(addProductsFunc(mockFaId, [mockProductId])).rejects.toThrow(
+				CUSTOM_LABELS_MOCK.not_the_active_fa
+			);
 		});
 	});
 });

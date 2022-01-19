@@ -1,7 +1,14 @@
-import { AppSettings, Attachment, FrameAgreement, FrameAgreementAttachment } from '../datasources';
+import {
+	AppSettings,
+	Attachment,
+	CommercialProductStandalone,
+	CommercialProductData,
+	FrameAgreement,
+	FrameAgreementAttachment
+} from '../datasources';
 import { Deforcified } from '../datasources/deforcify';
 import { remoteActions } from '../datasources';
-import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
+import { QueryKeys, FA_STATUS_FIELD_NAME, PRODUCTS_CHUNK_SIZE } from '../app-constants';
 import { QueryCache } from 'react-query';
 import { deforcify } from '../datasources/deforcify';
 import { DetailsState } from '../components/fa-details/details-page-provider';
@@ -10,6 +17,7 @@ import { selectAttachment } from '../components/fa-details/negotiation/details-r
 import { usePublisher as publishEventData } from '../hooks/use-publisher-subscriber';
 import { CSToastApi } from '@cloudsense/cs-ui-components';
 import { forcify } from '../datasources/forcify';
+import { usePublisher as callPublisher } from '../hooks/use-publisher-subscriber';
 
 class AgreementService {
 	private _settings: AppSettings;
@@ -17,19 +25,22 @@ class AgreementService {
 	private _queryCache;
 	private _customLabels: Deforcified<SfGlobal.CustomLabelsSf>;
 	private _detailsPageProvider: DetailsState;
+	private _itemIds: string[];
 
 	public constructor(
 		settings: AppSettings,
 		agreementList: FrameAgreement[],
 		queryCache: QueryCache,
 		customLabels: Deforcified<SfGlobal.CustomLabelsSf>,
-		detailsPageProvider: DetailsState
+		detailsPageProvider: DetailsState,
+		itemIds: string[]
 	) {
 		this._settings = settings;
 		this._agreementList = agreementList;
 		this._queryCache = queryCache;
 		this._customLabels = customLabels;
 		this._detailsPageProvider = detailsPageProvider;
+		this._itemIds = itemIds;
 	}
 
 	public getActiveFrameAgreement(): FrameAgreement {
@@ -312,6 +323,56 @@ class AgreementService {
 		);
 
 		return savedFrameAgreement;
+	};
+
+	public addProducts = async (faId: string, productIds: string[]): Promise<void> => {
+		let cpIds = await callPublisher<string[]>('onBeforeAddProducts', productIds);
+
+		let commercialProductsList: CommercialProductStandalone[] = [];
+
+		//change cp ids from length 15 to length 18
+		if (cpIds.some((cpId) => cpId.length === 15)) {
+			// Generate 15: 18 map
+			const charMap = {} as Record<string, string>;
+			commercialProductsList.forEach((cp) => {
+				charMap[cp.id.substring(0, 15)] = cp.id;
+			});
+
+			cpIds = cpIds.map((cpId) => (cpId.length === 15 ? charMap[cpId] : cpId));
+		}
+
+		const cpIdsinStore = this._detailsPageProvider.negotiation.products
+			? Object.keys(this._detailsPageProvider.negotiation.products)
+			: [];
+
+		const idsToLoad = [
+			...cpIdsinStore,
+			...cpIds.filter((cpId) => this._itemIds.includes(cpId))
+		];
+
+		for (let i = 0; i < idsToLoad.length; i += PRODUCTS_CHUNK_SIZE) {
+			commercialProductsList = [
+				...commercialProductsList,
+				...(await remoteActions.queryProducts(
+					idsToLoad.slice(i, i + PRODUCTS_CHUNK_SIZE),
+					null,
+					null,
+					10,
+					[]
+				))
+			];
+		}
+
+		const commercialProductsData = await remoteActions.getCommercialProductData(idsToLoad);
+
+		this._detailsPageProvider.dispatch({
+			type: 'addProducts',
+			payload: {
+				products: commercialProductsList,
+				productsData: commercialProductsData || ({} as CommercialProductData)
+			}
+		});
+		await callPublisher<string[]>('onAfterAddProducts', idsToLoad);
 	};
 }
 

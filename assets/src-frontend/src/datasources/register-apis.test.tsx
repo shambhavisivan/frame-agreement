@@ -124,4 +124,14 @@ describe('RegisterApis', () => {
 			);
 		});
 	});
+
+	describe('test clear all toasts', () => {
+		const csToastApiSpy = jest.spyOn(CSToastApi, 'clearAllToasts');
+		test('should clear the toast bar', async () => {
+			const clearToastFunc = globalAny?.FAM?.api?.clearToasts as () => void;
+			clearToastFunc();
+
+			expect(csToastApiSpy).toBeCalledTimes(1);
+		});
+	});
 });

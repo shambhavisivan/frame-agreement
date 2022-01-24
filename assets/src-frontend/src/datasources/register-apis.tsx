@@ -23,6 +23,7 @@ interface FamApi {
 		faId: string,
 		refreshAttachment: boolean
 	) => Promise<SfGlobal.FrameAgreementAttachment>;
+	clearToasts?: () => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -102,6 +103,11 @@ export function RegisterApis(): ReactElement {
 		);
 	};
 	registerApiEndpoint('toast', showToast);
+
+	const clearToasts = (): void => {
+		CSToastApi.clearAllToasts();
+	};
+	registerApiEndpoint('clearToasts', clearToasts);
 
 	return <></>;
 }

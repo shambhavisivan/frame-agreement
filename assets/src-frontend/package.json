@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@cloudsense/cs-form-v2": "^1.0.0-alpha1",
-    "@cloudsense/cs-ui-components": "^1.1.26-alpha6",
+    "@cloudsense/cs-ui-components": "^2.0.0",
     "axios": "^0.21.1",
     "lodash": "^4.17.21",
     "react": "^17.0.1",

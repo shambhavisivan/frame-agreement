@@ -150,7 +150,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'OwnerId',
@@ -159,7 +160,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'IsDeleted',
@@ -168,7 +170,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'Name',
@@ -177,7 +180,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'CreatedDate',
@@ -186,7 +190,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'CreatedById',
@@ -195,7 +200,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastModifiedDate',
@@ -204,7 +210,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastModifiedById',
@@ -213,7 +220,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'SystemModstamp',
@@ -222,7 +230,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastActivityDate',
@@ -231,7 +240,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastViewedDate',
@@ -240,7 +250,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastReferencedDate',
@@ -249,7 +260,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__Account__c',
@@ -258,7 +270,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__Agreement_Name__c',
@@ -267,7 +280,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__Main_Contact__c',
@@ -276,7 +290,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__Pricing_Rule_Group__c',
@@ -285,7 +300,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__Status__c',
@@ -294,7 +310,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__Valid_From__c',
@@ -303,7 +320,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__Valid_To__c',
@@ -312,7 +330,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__agreement_level__c',
@@ -321,7 +340,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__effective_end_date__c',
@@ -330,7 +350,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__effective_start_date__c',
@@ -339,7 +360,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__frame_agreement_number__c',
@@ -348,7 +370,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__master_frame_agreement__c',
@@ -357,7 +380,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__replaced_by__c',
@@ -366,7 +390,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'csconta__replaced_frame_agreement__c',
@@ -375,7 +400,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'async_job__c',
@@ -384,7 +410,8 @@ export const faFieldMetadataMock: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	}
 ];
 
@@ -738,6 +765,7 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	alert_deleteAgreements_title: 'Delete agreement(s)',
 	btn_DeleteAgreements: 'Delete',
 	filter_text_warning_message: 'Enter atleast 3 or more characters to begin search.',
+	fa_none: 'none',
 	approval_action_approve: 'Approve',
 	approval_action_reassign: 'Reassign',
 	approval_action_recall: 'Recall',
@@ -1189,7 +1217,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'OwnerId',
@@ -1198,7 +1227,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'IsDeleted',
@@ -1207,7 +1237,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'Name',
@@ -1216,7 +1247,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'CreatedDate',
@@ -1225,7 +1257,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'CreatedById',
@@ -1234,7 +1267,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastModifiedDate',
@@ -1243,7 +1277,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastModifiedById',
@@ -1252,7 +1287,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'SystemModstamp',
@@ -1261,7 +1297,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastViewedDate',
@@ -1270,7 +1307,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastReferencedDate',
@@ -1279,7 +1317,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Account__c',
@@ -1288,7 +1327,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Apply_One_Off_Charge_Account_Discount__c',
@@ -1297,7 +1337,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Apply_Recurring_Charge_Account_Discount__c',
@@ -1306,7 +1347,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Authorization_Level__c',
@@ -1315,7 +1357,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Billing_Frequency__c',
@@ -1324,7 +1367,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Contract_Term__c',
@@ -1333,7 +1377,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Currency_Code__c',
@@ -1342,7 +1387,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Current_Version__c',
@@ -1351,7 +1397,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Discount_Type__c',
@@ -1360,7 +1407,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Effective_End_Date__c',
@@ -1369,7 +1417,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Effective_Start_Date__c',
@@ -1378,7 +1427,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Is_Active__c',
@@ -1387,7 +1437,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Is_Authorization_Required__c',
@@ -1396,7 +1447,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Is_One_Off_Discount_Allowed__c',
@@ -1405,7 +1457,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Is_Recurring_Discount_Allowed__c',
@@ -1414,7 +1467,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Master_Price_item__c',
@@ -1423,7 +1477,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__One_Off_Charge_Code__c',
@@ -1432,7 +1487,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__One_Off_Charge_External_Id__c',
@@ -1441,7 +1497,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__One_Off_Charge__c',
@@ -1450,7 +1507,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__One_Off_Cost__c',
@@ -1459,7 +1517,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Price_Item_Code__c',
@@ -1468,7 +1527,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Price_Item_Description__c',
@@ -1477,7 +1537,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Product_Definition_Name__c',
@@ -1486,7 +1547,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Recurring_Charge_Code__c',
@@ -1495,7 +1557,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Recurring_Charge_External_Id__c',
@@ -1504,7 +1567,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Recurring_Charge__c',
@@ -1513,7 +1577,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Recurring_Cost__c',
@@ -1522,7 +1587,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Role__c',
@@ -1531,7 +1597,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Version_Number__c',
@@ -1540,7 +1607,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__auto_packaging_priority__c',
@@ -1549,7 +1617,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 5,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'rate_card_line__c',
@@ -1558,7 +1627,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Type__c',
@@ -1567,7 +1637,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__metadata__c',
@@ -1576,7 +1647,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__offer_code__c',
@@ -1585,7 +1657,8 @@ export const CP_FIELD_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	}
 ];
 
@@ -1627,7 +1700,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'OwnerId',
@@ -1636,7 +1710,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'IsDeleted',
@@ -1645,7 +1720,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'Name',
@@ -1654,7 +1730,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'CreatedDate',
@@ -1663,7 +1740,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'CreatedById',
@@ -1672,7 +1750,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastModifiedDate',
@@ -1681,7 +1760,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastModifiedById',
@@ -1690,7 +1770,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'SystemModstamp',
@@ -1699,7 +1780,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastActivityDate',
@@ -1708,7 +1790,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastViewedDate',
@@ -1717,7 +1800,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'LastReferencedDate',
@@ -1726,7 +1810,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: false,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Account__c',
@@ -1735,7 +1820,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Add_On_Price_Item_Code__c',
@@ -1744,7 +1830,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Add_On_Price_Item_Description__c',
@@ -1753,7 +1840,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Apply_One_Off_Charge_Account_Discount__c',
@@ -1762,7 +1850,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Apply_Recurring_Charge_Account_Discount__c',
@@ -1771,7 +1860,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Authorization_Level__c',
@@ -1780,7 +1870,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Billing_Frequency__c',
@@ -1789,7 +1880,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Contract_Term__c',
@@ -1798,7 +1890,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Currency_Code__c',
@@ -1807,7 +1900,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Current_Version__c',
@@ -1816,7 +1910,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Discount_Type__c',
@@ -1825,7 +1920,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Effective_End_Date__c',
@@ -1834,7 +1930,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Effective_Start_Date__c',
@@ -1843,7 +1940,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Is_Active__c',
@@ -1852,7 +1950,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Is_Authorization_Required__c',
@@ -1861,7 +1960,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Is_One_Off_Discount_Allowed__c',
@@ -1870,7 +1970,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Is_Recurring_Discount_Allowed__c',
@@ -1879,7 +1980,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__One_Off_Charge_Code__c',
@@ -1888,7 +1990,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__One_Off_Charge_External_Id__c',
@@ -1897,7 +2000,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__One_Off_Charge__c',
@@ -1906,7 +2010,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__One_Off_Cost__c',
@@ -1915,7 +2020,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Product_Definition_Name__c',
@@ -1924,7 +2030,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Recurring_Charge_Code__c',
@@ -1933,7 +2040,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Recurring_Charge_External_Id__c',
@@ -1942,7 +2050,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Recurring_Charge__c',
@@ -1951,7 +2060,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Recurring_Cost__c',
@@ -1960,7 +2070,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Sequence__c',
@@ -1969,7 +2080,8 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'cspmb__Version_Number__c',
@@ -1978,6 +2090,87 @@ export const ADDON_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
+		scale: 0,
+		referenceObjects: null
+	}
+];
+
+export const lookupRecords = [
+	{ name: 'Edge Communications', type: 'Customer - Direct', id: '0014K00000Bxld5QAB' },
+	{
+		name: 'Burlington Textiles Corp of America',
+		type: 'Customer - Direct',
+		id: '0014K00000Bxld6QAB'
+	},
+	{ name: 'Pyramid Construction Inc.', type: 'Customer - Channel', id: '0014K00000Bxld7QAB' },
+	{ name: 'Dickenson plc', type: 'Customer - Channel', id: '0014K00000Bxld8QAB' },
+	{ name: 'Grand Hotels & Resorts Ltd', type: 'Customer - Direct', id: '0014K00000Bxld9QAB' },
+	{ name: 'United Oil & Gas Corp.', type: 'Customer - Direct', id: '0014K00000BxldAQAR' },
+	{
+		name: 'Express Logistics and Transport',
+		type: 'Customer - Channel',
+		id: '0014K00000BxldBQAR'
+	},
+	{ name: 'University of Arizona', type: 'Customer - Direct', id: '0014K00000BxldCQAR' },
+	{ name: 'United Oil & Gas, UK', type: 'Customer - Direct', id: '0014K00000BxldDQAR' },
+	{ name: 'United Oil & Gas, Singapore', type: 'Customer - Direct', id: '0014K00000BxldEQAR' },
+	{ name: 'GenePoint', type: 'Customer - Channel', id: '0014K00000BxldFQAR' },
+	{ name: 'sForce', id: '0014K00000BxldGQAR' },
+	{ name: 'Wayne Enterprices', id: '0014K00000DGtowQAD' },
+	{ name: 'Customer Account', id: '0014K00000HTPJRQA5' },
+	{ name: 'Partner Account', id: '0014K00000I4Kd9QAF' },
+	{ name: 'Test', id: '0014K00000I4c4UQAR' }
+];
+
+export const lookupRecordFieldMetadata: Array<FieldMetadata> = [
+	{
+		apiName: 'id',
+		fieldLabel: 'Account ID',
+		fieldType: 'ID',
+		isCustom: false,
+		isUpdatable: false,
+		precision: 0,
+		referenceObjects: [],
+		scale: 0
+	},
+	{
+		apiName: 'name',
+		fieldLabel: 'Account Name',
+		fieldType: 'STRING',
+		isCustom: false,
+		isUpdatable: true,
+		precision: 0,
+		referenceObjects: [],
+		scale: 0
+	},
+	{
+		apiName: 'type',
+		fieldLabel: 'Account Type',
+		fieldType: 'PICKLIST',
+		isCustom: false,
+		isUpdatable: true,
+		precision: 0,
+		referenceObjects: [],
+		scale: 0
+	},
+	{
+		apiName: 'parentId',
+		fieldLabel: 'Parent Account ID',
+		fieldType: 'REFERENCE',
+		isCustom: false,
+		isUpdatable: true,
+		precision: 0,
+		referenceObjects: ['Account'],
+		scale: 0
+	},
+	{
+		apiName: 'accountNumber',
+		fieldLabel: 'Account Number',
+		fieldType: 'STRING',
+		isCustom: false,
+		isUpdatable: true,
+		precision: 0,
+		referenceObjects: [],
 		scale: 0
 	}
 ];

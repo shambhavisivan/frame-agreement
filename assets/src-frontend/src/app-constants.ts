@@ -33,7 +33,8 @@ export const FIELD_METADATA_CHILD_FA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'effectiveEndDate',
@@ -42,7 +43,8 @@ export const FIELD_METADATA_CHILD_FA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'effectiveStartDate',
@@ -51,7 +53,8 @@ export const FIELD_METADATA_CHILD_FA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	}
 ];
 
@@ -84,7 +87,8 @@ export const ADDON_PRODUCT_DETAILS_GRID_METADATA: FieldMetadata[] = [
 		isCustom: false,
 		isUpdatable: true,
 		precision: 0,
-		scale: 0
+		scale: 0,
+		referenceObjects: null
 	},
 	{
 		apiName: 'oneOffCharge',
@@ -93,7 +97,8 @@ export const ADDON_PRODUCT_DETAILS_GRID_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	},
 	{
 		apiName: 'recurringCharge',
@@ -102,7 +107,8 @@ export const ADDON_PRODUCT_DETAILS_GRID_METADATA: FieldMetadata[] = [
 		isCustom: true,
 		isUpdatable: true,
 		precision: 18,
-		scale: 2
+		scale: 2,
+		referenceObjects: null
 	}
 ];
 

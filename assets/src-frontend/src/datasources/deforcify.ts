@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
+import { addFieldMapping } from './forcify';
+
 // eslint-disable-next-line prettier/prettier
 type ToPascalCase<S extends string> = S extends `${infer Head}_${infer Tail}`
 	? `${Capitalize<Head>}${Capitalize<ToPascalCase<Tail>>}`
@@ -14,7 +16,7 @@ export type DeforcifiedKeyName<
 	? `${Uncapitalize<ToPascalCase<S>>}`
 	: S;
 
-type DeforcifiedObjectElement<T> = T extends (infer R)[] // Is it an array?
+export type DeforcifiedObjectElement<T> = T extends (infer R)[] // Is it an array?
 	? Deforcified<R>[] // deforcify each element of array
 	: T extends object // or is it just an object
 	? Deforcified<T> // deforcify the object
@@ -43,7 +45,10 @@ function toCamel(val: string): string {
 export function deforcifyKeyName<T extends string>(keyName: T): DeforcifiedKeyName<T> {
 	const body = keyName.replace(/^[a-zA-Z0-9]*__|__[a-zA-Z0-9]$/g, '');
 
-	return toCamel(body) as DeforcifiedKeyName<T>;
+	const deforcifiedField = toCamel(body) as DeforcifiedKeyName<T>;
+	addFieldMapping(deforcifiedField, keyName);
+
+	return deforcifiedField;
 }
 
 export function isObject(value: object | unknown): value is object {

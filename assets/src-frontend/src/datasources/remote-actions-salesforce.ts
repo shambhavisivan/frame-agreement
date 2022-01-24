@@ -13,6 +13,7 @@ import {
 	Addon
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
+import { LookupRecordParam } from '.';
 
 /* eslint-disable deprecation/deprecation */
 const SF = window.SF;
@@ -62,6 +63,7 @@ export interface RemoteActions {
 	getFrameAgreement(faId: string): Promise<FrameAgreement>;
 	submitForApproval(faId: string): Promise<boolean>;
 	activateFrameAgreement(faId: string): Promise<string>;
+	getLookupRecords(params: LookupRecordParam): Promise<Array<Record<string, unknown>>>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -322,5 +324,13 @@ export const remoteActions: RemoteActions = {
 		const pricingRuleGroupId = await SF.invokeAction('activateFrameAgreement', [faId]);
 
 		return pricingRuleGroupId;
+	},
+
+	async getLookupRecords(params: LookupRecordParam): Promise<Array<Record<string, unknown>>> {
+		const lookupRecords = await SF.invokeAction('getLookupRecords', [JSON.stringify(params)]);
+
+		return lookupRecords.map((record) => {
+			return deforcify(record);
+		});
 	}
 };

@@ -187,6 +187,7 @@ export interface FieldMetadata {
 	scale: number;
 	precision: number;
 	fieldType: FieldType;
+	referenceObjects: Array<string> | null;
 }
 
 export interface ProcessInstanceHistory {
@@ -336,3 +337,48 @@ export enum TabNames {
 export type SelectedAddons = {
 	[id: string]: Addon;
 };
+
+export interface PickListOption {
+	label: string;
+	value: string;
+}
+
+export interface FieldPickList {
+	[fieldName: string]: Array<PickListOption>;
+}
+
+export interface SettingsFieldMetadata {
+	field: string;
+	label: string;
+	urlLabel?: string;
+	type: FieldType;
+	grid: number;
+	readOnly?: boolean;
+	visible?: string;
+	lookupData?: SettingsFieldLookupMetadata;
+}
+
+export interface SettingsFieldLookupMetadata {
+	columns?: Array<string>;
+	whereClause?: string;
+}
+
+export interface FormBuilderFieldMetadata extends SettingsFieldMetadata {
+	pickListData?: Array<PickListOption>;
+	lookupData?: FormBuilderFieldLookupMetadata;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	value?: any;
+}
+
+export interface FormBuilderFieldLookupMetadata extends SettingsFieldLookupMetadata {
+	referenceField: string;
+}
+
+export interface LookupRecordParam {
+	field: string;
+	columns: Array<string>;
+	whereClause?: string | null;
+	search?: string;
+	lastId?: string | null;
+	offset?: number;
+}

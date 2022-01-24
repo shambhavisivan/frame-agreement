@@ -24,13 +24,15 @@ import {
 	attachment,
 	DELTA_CALC_RESULT_MOCK,
 	CP_FIELD_METADATA,
-	ADDON_METADATA
+	ADDON_METADATA,
+	lookupRecords
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 import { deforcify, deforcifyKeyName } from './deforcify';
 import { addons, approval } from '../local-server/local_data';
 import { ADDON_API_NAME, CP_API_NAME } from '../app-constants';
+import { LookupRecordParam } from '.';
 
 const FAKE_DELAY_MS = 500;
 
@@ -229,5 +231,9 @@ export const remoteActions: RemoteActions = {
 
 	async activateFrameAgreement(faId: string): Promise<string> {
 		return Promise.resolve('prgId-1');
+	},
+
+	async getLookupRecords(params: LookupRecordParam): Promise<Array<Record<string, unknown>>> {
+		return Promise.resolve(lookupRecords);
 	}
 };

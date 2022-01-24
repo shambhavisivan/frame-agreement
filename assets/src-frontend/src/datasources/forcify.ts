@@ -12,11 +12,19 @@ export type Forcified<T> = {
 	[K in keyof T as string]: ForcifiedObjectElement<T[K]>;
 };
 
+const deforcifiedForcifiedFieldMap: Map<string, string> = new Map();
+
 const standardSfFields = ['id', 'name', 'createdById', 'lastModifiedById', 'ownerId'];
 
-function forcifyKeyName<T extends string>(keyName: T, prefix: string): string {
-	const keys = keyName.split(/(?=[A-Z])/g);
-	return `${prefix}__${keys.map(capitalize).join('_')}__c`;
+export function forcifyKeyName<T extends string>(keyName: T, prefix: string): string {
+	let forcifiedKeyName = deforcifiedForcifiedFieldMap.get(keyName);
+
+	if (!forcifiedKeyName) {
+		const keys = keyName.split(/(?=[A-Z])/g);
+		forcifiedKeyName = `${prefix}__${keys.map(capitalize).join('_')}__c`;
+	}
+
+	return forcifiedKeyName;
 }
 
 function forcifyObjectElement<T extends object | unknown>(
@@ -46,4 +54,8 @@ export function forcify<T extends object>(obj: T, packagePrefix: string): Forcif
 			return [forcifiedKeyName, forcifiedObjectElement];
 		})
 	) as Forcified<T>;
+}
+
+export function addFieldMapping(deforcifiedFieldName: string, forcifyFieldName: string): void {
+	deforcifiedForcifiedFieldMap.set(deforcifiedFieldName, forcifyFieldName);
 }

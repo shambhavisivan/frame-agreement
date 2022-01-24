@@ -13,7 +13,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'OwnerId',
@@ -22,7 +23,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: true,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'IsDeleted',
@@ -31,7 +33,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'Name',
@@ -40,7 +43,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'CreatedDate',
@@ -49,7 +53,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'CreatedById',
@@ -58,7 +63,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'LastModifiedDate',
@@ -67,7 +73,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'LastModifiedById',
@@ -76,7 +83,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'SystemModstamp',
@@ -85,7 +93,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'LastActivityDate',
@@ -94,7 +103,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		},
 		{
 			apiName: 'LastViewedDate',
@@ -103,7 +113,8 @@ describe('cs table wrapper test', () => {
 			isCustom: false,
 			isUpdatable: false,
 			precision: 0,
-			scale: 0
+			scale: 0,
+			referenceObjects: null
 		}
 	];
 	const data: FrameAgreement[] = mockFrameAgreements;

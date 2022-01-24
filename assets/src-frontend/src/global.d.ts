@@ -64,6 +64,7 @@ namespace SfGlobal {
 		getFrameAgreement(faId: [string]): Promise<FrameAgreement>;
 		submitForApproval(faId: [string]): Promise<boolean>;
 		activateFrameAgreement(faId: [string]): Promise<string>;
+		getLookupRecords(param: [string]): Promise<Array<Record<string, unknown>>>;
 	}
 
 	interface CategorizationData {
@@ -257,6 +258,7 @@ namespace SfGlobal {
 		delta_fa_fields: string;
 		products_title: string;
 		fa_volume: string;
+		fa_none: string;
 		delta_status_added: string;
 		delta_status_changed: string;
 		delta_status_removed: string;

@@ -132,6 +132,12 @@ export type NegotiationAction =
 			};
 	  }
 	| {
+			type: 'removeProducts';
+			payload: {
+				productIds: string[];
+			};
+	  }
+	| {
 			type: 'negotiateVolume';
 			payload: {
 				productId: string;
@@ -331,6 +337,19 @@ export function detailsReducer(
 						...state.products,
 						...negotiatedProducts
 					}
+				}
+			};
+
+		case 'removeProducts':
+			const idsToBeDeleted = action.payload.productIds;
+			const productsAfterDeletion = JSON.parse(JSON.stringify(state.products));
+			idsToBeDeleted.forEach((id) => delete productsAfterDeletion[id]);
+
+			return {
+				...inputState,
+				negotiation: {
+					...state,
+					products: productsAfterDeletion
 				}
 			};
 

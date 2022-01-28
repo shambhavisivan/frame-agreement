@@ -579,4 +579,52 @@ describe('RegisterApisWithStore', () => {
 			);
 		});
 	});
+
+	describe('removeProducts', () => {
+		test('should remove products from the frame agreement and save it.', async () => {
+			const mockFaId = mockFrameAgreements[0].id;
+			const mockProductId = mockProductIds[0];
+
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const pubSubSpy = jest
+				.spyOn(pubSub, 'usePublisher')
+				.mockReturnValue(Promise.resolve([mockProductId]));
+
+			const useEffectSpy = jest.spyOn(React, 'useEffect');
+
+			const removeProductsFunc = globalAny?.FAM?.api?.removeProducts as (
+				faId: string,
+				productIds: string[]
+			) => Promise<Attachment>;
+
+			await removeProductsFunc(mockFaId, [mockProductId]);
+
+			expect(pubSubSpy).toBeCalled();
+			expect(useEffectSpy).toBeCalled();
+		});
+
+		test('should throw an error if user attempts to remove products from an inactive/ invalid fa.', async () => {
+			const mockFaId = mockFrameAgreements[0].id;
+			const mockProductId = mockProductIds[0];
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[1] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const removeProductsFunc = globalAny?.FAM?.api?.removeProducts as (
+				faId: string,
+				productIds: string[]
+			) => Promise<FrameAgreement>;
+
+			await expect(removeProductsFunc(mockFaId, [mockProductId])).rejects.toThrow(
+				CUSTOM_LABELS_MOCK.not_the_active_fa
+			);
+		});
+	});
 });

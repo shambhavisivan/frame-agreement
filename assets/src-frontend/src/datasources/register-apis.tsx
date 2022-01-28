@@ -29,6 +29,8 @@ interface FamApi {
 	activateFrameAgreement?: (faId: string) => Promise<void>;
 	saveFrameAgreement?: (faId: string) => Promise<SfGlobal.FrameAgreement>;
 	addProducts?: (faId: string, productIds?: string[]) => Promise<FrameAgreement | unknown>;
+
+	removeProducts?: (faId: string, products: string[]) => Promise<Attachment | unknown>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

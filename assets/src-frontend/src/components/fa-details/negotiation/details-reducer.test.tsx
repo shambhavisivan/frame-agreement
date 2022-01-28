@@ -17,6 +17,7 @@ describe('detailsReducer', () => {
 	const negotiateRecurring: NegotiationAction['type'] = 'negotiateProductRecurring';
 	const negotiateOneOff: NegotiationAction['type'] = 'negotiateProductOneOff';
 	const addProducts: NegotiationAction['type'] = 'addProducts';
+	const removeProducts: NegotiationAction['type'] = 'removeProducts';
 	const negotiateRateCardLine: NegotiationAction['type'] = 'negotiateRateCardLine';
 	const loadAttachment: NegotiationAction['type'] = 'loadAttachment';
 
@@ -836,6 +837,62 @@ describe('detailsReducer', () => {
 					}
 				)
 			);
+		});
+	});
+
+	describe(removeProducts, () => {
+		const testState: Negotiation = {
+			products: {},
+			offers: {},
+			addons: {}
+		};
+		const testProducts: { [productId: string]: ProductNegotiation } = {
+			[testProductId]: {
+				volume: {
+					mv: null,
+					muc: null,
+					mvp: null,
+					mucp: null
+				},
+				rateCards: {},
+				product: {
+					oneOff: {
+						original: 1000,
+						negotiated: undefined
+					},
+					recurring: {
+						original: 2000,
+						negotiated: undefined
+					}
+				},
+				charges: {},
+				addons: {},
+				allowances: {}
+			}
+		};
+
+		describe(`with ids of products in the fa`, () => {
+			test(`returns the state with the products removed`, () => {
+				const oldState: INegotiation = {
+					negotiation: {
+						products: { ...testState.products, ...testProducts },
+						addons: {},
+						offers: {}
+					},
+					activeFa: undefined
+				};
+
+				const updatedState = detailsReducer(
+					{ negotiation: oldState.negotiation },
+					{
+						type: removeProducts,
+						payload: {
+							productIds: [testProductId]
+						}
+					}
+				);
+				expect(Object.keys(updatedState.negotiation.products)).toEqual([]);
+			});
 		});
 	});
 });

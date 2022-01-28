@@ -10,6 +10,7 @@ import { useAppSettings } from '../hooks/use-app-settings';
 import { forcify } from './forcify';
 import { useGetProductIds } from '../hooks/use-get-product-ids';
 import { FAMClientError } from '../error/fam-client-error-handler';
+import { selectAttachment } from '../components/fa-details/negotiation/details-reducer';
 
 export function RegisterApisWithStore(): ReactElement {
 	const queryCache = useQueryCache();
@@ -159,6 +160,24 @@ export function RegisterApisWithStore(): ReactElement {
 		}
 	};
 	registerApiEndpoint('addProducts', addProducts);
+
+	const removeProducts = async (
+		faId: string,
+		productIds: string[]
+	): Promise<Attachment | unknown> => {
+		const attachment: Attachment = selectAttachment(detailsPageProvider.negotiation);
+		try {
+			if (checkIsActiveFa(faId)) {
+				await agreementService.removeProducts(faId, productIds);
+				setTriggerSave(true);
+				productIds.forEach((productId) => delete (attachment.products || {})[productId]);
+			}
+		} catch (e) {
+			return Promise.reject(e);
+		}
+		return attachment;
+	};
+	registerApiEndpoint('removeProducts', removeProducts);
 
 	const checkIsActiveFa = (faId: string): never | true => {
 		const activeFrameAgreement: FrameAgreement | undefined = detailsPageProvider.activeFa;

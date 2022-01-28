@@ -374,6 +374,20 @@ class AgreementService {
 		});
 		await callPublisher<string[]>('onAfterAddProducts', idsToLoad);
 	};
+	public removeProducts = async (faId: string, productIds: string[]): Promise<void> => {
+		await publishEventData<string[]>('onBeforeDeleteProducts', productIds);
+
+		const productIdsAfterDeletion = Object.keys(
+			this._detailsPageProvider.negotiation.products
+		).filter((pId) => !productIds.includes(pId));
+
+		this._detailsPageProvider.dispatch({
+			type: 'removeProducts',
+			payload: { productIds: productIds }
+		});
+
+		await publishEventData<string[]>('onAfterDeleteProducts', productIdsAfterDeletion);
+	};
 }
 
 export { AgreementService };

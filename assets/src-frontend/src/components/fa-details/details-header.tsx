@@ -20,7 +20,7 @@ import { store } from './details-page-provider';
 import { selectAttachment } from './negotiation/details-reducer';
 
 export function DetailsHeader(): ReactElement {
-	const { negotiation, activeFa } = useContext(store);
+	const { negotiation, activeFa, disableAgreementOperations, dispatch } = useContext(store);
 	const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 	const { settings } = useAppSettings();
 	const { mutate } = useSaveAttachment();
@@ -31,8 +31,10 @@ export function DetailsHeader(): ReactElement {
 
 	const saveAttachment = (): void => {
 		if (isAgreementNegotiated()) {
+			disableAgreementOperation(true);
 			mutate({ faId: activeFa?.id || '', attachment: selectAttachment(negotiation) }).finally(
-				() =>
+				() => {
+					disableAgreementOperation(false);
 					CSToastApi.renderCSToast(
 						{
 							variant: 'success',
@@ -41,13 +43,21 @@ export function DetailsHeader(): ReactElement {
 						},
 						'top-center',
 						3
-					)
+					);
+				}
 			);
 		}
 	};
 
 	const isAgreementNegotiated = (): boolean => {
 		return !_.isEqualWith(attachment, selectAttachment(negotiation));
+	};
+
+	const disableAgreementOperation = (disable: boolean): void => {
+		dispatch({
+			type: 'toggleDisableAgreementOperation',
+			payload: disable
+		});
 	};
 
 	const confirmationModal = (
@@ -83,7 +93,7 @@ export function DetailsHeader(): ReactElement {
 						activeFa || ({} as FrameAgreement)
 					) && (
 						<CSButton
-							disabled={!isAgreementNegotiated()}
+							disabled={!isAgreementNegotiated() || disableAgreementOperations}
 							label={label.btnSave}
 							onClick={saveAttachment}
 						/>

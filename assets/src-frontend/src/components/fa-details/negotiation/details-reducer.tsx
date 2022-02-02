@@ -53,6 +53,7 @@ export interface Negotiation {
 		custom?: string | Record<string, unknown> | undefined;
 	};
 	activeFa?: FrameAgreement;
+	disableAgreementOperations?: boolean;
 }
 
 export type NegotiationAction =
@@ -172,9 +173,16 @@ export type NegotiationAction =
 			};
 	  };
 
+export type AgreementAction = {
+	type: 'toggleDisableAgreementOperation';
+	payload: boolean;
+};
 // TODO: use normalized state for negotiables - will simplify updates
-export function detailsReducer(inputState: Negotiation, action: NegotiationAction): Negotiation {
-	const { negotiation: state, activeFa } = inputState;
+export function detailsReducer(
+	inputState: Negotiation,
+	action: NegotiationAction | AgreementAction
+): Negotiation {
+	const { negotiation: state } = inputState;
 	switch (action.type) {
 		case 'negotiateProductOneOff':
 			if (!state[action.payload.itemType][action.payload.productId]) {
@@ -182,6 +190,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 			}
 
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					[action.payload.itemType]: {
@@ -197,8 +206,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 							}
 						} as ProductNegotiation
 					}
-				},
-				activeFa
+				}
 			};
 
 		case 'negotiateProductRecurring':
@@ -207,6 +215,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 			}
 
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					[action.payload.itemType]: {
@@ -222,8 +231,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 							}
 						} as ProductNegotiation
 					}
-				},
-				activeFa
+				}
 			};
 
 		case 'addProducts':
@@ -304,14 +312,14 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 				}
 			);
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					products: {
 						...state.products,
 						...negotiatedProducts
 					}
-				},
-				activeFa
+				}
 			};
 
 		case 'negotiateRateCardLine':
@@ -324,6 +332,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 			}
 
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					[itemType]: {
@@ -347,8 +356,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 							}
 						}
 					}
-				},
-				activeFa
+				}
 			};
 
 		case 'loadAttachment':
@@ -454,6 +462,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 			};
 
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					products: createProductStructure(attachment.products),
@@ -475,13 +484,13 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 						},
 						{} as Negotiation['negotiation']['addons']
 					)
-				},
-				activeFa
+				}
 			};
 
 		case 'negotiateVolume':
 			const { productId: itemId, itemType: negotiationItemType, volume } = action.payload;
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					[negotiationItemType]: {
@@ -494,11 +503,11 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 				}
 			};
 		case 'updateActiveFa':
-			return { negotiation: { ...state }, activeFa: action.payload.agreement };
+			return { ...inputState, activeFa: action.payload.agreement };
 
 		case 'negotiateOneOffCharge':
 			return {
-				activeFa,
+				...inputState,
 				negotiation: {
 					...state,
 					[action.payload.itemType]: {
@@ -521,7 +530,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 
 		case 'negotiateRecurringCharge':
 			return {
-				activeFa,
+				...inputState,
 				negotiation: {
 					...state,
 					[action.payload.itemType]: {
@@ -544,6 +553,7 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 
 		case 'addAddonsToFa':
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					addons: action.payload.addons.reduce((accumulator, currentAddon) => {
@@ -565,11 +575,17 @@ export function detailsReducer(inputState: Negotiation, action: NegotiationActio
 
 		case 'setCustomData':
 			return {
-				activeFa,
+				...inputState,
 				negotiation: {
 					...state,
 					custom: action.payload.data
 				}
+			};
+
+		case 'toggleDisableAgreementOperation':
+			return {
+				...inputState,
+				disableAgreementOperations: action.payload
 			};
 
 		default:

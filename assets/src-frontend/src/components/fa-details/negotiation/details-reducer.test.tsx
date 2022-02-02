@@ -990,7 +990,6 @@ describe('test updateof currentFA', () => {
 			}
 		})
 	).toEqual({
-		activeFa: { id: 'someId', agreementName: 'some-agreement', name: 'AGR_001' },
-		negotiation: {}
+		activeFa: { id: 'someId', agreementName: 'some-agreement', name: 'AGR_001' }
 	} as INegotiation);
 });

@@ -1,9 +1,14 @@
 import React, { PropsWithChildren, ReactElement, useEffect, useReducer } from 'react';
 import { FrameAgreement } from '../../datasources';
-import { detailsReducer, Negotiation, NegotiationAction } from './negotiation/details-reducer';
+import {
+	AgreementAction,
+	detailsReducer,
+	Negotiation,
+	NegotiationAction
+} from './negotiation/details-reducer';
 
 export type DetailsState = {
-	dispatch: React.Dispatch<NegotiationAction>;
+	dispatch: React.Dispatch<NegotiationAction | AgreementAction>;
 } & Negotiation;
 
 export const store = React.createContext<DetailsState>({} as DetailsState);
@@ -18,7 +23,9 @@ export function DetailsProvider({
 	agreement
 }: PropsWithChildren<ProviderProps>): ReactElement {
 	const initialState: Negotiation = {
-		negotiation: { products: {}, offers: {}, addons: {}, custom: undefined }
+		negotiation: { products: {}, offers: {}, addons: {}, custom: undefined },
+		activeFa: {} as FrameAgreement,
+		disableAgreementOperations: false
 	};
 
 	const [state, dispatch] = useReducer(detailsReducer, initialState);

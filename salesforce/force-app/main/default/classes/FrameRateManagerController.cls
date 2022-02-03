@@ -2210,6 +2210,7 @@ global with sharing class FrameRateManagerController {
 		cloned.csconta__Status__c = 'Draft';
 		cloned.csconta__replaced_frame_agreement__c = null;
 		cloned.csconta__replaced_by__c = null;
+		cloned.OwnerId = UserInfo.getUserId();
 		insert cloned;
 
 		Fac_Settings__c facSettings = getFacSetting();

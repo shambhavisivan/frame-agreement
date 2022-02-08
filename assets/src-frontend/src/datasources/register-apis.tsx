@@ -1,7 +1,7 @@
 import { CSToastApi, CSToastVariant } from '@cloudsense/cs-ui-components';
 import React, { ReactElement } from 'react';
 import { useQueryCache } from 'react-query';
-import { Attachment, FrameAgreement, remoteActions } from '.';
+import { Attachment, FrameAgreement, remoteActions, CommercialProductStandalone } from '.';
 import { QueryKeys } from '../app-constants';
 import { useFrameAgreements } from '../hooks/use-frame-agreements';
 import { useAppSettings } from '../hooks/use-app-settings';
@@ -29,8 +29,8 @@ interface FamApi {
 	activateFrameAgreement?: (faId: string) => Promise<void>;
 	saveFrameAgreement?: (faId: string) => Promise<SfGlobal.FrameAgreement>;
 	addProducts?: (faId: string, productIds?: string[]) => Promise<FrameAgreement | unknown>;
-
 	removeProducts?: (faId: string, products: string[]) => Promise<Attachment | unknown>;
+	getCommercialProducts?: (faId?: string) => Promise<CommercialProductStandalone[]>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

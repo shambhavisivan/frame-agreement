@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { FamWindow } from './register-apis';
 import { RegisterApisWithStore } from './register-apis-with-store';
-import { FrameAgreement, remoteActions, Attachment } from '.';
+import { FrameAgreement, remoteActions, Attachment, CommercialProductStandalone } from '.';
 import {
 	CUSTOM_LABELS_MOCK,
 	mockFrameAgreements,
@@ -15,7 +15,10 @@ import { DetailsProvider, store } from '../components/fa-details/details-page-pr
 import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
 import * as reactQuery from 'react-query';
 import * as deforcify from './deforcify';
-import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
+import {
+	Negotiation,
+	ProductNegotiation
+} from '../components/fa-details/negotiation/details-reducer';
 import { AgreementService } from '../service/agreementService';
 import { approval } from '../local-server/local_data';
 import * as pubSub from '../hooks/use-publisher-subscriber';
@@ -625,6 +628,104 @@ describe('RegisterApisWithStore', () => {
 			await expect(removeProductsFunc(mockFaId, [mockProductId])).rejects.toThrow(
 				CUSTOM_LABELS_MOCK.not_the_active_fa
 			);
+		});
+	});
+
+	describe('getCommercialProducts', () => {
+		test('without any fa id passed should return all the commercial products', async () => {
+			const mockProductId = mockProductIds[0];
+			const queryProductsSpy = jest
+				.spyOn(remoteActions, 'queryProducts')
+				.mockResolvedValue([mockCommercialProducts[0]]);
+
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const getCommercialProductsFunc = globalAny?.FAM?.api?.getCommercialProducts as (
+				faId?: string
+			) => Promise<CommercialProductStandalone[]>;
+
+			const result = await getCommercialProductsFunc();
+
+			expect(useProductIdsSpy).toBeCalledWith([], null);
+			expect(queryProductsSpy).toBeCalledWith([mockProductId], null, null, 10, []);
+			expect(result.length).toEqual(1);
+		});
+
+		test('with an inactive fa id passed should throw an error.', async () => {
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const getCommercialProductsFunc = globalAny?.FAM?.api?.getCommercialProducts as (
+				faId?: string
+			) => Promise<CommercialProductStandalone[]>;
+
+			await expect(getCommercialProductsFunc(mockFrameAgreements[1].id)).rejects.toThrowError(
+				CUSTOM_LABELS_MOCK.not_the_active_fa
+			);
+		});
+
+		test('with active fa id passed should return the commercial products added to the fa.', async () => {
+			const mockFaId = mockFrameAgreements[0].id;
+
+			const queryProductsSpy = jest
+				.spyOn(remoteActions, 'queryProducts')
+				.mockResolvedValue([mockCommercialProducts[0]]);
+
+			const testProductId = mockCommercialProducts[0].id;
+
+			const newProducts: { [productId: string]: ProductNegotiation } = {
+				[testProductId]: {
+					volume: {
+						mv: null,
+						muc: null,
+						mvp: null,
+						mucp: null
+					},
+					rateCards: {},
+					product: {
+						oneOff: {
+							original: 1000,
+							negotiated: undefined
+						},
+						recurring: {
+							original: 2000,
+							negotiated: undefined
+						}
+					},
+					charges: {},
+					addons: {}
+				}
+			};
+
+			const useContextSpy = jest.spyOn(React, 'useContext').mockImplementationOnce(() => ({
+				...mockState,
+				negotiation: { ...mockState.negotiation, products: newProducts },
+				dispatch: mockDispatch
+			}));
+
+			render(
+				<DetailsProvider agreement={mockFrameAgreements[0] || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+				</DetailsProvider>
+			);
+
+			const getCommercialProductsFunc = globalAny?.FAM?.api?.getCommercialProducts as (
+				faId?: string
+			) => Promise<CommercialProductStandalone[]>;
+
+			const result = await getCommercialProductsFunc(mockFaId);
+
+			expect(useProductIdsSpy).toBeCalledWith([], null);
+			expect(queryProductsSpy).toBeCalledWith([testProductId], null, null, 10, []);
+			expect(result.length).toEqual(1);
+			expect(useContextSpy).toBeCalled();
 		});
 	});
 });

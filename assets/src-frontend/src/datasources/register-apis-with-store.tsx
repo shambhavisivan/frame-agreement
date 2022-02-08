@@ -1,5 +1,11 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
-import { FrameAgreement, AppSettings, Attachment } from '.';
+import {
+	FrameAgreement,
+	AppSettings,
+	Attachment,
+	CommercialProductStandalone,
+	remoteActions
+} from '.';
 import { registerApiEndpoint } from './register-apis';
 import { useCustomLabels } from '../hooks/use-custom-labels';
 import { store } from '../components/fa-details/details-page-provider';
@@ -11,6 +17,7 @@ import { forcify } from './forcify';
 import { useGetProductIds } from '../hooks/use-get-product-ids';
 import { FAMClientError } from '../error/fam-client-error-handler';
 import { selectAttachment } from '../components/fa-details/negotiation/details-reducer';
+import { PRODUCTS_CHUNK_SIZE } from '../app-constants';
 
 export function RegisterApisWithStore(): ReactElement {
 	const queryCache = useQueryCache();
@@ -178,6 +185,35 @@ export function RegisterApisWithStore(): ReactElement {
 		return attachment;
 	};
 	registerApiEndpoint('removeProducts', removeProducts);
+	const getCommercialProducts = async (faId?: string): Promise<CommercialProductStandalone[]> => {
+		let productIdsToFetch = [];
+		if (!faId) {
+			productIdsToFetch = itemIds || [];
+		} else {
+			if (detailsPageProvider.activeFa?.id === faId) {
+				productIdsToFetch = Object.keys(detailsPageProvider.negotiation.products);
+			} else {
+				throw new Error(customLabels.notTheActiveFa);
+			}
+		}
+
+		let commercialProducts: CommercialProductStandalone[] = [];
+
+		for (let i = 0; i < productIdsToFetch.length; i += PRODUCTS_CHUNK_SIZE) {
+			commercialProducts = [
+				...commercialProducts,
+				...(await remoteActions.queryProducts(
+					productIdsToFetch.slice(i, i + PRODUCTS_CHUNK_SIZE),
+					null,
+					null,
+					10,
+					[]
+				))
+			];
+		}
+		return commercialProducts;
+	};
+	registerApiEndpoint('getCommercialProducts', getCommercialProducts);
 
 	const checkIsActiveFa = (faId: string): never | true => {
 		const activeFrameAgreement: FrameAgreement | undefined = detailsPageProvider.activeFa;

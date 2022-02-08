@@ -602,8 +602,7 @@ export function detailsReducer(
 
 						return accumulator;
 					}, {} as Negotiation['negotiation']['addons'])
-				},
-				activeFa
+				}
 			};
 
 		case 'negotiateAddonOneOff':

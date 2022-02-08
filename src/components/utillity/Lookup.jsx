@@ -67,7 +67,7 @@ class Lookup extends React.Component {
 							<div
 								key={record.Id}
 								className={
-									'product-row' + (this.props.selected.Id === record.Id ? ' selected' : '')
+									'product-row' + (this.props.selected?.Id === record.Id ? ' selected' : '')
 								}
 								onClick={() => this.props.onChange(record)}
 							>

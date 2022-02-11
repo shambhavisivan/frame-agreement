@@ -290,7 +290,7 @@ class AccountsModal extends Component {
 		let _main;
 		let _empty_assoc;
 
-		if (this.state.main_acc.Id) {
+		if (this.state.main_acc?.Id) {
 			_main = (
 				<p className="vertical-tab-subtitle">
 					<span>{this.state.main_acc.Name}</span>

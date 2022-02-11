@@ -290,7 +290,7 @@ export const evaluateExpressionOnAgreement = (
 			}
 
 			try {
-				_fieldValue = fa[_relation[0]][_relation[1]] || 'null';
+				_fieldValue = fa[_relation[0]]? fa[_relation[0]][_relation[1]] || 'null': 'null';
 			} catch (err) {
 				console.warn('Cannot evaluate expression: ', Object.values(component).join(' '));
 				console.warn(err);

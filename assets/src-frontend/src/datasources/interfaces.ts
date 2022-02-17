@@ -322,3 +322,7 @@ export interface FrameAgreementAttachment {
 	frameAgreement: FrameAgreement;
 	attachment?: Attachment;
 }
+
+export interface SelectedProducts {
+	[id: string]: CommercialProductStandalone;
+}

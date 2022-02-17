@@ -9,16 +9,21 @@ import { LoadingFallback } from '../loading-fallback';
 import { CSButton } from '@cloudsense/cs-ui-components';
 
 import { AddProductsModal, SelectedProducts } from '../dialogs/add-products-modal';
+import { DeleteModal } from '../dialogs/delete-modal';
+
 import { useGetFaAttachment } from '../../hooks/use-get-fa-attachment';
 import { QueryStatus } from 'react-query';
 import { useCommercialProductData } from '../../hooks/use-commercial-product-data';
-import { ProductStatus } from './product-list-grid';
 import { DetailsTab } from './details-tab';
 import { store } from './details-page-provider';
+import { usePublisher as publishEventData } from '../../hooks/use-publisher-subscriber';
+import { FamWindow } from '../../datasources/register-apis';
 
 interface FaEditorProps {
 	agreement?: FrameAgreement;
 }
+
+declare const window: FamWindow;
 
 export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	const { attachment, attachmentStatus } = useGetFaAttachment(agreement?.id || '');
@@ -26,6 +31,7 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	// fetch only added products and required data intially
 	const { data: products = [], status: productsStatus } = useCommercialProducts(productIds);
 	const [isAddProductModalOpen, setAddProductsModalOpen] = useState<boolean>(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 	const { data: productsData, status: productDataStatus } = useCommercialProductData(
 		productIds || []
 	);
@@ -79,13 +85,45 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 		></AddProductsModal>
 	);
 
+	const deleteProdConfirmationHandler = async (): Promise<void> => {
+		const idsDeleted = Object.keys(selectedProducts);
+		await publishEventData<string[]>('onBeforeDeleteProducts', idsDeleted);
+		const idsToDisplay = productIds?.filter((id) => !idsDeleted.includes(id));
+		setProductIds(idsToDisplay);
+
+		dispatch({
+			type: 'removeProducts',
+			payload: { productIds: idsDeleted }
+		});
+		const validateStatusConsistencyFunc = window?.FAM?.api?.validateStatusConsistency as (
+			faId: string
+		) => Promise<void>;
+		await validateStatusConsistencyFunc(agreement?.id || '');
+
+		await publishEventData<string[]>('onAfterDeleteProducts', idsToDisplay || []);
+
+		setIsDeleteModalOpen(false);
+	};
+
+	const deleteProdCancelHandler = (): void => {
+		setIsDeleteModalOpen(false);
+	};
+
+	const deletionModal = (
+		<DeleteModal
+			isDeleteModalVisible={isDeleteModalOpen}
+			confirmHandler={deleteProdConfirmationHandler}
+			cancelHandler={deleteProdCancelHandler}
+		/>
+	);
+
 	const selectProducts = (
-		productList: CommercialProductStandalone[],
-		productStatus: ProductStatus
+		event: React.ChangeEvent<HTMLInputElement>,
+		productList: CommercialProductStandalone[]
 	): void => {
 		const selected = productList.reduce(
 			(selectedProd, currentSelected): SelectedProducts => {
-				if (!selectedProd[currentSelected.id] && productStatus === 'add') {
+				if (!selectedProd[currentSelected.id]) {
 					selectedProd[currentSelected.id] = currentSelected;
 				} else {
 					delete selectedProd[currentSelected.id];
@@ -94,20 +132,19 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 			},
 			{ ...selectedProducts }
 		);
-		setSelectedProducts(
-			(prevState): SelectedProducts => {
-				return { ...prevState, ...selected };
-			}
-		);
+
+		setSelectedProducts(selected);
 	};
 
 	return (
 		<LoadingFallback status={productsStatus}>
 			<LoadingFallback status={attachmentStatus}>
 				{isAddProductModalOpen && productSelection}
+				{isDeleteModalOpen && deletionModal}
 				<DetailsTab
 					products={productIds?.length ? products : []}
-					selectedProducts={selectProducts}
+					onSelectProduct={selectProducts}
+					selectedProducts={Object.values(selectedProducts)}
 				/>
 				{/* TODO: Move this to parent file. It needs to be sibling to header and pages. Add conditional so it is only rendered on details page */}
 				<footer className="action-footer">
@@ -115,6 +152,13 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 						label="Add products"
 						size="large"
 						onClick={(): void => setAddProductsModalOpen(true)}
+					/>
+
+					<CSButton
+						label="Delete products"
+						size="large"
+						onClick={(): void => setIsDeleteModalOpen(true)}
+						disabled={!productIds?.length}
 					/>
 				</footer>
 			</LoadingFallback>

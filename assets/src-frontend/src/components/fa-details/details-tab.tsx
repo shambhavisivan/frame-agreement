@@ -1,17 +1,17 @@
 import React, { ReactElement, useState } from 'react';
 import { CSTabGroup, CSTab } from '@cloudsense/cs-ui-components';
-import { ProductStatus } from './product-list-grid';
 import { CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
-import { ProductsList } from './products-list';
+import { ProductListGrid } from './product-list-grid';
 import { StandaloneAddons } from './standalone-addons/standalone-addons';
 
 type DetailTabProps = {
 	products: CommercialProductStandalone[];
-	selectedProducts: (
-		productList: CommercialProductStandalone[],
-		productStatus: ProductStatus
+	onSelectProduct: (
+		event: React.ChangeEvent<HTMLInputElement>,
+		productList: CommercialProductStandalone[]
 	) => void;
+	selectedProducts?: CommercialProductStandalone[];
 };
 
 const enum TabNames {
@@ -20,7 +20,11 @@ const enum TabNames {
 	'addonSA' = 'ADDON_STAND_ALONE'
 }
 
-export function DetailsTab({ products }: DetailTabProps): ReactElement {
+export function DetailsTab({
+	products,
+	onSelectProduct,
+	selectedProducts
+}: DetailTabProps): ReactElement {
 	const [activeTab, setActiveTab] = useState(TabNames.products);
 	const labels = useCustomLabels();
 	const onTabClick = (activeTab: TabNames): void => setActiveTab(activeTab);
@@ -46,7 +50,16 @@ export function DetailsTab({ products }: DetailTabProps): ReactElement {
 					/>
 				</CSTabGroup>
 			</div>
-			<div>{activeTab === TabNames.products && <ProductsList productList={products} />}</div>
+			<div>
+				{activeTab === TabNames.products && (
+					<ProductListGrid
+						data={products}
+						selectedProducts={Object.values(selectedProducts || [])}
+						onSelectRow={onSelectProduct}
+						isCollapsible={true}
+					/>
+				)}
+			</div>
 			<div>{activeTab === TabNames.addonSA && <StandaloneAddons />}</div>
 		</div>
 	);

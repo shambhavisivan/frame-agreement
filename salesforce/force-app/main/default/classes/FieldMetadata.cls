@@ -6,6 +6,7 @@ public class FieldMetadata {
 	public Integer scale;
 	public Integer precision;
 	public Schema.DisplayType fieldType;
+	public List<String> referenceObjects;
 
 	public FieldMetadata(Schema.DescribeFieldResult fieldDescribe) {
 		this.apiName = fieldDescribe.getLocalName();
@@ -15,5 +16,13 @@ public class FieldMetadata {
 		this.scale = fieldDescribe.getScale();
 		this.precision = fieldDescribe.getPrecision();
 		this.fieldType = fieldDescribe.getType();
+
+		if (fieldDescribe.getReferenceTo() != null) {
+			referenceObjects = new List<String>();
+
+			for (Schema.SObjectType reference: fieldDescribe.getReferenceTo()) {
+				referenceObjects.add(reference.getDescribe().getName());
+			}
+		}
 	}
 }

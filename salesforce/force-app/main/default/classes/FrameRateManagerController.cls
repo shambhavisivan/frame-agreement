@@ -318,10 +318,12 @@ global with sharing class FrameRateManagerController {
 			List<Map<String, Object>> options = new List<Map<String, Object>>();
 			// getLabel=OptionA;getValue=OptionA
 			for (Schema.PicklistEntry optionEntry : ple) {
-				Map<String, Object> option = new Map<String, Object>();
-				option.put('label', optionEntry.getLabel());
-				option.put('value', optionEntry.getValue());
-				options.add(option);
+				if (optionEntry.isActive()) {
+					Map<String, Object> option = new Map<String, Object>();
+					option.put('label', optionEntry.getLabel());
+					option.put('value', optionEntry.getValue());
+					options.add(option);
+				}
 			}
 
 			optionMap.put(field, options);

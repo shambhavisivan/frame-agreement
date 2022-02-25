@@ -2,9 +2,11 @@ import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import {
 	CommercialProductData,
 	CommercialProductStandalone,
-	FrameAgreement
+	FrameAgreement,
+	TabNames
 } from '../../datasources';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
+import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { LoadingFallback } from '../loading-fallback';
 import { CSButton } from '@cloudsense/cs-ui-components';
 
@@ -40,6 +42,8 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 		dispatch,
 		negotiation: { products: stateProduct }
 	} = useContext(store);
+	const [activeTab, setActiveTab] = useState(TabNames.products);
+	const labels = useCustomLabels();
 
 	useEffect(() => {
 		if (attachmentStatus === QueryStatus.Success) {
@@ -102,6 +106,7 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 
 		await publishEventData<string[]>('onAfterDeleteProducts', idsToDisplay || []);
 
+		setSelectedProducts({});
 		setIsDeleteModalOpen(false);
 	};
 
@@ -114,6 +119,7 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 			isDeleteModalVisible={isDeleteModalOpen}
 			confirmHandler={deleteProdConfirmationHandler}
 			cancelHandler={deleteProdCancelHandler}
+			activeTab={activeTab}
 		/>
 	);
 
@@ -136,6 +142,10 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 		setSelectedProducts(selected);
 	};
 
+	const isDisabled = (): boolean => {
+		return Object.keys(selectedProducts).length ? false : true;
+	};
+
 	return (
 		<LoadingFallback status={productsStatus}>
 			<LoadingFallback status={attachmentStatus}>
@@ -145,21 +155,26 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 					products={productIds?.length ? products : []}
 					onSelectProduct={selectProducts}
 					selectedProducts={Object.values(selectedProducts)}
+					setActiveTabName={setActiveTab}
 				/>
 				{/* TODO: Move this to parent file. It needs to be sibling to header and pages. Add conditional so it is only rendered on details page */}
 				<footer className="action-footer">
-					<CSButton
-						label="Add products"
-						size="large"
-						onClick={(): void => setAddProductsModalOpen(true)}
-					/>
+					{activeTab === TabNames.products && (
+						<CSButton
+							label={labels.btnAddProducts}
+							size="large"
+							onClick={(): void => setAddProductsModalOpen(true)}
+						/>
+					)}
 
-					<CSButton
-						label="Delete products"
-						size="large"
-						onClick={(): void => setIsDeleteModalOpen(true)}
-						disabled={!productIds?.length}
-					/>
+					{activeTab === TabNames.products && (
+						<CSButton
+							label={labels.btnDeleteProducts}
+							size="large"
+							onClick={(): void => setIsDeleteModalOpen(true)}
+							disabled={isDisabled()}
+						/>
+					)}
 				</footer>
 			</LoadingFallback>
 		</LoadingFallback>

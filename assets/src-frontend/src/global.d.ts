@@ -267,6 +267,8 @@ namespace SfGlobal {
 		products_rates: string;
 		addon_label: string;
 		btn_AddProducts: string;
+		btn_DeleteProducts: string;
+		btn_DeleteOffers: string;
 		modal_addFa_title: string;
 		modal_categorization_btn_add: string;
 		modal_categorization_btn_apply: string;
@@ -300,12 +302,14 @@ namespace SfGlobal {
 		one_off_product: string;
 		recurring_product: string;
 		btn_AddAddons: string;
+		btn_DeleteAddons: string;
 		modal_addAddons_title: string;
 		modal_addAddons_input_search_placeholder: string;
 		toast_decomposition_title_success: string;
 		toast_decomposition_success: string;
 		toast_decomposition_title_failed: string;
 		toast_decomposition_failed: string;
+		deletion_confirmation: string;
 	}
 
 	export interface SfdcProcessInstanceHistory {

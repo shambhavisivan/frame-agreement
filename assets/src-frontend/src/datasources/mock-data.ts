@@ -804,12 +804,16 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	one_off_product: 'One-off Charge (Product)',
 	recurring_product: 'Recurring charge (Product)',
 	btn_AddAddons: 'Add Addons',
+	btn_DeleteAddons: 'Delete AddOns',
+	btn_DeleteProducts: 'Delete Products',
+	btn_DeleteOffers: 'Delete Offers',
 	modal_addAddons_title: 'Add stand-alone Add Ons',
 	modal_addAddons_input_search_placeholder: 'Filter Addons',
 	toast_decomposition_title_success: 'Decomposition succeeded!',
 	toast_decomposition_success: 'Created associations',
 	toast_decomposition_title_failed: 'Decomposition failed!',
-	toast_decomposition_failed: 'Deleting associations made from this attempt'
+	toast_decomposition_failed: 'Deleting associations made from this attempt',
+	deletion_confirmation: 'Are you sure you want to delete the selected'
 };
 /* eslint-enable */
 

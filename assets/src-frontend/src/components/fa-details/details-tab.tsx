@@ -4,6 +4,7 @@ import { CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { ProductListGrid } from './product-list-grid';
 import { StandaloneAddons } from './standalone-addons/standalone-addons';
+import { TabNames } from '../../datasources';
 
 type DetailTabProps = {
 	products: CommercialProductStandalone[];
@@ -11,23 +12,24 @@ type DetailTabProps = {
 		event: React.ChangeEvent<HTMLInputElement>,
 		productList: CommercialProductStandalone[]
 	) => void;
+	setActiveTabName: (tabName: TabNames) => void;
+
 	selectedProducts?: CommercialProductStandalone[];
 };
-
-const enum TabNames {
-	'products' = 'PRODUCTS',
-	'offers' = 'OFFERS',
-	'addonSA' = 'ADDON_STAND_ALONE'
-}
 
 export function DetailsTab({
 	products,
 	onSelectProduct,
+	setActiveTabName,
 	selectedProducts
 }: DetailTabProps): ReactElement {
 	const [activeTab, setActiveTab] = useState(TabNames.products);
 	const labels = useCustomLabels();
-	const onTabClick = (activeTab: TabNames): void => setActiveTab(activeTab);
+
+	const tabClickHandler = (tabName: TabNames): void => {
+		setActiveTab(tabName);
+		setActiveTabName(tabName);
+	};
 
 	return (
 		<div>
@@ -36,17 +38,23 @@ export function DetailsTab({
 					<CSTab
 						name={labels.productsTitle}
 						active={activeTab === TabNames.products}
-						onClick={(): void => onTabClick(TabNames.products)}
+						onClick={(): void => {
+							tabClickHandler(TabNames.products);
+						}}
 					/>
 					<CSTab
 						name={labels.addonsTabTitle}
 						active={activeTab === TabNames.addonSA}
-						onClick={(): void => onTabClick(TabNames.addonSA)}
+						onClick={(): void => {
+							tabClickHandler(TabNames.addonSA);
+						}}
 					/>
 					<CSTab
 						name={labels.offersTabTitle}
 						active={activeTab === TabNames.offers}
-						onClick={(): void => onTabClick(TabNames.offers)}
+						onClick={(): void => {
+							tabClickHandler(TabNames.offers);
+						}}
 					/>
 				</CSTabGroup>
 			</div>
@@ -60,7 +68,9 @@ export function DetailsTab({
 					/>
 				)}
 			</div>
-			<div>{activeTab === TabNames.addonSA && <StandaloneAddons />}</div>
+			<div>
+				{activeTab === TabNames.addonSA && <StandaloneAddons activeTab={activeTab} />}
+			</div>
 		</div>
 	);
 }

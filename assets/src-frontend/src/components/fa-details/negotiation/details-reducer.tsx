@@ -588,20 +588,23 @@ export function detailsReducer(
 				...inputState,
 				negotiation: {
 					...state,
-					addons: action.payload.addons.reduce((accumulator, currentAddon) => {
-						accumulator[currentAddon.id] = {
-							oneOff: {
-								negotiated: undefined,
-								original: currentAddon.oneOffCharge
-							},
-							recurring: {
-								negotiated: undefined,
-								original: currentAddon.recurringCharge
-							}
-						};
+					addons: action.payload.addons.reduce(
+						(accumulator, currentAddon) => {
+							accumulator[currentAddon.id] = {
+								oneOff: {
+									negotiated: undefined,
+									original: currentAddon.oneOffCharge
+								},
+								recurring: {
+									negotiated: undefined,
+									original: currentAddon.recurringCharge
+								}
+							};
 
-						return accumulator;
-					}, {} as Negotiation['negotiation']['addons'])
+							return accumulator;
+						},
+						{ ...state.addons }
+					)
 				}
 			};
 

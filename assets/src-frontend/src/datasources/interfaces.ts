@@ -326,3 +326,13 @@ export interface FrameAgreementAttachment {
 export interface SelectedProducts {
 	[id: string]: CommercialProductStandalone;
 }
+
+export enum TabNames {
+	'products' = 'PRODUCTS',
+	'offers' = 'OFFERS',
+	'addonSA' = 'ADDON_STAND_ALONE'
+}
+
+export type SelectedAddons = {
+	[id: string]: Addon;
+};

@@ -413,8 +413,8 @@
 			  "dropdown_no_selection": "{!$Label.dropdown_no_selection}",
 			  "incorrect_fa": "{!$Label.incorrect_fa}",
 			  "no_active_fa": "{!$Label.no_active_fa}",
-			  "not_the_active_fa": "{!$Label.not_the_active_fa}"
-
+			  "not_the_active_fa": "{!$Label.not_the_active_fa}",
+			  "deletion_confirmation": "{!$Label.deletion_confirmation}"
 			},
 			fieldLabels: {}
 		};

@@ -1820,4 +1820,11 @@
         <shortDescription>not the current active fa/ fa id.</shortDescription>
         <value>This is not the current active fa/ fa id.</value>
     </labels>
+    <labels>
+        <fullName>deletion_confirmation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Are you sure you want to delete the selected</shortDescription>
+        <value>Are you sure you want to delete the selected</value>
+    </labels>
 </CustomLabels>

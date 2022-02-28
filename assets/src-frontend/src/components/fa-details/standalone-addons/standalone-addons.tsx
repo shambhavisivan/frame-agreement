@@ -1,6 +1,6 @@
 import { CSButton } from '@cloudsense/cs-ui-components';
 import React, { ReactElement, useContext, useState, useMemo } from 'react';
-import { Addon } from '../../../datasources';
+import { Addon, FrameAgreement } from '../../../datasources';
 import { useCustomLabels } from '../../../hooks/use-custom-labels';
 import { useGetStandaloneAddons } from '../../../hooks/use-get-standalone-addons';
 import { AddonGrid } from '../addon-grid';
@@ -8,9 +8,14 @@ import { store } from '../details-page-provider';
 import { AddAddonsModal } from './add-addons-modal';
 import { TabNames, SelectedAddons } from '../../../datasources';
 import { DeleteModal } from '../../dialogs/delete-modal';
+import { usePublisher as publishEventData } from '../../../hooks/use-publisher-subscriber';
+import { FamWindow } from '../../../datasources/register-apis';
+
+declare const window: FamWindow;
 
 interface StandaloneAddonProps {
 	activeTab: TabNames;
+	agreement: FrameAgreement;
 }
 
 type TransformedAddons = { [id: string]: Addon };
@@ -98,11 +103,26 @@ export function StandaloneAddons(props: StandaloneAddonProps): ReactElement {
 
 	const deleteAddonCancelHandler = (): void => {
 		setIsDeleteModalOpen(false);
-		//TODO: to be implemented
 	};
-	const deleteAddonConfirmationHandler = (): void => {
+
+	const deleteAddonConfirmationHandler = async (): Promise<void> => {
+		const idsDeleted = Object.keys(selectedAddons);
+		await publishEventData<string[]>('onBeforeDeleteAddons', idsDeleted);
+		const idsToDisplay = Object.keys(addons || {})?.filter((id) => !idsDeleted.includes(id));
+
+		setSelectedAddons({});
 		setIsDeleteModalOpen(false);
-		//TODO: to be implemented
+		dispatch({
+			type: 'removeAddons',
+			payload: { addonIds: idsDeleted }
+		});
+
+		const validateStatusConsistencyFunc = window?.FAM?.api?.validateStatusConsistency as (
+			faId: string
+		) => Promise<void>;
+		await validateStatusConsistencyFunc(props.agreement?.id || '');
+
+		await publishEventData<string[]>('onAfterDeleteAddons', idsToDisplay || []);
 	};
 
 	const deletionModal = (

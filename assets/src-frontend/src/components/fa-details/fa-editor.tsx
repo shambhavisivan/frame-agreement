@@ -153,6 +153,7 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 				{isDeleteModalOpen && deletionModal}
 				<DetailsTab
 					products={productIds?.length ? products : []}
+					agreement={agreement || ({} as FrameAgreement)}
 					onSelectProduct={selectProducts}
 					selectedProducts={Object.values(selectedProducts)}
 					setActiveTabName={setActiveTab}

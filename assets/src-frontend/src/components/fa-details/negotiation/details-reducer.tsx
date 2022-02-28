@@ -138,6 +138,12 @@ export type NegotiationAction =
 			};
 	  }
 	| {
+			type: 'removeAddons';
+			payload: {
+				addonIds: string[];
+			};
+	  }
+	| {
 			type: 'negotiateVolume';
 			payload: {
 				productId: string;
@@ -350,6 +356,19 @@ export function detailsReducer(
 				negotiation: {
 					...state,
 					products: productsAfterDeletion
+				}
+			};
+
+		case 'removeAddons':
+			const addonIdsToBeDeleted = action.payload.addonIds;
+			const addonsAfterDeletion = JSON.parse(JSON.stringify(state.addons));
+			addonIdsToBeDeleted.forEach((id) => delete addonsAfterDeletion[id]);
+
+			return {
+				...inputState,
+				negotiation: {
+					...state,
+					addons: addonsAfterDeletion
 				}
 			};
 

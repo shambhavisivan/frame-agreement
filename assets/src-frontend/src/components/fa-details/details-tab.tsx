@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import { CSTabGroup, CSTab } from '@cloudsense/cs-ui-components';
-import { CommercialProductStandalone } from '../../datasources';
+import { CommercialProductStandalone, FrameAgreement } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { ProductListGrid } from './product-list-grid';
 import { StandaloneAddons } from './standalone-addons/standalone-addons';
@@ -8,6 +8,7 @@ import { TabNames } from '../../datasources';
 
 type DetailTabProps = {
 	products: CommercialProductStandalone[];
+	agreement: FrameAgreement;
 	onSelectProduct: (
 		event: React.ChangeEvent<HTMLInputElement>,
 		productList: CommercialProductStandalone[]
@@ -19,6 +20,7 @@ type DetailTabProps = {
 
 export function DetailsTab({
 	products,
+	agreement,
 	onSelectProduct,
 	setActiveTabName,
 	selectedProducts
@@ -69,7 +71,9 @@ export function DetailsTab({
 				)}
 			</div>
 			<div>
-				{activeTab === TabNames.addonSA && <StandaloneAddons activeTab={activeTab} />}
+				{activeTab === TabNames.addonSA && (
+					<StandaloneAddons activeTab={activeTab} agreement={agreement} />
+				)}
 			</div>
 		</div>
 	);

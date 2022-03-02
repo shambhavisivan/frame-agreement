@@ -65,6 +65,7 @@ describe('test useFrameAgremments hook', () => {
 				arbFieldDate: 1547510400000,
 				arbFieldText2: 'Arb Text 2 - change 2',
 				arbFieldText3: 'Arb Text 3 - change 1',
+				arbFieldText4: '',
 				replacedFrameAgreement: 'a1t1t0000009wpQAAP',
 				agreementLevel: 'Master Agreement',
 				arbFieldTextarea:

@@ -511,6 +511,7 @@ export const frameAgreements = [
 		csfam__Arb_Field_Date__c: 1547510400000,
 		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 2',
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
+		csfam__Arb_Field_Text_4__c: '',
 		csconta__replaced_frame_agreement__c: 'a1t1t0000009wpQAAP',
 		csconta__agreement_level__c: 'Master Agreement',
 		csfam__Arb_Field_Textarea__c:

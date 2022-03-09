@@ -3,9 +3,10 @@ import React, { ReactElement, useContext, useMemo } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { store } from './details-page-provider';
-import { Negotiation } from './negotiation';
 import { Negotiable } from './negotiation/details-reducer';
 import { NegotiateProductActions } from './negotiation/negotiation-action-creator';
+import { NegotiateInput } from './negotiation/negotiate-input';
+import { Discount } from './negotiation/discount-validator';
 
 type Props = {
 	product: CommercialProductStandalone;
@@ -31,6 +32,7 @@ export function LegacyProductCharge({
 
 	const productWithNegotiation = useMemo((): ProductNegotiationCharge[] => {
 		const productNegotiation = productState[product.id]?.product;
+
 		const productOneOff: ProductNegotiationCharge = {
 			...product,
 			oneOffNeg: productNegotiation?.oneOff?.negotiated,
@@ -70,12 +72,17 @@ export function LegacyProductCharge({
 					return (
 						<>
 							{row.data?.oneOffCharge && row.data.isOneOffDiscountAllowed ? (
-								<Negotiation
+								<NegotiateInput
 									negotiable={{
 										negotiated: oneOffNegotiated,
 										original: row.data?.oneOffCharge
 									}}
-									onNegotiatedChanged={(value): void =>
+									discountType={row.data?.discountType}
+									discountLevels={[] as Discount[]}
+									isThresholdViolated={false}
+									//eslint-disable-next-line @typescript-eslint/no-empty-function
+									onDiscountSelectionChanged={(value: Discount): void => {}}
+									onNegotiatedChanged={(value: number): void =>
 										oneOffChargeNegotiation(value)
 									}
 								/>
@@ -101,11 +108,16 @@ export function LegacyProductCharge({
 					return (
 						<>
 							{row.data?.recurringCharge && row.data.isRecurringDiscountAllowed ? (
-								<Negotiation
+								<NegotiateInput
 									negotiable={{
 										negotiated: reccurringNeg,
 										original: row.data?.recurringCharge
 									}}
+									discountType={row.data?.discountType}
+									discountLevels={[] as Discount[]}
+									isThresholdViolated={false}
+									//eslint-disable-next-line @typescript-eslint/no-empty-function
+									onDiscountSelectionChanged={(value: Discount): void => {}}
 									onNegotiatedChanged={(value): void =>
 										recurringChargeNegotiation(value)
 									}
@@ -119,7 +131,7 @@ export function LegacyProductCharge({
 				header: label.productChargeHeaderReccNeg
 			}
 		];
-	}, []);
+	}, [productState]);
 
 	return (
 		<>

@@ -1,8 +1,10 @@
 import React, { ReactElement, useContext } from 'react';
-import { Negotiation } from './negotiation';
 import { RateCard as IRateCard } from '../../datasources';
 import { store } from './details-page-provider';
+import { NegotiateInput } from './negotiation/negotiate-input';
+import { Discount } from './negotiation/discount-validator';
 
+/* tslint:disable:no-empty */
 interface RateCardsProps {
 	rateCards: IRateCard[];
 	productId: string;
@@ -91,7 +93,7 @@ function RateCardLineComponent({
 				{name} ({rateCardId}/{rateCardLineId})
 			</th>
 			<th>
-				<Negotiation
+				<NegotiateInput
 					negotiable={{
 						original: value,
 						negotiated:
@@ -99,6 +101,11 @@ function RateCardLineComponent({
 								rateCardLineId
 							]?.negotiated
 					}}
+					discountType="Amount"
+					discountLevels={[] as Discount[]}
+					isThresholdViolated={false}
+					//eslint-disable-next-line @typescript-eslint/no-empty-function
+					onDiscountSelectionChanged={(discount: Discount): void => {}}
 					onNegotiatedChanged={onNegotiatedChanged}
 				/>
 			</th>

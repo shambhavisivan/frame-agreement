@@ -3,7 +3,8 @@ import { CSDataTable, CSDataTableColumnInterface } from '@cloudsense/cs-ui-compo
 import { Addon } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { store } from './details-page-provider';
-import { Negotiation } from './negotiation';
+import { NegotiateInput } from './negotiation/negotiate-input';
+import { Discount } from './negotiation/discount-validator';
 
 type Props = {
 	addon: Addon;
@@ -36,11 +37,16 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 					return (
 						<>
 							{row.data?.oneOffCharge && row.data.isOneOffDiscountAllowed ? (
-								<Negotiation
+								<NegotiateInput
 									negotiable={{
 										negotiated: oneOffNegotiated,
 										original: row.data?.oneOffCharge
 									}}
+									discountType={row.data?.discountType}
+									discountLevels={[] as Discount[]}
+									isThresholdViolated={false}
+									//eslint-disable-next-line @typescript-eslint/no-empty-function
+									onDiscountSelectionChanged={(value: Discount): void => {}}
 									onNegotiatedChanged={(value): void =>
 										dispatch({
 											type: 'negotiateAddonOneOff',
@@ -72,11 +78,20 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 					return (
 						<>
 							{row.data?.recurringCharge && row.data.isRecurringDiscountAllowed ? (
-								<Negotiation
+								<NegotiateInput
 									negotiable={{
 										negotiated: reccurringNeg,
 										original: row.data?.recurringCharge
 									}}
+									discountType={row.data?.discountType}
+									discountLevels={[] as Discount[]}
+									isThresholdViolated={false}
+									/*
+									 * TODO: onDiscountSelectionChanged method implementation will be done in future.
+									 * the same applies to other components where NegotiateInput has been used.
+									 */
+									//eslint-disable-next-line @typescript-eslint/no-empty-function
+									onDiscountSelectionChanged={(value: Discount): void => {}}
 									onNegotiatedChanged={(value): void =>
 										dispatch({
 											type: 'negotiateAddonRecurring',

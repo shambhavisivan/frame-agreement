@@ -3,9 +3,10 @@ import React, { ReactElement, useContext, useMemo } from 'react';
 import { Charge } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { store } from './details-page-provider';
-import { Negotiation } from './negotiation';
 import { Negotiable } from './negotiation/details-reducer';
 import { NegotiateProductActions } from './negotiation/negotiation-action-creator';
+import { NegotiateInput } from './negotiation/negotiate-input';
+import { Discount } from './negotiation/discount-validator';
 
 interface ChargeProp {
 	chargeList: Charge[];
@@ -81,11 +82,16 @@ export function ChargeList({
 					return (
 						<>
 							{row.data?.oneOff ? (
-								<Negotiation
+								<NegotiateInput
 									negotiable={{
 										negotiated: oneOffNegotiated,
 										original: row.data?.oneOff
 									}}
+									discountType={row.data?.discountType}
+									discountLevels={[] as Discount[]}
+									isThresholdViolated={false}
+									//eslint-disable-next-line @typescript-eslint/no-empty-function
+									onDiscountSelectionChanged={(value: Discount): void => {}}
 									onNegotiatedChanged={(value): void =>
 										negotiateOneOffCharge(value, row.data?.id)
 									}
@@ -118,11 +124,16 @@ export function ChargeList({
 					return (
 						<>
 							{row.data?.recurring ? (
-								<Negotiation
+								<NegotiateInput
 									negotiable={{
 										negotiated: reccurringNeg,
 										original: row.data?.recurring
 									}}
+									discountType={row.data?.discountType}
+									discountLevels={[] as Discount[]}
+									isThresholdViolated={false}
+									//eslint-disable-next-line @typescript-eslint/no-empty-function
+									onDiscountSelectionChanged={(value: Discount): void => {}}
 									onNegotiatedChanged={(value): void =>
 										negotiateRecurringCharge(value, row.data?.id)
 									}

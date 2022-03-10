@@ -65,6 +65,7 @@ namespace SfGlobal {
 		submitForApproval(faId: [string]): Promise<boolean>;
 		activateFrameAgreement(faId: [string]): Promise<string>;
 		getLookupRecords(param: [string]): Promise<Array<Record<string, unknown>>>;
+		getPicklistOptions(picklistFields: [Array<string>]): Promise<FieldPickList>;
 	}
 
 	interface CategorizationData {
@@ -88,7 +89,7 @@ namespace SfGlobal {
 			/* eslint-enable @typescript-eslint/naming-convention */
 		};
 		/* eslint-disable @typescript-eslint/naming-convention */
-		HeaderData: Record<string, unknown>;
+		HeaderData: Array<SettingsFieldMetadata>;
 		DefaultCatalogueId: string;
 		CustomTabsData: Record<string, unknown>;
 		ButtonCustomData: Record<string, unknown>;
@@ -235,6 +236,7 @@ namespace SfGlobal {
 		alert_deleteAgreements_title: string;
 		btn_DeleteAgreements: string;
 		filter_text_warning_message: string;
+		frame_agreements_title: string;
 		approval_action_approve: string;
 		approval_action_reassign: string;
 		approval_action_recall: string;

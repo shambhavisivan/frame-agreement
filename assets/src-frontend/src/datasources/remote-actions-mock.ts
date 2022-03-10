@@ -25,14 +25,15 @@ import {
 	DELTA_CALC_RESULT_MOCK,
 	CP_FIELD_METADATA,
 	ADDON_METADATA,
-	lookupRecords
+	lookupRecords,
+	pickListOptions
 } from './mock-data';
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 import { deforcify, deforcifyKeyName } from './deforcify';
 import { addons, approval } from '../local-server/local_data';
 import { ADDON_API_NAME, CP_API_NAME } from '../app-constants';
-import { LookupRecordParam } from '.';
+import { LookupRecordParam, FieldPickList } from '.';
 
 const FAKE_DELAY_MS = 500;
 
@@ -235,5 +236,9 @@ export const remoteActions: RemoteActions = {
 
 	async getLookupRecords(params: LookupRecordParam): Promise<Array<Record<string, unknown>>> {
 		return Promise.resolve(lookupRecords);
+	},
+
+	async getPicklistOptions(picklistFields: Array<string>): Promise<FieldPickList> {
+		return Promise.resolve(pickListOptions);
 	}
 };

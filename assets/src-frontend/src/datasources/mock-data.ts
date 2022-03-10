@@ -26,7 +26,7 @@ import {
 	ProductsByIdsData,
 	ProductsInCategoryData
 } from './graphql-endpoints/interface';
-import { DiscountThreshold } from '.';
+import { DiscountThreshold, FieldPickList } from '.';
 import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
 import { PAGE_SIZES } from '../app-constants';
 
@@ -35,7 +35,7 @@ export const mockAppSettings: AppSettings = {
 		id: 'mockID',
 		name: 'Cloudsense'
 	},
-	headerData: {},
+	headerData: [],
 	defaultCatalogueId: 'testCatalogueId000',
 	customTabsData: {},
 	buttonCustomData: {},
@@ -764,6 +764,7 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	alert_deleteAgreements_message: 'Are you sure you want to delete selected agreement(s)?',
 	alert_deleteAgreements_title: 'Delete agreement(s)',
 	btn_DeleteAgreements: 'Delete',
+	frame_agreements_title: 'Frame Agreements',
 	filter_text_warning_message: 'Enter atleast 3 or more characters to begin search.',
 	fa_none: 'none',
 	approval_action_approve: 'Approve',
@@ -2174,3 +2175,26 @@ export const lookupRecordFieldMetadata: Array<FieldMetadata> = [
 		scale: 0
 	}
 ];
+
+export const pickListOptions: FieldPickList = {
+	agreementLevel: [
+		{
+			label: 'Master Agreement',
+			value: 'Master Agreement'
+		},
+		{
+			label: 'Frame Agreement',
+			value: 'Frame Agreement'
+		}
+	],
+	status: [
+		{
+			label: 'Open',
+			value: 'Open'
+		},
+		{
+			label: 'Closed',
+			value: 'Closed'
+		}
+	]
+};

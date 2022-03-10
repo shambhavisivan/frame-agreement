@@ -177,6 +177,7 @@ const createFieldData = async (fieldMetadata: FormBuilderFieldMetadata): Promise
 			break;
 	}
 	fieldData.disabled = fieldMetadata.readOnly;
+	fieldData.grow = fieldMetadata.grid || 3;
 
 	return fieldData;
 };

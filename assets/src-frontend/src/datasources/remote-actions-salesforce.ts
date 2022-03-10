@@ -13,7 +13,7 @@ import {
 	Addon
 } from './interfaces';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
-import { LookupRecordParam } from '.';
+import { LookupRecordParam, FieldPickList } from '.';
 
 /* eslint-disable deprecation/deprecation */
 const SF = window.SF;
@@ -64,6 +64,7 @@ export interface RemoteActions {
 	submitForApproval(faId: string): Promise<boolean>;
 	activateFrameAgreement(faId: string): Promise<string>;
 	getLookupRecords(params: LookupRecordParam): Promise<Array<Record<string, unknown>>>;
+	getPicklistOptions(picklistFields: Array<string>): Promise<FieldPickList>;
 }
 
 export const remoteActions: RemoteActions = {
@@ -332,5 +333,11 @@ export const remoteActions: RemoteActions = {
 		return lookupRecords.map((record) => {
 			return deforcify(record);
 		});
+	},
+
+	async getPicklistOptions(picklistFields: Array<string>): Promise<FieldPickList> {
+		const pickListOptions = await SF.invokeAction('getPicklistOptions', [picklistFields]);
+
+		return deforcify(pickListOptions);
 	}
 };

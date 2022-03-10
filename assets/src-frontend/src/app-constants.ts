@@ -14,7 +14,8 @@ export enum QueryKeys {
 	filterCommercialProduct = 'filterCommercialProduct',
 	standaloneAddons = 'standaloneAddons',
 	approvalHistory = 'approvalHistory',
-	appSettings = 'appSettings'
+	appSettings = 'appSettings',
+	faFieldPickList = 'faFieldPickList'
 }
 export const FA_API_NAME = 'csconta__Frame_Agreement__c';
 export const FA_STATUS_FIELD_NAME = 'csconta__Status__c';

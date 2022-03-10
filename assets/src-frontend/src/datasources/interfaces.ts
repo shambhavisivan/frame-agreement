@@ -26,7 +26,7 @@ export type FacSetting = {
 export interface AppSettings {
 	account: Account;
 	defaultCatalogueId: string;
-	headerData: Record<string, unknown>;
+	headerData: Array<SettingsFieldMetadata>;
 	customTabsData: Record<string, unknown>;
 	buttonCustomData: Record<string, unknown>;
 	buttonStandardData: Deforcified<SfGlobal.StandardButtonData>;

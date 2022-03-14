@@ -40,7 +40,8 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
 	const {
 		dispatch,
-		negotiation: { products: stateProduct }
+		negotiation: { products: stateProduct },
+		discountData
 	} = useContext(store);
 	const [activeTab, setActiveTab] = useState(TabNames.products);
 	const labels = useCustomLabels();
@@ -57,12 +58,20 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	useEffect(() => {
 		const alreadyAddedProductIds = Object.keys(stateProduct || {});
 		setProductIds(alreadyAddedProductIds.length ? alreadyAddedProductIds : undefined);
-	}, [stateProduct]);
+	}, [stateProduct, discountData]);
 
 	useEffect(() => {
 		function addProductsToFa(products: CommercialProductStandalone[]): void {
 			dispatch({
 				type: 'addProducts',
+				payload: {
+					products: products,
+					productsData: productsData || ({} as CommercialProductData)
+				}
+			});
+
+			dispatch({
+				type: 'setDiscountData',
 				payload: {
 					products: products,
 					productsData: productsData || ({} as CommercialProductData)

@@ -10,7 +10,7 @@ import {
 	ProductNegotiation
 } from '../components/fa-details/negotiation/details-reducer';
 import { DiscountLevel } from '../datasources';
-import { discountContext } from '../providers/discount-conformance-provider';
+import { store } from '../components/fa-details/details-page-provider';
 
 export function useDiscountLevels(): {
 	fetchValidProductDiscounts: (
@@ -25,30 +25,34 @@ export function useDiscountLevels(): {
 		discount: Discount
 	) => number;
 } {
-	const { discountLevels, negotiation: state } = useContext(discountContext);
+	const { discountData, negotiation: state } = useContext(store);
 	const discountsByProductId: {
 		[productId: string]: DiscountLevel[];
-	} = discountLevels.reduce(
-		(discsByProd, discLvl) => {
-			const itemId: string = discLvl.priceItemId
-				? discLvl.priceItemId
-				: (discLvl.addonId as string);
-			if (discsByProd[itemId]) {
-				discsByProd[itemId].push(discLvl.discountLevel);
-			} else {
-				discsByProd[itemId] = [discLvl.discountLevel];
+	} =
+		discountData?.discountLevels?.reduce(
+			(discsByProd, discLvl) => {
+				const itemId: string = discLvl.priceItemId
+					? discLvl.priceItemId
+					: (discLvl.addonId as string);
+				if (discsByProd[itemId]) {
+					discsByProd[itemId].push(discLvl.discountLevel);
+				} else {
+					discsByProd[itemId] = [discLvl.discountLevel];
+				}
+				return discsByProd;
+			},
+			{} as {
+				[productId: string]: DiscountLevel[];
 			}
-			return discsByProd;
-		},
-		{} as {
+		) ||
+		({} as {
 			[productId: string]: DiscountLevel[];
-		}
-	);
+		});
 
 	const fetchValidProductDiscounts = useCallback(
 		(productId: string, itemType: NegotiationItemType, chargeType: ChargeType): Discount[] => {
 			let productDiscountLevels: DiscountLevel[] = [];
-			if (discountLevels) {
+			if (discountData?.discountLevels) {
 				productDiscountLevels = discountsByProductId[productId]?.filter(
 					(discountLvl: DiscountLevel) => discountLvl.chargeType === chargeType
 				);
@@ -78,7 +82,7 @@ export function useDiscountLevels(): {
 
 			return discounts;
 		},
-		[state, discountLevels, discountsByProductId]
+		[state, discountData?.discountLevels, discountsByProductId]
 	);
 
 	const applyProductDiscount = useCallback(

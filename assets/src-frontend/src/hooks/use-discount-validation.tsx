@@ -9,7 +9,7 @@ import {
 	ProductNegotiation
 } from '../components/fa-details/negotiation/details-reducer';
 import { DiscountThreshold } from '../datasources';
-import { discountContext } from '../providers/discount-conformance-provider';
+import { store } from '../components/fa-details/details-page-provider';
 
 export function useDiscountValidation(): {
 	validateProductThreshold: (
@@ -28,14 +28,14 @@ export function useDiscountValidation(): {
 		rateCardLineId: string
 	) => DiscountThresholdViolation[];
 } {
-	const { discountThresholds, authLevels, negotiation: state } = useContext(discountContext);
+	const { discountData, negotiation: state } = useContext(store);
 	const validateRateCardLineThreshold = useCallback(
 		(
 			productId: string,
 			rateCardId: string,
 			rateCardLineId: string
 		): DiscountThresholdViolation[] => {
-			if (!discountThresholds) {
+			if (!discountData?.discountThresholds) {
 				return [];
 			}
 
@@ -44,13 +44,13 @@ export function useDiscountValidation(): {
 
 			let rclThresholds: DiscountThreshold[];
 			if (!!state['products'][productId]?.rateCards[rateCardId]?.authId) {
-				rclThresholds = discountThresholds.filter(
+				rclThresholds = discountData?.discountThresholds.filter(
 					(threshold) =>
 						threshold.authorizationLevel ===
 						state['products'][productId].rateCards[rateCardId].authId
 				);
 			} else {
-				rclThresholds = discountThresholds.filter(
+				rclThresholds = discountData?.discountThresholds.filter(
 					(threshold) =>
 						threshold.name ===
 						state['products'][productId].rateCards[rateCardId].rateCardLines[
@@ -67,7 +67,7 @@ export function useDiscountValidation(): {
 				rclThresholds
 			);
 		},
-		[state, discountThresholds]
+		[state, discountData?.discountThresholds]
 	);
 
 	const validateProductThreshold = useCallback(
@@ -76,20 +76,26 @@ export function useDiscountValidation(): {
 			itemType: NegotiationItemType,
 			chargeType: ChargeType
 		): DiscountThresholdViolation[] => {
-			if (!discountThresholds) {
+			if (!discountData?.discountThresholds) {
 				return [];
 			}
 			const productNegotiable = (state[itemType][productId] as ProductNegotiation).product[
 				chargeType
 			];
 
-			const productThresholds = discountThresholds.filter(
-				(threshold) => threshold.authorizationLevel === authLevels[productId]
-			);
+			let productThresholds: DiscountThreshold[] = [];
+
+			const authLevels: { [productId: string]: string } = discountData?.authLevels || {};
+
+			if (Object.keys(authLevels).length) {
+				productThresholds = discountData?.discountThresholds.filter(
+					(threshold) => threshold.authorizationLevel === authLevels[productId]
+				);
+			}
 
 			return validateDiscountThreshold(productNegotiable, productThresholds);
 		},
-		[authLevels, state, discountThresholds]
+		[discountData?.authLevels, state, discountData?.discountThresholds]
 	);
 
 	const validateAddonThreshold = useCallback(
@@ -98,19 +104,25 @@ export function useDiscountValidation(): {
 			addonId: string,
 			chargeType: ChargeType
 		): DiscountThresholdViolation[] => {
-			if (!discountThresholds) {
+			if (!discountData?.discountThresholds) {
 				return [];
 			}
 
 			const addonNegotiable = state['products'][productId].addons[addonId][chargeType];
 
-			const addonThresholds = discountThresholds.filter(
-				(threshold) => threshold.authorizationLevel === authLevels[addonId]
-			);
+			let addonThresholds: DiscountThreshold[] = [];
+
+			const authLevels: { [addonId: string]: string } = discountData?.authLevels || {};
+
+			if (Object.keys(authLevels).length) {
+				addonThresholds = discountData?.discountThresholds.filter(
+					(threshold) => threshold.authorizationLevel === authLevels[addonId]
+				);
+			}
 
 			return validateDiscountThreshold(addonNegotiable, addonThresholds);
 		},
-		[authLevels, state, discountThresholds]
+		[discountData?.authLevels, state, discountData?.discountThresholds]
 	);
 	return {
 		validateProductThreshold,

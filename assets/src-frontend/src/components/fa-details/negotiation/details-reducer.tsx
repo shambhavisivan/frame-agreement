@@ -8,6 +8,7 @@ import {
 	Product,
 	Volume
 } from '../../../datasources';
+import { DiscLevelWrapper, DiscountThreshold } from '../../../datasources';
 
 export interface Negotiable {
 	original: number | undefined | null;
@@ -41,6 +42,15 @@ export interface ProductNegotiation {
 
 export type NegotiationItemType = 'products' | 'offers' | 'addons';
 
+export type DiscountData = {
+	authLevels?: {
+		[productId: string]: string;
+	};
+	discountThresholds?: DiscountThreshold[];
+
+	discountLevels?: DiscLevelWrapper[];
+};
+
 export interface Negotiation {
 	negotiation: {
 		products: {
@@ -55,6 +65,7 @@ export interface Negotiation {
 		allowances?: Allowances;
 		custom?: string | Record<string, unknown> | undefined;
 	};
+	discountData?: DiscountData;
 	activeFa?: FrameAgreement;
 	disableAgreementOperations?: boolean;
 }
@@ -185,6 +196,13 @@ export type NegotiationAction =
 			type: 'setCustomData';
 			payload: {
 				data: string | Record<string, unknown>;
+			};
+	  }
+	| {
+			type: 'setDiscountData';
+			payload: {
+				products: CommercialProductStandalone[];
+				productsData: CommercialProductData;
 			};
 	  };
 
@@ -345,6 +363,24 @@ export function detailsReducer(
 					}
 				}
 			};
+
+		case 'setDiscountData':
+			const authLevels = action.payload.products.reduce((authAccumulator, currentProduct): {
+				[id: string]: string;
+			} => {
+				if (currentProduct.authorizationLevel) {
+					authAccumulator[currentProduct.id] = currentProduct.authorizationLevel;
+				}
+				return authAccumulator;
+			}, {} as { [id: string]: string });
+
+			const discountData: DiscountData = {
+				authLevels: authLevels,
+				discountThresholds: action.payload.productsData.discThresh || [],
+				discountLevels: action.payload.productsData.discLevels || []
+			};
+
+			return { ...inputState, discountData };
 
 		case 'removeProducts':
 			const idsToBeDeleted = action.payload.productIds;

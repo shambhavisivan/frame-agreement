@@ -1,20 +1,22 @@
 import { renderHook } from '@testing-library/react-hooks';
 import {
-	mockAuthLevels,
-	mockDiscountThresholds,
-	mockNegotiationState
+	mockNegotiationState,
+	mockFrameAgreements,
+	mockDiscountData
 } from '../datasources/mock-data';
 import * as discountValidator from '../components/fa-details/negotiation/discount-validator';
-import { ContextProps, discountContext } from '../providers/discount-conformance-provider';
 import {
 	ChargeType,
-	NegotiationItemType
+	NegotiationItemType,
+	Negotiation
 } from '../components/fa-details/negotiation/details-reducer';
 import React, { FunctionComponent, ReactElement, ReactNode } from 'react';
 import { deforcify } from '../datasources/deforcify';
 import { DiscLevels_general } from '../local-server/local_data';
 import { useDiscountLevels } from './use-discount-levels';
 import { Discount } from '../components/fa-details/negotiation/discount-validator';
+import { store, ProviderProps } from '../components/fa-details/details-page-provider';
+import { FrameAgreement } from '../datasources';
 
 describe('test useDiscountLevels hook', () => {
 	// Cleanup mock
@@ -22,24 +24,24 @@ describe('test useDiscountLevels hook', () => {
 		jest.clearAllMocks();
 	});
 
-	const makeWrapper = (value: ContextProps): FunctionComponent => ({
+	const initialState: Negotiation = {
+		negotiation: mockNegotiationState,
+		activeFa: {} as FrameAgreement,
+		discountData: mockDiscountData,
+		disableAgreementOperations: false
+	};
+	const dispatch = jest.fn();
+
+	const makeWrapper = (value: ProviderProps): FunctionComponent => ({
 		children
 	}: {
 		children?: ReactNode;
 	}): ReactElement => (
-		<discountContext.Provider value={value}>{children}</discountContext.Provider>
+		<store.Provider value={{ ...initialState, dispatch }}>{children}</store.Provider>
 	);
 
 	const testWrapper = makeWrapper({
-		negotiation: mockNegotiationState,
-		discountThresholds: mockDiscountThresholds,
-		authLevels: mockAuthLevels,
-		discountLevels: DiscLevels_general.map((discWrap: SfGlobal.DiscLevelWrapper) => {
-			return {
-				...discWrap,
-				discountLevel: deforcify(discWrap.discountLevel)
-			};
-		})
+		agreement: mockFrameAgreements[0]
 	});
 
 	const testProductId = 'a1i4I000003Q4GGQA0';

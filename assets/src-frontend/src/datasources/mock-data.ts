@@ -27,7 +27,7 @@ import {
 	ProductsInCategoryData
 } from './graphql-endpoints/interface';
 import { DiscountThreshold, FieldPickList } from '.';
-import { Negotiation } from '../components/fa-details/negotiation/details-reducer';
+import { Negotiation, DiscountData } from '../components/fa-details/negotiation/details-reducer';
 import { PAGE_SIZES } from '../app-constants';
 
 export const mockAppSettings: AppSettings = {
@@ -2197,4 +2197,15 @@ export const pickListOptions: FieldPickList = {
 			value: 'Closed'
 		}
 	]
+};
+
+export const mockDiscountData: DiscountData = {
+	authLevels: mockAuthLevels,
+	discountThresholds: mockDiscountThresholds,
+	discountLevels: DiscLevels_general.slice(0, 2).map((discWrap: SfGlobal.DiscLevelWrapper) => {
+		return {
+			...discWrap,
+			discountLevel: deforcify(discWrap.discountLevel)
+		};
+	})
 };

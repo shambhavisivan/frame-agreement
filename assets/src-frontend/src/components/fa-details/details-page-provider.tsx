@@ -3,6 +3,7 @@ import { FrameAgreement } from '../../datasources';
 import {
 	AgreementAction,
 	detailsReducer,
+	DiscountData,
 	Negotiation,
 	NegotiationAction
 } from './negotiation/details-reducer';
@@ -14,7 +15,7 @@ export type DetailsState = {
 export const store = React.createContext<DetailsState>({} as DetailsState);
 store.displayName = 'DetailsStore';
 
-interface ProviderProps {
+export interface ProviderProps {
 	agreement: FrameAgreement;
 }
 
@@ -25,6 +26,7 @@ export function DetailsProvider({
 	const initialState: Negotiation = {
 		negotiation: { products: {}, offers: {}, addons: {}, custom: undefined },
 		activeFa: {} as FrameAgreement,
+		discountData: {} as DiscountData,
 		disableAgreementOperations: false
 	};
 

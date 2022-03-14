@@ -17,6 +17,7 @@ describe('detailsReducer', () => {
 	const negotiateRecurring: NegotiationAction['type'] = 'negotiateProductRecurring';
 	const negotiateOneOff: NegotiationAction['type'] = 'negotiateProductOneOff';
 	const addProducts: NegotiationAction['type'] = 'addProducts';
+	const setDiscountData: NegotiationAction['type'] = 'setDiscountData';
 	const removeProducts: NegotiationAction['type'] = 'removeProducts';
 	const negotiateRateCardLine: NegotiationAction['type'] = 'negotiateRateCardLine';
 	const loadAttachment: NegotiationAction['type'] = 'loadAttachment';
@@ -487,6 +488,113 @@ describe('detailsReducer', () => {
 						}
 					)
 				).toEqual(expectedState);
+			});
+		});
+	});
+
+	describe(setDiscountData, () => {
+		const testState: INegotiation = {
+			negotiation: {} as Negotiation,
+			discountData: {}
+		};
+
+		describe(`with new products having discount data`, () => {
+			const productsData: CommercialProductData = {
+				cpData: {
+					[testProductId]: {
+						addons: [],
+						allowances: [],
+						rateCards: [],
+						charges: []
+					}
+				},
+				discThresh: [
+					{
+						id: 'a1F4K000001AfjdUAC',
+						name: 'FAM_DT1',
+						discountThreshold: 2,
+						authorizationLevel: 'a0z4K000000it1fQAA',
+						discountType: 'Amount'
+					},
+					{
+						id: 'a1F4K000000t12fUAA',
+						name: 'DT1',
+						discountThreshold: 3,
+						authorizationLevel: 'a0z4K000000dv6SQAQ',
+						discountType: 'Amount'
+					}
+				],
+				discLevels: [
+					{
+						discountLevel: {
+							id: 'a1E4K000000iKncUAE',
+							name: 'DiscountLevel1',
+							chargeType: 'One Off',
+							discountType: 'Amount'
+						},
+						priceItemId: 'a1P4K0000074iJaUAI'
+					}
+				]
+			};
+
+			const products: CommercialProductStandalone[] = [
+				{
+					id: testProductId,
+					name: 'testproductname',
+					contractTerm: '12months',
+					authorizationLevel: 'a0z4K000000it1fQAA',
+					oneOffCharge: 1000,
+					recurringCharge: 2000,
+					isOneOffDiscountAllowed: true,
+					isRecurringDiscountAllowed: true
+				}
+			];
+
+			test(`returns the state with new discount data added`, () => {
+				const expectedState: INegotiation = {
+					...testState,
+					discountData: {
+						authLevels: {
+							testProductId: 'a0z4K000000it1fQAA'
+						},
+						discountLevels: [
+							{
+								discountLevel: {
+									id: 'a1E4K000000iKncUAE',
+									name: 'DiscountLevel1',
+									chargeType: 'One Off',
+									discountType: 'Amount'
+								},
+								priceItemId: 'a1P4K0000074iJaUAI'
+							}
+						],
+						discountThresholds: [
+							{
+								id: 'a1F4K000001AfjdUAC',
+								name: 'FAM_DT1',
+								discountThreshold: 2,
+								authorizationLevel: 'a0z4K000000it1fQAA',
+								discountType: 'Amount'
+							},
+							{
+								id: 'a1F4K000000t12fUAA',
+								name: 'DT1',
+								discountThreshold: 3,
+								authorizationLevel: 'a0z4K000000dv6SQAQ',
+								discountType: 'Amount'
+							}
+						]
+					}
+				};
+
+				const updated = detailsReducer(testState, {
+					type: setDiscountData,
+					payload: {
+						products: products,
+						productsData: productsData
+					}
+				});
+				expect(updated).toEqual(expectedState);
 			});
 		});
 	});

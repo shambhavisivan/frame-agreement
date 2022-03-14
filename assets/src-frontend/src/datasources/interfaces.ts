@@ -157,6 +157,7 @@ export interface CommercialProductStandalone {
 	isActive?: boolean;
 	oneOffCharge?: number;
 	recurringCharge?: number;
+	authorizationLevel?: string;
 	isOneOffDiscountAllowed: boolean;
 	isRecurringDiscountAllowed: boolean;
 }

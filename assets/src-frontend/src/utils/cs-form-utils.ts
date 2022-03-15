@@ -1,4 +1,5 @@
-import { CSFormData } from '@cloudsense/cs-form-v2';
+import { CSFormChangedFieldData, CSFormData } from '@cloudsense/cs-form-v2';
+import { CSFormFieldData } from '@cloudsense/cs-form-v2/dist/types/cs-form-field-types';
 import {
 	FieldMetadata,
 	FormBuilderFieldMetadata,
@@ -217,6 +218,35 @@ export const generateCsformData = async (formData: {
 			)
 		}
 	];
+
+	return csFormData;
+};
+
+export const updateCsFormData = (
+	csFormData: CSFormData,
+	data: CSFormChangedFieldData
+): CSFormData => {
+	const csFormSectionData = csFormData.find((csFromFieldData) => {
+		return csFromFieldData.sectionKey === data.sectionKey;
+	});
+	const csFormFieldData =
+		csFormSectionData?.fields.find((csFormFieldData) => {
+			return csFormFieldData.name === data.fieldName;
+		}) || ({} as CSFormFieldData);
+	const value = data.value;
+	if (typeof value === 'object') {
+		if (value instanceof Date) {
+			csFormFieldData.value = value.getTime();
+			if (csFormFieldData.fieldType === 'DATETIME' || csFormFieldData.fieldType === 'DATE') {
+				csFormFieldData.selected = getDateValue(value);
+			}
+		} else if (value.hasOwnProperty('key')) {
+			// look up option selected by the user
+			csFormFieldData.value = value.key;
+		}
+	} else {
+		csFormFieldData.value = value;
+	}
 
 	return csFormData;
 };

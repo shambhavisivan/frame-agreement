@@ -1,7 +1,8 @@
-import { CSFormData } from '@cloudsense/cs-form-v2';
+import { CSFormChangedFieldData, CSFormData } from '@cloudsense/cs-form-v2';
+import { CSFormFieldData } from '@cloudsense/cs-form-v2/dist/types/cs-form-field-types';
 import { FormBuilderFieldMetadata, remoteActions } from '../datasources';
 import { lookupRecordFieldMetadata, lookupRecords } from '../datasources/mock-data';
-import { generateCsformData } from './cs-form-utils';
+import { generateCsformData, updateCsFormData } from './cs-form-utils';
 
 describe('build CS form data', () => {
 	jest.spyOn(remoteActions, 'getFieldMetadata').mockReturnValue(
@@ -249,6 +250,145 @@ describe('build CS form data', () => {
 				});
 			};
 			expect(invalidDataType()).rejects.toThrow(Error);
+		});
+	});
+
+	describe('test update csForm', () => {
+		const formLabel = 'testLabel';
+		let csFormData = {} as CSFormData;
+
+		beforeEach(async () => {
+			csFormData = await generateCsformData({
+				fieldMetadataList: sampleFieldMetadata,
+				label: formLabel
+			});
+		});
+
+		test('string value update', () => {
+			const fieldName =
+				sampleFieldMetadata.find((fieldMetadata) => {
+					return fieldMetadata.type === 'STRING';
+				})?.field || '';
+			const fieldValue = 'updatedValue';
+			const data: CSFormChangedFieldData = {
+				sectionKey: formLabel,
+				fieldName: fieldName,
+				value: fieldValue
+			};
+
+			const updatedCsForm: CSFormData = updateCsFormData(csFormData, data);
+			const updatedCsFormValue: string = updatedCsForm
+				.find((csFromFieldData) => {
+					return csFromFieldData.sectionKey === data.sectionKey;
+				})
+				?.fields.find((csFormFieldData) => {
+					return csFormFieldData.name === data.fieldName;
+				})?.value;
+
+			expect(fieldValue).toBe(updatedCsFormValue);
+		});
+
+		test('pickList value update', () => {
+			const fieldName =
+				sampleFieldMetadata.find((fieldMetadata) => {
+					return fieldMetadata.type === 'PICKLIST';
+				})?.field || '';
+			const fieldValue = 'updatedValue';
+			const data: CSFormChangedFieldData = {
+				sectionKey: formLabel,
+				fieldName: fieldName,
+				value: fieldValue
+			};
+
+			const updatedCsForm: CSFormData = updateCsFormData(csFormData, data);
+			const updatedCsFormValue: string = updatedCsForm
+				.find((csFromFieldData) => {
+					return csFromFieldData.sectionKey === data.sectionKey;
+				})
+				?.fields.find((csFormFieldData) => {
+					return csFormFieldData.name === data.fieldName;
+				})?.value;
+
+			expect(fieldValue).toBe(updatedCsFormValue);
+		});
+
+		test('dateTime value update', () => {
+			const fieldName =
+				sampleFieldMetadata.find((fieldMetadata) => {
+					return fieldMetadata.type === 'DATETIME';
+				})?.field || '';
+			const fieldValue = new Date(1638469800000);
+			const data: CSFormChangedFieldData = {
+				sectionKey: formLabel,
+				fieldName: fieldName,
+				value: fieldValue
+			};
+
+			const updatedCsForm: CSFormData = updateCsFormData(csFormData, data);
+			const updatedCsFormValue: CSFormFieldData = updatedCsForm
+				.find((csFromFieldData) => {
+					return csFromFieldData.sectionKey === data.sectionKey;
+				})
+				?.fields.find((csFormFieldData) => {
+					return csFormFieldData.name === data.fieldName;
+				}) as CSFormFieldData;
+
+			if (updatedCsFormValue?.fieldType === 'DATETIME') {
+				expect(updatedCsFormValue.selected?.getTime()).toBe(fieldValue.getTime());
+			}
+		});
+
+		test('lookup value update', () => {
+			const fieldName =
+				sampleFieldMetadata.find((fieldMetadata) => {
+					return fieldMetadata.type === 'REFERENCE';
+				})?.field || '';
+			const fieldValue: Record<string, unknown> = {
+				...lookupRecords[Math.floor(Math.random() * lookupRecords.length)]
+			};
+			const data: CSFormChangedFieldData = {
+				sectionKey: formLabel,
+				fieldName: fieldName,
+				value: {
+					key: fieldValue.id,
+					data: fieldValue
+				}
+			};
+
+			const updatedCsForm: CSFormData = updateCsFormData(csFormData, data);
+			const updatedCsFormValue: CSFormFieldData = updatedCsForm
+				.find((csFromFieldData) => {
+					return csFromFieldData.sectionKey === data.sectionKey;
+				})
+				?.fields.find((csFormFieldData) => {
+					return csFormFieldData.name === data.fieldName;
+				}) as CSFormFieldData;
+
+			expect(updatedCsFormValue?.value).toBe(fieldValue.id);
+		});
+
+		test('boolean value update', () => {
+			const fieldName =
+				sampleFieldMetadata.find((fieldMetadata) => {
+					return fieldMetadata.type === 'BOOLEAN';
+				})?.field || '';
+			const fieldValue = true;
+			const data: CSFormChangedFieldData = {
+				sectionKey: formLabel,
+				fieldName: fieldName,
+				value: fieldValue
+			};
+
+			const updatedCsForm: CSFormData = updateCsFormData(csFormData, data);
+			const updatedCsFormValue: CSFormFieldData = updatedCsForm
+				.find((csFromFieldData) => {
+					return csFromFieldData.sectionKey === data.sectionKey;
+				})
+				?.fields.find((csFormFieldData) => {
+					return csFormFieldData.name === data.fieldName;
+				}) as CSFormFieldData;
+
+			expect(updatedCsFormValue?.value).toBe(fieldValue);
 		});
 	});
 });

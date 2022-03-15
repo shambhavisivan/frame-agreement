@@ -9,20 +9,23 @@ import { FaStatusContextProvider } from '../../providers/fa-status-provider';
 import { DetailsProvider } from './details-page-provider';
 import { DetailsHeader } from './details-header';
 import { RegisterApisWithStore } from '../../datasources/register-apis-with-store';
-import { CSForm, CSFormData } from '@cloudsense/cs-form-v2';
+import { CSForm, CSFormChangedFieldData, CSFormData } from '@cloudsense/cs-form-v2';
 import { useFieldMetadata } from '../../hooks/use-field-metadata';
 import { FA_API_NAME } from '../../app-constants';
-import { generateCsformData } from '../../utils/cs-form-utils';
+import { generateCsformData, updateCsFormData } from '../../utils/cs-form-utils';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { usePickListOption } from '../../hooks/use-pick-list-option';
 import { forcifyKeyName } from '../../datasources/forcify';
 import { useAppSettings } from '../../hooks/use-app-settings';
 import { evaluateConditionalExpression } from '../../utils/app-settings-config-utils';
 import { deforcifyKeyName } from '../../datasources/deforcify';
+import { FamWindow } from '../../datasources/register-apis';
 
 interface FrameAgreementDetailsProps {
 	agreementId: string;
 }
+
+declare const window: FamWindow;
 
 export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProps): ReactElement {
 	const { agreementList = [], status: faStatus } = useFrameAgreements();
@@ -124,6 +127,24 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 		setFaHeaderFields(headerFieldFormData);
 	};
 
+	const updateFa = async (data: CSFormChangedFieldData): Promise<void> => {
+		let headerFieldFormData = [...faHeaderFields];
+		headerFieldFormData = updateCsFormData(headerFieldFormData, data);
+
+		setFaHeaderFields(headerFieldFormData);
+
+		const updateFrameAgreement = window?.FAM?.api?.updateFrameAgreement as (
+			agreementId: string,
+			fieldName: keyof SfGlobal.FrameAgreement,
+			value: string | number
+		) => Promise<void>;
+		await updateFrameAgreement(
+			agreement?.id as string,
+			forcifyKeyName(data.fieldName, 'csconta') as keyof SfGlobal.FrameAgreement,
+			data.value
+		);
+	};
+
 	return (
 		<div className="details-wrapper">
 			<LoadingFallback status={faStatus}>
@@ -144,6 +165,7 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 										}
 									}
 								}}
+								onFieldChange={updateFa}
 							/>
 						</div>
 						<ApprovalProcess faId={agreementId} />

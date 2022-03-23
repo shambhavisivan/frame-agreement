@@ -1,12 +1,14 @@
 import { CSDataTable, CSDataTableColumnInterface } from '@cloudsense/cs-ui-components';
-import React, { ReactElement, useContext, useMemo } from 'react';
+import React, { ReactElement, useContext, useMemo, useRef } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { store } from './details-page-provider';
-import { Negotiable } from './negotiation/details-reducer';
+import { Negotiable, ChargeType } from './negotiation/details-reducer';
 import { NegotiateProductActions } from './negotiation/negotiation-action-creator';
 import { NegotiateInput } from './negotiation/negotiate-input';
 import { Discount } from './negotiation/discount-validator';
+import { useDiscountValidation } from '../../hooks/use-discount-validation';
+import { useDiscountLevels } from '../../hooks/use-discount-levels';
 
 type Props = {
 	product: CommercialProductStandalone;
@@ -17,7 +19,6 @@ type Props = {
 type ProductNegotiationCharge = CommercialProductStandalone & {
 	oneOffNeg: Negotiable['negotiated'];
 	recurringNeg: Negotiable['negotiated'];
-	chargeType: string;
 };
 
 export function LegacyProductCharge({
@@ -30,32 +31,32 @@ export function LegacyProductCharge({
 	} = useContext(store);
 	const label = useCustomLabels();
 
+	const { validateProductThreshold } = useDiscountValidation();
+	const { fetchValidProductDiscounts, applyProductDiscount } = useDiscountLevels();
+	const currentChargeChanged = useRef<ChargeType | string>('');
+
+	const evaluateThreshold = (chargeType: ChargeType): boolean => {
+		const breachedThresholds = validateProductThreshold(product.id, 'products', chargeType);
+		return breachedThresholds.length ? true : false;
+	};
+
 	const productWithNegotiation = useMemo((): ProductNegotiationCharge[] => {
 		const productNegotiation = productState[product.id]?.product;
 
-		const productOneOff: ProductNegotiationCharge = {
+		const productNeg: ProductNegotiationCharge = {
 			...product,
 			oneOffNeg: productNegotiation?.oneOff?.negotiated,
-			chargeType: label.oneOffProduct,
-			recurringCharge: undefined,
-			recurringNeg: null
-		};
-		const productRecurring: ProductNegotiationCharge = {
-			...product,
-			oneOffNeg: null,
-			oneOffCharge: undefined,
-			recurringNeg: productNegotiation?.recurring.negotiated,
-			chargeType: label.recurringProduct
+			recurringNeg: productNegotiation?.recurring.negotiated
 		};
 
-		return [productOneOff, productRecurring];
+		return [productNeg];
 	}, [label.oneOffProduct, label.recurringProduct, product, productState]);
 
 	const metadata = useMemo((): CSDataTableColumnInterface[] => {
 		return [
 			{
 				key: label.productChargeHeaderName,
-				render: (row): ReactElement => <>{row.data?.chargeType}</>,
+				render: (): ReactElement => <>{label.productLegacyChargeName}</>,
 				header: label.productChargeHeaderName
 			},
 			{
@@ -78,13 +79,27 @@ export function LegacyProductCharge({
 										original: row.data?.oneOffCharge
 									}}
 									discountType={row.data?.discountType}
-									discountLevels={[] as Discount[]}
-									isThresholdViolated={false}
+									discountLevels={fetchValidProductDiscounts(
+										product.id,
+										'products',
+										'oneOff'
+									)}
+									isThresholdViolated={evaluateThreshold('oneOff')}
 									//eslint-disable-next-line @typescript-eslint/no-empty-function
-									onDiscountSelectionChanged={(value: Discount): void => {}}
-									onNegotiatedChanged={(value: number): void =>
-										oneOffChargeNegotiation(value)
-									}
+									onDiscountSelectionChanged={(value: Discount): void => {
+										currentChargeChanged.current = 'oneOff';
+										const discountedValue = applyProductDiscount(
+											product.id,
+											'products',
+											'oneOff',
+											value
+										);
+										oneOffChargeNegotiation(discountedValue);
+									}}
+									onNegotiatedChanged={(value: number): void => {
+										currentChargeChanged.current = 'oneOff';
+										oneOffChargeNegotiation(value);
+									}}
 								/>
 							) : (
 								'N/A'
@@ -114,13 +129,27 @@ export function LegacyProductCharge({
 										original: row.data?.recurringCharge
 									}}
 									discountType={row.data?.discountType}
-									discountLevels={[] as Discount[]}
-									isThresholdViolated={false}
+									discountLevels={fetchValidProductDiscounts(
+										product.id,
+										'products',
+										'recurring'
+									)}
+									isThresholdViolated={evaluateThreshold('recurring')}
 									//eslint-disable-next-line @typescript-eslint/no-empty-function
-									onDiscountSelectionChanged={(value: Discount): void => {}}
-									onNegotiatedChanged={(value): void =>
-										recurringChargeNegotiation(value)
-									}
+									onDiscountSelectionChanged={(value: Discount): void => {
+										currentChargeChanged.current = 'recurring';
+										const discountedValue = applyProductDiscount(
+											product.id,
+											'products',
+											'recurring',
+											value
+										);
+										recurringChargeNegotiation(discountedValue);
+									}}
+									onNegotiatedChanged={(value): void => {
+										currentChargeChanged.current = 'recurring';
+										recurringChargeNegotiation(value);
+									}}
 								/>
 							) : (
 								'N/A'

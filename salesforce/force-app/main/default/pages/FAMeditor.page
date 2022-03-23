@@ -337,6 +337,7 @@
 			  "no_fa_message_2": "{!$Label.no_fa_message_2}",
 			  "offer_metadata_header": "{!$Label.offer_metadata_header}",
 			  "product_charge_header_name": "{!$Label.product_charge_header_name}",
+			  "product_legacy_charge_name": "{!$Label.product_legacy_charge_name}",
 			  "product_charge_header_oneOff": "{!$Label.product_charge_header_oneOff}",
 			  "product_charge_header_oneOff_neg": "{!$Label.product_charge_header_oneOff_neg}",
 			  "product_charge_header_recc": "{!$Label.product_charge_header_recc}",

@@ -299,6 +299,7 @@ namespace SfGlobal {
 		charges_header_recc_neg: string;
 		charges_header_type: string;
 		product_charge_header_name: string;
+		product_legacy_charge_name: string;
 		product_charge_header_oneOff: string;
 		product_charge_header_oneOff_neg: string;
 		product_charge_header_recc: string;

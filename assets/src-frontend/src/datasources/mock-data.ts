@@ -826,6 +826,7 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	charges_header_recc_neg: 'Negotiated Recurring',
 	charges_header_type: 'Charge Type',
 	product_charge_header_name: 'Product Charges',
+	product_legacy_charge_name: 'On product',
 	product_charge_header_oneOff: 'One-Off Adjustment',
 	product_charge_header_oneOff_neg: 'Negotiated One Off',
 	product_charge_header_recc: 'Recurring Adjustment',

@@ -1107,6 +1107,13 @@
         <value>Charge Name</value>
     </labels>
     <labels>
+        <fullName>product_legacy_charge_name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>product_legacy_charge_name</shortDescription>
+        <value>On product</value>
+    </labels>
+    <labels>
         <fullName>product_charge_header_oneOff</fullName>
         <language>en_US</language>
         <protected>true</protected>

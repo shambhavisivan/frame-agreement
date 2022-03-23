@@ -36,7 +36,10 @@ describe('test discount validator utils', () => {
 			);
 
 			expect(validations).toEqual([
-				{ thresholdName: testDiscountThresholds[1].name, violatedAmount: 1 }
+				{
+					thresholdName: testDiscountThresholds[1].name,
+					violatedAmount: 1
+				}
 			]);
 		});
 
@@ -53,8 +56,14 @@ describe('test discount validator utils', () => {
 			);
 
 			expect(validations).toEqual([
-				{ thresholdName: testDiscountThresholds[0].name, violatedAmount: 1 },
-				{ thresholdName: testDiscountThresholds[1].name, violatedAmount: 11 }
+				{
+					thresholdName: testDiscountThresholds[0].name,
+					violatedAmount: 1
+				},
+				{
+					thresholdName: testDiscountThresholds[1].name,
+					violatedAmount: 11
+				}
 			]);
 		});
 	});

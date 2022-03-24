@@ -14,7 +14,7 @@ import {
 } from '../components/fa-details/negotiation/details-reducer';
 import React, { FunctionComponent, ReactElement, ReactNode } from 'react';
 import { DiscountThresholdViolation } from '../components/fa-details/negotiation/discount-validator';
-import { FrameAgreement } from '../datasources';
+import { FrameAgreement, ChargeT } from '../datasources';
 import { store, ProviderProps } from '../components/fa-details/details-page-provider';
 
 describe('test useDiscountValidation hook', () => {
@@ -79,6 +79,43 @@ describe('test useDiscountValidation hook', () => {
 		});
 	});
 
+	describe('validateProductThresholdForAdvancedCharges', () => {
+		const {
+			result: {
+				current: { validateProductThresholdForAdvancedCharges }
+			}
+		} = renderHook(() => useDiscountValidation(), {
+			wrapper: testWrapper
+		});
+
+		test('should validate the product advanced charge against given threshold', async () => {
+			const testProductId = 'a1i4I000003Kqe8QAC';
+			const testChargeId = 'a1l4I00000AFilFQAT';
+
+			const mockCharge: ChargeT = {
+				id: testChargeId,
+				name: 'Voice Threshold',
+				chargeType: 'oneOff',
+				oneOff: { original: 15.5, negotiated: 7.5 },
+				recurring: {
+					original: 15,
+					negotiated: undefined
+				}
+			};
+			const validations = validateProductThresholdForAdvancedCharges(
+				testProductId,
+				mockCharge
+			);
+
+			expect(validations).toEqual([fakeThresholdViolation]);
+			expect(validateDiscountsSpy.mock.calls.length).toBe(1);
+			expect(validateDiscountsSpy).toHaveBeenCalledWith(
+				mockNegotiationState.products[testProductId].charges?.[testChargeId].oneOff,
+				[mockDiscountThresholds[1]]
+			);
+		});
+	});
+
 	describe('validateAddonThreshold', () => {
 		const {
 			result: {
@@ -117,22 +154,27 @@ describe('test useDiscountValidation hook', () => {
 		});
 
 		test('should validate the rate card line item value against given threshold', async () => {
-			const testrateCardProductId = 'a1i4I000003KqdtQAC';
+			const testrateCardProductId = 'a1i4I000003Q4GGQA0';
 			const testRateCardId = 'a1q4I000009tfziQAA';
 			const testRateCardLineId = 'a1p4I00000Cn44DQAR';
 			const validations = validateRateCardLineThreshold(
 				testrateCardProductId,
 				testRateCardId,
-				testRateCardLineId
+				testRateCardLineId,
+				mockDiscountThresholds[0].authorizationLevel
 			);
-
+			const rateCardLine =
+				mockNegotiationState.products[testrateCardProductId].rateCards[testRateCardId]
+					.rateCardLines[testRateCardLineId];
+			const rateCardNegotiable = {
+				original: rateCardLine.original,
+				negotiated: rateCardLine.negotiated
+			};
 			expect(validations).toEqual([fakeThresholdViolation]);
 			expect(validateDiscountsSpy.mock.calls.length).toBe(1);
-			expect(validateDiscountsSpy).toHaveBeenCalledWith(
-				mockNegotiationState.products[testrateCardProductId].rateCards[testRateCardId]
-					.rateCardLines[testRateCardLineId],
-				[mockDiscountThresholds[0]]
-			);
+			expect(validateDiscountsSpy).toHaveBeenCalledWith(rateCardNegotiable, [
+				mockDiscountThresholds[0]
+			]);
 		});
 	});
 });

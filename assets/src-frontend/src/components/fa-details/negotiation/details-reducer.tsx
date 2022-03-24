@@ -598,6 +598,7 @@ export function detailsReducer(
 				negotiation: {
 					...state,
 					[action.payload.itemType]: {
+						...state[action.payload.itemType],
 						[action.payload.productId]: {
 							...state.products[action.payload.productId],
 							charges: Object.fromEntries(
@@ -621,6 +622,7 @@ export function detailsReducer(
 				negotiation: {
 					...state,
 					[action.payload.itemType]: {
+						...state[action.payload.itemType],
 						[action.payload.productId]: {
 							...state.products[action.payload.productId],
 							charges: Object.fromEntries(

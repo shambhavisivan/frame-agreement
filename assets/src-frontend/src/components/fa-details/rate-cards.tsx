@@ -3,6 +3,7 @@ import { RateCard as IRateCard } from '../../datasources';
 import { store } from './details-page-provider';
 import { NegotiateInput } from './negotiation/negotiate-input';
 import { Discount } from './negotiation/discount-validator';
+import { useDiscountValidation } from '../../hooks/use-discount-validation';
 
 /* tslint:disable:no-empty */
 interface RateCardsProps {
@@ -19,7 +20,7 @@ export function RateCards({
 	return (
 		<table>
 			<tbody>
-				{rateCards.map(({ id, rateCardLines }) => {
+				{rateCards.map(({ id, authId, rateCardLines }) => {
 					return (
 						<RateCard
 							key={id}
@@ -27,6 +28,7 @@ export function RateCards({
 							rateCardId={id}
 							onNegotiatedChanged={negotiateRateCardLine}
 							productId={productId}
+							authId={authId}
 						/>
 					);
 				})}
@@ -40,13 +42,15 @@ interface RateCardProps {
 	rateCardId: string;
 	onNegotiatedChanged: (rateCardId: string, rateCardLineId: string, value: number) => void;
 	productId: string;
+	authId?: string;
 }
 
 function RateCard({
 	rateCardLines,
 	rateCardId,
 	onNegotiatedChanged,
-	productId
+	productId,
+	authId
 }: RateCardProps): ReactElement {
 	return (
 		<>
@@ -62,6 +66,7 @@ function RateCard({
 							onNegotiatedChanged(rateCardId, rateCardLineId, value)
 						}
 						productId={productId}
+						authId={authId}
 					/>
 				);
 			})}
@@ -76,6 +81,7 @@ interface RateCardLineProps {
 	value: number;
 	onNegotiatedChanged: (value: number) => void;
 	productId: string;
+	authId?: string;
 }
 
 function RateCardLineComponent({
@@ -84,9 +90,22 @@ function RateCardLineComponent({
 	name,
 	value,
 	onNegotiatedChanged,
-	productId
+	productId,
+	authId
 }: RateCardLineProps): ReactElement {
 	const { negotiation } = useContext(store);
+	const { validateRateCardLineThreshold } = useDiscountValidation();
+
+	const evaluateThreshold = (): boolean => {
+		const breachedThresholds = validateRateCardLineThreshold(
+			productId,
+			rateCardId,
+			rateCardLineId,
+			authId
+		);
+
+		return breachedThresholds.length ? true : false;
+	};
 	return (
 		<tr>
 			<th>
@@ -103,7 +122,7 @@ function RateCardLineComponent({
 					}}
 					discountType="Amount"
 					discountLevels={[] as Discount[]}
-					isThresholdViolated={false}
+					isThresholdViolated={evaluateThreshold()}
 					//eslint-disable-next-line @typescript-eslint/no-empty-function
 					onDiscountSelectionChanged={(discount: Discount): void => {}}
 					onNegotiatedChanged={onNegotiatedChanged}

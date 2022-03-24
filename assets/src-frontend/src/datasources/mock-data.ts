@@ -969,7 +969,17 @@ export const mockNegotiationState: Negotiation['negotiation'] = {
 				oneOff: { original: 500, negotiated: 500 },
 				recurring: { original: 255, negotiated: 255 }
 			},
-			rateCards: {},
+			rateCards: {
+				a1q4I000009tfziQAA: {
+					rateCardLines: {
+						a1p4I00000Cn44DQAR: {
+							name: 'Data Threshold',
+							original: 500,
+							negotiated: 20
+						}
+					}
+				}
+			},
 			addons: {}
 		},
 		a1i4I000003Kqe8QAC: {
@@ -987,11 +997,21 @@ export const mockNegotiationState: Negotiation['negotiation'] = {
 			},
 			charges: {
 				a1l4I00000AFilFQAT: {
-					recurring: { original: 5.5, negotiated: undefined },
-					oneOff: { original: 15.5, negotiated: undefined }
+					recurring: { original: 5.5, negotiated: 1.5 },
+					oneOff: { original: 15.5, negotiated: 7.5 }
 				}
 			},
-			rateCards: {},
+			rateCards: {
+				a1q4I000009tfziQAA: {
+					rateCardLines: {
+						a1p4I00000Cn44DQAR: {
+							original: 50,
+							negotiated: 20,
+							name: 'Data Threshold'
+						}
+					}
+				}
+			},
 			product: {
 				oneOff: { original: 50, negotiated: undefined },
 				recurring: { original: 8, negotiated: undefined }

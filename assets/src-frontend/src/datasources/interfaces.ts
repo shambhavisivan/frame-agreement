@@ -1,4 +1,7 @@
-import { ChargeType } from '../components/fa-details/negotiation/details-reducer';
+import {
+	ChargeType,
+	NegotiableCharges
+} from '../components/fa-details/negotiation/details-reducer';
 import { Deforcified } from './deforcify';
 
 export interface Account {
@@ -383,3 +386,8 @@ export interface LookupRecordParam {
 	lastId?: string | null;
 	offset?: number;
 }
+export type ChargeT = NegotiableCharges & {
+	id: string;
+	name: string;
+	chargeType: ChargeType;
+};

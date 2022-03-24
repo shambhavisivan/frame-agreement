@@ -50,7 +50,7 @@ export function LegacyProductCharge({
 		};
 
 		return [productNeg];
-	}, [label.oneOffProduct, label.recurringProduct, product, productState]);
+	}, [label.oneOffProduct, label.recurringProduct, product, productState[product.id]?.product]);
 
 	const metadata = useMemo((): CSDataTableColumnInterface[] => {
 		return [
@@ -160,7 +160,7 @@ export function LegacyProductCharge({
 				header: label.productChargeHeaderReccNeg
 			}
 		];
-	}, [productState]);
+	}, [productState[product.id]?.product]);
 
 	return (
 		<>

@@ -5,12 +5,13 @@ import {
 	CSDataTableRowWithMetaInterface,
 	CSDropdown
 } from '@cloudsense/cs-ui-components';
-import React, { ReactElement, useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useMemo, useState } from 'react';
 import { QueryStatus } from 'react-query';
 import { ADDON_API_NAME, DEFAULT_GRID_VISIBLE_FIELDS } from '../../app-constants';
 import { Addon, FieldMetadata } from '../../datasources';
 import { useFieldMetadata } from '../../hooks/use-field-metadata';
 import { AddonNegotiation } from './addon-negotiation';
+import { store } from './details-page-provider';
 import { GridColumnChooser } from './grid-column-chooser';
 
 interface Props {
@@ -30,6 +31,9 @@ export function AddonGrid({
 }: Props): ReactElement {
 	const [metadata, setFieldMetadata] = useState<CSDataTableColumnInterface[]>([]);
 	const { metadata: addonMetadata, metadataStatus } = useFieldMetadata(ADDON_API_NAME);
+	const {
+		negotiation: { addons: addonNegotiations }
+	} = useContext(store);
 
 	function transformMetadata(inputFieldMetadata: FieldMetadata[]): CSDataTableColumnInterface[] {
 		return inputFieldMetadata.reduce((modifiedFieldMetadata, data) => {
@@ -76,7 +80,14 @@ export function AddonGrid({
 	}, [addonMetadata, metadata, metadataStatus]);
 
 	const renderDetails = (row: CSDataTableRowWithMetaInterface): ReactElement => {
-		return <AddonNegotiation addon={row.data as Addon} />;
+		const addon = row.data as Addon;
+		return (
+			<AddonNegotiation
+				addons={[addon]}
+				addonNegotiations={addonNegotiations}
+				addonType={'STANDALONE'}
+			/>
+		);
 	};
 
 	return (

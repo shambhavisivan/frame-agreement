@@ -31,7 +31,7 @@ import {
 import type { RemoteActions } from './remote-actions-salesforce';
 import { DispatcherToken } from '../datasources/graphql-endpoints/dispatcher-service';
 import { deforcify, deforcifyKeyName } from './deforcify';
-import { addons, approval } from '../local-server/local_data';
+import { addons, approval, STANDALONE_ADDONS } from '../local-server/local_data';
 import { ADDON_API_NAME, CP_API_NAME } from '../app-constants';
 import { LookupRecordParam, FieldPickList } from '.';
 
@@ -195,7 +195,7 @@ export const remoteActions: RemoteActions = {
 	},
 
 	async getStandaloneAddons() {
-		const mockaddons = addons.map(deforcify);
+		const mockaddons = STANDALONE_ADDONS.map(deforcify);
 
 		return new Promise((resolve) => {
 			setTimeout(() => resolve(mockaddons), FAKE_DELAY_MS);

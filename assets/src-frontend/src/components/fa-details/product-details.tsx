@@ -2,9 +2,6 @@ import React, { ReactElement, useContext, useState } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { CSButton } from '@cloudsense/cs-ui-components';
-import { AddonGrid } from './addon-grid';
-import { useQueryAddons } from '../../hooks/use-query-addons';
-import { ADDON_PRODUCT_DETAILS_GRID_METADATA } from '../../app-constants';
 import { RateCards } from './rate-cards';
 import { store } from './details-page-provider';
 import { createActionsForNegotiateProduct } from './negotiation/negotiation-action-creator';
@@ -12,6 +9,7 @@ import { NegotiationItemType } from './negotiation/details-reducer';
 import { QueryStatus, useCommercialProductData } from '../../hooks/use-commercial-product-data';
 import { ChargeList } from './charge-list';
 import { LegacyProductCharge } from './legacy-product-charge';
+import { AddonNegotiation } from './addon-negotiation';
 
 interface ProductDetailsProps {
 	product: CommercialProductStandalone;
@@ -29,8 +27,10 @@ export function ProductDetails({
 }: ProductDetailsProps): ReactElement {
 	const labels = useCustomLabels();
 	const [activeDetails, setActiveDetails] = useState<ChildButtons>(ChildButtons.addon);
-	const { addonList } = useQueryAddons(product.id);
-	const { dispatch } = useContext(store);
+	const {
+		negotiation: { products },
+		dispatch
+	} = useContext(store);
 	const negotiateActions = createActionsForNegotiateProduct(dispatch);
 	const {
 		negotiateRateCardLine,
@@ -83,10 +83,18 @@ export function ProductDetails({
 				label={labels.chargesHeaderName}
 				onClick={(): void => onClickButton(ChildButtons.charges)}
 			/>
-			{activeDetails === ChildButtons.addon && (
-				<AddonGrid
-					addonList={addonList || []}
-					fieldMetadata={ADDON_PRODUCT_DETAILS_GRID_METADATA}
+			{activeDetails === ChildButtons.addon && productData?.cpData[product.id].addons && (
+				<AddonNegotiation
+					addons={
+						productData?.cpData[product.id]?.addons.map(
+							(commercialProductsAddonAssociation) => {
+								return commercialProductsAddonAssociation.addOnPriceItem;
+							}
+						) || []
+					}
+					productId={product.id}
+					addonNegotiations={products[product.id].addons}
+					addonType={'COMMERCIAL_PRODUCT_ASSOCIATED'}
 				/>
 			)}
 			{activeDetails === ChildButtons.ratecard &&

@@ -132,19 +132,30 @@ namespace SfGlobal {
 	}
 
 	interface CommercialProduct {
-		addons: Addon[];
+		addons: CommercialProductAddonAssociation[];
 		allowances: Allowance[];
 		charges: unknown[];
 		rateCards: RateCard[];
 	}
 
 	interface Addon {
-		Name: string;
 		Id: string;
+		Name: string;
+		cspmb__Add_On_Price_Item_Code__c: string;
 		cspmb__One_Off_Charge__c: number;
 		cspmb__Recurring_Charge__c: number;
 		cspmb__Is_One_Off_Discount_Allowed__c: boolean;
 		cspmb__Is_Recurring_Discount_Allowed__c: boolean;
+		cspmb__Authorization_Level__c?: string;
+	}
+
+	interface CommercialProductAddonAssociation {
+		Id: string;
+		cspmb__One_Off_Charge__c: number;
+		cspmb__Recurring_Charge__c: number;
+		cspmb__Price_Item__c: string;
+		cspmb__Overrides_Add_On_Charges__c: boolean;
+		cspmb__Add_On_Price_Item__r: Addon;
 	}
 
 	interface Allowance {

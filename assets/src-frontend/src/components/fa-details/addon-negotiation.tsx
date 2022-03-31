@@ -1,28 +1,81 @@
 import React, { ReactElement, useContext, useMemo } from 'react';
 import { CSDataTable, CSDataTableColumnInterface } from '@cloudsense/cs-ui-components';
-import { Addon } from '../../datasources';
+import { Addon, AddonType } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { store } from './details-page-provider';
 import { NegotiateInput } from './negotiation/negotiate-input';
 import { Discount } from './negotiation/discount-validator';
+import { useDiscountValidation } from '../../hooks/use-discount-validation';
+import { ChargeType, Negotiable, NegotiableCharges } from './negotiation/details-reducer';
 
 type Props = {
-	addon: Addon;
+	productId?: string;
+	addons: Array<Addon>;
+	addonNegotiations: {
+		[addonId: string]: NegotiableCharges;
+	};
+	addonType: AddonType;
 };
 
-export function AddonNegotiation({ addon }: Props): ReactElement {
-	const {
-		negotiation: { addons },
-		dispatch
-	} = useContext(store);
+type AddonNegotiationCharge = Addon & {
+	oneOffNeg: Negotiable['negotiated'];
+	recurringNeg: Negotiable['negotiated'];
+	chargeType: string;
+};
+
+export function AddonNegotiation({
+	productId,
+	addons,
+	addonNegotiations,
+	addonType
+}: Props): ReactElement {
+	const { dispatch } = useContext(store);
 	const label = useCustomLabels();
+	const { validateAddonThreshold } = useDiscountValidation();
+
+	const evaluateThreshold = (
+		addonId: string,
+		referenceId: string,
+		chargeType: ChargeType
+	): boolean => {
+		const breachedThresholds = validateAddonThreshold(
+			addonId,
+			referenceId,
+			chargeType,
+			addonType,
+			productId
+		);
+
+		return breachedThresholds.length ? true : false;
+	};
+
+	const getReferenceId = (addon: Addon): string => {
+		return addonType === 'COMMERCIAL_PRODUCT_ASSOCIATED'
+			? (addon.commercialProductAssociationId as string)
+			: addon.id;
+	};
+
+	const addonWithNegotiation = useMemo((): AddonNegotiationCharge[] => {
+		return addons.reduce((addonAccumulator, addon) => {
+			const referenceId: string = getReferenceId(addon);
+			const productOneOff: AddonNegotiationCharge = {
+				...addon,
+				oneOffNeg: addonNegotiations[referenceId]?.oneOff?.negotiated,
+				chargeType: label.oneOffProduct,
+				recurringNeg: addonNegotiations[referenceId]?.recurring.negotiated
+			};
+			addonAccumulator.push(productOneOff);
+
+			return addonAccumulator;
+		}, [] as AddonNegotiationCharge[]);
+	}, [label.oneOffProduct, label.recurringProduct, addons, addonNegotiations]);
 
 	const metadata = useMemo((): CSDataTableColumnInterface[] => {
 		return [
 			{
 				key: label.addonsHeaderName,
 				render: (row): ReactElement => <>{row.data?.name}</>,
-				header: label.productChargeHeaderName
+				header: label.addonsHeaderName
 			},
 			{
 				key: label.addonsHeaderOneOff,
@@ -32,7 +85,9 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 			{
 				key: label.addonsHeaderOneOffNeg,
 				render: (row): ReactElement => {
-					const oneOffNegotiated = addons[addon.id]?.oneOff?.negotiated || 0;
+					const referenceId: string = getReferenceId(row.data as Addon);
+					const oneOffNegotiated =
+						addonNegotiations[referenceId]?.oneOff?.negotiated || 0;
 
 					return (
 						<>
@@ -44,14 +99,18 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 									}}
 									discountType={row.data?.discountType}
 									discountLevels={[] as Discount[]}
-									isThresholdViolated={false}
+									isThresholdViolated={evaluateThreshold(
+										row.data.id as string,
+										referenceId,
+										'oneOff'
+									)}
 									//eslint-disable-next-line @typescript-eslint/no-empty-function
 									onDiscountSelectionChanged={(value: Discount): void => {}}
 									onNegotiatedChanged={(value): void =>
 										dispatch({
 											type: 'negotiateAddonOneOff',
 											payload: {
-												addonId: addon.id,
+												addonId: row.data?.id,
 												value
 											}
 										})
@@ -73,7 +132,9 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 			{
 				key: label.addonsHeaderReccNeg,
 				render: (row): ReactElement => {
-					const reccurringNeg = addons[addon.id]?.recurring?.negotiated || 0;
+					const referenceId: string = getReferenceId(row.data as Addon);
+					const reccurringNeg =
+						addonNegotiations[referenceId]?.recurring?.negotiated || 0;
 
 					return (
 						<>
@@ -85,7 +146,11 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 									}}
 									discountType={row.data?.discountType}
 									discountLevels={[] as Discount[]}
-									isThresholdViolated={false}
+									isThresholdViolated={evaluateThreshold(
+										row.data.id as string,
+										referenceId,
+										'oneOff'
+									)}
 									/*
 									 * TODO: onDiscountSelectionChanged method implementation will be done in future.
 									 * the same applies to other components where NegotiateInput has been used.
@@ -96,7 +161,7 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 										dispatch({
 											type: 'negotiateAddonRecurring',
 											payload: {
-												addonId: addon.id,
+												addonId: row.data?.id,
 												value
 											}
 										})
@@ -112,7 +177,6 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 			}
 		];
 	}, [
-		addon.id,
 		addons,
 		label.productChargeHeaderName,
 		label.productChargeHeaderOneOff,
@@ -125,12 +189,10 @@ export function AddonNegotiation({ addon }: Props): ReactElement {
 		<>
 			<CSDataTable
 				columns={metadata}
-				rows={[
-					{
-						key: addon.id,
-						data: addon
-					}
-				]}
+				rows={addonWithNegotiation.map((row) => ({
+					key: row.id,
+					data: row
+				}))}
 			/>
 		</>
 	);

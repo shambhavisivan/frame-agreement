@@ -96,7 +96,7 @@ export interface FrameAgreement {
 }
 
 export interface CommercialProduct {
-	addons: Addon[];
+	addons: CommercialProductAddonAssociation[];
 	allowances?: Allowance[];
 	rateCards: RateCard[];
 	charges: Charge[];
@@ -121,10 +121,22 @@ export interface CommercialProductData {
 export interface Addon {
 	id: string;
 	name: string;
+	addOnPriceItemCode: string;
 	oneOffCharge?: number;
 	recurringCharge?: number;
 	isOneOffDiscountAllowed: boolean;
 	isRecurringDiscountAllowed: boolean;
+	authorizationLevel?: string;
+	commercialProductAssociationId?: string;
+}
+
+export interface CommercialProductAddonAssociation {
+	id: string;
+	oneOffCharge?: number;
+	recurringCharge?: number;
+	priceItem: string;
+	overridesAddOnCharges: boolean;
+	addOnPriceItem: Addon;
 }
 
 export interface Allowance {

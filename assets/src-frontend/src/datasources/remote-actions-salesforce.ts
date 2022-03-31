@@ -123,7 +123,26 @@ export const remoteActions: RemoteActions = {
 			[ids, []]
 		);
 
-		return deforcify(commercialProductData);
+		const deforcifiedCommercialProductData: CommercialProductData = deforcify(
+			commercialProductData
+		);
+
+		Object.keys(deforcifiedCommercialProductData.cpData || {}).forEach((productId) => {
+			deforcifiedCommercialProductData.cpData[productId].addons?.forEach(
+				(addonAssociation) => {
+					if (addonAssociation.overridesAddOnCharges) {
+						addonAssociation.addOnPriceItem.oneOffCharge =
+							addonAssociation.oneOffCharge;
+						addonAssociation.addOnPriceItem.recurringCharge =
+							addonAssociation.recurringCharge;
+					}
+					addonAssociation.addOnPriceItem.commercialProductAssociationId =
+						addonAssociation.id;
+				}
+			);
+		});
+
+		return deforcifiedCommercialProductData;
 	},
 
 	async getCommercialProducts(cpIds: string[]): Promise<CommercialProductStandalone[]> {

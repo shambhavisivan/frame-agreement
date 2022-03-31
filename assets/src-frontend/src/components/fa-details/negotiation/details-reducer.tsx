@@ -92,7 +92,7 @@ export type NegotiationAction =
 			payload: {
 				productId: string;
 				itemType: NegotiationItemType;
-				addonId: string;
+				productAddonAssociationId: string;
 				value: number;
 			};
 	  }
@@ -101,7 +101,7 @@ export type NegotiationAction =
 			payload: {
 				productId: string;
 				itemType: NegotiationItemType;
-				addonId: string;
+				productAddonAssociationId: string;
 				value: number;
 			};
 	  }
@@ -318,7 +318,24 @@ export function detailsReducer(
 							muc: null,
 							mucp: null
 						},
-						addons: {},
+						addons: productData?.addons?.reduce(
+							(accu, currentAddon) => {
+								accu[currentAddon.id] = {
+									oneOff: {
+										original: currentAddon.addOnPriceItem.oneOffCharge,
+										negotiated: undefined
+									},
+									recurring: {
+										original: currentAddon.addOnPriceItem.recurringCharge,
+										negotiated: undefined
+									}
+								};
+								return accu;
+							},
+							{} as {
+								[addonId: string]: NegotiableCharges;
+							}
+						),
 						charges: productData?.charges?.reduce(
 							(accu, currentCharge) => {
 								accu[currentCharge.id] = {
@@ -365,7 +382,7 @@ export function detailsReducer(
 			};
 
 		case 'setDiscountData':
-			const authLevels = action.payload.products.reduce((authAccumulator, currentProduct): {
+			let authLevels = action.payload.products.reduce((authAccumulator, currentProduct): {
 				[id: string]: string;
 			} => {
 				if (currentProduct.authorizationLevel) {
@@ -373,6 +390,29 @@ export function detailsReducer(
 				}
 				return authAccumulator;
 			}, {} as { [id: string]: string });
+
+			const cpData = action.payload.productsData.cpData;
+			Object.keys(cpData).forEach((productId) => {
+				const productAddonAuthLevels = cpData[productId].addons.reduce(
+					(
+						authAccumulator,
+						currentProductAddonAssociation
+					): {
+						[id: string]: string;
+					} => {
+						const addon = currentProductAddonAssociation.addOnPriceItem;
+						if (addon.authorizationLevel) {
+							authAccumulator[addon.id] = addon.authorizationLevel;
+						}
+						return authAccumulator;
+					},
+					{} as { [id: string]: string }
+				);
+				authLevels = {
+					...authLevels,
+					...productAddonAuthLevels
+				};
+			});
 
 			const discountData: DiscountData = {
 				authLevels: authLevels,
@@ -665,8 +705,65 @@ export function detailsReducer(
 				}
 			};
 
+		case 'negotiateProductAddonOneOff':
+			return {
+				...inputState,
+				negotiation: {
+					...state,
+					[action.payload.itemType]: {
+						...state[action.payload.itemType],
+						[action.payload.productId]: {
+							...state.products[action.payload.productId],
+							addons: {
+								...state.products[action.payload.productId].addons,
+								[action.payload.productAddonAssociationId]: {
+									...state.products[action.payload.productId].addons[
+										action.payload.productAddonAssociationId
+									],
+									oneOff: {
+										...state.products[action.payload.productId].addons[
+											action.payload.productAddonAssociationId
+										].oneOff,
+										negotiated: action.payload.value
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+
+		case 'negotiateProductAddonRecurring':
+			return {
+				...inputState,
+				negotiation: {
+					...state,
+					[action.payload.itemType]: {
+						...state[action.payload.itemType],
+						[action.payload.productId]: {
+							...state.products[action.payload.productId],
+							addons: {
+								...state.products[action.payload.productId].addons,
+								[action.payload.productAddonAssociationId]: {
+									...state.products[action.payload.productId].addons[
+										action.payload.productAddonAssociationId
+									],
+									recurring: {
+										...state.products[action.payload.productId].addons[
+											action.payload.productAddonAssociationId
+										].recurring,
+										negotiated: action.payload.value
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+
 		case 'negotiateAddonOneOff':
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					addons: {
@@ -684,6 +781,7 @@ export function detailsReducer(
 
 		case 'negotiateAddonRecurring':
 			return {
+				...inputState,
 				negotiation: {
 					...state,
 					addons: {
@@ -795,7 +893,7 @@ export function selectAttachment(state: Negotiation['negotiation']): Attachment 
 	return {
 		products: formatProducts(state.products),
 		offers: formatProducts(state.offers),
-		addons,
+		addons: addons,
 		custom: state.custom
 	};
 }

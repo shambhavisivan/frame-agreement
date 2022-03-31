@@ -16,6 +16,9 @@ type Negotiation = INegotiation['negotiation'];
 describe('detailsReducer', () => {
 	const negotiateRecurring: NegotiationAction['type'] = 'negotiateProductRecurring';
 	const negotiateOneOff: NegotiationAction['type'] = 'negotiateProductOneOff';
+	const negotiateProductAddonOneOff: NegotiationAction['type'] = 'negotiateProductAddonOneOff';
+	const negotiateProductAddonRecurring: NegotiationAction['type'] =
+		'negotiateProductAddonRecurring';
 	const addProducts: NegotiationAction['type'] = 'addProducts';
 	const setDiscountData: NegotiationAction['type'] = 'setDiscountData';
 	const removeProducts: NegotiationAction['type'] = 'removeProducts';
@@ -23,6 +26,7 @@ describe('detailsReducer', () => {
 	const loadAttachment: NegotiationAction['type'] = 'loadAttachment';
 
 	const testProductId = 'testProductId';
+	const testProductAddonId = 'testProductAddonId';
 	const testRateCartId = 'testRateCardId';
 	const testRateCardLineId1 = 'testRateCardId1';
 
@@ -174,6 +178,210 @@ describe('detailsReducer', () => {
 						payload: {
 							productId: testProductId,
 							itemType: 'products',
+							value: negotiatedValue
+						}
+					}
+				)
+			).toEqual(expectedState);
+		});
+	});
+
+	describe(negotiateProductAddonRecurring, () => {
+		const testState: Negotiation = {
+			products: {
+				[testProductId]: {
+					volume: {
+						mv: null,
+						muc: null,
+						mvp: null,
+						mucp: null
+					},
+					rateCards: {},
+					product: {
+						oneOff: {
+							original: 100,
+							negotiated: undefined
+						},
+						recurring: {
+							original: 200,
+							negotiated: undefined
+						}
+					},
+					addons: {
+						[testProductAddonId]: {
+							oneOff: {
+								original: 300,
+								negotiated: undefined
+							},
+							recurring: {
+								original: 50,
+								negotiated: undefined
+							}
+						}
+					}
+				}
+			},
+			addons: {},
+			offers: {},
+			custom: undefined
+		};
+
+		test(`returns the state with the product's addon negotiated oneOff charge set`, () => {
+			const negotiatedValue = 42;
+
+			const expectedState: INegotiation = {
+				negotiation: {
+					products: {
+						[testProductId]: {
+							volume: {
+								mv: null,
+								muc: null,
+								mvp: null,
+								mucp: null
+							},
+							rateCards: {},
+							product: {
+								oneOff: {
+									original: 100,
+									negotiated: undefined
+								},
+								recurring: {
+									original: 200,
+									negotiated: undefined
+								}
+							},
+							addons: {
+								[testProductAddonId]: {
+									oneOff: {
+										original: 300,
+										negotiated: negotiatedValue
+									},
+									recurring: {
+										original: 50,
+										negotiated: undefined
+									}
+								}
+							}
+						}
+					},
+					addons: {},
+					offers: {},
+					custom: undefined
+				},
+				activeFa: undefined
+			};
+
+			expect(
+				detailsReducer(
+					{ negotiation: testState },
+					{
+						type: negotiateProductAddonOneOff,
+						payload: {
+							productId: testProductId,
+							itemType: 'products',
+							productAddonAssociationId: testProductAddonId,
+							value: negotiatedValue
+						}
+					}
+				)
+			).toEqual(expectedState);
+		});
+	});
+
+	describe(negotiateProductAddonOneOff, () => {
+		const testState: Negotiation = {
+			products: {
+				[testProductId]: {
+					volume: {
+						mv: null,
+						muc: null,
+						mvp: null,
+						mucp: null
+					},
+					rateCards: {},
+					product: {
+						oneOff: {
+							original: 100,
+							negotiated: undefined
+						},
+						recurring: {
+							original: 200,
+							negotiated: undefined
+						}
+					},
+					addons: {
+						[testProductAddonId]: {
+							oneOff: {
+								original: 300,
+								negotiated: undefined
+							},
+							recurring: {
+								original: 50,
+								negotiated: undefined
+							}
+						}
+					}
+				}
+			},
+			addons: {},
+			offers: {},
+			custom: undefined
+		};
+
+		test(`returns the state with the product's addon negotiated oneOff charge set`, () => {
+			const negotiatedValue = 42;
+
+			const expectedState: INegotiation = {
+				negotiation: {
+					products: {
+						[testProductId]: {
+							volume: {
+								mv: null,
+								muc: null,
+								mvp: null,
+								mucp: null
+							},
+							rateCards: {},
+							product: {
+								oneOff: {
+									original: 100,
+									negotiated: undefined
+								},
+								recurring: {
+									original: 200,
+									negotiated: undefined
+								}
+							},
+							addons: {
+								[testProductAddonId]: {
+									oneOff: {
+										original: 300,
+										negotiated: undefined
+									},
+									recurring: {
+										original: 50,
+										negotiated: negotiatedValue
+									}
+								}
+							}
+						}
+					},
+					addons: {},
+					offers: {},
+					custom: undefined
+				},
+				activeFa: undefined
+			};
+
+			expect(
+				detailsReducer(
+					{ negotiation: testState },
+					{
+						type: negotiateProductAddonRecurring,
+						payload: {
+							productId: testProductId,
+							itemType: 'products',
+							productAddonAssociationId: testProductAddonId,
 							value: negotiatedValue
 						}
 					}

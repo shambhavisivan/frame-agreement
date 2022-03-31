@@ -37,24 +37,24 @@ export const createActionsForNegotiateProduct = (dispatch: React.Dispatch<Negoti
 				}
 			});
 		},
-		negotiateProductAddonRecurring(addonId: string, value: number): void {
+		negotiateProductAddonRecurring(productAddonAssociationId: string, value: number): void {
 			return dispatch({
 				type: 'negotiateProductAddonRecurring',
 				payload: {
 					productId,
 					itemType,
-					addonId,
+					productAddonAssociationId,
 					value
 				}
 			});
 		},
-		negotiateProductAddonOneOff(addonId: string, value: number): void {
+		negotiateProductAddonOneOff(productAddonAssociationId: string, value: number): void {
 			return dispatch({
 				type: 'negotiateProductAddonOneOff',
 				payload: {
 					productId,
 					itemType,
-					addonId,
+					productAddonAssociationId,
 					value
 				}
 			});

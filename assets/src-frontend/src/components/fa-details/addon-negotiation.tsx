@@ -106,15 +106,27 @@ export function AddonNegotiation({
 									)}
 									//eslint-disable-next-line @typescript-eslint/no-empty-function
 									onDiscountSelectionChanged={(value: Discount): void => {}}
-									onNegotiatedChanged={(value): void =>
-										dispatch({
-											type: 'negotiateAddonOneOff',
-											payload: {
-												addonId: row.data?.id,
-												value
-											}
-										})
-									}
+									onNegotiatedChanged={(value): void => {
+										if (addonType === 'COMMERCIAL_PRODUCT_ASSOCIATED') {
+											dispatch({
+												type: 'negotiateProductAddonOneOff',
+												payload: {
+													itemType: 'products',
+													productId: productId as string,
+													productAddonAssociationId: referenceId,
+													value
+												}
+											});
+										} else if (addonType === 'STANDALONE') {
+											dispatch({
+												type: 'negotiateAddonOneOff',
+												payload: {
+													addonId: referenceId,
+													value
+												}
+											});
+										}
+									}}
 								/>
 							) : (
 								'N/A'
@@ -157,15 +169,27 @@ export function AddonNegotiation({
 									 */
 									//eslint-disable-next-line @typescript-eslint/no-empty-function
 									onDiscountSelectionChanged={(value: Discount): void => {}}
-									onNegotiatedChanged={(value): void =>
-										dispatch({
-											type: 'negotiateAddonRecurring',
-											payload: {
-												addonId: row.data?.id,
-												value
-											}
-										})
-									}
+									onNegotiatedChanged={(value): void => {
+										if (addonType === 'COMMERCIAL_PRODUCT_ASSOCIATED') {
+											dispatch({
+												type: 'negotiateProductAddonRecurring',
+												payload: {
+													itemType: 'products',
+													productId: productId as string,
+													productAddonAssociationId: referenceId,
+													value
+												}
+											});
+										} else if (addonType === 'STANDALONE') {
+											dispatch({
+												type: 'negotiateAddonRecurring',
+												payload: {
+													addonId: referenceId,
+													value
+												}
+											});
+										}
+									}}
 								/>
 							) : (
 								'N/A'

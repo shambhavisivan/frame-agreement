@@ -391,3 +391,5 @@ export type ChargeT = NegotiableCharges & {
 	name: string;
 	chargeType: ChargeType;
 };
+
+export type AddonType = 'STANDALONE' | 'COMMERCIAL_PRODUCT_ASSOCIATED';

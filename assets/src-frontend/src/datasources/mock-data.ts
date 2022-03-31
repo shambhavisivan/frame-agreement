@@ -88,13 +88,8 @@ export const mockAuthLevels = {
 	a1i4I000003Q4GGQA0: 'a1P4K000004UwUaUAK',
 	a1i4I000003Kqe8QAC: 'a1P4K000004UwUaUAK',
 	a1i4I000003KqdtQAC: 'a1P4K000004UwUaUAK',
-	a1d4I000005Vx2RQAS: 'a1P4K000008Ci07UAC',
-	a1d4I000005VsVYQA0: 'a1P4K000008Ci07UAC',
-	a1d4I000005VvmoQAC: 'a1P4K000008Ci07UAC',
-	a1d4I000005Vx2bQAC: 'a1P4K000008Ci07UAC',
-	a1d4I000005Vx2gQAC: 'a1P4K000008Ci07UAC',
 	a1N4I000002wyh9UAA: 'a1P4K000004UwUaUAK',
-	a1N4I000002wyg0UAA: 'a1P4K000004UwUaUAK',
+	a1N4I000002wyg0UAA: 'a1P4K000008Ci07UAC',
 	a1q4I000009tfziQAA: 'a1P4K000004UwUaUAK',
 	a1p4I00000Cn44DQAR: 'a1P4K000008Ci07UAC',
 	a1p4I00000Cn42gQAB: 'a1P4K000008Ci07UAC'
@@ -871,7 +866,7 @@ export const attachment: Attachment = {
 				mucp: null
 			},
 			addons: {
-				a1d4I000005Vx2RQAS: {
+				a1d4I000005Vx5SQAT: {
 					oneOff: null,
 					recurring: null
 				}
@@ -897,19 +892,19 @@ export const attachment: Attachment = {
 				mucp: null
 			},
 			addons: {
-				a1d4I000005VsVYQA0: {
+				a1d4I000005VsVZAA0: {
 					oneOff: 20,
 					recurring: 5
 				},
-				a1d4I000005VvmoQAC: {
+				a1d4I000005VvmoPAC: {
 					oneOff: 8,
 					recurring: 2
 				},
-				a1d4I000005Vx2bQAC: {
+				a1d4I000005VvntPAC: {
 					oneOff: 15,
 					recurring: 5
 				},
-				a1d4I000005Vx2gQAC: {
+				a1d4I000005Vx5gQAC: {
 					oneOff: null,
 					recurring: null
 				}
@@ -990,7 +985,7 @@ export const mockNegotiationState: Negotiation['negotiation'] = {
 				mucp: null
 			},
 			addons: {
-				a1d4I000005Vx2RQAS: {
+				a1d4I000005Vx5SQAT: {
 					oneOff: { original: 5, negotiated: undefined },
 					recurring: { original: 1, negotiated: undefined }
 				}
@@ -1035,19 +1030,19 @@ export const mockNegotiationState: Negotiation['negotiation'] = {
 				mucp: null
 			},
 			addons: {
-				a1d4I000005VsVYQA0: {
+				a1d4I000005VsVZAA0: {
 					oneOff: { original: 20, negotiated: undefined },
 					recurring: { original: 5, negotiated: undefined }
 				},
-				a1d4I000005VvmoQAC: {
+				a1d4I000005VvmoPAC: {
 					oneOff: { original: 8, negotiated: undefined },
 					recurring: { original: 2, negotiated: undefined }
 				},
-				a1d4I000005Vx2bQAC: {
+				a1d4I000005VvntPAC: {
 					oneOff: { original: 15, negotiated: undefined },
 					recurring: { original: 5, negotiated: undefined }
 				},
-				a1d4I000005Vx2gQAC: {
+				a1d4I000005Vx5gQAC: {
 					oneOff: { original: 5, negotiated: undefined },
 					recurring: { original: 1, negotiated: undefined }
 				}

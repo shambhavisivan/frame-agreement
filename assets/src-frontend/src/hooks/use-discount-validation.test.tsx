@@ -125,21 +125,40 @@ describe('test useDiscountValidation hook', () => {
 			wrapper: testWrapper
 		});
 
-		test('should validate the addon charge against given threshold', async () => {
+		test('should validate the product associated addon charge against given threshold', async () => {
 			const testAddonProductId = 'a1i4I000003KqdtQAC';
-			const testAddonId = 'a1d4I000005VsVYQA0';
+			const testAddonId = 'a1N4I000002wyg0UAA';
+			const testProductAddonAssociationId = 'a1d4I000005VvmoPAC';
 			const validations = validateAddonThreshold(
-				testAddonProductId,
 				testAddonId,
-				testChargeType
+				testProductAddonAssociationId,
+				testChargeType,
+				'COMMERCIAL_PRODUCT_ASSOCIATED',
+				testAddonProductId
 			);
 			expect(validations).toEqual([fakeThresholdViolation]);
 			expect(validateDiscountsSpy.mock.calls.length).toBe(1);
 			expect(validateDiscountsSpy).toHaveBeenCalledWith(
-				mockNegotiationState.products[testAddonProductId].addons[testAddonId][
-					testChargeType
-				],
+				mockNegotiationState.products[testAddonProductId].addons[
+					testProductAddonAssociationId
+				][testChargeType],
 				[mockDiscountThresholds[0]]
+			);
+		});
+
+		test('should validate the standalone addon charge against given threshold', async () => {
+			const testAddonId = 'a1N4I000002wyh9UAA';
+			const validations = validateAddonThreshold(
+				testAddonId,
+				testAddonId,
+				testChargeType,
+				'STANDALONE'
+			);
+			expect(validations).toEqual([fakeThresholdViolation]);
+			expect(validateDiscountsSpy.mock.calls.length).toBe(1);
+			expect(validateDiscountsSpy).toHaveBeenCalledWith(
+				mockNegotiationState.addons[testAddonId][testChargeType],
+				[mockDiscountThresholds[1]]
 			);
 		});
 	});

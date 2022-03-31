@@ -9,7 +9,7 @@ import {
 	ProductNegotiation,
 	Negotiable
 } from '../components/fa-details/negotiation/details-reducer';
-import { DiscountThreshold, ChargeT } from '../datasources';
+import { DiscountThreshold, ChargeT, AddonType } from '../datasources';
 import { store } from '../components/fa-details/details-page-provider';
 
 export function useDiscountValidation(): {
@@ -23,9 +23,11 @@ export function useDiscountValidation(): {
 		charge: ChargeT
 	) => DiscountThresholdViolation[];
 	validateAddonThreshold: (
-		productId: string,
 		addonId: string,
-		chargeType: ChargeType
+		referenceId: string,
+		chargeType: ChargeType,
+		addonType: AddonType,
+		productId?: string
 	) => DiscountThresholdViolation[];
 	validateRateCardLineThreshold: (
 		productId: string,
@@ -125,15 +127,20 @@ export function useDiscountValidation(): {
 
 	const validateAddonThreshold = useCallback(
 		(
-			productId: string,
 			addonId: string,
-			chargeType: ChargeType
+			referenceId: string,
+			chargeType: ChargeType,
+			addonType: AddonType,
+			productId?: string
 		): DiscountThresholdViolation[] => {
 			if (!discountData?.discountThresholds) {
 				return [];
 			}
 
-			const addonNegotiable = state['products'][productId].addons[addonId][chargeType];
+			const addonNegotiable =
+				addonType === 'COMMERCIAL_PRODUCT_ASSOCIATED'
+					? state['products'][productId as string].addons[referenceId][chargeType]
+					: state['addons'][referenceId][chargeType];
 
 			let addonThresholds: DiscountThreshold[] = [];
 

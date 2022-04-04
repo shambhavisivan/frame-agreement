@@ -405,3 +405,9 @@ export type ChargeT = NegotiableCharges & {
 };
 
 export type AddonType = 'STANDALONE' | 'COMMERCIAL_PRODUCT_ASSOCIATED';
+
+export type AttachmentOriginalItems = {
+	commercialProducts: { [id: string]: CommercialProductStandalone };
+	commercialProductData: CommercialProductData;
+	standaloneAddons: { [id: string]: Addon };
+};

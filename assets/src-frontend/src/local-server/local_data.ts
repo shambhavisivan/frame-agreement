@@ -1434,6 +1434,38 @@ export const productData: SfProductData = {
 	}
 };
 
+export const productDataWithRateCardsOnly: SfProductData = {
+	a1F1t0000001JBoEAM: {
+		addons: [],
+		allowances: [],
+		charges: [],
+		rateCards: [
+			{
+				authId: 'a0x1t000001RjC9AAK',
+				Id: 'rateCartId1',
+				Name: 'Domestic',
+				rateCardLines: [
+					{
+						Id: 'rateCartLineId1',
+						Name: 'Voice',
+						cspmb__Cap_Unit__c: 'Sample Cap Unit',
+						cspmb__rate_value__c: 124.99,
+						cspmb__usage_type__c: 'a201t0000009ryNAAQ',
+						cspmb__Rate_Card__c: 'a1N1t0000001QxrEAE',
+						cspmb__Currency_Code__c: 'Sample Code',
+						cspmb__Weekend__c: 12,
+						cspmb__usage_type__r: {
+							Name: 'UT1',
+							Id: 'a201t0000009ryNAAQ'
+						},
+						usageTypeName: 'UT1'
+					}
+				]
+			}
+		]
+	}
+};
+
 export const attachment =
 	'eyJjdXN0b20iOiIiLCJwcm9kdWN0cyI6eyJhMUYxdDAwMDAwMDFKQmpFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwM1NibkVBRSI6e319LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2Nn19LCJhMUYxdDAwMDAwMDFKQ0RFQTIiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjI2M319LCJhMUYxdDAwMDAwMDFKQzhFQU0iOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfcHJvZHVjdCI6eyJyZWN1cnJpbmciOjIzOS40MX19LCJhMUYxdDAwMDAwMDE3WTBFQUkiOnsiX3ZvbHVtZSI6eyJtdiI6bnVsbCwibXZwIjpudWxsLCJtdWMiOm51bGwsIm11Y3AiOm51bGx9LCJfYWRkb25zIjp7ImExQTF0MDAwMDAwMmNJTUVBWSI6eyJvbmVPZmYiOjcuNjQsInJlY3VycmluZyI6Ny43NX0sImExQTF0MDAwMDAwM1NjZkVBRSI6eyJvbmVPZmYiOjcuNDksInJlY3VycmluZyI6NzkuNDR9fSwiX2NoYXJnZXMiOnsiYTFJMXQwMDAwMDFXa3pvRUFDIjp7Im9uZU9mZiI6N30sImExSTF0MDAwMDAxV2t6akVBQyI6eyJyZWN1cnJpbmciOjEyfX0sIl9yYXRlQ2FyZHMiOnsiYTFOMXQwMDAwMDAxUXhyRUFFIjp7ImExTTF0MDAwMDAwQkZyVkVBVyI6MTI0Ljk5fX19fX0=';
 

@@ -88,7 +88,7 @@ export function StandaloneAddons(props: StandaloneAddonProps): ReactElement {
 		const storeAddOnIds = Object.keys(addons || {});
 		return storeAddOnIds.length
 			? standaloneAddons?.filter((ao) => !storeAddOnIds.includes(ao.id)) || []
-			: [];
+			: standaloneAddons || [];
 	};
 
 	const addOnModal = (

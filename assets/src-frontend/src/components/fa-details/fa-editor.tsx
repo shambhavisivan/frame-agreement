@@ -6,6 +6,7 @@ import {
 	TabNames
 } from '../../datasources';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
+import { useGetAttachmentExtended } from '../../hooks/use-get-attachment-extended';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { LoadingFallback } from '../loading-fallback';
 import { CSButton } from '@cloudsense/cs-ui-components';
@@ -45,15 +46,16 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	} = useContext(store);
 	const [activeTab, setActiveTab] = useState(TabNames.products);
 	const labels = useCustomLabels();
+	const attachmentExtended = useGetAttachmentExtended(attachment || {}, attachmentStatus);
 
 	useEffect(() => {
-		if (attachmentStatus === QueryStatus.Success) {
+		if (Object.keys(attachmentExtended).length) {
 			dispatch({
 				type: 'loadAttachment',
-				payload: { attachment: attachment || {} }
+				payload: { attachment: attachment || {}, attachmentExtended }
 			});
 		}
-	}, [attachmentStatus, attachment]);
+	}, [attachmentExtended]);
 
 	useEffect(() => {
 		const alreadyAddedProductIds = Object.keys(stateProduct || {});

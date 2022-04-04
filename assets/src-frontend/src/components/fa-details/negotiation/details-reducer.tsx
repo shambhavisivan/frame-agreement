@@ -6,9 +6,12 @@ import {
 	CommercialProductStandalone,
 	FrameAgreement,
 	Product,
-	Volume
+	Volume,
+	AttachmentOriginalItems,
+	Charge
 } from '../../../datasources';
 import { DiscLevelWrapper, DiscountThreshold } from '../../../datasources';
+import { RateCards } from '../rate-cards';
 
 export interface Negotiable {
 	original: number | undefined | null;
@@ -133,6 +136,7 @@ export type NegotiationAction =
 			type: 'loadAttachment'; // attachment is like a diff
 			payload: {
 				attachment: Attachment;
+				attachmentExtended: AttachmentOriginalItems;
 			};
 	  }
 	| {
@@ -487,6 +491,7 @@ export function detailsReducer(
 
 		case 'loadAttachment':
 			const attachment = action.payload.attachment;
+			const attachmentExtended = action.payload.attachmentExtended;
 
 			const createProductStructure = (
 				products: Attachment['products'] | Attachment['offers']
@@ -496,6 +501,36 @@ export function detailsReducer(
 				};
 				if (products) {
 					Object.entries(products).forEach(([productId, productNegotiation]) => {
+						const cpAddons = attachmentExtended?.commercialProductData?.cpData[
+							productId
+						].addons.reduce((result, currentAddon) => {
+							result[currentAddon.id] = currentAddon.addOnPriceItem;
+							return result;
+						}, {} as { [id: string]: Addon });
+
+						const cpAdvancedCharges = attachmentExtended?.commercialProductData?.cpData[
+							productId
+						].charges.reduce((result, charge) => {
+							result[charge.id] = charge;
+							return result;
+						}, {} as { [id: string]: Charge });
+
+						const rcs = attachmentExtended?.commercialProductData?.cpData[
+							productId
+						].rateCards.reduce((rcResult, rateCard) => {
+							rcResult[rateCard.id] = {
+								rateCardLines: rateCard.rateCardLines?.reduce((rclResult, rcl) => {
+									rclResult[rcl.id] = {
+										original: rcl.rateValue,
+										negotiated:
+											productNegotiation?.rateCards?.[rateCard.id]?.[rcl.id]
+									};
+									return rclResult;
+								}, {} as RateCardLines)
+							};
+							return rcResult;
+						}, {} as RateCards);
+
 						productState[productId] = {
 							volume: productNegotiation.volume || ({} as Volume),
 							addons: Object.keys(productNegotiation.addons || {}).reduce(
@@ -510,14 +545,14 @@ export function detailsReducer(
 											negotiated: productNegotiation?.addons
 												? productNegotiation?.addons[currentAddonId]?.oneOff
 												: undefined,
-											original: undefined
+											original: cpAddons?.[currentAddonId]?.oneOffCharge
 										},
 										recurring: {
 											negotiated: productNegotiation?.addons
 												? productNegotiation?.addons[currentAddonId]
 														?.recurring
 												: undefined,
-											original: undefined
+											original: cpAddons?.[currentAddonId]?.recurringCharge
 										}
 									};
 									return addonData;
@@ -538,13 +573,13 @@ export function detailsReducer(
 											negotiated: productNegotiation?.charges
 												? productNegotiation?.charges[chargeId]?.oneOff
 												: undefined,
-											original: undefined
+											original: cpAdvancedCharges?.[chargeId].oneOff
 										},
 										recurring: {
 											negotiated: productNegotiation?.charges
 												? productNegotiation.charges[chargeId]?.recurring
 												: undefined,
-											original: undefined
+											original: cpAdvancedCharges?.[chargeId].recurring
 										}
 									};
 									return charges;
@@ -556,21 +591,26 @@ export function detailsReducer(
 							product: {
 								oneOff: {
 									negotiated: productNegotiation.product?.oneOff,
-									original: undefined
+									original:
+										attachmentExtended?.commercialProducts?.[productId]
+											.oneOffCharge
 								},
 								recurring: {
 									negotiated: productNegotiation.product?.recurring,
-									original: undefined
+									original:
+										attachmentExtended?.commercialProducts?.[productId]
+											.recurringCharge
 								}
 							},
 							rateCards: Object.entries(productNegotiation?.rateCards || {}).reduce(
-								(accu, [id, value]) => {
-									accu[id] = {
+								(accu, [rcId, value]) => {
+									accu[rcId] = {
 										rateCardLines: Object.entries(value).reduce(
-											(rateCardLine, [id, negotiated]) => {
-												rateCardLine[id] = {
+											(rateCardLine, [rclId, negotiated]) => {
+												rateCardLine[rclId] = {
 													negotiated,
-													original: undefined
+													original:
+														rcs?.[rcId].rateCardLines[rclId].original
 												};
 												return rateCardLine;
 											},
@@ -599,11 +639,14 @@ export function detailsReducer(
 							accu[addonId] = {
 								oneOff: {
 									negotiated: chargeValue.oneOff,
-									original: undefined
+									original:
+										attachmentExtended?.standaloneAddons?.[addonId].oneOffCharge
 								},
 								recurring: {
 									negotiated: chargeValue.recurring,
-									original: undefined
+									original:
+										attachmentExtended?.standaloneAddons?.[addonId]
+											.recurringCharge
 								}
 							};
 
@@ -832,6 +875,19 @@ export function selectAttachment(state: Negotiation['negotiation']): Attachment 
 							recurring: productNegotiation.product.recurring.negotiated
 						})
 					},
+					addons: Object.fromEntries(
+						Object.entries(productNegotiation?.addons || {}).map(
+							([addonId, aoNegotiable]) => {
+								return [
+									addonId,
+									{
+										oneOff: aoNegotiable.oneOff.negotiated,
+										recurring: aoNegotiable.recurring.negotiated
+									}
+								];
+							}
+						)
+					),
 					rateCards: Object.fromEntries(
 						Object.entries(productNegotiation?.rateCards || {}).map(
 							([rateCardId, rateCard]) => {

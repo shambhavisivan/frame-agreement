@@ -1,5 +1,6 @@
 import {
 	Attachment,
+	AttachmentOriginalItems,
 	CommercialProductData,
 	CommercialProductStandalone
 } from '../../../datasources';
@@ -11,6 +12,10 @@ import {
 	ProductNegotiation,
 	selectAttachment
 } from './details-reducer';
+import {
+	mockCommercialProducts,
+	mockProductDataWithRateCardsOnly
+} from '../../../datasources/mock-data';
 
 type Negotiation = INegotiation['negotiation'];
 describe('detailsReducer', () => {
@@ -826,11 +831,7 @@ describe('detailsReducer', () => {
 						[rateCardId1]: {
 							rateCardLines: {
 								[rateCartLineId1]: {
-									original: 1,
-									negotiated: undefined
-								},
-								[rateCartLineId2]: {
-									original: 2,
+									original: 124.99,
 									negotiated: undefined
 								}
 							}
@@ -854,13 +855,13 @@ describe('detailsReducer', () => {
 			custom: undefined
 		};
 		test(`updates the current state with the one described in the attachment`, () => {
+			const productId = 'a1F1t0000001JBoEAM';
 			const attachment: Attachment = {
 				products: {
 					[productId]: {
 						rateCards: {
 							[rateCardId1]: {
-								[rateCartLineId1]: 42,
-								[rateCartLineId2]: 43
+								[rateCartLineId1]: 42
 							}
 						},
 						volume: {
@@ -879,6 +880,13 @@ describe('detailsReducer', () => {
 				addons: {},
 				custom: {}
 			};
+			const attachmentExtended: AttachmentOriginalItems = {
+				commercialProducts: {
+					[mockCommercialProducts[0].id]: mockCommercialProducts[0]
+				},
+				commercialProductData: mockProductDataWithRateCardsOnly,
+				standaloneAddons: {}
+			};
 
 			const expectedState: INegotiation = {
 				negotiation: {
@@ -889,11 +897,7 @@ describe('detailsReducer', () => {
 									rateCardLines: {
 										[rateCartLineId1]: {
 											negotiated: 42,
-											original: undefined
-										},
-										[rateCartLineId2]: {
-											negotiated: 43,
-											original: undefined
+											original: 124.99
 										}
 									}
 								}
@@ -906,11 +910,11 @@ describe('detailsReducer', () => {
 							},
 							product: {
 								recurring: {
-									original: undefined,
+									original: 269.665423,
 									negotiated: 1
 								},
 								oneOff: {
-									original: undefined,
+									original: 60.2336,
 									negotiated: 2
 								}
 							},
@@ -932,7 +936,8 @@ describe('detailsReducer', () => {
 					{
 						type: 'loadAttachment',
 						payload: {
-							attachment
+							attachment,
+							attachmentExtended
 						}
 					}
 				)
@@ -1319,7 +1324,8 @@ describe('selectors', () => {
 						recurring: 1,
 						oneOff: 2
 					},
-					charges: {}
+					charges: {},
+					addons: {}
 				},
 				[productId2]: {
 					rateCards: {
@@ -1334,6 +1340,7 @@ describe('selectors', () => {
 						mv: null,
 						mvp: null
 					},
+					addons: {},
 					allowances: {},
 					product: {},
 					charges: {

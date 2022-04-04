@@ -4,7 +4,9 @@ import {
 	CommercialProductStandalone,
 	CommercialProductData,
 	FrameAgreement,
-	FrameAgreementAttachment
+	FrameAgreementAttachment,
+	AttachmentOriginalItems,
+	Addon
 } from '../datasources';
 import { Deforcified } from '../datasources/deforcify';
 import { remoteActions } from '../datasources';
@@ -18,6 +20,7 @@ import { usePublisher as publishEventData } from '../hooks/use-publisher-subscri
 import { CSToastApi } from '@cloudsense/cs-ui-components';
 import { forcify } from '../datasources/forcify';
 import { usePublisher as callPublisher } from '../hooks/use-publisher-subscriber';
+import { createAttExtended } from '../utils/helper-functions';
 
 class AgreementService {
 	private _settings: AppSettings;
@@ -60,7 +63,10 @@ class AgreementService {
 		this._detailsPageProvider.dispatch({
 			type: 'loadAttachment',
 			payload: {
-				attachment
+				attachment,
+				attachmentExtended: (this._getAttExtended(
+					attachment
+				) as unknown) as AttachmentOriginalItems
 			}
 		});
 		return attachment;
@@ -174,10 +180,14 @@ class AgreementService {
 
 		if (refreshAttachment && this._detailsPageProvider.activeFa?.id === frameAgreementId) {
 			const attachment = await remoteActions.getAttachmentBody(frameAgreementId);
+
 			this._detailsPageProvider.dispatch({
 				type: 'loadAttachment',
 				payload: {
-					attachment
+					attachment,
+					attachmentExtended: (this._getAttExtended(
+						attachment
+					) as unknown) as AttachmentOriginalItems
 				}
 			});
 			frameAgreementAttachment.attachment = attachment;
@@ -387,6 +397,52 @@ class AgreementService {
 		});
 
 		await publishEventData<string[]>('onAfterDeleteProducts', productIdsAfterDeletion);
+	};
+
+	private _getAttExtended = async (attachment: Attachment): Promise<AttachmentOriginalItems> => {
+		let productIds: string[] = [];
+		if (attachment) {
+			productIds = Object.keys(attachment.products || {});
+		}
+
+		let commercialProducts: CommercialProductStandalone[] = [];
+		let productsData: CommercialProductData = {} as CommercialProductData;
+		let standaloneAddons: Addon[] = [];
+
+		const cachedCps: CommercialProductStandalone[] | undefined = this._queryCache.getQueryData([
+			'commercialProducts',
+			productIds,
+			null,
+			null,
+			0,
+			[]
+		]);
+
+		const cachedCpData: CommercialProductData | undefined = this._queryCache.getQueryData([
+			'commercialProductData',
+			productIds
+		]);
+
+		const cachedAddons: Addon[] | undefined = this._queryCache.getQueryData([
+			QueryKeys.standaloneAddons
+		]);
+
+		commercialProducts = cachedCps
+			? cachedCps
+			: await remoteActions.queryProducts(productIds, null, null, 0, []);
+
+		productsData = cachedCpData
+			? cachedCpData
+			: await remoteActions.getCommercialProductData(productIds);
+
+		standaloneAddons = cachedAddons ? cachedAddons : await remoteActions.getStandaloneAddons();
+
+		const attachmentExtended: AttachmentOriginalItems = createAttExtended(
+			commercialProducts,
+			productsData,
+			standaloneAddons
+		);
+		return attachmentExtended;
 	};
 }
 

@@ -2,7 +2,9 @@ import {
 	commercialProducts,
 	DiscLevels_general,
 	frameAgreements,
-	productData
+	productData,
+	productDataWithRateCardsOnly,
+	STANDALONE_ADDONS
 } from '../local-server/local_data';
 import { deforcify } from './deforcify';
 import {
@@ -13,7 +15,8 @@ import {
 	UserLocaleInfo,
 	FieldMetadata,
 	Attachment,
-	DeltaResult
+	DeltaResult,
+	Addon
 } from './interfaces';
 import {
 	DispatcherToken,
@@ -97,6 +100,17 @@ export const mockAuthLevels = {
 
 export const mockCommercialProductData: CommercialProductData = {
 	cpData: deforcify(productData),
+	discThresh: mockDiscountThresholds,
+	discLevels: DiscLevels_general.map((discWrap: SfGlobal.DiscLevelWrapper) => {
+		return {
+			...discWrap,
+			discountLevel: deforcify(discWrap.discountLevel)
+		};
+	})
+};
+
+export const mockProductDataWithRateCardsOnly: CommercialProductData = {
+	cpData: deforcify(productDataWithRateCardsOnly),
 	discThresh: mockDiscountThresholds,
 	discLevels: DiscLevels_general.map((discWrap: SfGlobal.DiscLevelWrapper) => {
 		return {
@@ -2225,3 +2239,5 @@ export const mockDiscountData: DiscountData = {
 		};
 	})
 };
+
+export const mockStandaloneAddons: Addon[] = STANDALONE_ADDONS.map(deforcify);

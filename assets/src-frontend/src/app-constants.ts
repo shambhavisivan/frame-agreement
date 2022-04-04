@@ -25,6 +25,7 @@ export const DEFAULT_GRID_VISIBLE_FIELDS = 5;
 export const DEFAULT_SEARCH_TRIGGER_LIMIT = 3;
 export const PAGE_SIZES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 export const PRODUCTS_CHUNK_SIZE = 10;
+export const FA_STATUS_PENDING = 'Pending';
 
 export const FIELD_METADATA_CHILD_FA: FieldMetadata[] = [
 	{

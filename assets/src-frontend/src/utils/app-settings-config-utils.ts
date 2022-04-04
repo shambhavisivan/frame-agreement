@@ -1,3 +1,4 @@
+import { FrameAgreement } from '../datasources';
 import { deforcifyKeyName } from '../datasources/deforcify';
 import { FAMClientError } from '../error/fam-client-error-handler';
 
@@ -11,6 +12,29 @@ interface ExpressionComponent {
 	comparison: string;
 	value: string;
 }
+
+export const isStandardButtonVisible = (
+	inputConfig: string[] | string | undefined,
+	activeFa: FrameAgreement
+): boolean => {
+	if (!inputConfig?.length) {
+		return false;
+	}
+	if (Array.isArray(inputConfig)) {
+		// show every time backwards compatibility
+		if (inputConfig.includes('*')) {
+			return true;
+		}
+
+		return inputConfig.includes(activeFa.status || '');
+	} else if (typeof inputConfig === 'string') {
+		if (inputConfig.indexOf('*') !== -1) {
+			return true;
+		}
+		return evaluateConditionalExpression(inputConfig, activeFa);
+	}
+	return false;
+};
 
 export const evaluateConditionalExpression = <T, U extends keyof T>(
 	expString: string,

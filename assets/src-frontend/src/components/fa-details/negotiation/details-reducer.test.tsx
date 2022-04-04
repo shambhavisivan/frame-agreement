@@ -1369,10 +1369,20 @@ describe('test updateof currentFA', () => {
 		detailsReducer(testState, {
 			type: 'updateActiveFa',
 			payload: {
-				agreement: { id: 'someId', agreementName: 'some-agreement', name: 'AGR_001' }
+				agreement: {
+					id: 'someId',
+					agreementName: 'some-agreement',
+					name: 'AGR_001',
+					agreementLevel: 'Frame Agreement'
+				}
 			}
 		})
 	).toEqual({
-		activeFa: { id: 'someId', agreementName: 'some-agreement', name: 'AGR_001' }
+		activeFa: {
+			id: 'someId',
+			agreementName: 'some-agreement',
+			name: 'AGR_001',
+			agreementLevel: 'Frame Agreement'
+		}
 	} as INegotiation);
 });

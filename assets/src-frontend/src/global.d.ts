@@ -77,6 +77,16 @@ namespace SfGlobal {
 	/* eslint-disable @typescript-eslint/naming-convention */
 	export interface StandardButtonData {
 		Save: string[] | string;
+		SubmitForApproval: string[] | string;
+		Submit: string[] | string;
+		DeleteProducts: string[] | string;
+		DeleteAddons: string[] | string;
+		BulkNegotiate: string[] | string;
+		BulkNegotiateAddons: string[] | string;
+		AddProducts: string[] | string;
+		AddAddons: string[] | string;
+		NewVersion: string[] | string;
+		Delta: string[] | string;
 	}
 	/* eslint-enable @typescript-eslint/naming-convention */
 
@@ -106,7 +116,7 @@ namespace SfGlobal {
 		Id: string;
 		LastModifiedDate: number;
 		Name: string;
-		csconta__agreement_level__c: string;
+		csconta__agreement_level__c: AgreementLevel;
 		csconta__Status__c: string;
 		csconta__Account__c: string;
 		csconta__replaced_frame_agreement__c: string;
@@ -246,6 +256,11 @@ namespace SfGlobal {
 		alert_deleteAgreements_message: string;
 		alert_deleteAgreements_title: string;
 		btn_DeleteAgreements: string;
+		btn_Done: string;
+		btn_NewVersion: string;
+		btn_Save: string;
+		btn_Submit: string;
+		btn_SubmitForApproval: string;
 		filter_text_warning_message: string;
 		frame_agreements_title: string;
 		approval_action_approve: string;

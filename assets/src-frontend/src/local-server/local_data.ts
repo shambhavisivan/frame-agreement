@@ -1,3 +1,5 @@
+import { AgreementLevel } from '../datasources';
+
 /* eslint-disable @typescript-eslint/naming-convention */
 function makeId(n = 15): string {
 	let text = '';
@@ -513,7 +515,7 @@ export const frameAgreements = [
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
 		csfam__Arb_Field_Text_4__c: '',
 		csconta__replaced_frame_agreement__c: 'a1t1t0000009wpQAAP',
-		csconta__agreement_level__c: 'Master Agreement',
+		csconta__agreement_level__c: 'Master Agreement' as AgreementLevel,
 		csfam__Arb_Field_Textarea__c:
 			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
 		csconta__Account__r: {
@@ -536,7 +538,7 @@ export const frameAgreements = [
 		csfam__Arb_Field_Date__c: 1547510400000,
 		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 2',
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
-		csconta__agreement_level__c: 'Master Agreement',
+		csconta__agreement_level__c: 'Master Agreement' as AgreementLevel,
 		csfam__Arb_Field_Textarea__c:
 			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
 		csconta__Account__r: {
@@ -559,7 +561,7 @@ export const frameAgreements = [
 		csfam__Arb_Field_Date__c: 1547510400000,
 		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 2',
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
-		csconta__agreement_level__c: 'Master Agreement',
+		csconta__agreement_level__c: 'Master Agreement' as AgreementLevel,
 		csfam__Arb_Field_Textarea__c:
 			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
 		csconta__Account__r: {
@@ -575,7 +577,7 @@ export const frameAgreements = [
 		csconta__Agreement_Name__c: 'Delta Test 1',
 		csconta__Status__c: 'Draft',
 		csconta__frame_agreement_number__c: '010263',
-		csconta__agreement_level__c: 'Frame Agreement',
+		csconta__agreement_level__c: 'Frame Agreement' as AgreementLevel,
 		csfam__Arb_Field_Text__c: 'Arb Text',
 		csfam__Arb_Formula__c: 'Arb Text TESTING TESTING',
 		csfam__Arb_Field_Bool__c: true,
@@ -592,7 +594,7 @@ export const frameAgreements = [
 		csconta__Agreement_Name__c: 'Delta Test 2',
 		csconta__Status__c: 'Requires Approval',
 		csconta__frame_agreement_number__c: '010264',
-		csconta__agreement_level__c: 'Frame Agreement',
+		csconta__agreement_level__c: 'Frame Agreement' as AgreementLevel,
 		csfam__Arb_Formula__c: 'TESTING TESTING',
 		csfam__Arb_Field_Bool__c: true,
 		csconta__Account__r: {
@@ -615,7 +617,7 @@ export const frameAgreements = [
 		csfam__Arb_Field_Date__c: 1547424000000,
 		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 1dsfsdf',
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
-		csconta__agreement_level__c: 'Frame Agreement',
+		csconta__agreement_level__c: 'Frame Agreement' as AgreementLevel,
 		csfam__Arb_Field_Textarea__c:
 			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
 		csconta__Account__r: {
@@ -638,6 +640,7 @@ export const frameAgreements = [
 		csfam__Arb_Field_Date__c: 1547424000000,
 		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 1dsfsdf',
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
+		csconta__agreement_level__c: 'Frame Agreement' as AgreementLevel,
 		csfam__Arb_Field_Textarea__c:
 			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
 		csconta__Account__r: {
@@ -660,6 +663,7 @@ export const frameAgreements = [
 		csfam__Arb_Field_Date__c: 1547424000000,
 		csfam__Arb_Field_Text_2__c: 'Arb Text 2 - change 1dsfsdf',
 		csfam__Arb_Field_Text_3__c: 'Arb Text 3 - change 1',
+		csconta__agreement_level__c: 'Frame Agreement' as AgreementLevel,
 		csfam__Arb_Field_Textarea__c:
 			'Metus in vestibulum faucibus erat tortor et, suscipit orci, scelerisque a do ac eu, maecenas fusce velit, cras dui faucibus donec urna leo justo. Enim nec sagittis rutrum est, vel erat in venenatis vestibulum, sed nostra dui nonummy etiam eros, eget',
 		csconta__Account__r: {

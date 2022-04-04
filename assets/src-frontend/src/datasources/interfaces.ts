@@ -87,7 +87,7 @@ export interface FrameAgreement {
 	id: string;
 	lastModifiedDate?: number;
 	name: string;
-	agreementLevel?: string;
+	agreementLevel: AgreementLevel;
 	status?: string;
 	replacedFrameAgreement?: string;
 	agreementName?: string;
@@ -411,3 +411,5 @@ export type AttachmentOriginalItems = {
 	commercialProductData: CommercialProductData;
 	standaloneAddons: { [id: string]: Addon };
 };
+
+export type AgreementLevel = 'Frame Agreement' | 'Master Agreement';

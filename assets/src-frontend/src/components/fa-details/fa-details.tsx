@@ -146,12 +146,12 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 	};
 
 	return (
-		<div className="details-wrapper">
-			<LoadingFallback status={faStatus}>
-				<DetailsProvider agreement={agreement || ({} as FrameAgreement)}>
-					<RegisterApisWithStore />
-					<FaStatusContextProvider faId={agreementId}>
-						<DetailsHeader />
+		<LoadingFallback status={faStatus}>
+			<DetailsProvider agreement={agreement || ({} as FrameAgreement)}>
+				<RegisterApisWithStore />
+				<FaStatusContextProvider faId={agreementId}>
+					<DetailsHeader agreement={agreement} />
+					<div className="details-wrapper">
 						<div className="field-wrapper">
 							<CSForm
 								data={faHeaderFields}
@@ -169,15 +169,14 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 							/>
 						</div>
 						<ApprovalProcess faId={agreementId} />
-						Agreement ID: {agreementId}, name: {agreement?.name}
 						<CSCard className="products-search-wrapper">
 							<CSCardBody padding="0">
 								<FaEditor agreement={agreement} />
 							</CSCardBody>
 						</CSCard>
-					</FaStatusContextProvider>
-				</DetailsProvider>
-			</LoadingFallback>
-		</div>
+					</div>
+				</FaStatusContextProvider>
+			</DetailsProvider>
+		</LoadingFallback>
 	);
 }

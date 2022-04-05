@@ -314,6 +314,12 @@ namespace SfGlobal {
 		btn_Save: string;
 		modal_unsavedChanges_alert: string;
 		toast_saved_fa: string;
+		toast_submitForApproval_config_error: string;
+		toast_submitForApproval_config_errorMsg: string;
+		toast_success_title: string;
+		toast_submitForApproval_success: string;
+		toast_failed_title: string;
+		toast_submitForApproval_failed: string;
 		btn_ok: string;
 		incorrect_fa: string;
 		no_active_fa: string;

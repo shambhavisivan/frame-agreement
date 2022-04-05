@@ -12,7 +12,12 @@ import {
 	mockProductIds
 } from './mock-data';
 import { DetailsProvider, store } from '../components/fa-details/details-page-provider';
-import { QueryKeys, FA_STATUS_FIELD_NAME } from '../app-constants';
+import {
+	QueryKeys,
+	FA_STATUS_FIELD_NAME,
+	DEFAULT_TOAST_DURATION,
+	DEFAULT_TOAST_LOCATION
+} from '../app-constants';
 import * as reactQuery from 'react-query';
 import * as deforcify from './deforcify';
 import {
@@ -444,8 +449,8 @@ describe('RegisterApisWithStore', () => {
 					detail: CUSTOM_LABELS_MOCK.toast_decomposition_success,
 					closeButton: true
 				},
-				'top-center',
-				3
+				DEFAULT_TOAST_LOCATION,
+				DEFAULT_TOAST_DURATION
 			);
 			expect(publisherSubscriberSpy).toBeCalledTimes(2);
 		});
@@ -484,8 +489,8 @@ describe('RegisterApisWithStore', () => {
 					detail: CUSTOM_LABELS_MOCK.toast_decomposition_failed,
 					closeButton: true
 				},
-				'top-center',
-				3
+				DEFAULT_TOAST_LOCATION,
+				DEFAULT_TOAST_DURATION
 			);
 			expect(publisherSubscriberSpy).toBeCalledTimes(1);
 		});

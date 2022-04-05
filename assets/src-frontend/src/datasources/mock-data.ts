@@ -74,7 +74,8 @@ export const mockAppSettings: AppSettings = {
 		discountAsPrice: false,
 		activeStatusManagement: true,
 		faEditableStatuses: ['Draft', 'Requires Approval', 'Approved'],
-		approversRevise: true
+		approversRevise: true,
+		approvalProcessName: 'Approver Process'
 	}
 };
 
@@ -839,7 +840,13 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	addons_header_oneOff_neg: 'Negotiated One Off',
 	addons_header_recc_neg: 'Negotiated Recurring',
 	modal_unsavedChanges_alert: 'You have unsaved changes, are you sure you want to leave?',
-	toast_saved_fa: 'Successfuly saved frame agreement!',
+	toast_saved_fa: 'Successfully saved frame agreement!',
+	toast_submitForApproval_config_error: 'Approval Process not configured',
+	toast_submitForApproval_config_errorMsg: 'Kindly configure in FAC Settings',
+	toast_success_title: 'Submitted!',
+	toast_submitForApproval_success: 'Successfuly submitted for approval!',
+	toast_failed_title: 'Failed!',
+	toast_submitForApproval_failed: 'Unable to start approval process.',
 	btn_ok: 'Ok',
 	incorrect_fa: 'Input frame agreement is either incorrect or not found',
 	no_active_fa: 'No active frame agreement in fa editor.',

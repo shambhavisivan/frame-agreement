@@ -24,6 +24,7 @@ export type FacSetting = {
 	faEditableStatuses: string[];
 	approversRevise: boolean;
 	activeStatusManagement: boolean;
+	approvalProcessName: string;
 };
 
 export interface AppSettings {

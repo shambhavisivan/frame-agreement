@@ -5,6 +5,7 @@ import { Attachment, FrameAgreement, remoteActions, CommercialProductStandalone 
 import { QueryKeys } from '../app-constants';
 import { useFrameAgreements } from '../hooks/use-frame-agreements';
 import { useAppSettings } from '../hooks/use-app-settings';
+import { showToast as invokeShowToast } from '../components/app-utils';
 
 interface FamApi {
 	getAttachment?: (faId: string) => Promise<Attachment>;
@@ -82,16 +83,8 @@ export function RegisterApis(): ReactElement {
 		message: string,
 		timeout: number
 	): void => {
-		CSToastApi.renderCSToast(
-			{
-				variant: type,
-				text: title,
-				detail: message,
-				closeButton: true
-			},
-			'top-right',
-			timeout / 1000
-		);
+		const duration = timeout / 1000;
+		invokeShowToast(type, title, { durationInSecond: duration, toastMessageDetail: message });
 	};
 	registerApiEndpoint('toast', showToast);
 

@@ -5,13 +5,12 @@ import {
 	CSMainHeaderColor,
 	CSMainHeaderIcon,
 	CSMainHeaderLeft,
-	CSMainHeaderRight,
-	CSToastApi
+	CSMainHeaderRight
 } from '@cloudsense/cs-ui-components';
 import _ from 'lodash';
 import React, { ReactElement, useContext, useState } from 'react';
 import { useHistory } from 'react-router';
-import { FrameAgreement } from '../../datasources';
+import { FrameAgreement, remoteActions } from '../../datasources';
 import { useAppSettings } from '../../hooks/use-app-settings';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { useGetFaAttachment } from '../../hooks/use-get-fa-attachment';
@@ -22,6 +21,8 @@ import { ConfirmationModal } from '../dialogs/confirmation-modal';
 import { store } from './details-page-provider';
 import { selectAttachment } from './negotiation/details-reducer';
 import { Deforcified } from '../../datasources/deforcify';
+import { useApprovalHistory } from '../../hooks/use-approval-history';
+import { showToast } from '../app-utils';
 import { FA_STATUS_PENDING } from '../../app-constants';
 
 interface DetailsHeaderProps {
@@ -32,30 +33,55 @@ export function DetailsHeader({ agreement }: DetailsHeaderProps): ReactElement {
 	const { negotiation, activeFa, disableAgreementOperations, dispatch } = useContext(store);
 	const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 	const { settings } = useAppSettings();
-	const { mutate } = useSaveAttachment();
+	const { mutate: saveAttachment } = useSaveAttachment();
 	const history = useHistory();
 	const { attachment } = useGetFaAttachment(activeFa?.id || '');
 	const label = useCustomLabels();
 	const { faStatus } = useContext(faStatusContext);
+	const { refetchApprovalHistory } = useApprovalHistory(agreement?.id || '');
+	const { setFaStatus } = useContext(faStatusContext);
 
-	const saveAttachment = (): void => {
+	const triggerSaveAttachment = (): void => {
 		if (isAgreementNegotiated()) {
 			disableAgreementOperation(true);
-			mutate({ faId: activeFa?.id || '', attachment: selectAttachment(negotiation) }).finally(
-				() => {
-					disableAgreementOperation(false);
-					CSToastApi.renderCSToast(
-						{
-							variant: 'success',
-							text: label.toastSavedFa,
-							closeButton: true
-						},
-						'top-center',
-						3
-					);
-				}
-			);
+			saveAttachment({
+				faId: activeFa?.id || '',
+				attachment: selectAttachment(negotiation)
+			}).finally(() => {
+				disableAgreementOperation(false);
+				showToast('success', label.toastSavedFa);
+			});
 		}
+	};
+
+	const triggerApproval = async (): Promise<void> => {
+		if (!settings?.facSettings.approvalProcessName) {
+			showToast('error', label.toastSubmitForApprovalConfigError, {
+				toastMessageDetail: label.toastSubmitForApprovalConfigErrorMsg
+			});
+			return;
+		}
+		disableAgreementOperation(true);
+		await saveAttachment({
+			faId: agreement?.id || '',
+			attachment: selectAttachment(negotiation)
+		});
+		const approvalProcessResult = await remoteActions.submitForApproval(
+			agreement?.id as string
+		);
+
+		if (approvalProcessResult) {
+			showToast('success', label.toastSuccessTitle, {
+				toastMessageDetail: label.toastSubmitForApprovalSuccess
+			});
+			setFaStatus(FA_STATUS_PENDING);
+			refetchApprovalHistory();
+		} else {
+			showToast('error', label.toastFailedTitle, {
+				toastMessageDetail: label.toastSubmitForApprovalFailed
+			});
+		}
+		disableAgreementOperation(false);
 	};
 
 	const isAgreementNegotiated = (): boolean => {
@@ -177,13 +203,14 @@ export function DetailsHeader({ agreement }: DetailsHeaderProps): ReactElement {
 						<CSButton
 							disabled={disableAgreementOperations}
 							label={label.btnSubmitForApproval}
+							onClick={triggerApproval}
 						/>
 					)}
 					{isButtonVisible('save') && (
 						<CSButton
 							disabled={!isAgreementNegotiated() || disableAgreementOperations}
 							label={label.btnSave}
-							onClick={saveAttachment}
+							onClick={triggerSaveAttachment}
 						/>
 					)}
 					{isButtonVisible('newVersion') && (

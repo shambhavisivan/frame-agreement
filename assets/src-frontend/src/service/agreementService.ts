@@ -17,10 +17,10 @@ import { DetailsState } from '../components/fa-details/details-page-provider';
 import { FAMClientError } from '../error/fam-client-error-handler';
 import { selectAttachment } from '../components/fa-details/negotiation/details-reducer';
 import { usePublisher as publishEventData } from '../hooks/use-publisher-subscriber';
-import { CSToastApi } from '@cloudsense/cs-ui-components';
 import { forcify } from '../datasources/forcify';
 import { usePublisher as callPublisher } from '../hooks/use-publisher-subscriber';
 import { createAttExtended } from '../utils/helper-functions';
+import { showToast } from '../components/app-utils';
 
 class AgreementService {
 	private _settings: AppSettings;
@@ -263,28 +263,14 @@ class AgreementService {
 		});
 
 		if (prgId) {
-			CSToastApi.renderCSToast(
-				{
-					variant: 'success',
-					text: this._customLabels.toastDecompositionTitleSuccess,
-					detail: this._customLabels.toastDecompositionSuccess,
-					closeButton: true
-				},
-				'top-center',
-				3
-			);
+			showToast('success', this._customLabels.toastDecompositionTitleSuccess, {
+				toastMessageDetail: this._customLabels.toastDecompositionSuccess
+			});
 			await publishEventData('onAfterActivation', prgId);
 		} else {
-			CSToastApi.renderCSToast(
-				{
-					variant: 'error',
-					text: this._customLabels.toastDecompositionTitleFailed,
-					detail: this._customLabels.toastDecompositionFailed,
-					closeButton: true
-				},
-				'top-center',
-				3
-			);
+			showToast('error', this._customLabels.toastDecompositionTitleFailed, {
+				toastMessageDetail: this._customLabels.toastDecompositionFailed
+			});
 		}
 	};
 

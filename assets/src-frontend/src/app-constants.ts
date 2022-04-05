@@ -1,3 +1,4 @@
+import { ToastPosition } from './components/app-utils';
 import { FieldMetadata } from './datasources';
 import {
 	CommercialProductRole,
@@ -26,6 +27,8 @@ export const DEFAULT_SEARCH_TRIGGER_LIMIT = 3;
 export const PAGE_SIZES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 export const PRODUCTS_CHUNK_SIZE = 10;
 export const FA_STATUS_PENDING = 'Pending';
+export const DEFAULT_TOAST_DURATION = 3;
+export const DEFAULT_TOAST_LOCATION: ToastPosition = 'top-right';
 
 export const FIELD_METADATA_CHILD_FA: FieldMetadata[] = [
 	{

@@ -101,7 +101,8 @@ export const remoteActions: RemoteActions = {
 					.split(',')
 					.map((status: string) => status.trim()),
 				approversRevise: settings.FACSettings.approvers_revise,
-				activeStatusManagement: settings.FACSettings.active_status_management__c
+				activeStatusManagement: settings.FACSettings.active_status_management__c,
+				approvalProcessName: settings.FACSettings.approvalProcessName
 			}
 		};
 	},

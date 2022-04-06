@@ -19,7 +19,7 @@ import { QueryStatus } from 'react-query';
 import { useCommercialProductData } from '../../hooks/use-commercial-product-data';
 import { DetailsTab } from './details-tab';
 import { store } from './details-page-provider';
-import { usePublisher as publishEventData } from '../../hooks/use-publisher-subscriber';
+import { publishEventData } from '../../utils/publisher-subscriber-utils';
 import { FamWindow } from '../../datasources/register-apis';
 
 interface FaEditorProps {

@@ -8,7 +8,7 @@ import { store } from '../details-page-provider';
 import { AddAddonsModal } from './add-addons-modal';
 import { TabNames, SelectedAddons } from '../../../datasources';
 import { DeleteModal } from '../../dialogs/delete-modal';
-import { usePublisher as publishEventData } from '../../../hooks/use-publisher-subscriber';
+import { publishEventData } from '../../../utils/publisher-subscriber-utils';
 import { FamWindow } from '../../../datasources/register-apis';
 
 declare const window: FamWindow;

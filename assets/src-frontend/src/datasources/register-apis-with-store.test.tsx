@@ -26,10 +26,9 @@ import {
 } from '../components/fa-details/negotiation/details-reducer';
 import { AgreementService } from '../service/agreementService';
 import { approval } from '../local-server/local_data';
-import * as pubSub from '../hooks/use-publisher-subscriber';
 import * as productIdHook from '../hooks/use-get-product-ids';
 import { CSToastApi } from '@cloudsense/cs-ui-components';
-import * as publisherSubscriber from '../hooks/use-publisher-subscriber';
+import * as publisherSubscriber from '../utils/publisher-subscriber-utils';
 
 const useProductIdsSpy = jest.spyOn(productIdHook, 'useGetProductIds').mockReturnValue({
 	itemIdsStatus: reactQuery.QueryStatus.Success,
@@ -412,7 +411,7 @@ describe('RegisterApisWithStore', () => {
 
 	describe('activateFrameAgreement', () => {
 		const publisherSubscriberSpy = jest
-			.spyOn(publisherSubscriber, 'usePublisher')
+			.spyOn(publisherSubscriber, 'publishEventData')
 			.mockReturnValue(Promise.resolve(mockFrameAgreements[0]));
 
 		test('should activate frame agreement', async () => {
@@ -509,7 +508,7 @@ describe('RegisterApisWithStore', () => {
 				.mockReturnValue(Promise.resolve(mockFrameAgreements[0]));
 
 			const publisherSubscriberSpy = jest
-				.spyOn(publisherSubscriber, 'usePublisher')
+				.spyOn(publisherSubscriber, 'publishEventData')
 				.mockReturnValue(Promise.resolve(mockFrameAgreements[0]));
 
 			render(
@@ -539,8 +538,8 @@ describe('RegisterApisWithStore', () => {
 				</DetailsProvider>
 			);
 
-			const pubSubSpy = jest
-				.spyOn(pubSub, 'usePublisher')
+			const publisherSubscriberSpy = jest
+				.spyOn(publisherSubscriber, 'publishEventData')
 				.mockReturnValue(Promise.resolve([mockProductId]));
 
 			const queryProductsSpy = jest
@@ -560,7 +559,7 @@ describe('RegisterApisWithStore', () => {
 
 			const result = await addProductsFunc(mockFaId, [mockProductId]);
 
-			expect(pubSubSpy).toBeCalled();
+			expect(publisherSubscriberSpy).toBeCalled();
 			expect(useProductIdsSpy).toBeCalledWith([], null);
 			expect(queryProductsSpy).toBeCalledWith([mockProductId], null, null, 10, []);
 			expect(getCommercialProductDataSpy).toBeCalled();
@@ -599,8 +598,8 @@ describe('RegisterApisWithStore', () => {
 				</DetailsProvider>
 			);
 
-			const pubSubSpy = jest
-				.spyOn(pubSub, 'usePublisher')
+			const publisherSubscriberSpy = jest
+				.spyOn(publisherSubscriber, 'publishEventData')
 				.mockReturnValue(Promise.resolve([mockProductId]));
 
 			const useEffectSpy = jest.spyOn(React, 'useEffect');
@@ -612,7 +611,7 @@ describe('RegisterApisWithStore', () => {
 
 			await removeProductsFunc(mockFaId, [mockProductId]);
 
-			expect(pubSubSpy).toBeCalled();
+			expect(publisherSubscriberSpy).toBeCalled();
 			expect(useEffectSpy).toBeCalled();
 		});
 

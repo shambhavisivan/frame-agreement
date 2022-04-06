@@ -1,4 +1,4 @@
-import { usePublisher, useSubscriber } from './use-publisher-subscriber';
+import { publishEventData, subscribeEvent } from './publisher-subscriber-utils';
 
 describe('usePublisherSubscriber', () => {
 	test('PublisherSubscriber hooks should publish data and should be successfully received by subscriber', async () => {
@@ -7,14 +7,14 @@ describe('usePublisherSubscriber', () => {
 
 		const testData = 'some event data';
 
-		useSubscriber(eventType, (data) => {
+		subscribeEvent(eventType, (data) => {
 			return new Promise((resolve) => {
 				dataReceivedBySubscriber = true;
 				resolve(data);
 			});
 		});
 
-		await usePublisher(eventType, testData);
+		await publishEventData(eventType, testData);
 
 		expect(dataReceivedBySubscriber).toBe(true);
 	});
@@ -25,7 +25,7 @@ describe('usePublisherSubscriber', () => {
 
 		const testData = 'some event data';
 
-		const returnedSubscription = useSubscriber(eventType, (data) => {
+		const returnedSubscription = subscribeEvent(eventType, (data) => {
 			return new Promise((resolve) => {
 				dataReceivedBySubscriber = true;
 				resolve(data);
@@ -33,7 +33,7 @@ describe('usePublisherSubscriber', () => {
 		});
 		returnedSubscription.unsubscribe();
 
-		await usePublisher(eventType, testData);
+		await publishEventData(eventType, testData);
 
 		expect(dataReceivedBySubscriber).toBe(false);
 	});

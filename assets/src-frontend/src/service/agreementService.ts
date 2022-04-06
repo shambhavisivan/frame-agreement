@@ -16,9 +16,8 @@ import { deforcify } from '../datasources/deforcify';
 import { DetailsState } from '../components/fa-details/details-page-provider';
 import { FAMClientError } from '../error/fam-client-error-handler';
 import { selectAttachment } from '../components/fa-details/negotiation/details-reducer';
-import { usePublisher as publishEventData } from '../hooks/use-publisher-subscriber';
+import { publishEventData } from '../utils/publisher-subscriber-utils';
 import { forcify } from '../datasources/forcify';
-import { usePublisher as callPublisher } from '../hooks/use-publisher-subscriber';
 import { createAttExtended } from '../utils/helper-functions';
 import { showToast } from '../components/app-utils';
 
@@ -322,7 +321,7 @@ class AgreementService {
 	};
 
 	public addProducts = async (faId: string, productIds: string[]): Promise<void> => {
-		let cpIds = await callPublisher<string[]>('onBeforeAddProducts', productIds);
+		let cpIds = await publishEventData<string[]>('onBeforeAddProducts', productIds);
 
 		let commercialProductsList: CommercialProductStandalone[] = [];
 
@@ -368,7 +367,7 @@ class AgreementService {
 				productsData: commercialProductsData || ({} as CommercialProductData)
 			}
 		});
-		await callPublisher<string[]>('onAfterAddProducts', idsToLoad);
+		await publishEventData<string[]>('onAfterAddProducts', idsToLoad);
 	};
 	public removeProducts = async (faId: string, productIds: string[]): Promise<void> => {
 		await publishEventData<string[]>('onBeforeDeleteProducts', productIds);

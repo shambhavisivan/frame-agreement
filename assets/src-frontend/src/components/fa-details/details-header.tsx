@@ -24,6 +24,7 @@ import { Deforcified } from '../../datasources/deforcify';
 import { useApprovalHistory } from '../../hooks/use-approval-history';
 import { showToast } from '../app-utils';
 import { FA_STATUS_PENDING } from '../../app-constants';
+import { publishEventData } from '../../utils/publisher-subscriber-utils';
 
 interface DetailsHeaderProps {
 	agreement?: FrameAgreement;
@@ -66,6 +67,7 @@ export function DetailsHeader({ agreement }: DetailsHeaderProps): ReactElement {
 			faId: agreement?.id || '',
 			attachment: selectAttachment(negotiation)
 		});
+		await publishEventData('onBeforeSubmit', undefined);
 		const approvalProcessResult = await remoteActions.submitForApproval(
 			agreement?.id as string
 		);
@@ -76,6 +78,7 @@ export function DetailsHeader({ agreement }: DetailsHeaderProps): ReactElement {
 			});
 			setFaStatus(FA_STATUS_PENDING);
 			refetchApprovalHistory();
+			await publishEventData('onAfterSubmit', undefined);
 		} else {
 			showToast('error', label.toastFailedTitle, {
 				toastMessageDetail: label.toastSubmitForApprovalFailed

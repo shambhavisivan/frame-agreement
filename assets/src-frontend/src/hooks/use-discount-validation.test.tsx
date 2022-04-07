@@ -3,7 +3,8 @@ import {
 	mockDiscountThresholds,
 	mockNegotiationState,
 	mockFrameAgreements,
-	mockDiscountData
+	mockDiscountData,
+	mockAppSettings
 } from '../datasources/mock-data';
 import * as discountValidator from '../components/fa-details/negotiation/discount-validator';
 import { useDiscountValidation } from './use-discount-validation';
@@ -16,6 +17,9 @@ import React, { FunctionComponent, ReactElement, ReactNode } from 'react';
 import { DiscountThresholdViolation } from '../components/fa-details/negotiation/discount-validator';
 import { FrameAgreement, ChargeT } from '../datasources';
 import { store, ProviderProps } from '../components/fa-details/details-page-provider';
+import * as useAppSettingsOb from '../hooks/use-app-settings';
+import { QueryStatus } from 'react-query';
+import { FamWindow } from '../datasources/register-apis';
 
 describe('test useDiscountValidation hook', () => {
 	// Cleanup mock
@@ -30,6 +34,20 @@ describe('test useDiscountValidation hook', () => {
 		disableAgreementOperations: false
 	};
 	const dispatch = jest.fn();
+
+	const globalAny: FamWindow = (global as unknown) as FamWindow;
+	globalAny.FAM = {};
+	globalAny.FAM.api = {};
+	globalAny.FAM.api.updateFrameAgreement = jest.fn();
+
+	const famApiSpy = jest
+		.spyOn(globalAny?.FAM?.api, 'updateFrameAgreement')
+		.mockImplementation(jest.fn());
+
+	const appSettingsSpy = jest.spyOn(useAppSettingsOb, 'useAppSettings').mockReturnValue({
+		status: QueryStatus.Success,
+		settings: mockAppSettings
+	});
 
 	const makeWrapper = (value: ProviderProps): FunctionComponent => ({
 		children
@@ -76,6 +94,9 @@ describe('test useDiscountValidation hook', () => {
 				mockNegotiationState.products[testProductId].product.recurring,
 				[mockDiscountThresholds[1]]
 			);
+
+			expect(appSettingsSpy).toHaveBeenCalledTimes(4);
+			expect(famApiSpy).toHaveBeenCalledTimes(1);
 		});
 	});
 
@@ -144,6 +165,7 @@ describe('test useDiscountValidation hook', () => {
 				][testChargeType],
 				[mockDiscountThresholds[0]]
 			);
+			expect(famApiSpy).toHaveBeenCalledTimes(1);
 		});
 
 		test('should validate the standalone addon charge against given threshold', async () => {
@@ -194,6 +216,7 @@ describe('test useDiscountValidation hook', () => {
 			expect(validateDiscountsSpy).toHaveBeenCalledWith(rateCardNegotiable, [
 				mockDiscountThresholds[0]
 			]);
+			expect(famApiSpy).toHaveBeenCalledTimes(1);
 		});
 	});
 });

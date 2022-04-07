@@ -9,8 +9,13 @@ import {
 	ProductNegotiation,
 	Negotiable
 } from '../components/fa-details/negotiation/details-reducer';
-import { DiscountThreshold, ChargeT, AddonType } from '../datasources';
+import { DiscountThreshold, ChargeT, AddonType, FacSetting } from '../datasources';
 import { store } from '../components/fa-details/details-page-provider';
+import { useAppSettings } from '../hooks/use-app-settings';
+import { FamWindow } from '../datasources/register-apis';
+
+const globalAny: FamWindow = (global as unknown) as FamWindow;
+globalAny.FAM = {};
 
 export function useDiscountValidation(): {
 	validateProductThreshold: (
@@ -36,7 +41,11 @@ export function useDiscountValidation(): {
 		authId?: string
 	) => DiscountThresholdViolation[];
 } {
-	const { discountData, negotiation: state } = useContext(store);
+	const { discountData, negotiation: state, activeFa } = useContext(store);
+
+	const { settings } = useAppSettings();
+	const { statuses } = settings?.facSettings as FacSetting;
+
 	const validateRateCardLineThreshold = useCallback(
 		(
 			productId: string,
@@ -60,13 +69,18 @@ export function useDiscountValidation(): {
 				);
 			}
 
-			return validateDiscountThreshold(
+			const rclThresholdViolations: DiscountThresholdViolation[] = validateDiscountThreshold(
 				{
 					original: rateLineNegotiable.original,
 					negotiated: rateLineNegotiable.negotiated
 				},
 				rclThresholds
 			);
+
+			if (rclThresholdViolations.length) {
+				updateFa();
+			}
+			return rclThresholdViolations;
 		},
 		[state, discountData?.discountThresholds]
 	);
@@ -93,8 +107,14 @@ export function useDiscountValidation(): {
 					(threshold) => threshold.authorizationLevel === authLevels[productId]
 				);
 			}
-
-			return validateDiscountThreshold(productNegotiable, productThresholds);
+			const productThresholdViolations: DiscountThresholdViolation[] = validateDiscountThreshold(
+				productNegotiable,
+				productThresholds
+			);
+			if (productThresholdViolations.length) {
+				updateFa();
+			}
+			return productThresholdViolations;
 		},
 		[discountData?.authLevels, state, discountData?.discountThresholds]
 	);
@@ -152,10 +172,32 @@ export function useDiscountValidation(): {
 				);
 			}
 
-			return validateDiscountThreshold(addonNegotiable, addonThresholds);
+			const addonThresholdViolations: DiscountThresholdViolation[] = validateDiscountThreshold(
+				addonNegotiable,
+				addonThresholds
+			);
+			if (addonThresholdViolations.length) {
+				updateFa();
+			}
+			return addonThresholdViolations;
 		},
 		[discountData?.authLevels, state, discountData?.discountThresholds]
 	);
+
+	const updateFa = (): void => {
+		const updateFrameAgreementFunc = globalAny?.FAM?.api?.updateFrameAgreement as (
+			faId: string,
+			field: keyof SfGlobal.FrameAgreement,
+			value: string | number | undefined
+		) => Promise<void>;
+
+		updateFrameAgreementFunc(
+			activeFa?.id || '',
+			'csconta__Status__c',
+			statuses.requiresApprovalStatus
+		);
+	};
+
 	return {
 		validateProductThreshold,
 		validateProductThresholdForAdvancedCharges,

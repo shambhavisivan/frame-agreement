@@ -95,6 +95,7 @@ export function ProductDetails({
 					<RateCards
 						productId={product.id}
 						rateCards={productData?.cpData[product.id].rateCards}
+						allowances={productData?.cpData[product.id].allowances}
 						negotiateRateCardLine={negotiateRateCardLine}
 					/>
 				)}

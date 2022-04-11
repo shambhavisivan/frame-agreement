@@ -60,9 +60,9 @@ export function AddonNegotiation({
 			const referenceId: string = getReferenceId(addon);
 			const productOneOff: AddonNegotiationCharge = {
 				...addon,
-				oneOffNeg: addonNegotiations[referenceId]?.oneOff?.negotiated,
+				oneOffNeg: addonNegotiations?.[referenceId]?.oneOff?.negotiated,
 				chargeType: label.oneOffProduct,
-				recurringNeg: addonNegotiations[referenceId]?.recurring.negotiated
+				recurringNeg: addonNegotiations?.[referenceId]?.recurring?.negotiated
 			};
 			addonAccumulator.push(productOneOff);
 
@@ -87,7 +87,7 @@ export function AddonNegotiation({
 				render: (row): ReactElement => {
 					const referenceId: string = getReferenceId(row.data as Addon);
 					const oneOffNegotiated =
-						addonNegotiations[referenceId]?.oneOff?.negotiated || 0;
+						addonNegotiations?.[referenceId]?.oneOff?.negotiated || 0;
 
 					return (
 						<>
@@ -146,7 +146,7 @@ export function AddonNegotiation({
 				render: (row): ReactElement => {
 					const referenceId: string = getReferenceId(row.data as Addon);
 					const reccurringNeg =
-						addonNegotiations[referenceId]?.recurring?.negotiated || 0;
+						addonNegotiations?.[referenceId]?.recurring?.negotiated || 0;
 
 					return (
 						<>

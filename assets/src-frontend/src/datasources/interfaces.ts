@@ -150,6 +150,7 @@ export interface Allowance {
 		type: string;
 		unitOfMeasure: string;
 	};
+	priority?: number;
 }
 
 export interface RateCard {

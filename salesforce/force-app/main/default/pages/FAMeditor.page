@@ -349,6 +349,7 @@
 			  "products_productNameHeaderCell": "{!$Label.products_productNameHeaderCell}",
 			  "products_product_charges": "{!$Label.products_product_charges}",
 			  "products_rates": "{!$Label.products_rates}",
+			  "allowances": "{!$Label.allowances}",
 			  "products_tab_title": "{!$Label.products_tab_title}",
 			  "addons_tab_title": "{!$Label.addons_tab_title}",
 			  "offers_tab_title": "{!$Label.offers_tab_title}",

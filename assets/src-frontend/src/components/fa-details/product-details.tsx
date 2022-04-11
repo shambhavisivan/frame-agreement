@@ -3,6 +3,7 @@ import { CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { CSButton } from '@cloudsense/cs-ui-components';
 import { RateCards } from './rate-cards';
+import { Allowances } from './allowances';
 import { store } from './details-page-provider';
 import { createActionsForNegotiateProduct } from './negotiation/negotiation-action-creator';
 import { NegotiationItemType } from './negotiation/details-reducer';
@@ -18,7 +19,8 @@ interface ProductDetailsProps {
 const enum ChildButtons {
 	'addon' = 'addon',
 	'ratecard' = 'ratecard',
-	'charges' = 'charges'
+	'charges' = 'charges',
+	'allowances' = 'allowances'
 }
 
 export function ProductDetails({
@@ -76,13 +78,18 @@ export function ProductDetails({
 				onClick={(): void => onClickButton(ChildButtons.addon)}
 			/>
 			<CSButton
+				label={labels.chargesHeaderName}
+				onClick={(): void => onClickButton(ChildButtons.charges)}
+			/>
+			<CSButton
 				label={labels.productsRates}
 				onClick={(): void => onClickButton(ChildButtons.ratecard)}
 			/>
 			<CSButton
-				label={labels.chargesHeaderName}
-				onClick={(): void => onClickButton(ChildButtons.charges)}
+				label={labels.allowances}
+				onClick={(): void => onClickButton(ChildButtons.allowances)}
 			/>
+
 			{activeDetails === ChildButtons.addon && productData?.cpData[product.id].addons && (
 				<AddonNegotiation
 					addons={
@@ -93,7 +100,7 @@ export function ProductDetails({
 						) || []
 					}
 					productId={product.id}
-					addonNegotiations={products[product.id].addons}
+					addonNegotiations={products[product.id]?.addons}
 					addonType={'COMMERCIAL_PRODUCT_ASSOCIATED'}
 				/>
 			)}
@@ -104,6 +111,14 @@ export function ProductDetails({
 						productId={product.id}
 						rateCards={productData?.cpData[product.id].rateCards}
 						negotiateRateCardLine={negotiateRateCardLine}
+					/>
+				)}
+			{activeDetails === ChildButtons.allowances &&
+				status === QueryStatus.Success &&
+				productData?.cpData[product.id].allowances && (
+					<Allowances
+						productId={product.id}
+						allowances={productData?.cpData[product.id].allowances || []}
 					/>
 				)}
 			{renderCharges()}

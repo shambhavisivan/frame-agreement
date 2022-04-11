@@ -825,6 +825,7 @@ export const CUSTOM_LABELS_MOCK: SfGlobal.CustomLabelsSf = {
 	fa_volume: 'Volume',
 	products_charges: 'Charges',
 	products_rates: 'Rate card',
+	allowances: 'Allowances',
 	addon_label: 'Addons',
 	btn_AddProducts: 'Add Products',
 	modal_addFa_title: 'Add Product to Frame Agreement',

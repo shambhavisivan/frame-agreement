@@ -1191,6 +1191,13 @@
         <value>Rate Cards</value>
     </labels>
     <labels>
+        <fullName>allowances</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>allowances</shortDescription>
+        <value>Allowances</value>
+    </labels>
+    <labels>
         <fullName>products_tab_title</fullName>
         <language>en_US</language>
         <protected>true</protected>

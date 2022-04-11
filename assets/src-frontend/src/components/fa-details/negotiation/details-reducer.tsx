@@ -524,7 +524,8 @@ export function detailsReducer(
 									rclResult[rcl.id] = {
 										original: rcl.rateValue,
 										negotiated:
-											productNegotiation?.rateCards?.[rateCard.id]?.[rcl.id]
+											productNegotiation?.rateCards?.[rateCard.id]?.[rcl.id],
+										name: rcl.name
 									};
 									return rclResult;
 								}, {} as RateCardLines)
@@ -534,7 +535,7 @@ export function detailsReducer(
 
 						productState[productId] = {
 							volume: productNegotiation.volume || ({} as Volume),
-							addons: Object.keys(productNegotiation.addons || {}).reduce(
+							addons: Object.keys(cpAddons || {}).reduce(
 								(
 									addonData,
 									productAddonAssociationId
@@ -617,7 +618,8 @@ export function detailsReducer(
 												rateCardLine[rclId] = {
 													negotiated,
 													original:
-														rcs?.[rcId].rateCardLines[rclId].original
+														rcs?.[rcId].rateCardLines[rclId].original,
+													name: rcs?.[rcId].rateCardLines[rclId].name
 												};
 												return rateCardLine;
 											},

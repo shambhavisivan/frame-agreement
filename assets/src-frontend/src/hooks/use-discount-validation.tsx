@@ -140,7 +140,16 @@ export function useDiscountValidation(): {
 				);
 			}
 
-			return validateDiscountThreshold(productChargeNegotiable, productThresholds);
+			const productThresholdViolations = validateDiscountThreshold(
+				productChargeNegotiable,
+				productThresholds
+			);
+
+			if (productThresholdViolations.length) {
+				updateFa();
+			}
+
+			return productThresholdViolations;
 		},
 		[discountData?.authLevels, state, discountData?.discountThresholds]
 	);
@@ -159,8 +168,8 @@ export function useDiscountValidation(): {
 
 			const addonNegotiable =
 				addonType === 'COMMERCIAL_PRODUCT_ASSOCIATED'
-					? state['products'][productId as string].addons[referenceId][chargeType]
-					: state['addons'][referenceId][chargeType];
+					? state['products'][productId as string]?.addons?.[referenceId]?.[chargeType]
+					: state['addons']?.[referenceId]?.[chargeType];
 
 			let addonThresholds: DiscountThreshold[] = [];
 

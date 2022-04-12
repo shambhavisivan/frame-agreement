@@ -1,5 +1,5 @@
-import { CSButton } from '@cloudsense/cs-ui-components';
-import React, { ReactElement, useContext, useState, useMemo } from 'react';
+import { CSAlert, CSButton } from '@cloudsense/cs-ui-components';
+import React, { ReactElement, useContext, useState, useMemo, useEffect } from 'react';
 import { Addon, FrameAgreement } from '../../../datasources';
 import { useCustomLabels } from '../../../hooks/use-custom-labels';
 import { useGetStandaloneAddons } from '../../../hooks/use-get-standalone-addons';
@@ -14,8 +14,8 @@ import { FamWindow } from '../../../datasources/register-apis';
 declare const window: FamWindow;
 
 interface StandaloneAddonProps {
-	activeTab: TabNames;
 	agreement: FrameAgreement;
+	setFaFooterActionButtons: React.Dispatch<React.SetStateAction<React.ReactElement>>;
 }
 
 type TransformedAddons = { [id: string]: Addon };
@@ -31,6 +31,10 @@ export function StandaloneAddons(props: StandaloneAddonProps): ReactElement {
 		dispatch,
 		negotiation: { addons }
 	} = useContext(store);
+
+	useEffect(() => {
+		props.setFaFooterActionButtons(getFooterActionButtons());
+	}, [selectedAddons]);
 
 	const onSelectAddons = (
 		addOnList: Addon[],
@@ -130,35 +134,47 @@ export function StandaloneAddons(props: StandaloneAddonProps): ReactElement {
 			isDeleteModalVisible={isDeleteModalOpen}
 			confirmHandler={deleteAddonConfirmationHandler}
 			cancelHandler={deleteAddonCancelHandler}
-			activeTab={props.activeTab}
+			activeTab={TabNames.addonSA}
 		/>
 	);
 
-	return (
-		<>
-			{updateAddonsAdded.length && (
-				<AddonGrid
-					addonList={updateAddonsAdded || []}
-					isCollapsible={true}
-					onSelectRow={(event, row): void =>
-						onSelectAddons(row, selectedAddons, setSelectedAddons)
-					}
-					selectedAddonIds={Object.values(selectedAddons).map((addon) => addon.id)}
+	const getFooterActionButtons = (): ReactElement => {
+		return (
+			<>
+				<CSButton
+					label={labels.btnAddAddons}
+					size="large"
+					onClick={(): void => toggleAddonsModal()}
 				/>
-			)}
-			{addOnModal}
-			{isDeleteModalOpen && deletionModal}
-			{props.activeTab === TabNames.addonSA && (
-				<CSButton size="large" label={labels.btnAddAddons} onClick={toggleAddonsModal} />
-			)}
-			{props.activeTab === TabNames.addonSA && (
+
 				<CSButton
 					label={labels.btnDeleteAddons}
 					size="large"
 					onClick={(): void => setIsDeleteModalOpen(true)}
 					disabled={isDisabled()}
 				/>
-			)}
+			</>
+		);
+	};
+
+	return (
+		<>
+			{addOnModal}
+			{isDeleteModalOpen && deletionModal}
+			<AddonGrid
+				addonList={updateAddonsAdded || []}
+				isCollapsible={true}
+				onSelectRow={(event, row): void =>
+					onSelectAddons(row, selectedAddons, setSelectedAddons)
+				}
+				selectedAddonIds={Object.values(selectedAddons).map((addon) => addon.id)}
+				customNoDataAlert={
+					<CSAlert
+						variant="info"
+						text={[labels.addAddonsCTAMessage, labels.saveFaProductsMessage]}
+					/>
+				}
+			/>
 		</>
 	);
 }

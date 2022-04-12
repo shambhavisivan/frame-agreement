@@ -7,6 +7,11 @@
     margin: 0 auto;
     width: 100%;
 
+    &.footer-wrapper {
+        max-height: 93vh;
+        overflow: auto;
+    }
+
     .field-wrapper {
         margin-bottom: 1rem;
         border-radius: 0 0 0.25rem 0.25rem;
@@ -88,7 +93,7 @@
 footer.action-footer {
 	display: flex;
 	width: 100%;
-	position: sticky;
+	position: fixed;
 	bottom: 0;
 	z-index: var(--z-index-details-action-footer);
 	background: var(--details-action-footer-bg);

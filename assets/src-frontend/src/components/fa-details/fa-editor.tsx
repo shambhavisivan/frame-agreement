@@ -1,48 +1,34 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
-import {
-	CommercialProductData,
-	CommercialProductStandalone,
-	FrameAgreement,
-	TabNames
-} from '../../datasources';
+import { CommercialProductData, FrameAgreement, TabNames } from '../../datasources';
 import { useCommercialProducts } from '../../hooks/use-commercial-products';
 import { useGetAttachmentOriginalItems } from '../../hooks/use-get-attachment-original-items';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { LoadingFallback } from '../loading-fallback';
-import { CSButton } from '@cloudsense/cs-ui-components';
-
-import { AddProductsModal, SelectedProducts } from '../dialogs/add-products-modal';
-import { DeleteModal } from '../dialogs/delete-modal';
-
+import { CSTab, CSTabGroup } from '@cloudsense/cs-ui-components';
 import { useGetFaAttachment } from '../../hooks/use-get-fa-attachment';
 import { QueryStatus } from 'react-query';
 import { useCommercialProductData } from '../../hooks/use-commercial-product-data';
-import { DetailsTab } from './details-tab';
 import { store } from './details-page-provider';
-import { publishEventData } from '../../utils/publisher-subscriber-utils';
-import { FamWindow } from '../../datasources/register-apis';
+import { StandaloneAddons } from './standalone-addons/standalone-addons';
+import { Products } from './products';
+import { useAppSettings } from '../../hooks/use-app-settings';
 
 interface FaEditorProps {
+	setFaFooterActionButtons: React.Dispatch<React.SetStateAction<React.ReactElement>>;
 	agreement?: FrameAgreement;
 }
 
-declare const window: FamWindow;
-
-export function FaEditor({ agreement }: FaEditorProps): ReactElement {
+export function FaEditor({ setFaFooterActionButtons, agreement }: FaEditorProps): ReactElement {
 	const { attachment, attachmentStatus } = useGetFaAttachment(agreement?.id || '');
 	const [productIds, setProductIds] = useState<string[] | undefined>(undefined);
 	// fetch only added products and required data intially
 	const { data: products = [], status: productsStatus } = useCommercialProducts(productIds);
-	const [isAddProductModalOpen, setAddProductsModalOpen] = useState<boolean>(false);
-	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 	const { data: productsData, status: productDataStatus } = useCommercialProductData(
 		productIds || []
 	);
-	const [selectedProducts, setSelectedProducts] = useState<SelectedProducts>({});
 	const {
 		dispatch,
-		negotiation: { products: stateProduct },
-		discountData
+		negotiation: { products: stateProduct }
 	} = useContext(store);
 	const [activeTab, setActiveTab] = useState(TabNames.products);
 	const labels = useCustomLabels();
@@ -50,6 +36,7 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 		attachment || {},
 		attachmentStatus
 	);
+	const { settings } = useAppSettings();
 
 	useEffect(() => {
 		if (Object.keys(attachmentOriginalItems).length) {
@@ -63,10 +50,10 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 	useEffect(() => {
 		const alreadyAddedProductIds = Object.keys(stateProduct || {});
 		setProductIds(alreadyAddedProductIds.length ? alreadyAddedProductIds : undefined);
-	}, [stateProduct, discountData]);
+	}, [stateProduct]);
 
 	useEffect(() => {
-		function addProductsToFa(products: CommercialProductStandalone[]): void {
+		if (productDataStatus === QueryStatus.Success && productsStatus === QueryStatus.Success) {
 			dispatch({
 				type: 'addProducts',
 				payload: {
@@ -74,7 +61,6 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 					productsData: productsData || ({} as CommercialProductData)
 				}
 			});
-
 			dispatch({
 				type: 'setDiscountData',
 				payload: {
@@ -83,114 +69,58 @@ export function FaEditor({ agreement }: FaEditorProps): ReactElement {
 				}
 			});
 		}
-		if (productDataStatus === QueryStatus.Success && productsStatus === QueryStatus.Success) {
-			addProductsToFa(products);
-		}
 	}, [productDataStatus, products, productsData, productsStatus]);
 
-	const onAddProducts = (products: CommercialProductStandalone[]): void =>
-		setProductIds((prevState) => [
-			...(prevState || []),
-			...products.map((product) => product.id)
-		]);
-
-	const productSelection = (
-		<AddProductsModal
-			isModalOpen={isAddProductModalOpen}
-			onAddProducts={onAddProducts}
-			onModalClose={(): void => setAddProductsModalOpen(false)}
-			addedProductIds={productIds || []}
-		></AddProductsModal>
-	);
-
-	const deleteProdConfirmationHandler = async (): Promise<void> => {
-		const idsDeleted = Object.keys(selectedProducts);
-		await publishEventData<string[]>('onBeforeDeleteProducts', idsDeleted);
-		const idsToDisplay = productIds?.filter((id) => !idsDeleted.includes(id));
-		setProductIds(idsToDisplay);
-
-		dispatch({
-			type: 'removeProducts',
-			payload: { productIds: idsDeleted }
-		});
-		const validateStatusConsistencyFunc = window?.FAM?.api?.validateStatusConsistency as (
-			faId: string
-		) => Promise<void>;
-		await validateStatusConsistencyFunc(agreement?.id || '');
-
-		await publishEventData<string[]>('onAfterDeleteProducts', idsToDisplay || []);
-
-		setSelectedProducts({});
-		setIsDeleteModalOpen(false);
-	};
-
-	const deleteProdCancelHandler = (): void => {
-		setIsDeleteModalOpen(false);
-	};
-
-	const deletionModal = (
-		<DeleteModal
-			isDeleteModalVisible={isDeleteModalOpen}
-			confirmHandler={deleteProdConfirmationHandler}
-			cancelHandler={deleteProdCancelHandler}
-			activeTab={activeTab}
-		/>
-	);
-
-	const selectProducts = (
-		event: React.ChangeEvent<HTMLInputElement>,
-		productList: CommercialProductStandalone[]
-	): void => {
-		const selected = productList.reduce(
-			(selectedProd, currentSelected): SelectedProducts => {
-				if (!selectedProd[currentSelected.id]) {
-					selectedProd[currentSelected.id] = currentSelected;
-				} else {
-					delete selectedProd[currentSelected.id];
-				}
-				return selectedProd;
-			},
-			{ ...selectedProducts }
-		);
-
-		setSelectedProducts(selected);
-	};
-
-	const isDisabled = (): boolean => {
-		return Object.keys(selectedProducts).length ? false : true;
+	const tabClickHandler = (tabName: TabNames): void => {
+		setActiveTab(tabName);
 	};
 
 	return (
-		<LoadingFallback status={productsStatus}>
+		<LoadingFallback status={productsStatus && productDataStatus}>
 			<LoadingFallback status={attachmentStatus}>
-				{isAddProductModalOpen && productSelection}
-				{isDeleteModalOpen && deletionModal}
-				<DetailsTab
-					products={productIds?.length ? products : []}
-					agreement={agreement || ({} as FrameAgreement)}
-					onSelectProduct={selectProducts}
-					selectedProducts={Object.values(selectedProducts)}
-					setActiveTabName={setActiveTab}
-				/>
-				{/* TODO: Move this to parent file. It needs to be sibling to header and pages. Add conditional so it is only rendered on details page */}
-				<footer className="action-footer">
+				<div>
+					<CSTabGroup>
+						<CSTab
+							name={labels.productsTitle}
+							active={activeTab === TabNames.products}
+							onClick={(): void => {
+								tabClickHandler(TabNames.products);
+							}}
+						/>
+						<CSTab
+							name={labels.addonsTabTitle}
+							active={activeTab === TabNames.addonSA}
+							onClick={(): void => {
+								tabClickHandler(TabNames.addonSA);
+							}}
+						/>
+						{settings?.facSettings.isPsEnabled && (
+							<CSTab
+								name={labels.offersTabTitle}
+								active={activeTab === TabNames.offers}
+								onClick={(): void => {
+									tabClickHandler(TabNames.offers);
+								}}
+							/>
+						)}
+					</CSTabGroup>
+				</div>
+				<div>
 					{activeTab === TabNames.products && (
-						<CSButton
-							label={labels.btnAddProducts}
-							size="large"
-							onClick={(): void => setAddProductsModalOpen(true)}
+						<Products
+							agreement={agreement || ({} as FrameAgreement)}
+							setFaFooterActionButtons={setFaFooterActionButtons}
 						/>
 					)}
-
-					{activeTab === TabNames.products && (
-						<CSButton
-							label={labels.btnDeleteProducts}
-							size="large"
-							onClick={(): void => setIsDeleteModalOpen(true)}
-							disabled={isDisabled()}
+				</div>
+				<div>
+					{activeTab === TabNames.addonSA && (
+						<StandaloneAddons
+							agreement={agreement || ({} as FrameAgreement)}
+							setFaFooterActionButtons={setFaFooterActionButtons}
 						/>
 					)}
-				</footer>
+				</div>
 			</LoadingFallback>
 		</LoadingFallback>
 	);

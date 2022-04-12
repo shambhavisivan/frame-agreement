@@ -1,4 +1,5 @@
 import {
+	CSAlert,
 	CSDataTable,
 	CSDataTableColumnInterface,
 	CSDataTableRowInterface,
@@ -9,6 +10,7 @@ import React, { ReactElement, useContext, useEffect, useMemo, useState } from 'r
 import { QueryStatus } from 'react-query';
 import { ADDON_API_NAME, DEFAULT_GRID_VISIBLE_FIELDS } from '../../app-constants';
 import { Addon, FieldMetadata } from '../../datasources';
+import { useCustomLabels } from '../../hooks/use-custom-labels';
 import { useFieldMetadata } from '../../hooks/use-field-metadata';
 import { AddonNegotiation } from './addon-negotiation';
 import { store } from './details-page-provider';
@@ -20,6 +22,7 @@ interface Props {
 	selectedAddonIds?: string[];
 	onSelectRow?: (event: React.ChangeEvent<HTMLInputElement>, row: Addon[]) => void;
 	isCollapsible?: boolean;
+	customNoDataAlert?: ReactElement;
 }
 
 export function AddonGrid({
@@ -27,13 +30,15 @@ export function AddonGrid({
 	addonList,
 	selectedAddonIds,
 	isCollapsible = false,
-	onSelectRow
+	onSelectRow,
+	customNoDataAlert
 }: Props): ReactElement {
 	const [metadata, setFieldMetadata] = useState<CSDataTableColumnInterface[]>([]);
 	const { metadata: addonMetadata, metadataStatus } = useFieldMetadata(ADDON_API_NAME);
 	const {
 		negotiation: { addons: addonNegotiations }
 	} = useContext(store);
+	const labels = useCustomLabels();
 
 	function transformMetadata(inputFieldMetadata: FieldMetadata[]): CSDataTableColumnInterface[] {
 		return inputFieldMetadata.reduce((modifiedFieldMetadata, data) => {
@@ -109,8 +114,10 @@ export function AddonGrid({
 					}
 					subsectionRender={renderDetails}
 				/>
+			) : customNoDataAlert ? (
+				customNoDataAlert
 			) : (
-				<p>No addons to show here</p>
+				<CSAlert variant="info" text={labels.addAddonsCTAMessage} />
 			)}
 		</div>
 	);

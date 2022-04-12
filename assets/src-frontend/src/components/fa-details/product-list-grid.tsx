@@ -1,4 +1,5 @@
 import {
+	CSAlert,
 	CSDataTable,
 	CSDataTableColumnInterface,
 	CSDataTableRowInterface,
@@ -31,6 +32,7 @@ type GridProps = {
 		row: CommercialProductStandalone[]
 	) => void;
 	selectedProducts?: CommercialProductStandalone[];
+	customNoDataAlert?: ReactElement;
 };
 
 export function ProductListGrid({
@@ -38,7 +40,8 @@ export function ProductListGrid({
 	filterHandler,
 	isCollapsible = false,
 	onSelectRow,
-	selectedProducts
+	selectedProducts,
+	customNoDataAlert
 }: GridProps): ReactElement {
 	const { metadata, metadataStatus } = useFieldMetadata(CP_API_NAME);
 	const [fieldMetadata, setFieldMetadata] = useState<CSDataTableColumnInterface[]>([]);
@@ -165,8 +168,10 @@ export function ProductListGrid({
 						onSelectRow(event, [selectedRow.data as CommercialProductStandalone] || [])
 					}
 				/>
+			) : customNoDataAlert ? (
+				customNoDataAlert
 			) : (
-				<p>No products to show here</p>
+				<CSAlert variant="info" text={labels.addProductCTAMessage} />
 			)}
 		</div>
 	);

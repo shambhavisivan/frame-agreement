@@ -3,7 +3,7 @@ import { FieldMetadata, FormBuilderFieldMetadata, FrameAgreement } from '../../d
 import { QueryStatus, useFrameAgreements } from '../../hooks/use-frame-agreements';
 import { LoadingFallback } from '../loading-fallback';
 import { FaEditor } from './fa-editor';
-import { CSCard, CSCardBody } from '@cloudsense/cs-ui-components';
+import { CSCard, CSCardBody, CSCardFooter } from '@cloudsense/cs-ui-components';
 import { ApprovalProcess } from './approval';
 import { FaStatusContextProvider } from '../../providers/fa-status-provider';
 import { DetailsProvider } from './details-page-provider';
@@ -44,6 +44,7 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 	const { status, settings } = useAppSettings();
 
 	const [faHeaderFields, setFaHeaderFields] = useState<CSFormData>([] as CSFormData);
+	const [footerButtons, setFooterButtons] = useState<ReactElement>(<></>);
 
 	useEffect(() => {
 		if (
@@ -146,12 +147,12 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 	};
 
 	return (
-		<LoadingFallback status={faStatus}>
-			<DetailsProvider agreement={agreement || ({} as FrameAgreement)}>
-				<RegisterApisWithStore />
-				<FaStatusContextProvider faId={agreementId}>
-					<DetailsHeader agreement={agreement} />
-					<div className="details-wrapper">
+		<div className="details-wrapper footer-wrapper">
+			<LoadingFallback status={faStatus}>
+				<DetailsProvider agreement={agreement || ({} as FrameAgreement)}>
+					<RegisterApisWithStore />
+					<FaStatusContextProvider faId={agreementId}>
+						<DetailsHeader />
 						<div className="field-wrapper">
 							<CSForm
 								data={faHeaderFields}
@@ -171,12 +172,17 @@ export function FrameAgreementDetails({ agreementId }: FrameAgreementDetailsProp
 						<ApprovalProcess faId={agreementId} />
 						<CSCard className="products-search-wrapper">
 							<CSCardBody padding="0">
-								<FaEditor agreement={agreement} />
+								<FaEditor
+									agreement={agreement}
+									setFaFooterActionButtons={setFooterButtons}
+								/>
 							</CSCardBody>
+							<CSCardFooter padding="10px"></CSCardFooter>
 						</CSCard>
-					</div>
-				</FaStatusContextProvider>
-			</DetailsProvider>
-		</LoadingFallback>
+						<footer className="action-footer">{footerButtons}</footer>
+					</FaStatusContextProvider>
+				</DetailsProvider>
+			</LoadingFallback>
+		</div>
 	);
 }

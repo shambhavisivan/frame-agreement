@@ -293,6 +293,8 @@ namespace SfGlobal {
 		delta_status_unchanged: string;
 		addons_header_oneOff: string;
 		addons_header_recc: string;
+		addAddonsCTAMessage: string;
+		addProductCTAMessage: string;
 		products_charges: string;
 		products_rates: string;
 		addon_label: string;
@@ -338,6 +340,7 @@ namespace SfGlobal {
 		product_charge_header_recc_neg: string;
 		one_off_product: string;
 		recurring_product: string;
+		save_fa_products_message: string;
 		btn_AddAddons: string;
 		btn_DeleteAddons: string;
 		modal_addAddons_title: string;

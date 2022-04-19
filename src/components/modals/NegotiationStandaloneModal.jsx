@@ -9,6 +9,11 @@ import { createToast } from '~/src/actions';
 import { DiscountInput } from '../utillity/inputs/discount-input';
 import * as Constants from '~/src/utils/constants'
 
+const BulkNegotiationAction = {
+	RESET_NEGOTIATION_ACTION: 'RESET',
+	APPLY_NEGOTIATION_ACTION: 'APPLY'
+}
+
 class NegotiationStandaloneModal extends Component {
 	constructor(props) {
 		super(props);
@@ -65,11 +70,16 @@ class NegotiationStandaloneModal extends Component {
 		this.props.onCloseModal();
 	}
 
-	applyDiscount() {
+	applyDiscount(actionType) {
 		const _DISCOUNT = +this.state.discount * -1;
 		const facSettings = this.props.settings.FACSettings;
 
 		function applyDiscountRate(val, discountMode, originalPrice) {
+
+			if (actionType === BulkNegotiationAction.RESET_NEGOTIATION_ACTION) {
+				return originalPrice;
+			}
+
 			val = +val;
 			const prevNegotiatedPrice = val;
 
@@ -307,9 +317,27 @@ class NegotiationStandaloneModal extends Component {
 								<button
 									disabled={!(this.state.applyRecurring || this.state.applyOneOff)}
 									className="fa-button fa-button--brand"
-									onClick={this.applyDiscount}
+									onClick={() => this.applyDiscount(BulkNegotiationAction.APPLY_NEGOTIATION_ACTION)}
 								>
 									{window.SF.labels.modal_bulk_btn_apply}
+								</button>
+							</div>
+							<div className="fa-modal-discount-item">
+								<button
+									disabled={
+										!(
+											this.state.applyRecurring ||
+											this.state.applyOneOff
+										)
+									}
+									className="fa-button fa-button--brand"
+									onClick={() =>
+										this.applyDiscount(
+											BulkNegotiationAction.RESET_NEGOTIATION_ACTION
+										)
+									}
+								>
+									{"Reset Negotiations"}
 								</button>
 							</div>
 						</div>

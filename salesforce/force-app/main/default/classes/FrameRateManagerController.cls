@@ -579,6 +579,12 @@ global with sharing class FrameRateManagerController {
 		settingMap.put('dispatcherServiceUrl', facSettings.dispatcher_service_url__c);
 		settingMap.put('isPsEnabled', facSettings.is_ps_enabled__c);
 		settingMap.put('approvalProcessName', facSettings.approval_process_name__c);
+		csutil__JSON_Data__c faBulkDiscountListPrice = getJsonData('FA-Bulk-Discount-List-Price');
+		if (faBulkDiscountListPrice != null && faBulkDiscountListPrice.csutil__value__c != null) {
+			settingMap.put('applyBulkDiscountListPrice', Boolean.valueOf(faBulkDiscountListPrice.csutil__value__c));
+		} else {
+			settingMap.put('applyBulkDiscountListPrice', false);
+		}
 
 		Map<String, Object> statuses = new Map<String, Object>();
 		statuses.put('active_status', facSettings.get('active_status__c'));
@@ -1248,6 +1254,7 @@ global with sharing class FrameRateManagerController {
 		return cpIdMap.values();
 	}
 
+	@TestVisible
 	private static csutil__JSON_Data__c getJsonData(String jsonSettingKey) {
 		List<csutil__JSON_Data__c> result = [
 			select csutil__value__c

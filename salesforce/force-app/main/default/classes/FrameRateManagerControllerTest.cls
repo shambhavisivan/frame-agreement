@@ -574,6 +574,7 @@ private class FrameRateManagerControllerTest {
 		csutil__JSON_Data__c customButtonData = new csutil__JSON_Data__c(Name = 'FA-Custom-Buttons', csutil__value__c = '[{"type":"action","label":"Action button","id":"bta1","method":"ActionFunction","hidden":["Active"]},{"type":"iframe","label":"iFrame button","id":"bta2","method":"iFrameFunction","hidden":["Active"]},{"type":"redirect","label":"Redirect button","id":"bta3","method":"RedirectFunction","hidden":["Active"]}]');
 		csutil__JSON_Data__c standardButtonData = new csutil__JSON_Data__c(Name = 'FA-Standard-Buttons', csutil__value__c = '{"Save":["Draft","Requires Approval"],"SubmitForApproval":["Requires Approval"],"Submit":["Approved"],"DeleteProducts":["Draft","Requires Approval"],"BulkNegotiate":["Draft","Requires Approval"],"AddProducts":["Draft","Requires Approval"]}');
 		csutil__JSON_Data__c customTabsData = new csutil__JSON_Data__c(Name = 'FA-Custom-Tabs', csutil__value__c = '[{"label":"Custom tab","container_id":"customTab1","onEnter":"customTabEnter"}]');
+		csutil__JSON_Data__c applyBulkDiscountOnListPrice = new csutil__JSON_Data__c(Name = 'FA-Bulk-Discount-List-Price', csutil__value__c = 'true');
 
 		insert defaultCatalogueId;
 		insert headerData;
@@ -581,6 +582,7 @@ private class FrameRateManagerControllerTest {
 		insert standardButtonData;
 		insert categorizationData;
 		insert customTabsData;
+		insert applyBulkDiscountOnListPrice;
 	}
 
 	@isTest
@@ -613,6 +615,12 @@ private class FrameRateManagerControllerTest {
 		Test.startTest();
 
 		Map<String, Object> csettings = FrameRateManagerController.getCustomSettings();
+		Boolean applyBulkDiscountListPrice = Boolean.valueOf(csettings.get('applyBulkDiscountListPrice'));
+		csutil__JSON_Data__c applyBulkDiscountOnListPrice = FrameRateManagerController.getJsonData('FA-Bulk-Discount-List-Price');
+		delete applyBulkDiscountOnListPrice;
+
+		Map<String, Object> csettingsAfterModification = FrameRateManagerController.getCustomSettings();
+		Boolean applyBulkDiscountListPriceAfterDeletion =  Boolean.valueOf(csettingsAfterModification.get('applyBulkDiscountListPrice'));
 
 		Test.stopTest();
 
@@ -622,6 +630,8 @@ private class FrameRateManagerControllerTest {
 		System.assertEquals(csettings.get('dispatcherServiceUrl'),
 			'https://cs-messaging-dispatcher-eu-dev.herokuapp.com');
 		System.assertEquals(csettings.get('isPsEnabled'), true);
+		System.assertEquals(csettings.get('applyBulkDiscountListPrice'), true);
+		System.assertEquals(csettingsAfterModification.get('applyBulkDiscountListPrice'), false);
 	}
 
 	@isTest

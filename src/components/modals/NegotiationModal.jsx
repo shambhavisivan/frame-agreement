@@ -30,6 +30,11 @@ import { isFalsyExceptZero } from '~/src/utils/shared-service';
 const ADDON_VALUE_FIELD = 'cspmb__Recurring_Charge__c';
 const RATE_VALUE_FIELD = 'cspmb__rate_value__c';
 
+const BulkNegotiationAction = {
+	RESET_NEGOTIATION_ACTION: 'RESET',
+	APPLY_NEGOTIATION_ACTION: 'APPLY'
+}
+
 class NegotiationModal extends Component {
 	constructor(props) {
 		super(props);
@@ -491,9 +496,10 @@ class NegotiationModal extends Component {
 		);
 	}
 
-	applyDiscount() {
+	applyDiscount(actionType) {
 		const { discount } = this.state;
-		if (!+discount) {
+
+		if (!+discount && actionType !== BulkNegotiationAction.RESET_NEGOTIATION_ACTION) {
 			return;
 		}
 
@@ -502,6 +508,11 @@ class NegotiationModal extends Component {
 		console.log(_DISCOUNT);
 
 		function applyDiscountRate(prevNegotiatedPrice, state, originalPrice) {
+
+			if (actionType === BulkNegotiationAction.RESET_NEGOTIATION_ACTION) {
+				return originalPrice;
+			}
+
 			prevNegotiatedPrice = +prevNegotiatedPrice;
 			let  discountedPrice = prevNegotiatedPrice;
 
@@ -541,7 +552,7 @@ class NegotiationModal extends Component {
 							if (addon.cspmb__One_Off_Charge__c && isDiscountAllowed('oneOff', addon)) {
 								const prevNegotiatedPrice = !isFalsyExceptZero(
 									attachment[cp.Id]._addons[addon.Id].oneOff
-								)
+								) && !facSettings.applyBulkDiscountListPrice
 									? attachment[cp.Id]._addons[addon.Id].oneOff
 									: addon.cspmb__One_Off_Charge__c;
 								const negotiatedValue = applyDiscountRate(
@@ -556,7 +567,7 @@ class NegotiationModal extends Component {
 							if (addon.cspmb__Recurring_Charge__c && isDiscountAllowed('recurring', addon)) {
 								const prevNegotiatedPrice = !isFalsyExceptZero(
 									attachment[cp.Id]._addons[addon.Id].recurring
-								)
+								) && !facSettings.applyBulkDiscountListPrice
 									? attachment[cp.Id]._addons[addon.Id].recurring
 									: addon.cspmb__Recurring_Charge__c;
 								const negotiatedValue = applyDiscountRate(
@@ -588,7 +599,7 @@ class NegotiationModal extends Component {
 								attachment[cp.Id]._charges[charge.Id][
 									charge._type
 								]
-							)
+							) && !facSettings.applyBulkDiscountListPrice
 								? attachment[cp.Id]._charges[charge.Id][
 										charge._type
 								  ]
@@ -622,7 +633,7 @@ class NegotiationModal extends Component {
 								) {
 									const prevNegotiatedPrice = !isFalsyExceptZero(
 										attachment[cp.Id]._product.oneOff
-									)
+									) && !facSettings.applyBulkDiscountListPrice
 										? attachment[cp.Id]._product.oneOff
 										: oneOffCharge;
 									const negotiatedValue = applyDiscountRate(
@@ -639,7 +650,7 @@ class NegotiationModal extends Component {
 								) {
 									const prevNegotiatedPrice = !isFalsyExceptZero(
 										attachment[cp.Id]._product.recurring
-									)
+									) && !facSettings.applyBulkDiscountListPrice
 										? attachment[cp.Id]._product.recurring
 										: recurringCharge;
 									const negotiatedValue = applyDiscountRate(
@@ -667,7 +678,7 @@ class NegotiationModal extends Component {
 								attachment[cp.Id]._rateCards[rc.Id] = attachment[cp.Id]._rateCards[rc.Id] || {};
 								const prevNegotiatedPrice = !isFalsyExceptZero(
 									attachment[cp.Id]._rateCards[rc.Id][rcl.Id]
-								)
+								) && !facSettings.applyBulkDiscountListPrice
 									? attachment[cp.Id]._rateCards[rc.Id][rcl.Id]
 									: rcl.cspmb__rate_value__c;
 								const negotiatedValue = applyDiscountRate(
@@ -1221,9 +1232,18 @@ class NegotiationModal extends Component {
 								<button
 									disabled={!this.state.countTotal}
 									className="fa-button fa-button--brand"
-									onClick={this.applyDiscount}
+									onClick={() => this.applyDiscount(BulkNegotiationAction.APPLY_NEGOTIATION_ACTION)}
 								>
 									{window.SF.labels.modal_bulk_btn_apply}
+								</button>
+							</div>
+							<div className="fa-modal-discount-item">
+								<button
+									disabled={!this.state.countTotal}
+									className="fa-button fa-button--brand"
+									onClick={() => this.applyDiscount(BulkNegotiationAction.RESET_NEGOTIATION_ACTION)}
+								>
+									{'Reset Negotiations'}
 								</button>
 							</div>
 						</div>

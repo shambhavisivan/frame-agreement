@@ -151,7 +151,7 @@ class NegotiationStandaloneModal extends Component {
 				if (!_dl.some((dl) => isRecurring(dl.cspmb__Charge_Type__c))) {
 					const prevNegotiatedPrice = !isFalsyExceptZero(
 						associatedAddOns[add.Id]?.recurring
-					)
+					) && !facSettings.applyBulkDiscountListPrice
 						? associatedAddOns[add.Id]?.recurring
 						: add.cspmb__Recurring_Charge__c
 					const negotiatedValue = applyDiscountRate(
@@ -177,7 +177,7 @@ class NegotiationStandaloneModal extends Component {
 			) {
 				const prevNegotiatedPrice = !isFalsyExceptZero(
 					associatedAddOns[add.Id]?.oneOff
-				)
+				) && !facSettings.applyBulkDiscountListPrice
 					? associatedAddOns[add.Id]?.oneOff
 					: add.cspmb__One_Off_Charge__c
 				// If there aren't any NRC DLs
@@ -301,7 +301,7 @@ class NegotiationStandaloneModal extends Component {
 							</div>
 						</div>
 
-						<div className="discount-wrap">
+						<div className="discount-wrap fa-discount-action">
 							<div className="fa-modal-discount-item">
 								<h4 className="fa-modal-discount-title">
 									{window.SF.labels.modal_bulk_discount_input_title}
@@ -323,6 +323,7 @@ class NegotiationStandaloneModal extends Component {
 								</button>
 							</div>
 							<div className="fa-modal-discount-item">
+								<h4 className="fa-modal-discount-title">&#8203;</h4>
 								<button
 									disabled={
 										!(

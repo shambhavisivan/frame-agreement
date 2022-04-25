@@ -8,6 +8,7 @@ import { isDiscountAllowed, isFalsyExceptZero, isOneOff, isRecurring } from '../
 import { createToast } from '~/src/actions';
 import { DiscountInput } from '../utillity/inputs/discount-input';
 import * as Constants from '~/src/utils/constants'
+import { getDiscountSet } from '../../utils/api-data-validation-service';
 
 const BulkNegotiationAction = {
 	RESET_NEGOTIATION_ACTION: 'RESET',
@@ -73,35 +74,37 @@ class NegotiationStandaloneModal extends Component {
 	applyDiscount(actionType) {
 		const _DISCOUNT = +this.state.discount * -1;
 		const facSettings = this.props.settings.FACSettings;
+		let showNegotiationSkippedAlert = false;
 
-		function applyDiscountRate(val, discountMode, originalPrice) {
+		function applyDiscountRate(prevNegotiatedPrice, discountMode, originalPrice) {
 
 			if (actionType === BulkNegotiationAction.RESET_NEGOTIATION_ACTION) {
 				return originalPrice;
 			}
 
-			val = +val;
-			const prevNegotiatedPrice = val;
+			let negotiatedPrice = facSettings.applyBulkDiscountListPrice
+					? originalPrice
+					: prevNegotiatedPrice;
 
 			if (discountMode === 'fixed') {
-				val = val + _DISCOUNT;
+				negotiatedPrice = negotiatedPrice + _DISCOUNT;
 			} else {
-				var discountSum = (val * Math.abs(_DISCOUNT)) / 100;
+				var discountSum = (negotiatedPrice * Math.abs(_DISCOUNT)) / 100;
 
 				if (_DISCOUNT >= 0) {
-					val = val + discountSum;
+					negotiatedPrice = negotiatedPrice + discountSum;
 				} else {
-					val = val - discountSum;
+					negotiatedPrice = negotiatedPrice - discountSum;
 				}
 			}
 
 			if (facSettings.input_minmax_restriction) {
-				if (val < 0 || val > originalPrice) {
-					val = prevNegotiatedPrice;
+				if (negotiatedPrice < 0 || negotiatedPrice > originalPrice) {
+					negotiatedPrice = prevNegotiatedPrice;
 				}
 			}
 
-			return +val.toFixed(8);
+			return +negotiatedPrice.toFixed(8);
 		}
 
 		function frameHookStandAloneAddonData(eventHookData, updatedAttachment, addon, chargeType, negotiatedValue) {
@@ -125,15 +128,6 @@ class NegotiationStandaloneModal extends Component {
 		let eventHookData = this.eventHookData;
 
 		this.props.addons.forEach(add => {
-			// Ignore DL
-			let _dl = [];
-			if (add.hasOwnProperty('_discountLvIds')) {
-				try {
-					_dl = add._discountLvIds.map(dlv => dlv.discountLevel);
-				} catch(e){
-					console.warn(e);
-				}
-			}
 
 			let addOn = {
 				[add.Id]: {
@@ -147,19 +141,36 @@ class NegotiationStandaloneModal extends Component {
 				add.hasOwnProperty('cspmb__Recurring_Charge__c') &&
 				isDiscountAllowed('recurring', add)
 			) {
-				// If there aren't any RC DLs
-				if (!_dl.some((dl) => isRecurring(dl.cspmb__Charge_Type__c))) {
-					const prevNegotiatedPrice = !isFalsyExceptZero(
-						associatedAddOns[add.Id]?.recurring
-					) && !facSettings.applyBulkDiscountListPrice
-						? associatedAddOns[add.Id]?.recurring
-						: add.cspmb__Recurring_Charge__c
-					const negotiatedValue = applyDiscountRate(
-						prevNegotiatedPrice,
-						this.state.discountMode,
-						add.cspmb__Recurring_Charge__c
-					);
-					addOn[add.Id].recurring = negotiatedValue;
+
+				const prevNegotiatedPrice = !isFalsyExceptZero(
+					associatedAddOns[add.Id]?.recurring
+				)
+					? associatedAddOns[add.Id]?.recurring
+					: add.cspmb__Recurring_Charge__c
+				let negotiatedValue = applyDiscountRate(
+					prevNegotiatedPrice,
+					this.state.discountMode,
+					add.cspmb__Recurring_Charge__c
+				);
+				const recurringDiscountSet = getDiscountSet(add, add.cspmb__Recurring_Charge__c, 'recurring');
+				let ignoreHook = false;
+
+				if (recurringDiscountSet.size) {
+					if (
+						!recurringDiscountSet.has(negotiatedValue) &&
+						negotiatedValue !== add.cspmb__Recurring_Charge__c
+					) {
+						negotiatedValue = addOn[add.Id].recurring;
+						showNegotiationSkippedAlert = true;
+					}
+				}
+
+				if (negotiatedValue === addOn[add.Id].recurring) {
+					ignoreHook = true;
+				}
+				addOn[add.Id].recurring = negotiatedValue;
+
+				if (!ignoreHook) {
 					eventHookData = frameHookStandAloneAddonData(
 						eventHookData,
 						this.state.updatedAttachment,
@@ -177,17 +188,33 @@ class NegotiationStandaloneModal extends Component {
 			) {
 				const prevNegotiatedPrice = !isFalsyExceptZero(
 					associatedAddOns[add.Id]?.oneOff
-				) && !facSettings.applyBulkDiscountListPrice
+				)
 					? associatedAddOns[add.Id]?.oneOff
 					: add.cspmb__One_Off_Charge__c
-				// If there aren't any NRC DLs
-				if (!_dl.some((dl) => isOneOff(dl.cspmb__Charge_Type__c))) {
-					const negotiatedValue = applyDiscountRate(
-						prevNegotiatedPrice,
-						this.state.discountMode,
-						add.cspmb__One_Off_Charge__c
-					);
-					addOn[add.Id].oneOff = negotiatedValue;
+				const oneOffDiscountSet = getDiscountSet(add, add.cspmb__One_Off_Charge__c, 'oneOff');
+				let ignoreHook = false;
+				let negotiatedValue = applyDiscountRate(
+					prevNegotiatedPrice,
+					this.state.discountMode,
+					add.cspmb__One_Off_Charge__c
+				);
+
+				if (oneOffDiscountSet.size) {
+					if (
+						!oneOffDiscountSet.has(negotiatedValue) &&
+						negotiatedValue !== add.cspmb__One_Off_Charge__c
+					) {
+						negotiatedValue = addOn[add.Id].oneOff;
+						showNegotiationSkippedAlert = true;
+					}
+				}
+
+				if (negotiatedValue === addOn[add.Id].oneOff) {
+					ignoreHook = true;
+				}
+				addOn[add.Id].oneOff = negotiatedValue;
+
+				if (!ignoreHook) {
 					eventHookData = frameHookStandAloneAddonData(
 						eventHookData,
 						this.state.updatedAttachment,
@@ -209,6 +236,14 @@ class NegotiationStandaloneModal extends Component {
 			);
 			console.log(this.state.attachment);
 		});
+
+		if (showNegotiationSkippedAlert) {
+			this.props.createToast(
+				'warning',
+				'Some Discounts not applied',
+				'Some set values could not be applied to all items due to discount level constraints'
+			);
+		}
 	}
 
 	render() {

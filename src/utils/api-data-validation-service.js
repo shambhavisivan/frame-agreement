@@ -310,7 +310,7 @@ export const validateNegotiationInputData = (
 	return validInputNegotiationData;
 };
 
-const getDiscountSet = (
+export const getDiscountSet = (
 	productOrAddon,
 	originalValue,
 	chargeType,

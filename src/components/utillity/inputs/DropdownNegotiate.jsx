@@ -17,18 +17,7 @@ class DropdownNegotiate extends React.Component {
 	constructor(props) {
 		super(props);
 
-		// get the initial discount
-		let initialDiscount = 'none';
-		let initialFixed = 0;
-		let initialPercentage = 0;
-
 		let _originalValue = this.props.originalValue || 0;
-		let _negotiatedValue = this.props.negotiatedValue || 0;
-
-		if (_originalValue - _negotiatedValue) {
-			initialPercentage = percIncrease(_originalValue, _negotiatedValue);
-			initialFixed = (_originalValue - _negotiatedValue).toFixedNumber();
-		}
 
 		this.discounts = [];
 		let _logMessages = [];
@@ -78,13 +67,7 @@ class DropdownNegotiate extends React.Component {
 		this.discountNulled =
 			this.props.discounts.length === 1 && !this.props.discounts.reduce((a, b) => a + b, 0);
 
-		this.discounts.forEach((discount, index) => {
-			if (discount.type === 'Percentage' && +discount.value === initialPercentage) {
-				initialDiscount = index;
-			} else if (discount.type === 'Amount' && +discount.value === initialFixed) {
-				initialDiscount = index;
-			}
-		});
+		const initialDiscount = this.getSelectedIndex();
 
 		this.state = {
 			selected: initialDiscount,
@@ -93,16 +76,49 @@ class DropdownNegotiate extends React.Component {
 	}
 
 	onChange(e) {
+		let newPrice = this.updateSelectedDiscount(e.target.value);
+		this.props.onChange(newPrice.toFixedNumber());
+	}
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.negotiatedValue != this.props.negotiatedValue) {
+			const selectedIndex = this.getSelectedIndex();
+			this.updateSelectedDiscount(selectedIndex);
+		}
+	}
+
+	getSelectedIndex() {
+		let initialFixed = 0;
+		let initialPercentage = 0;
+		let _originalValue = this.props.originalValue || 0;
+		let _negotiatedValue = this.props.negotiatedValue || 0;
+
+		if (_originalValue - _negotiatedValue) {
+			initialPercentage = percIncrease(_originalValue, _negotiatedValue);
+			initialFixed = (_originalValue - _negotiatedValue).toFixedNumber();
+		}
+		let selectedIndex = 'none';
+		this.discounts.forEach((discount, index) => {
+			if (discount.type === 'Percentage' && +discount.value === initialPercentage) {
+				selectedIndex = index;
+			} else if (discount.type === 'Amount' && +discount.value === initialFixed) {
+				selectedIndex = index;
+			}
+		});
+
+		return selectedIndex;
+	}
+
+	updateSelectedDiscount(selectedIndex) {
 		let newIndex;
 		let newPrice;
-
 		let _originalValue = this.props.originalValue || 0;
 
-		if (e.target.value === 'none') {
+		if (selectedIndex === 'none') {
 			newIndex = 'none';
 			newPrice = _originalValue;
 		} else {
-			newIndex = +e.target.value;
+			newIndex = +selectedIndex;
 			let selectedOption = this.discounts[newIndex];
 			if (selectedOption.type === 'Percentage') {
 				newPrice = ((100 - selectedOption.value) * _originalValue) / 100;
@@ -115,7 +131,7 @@ class DropdownNegotiate extends React.Component {
 			selected: newIndex
 		});
 
-		this.props.onChange(newPrice.toFixedNumber());
+		return newPrice;
 	}
 
 	render() {

@@ -24,6 +24,7 @@ import { isDiscountAllowed } from '../../utils/shared-service';
 import * as Constants from '~/src/utils/constants'
 import { frameHookAddonData, frameHookChargesData, frameHookProductChargesData, frameHookRateCardsData } from '../../utils/event-service';
 import { isFalsyExceptZero } from '~/src/utils/shared-service';
+import { getDiscountSet } from '../../utils/api-data-validation-service';
 
 // import { getFrameAgreements } from '~/src/actions';
 
@@ -505,6 +506,7 @@ class NegotiationModal extends Component {
 
 		const facSettings = this.props.settings.FACSettings;
 		const _DISCOUNT = +discount * -1;
+		let showNegotiationSkippedAlert = false;
 		console.log(_DISCOUNT);
 
 		function applyDiscountRate(prevNegotiatedPrice, state, originalPrice) {
@@ -514,27 +516,29 @@ class NegotiationModal extends Component {
 			}
 
 			prevNegotiatedPrice = +prevNegotiatedPrice;
-			let  discountedPrice = prevNegotiatedPrice;
+			let negotiatedPrice = facSettings.applyBulkDiscountListPrice
+				? originalPrice
+				: prevNegotiatedPrice;
 
 			if (state.discountMode === 'fixed') {
-				discountedPrice = discountedPrice + _DISCOUNT;
+				negotiatedPrice = negotiatedPrice + _DISCOUNT;
 			} else {
-				var discountSum = (discountedPrice * Math.abs(_DISCOUNT)) / 100;
+				var discountSum = (negotiatedPrice * Math.abs(_DISCOUNT)) / 100;
 
 				if (_DISCOUNT >= 0) {
-					discountedPrice = discountedPrice + discountSum;
+					negotiatedPrice = negotiatedPrice + discountSum;
 				} else {
-					discountedPrice = discountedPrice - discountSum;
+					negotiatedPrice = negotiatedPrice - discountSum;
 				}
 			}
 
 			if (facSettings.input_minmax_restriction) {
-				if (discountedPrice < 0 || discountedPrice > originalPrice) {
-					discountedPrice = prevNegotiatedPrice;
+				if (negotiatedPrice < 0 || negotiatedPrice > originalPrice) {
+					negotiatedPrice = prevNegotiatedPrice;
 				}
 			}
 
-			return +discountedPrice.toFixed(8);
+			return +negotiatedPrice.toFixed(8);
 		}
 
 		let selected = { ...this.state.selected };
@@ -550,33 +554,112 @@ class NegotiationModal extends Component {
 							attachment[cp.Id]._addons[addon.Id] = attachment[cp.Id]._addons[addon.Id] || {};
 
 							if (addon.cspmb__One_Off_Charge__c && isDiscountAllowed('oneOff', addon)) {
+								const oneOffDiscountSet = getDiscountSet(
+									addon,
+									addon.cspmb__One_Off_Charge__c,
+									"oneOff"
+								);
+								let ignoreHook = false;
 								const prevNegotiatedPrice = !isFalsyExceptZero(
 									attachment[cp.Id]._addons[addon.Id].oneOff
-								) && !facSettings.applyBulkDiscountListPrice
+								)
 									? attachment[cp.Id]._addons[addon.Id].oneOff
 									: addon.cspmb__One_Off_Charge__c;
-								const negotiatedValue = applyDiscountRate(
+								let negotiatedValue = applyDiscountRate(
 									prevNegotiatedPrice,
 									this.state,
 									addon.cspmb__One_Off_Charge__c
 								);
-								attachment[cp.Id]._addons[addon.Id].oneOff = negotiatedValue;
-								eventHookData = frameHookAddonData(eventHookData, this.state.updatedAttachment, cp, addon, 'oneOff', negotiatedValue);
+
+								if (oneOffDiscountSet.size) {
+									if (
+										!oneOffDiscountSet.has(
+											negotiatedValue
+										) &&
+										negotiatedValue !==
+											addon.cspmb__One_Off_Charge__c
+									) {
+										negotiatedValue =
+											attachment[cp.Id]._addons[addon.Id]
+												.oneOff;
+										showNegotiationSkippedAlert = true;
+									}
+								}
+
+								if (
+									negotiatedValue ===
+									attachment[cp.Id]._addons[addon.Id].oneOff
+								) {
+									ignoreHook = true;
+								}
+								attachment[cp.Id]._addons[
+									addon.Id
+								].oneOff = negotiatedValue;
+								if (!ignoreHook) {
+									eventHookData = frameHookAddonData(
+										eventHookData,
+										this.state.updatedAttachment,
+										cp,
+										addon,
+										"oneOff",
+										negotiatedValue
+									);
+								}
 							}
 
 							if (addon.cspmb__Recurring_Charge__c && isDiscountAllowed('recurring', addon)) {
+								const recurringDiscountSet = getDiscountSet(
+									addon,
+									addon.cspmb__Recurring_Charge__c,
+									"recurring"
+								);
+								let ignoreHook = false;
 								const prevNegotiatedPrice = !isFalsyExceptZero(
 									attachment[cp.Id]._addons[addon.Id].recurring
-								) && !facSettings.applyBulkDiscountListPrice
+								)
 									? attachment[cp.Id]._addons[addon.Id].recurring
 									: addon.cspmb__Recurring_Charge__c;
-								const negotiatedValue = applyDiscountRate(
+								let negotiatedValue = applyDiscountRate(
 									prevNegotiatedPrice,
 									this.state,
 									addon.cspmb__Recurring_Charge__c
 								);
-								attachment[cp.Id]._addons[addon.Id].recurring = negotiatedValue;
-								eventHookData = frameHookAddonData(eventHookData, this.state.updatedAttachment, cp, addon, 'recurring', negotiatedValue);
+
+								if (recurringDiscountSet.size) {
+									if (
+										!recurringDiscountSet.has(
+											negotiatedValue
+										) &&
+										negotiatedValue !==
+											addon.cspmb__Recurring_Charge__c
+									) {
+										negotiatedValue =
+											attachment[cp.Id]._addons[addon.Id]
+												.recurring;
+										showNegotiationSkippedAlert = true;
+									}
+								}
+
+								if (
+									negotiatedValue ===
+									attachment[cp.Id]._addons[addon.Id]
+										.recurring
+								) {
+									ignoreHook = true;
+								}
+								attachment[cp.Id]._addons[
+									addon.Id
+								].recurring = negotiatedValue;
+								if (!ignoreHook) {
+									eventHookData = frameHookAddonData(
+										eventHookData,
+										this.state.updatedAttachment,
+										cp,
+										addon,
+										"recurring",
+										negotiatedValue
+									);
+								}
 							}
 						}
 					});
@@ -592,6 +675,14 @@ class NegotiationModal extends Component {
 							selected.charges.hasOwnProperty(charge.Id) &&
 							isDiscountAllowed(charge._type, cp)
 						) {
+							const chargeDiscountSet = getDiscountSet(
+								cp,
+								charge[charge._type],
+								charge._type,
+								charge,
+								true
+							);
+							let ignoreHook = false;
 							attachment[cp.Id]._charges = attachment[cp.Id]._charges || {};
 							attachment[cp.Id]._charges[charge.Id] =
 								attachment[cp.Id]._charges[charge.Id] || {};
@@ -599,20 +690,50 @@ class NegotiationModal extends Component {
 								attachment[cp.Id]._charges[charge.Id][
 									charge._type
 								]
-							) && !facSettings.applyBulkDiscountListPrice
+							)
 								? attachment[cp.Id]._charges[charge.Id][
 										charge._type
 								  ]
 								: charge[charge._type];
-							const negotiatedValue = applyDiscountRate(
+							let negotiatedValue = applyDiscountRate(
 								prevNegotiatedPrice,
 								this.state,
 								charge[charge._type]
 							);
+							if (chargeDiscountSet.size) {
+								if (
+									!chargeDiscountSet.has(negotiatedValue) &&
+									negotiatedValue !== charge[charge._type]
+								) {
+									negotiatedValue =
+										attachment[cp.Id]._charges[charge.Id][
+											charge._type
+										];
+									showNegotiationSkippedAlert = true;
+								}
+							}
+
+							if (
+								negotiatedValue ===
+								attachment[cp.Id]._charges[charge.Id][
+									charge._type
+								]
+							) {
+								ignoreHook = true;
+							}
 							attachment[cp.Id]._charges[charge.Id][
 								charge._type
 							] = negotiatedValue;
-							eventHookData = frameHookChargesData(eventHookData, this.state.updatedAttachment, cp, charge, negotiatedValue);
+
+							if (!ignoreHook) {
+								eventHookData = frameHookChargesData(
+									eventHookData,
+									this.state.updatedAttachment,
+									cp,
+									charge,
+									negotiatedValue
+								);
+							}
 						}
 					});
 				} else {
@@ -631,35 +752,107 @@ class NegotiationModal extends Component {
 									oneOffCharge &&
 									isDiscountAllowed(charge.type, cp)
 								) {
+									const oneOffDiscountSet = getDiscountSet(
+										cp,
+										oneOffCharge,
+										charge.type
+									);
+									let ignoreHook = false;
 									const prevNegotiatedPrice = !isFalsyExceptZero(
 										attachment[cp.Id]._product.oneOff
-									) && !facSettings.applyBulkDiscountListPrice
+									)
 										? attachment[cp.Id]._product.oneOff
 										: oneOffCharge;
-									const negotiatedValue = applyDiscountRate(
+									let negotiatedValue = applyDiscountRate(
 										prevNegotiatedPrice,
 										this.state,
 										oneOffCharge
 									);
+
+									if (oneOffDiscountSet.size) {
+										if (
+											!oneOffDiscountSet.has(
+												negotiatedValue
+											) &&
+											negotiatedValue !== oneOffCharge
+										) {
+											negotiatedValue =
+												attachment[cp.Id]._product
+													.oneOff;
+											showNegotiationSkippedAlert = true;
+										}
+									}
+
+									if (
+										negotiatedValue ===
+										attachment[cp.Id]._product.oneOff
+									) {
+										ignoreHook = true;
+									}
 									attachment[cp.Id]._product.oneOff = negotiatedValue;
-									eventHookData = frameHookProductChargesData(eventHookData, this.state.updatedAttachment, cp, 'oneOff', negotiatedValue);
+
+									if (!ignoreHook) {
+										eventHookData = frameHookProductChargesData(
+											eventHookData,
+											this.state.updatedAttachment,
+											cp,
+											"oneOff",
+											negotiatedValue
+										);
+									}
 								} else if (
 									charge.type == 'recurring' &&
 									recurringCharge &&
 									isDiscountAllowed(charge.type, cp)
 								) {
+									const recurringDiscountSet = getDiscountSet(
+										cp,
+										recurringCharge,
+										charge.type
+									);
+									let ignoreHook = false;
 									const prevNegotiatedPrice = !isFalsyExceptZero(
 										attachment[cp.Id]._product.recurring
-									) && !facSettings.applyBulkDiscountListPrice
+									)
 										? attachment[cp.Id]._product.recurring
 										: recurringCharge;
-									const negotiatedValue = applyDiscountRate(
+									let negotiatedValue = applyDiscountRate(
 										prevNegotiatedPrice,
 										this.state,
 										recurringCharge
 									);
+
+									if (recurringDiscountSet.size) {
+										if (
+											!recurringDiscountSet.has(
+												negotiatedValue
+											) &&
+											negotiatedValue !== recurringCharge
+										) {
+											negotiatedValue =
+												attachment[cp.Id]._product
+													.recurring;
+											showNegotiationSkippedAlert = true;
+										}
+									}
+
+									if (
+										negotiatedValue ===
+										attachment[cp.Id]._product.recurring
+									) {
+										ignoreHook = true;
+									}
 									attachment[cp.Id]._product.recurring = negotiatedValue;
-									eventHookData = frameHookProductChargesData(eventHookData, this.state.updatedAttachment, cp, 'recurring', negotiatedValue);
+
+									if (!ignoreHook) {
+										eventHookData = frameHookProductChargesData(
+											eventHookData,
+											this.state.updatedAttachment,
+											cp,
+											"recurring",
+											negotiatedValue
+										);
+									}
 								}
 							}
 						});
@@ -676,9 +869,10 @@ class NegotiationModal extends Component {
 							if (selected.rated.hasOwnProperty(rcl.Id)) {
 								attachment[cp.Id]._rateCards = attachment[cp.Id]._rateCards || {};
 								attachment[cp.Id]._rateCards[rc.Id] = attachment[cp.Id]._rateCards[rc.Id] || {};
+								let ignoreHook = false;
 								const prevNegotiatedPrice = !isFalsyExceptZero(
 									attachment[cp.Id]._rateCards[rc.Id][rcl.Id]
-								) && !facSettings.applyBulkDiscountListPrice
+								)
 									? attachment[cp.Id]._rateCards[rc.Id][rcl.Id]
 									: rcl.cspmb__rate_value__c;
 								const negotiatedValue = applyDiscountRate(
@@ -686,8 +880,24 @@ class NegotiationModal extends Component {
 									this.state,
 									rcl.cspmb__rate_value__c
 								);
+								if (
+									negotiatedValue ===
+									attachment[cp.Id]._rateCards[rc.Id][rcl.Id]
+								) {
+									ignoreHook = true;
+								}
 								attachment[cp.Id]._rateCards[rc.Id][rcl.Id] = negotiatedValue;
-								eventHookData = frameHookRateCardsData(eventHookData, this.state.updatedAttachment, cp, rc, rcl, negotiatedValue);
+
+								if (!ignoreHook) {
+									eventHookData = frameHookRateCardsData(
+										eventHookData,
+										this.state.updatedAttachment,
+										cp,
+										rc,
+										rcl,
+										negotiatedValue
+									);
+								}
 							}
 						});
 					});
@@ -703,6 +913,14 @@ class NegotiationModal extends Component {
 			);
 			console.log(this.state.attachment);
 		});
+
+		if (showNegotiationSkippedAlert) {
+			this.props.createToast(
+				'warning',
+				'Some Discounts not applied',
+				'Some set values could not be applied to all items due to discount level constraints'
+			);
+		}
 	}
 
 	renderCharges(charge) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from '../Icon';
-import { log, percIncrease } from '~/src/utils/shared-service';
+import { log } from '~/src/utils/shared-service';
 import NumberFormat, { getLocaleNumber } from '~/src/components/negotiation/NumberFormat';
 
 /*
@@ -89,18 +89,19 @@ class DropdownNegotiate extends React.Component {
 
 	getSelectedIndex() {
 		let initialFixed = 0;
-		let initialPercentage = 0;
 		let _originalValue = this.props.originalValue || 0;
 		let _negotiatedValue = this.props.negotiatedValue || 0;
 
 		if (_originalValue - _negotiatedValue) {
-			initialPercentage = percIncrease(_originalValue, _negotiatedValue);
 			initialFixed = (_originalValue - _negotiatedValue).toFixedNumber();
 		}
 		let selectedIndex = 'none';
 		this.discounts.forEach((discount, index) => {
-			if (discount.type === 'Percentage' && +discount.value === initialPercentage) {
-				selectedIndex = index;
+			if (discount.type === 'Percentage') {
+				const discountedPrice = (((100 - discount.value) * _originalValue) / 100).toFixedNumber();
+				if (_negotiatedValue === discountedPrice) {
+					selectedIndex = index;
+				}
 			} else if (discount.type === 'Amount' && +discount.value === initialFixed) {
 				selectedIndex = index;
 			}

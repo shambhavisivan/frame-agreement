@@ -75,6 +75,7 @@ class NegotiationStandaloneModal extends Component {
 		const _DISCOUNT = +this.state.discount * -1;
 		const facSettings = this.props.settings.FACSettings;
 		let showNegotiationSkippedAlert = false;
+		let appliedDiscountsCount = 0;
 
 		function applyDiscountRate(prevNegotiatedPrice, discountMode, originalPrice) {
 
@@ -104,7 +105,7 @@ class NegotiationStandaloneModal extends Component {
 				}
 			}
 
-			return +negotiatedPrice.toFixed(8);
+			return +negotiatedPrice.toFixedNumber();
 		}
 
 		function frameHookStandAloneAddonData(eventHookData, updatedAttachment, addon, chargeType, negotiatedValue) {
@@ -167,8 +168,10 @@ class NegotiationStandaloneModal extends Component {
 
 				if (negotiatedValue === addOn[add.Id].recurring) {
 					ignoreHook = true;
+				} else {
+					appliedDiscountsCount++;
+					addOn[add.Id].recurring = negotiatedValue;
 				}
-				addOn[add.Id].recurring = negotiatedValue;
 
 				if (!ignoreHook) {
 					eventHookData = frameHookStandAloneAddonData(
@@ -211,8 +214,10 @@ class NegotiationStandaloneModal extends Component {
 
 				if (negotiatedValue === addOn[add.Id].oneOff) {
 					ignoreHook = true;
+				} else {
+					appliedDiscountsCount++;
+					addOn[add.Id].oneOff = negotiatedValue;
 				}
-				addOn[add.Id].oneOff = negotiatedValue;
 
 				if (!ignoreHook) {
 					eventHookData = frameHookStandAloneAddonData(
@@ -229,12 +234,13 @@ class NegotiationStandaloneModal extends Component {
 		});
 
 		this._setState({ attachment, actionTaken: true }, () => {
-			this.props.createToast(
-				'info',
-				window.SF.labels.toast_discount_calculated_title,
-				window.SF.labels.toast_discount_calculated
-			);
-			console.log(this.state.attachment);
+			if (appliedDiscountsCount) {
+				this.props.createToast(
+					'info',
+					window.SF.labels.toast_discount_calculated_title,
+					window.SF.labels.toast_discount_calculated
+				);
+			}
 		});
 
 		if (showNegotiationSkippedAlert) {

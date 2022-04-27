@@ -507,7 +507,7 @@ class NegotiationModal extends Component {
 		const facSettings = this.props.settings.FACSettings;
 		const _DISCOUNT = +discount * -1;
 		let showNegotiationSkippedAlert = false;
-		console.log(_DISCOUNT);
+		let appliedDiscountsCount = 0;
 
 		function applyDiscountRate(prevNegotiatedPrice, state, originalPrice) {
 
@@ -538,7 +538,7 @@ class NegotiationModal extends Component {
 				}
 			}
 
-			return +negotiatedPrice.toFixed(8);
+			return +negotiatedPrice.toFixedNumber();
 		}
 
 		let selected = { ...this.state.selected };
@@ -571,6 +571,7 @@ class NegotiationModal extends Component {
 									addon.cspmb__One_Off_Charge__c
 								);
 
+								//Reset applied discount to prev negotiated value
 								if (oneOffDiscountSet.size) {
 									if (
 										!oneOffDiscountSet.has(
@@ -591,10 +592,13 @@ class NegotiationModal extends Component {
 									attachment[cp.Id]._addons[addon.Id].oneOff
 								) {
 									ignoreHook = true;
+								} else {
+									appliedDiscountsCount++;
+									attachment[cp.Id]._addons[
+										addon.Id
+									].oneOff = negotiatedValue;
 								}
-								attachment[cp.Id]._addons[
-									addon.Id
-								].oneOff = negotiatedValue;
+
 								if (!ignoreHook) {
 									eventHookData = frameHookAddonData(
 										eventHookData,
@@ -625,6 +629,7 @@ class NegotiationModal extends Component {
 									addon.cspmb__Recurring_Charge__c
 								);
 
+								//Reset applied discount to prev negotiated value
 								if (recurringDiscountSet.size) {
 									if (
 										!recurringDiscountSet.has(
@@ -646,10 +651,13 @@ class NegotiationModal extends Component {
 										.recurring
 								) {
 									ignoreHook = true;
+								} else {
+									appliedDiscountsCount++;
+									attachment[cp.Id]._addons[
+										addon.Id
+									].recurring = negotiatedValue;
 								}
-								attachment[cp.Id]._addons[
-									addon.Id
-								].recurring = negotiatedValue;
+
 								if (!ignoreHook) {
 									eventHookData = frameHookAddonData(
 										eventHookData,
@@ -700,6 +708,8 @@ class NegotiationModal extends Component {
 								this.state,
 								charge[charge._type]
 							);
+
+							//Reset applied discount to prev negotiated value
 							if (chargeDiscountSet.size) {
 								if (
 									!chargeDiscountSet.has(negotiatedValue) &&
@@ -720,10 +730,12 @@ class NegotiationModal extends Component {
 								]
 							) {
 								ignoreHook = true;
+							} else {
+								appliedDiscountsCount++;
+								attachment[cp.Id]._charges[charge.Id][
+									charge._type
+								] = negotiatedValue;
 							}
-							attachment[cp.Id]._charges[charge.Id][
-								charge._type
-							] = negotiatedValue;
 
 							if (!ignoreHook) {
 								eventHookData = frameHookChargesData(
@@ -769,6 +781,7 @@ class NegotiationModal extends Component {
 										oneOffCharge
 									);
 
+									//Reset applied discount to prev negotiated value
 									if (oneOffDiscountSet.size) {
 										if (
 											!oneOffDiscountSet.has(
@@ -788,8 +801,10 @@ class NegotiationModal extends Component {
 										attachment[cp.Id]._product.oneOff
 									) {
 										ignoreHook = true;
+									} else {
+										appliedDiscountsCount++;
+										attachment[cp.Id]._product.oneOff = negotiatedValue;
 									}
-									attachment[cp.Id]._product.oneOff = negotiatedValue;
 
 									if (!ignoreHook) {
 										eventHookData = frameHookProductChargesData(
@@ -822,6 +837,7 @@ class NegotiationModal extends Component {
 										recurringCharge
 									);
 
+									//Reset applied discount to prev negotiated value
 									if (recurringDiscountSet.size) {
 										if (
 											!recurringDiscountSet.has(
@@ -841,8 +857,10 @@ class NegotiationModal extends Component {
 										attachment[cp.Id]._product.recurring
 									) {
 										ignoreHook = true;
+									} else {
+										appliedDiscountsCount++;
+										attachment[cp.Id]._product.recurring = negotiatedValue;
 									}
-									attachment[cp.Id]._product.recurring = negotiatedValue;
 
 									if (!ignoreHook) {
 										eventHookData = frameHookProductChargesData(
@@ -880,13 +898,17 @@ class NegotiationModal extends Component {
 									this.state,
 									rcl.cspmb__rate_value__c
 								);
+
+								//Reset applied discount to prev negotiated value
 								if (
 									negotiatedValue ===
 									attachment[cp.Id]._rateCards[rc.Id][rcl.Id]
 								) {
 									ignoreHook = true;
+								} else {
+									appliedDiscountsCount++;
+									attachment[cp.Id]._rateCards[rc.Id][rcl.Id] = negotiatedValue;
 								}
-								attachment[cp.Id]._rateCards[rc.Id][rcl.Id] = negotiatedValue;
 
 								if (!ignoreHook) {
 									eventHookData = frameHookRateCardsData(
@@ -905,14 +927,18 @@ class NegotiationModal extends Component {
 			});
 		}
 
-		this._setState({ attachment, actionTaken: true }, () => {
-			this.props.createToast(
-				'info',
-				window.SF.labels.toast_discount_calculated_title,
-				window.SF.labels.toast_discount_calculated
-			);
-			console.log(this.state.attachment);
-		});
+		this._setState(
+			{ attachment, actionTaken: true },
+			() => {
+				if (appliedDiscountsCount) {
+					this.props.createToast(
+						"info",
+						window.SF.labels.toast_discount_calculated_title,
+						window.SF.labels.toast_discount_calculated
+					);
+				}
+			}
+		);
 
 		if (showNegotiationSkippedAlert) {
 			this.props.createToast(

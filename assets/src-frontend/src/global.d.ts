@@ -297,6 +297,7 @@ namespace SfGlobal {
 		addProductCTAMessage: string;
 		products_charges: string;
 		products_rates: string;
+		allowances: string;
 		addon_label: string;
 		btn_AddProducts: string;
 		btn_DeleteProducts: string;

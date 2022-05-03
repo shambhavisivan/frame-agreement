@@ -12,6 +12,7 @@ import {
 import { DiscountThreshold, ChargeT, AddonType, FacSetting } from '../datasources';
 import { store } from '../components/fa-details/details-page-provider';
 import { useAppSettings } from '../hooks/use-app-settings';
+import { useFrameAgreements } from '../hooks/use-frame-agreements';
 import { FamWindow } from '../datasources/register-apis';
 
 const globalAny: FamWindow = (global as unknown) as FamWindow;
@@ -78,11 +79,11 @@ export function useDiscountValidation(): {
 			);
 
 			if (rclThresholdViolations.length) {
-				updateFa();
+				//updateFa();
 			}
 			return rclThresholdViolations;
 		},
-		[state, discountData?.discountThresholds]
+		[state, discountData?.discountThresholds, JSON.stringify(activeFa)]
 	);
 
 	const validateProductThreshold = useCallback(
@@ -112,11 +113,20 @@ export function useDiscountValidation(): {
 				productThresholds
 			);
 			if (productThresholdViolations.length) {
-				updateFa();
+				updateFaStatus(true);
 			}
+			// else {
+			// 	updateFaStatus(false);
+			// }
+
 			return productThresholdViolations;
 		},
-		[discountData?.authLevels, state, discountData?.discountThresholds]
+		[
+			JSON.stringify(discountData?.authLevels),
+			JSON.stringify(state),
+			JSON.stringify(discountData?.discountThresholds),
+			JSON.stringify(activeFa)
+		]
 	);
 
 	const validateProductThresholdForAdvancedCharges = useCallback(
@@ -142,7 +152,12 @@ export function useDiscountValidation(): {
 
 			return validateDiscountThreshold(productChargeNegotiable, productThresholds);
 		},
-		[discountData?.authLevels, state, discountData?.discountThresholds]
+		[
+			discountData?.authLevels,
+			state,
+			discountData?.discountThresholds,
+			JSON.stringify(activeFa)
+		]
 	);
 
 	const validateAddonThreshold = useCallback(
@@ -159,8 +174,8 @@ export function useDiscountValidation(): {
 
 			const addonNegotiable =
 				addonType === 'COMMERCIAL_PRODUCT_ASSOCIATED'
-					? state['products'][productId as string].addons[referenceId][chargeType]
-					: state['addons'][referenceId][chargeType];
+					? state['products'][productId as string]?.addons?.[referenceId]?.[chargeType]
+					: state['addons']?.[referenceId]?.[chargeType];
 
 			let addonThresholds: DiscountThreshold[] = [];
 
@@ -177,25 +192,38 @@ export function useDiscountValidation(): {
 				addonThresholds
 			);
 			if (addonThresholdViolations.length) {
-				updateFa();
+				updateFaStatus(true);
 			}
 			return addonThresholdViolations;
 		},
-		[discountData?.authLevels, state, discountData?.discountThresholds]
+		[
+			discountData?.authLevels,
+			state,
+			discountData?.discountThresholds,
+			JSON.stringify(activeFa)
+		]
 	);
 
-	const updateFa = (): void => {
+	const updateFaStatus = (requiresApproval: boolean): void => {
 		const updateFrameAgreementFunc = globalAny?.FAM?.api?.updateFrameAgreement as (
 			faId: string,
 			field: keyof SfGlobal.FrameAgreement,
 			value: string | number | undefined
 		) => Promise<void>;
 
-		updateFrameAgreementFunc(
-			activeFa?.id || '',
-			'csconta__Status__c',
-			statuses.requiresApprovalStatus
-		);
+		if (requiresApproval) {
+			updateFrameAgreementFunc(
+				activeFa?.id || '',
+				'csconta__Status__c',
+				statuses.requiresApprovalStatus
+			);
+		} else {
+			updateFrameAgreementFunc(
+				activeFa?.id || '',
+				'csconta__Status__c',
+				statuses.draftStatus
+			);
+		}
 	};
 
 	return {

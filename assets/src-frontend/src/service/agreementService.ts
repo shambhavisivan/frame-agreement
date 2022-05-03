@@ -82,21 +82,37 @@ class AgreementService {
 		}
 		const sfData: Partial<SfGlobal.FrameAgreement> = { [field]: value };
 		const faData: Partial<FrameAgreement> = deforcify(sfData);
-		this._queryCache.setQueryData(
-			QueryKeys.frameagreement,
-			(oldData: FrameAgreement[] | undefined) => {
-				if (oldData && oldData?.length) {
-					return oldData?.map((agreement) => {
-						if (agreement.id === faId) {
-							return { ...agreement, ...faData };
-						}
-						return agreement;
-					});
-				} else {
-					return [];
+		console.log('field: ', Object.keys(faData)[0]);
+		const deforcifiedField = Object.keys(faData);
+
+		let updateCache = false;
+
+		console.log('updateCache: ', updateCache);
+		console.log('field: ', deforcifiedField[0]);
+
+		console.log('value: ', faFound[(deforcifiedField[0] as unknown) as keyof FrameAgreement]);
+		if (faFound[(deforcifiedField[0] as unknown) as keyof FrameAgreement] != value) {
+			updateCache = true;
+		}
+		console.log('updateCache: ', updateCache);
+
+		if (updateCache) {
+			this._queryCache.setQueryData(
+				QueryKeys.frameagreement,
+				(oldData: FrameAgreement[] | undefined) => {
+					if (oldData && oldData?.length) {
+						return oldData?.map((agreement) => {
+							if (agreement.id === faId) {
+								return { ...agreement, ...faData };
+							}
+							return agreement;
+						});
+					} else {
+						return [];
+					}
 				}
-			}
-		);
+			);
+		}
 	};
 
 	public setStatusOfFrameAgreement = async (faId: string, newState: string): Promise<string> => {

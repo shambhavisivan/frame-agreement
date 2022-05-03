@@ -1,7 +1,8 @@
 import { CSDataTable, CSDataTableColumnInterface } from '@cloudsense/cs-ui-components';
-import React, { ReactElement, useContext, useMemo, useRef } from 'react';
+import React, { ReactElement, useContext, useMemo, useRef, useState } from 'react';
 import { CommercialProductStandalone } from '../../datasources';
 import { useCustomLabels } from '../../hooks/use-custom-labels';
+import { useFrameAgreements } from '../../hooks/use-frame-agreements';
 import { store } from './details-page-provider';
 import { Negotiable, ChargeType } from './negotiation/details-reducer';
 import { NegotiateProductActions } from './negotiation/negotiation-action-creator';
@@ -21,19 +22,22 @@ type ProductNegotiationCharge = CommercialProductStandalone & {
 	recurringNeg: Negotiable['negotiated'];
 };
 
-export function LegacyProductCharge({
+function LegacyProdCharge({
 	product,
 	oneOffChargeNegotiation,
 	recurringChargeNegotiation
 }: Props): ReactElement {
 	const {
-		negotiation: { products: productState }
+		negotiation: { products: productState },
+		activeFa
 	} = useContext(store);
 	const label = useCustomLabels();
+	const { agreementList = [] } = useFrameAgreements();
 
 	const { validateProductThreshold } = useDiscountValidation();
 	const { fetchValidProductDiscounts, applyProductDiscount } = useDiscountLevels();
 	const currentChargeChanged = useRef<ChargeType | string>('');
+	//const [breachedThresolds, setBreachedThresholds] = useState();
 
 	const evaluateThreshold = (chargeType: ChargeType): boolean => {
 		const breachedThresholds = validateProductThreshold(product.id, 'products', chargeType);
@@ -50,7 +54,18 @@ export function LegacyProductCharge({
 		};
 
 		return [productNeg];
-	}, [label.oneOffProduct, label.recurringProduct, product, productState[product.id]?.product]);
+	}, [
+		label.oneOffProduct,
+		label.recurringProduct,
+		JSON.stringify(product),
+		JSON.stringify(productState[product.id]?.product)
+	]);
+
+	const updateFaStatus = () => {
+		const faFound = agreementList.find((fa) => fa.id === activeFa?.id);
+		if (faFound?.status !== '') {
+		}
+	};
 
 	const metadata = useMemo((): CSDataTableColumnInterface[] => {
 		return [
@@ -160,7 +175,7 @@ export function LegacyProductCharge({
 				header: label.productChargeHeaderReccNeg
 			}
 		];
-	}, [productState[product.id]?.product]);
+	}, [JSON.stringify(productState[product.id]?.product), currentChargeChanged.current]);
 
 	return (
 		<>
@@ -174,3 +189,9 @@ export function LegacyProductCharge({
 		</>
 	);
 }
+
+const areEqual = (prevProps: Props, nextProps: Props): boolean => {
+	return JSON.stringify(prevProps.product) === JSON.stringify(nextProps.product) ? false : true;
+};
+
+export const LegacyProductCharge = React.memo(LegacyProdCharge, areEqual);

@@ -63,7 +63,7 @@ export function ChargeList({
 			});
 			return result;
 		}, [] as ChargeT[]);
-	}, [chargeList, productId, products[productId].charges]);
+	}, [JSON.stringify(chargeList), productId, JSON.stringify(products[productId].charges)]);
 
 	const metadata = useMemo((): CSDataTableColumnInterface[] => {
 		return [
@@ -146,7 +146,7 @@ export function ChargeList({
 				header: label.chargesHeaderReccNeg
 			}
 		];
-	}, [products[productId].charges]);
+	}, [JSON.stringify(products[productId].charges)]);
 
 	return (
 		<div>
